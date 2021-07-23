@@ -25,7 +25,10 @@ context uvvm_util.uvvm_util_context;
 
 package rand_tb_pkg is
 
-  type t_integer_cnt  is array (integer range <>) of integer;
+  type t_range_int_vec   is array (natural range <>) of integer_vector;
+  type t_range_real_vec  is array (natural range <>) of real_vector;
+  type t_range_time_vec  is array (natural range <>) of time_vector;
+  type t_integer_cnt     is array (integer range <>) of integer;
   type t_weight_dist_vec is array (natural range <>) of integer_vector;
 
   ------------------------------------------------------------
@@ -34,77 +37,65 @@ package rand_tb_pkg is
   -- Base function (integer)
   function check_rand_value(
     constant value       : integer;
-    constant min_range   : integer;
-    constant max_range   : integer)
+    constant range_vec   : t_range_int_vec)
   return boolean;
 
   -- Base function (real)
   function check_rand_value(
     constant value       : real;
-    constant min_range   : real;
-    constant max_range   : real)
+    constant range_vec   : t_range_real_vec)
   return boolean;
 
   -- Base function (time)
   function check_rand_value(
     constant value       : time;
-    constant min_range   : time;
-    constant max_range   : time)
+    constant range_vec   : t_range_time_vec)
   return boolean;
 
   -- Overload (integer)
   procedure check_rand_value(
     constant value       : in integer;
-    constant min_range   : in integer;
-    constant max_range   : in integer);
+    constant range_vec   : in t_range_int_vec);
 
   -- Overload (real)
   procedure check_rand_value(
     constant value       : in real;
-    constant min_range   : in real;
-    constant max_range   : in real);
+    constant range_vec   : in t_range_real_vec);
 
   -- Overload (time)
   procedure check_rand_value(
     constant value       : in time;
-    constant min_range   : in time;
-    constant max_range   : in time);
+    constant range_vec   : in t_range_time_vec);
 
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values      : in integer_vector;
-    constant min_range   : in integer;
-    constant max_range   : in integer);
+    constant range_vec   : in t_range_int_vec);
 
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values      : in real_vector;
-    constant min_range   : in real;
-    constant max_range   : in real);
+    constant range_vec   : in t_range_real_vec);
 
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values      : in time_vector;
-    constant min_range   : in time;
-    constant max_range   : in time);
+    constant range_vec   : in t_range_time_vec);
 
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value       : in unsigned;
-    constant min_range   : in natural;
-    constant max_range   : in natural);
+    constant range_vec   : in t_range_int_vec);
 
   -- Overload (signed)
   procedure check_rand_value(
     constant value       : in signed;
-    constant min_range   : in integer;
-    constant max_range   : in integer);
+    constant range_vec   : in t_range_int_vec);
 
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value       : in std_logic_vector;
-    constant min_range   : in natural;
-    constant max_range   : in natural);
+    constant range_vec   : in t_range_int_vec);
 
   ------------------------------------------------------------
   -- Check value within set of values
@@ -187,8 +178,7 @@ package rand_tb_pkg is
   -- Base function (integer)
   function check_rand_value(
     constant value       : integer;
-    constant min_range   : integer;
-    constant max_range   : integer;
+    constant range_vec   : t_range_int_vec;
     constant set_type    : t_set_type;
     constant set_values  : integer_vector)
   return boolean;
@@ -196,8 +186,7 @@ package rand_tb_pkg is
   -- Base function (real)
   function check_rand_value(
     constant value       : real;
-    constant min_range   : real;
-    constant max_range   : real;
+    constant range_vec   : t_range_real_vec;
     constant set_type    : t_set_type;
     constant set_values  : real_vector)
   return boolean;
@@ -205,8 +194,7 @@ package rand_tb_pkg is
   -- Base function (time)
   function check_rand_value(
     constant value       : time;
-    constant min_range   : time;
-    constant max_range   : time;
+    constant range_vec   : t_range_time_vec;
     constant set_type    : t_set_type;
     constant set_values  : time_vector)
   return boolean;
@@ -214,72 +202,63 @@ package rand_tb_pkg is
   -- Overload (integer)
   procedure check_rand_value(
     constant value       : in integer;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector);
 
   -- Overload (real)
   procedure check_rand_value(
     constant value       : in real;
-    constant min_range   : in real;
-    constant max_range   : in real;
+    constant range_vec   : in t_range_real_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in real_vector);
 
   -- Overload (time)
   procedure check_rand_value(
     constant value       : in time;
-    constant min_range   : in time;
-    constant max_range   : in time;
+    constant range_vec   : in t_range_time_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in time_vector);
 
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values      : in integer_vector;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector);
 
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values      : in real_vector;
-    constant min_range   : in real;
-    constant max_range   : in real;
+    constant range_vec   : in t_range_real_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in real_vector);
 
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values      : in time_vector;
-    constant min_range   : in time;
-    constant max_range   : in time;
+    constant range_vec   : in t_range_time_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in time_vector);
 
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value       : in unsigned;
-    constant min_range   : in natural;
-    constant max_range   : in natural;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in t_natural_vector);
 
   -- Overload (signed)
   procedure check_rand_value(
     constant value       : in signed;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector);
 
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value       : in std_logic_vector;
-    constant min_range   : in natural;
-    constant max_range   : in natural;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in t_natural_vector);
 
@@ -289,8 +268,7 @@ package rand_tb_pkg is
   -- Base function (integer)
   impure function check_rand_value(
     constant value       : integer;
-    constant min_range   : integer;
-    constant max_range   : integer;
+    constant range_vec   : t_range_int_vec;
     constant set_type1   : t_set_type;
     constant set_values1 : integer_vector;
     constant set_type2   : t_set_type;
@@ -300,8 +278,7 @@ package rand_tb_pkg is
   -- Base function (real)
   impure function check_rand_value(
     constant value       : real;
-    constant min_range   : real;
-    constant max_range   : real;
+    constant range_vec   : t_range_real_vec;
     constant set_type1   : t_set_type;
     constant set_values1 : real_vector;
     constant set_type2   : t_set_type;
@@ -311,8 +288,7 @@ package rand_tb_pkg is
   -- Base function (time)
   impure function check_rand_value(
     constant value       : time;
-    constant min_range   : time;
-    constant max_range   : time;
+    constant range_vec   : t_range_time_vec;
     constant set_type1   : t_set_type;
     constant set_values1 : time_vector;
     constant set_type2   : t_set_type;
@@ -322,8 +298,7 @@ package rand_tb_pkg is
   -- Overload (integer)
   procedure check_rand_value(
     constant value       : in integer;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in integer_vector;
     constant set_type2   : in t_set_type;
@@ -332,8 +307,7 @@ package rand_tb_pkg is
   -- Overload (real)
   procedure check_rand_value(
     constant value       : in real;
-    constant min_range   : in real;
-    constant max_range   : in real;
+    constant range_vec   : in t_range_real_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in real_vector;
     constant set_type2   : in t_set_type;
@@ -342,8 +316,7 @@ package rand_tb_pkg is
   -- Overload (time)
   procedure check_rand_value(
     constant value       : in time;
-    constant min_range   : in time;
-    constant max_range   : in time;
+    constant range_vec   : in t_range_time_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in time_vector;
     constant set_type2   : in t_set_type;
@@ -352,8 +325,7 @@ package rand_tb_pkg is
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values      : in integer_vector;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in integer_vector;
     constant set_type2   : in t_set_type;
@@ -362,8 +334,7 @@ package rand_tb_pkg is
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values      : in real_vector;
-    constant min_range   : in real;
-    constant max_range   : in real;
+    constant range_vec   : in t_range_real_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in real_vector;
     constant set_type2   : in t_set_type;
@@ -372,8 +343,7 @@ package rand_tb_pkg is
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values      : in time_vector;
-    constant min_range   : in time;
-    constant max_range   : in time;
+    constant range_vec   : in t_range_time_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in time_vector;
     constant set_type2   : in t_set_type;
@@ -382,8 +352,7 @@ package rand_tb_pkg is
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value       : in unsigned;
-    constant min_range   : in natural;
-    constant max_range   : in natural;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in t_natural_vector;
     constant set_type2   : in t_set_type;
@@ -392,8 +361,7 @@ package rand_tb_pkg is
   -- Overload (signed)
   procedure check_rand_value(
     constant value       : in signed;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in integer_vector;
     constant set_type2   : in t_set_type;
@@ -402,8 +370,7 @@ package rand_tb_pkg is
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value       : in std_logic_vector;
-    constant min_range   : in natural;
-    constant max_range   : in natural;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in t_natural_vector;
     constant set_type2   : in t_set_type;
@@ -505,52 +472,51 @@ package body rand_tb_pkg is
   -- Base function (integer)
   function check_rand_value(
     constant value       : integer;
-    constant min_range   : integer;
-    constant max_range   : integer)
+    constant range_vec   : t_range_int_vec)
   return boolean is
   begin
-    if value >= min_range and value <= max_range then
-      return true;
-    else
-      return false;
-    end if;
+    for i in range_vec'range loop
+      if value >= range_vec(i)(0) and value <= range_vec(i)(1) then
+        return true;
+      end if;
+    end loop;
+    return false;
   end function;
 
   -- Base function (real)
   function check_rand_value(
     constant value       : real;
-    constant min_range   : real;
-    constant max_range   : real)
+    constant range_vec   : t_range_real_vec)
   return boolean is
   begin
-    if value >= min_range and value <= max_range then
-      return true;
-    else
-      return false;
-    end if;
+    for i in range_vec'range loop
+      if value >= range_vec(i)(0) and value <= range_vec(i)(1) then
+        return true;
+      end if;
+    end loop;
+    return false;
   end function;
 
   -- Base function (time)
   function check_rand_value(
     constant value       : time;
-    constant min_range   : time;
-    constant max_range   : time)
+    constant range_vec   : t_range_time_vec)
   return boolean is
   begin
-    if value >= min_range and value <= max_range then
-      return true;
-    else
-      return false;
-    end if;
+    for i in range_vec'range loop
+      if value >= range_vec(i)(0) and value <= range_vec(i)(1) then
+        return true;
+      end if;
+    end loop;
+    return false;
   end function;
 
   -- Overload (integer)
   procedure check_rand_value(
     constant value       : in integer;
-    constant min_range   : in integer;
-    constant max_range   : in integer) is
+    constant range_vec   : in t_range_int_vec) is
   begin
-    if check_rand_value(value, min_range, max_range) then
+    if check_rand_value(value, range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -560,10 +526,9 @@ package body rand_tb_pkg is
   -- Overload (real)
   procedure check_rand_value(
     constant value       : in real;
-    constant min_range   : in real;
-    constant max_range   : in real) is
+    constant range_vec   : in t_range_real_vec) is
   begin
-    if check_rand_value(value, min_range, max_range) then
+    if check_rand_value(value, range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -573,10 +538,9 @@ package body rand_tb_pkg is
   -- Overload (time)
   procedure check_rand_value(
     constant value       : in time;
-    constant min_range   : in time;
-    constant max_range   : in time) is
+    constant range_vec   : in t_range_time_vec) is
   begin
-    if check_rand_value(value, min_range, max_range) then
+    if check_rand_value(value, range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -585,13 +549,12 @@ package body rand_tb_pkg is
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant values      : in integer_vector;
-    constant min_range   : in integer;
-    constant max_range   : in integer) is
+    constant values    : in integer_vector;
+    constant range_vec : in t_range_int_vec) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -603,12 +566,11 @@ package body rand_tb_pkg is
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values      : in real_vector;
-    constant min_range   : in real;
-    constant max_range   : in real) is
+    constant range_vec   : in t_range_real_vec) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -620,12 +582,11 @@ package body rand_tb_pkg is
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values      : in time_vector;
-    constant min_range   : in time;
-    constant max_range   : in time) is
+    constant range_vec   : in t_range_time_vec) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -636,11 +597,10 @@ package body rand_tb_pkg is
 
   -- Overload (unsigned)
   procedure check_rand_value(
-    constant value       : in unsigned;
-    constant min_range   : in natural;
-    constant max_range   : in natural) is
+    constant value     : in unsigned;
+    constant range_vec : in t_range_int_vec) is
   begin
-    if check_rand_value(to_integer(value), min_range, max_range) then
+    if check_rand_value(to_integer(value), range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -649,11 +609,10 @@ package body rand_tb_pkg is
 
   -- Overload (signed)
   procedure check_rand_value(
-    constant value       : in signed;
-    constant min_range   : in integer;
-    constant max_range   : in integer) is
+    constant value     : in signed;
+    constant range_vec : in t_range_int_vec) is
   begin
-    if check_rand_value(to_integer(value), min_range, max_range) then
+    if check_rand_value(to_integer(value), range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, DEC) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, DEC) & ".");
@@ -662,11 +621,10 @@ package body rand_tb_pkg is
 
   -- Overload (std_logic_vector)
   procedure check_rand_value(
-    constant value       : in std_logic_vector;
-    constant min_range   : in natural;
-    constant max_range   : in natural) is
+    constant value     : in std_logic_vector;
+    constant range_vec : in t_range_int_vec) is
   begin
-    if check_rand_value(to_integer(unsigned(value)), min_range, max_range) then
+    if check_rand_value(to_integer(unsigned(value)), range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -862,20 +820,19 @@ package body rand_tb_pkg is
   -- Base function (integer)
   function check_rand_value(
     constant value       : integer;
-    constant min_range   : integer;
-    constant max_range   : integer;
+    constant range_vec   : t_range_int_vec;
     constant set_type    : t_set_type;
     constant set_values  : integer_vector)
   return boolean is
   begin
     -- Check in range plus a set of values
     if set_type = ADD then
-      if check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values) then
+      if check_rand_value(value, range_vec) or check_rand_value(value, set_values) then
         return true;
       end if;
     -- Check in range except a set of values
     elsif set_type = EXCL then
-      if check_rand_value(value, min_range, max_range) and not(check_rand_value(value, set_values)) then
+      if check_rand_value(value, range_vec) and not(check_rand_value(value, set_values)) then
         return true;
       end if;
     end if;
@@ -885,20 +842,19 @@ package body rand_tb_pkg is
   -- Base function (real)
   function check_rand_value(
     constant value       : real;
-    constant min_range   : real;
-    constant max_range   : real;
+    constant range_vec   : t_range_real_vec;
     constant set_type    : t_set_type;
     constant set_values  : real_vector)
   return boolean is
   begin
     -- Check in range plus a set of values
     if set_type = ADD then
-      if check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values) then
+      if check_rand_value(value, range_vec) or check_rand_value(value, set_values) then
         return true;
       end if;
     -- Check in range except a set of values
     elsif set_type = EXCL then
-      if check_rand_value(value, min_range, max_range) and not(check_rand_value(value, set_values)) then
+      if check_rand_value(value, range_vec) and not(check_rand_value(value, set_values)) then
         return true;
       end if;
     end if;
@@ -908,20 +864,19 @@ package body rand_tb_pkg is
   -- Base function (time)
   function check_rand_value(
     constant value       : time;
-    constant min_range   : time;
-    constant max_range   : time;
+    constant range_vec   : t_range_time_vec;
     constant set_type    : t_set_type;
     constant set_values  : time_vector)
   return boolean is
   begin
     -- Check in range plus a set of values
     if set_type = ADD then
-      if check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values) then
+      if check_rand_value(value, range_vec) or check_rand_value(value, set_values) then
         return true;
       end if;
     -- Check in range except a set of values
     elsif set_type = EXCL then
-      if check_rand_value(value, min_range, max_range) and not(check_rand_value(value, set_values)) then
+      if check_rand_value(value, range_vec) and not(check_rand_value(value, set_values)) then
         return true;
       end if;
     end if;
@@ -931,12 +886,11 @@ package body rand_tb_pkg is
   -- Overload (integer)
   procedure check_rand_value(
     constant value       : in integer;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector) is
   begin
-    if check_rand_value(value, min_range, max_range, set_type, set_values) then
+    if check_rand_value(value, range_vec, set_type, set_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -946,12 +900,11 @@ package body rand_tb_pkg is
   -- Overload (real)
   procedure check_rand_value(
     constant value       : in real;
-    constant min_range   : in real;
-    constant max_range   : in real;
+    constant range_vec   : in t_range_real_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in real_vector) is
   begin
-    if check_rand_value(value, min_range, max_range, set_type, set_values) then
+    if check_rand_value(value, range_vec, set_type, set_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -961,12 +914,11 @@ package body rand_tb_pkg is
   -- Overload (time)
   procedure check_rand_value(
     constant value       : in time;
-    constant min_range   : in time;
-    constant max_range   : in time;
+    constant range_vec   : in t_range_time_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in time_vector) is
   begin
-    if check_rand_value(value, min_range, max_range, set_type, set_values) then
+    if check_rand_value(value, range_vec, set_type, set_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -976,14 +928,13 @@ package body rand_tb_pkg is
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values      : in integer_vector;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type, set_values);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type, set_values);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -995,14 +946,13 @@ package body rand_tb_pkg is
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values      : in real_vector;
-    constant min_range   : in real;
-    constant max_range   : in real;
+    constant range_vec   : in t_range_real_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in real_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type, set_values);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type, set_values);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1014,14 +964,13 @@ package body rand_tb_pkg is
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values      : in time_vector;
-    constant min_range   : in time;
-    constant max_range   : in time;
+    constant range_vec   : in t_range_time_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in time_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type, set_values);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type, set_values);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1033,12 +982,11 @@ package body rand_tb_pkg is
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value       : in unsigned;
-    constant min_range   : in natural;
-    constant max_range   : in natural;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(value), min_range, max_range, set_type, integer_vector(set_values)) then
+    if check_rand_value(to_integer(value), range_vec, set_type, integer_vector(set_values)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -1048,12 +996,11 @@ package body rand_tb_pkg is
   -- Overload (signed)
   procedure check_rand_value(
     constant value       : in signed;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in integer_vector) is
   begin
-    if check_rand_value(to_integer(value), min_range, max_range, set_type, set_values) then
+    if check_rand_value(to_integer(value), range_vec, set_type, set_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, DEC) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, DEC) & ".");
@@ -1063,12 +1010,11 @@ package body rand_tb_pkg is
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value       : in std_logic_vector;
-    constant min_range   : in natural;
-    constant max_range   : in natural;
+    constant range_vec   : in t_range_int_vec;
     constant set_type    : in t_set_type;
     constant set_values  : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(unsigned(value)), min_range, max_range, set_type, integer_vector(set_values)) then
+    if check_rand_value(to_integer(unsigned(value)), range_vec, set_type, integer_vector(set_values)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -1081,8 +1027,7 @@ package body rand_tb_pkg is
   -- Base function (integer)
   impure function check_rand_value(
     constant value       : integer;
-    constant min_range   : integer;
-    constant max_range   : integer;
+    constant range_vec   : t_range_int_vec;
     constant set_type1   : t_set_type;
     constant set_values1 : integer_vector;
     constant set_type2   : t_set_type;
@@ -1092,11 +1037,11 @@ package body rand_tb_pkg is
   begin
     check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = ADD then
-      if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
       end if;
     elsif set_type1 = EXCL then
-      if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values2)) and not(check_rand_value(value, set_values1)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_values2)) and not(check_rand_value(value, set_values1)) then
         return true;
       end if;
     end if;
@@ -1106,8 +1051,7 @@ package body rand_tb_pkg is
   -- Base function (real)
   impure function check_rand_value(
     constant value       : real;
-    constant min_range   : real;
-    constant max_range   : real;
+    constant range_vec   : t_range_real_vec;
     constant set_type1   : t_set_type;
     constant set_values1 : real_vector;
     constant set_type2   : t_set_type;
@@ -1117,11 +1061,11 @@ package body rand_tb_pkg is
   begin
     check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = ADD then
-      if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
       end if;
     elsif set_type1 = EXCL then
-      if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values2)) and not(check_rand_value(value, set_values1)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_values2)) and not(check_rand_value(value, set_values1)) then
         return true;
       end if;
     end if;
@@ -1131,8 +1075,7 @@ package body rand_tb_pkg is
   -- Base function (time)
   impure function check_rand_value(
     constant value       : time;
-    constant min_range   : time;
-    constant max_range   : time;
+    constant range_vec   : t_range_time_vec;
     constant set_type1   : t_set_type;
     constant set_values1 : time_vector;
     constant set_type2   : t_set_type;
@@ -1142,11 +1085,11 @@ package body rand_tb_pkg is
   begin
     check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if set_type1 = ADD then
-      if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_values1)) and not(check_rand_value(value, set_values2)) then
         return true;
       end if;
     elsif set_type1 = EXCL then
-      if (check_rand_value(value, min_range, max_range) or check_rand_value(value, set_values2)) and not(check_rand_value(value, set_values1)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_values2)) and not(check_rand_value(value, set_values1)) then
         return true;
       end if;
     end if;
@@ -1156,14 +1099,13 @@ package body rand_tb_pkg is
   -- Overload (integer)
   procedure check_rand_value(
     constant value       : in integer;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in integer_vector;
     constant set_type2   : in t_set_type;
     constant set_values2 : in integer_vector) is
   begin
-    if check_rand_value(value, min_range, max_range, set_type1, set_values1, set_type2, set_values2) then
+    if check_rand_value(value, range_vec, set_type1, set_values1, set_type2, set_values2) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -1173,14 +1115,13 @@ package body rand_tb_pkg is
   -- Overload (real)
   procedure check_rand_value(
     constant value       : in real;
-    constant min_range   : in real;
-    constant max_range   : in real;
+    constant range_vec   : in t_range_real_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in real_vector;
     constant set_type2   : in t_set_type;
     constant set_values2 : in real_vector) is
   begin
-    if check_rand_value(value, min_range, max_range, set_type1, set_values1, set_type2, set_values2) then
+    if check_rand_value(value, range_vec, set_type1, set_values1, set_type2, set_values2) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -1190,14 +1131,13 @@ package body rand_tb_pkg is
   -- Overload (time)
   procedure check_rand_value(
     constant value       : in time;
-    constant min_range   : in time;
-    constant max_range   : in time;
+    constant range_vec   : in t_range_time_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in time_vector;
     constant set_type2   : in t_set_type;
     constant set_values2 : in time_vector) is
   begin
-    if check_rand_value(value, min_range, max_range, set_type1, set_values1, set_type2, set_values2) then
+    if check_rand_value(value, range_vec, set_type1, set_values1, set_type2, set_values2) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -1207,8 +1147,7 @@ package body rand_tb_pkg is
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values      : in integer_vector;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in integer_vector;
     constant set_type2   : in t_set_type;
@@ -1216,7 +1155,7 @@ package body rand_tb_pkg is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type1, set_values1, set_type2, set_values2);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1228,8 +1167,7 @@ package body rand_tb_pkg is
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values      : in real_vector;
-    constant min_range   : in real;
-    constant max_range   : in real;
+    constant range_vec   : in t_range_real_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in real_vector;
     constant set_type2   : in t_set_type;
@@ -1237,7 +1175,7 @@ package body rand_tb_pkg is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type1, set_values1, set_type2, set_values2);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1249,8 +1187,7 @@ package body rand_tb_pkg is
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values      : in time_vector;
-    constant min_range   : in time;
-    constant max_range   : in time;
+    constant range_vec   : in t_range_time_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in time_vector;
     constant set_type2   : in t_set_type;
@@ -1258,7 +1195,7 @@ package body rand_tb_pkg is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), min_range, max_range, set_type1, set_values1, set_type2, set_values2);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type1, set_values1, set_type2, set_values2);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1270,14 +1207,13 @@ package body rand_tb_pkg is
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value       : in unsigned;
-    constant min_range   : in natural;
-    constant max_range   : in natural;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in t_natural_vector;
     constant set_type2   : in t_set_type;
     constant set_values2 : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(value), min_range, max_range, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2)) then
+    if check_rand_value(to_integer(value), range_vec, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -1287,14 +1223,13 @@ package body rand_tb_pkg is
   -- Overload (signed)
   procedure check_rand_value(
     constant value       : in signed;
-    constant min_range   : in integer;
-    constant max_range   : in integer;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in integer_vector;
     constant set_type2   : in t_set_type;
     constant set_values2 : in integer_vector) is
   begin
-    if check_rand_value(to_integer(value), min_range, max_range, set_type1, set_values1, set_type2, set_values2) then
+    if check_rand_value(to_integer(value), range_vec, set_type1, set_values1, set_type2, set_values2) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, DEC) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, DEC) & ".");
@@ -1304,14 +1239,13 @@ package body rand_tb_pkg is
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value       : in std_logic_vector;
-    constant min_range   : in natural;
-    constant max_range   : in natural;
+    constant range_vec   : in t_range_int_vec;
     constant set_type1   : in t_set_type;
     constant set_values1 : in t_natural_vector;
     constant set_type2   : in t_set_type;
     constant set_values2 : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(unsigned(value)), min_range, max_range, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2)) then
+    if check_rand_value(to_integer(unsigned(value)), range_vec, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -1496,60 +1430,60 @@ package body rand_tb_pkg is
     for i in 1 to num_values loop
       if value_type = "INT" then
         v_int := rand_gen.rand(min_value, max_value);
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "INT_VEC" then
         v_int_vec := rand_gen.rand(v_int_vec'length, min_value, max_value);
-        check_rand_value(v_int_vec(0), min_value, max_value);
+        check_rand_value(v_int_vec(0), (0 => (min_value, max_value)));
         value_cnt(v_int_vec(0)) := value_cnt(v_int_vec(0)) + 1;
 
       elsif value_type = "REAL" then
         v_real := rand_gen.rand(real(min_value), real(max_value));
         v_int  := integer(round(v_real));
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "REAL_VEC" then
         v_real_vec := rand_gen.rand(v_real_vec'length, real(min_value), real(max_value));
         v_int      := integer(round(v_real_vec(0)));
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "UNS" then
         v_uns := rand_gen.rand(v_uns'length, min_value, max_value);
         v_int := to_integer(v_uns);
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "UNS_VEC" then
         v_uns := rand_gen.rand(v_uns'length);
         v_int := to_integer(v_uns);
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "SIG" then
         v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
         v_int := to_integer(v_sig);
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "SIG_VEC" then
         v_sig := rand_gen.rand(v_sig'length);
         v_int := to_integer(v_sig);
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "SLV" then
         v_slv := rand_gen.rand(v_slv'length, min_value, max_value);
         v_int := to_integer(unsigned(v_slv));
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "SLV_VEC" then
         v_slv := rand_gen.rand(v_slv'length);
         v_int := to_integer(unsigned(v_slv));
-        check_rand_value(v_int, min_value, max_value);
+        check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       else

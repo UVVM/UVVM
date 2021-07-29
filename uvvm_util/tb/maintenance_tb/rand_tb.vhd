@@ -220,14 +220,6 @@ begin
 
       v_found := false;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'left, integer'left+1, ADD,(10));
-        check_rand_value(v_int, (0 => (integer'left,integer'left+1)), ADD,(0 => 10));
-        v_found := true when v_int = 10;
-      end loop;
-      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
-
-      v_found := false;
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(integer'right-1, integer'right, ADD,(-10), EXCL,(integer'right));
         check_rand_value(v_int, (0 => (integer'right-1,integer'right)), ADD,(0 => -10), EXCL,(integer'right,0));
         v_found := true when v_int = -10;
@@ -236,25 +228,9 @@ begin
 
       v_found := false;
       for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'left, integer'left+1, ADD,(10), EXCL,(integer'left));
-        check_rand_value(v_int, (0 => (integer'left,integer'left+1)), ADD,(0 => 10), EXCL,(integer'left,0));
-        v_found := true when v_int = 10;
-      end loop;
-      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
-
-      v_found := false;
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(integer'right-1, integer'right, EXCL,(integer'right), ADD,(-10));
         check_rand_value(v_int, (0 => (integer'right-1,integer'right)), EXCL,(integer'right,0), ADD,(0 => -10));
         v_found := true when v_int = -10;
-      end loop;
-      check_value(v_found, TB_ERROR, "Checking ADD value is generated");
-
-      v_found := false;
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_int := v_rand.rand(integer'left, integer'left+1, EXCL,(integer'left), ADD,(10));
-        check_rand_value(v_int, (0 => (integer'left,integer'left+1)), EXCL,(integer'left,0), ADD,(0 => 10));
-        v_found := true when v_int = 10;
       end loop;
       check_value(v_found, TB_ERROR, "Checking ADD value is generated");
 

@@ -3389,12 +3389,12 @@ package body rand_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      if min_value > max_value then
+      if min_value >= max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
         return v_ret;
       end if;
       if min_value'length > length or max_value'length > length then
-        alert(TB_ERROR, v_proc_call.all & "=> min_value and max_value lengths must be less than length", priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> min_value and max_value lengths must be less or equal than length", priv_scope);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
@@ -3650,12 +3650,12 @@ package body rand_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      if min_value > max_value then
+      if min_value >= max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
         return v_ret;
       end if;
       if min_value'length > length or max_value'length > length then
-        alert(TB_ERROR, v_proc_call.all & "=> min_value and max_value lengths must be less than length", priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> min_value and max_value lengths must be less or equal than length", priv_scope);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then

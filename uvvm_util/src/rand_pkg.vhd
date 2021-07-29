@@ -97,9 +97,6 @@ package rand_pkg is
   type t_range_weight_time_vec       is array (natural range <>) of t_range_weight_time;
   type t_range_weight_mode_time_vec  is array (natural range <>) of t_range_weight_mode_time;
 
-  type t_cyclic_list is array (integer range <>) of std_logic;
-  type t_cyclic_list_ptr is access t_cyclic_list;
-
   ------------------------------------------------------------
   -- Base procedures
   ------------------------------------------------------------
@@ -233,6 +230,11 @@ package rand_pkg is
       constant VOID : t_void)
     return t_positive_vector;
 
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- ***************************************************************************************************************************
+    -- Single-line rand() implementation
+    -- ***************************************************************************************************************************
+    ------------------------------------------------------------------------------------------------------------------------------
     ------------------------------------------------------------
     -- Random integer
     ------------------------------------------------------------
@@ -1095,6 +1097,130 @@ package rand_pkg is
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector;
 
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- ***************************************************************************************************************************
+    -- Multi-line rand() implementation
+    -- ***************************************************************************************************************************
+    ------------------------------------------------------------------------------------------------------------------------------
+    ------------------------------------------------------------
+    -- Integer constraints
+    ------------------------------------------------------------
+    procedure add_range(
+      constant min_value    : in integer;
+      constant max_value    : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val(
+      constant value        : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val(
+      constant set_values   : in integer_vector;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure excl_val(
+      constant value        : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure excl_val(
+      constant set_values   : in integer_vector;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_weight(
+      constant value        : in integer;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_range_weight(
+      constant min_value    : in integer;
+      constant max_value    : in integer;
+      constant weight       : in natural;
+      constant mode         : in t_weight_mode := COMBINED_WEIGHT;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    ------------------------------------------------------------
+    -- Real constraints
+    ------------------------------------------------------------
+    procedure add_range_real(
+      constant min_value    : in real;
+      constant max_value    : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_real(
+      constant value        : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_real(
+      constant set_values   : in real_vector;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure excl_val_real(
+      constant value        : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure excl_val_real(
+      constant set_values   : in real_vector;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_weight_real(
+      constant value        : in real;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_range_weight_real(
+      constant min_value    : in real;
+      constant max_value    : in real;
+      constant weight       : in natural;
+      constant mode         : in t_weight_mode := COMBINED_WEIGHT;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    ------------------------------------------------------------
+    -- Configuration
+    ------------------------------------------------------------
+    procedure set_uniqueness(
+      constant uniqueness   : in t_uniqueness;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure clear_config(
+      constant VOID : in t_void);
+
+    procedure clear_config(
+      constant msg_id_panel : in t_msg_id_panel);
+
+    ------------------------------------------------------------
+    -- Randomization
+    ------------------------------------------------------------
+    impure function rand(
+      constant VOID : t_void)
+    return integer;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return integer;
+
+    impure function rand(
+      constant VOID : t_void)
+    return real;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return real;
+
+    -- TODO: size/length as parameter or config?
+    --       length must be a config or the rand(len) function must have a different name
+    --       due to ambiguosity with single-line call
+    impure function rand(
+      constant size         : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return integer_vector;
+
+    impure function rand_mult(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return unsigned;
+
   end protected t_rand;
 
 end package rand_pkg;
@@ -1109,6 +1235,60 @@ package body rand_pkg is
       GC_QUEUE_COUNT_THRESHOLD => 0);
 
   use cyclic_queue_pkg.all;
+
+  ------------------------------------------------------------
+  -- Internal Types
+  ------------------------------------------------------------
+  type t_cyclic_list is array (integer range <>) of std_logic;
+  type t_cyclic_list_ptr is access t_cyclic_list;
+
+  type t_range_int is record
+    min_value : integer;
+    max_value : integer;
+    range_len : signed(32 downto 0);
+  end record;
+  type t_range_real is record
+    min_value : real;
+    max_value : real;
+    range_len : real;
+  end record;
+  type t_range_time is record
+    min_value : time;
+    max_value : time;
+    range_len : time;
+  end record;
+
+  type t_range_int_vec  is array (natural range <>) of t_range_int;
+  type t_range_real_vec is array (natural range <>) of t_range_real;
+  type t_range_time_vec is array (natural range <>) of t_range_time;
+
+  type t_range_int_vec_ptr  is access t_range_int_vec;
+  type t_range_real_vec_ptr is access t_range_real_vec;
+  type t_range_time_vec_ptr is access t_range_time_vec;
+
+  type t_integer_vector_ptr is access integer_vector;
+  type t_real_vector_ptr    is access real_vector;
+  type t_time_vector_ptr    is access time_vector;
+
+  type t_range_weight_mode_int_vec_ptr  is access t_range_weight_mode_int_vec;
+  type t_range_weight_mode_real_vec_ptr is access t_range_weight_mode_real_vec;
+  type t_range_weight_mode_time_vec_ptr is access t_range_weight_mode_time_vec;
+
+  type t_int_constraints is record
+    ran_incl        : t_range_int_vec_ptr;
+    val_incl        : t_integer_vector_ptr;
+    val_excl        : t_integer_vector_ptr;
+    weighted        : t_range_weight_mode_int_vec_ptr;
+    weighted_config : boolean;
+  end record;
+
+  type t_real_constraints is record
+    ran_incl        : t_range_real_vec_ptr;
+    val_incl        : t_real_vector_ptr;
+    val_excl        : t_real_vector_ptr;
+    weighted        : t_range_weight_mode_real_vec_ptr;
+    weighted_config : boolean;
+  end record;
 
   ------------------------------------------------------------
   -- Base procedures
@@ -1205,6 +1385,19 @@ package body rand_pkg is
     -- Default values for the mean and standard deviation are relative to the given range, i.e. default values below are ignored
     variable priv_mean                    : real                                := 0.0;
     variable priv_std_dev                 : real                                := 0.0;
+    -- Multi-line rand() configuration
+    variable priv_cyclic_mode             : t_cyclic                            := NON_CYCLIC;
+    variable priv_uniqueness              : t_uniqueness                        := NON_UNIQUE;
+    variable priv_int_constraints         : t_int_constraints                   := (ran_incl        => new t_range_int_vec(1 to 0),
+                                                                                    val_incl        => new integer_vector(1 to 0),
+                                                                                    val_excl        => new integer_vector(1 to 0),
+                                                                                    weighted        => new t_range_weight_mode_int_vec(1 to 0),
+                                                                                    weighted_config => false);
+    variable priv_real_constraints        : t_real_constraints                  := (ran_incl        => new t_range_real_vec(1 to 0),
+                                                                                    val_incl        => new real_vector(1 to 0),
+                                                                                    val_excl        => new real_vector(1 to 0),
+                                                                                    weighted        => new t_range_weight_mode_real_vec(1 to 0),
+                                                                                    weighted_config => false);
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1797,6 +1990,11 @@ package body rand_pkg is
       return v_ret;
     end function;
 
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- ***************************************************************************************************************************
+    -- Single-line rand() implementation
+    -- ***************************************************************************************************************************
+    ------------------------------------------------------------------------------------------------------------------------------
     ------------------------------------------------------------
     -- Random integer
     ------------------------------------------------------------
@@ -4471,6 +4669,935 @@ package body rand_pkg is
     begin
       v_ret := to_unsigned(rand_range_weight_mode(weighted_vector, msg_id_panel), length);
       return std_logic_vector(v_ret);
+    end function;
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- ***************************************************************************************************************************
+    -- Multi-line rand() implementation
+    -- ***************************************************************************************************************************
+    ------------------------------------------------------------------------------------------------------------------------------
+    -- Increases the size of the vector pointer variable
+    procedure increment_vec_size(
+      variable ran_vector : inout t_range_int_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_int_vec_ptr;
+    begin
+      v_copy_ptr := ran_vector;
+      ran_vector := new t_range_int_vec(0 to v_copy_ptr'length-1 + increment);
+      ran_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_integer_vector_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_integer_vector_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new integer_vector(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_range_weight_mode_int_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_weight_mode_int_vec_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new t_range_weight_mode_int_vec(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable ran_vector : inout t_range_real_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_real_vec_ptr;
+    begin
+      v_copy_ptr := ran_vector;
+      ran_vector := new t_range_real_vec(0 to v_copy_ptr'length-1 + increment);
+      ran_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_real_vector_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_real_vector_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new real_vector(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_range_weight_mode_real_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_weight_mode_real_vec_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new t_range_weight_mode_real_vec(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Returns the integer constraints for randomization
+    impure function get_int_constraints(
+      constant length : natural)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      if length > 0 then
+        write(v_line, string'("LEN:"));
+        write(v_line, to_string(length));
+        if priv_int_constraints.ran_incl'length > 0 or priv_int_constraints.val_incl'length > 0 or priv_int_constraints.val_excl'length > 0 then
+          write(v_line, string'(", "));
+        end if;
+      end if;
+      for i in 0 to priv_int_constraints.ran_incl'length-1 loop
+        if i = 0 then
+          write(v_line, string'("RANGE:"));
+        end if;
+        write(v_line, '[');
+        write(v_line, to_string(priv_int_constraints.ran_incl(i).min_value));
+        write(v_line, ':');
+        write(v_line, to_string(priv_int_constraints.ran_incl(i).max_value));
+        write(v_line, ']');
+        if i < priv_int_constraints.ran_incl'length-1 then
+          write(v_line, ',');
+        end if;
+      end loop;
+      if priv_int_constraints.val_incl'length > 0 then
+        if priv_int_constraints.ran_incl'length = 0 then
+          write(v_line, string'("ONLY:"));
+        else
+          write(v_line, string'(", ADD:"));
+        end if;
+        write(v_line, to_string(priv_int_constraints.val_incl.all));
+      end if;
+      if priv_int_constraints.val_excl'length > 0 then
+        write(v_line, string'(", EXCL:"));
+        write(v_line, to_string(priv_int_constraints.val_excl.all));
+      end if;
+      if priv_cyclic_mode = CYCLIC then
+        write(v_line, string'(", "));
+        write(v_line, to_upper(to_string(priv_cyclic_mode)));
+      end if;
+      if priv_uniqueness = UNIQUE then
+        write(v_line, string'(", "));
+        write(v_line, to_upper(to_string(priv_uniqueness)));
+      end if;
+      if v_line = NULL then
+        write(v_line, string'("UNCONSTRAINED"));
+      end if;
+      return return_and_deallocate;
+    end function;
+
+    -- Overload
+    impure function get_int_constraints(
+      constant VOID : t_void)
+    return string is
+    begin
+      return get_int_constraints(0);
+    end function;
+
+    -- Returns the real constraints for randomization
+    impure function get_real_constraints(
+      constant VOID : t_void)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      for i in 0 to priv_real_constraints.ran_incl'length-1 loop
+        if i = 0 then
+          write(v_line, string'("RANGE:"));
+        end if;
+        write(v_line, '[');
+        write(v_line, format_real(priv_real_constraints.ran_incl(i).min_value));
+        write(v_line, ':');
+        write(v_line, format_real(priv_real_constraints.ran_incl(i).max_value));
+        write(v_line, ']');
+        if i < priv_real_constraints.ran_incl'length-1 then
+          write(v_line, ',');
+        end if;
+      end loop;
+      if priv_real_constraints.val_incl'length > 0 then
+        if priv_real_constraints.ran_incl'length = 0 then
+          write(v_line, string'("ONLY:"));
+        else
+          write(v_line, string'(", ADD:"));
+        end if;
+        write(v_line, format_real(priv_real_constraints.val_incl.all));
+      end if;
+      if priv_real_constraints.val_excl'length > 0 then
+        write(v_line, string'(", EXCL:"));
+        write(v_line, format_real(priv_real_constraints.val_excl.all));
+      end if;
+      if priv_uniqueness = UNIQUE then
+        write(v_line, string'(", "));
+        write(v_line, to_upper(to_string(priv_uniqueness)));
+      end if;
+      if v_line = NULL then
+        write(v_line, string'("UNCONSTRAINED"));
+      end if;
+      return return_and_deallocate;
+    end function;
+
+    -- Returns the number of values in the integer constraints
+    impure function get_int_constraints_count(
+      constant VOID : t_void)
+    return natural is
+      variable v_cnt : natural := 0;
+    begin
+      for i in 0 to priv_int_constraints.ran_incl'length-1 loop
+        v_cnt := v_cnt + (priv_int_constraints.ran_incl(i).max_value - priv_int_constraints.ran_incl(i).min_value + 1);
+      end loop;
+      v_cnt := v_cnt + priv_int_constraints.val_incl'length;
+      v_cnt := v_cnt - priv_int_constraints.val_excl'length;
+      return v_cnt;
+    end function;
+
+    -- Returns an integer random value supporting multiple range constraints
+    impure function rand_multiple_ranges(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant proc_call     : string;
+      constant ext_proc_call : string := "")
+    return integer is
+      constant C_MIN_RANGE      : integer := integer'left;
+      variable v_proc_call      : line;
+      variable v_max_range      : signed(32 downto 0);
+      variable v_max_value      : signed(32 downto 0);
+      variable v_acc_range_len  : signed(32 downto 0);
+      variable v_gen_new_random : boolean := true;
+      variable v_ret            : integer;
+    begin
+      create_proc_call(proc_call, ext_proc_call, v_proc_call);
+
+      while v_gen_new_random loop
+        -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
+        v_max_range := to_signed(C_MIN_RANGE,33);
+        for i in 0 to priv_int_constraints.ran_incl'length-1 loop
+          v_max_range := v_max_range + priv_int_constraints.ran_incl(i).range_len;
+        end loop;
+        v_max_range := v_max_range - 1;
+        v_max_value := v_max_range + priv_int_constraints.val_incl'length;
+        if v_max_value > to_signed(integer'right,33) then
+          alert(TB_ERROR, v_proc_call.all & "=> Constraints are greater than integer's range", priv_scope);
+          return 0;
+        end if;
+
+        v_ret := rand(C_MIN_RANGE, to_integer(v_max_value), priv_cyclic_mode, msg_id_panel, v_proc_call.all);
+
+        -- Convert the random value to the correct range
+        if v_ret <= v_max_range then
+          v_ret := v_ret - C_MIN_RANGE; -- Remove offset
+          v_acc_range_len := (others => '0');
+          for i in 0 to priv_int_constraints.ran_incl'length-1 loop
+            v_acc_range_len := v_acc_range_len + priv_int_constraints.ran_incl(i).range_len;
+            if v_ret < v_acc_range_len then
+              v_ret := v_ret + priv_int_constraints.ran_incl(i).min_value - to_integer(v_acc_range_len - priv_int_constraints.ran_incl(i).range_len);
+              exit;
+            end if;
+          end loop;
+        -- If random value isn't a range, convert it to the corresponding added value
+        else
+          v_ret := priv_int_constraints.val_incl(v_ret-to_integer(v_max_range)-1);
+        end if;
+
+        -- Check if the random value is in the exclusion list
+        v_gen_new_random := check_value_in_vector(v_ret, priv_int_constraints.val_excl.all);
+      end loop;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    -- Returns a real random value supporting multiple range constraints
+    impure function rand_multiple_ranges(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant proc_call     : string;
+      constant ext_proc_call : string := "")
+    return real is
+      --constant C_MIN_RANGE      : real := real'left; -- TODO
+      variable v_proc_call      : line;
+      variable v_max_range      : real;
+      variable v_max_value      : real;
+      variable v_acc_range_len  : real;
+      variable v_gen_new_random : boolean := true;
+      variable v_ret            : real;
+    begin
+      create_proc_call(proc_call, ext_proc_call, v_proc_call);
+
+      while v_gen_new_random loop
+        -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
+        v_max_range := 0.0;--to_signed(C_MIN_RANGE,33);
+        for i in 0 to priv_real_constraints.ran_incl'length-1 loop
+          v_max_range := v_max_range + priv_real_constraints.ran_incl(i).range_len;
+        end loop;
+        -- It is impossible to give the same weight to an included value than to a single value in the real range,
+        -- therefore we split the probability to 50% ranges and 50% included values.
+        v_max_value := v_max_range*2.0 when priv_real_constraints.val_incl'length > 0 else v_max_range;
+
+        --v_ret := rand(C_MIN_RANGE, v_max_value, msg_id_panel, proc_call);
+        v_ret := rand(0.0, v_max_value, msg_id_panel, proc_call);
+
+        -- Convert the random value to the correct range
+        if v_ret <= v_max_range then
+          --v_ret := v_ret - C_MIN_RANGE; -- Remove offset
+          v_acc_range_len := 0.0;
+          for i in 0 to priv_real_constraints.ran_incl'length-1 loop
+            v_acc_range_len := v_acc_range_len + priv_real_constraints.ran_incl(i).range_len;
+            --if v_ret < v_acc_range_len then
+            if v_ret <= v_acc_range_len then
+              v_ret := v_ret + priv_real_constraints.ran_incl(i).min_value - (v_acc_range_len - priv_real_constraints.ran_incl(i).range_len);
+              exit;
+            end if;
+          end loop;
+        -- If random value isn't a range, randomize within the added values
+        else
+          v_ret := rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, proc_call);
+        end if;
+
+        -- Check if the random value is in the exclusion list
+        v_gen_new_random := check_value_in_vector(v_ret, priv_real_constraints.val_excl.all);
+      end loop;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    -- Returns an integer random value with ADD and EXCL constraints
+    impure function rand_add_excl(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant proc_call     : string;
+      constant ext_proc_call : string := "")
+    return integer is
+      variable v_proc_call      : line;
+      variable v_gen_new_random : boolean := true;
+      variable v_ret            : integer;
+    begin
+      create_proc_call(proc_call, ext_proc_call, v_proc_call);
+
+      while v_gen_new_random loop
+        v_ret := rand(ONLY, priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_gen_new_random := check_value_in_vector(v_ret, priv_int_constraints.val_excl.all);
+      end loop;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    -- Returns a real random value with ADD and EXCL constraints
+    impure function rand_add_excl(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant proc_call     : string;
+      constant ext_proc_call : string := "")
+    return real is
+      variable v_proc_call      : line;
+      variable v_gen_new_random : boolean := true;
+      variable v_ret            : real;
+    begin
+      create_proc_call(proc_call, ext_proc_call, v_proc_call);
+
+      while v_gen_new_random loop
+        v_ret := rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
+        v_gen_new_random := check_value_in_vector(v_ret, priv_real_constraints.val_excl.all);
+      end loop;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    ------------------------------------------------------------
+    -- Integer constraints
+    ------------------------------------------------------------
+    procedure add_range(
+      constant min_value    : in integer;
+      constant max_value    : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range([" & to_string(min_value) & ":" & to_string(max_value) & "])";
+    begin
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_int_constraints.ran_incl, 1);
+      increment_vec_size(priv_int_constraints.weighted, 1);
+      priv_int_constraints.ran_incl(priv_int_constraints.ran_incl'length-1).min_value := min_value;
+      priv_int_constraints.ran_incl(priv_int_constraints.ran_incl'length-1).max_value := max_value;
+      priv_int_constraints.ran_incl(priv_int_constraints.ran_incl'length-1).range_len := to_signed(max_value,33) - to_signed(min_value,33) + to_signed(1,33);
+      priv_int_constraints.weighted(priv_int_constraints.weighted'length-1) := (min_value, max_value, 1, COMBINED_WEIGHT);
+    end procedure;
+
+    procedure add_val(
+      constant value        : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val(" & to_string(value) & ")";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_int_constraints.val_incl, 1);
+      increment_vec_size(priv_int_constraints.weighted, 1);
+      priv_int_constraints.val_incl(priv_int_constraints.val_incl'length-1) := value;
+      priv_int_constraints.weighted(priv_int_constraints.weighted'length-1) := (value, value, 1, NA);
+    end procedure;
+
+    procedure add_val(
+      constant set_values   : in integer_vector;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val" & to_string(set_values);
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_int_constraints.val_incl, set_values'length);
+      increment_vec_size(priv_int_constraints.weighted, set_values'length);
+      priv_int_constraints.val_incl(priv_int_constraints.val_incl'length-1-(set_values'length-1) to priv_int_constraints.val_incl'length-1) := set_values;
+      for i in 0 to set_values'length-1 loop
+        priv_int_constraints.weighted(priv_int_constraints.weighted'length-1-(set_values'length-1)+i) := (set_values(i), set_values(i), 1, NA);
+      end loop;
+    end procedure;
+
+    procedure excl_val(
+      constant value        : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "excl_val(" & to_string(value) & ")";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_int_constraints.val_excl, 1);
+      priv_int_constraints.val_excl(priv_int_constraints.val_excl'length-1) := value;
+    end procedure;
+
+    procedure excl_val(
+      constant set_values   : in integer_vector;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "excl_val" & to_string(set_values);
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_int_constraints.val_excl, set_values'length);
+      priv_int_constraints.val_excl(priv_int_constraints.val_excl'length-1-(set_values'length-1) to priv_int_constraints.val_excl'length-1) := set_values;
+    end procedure;
+
+    procedure add_val_weight(
+      constant value        : in integer;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val_weight(" & to_string(value) & "," & to_string(weight) & ")";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_int_constraints.weighted, 1);
+      priv_int_constraints.weighted(priv_int_constraints.weighted'length-1) := (value, value, weight, NA);
+      priv_int_constraints.weighted_config := true;
+    end procedure;
+
+    procedure add_range_weight(
+      constant min_value    : in integer;
+      constant max_value    : in integer;
+      constant weight       : in natural;
+      constant mode         : in t_weight_mode := COMBINED_WEIGHT;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_weight([" & to_string(min_value) & ":" & to_string(max_value) & "]," &
+        to_string(weight) & "," & to_upper(to_string(mode)) & ")";
+    begin
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_int_constraints.weighted, 1);
+      priv_int_constraints.weighted(priv_int_constraints.weighted'length-1) := (min_value, max_value, weight, mode);
+      priv_int_constraints.weighted_config := true;
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Real constraints
+    ------------------------------------------------------------
+    procedure add_range_real(
+      constant min_value    : in real;
+      constant max_value    : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_real([" & format_real(min_value) & ":" & format_real(max_value) & "])";
+    begin
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_real_constraints.ran_incl, 1);
+      increment_vec_size(priv_real_constraints.weighted, 1);
+      priv_real_constraints.ran_incl(priv_real_constraints.ran_incl'length-1) := (min_value, max_value, max_value-min_value); -- NOTE: range is different for real than integer
+      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (min_value, max_value, 1, COMBINED_WEIGHT);
+    end procedure;
+
+    procedure add_val_real(
+      constant value        : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val_real(" & format_real(value) & ")";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_real_constraints.val_incl, 1);
+      increment_vec_size(priv_real_constraints.weighted, 1);
+      priv_real_constraints.val_incl(priv_real_constraints.val_incl'length-1) := value;
+      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (value, value, 1, NA);
+    end procedure;
+
+    procedure add_val_real(
+      constant set_values   : in real_vector;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val_real" & format_real(set_values);
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_real_constraints.val_incl, set_values'length);
+      increment_vec_size(priv_real_constraints.weighted, set_values'length);
+      priv_real_constraints.val_incl(priv_real_constraints.val_incl'length-1-(set_values'length-1) to priv_real_constraints.val_incl'length-1) := set_values;
+      for i in 0 to set_values'length-1 loop
+        priv_real_constraints.weighted(priv_real_constraints.weighted'length-1-(set_values'length-1)+i) := (set_values(i), set_values(i), 1, NA);
+      end loop;
+    end procedure;
+
+    procedure excl_val_real(
+      constant value        : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "excl_val_real(" & format_real(value) & ")";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_real_constraints.val_excl, 1);
+      priv_real_constraints.val_excl(priv_real_constraints.val_excl'length-1) := value;
+    end procedure;
+
+    procedure excl_val_real(
+      constant set_values   : in real_vector;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "excl_val_real" & format_real(set_values);
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_real_constraints.val_excl, set_values'length);
+      priv_real_constraints.val_excl(priv_real_constraints.val_excl'length-1-(set_values'length-1) to priv_real_constraints.val_excl'length-1) := set_values;
+    end procedure;
+
+    procedure add_val_weight_real(
+      constant value        : in real;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val_weight_real(" & format_real(value) & "," & to_string(weight) & ")";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_real_constraints.weighted, 1);
+      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (value, value, weight, NA);
+      priv_real_constraints.weighted_config := true;
+    end procedure;
+
+    procedure add_range_weight_real(
+      constant min_value    : in real;
+      constant max_value    : in real;
+      constant weight       : in natural;
+      constant mode         : in t_weight_mode := COMBINED_WEIGHT;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_weight_real([" & format_real(min_value) & ":" & format_real(max_value) & "]," &
+        to_string(weight) & "," & to_upper(to_string(mode)) & ")";
+    begin
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_real_constraints.weighted, 1);
+      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (min_value, max_value, weight, mode);
+      priv_real_constraints.weighted_config := true;
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Configuration
+    ------------------------------------------------------------
+    procedure set_uniqueness(
+      constant uniqueness   : in t_uniqueness;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_uniqueness(" & to_upper(to_string(uniqueness)) & ")";
+    begin
+      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Uniqueness and " & to_upper(to_string(priv_rand_dist)) & " distribution cannot be combined.", priv_scope);
+      elsif uniqueness = UNIQUE and priv_cyclic_mode = CYCLIC then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined.", priv_scope);
+      else
+        log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+        priv_uniqueness := uniqueness;
+      end if;
+    end procedure;
+
+    procedure clear_config(
+      constant VOID : in t_void) is
+    begin
+      clear_config(shared_msg_id_panel);
+    end procedure;
+
+    procedure clear_config(
+      constant msg_id_panel : in t_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "clear_config()";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+
+      priv_cyclic_mode := NON_CYCLIC;
+      priv_uniqueness  := NON_UNIQUE;
+
+      DEALLOCATE(priv_int_constraints.ran_incl);
+      DEALLOCATE(priv_int_constraints.val_incl);
+      DEALLOCATE(priv_int_constraints.val_excl);
+      DEALLOCATE(priv_int_constraints.weighted);
+      priv_int_constraints.ran_incl := new t_range_int_vec(1 to 0);
+      priv_int_constraints.val_incl := new integer_vector(1 to 0);
+      priv_int_constraints.val_excl := new integer_vector(1 to 0);
+      priv_int_constraints.weighted := new t_range_weight_mode_int_vec(1 to 0);
+      priv_int_constraints.weighted_config := false;
+
+      DEALLOCATE(priv_real_constraints.ran_incl);
+      DEALLOCATE(priv_real_constraints.val_incl);
+      DEALLOCATE(priv_real_constraints.val_excl);
+      DEALLOCATE(priv_real_constraints.weighted);
+      priv_real_constraints.ran_incl := new t_range_real_vec(1 to 0);
+      priv_real_constraints.val_incl := new real_vector(1 to 0);
+      priv_real_constraints.val_excl := new real_vector(1 to 0);
+      priv_real_constraints.weighted := new t_range_weight_mode_real_vec(1 to 0);
+      priv_real_constraints.weighted_config := false;
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Randomization
+    ------------------------------------------------------------
+    impure function rand(
+      constant VOID : t_void)
+    return integer is
+    begin
+      return rand(shared_msg_id_panel);
+    end function;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return integer is
+      constant C_LOCAL_CALL : string := "rand(" & get_int_constraints(VOID) & ")";
+      variable v_ran_incl_configured : std_logic;
+      variable v_val_incl_configured : std_logic;
+      variable v_val_excl_configured : std_logic;
+      variable v_num_ranges          : natural := priv_int_constraints.ran_incl'length;
+    begin
+      v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
+      v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
+
+      if priv_int_constraints.weighted_config then
+        -- TODO: can't combine with: distributions, cyclic, vector types/uniqueness, exclude. It can be combined with normal add_range/add_val
+        return rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
+      end if;
+
+      case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
+        ----------------------------------------
+        -- RANGE
+        ----------------------------------------
+        when "100" =>
+          if v_num_ranges = 1 then
+            return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+          else
+            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          end if;
+        ----------------------------------------
+        -- SET OF VALUES
+        ----------------------------------------
+        when "010" =>
+          return rand(ONLY, priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+        ----------------------------------------
+        -- EXCLUDE
+        ----------------------------------------
+        --when "001" => -- TODO: needed?
+          --return rand(integer'left, integer'right, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+        ----------------------------------------
+        -- RANGE + SET OF VALUES
+        ----------------------------------------
+        when "110" =>
+          if v_num_ranges = 1 then
+            return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
+              priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+          else
+            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          end if;
+        ----------------------------------------
+        -- RANGE + EXCLUDE
+        ----------------------------------------
+        when "101" =>
+          if v_num_ranges = 1 then
+            return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, EXCL,
+              priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+          else
+            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          end if;
+        ----------------------------------------
+        -- SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "011" =>
+          return rand_add_excl(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+        ----------------------------------------
+        -- RANGE + SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "111" =>
+          if v_num_ranges = 1 then
+            return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
+              priv_int_constraints.val_incl.all, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+          else
+            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          end if;
+        ----------------------------------------
+        -- NO CONSTRAINTS
+        ----------------------------------------
+        when "000" =>
+          return rand(integer'left, integer'right, NON_CYCLIC, msg_id_panel, ext_proc_call); -- TODO: use cyclic?
+
+        when others =>
+          alert(TB_ERROR, C_LOCAL_CALL & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+            v_val_excl_configured)), priv_scope);
+          return 0;
+      end case;
+    end function;
+
+    impure function rand(
+      constant VOID : t_void)
+    return real is
+    begin
+      return rand(shared_msg_id_panel);
+    end function;
+
+    impure function rand(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return real is
+      constant C_LOCAL_CALL : string := "rand(" & get_real_constraints(VOID) & ")";
+      variable v_ran_incl_configured : std_logic;
+      variable v_val_incl_configured : std_logic;
+      variable v_val_excl_configured : std_logic;
+      variable v_num_ranges          : natural := priv_real_constraints.ran_incl'length;
+    begin
+      v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
+      v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
+
+      if priv_real_constraints.weighted_config then
+        -- TODO: can't combine with: distributions, cyclic, vector types/uniqueness, exclude. It can be combined with normal add_range/add_val
+        return rand_range_weight_mode(priv_real_constraints.weighted.all, msg_id_panel);
+      end if;
+
+      case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
+        ----------------------------------------
+        -- RANGE
+        ----------------------------------------
+        when "100" =>
+          if v_num_ranges = 1 then
+            return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, msg_id_panel, ext_proc_call);
+          else
+            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          end if;
+        ----------------------------------------
+        -- SET OF VALUES
+        ----------------------------------------
+        when "010" =>
+          return rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, ext_proc_call);
+        ----------------------------------------
+        -- EXCLUDE
+        ----------------------------------------
+        --when "001" => -- TODO: needed?
+          --return rand(integer'left, integer'right, EXCL, priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
+        ----------------------------------------
+        -- RANGE + SET OF VALUES
+        ----------------------------------------
+        when "110" =>
+          if v_num_ranges = 1 then
+            return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
+              priv_real_constraints.val_incl.all, msg_id_panel, ext_proc_call);
+          else
+            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          end if;
+        ----------------------------------------
+        -- RANGE + EXCLUDE
+        ----------------------------------------
+        when "101" =>
+          if v_num_ranges = 1 then
+            return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, EXCL,
+              priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
+          else
+            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          end if;
+        ----------------------------------------
+        -- SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "011" =>
+          return rand_add_excl(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+        ----------------------------------------
+        -- RANGE + SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "111" =>
+          if v_num_ranges = 1 then
+            return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
+              priv_real_constraints.val_incl.all, EXCL, priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
+          else
+            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          end if;
+        ----------------------------------------
+        -- NO CONSTRAINTS
+        ----------------------------------------
+        when "000" =>
+          alert(TB_ERROR, C_LOCAL_CALL & "=> Real random generator must be constrained", priv_scope);
+          return 0.0;
+
+        when others =>
+          alert(TB_ERROR, C_LOCAL_CALL & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+            v_val_excl_configured)), priv_scope);
+          return 0.0;
+      end case;
+    end function;
+
+    impure function rand(
+      constant size         : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return integer_vector is
+      constant C_LOCAL_CALL : string := "rand(" & get_int_constraints(VOID) & ")";
+      variable v_gen_new_random  : boolean := true;
+      variable v_ret             : integer_vector(0 to size-1);
+    begin
+      if priv_uniqueness = NON_UNIQUE then
+        -- Generate a random value for each element of the vector
+        for i in 0 to size-1 loop
+          v_ret(i) := rand(msg_id_panel, C_LOCAL_CALL);
+        end loop;
+      else -- UNIQUE
+        -- Check if it is possible to generate unique values for the complete vector
+        if get_int_constraints_count(VOID) < size then
+          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          return v_ret;
+        else
+          -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
+          for i in 0 to size-1 loop
+            v_gen_new_random := true;
+            while v_gen_new_random loop
+              v_ret(i) := rand(msg_id_panel, C_LOCAL_CALL);
+              if i > 0 then
+                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+              else
+                v_gen_new_random := false;
+              end if;
+            end loop;
+          end loop;
+        end if;
+      end if;
+
+      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function rand_mult(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return unsigned is
+      constant C_LOCAL_CALL : string := "rand(" & get_int_constraints(length) & ")";
+      variable v_ran_incl_configured : std_logic;
+      variable v_val_incl_configured : std_logic;
+      variable v_val_excl_configured : std_logic;
+      variable v_ret_int             : integer;
+      variable v_ret                 : unsigned(length-1 downto 0);
+    begin
+      v_ran_incl_configured := '1' when priv_int_constraints.ran_incl'length > 0 else '0';
+      v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
+
+      --if priv_int_constraints.weighted_config then
+      --  -- TODO: can't combine with: distributions, cyclic, vector types/uniqueness, exclude. It can be combined with normal add_range/add_val
+      --  return rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
+      --end if;
+
+    -- TODO: what should happen when negative constraints are added and rand() unsigned is called?
+    --       1. print alert
+    --       2. print alert and ignore negative values
+    --       3. ignore negative values
+      for i in 0 to priv_int_constraints.ran_incl'length-1 loop
+        check_parameters_within_range(length, priv_int_constraints.ran_incl(i).min_value, priv_int_constraints.ran_incl(i).max_value, msg_id_panel, signed_values => false);
+      end loop;
+      check_parameters_within_range(length, priv_int_constraints.val_incl.all, msg_id_panel, signed_values => false);
+      check_parameters_within_range(length, priv_int_constraints.val_excl.all, msg_id_panel, signed_values => false);
+
+      -- TODO: check support for long vectors
+      case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
+        ----------------------------------------
+        -- RANGE
+        ----------------------------------------
+        when "100" =>
+          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
+          v_ret     := to_unsigned(v_ret_int,length);
+        ----------------------------------------
+        -- SET OF VALUES
+        ----------------------------------------
+        when "010" =>
+          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
+          v_ret     := to_unsigned(v_ret_int,length);
+        ----------------------------------------
+        -- EXCLUDE
+        ----------------------------------------
+        when "001" =>
+          v_ret := rand(length, EXCL, t_natural_vector(priv_int_constraints.val_excl.all), priv_cyclic_mode, msg_id_panel);
+          return v_ret;
+        ----------------------------------------
+        -- RANGE + SET OF VALUES
+        ----------------------------------------
+        when "110" =>
+          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
+          v_ret     := to_unsigned(v_ret_int,length);
+        ----------------------------------------
+        -- RANGE + EXCLUDE
+        ----------------------------------------
+        when "101" =>
+          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
+          v_ret     := to_unsigned(v_ret_int,length);
+        ----------------------------------------
+        -- SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "011" =>
+          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
+          v_ret     := to_unsigned(v_ret_int,length);
+        ----------------------------------------
+        -- RANGE + SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "111" =>
+          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
+          v_ret     := to_unsigned(v_ret_int,length);
+        ----------------------------------------
+        -- NO CONSTRAINTS
+        ----------------------------------------
+        when "000" =>
+          v_ret := rand(length, priv_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+
+        when others =>
+          alert(TB_ERROR, C_LOCAL_CALL & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+            v_val_excl_configured)), priv_scope);
+          return v_ret;
+      end case;
+
+      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      return v_ret;
     end function;
 
   end protected body t_rand;

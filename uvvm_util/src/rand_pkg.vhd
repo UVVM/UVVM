@@ -1135,7 +1135,7 @@ package rand_pkg is
       constant min_value    : in integer;
       constant max_value    : in integer;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode := COMBINED_WEIGHT;
+      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
@@ -1171,12 +1171,16 @@ package rand_pkg is
       constant min_value    : in real;
       constant max_value    : in real;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode := COMBINED_WEIGHT;
+      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
+    procedure set_cyclic_mode(
+      constant cyclic_mode  : in t_cyclic;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     procedure set_uniqueness(
       constant uniqueness   : in t_uniqueness;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
@@ -4292,7 +4296,8 @@ package body rand_pkg is
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call   : string         := "")
     return integer is
-      constant C_LOCAL_CALL : string := "rand_range_weight_mode(" & to_string(weighted_vector) & ")";
+      constant C_LOCAL_CALL_1 : string := "rand(" & to_string(weighted_vector) & ")";
+      constant C_LOCAL_CALL_2 : string := "rand_range_weight_mode(" & to_string(weighted_vector) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_mode                : t_weight_mode;
@@ -4302,7 +4307,11 @@ package body rand_pkg is
       variable v_values_in_range     : natural := 0;
       variable v_ret                 : integer;
     begin
-      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      if priv_int_constraints.weighted_config then
+        create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
+      else
+        create_proc_call(C_LOCAL_CALL_2, ext_proc_call, v_proc_call);
+      end if;
 
       -- Create a new vector with the accumulated weights
       for i in weighted_vector'range loop
@@ -4400,7 +4409,8 @@ package body rand_pkg is
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call   : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand_range_weight_mode(" & to_string(weighted_vector) & ")";
+      constant C_LOCAL_CALL_1 : string := "rand(" & to_string(weighted_vector) & ")";
+      constant C_LOCAL_CALL_2 : string := "rand_range_weight_mode(" & to_string(weighted_vector) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_mode                : t_weight_mode;
@@ -4409,7 +4419,11 @@ package body rand_pkg is
       variable v_weight_idx          : natural := 0;
       variable v_ret                 : real;
     begin
-      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      if priv_int_constraints.weighted_config then
+        create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
+      else
+        create_proc_call(C_LOCAL_CALL_2, ext_proc_call, v_proc_call);
+      end if;
 
       -- Create a new vector with the accumulated weights
       for i in weighted_vector'range loop
@@ -4506,7 +4520,8 @@ package body rand_pkg is
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call   : string         := "")
     return time is
-      constant C_LOCAL_CALL : string := "rand_range_weight_mode(" & to_string(weighted_vector) & ")";
+      constant C_LOCAL_CALL_1 : string := "rand(" & to_string(weighted_vector) & ")";
+      constant C_LOCAL_CALL_2 : string := "rand_range_weight_mode(" & to_string(weighted_vector) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_mode                : t_weight_mode;
@@ -4515,7 +4530,11 @@ package body rand_pkg is
       variable v_weight_idx          : natural := 0;
       variable v_ret                 : time;
     begin
-      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      if priv_int_constraints.weighted_config then
+        create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
+      else
+        create_proc_call(C_LOCAL_CALL_2, ext_proc_call, v_proc_call);
+      end if;
 
       -- Create a new vector with the accumulated weights
       for i in weighted_vector'range loop
@@ -4937,7 +4956,6 @@ package body rand_pkg is
       constant proc_call     : string;
       constant ext_proc_call : string := "")
     return real is
-      --constant C_MIN_RANGE      : real := real'left; -- TODO
       variable v_proc_call      : line;
       variable v_max_range      : real;
       variable v_max_value      : real;
@@ -4949,7 +4967,7 @@ package body rand_pkg is
 
       while v_gen_new_random loop
         -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
-        v_max_range := 0.0;--to_signed(C_MIN_RANGE,33);
+        v_max_range := 0.0;
         for i in 0 to priv_real_constraints.ran_incl'length-1 loop
           v_max_range := v_max_range + priv_real_constraints.ran_incl(i).range_len;
         end loop;
@@ -4957,16 +4975,13 @@ package body rand_pkg is
         -- therefore we split the probability to 50% ranges and 50% included values.
         v_max_value := v_max_range*2.0 when priv_real_constraints.val_incl'length > 0 else v_max_range;
 
-        --v_ret := rand(C_MIN_RANGE, v_max_value, msg_id_panel, proc_call);
         v_ret := rand(0.0, v_max_value, msg_id_panel, proc_call);
 
         -- Convert the random value to the correct range
         if v_ret <= v_max_range then
-          --v_ret := v_ret - C_MIN_RANGE; -- Remove offset
           v_acc_range_len := 0.0;
           for i in 0 to priv_real_constraints.ran_incl'length-1 loop
             v_acc_range_len := v_acc_range_len + priv_real_constraints.ran_incl(i).range_len;
-            --if v_ret < v_acc_range_len then
             if v_ret <= v_acc_range_len then
               v_ret := v_ret + priv_real_constraints.ran_incl(i).min_value - (v_acc_range_len - priv_real_constraints.ran_incl(i).range_len);
               exit;
@@ -5114,18 +5129,20 @@ package body rand_pkg is
       constant min_value    : in integer;
       constant max_value    : in integer;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode := COMBINED_WEIGHT;
+      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_weight([" & to_string(min_value) & ":" & to_string(max_value) & "]," &
-        to_string(weight) & "," & to_upper(to_string(mode)) & ")";
+        to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
+      variable v_weight_mode : t_weight_mode;
     begin
       if min_value >= max_value then
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
       end if;
+      v_weight_mode := mode when mode /= NA else priv_weight_mode;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_int_constraints.weighted, 1);
-      priv_int_constraints.weighted(priv_int_constraints.weighted'length-1) := (min_value, max_value, weight, mode);
+      priv_int_constraints.weighted(priv_int_constraints.weighted'length-1) := (min_value, max_value, weight, v_weight_mode);
       priv_int_constraints.weighted_config := true;
     end procedure;
 
@@ -5211,24 +5228,41 @@ package body rand_pkg is
       constant min_value    : in real;
       constant max_value    : in real;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode := COMBINED_WEIGHT;
+      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_weight_real([" & format_real(min_value) & ":" & format_real(max_value) & "]," &
-        to_string(weight) & "," & to_upper(to_string(mode)) & ")";
+        to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
+      variable v_weight_mode : t_weight_mode;
     begin
       if min_value >= max_value then
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
       end if;
+      v_weight_mode := mode when mode /= NA else priv_weight_mode;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_real_constraints.weighted, 1);
-      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (min_value, max_value, weight, mode);
+      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (min_value, max_value, weight, v_weight_mode);
       priv_real_constraints.weighted_config := true;
     end procedure;
 
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
+    procedure set_cyclic_mode(
+      constant cyclic_mode  : in t_cyclic;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_cyclic_mode(" & to_upper(to_string(cyclic_mode)) & ")";
+    begin
+      if priv_cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Cyclic mode and " & to_upper(to_string(priv_rand_dist)) & " distribution cannot be combined.", priv_scope);
+      elsif priv_cyclic_mode = CYCLIC and priv_uniqueness = UNIQUE then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Cyclic mode and uniqueness cannot be combined.", priv_scope);
+      else
+        log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+        priv_cyclic_mode := cyclic_mode;
+      end if;
+    end procedure;
+
     procedure set_uniqueness(
       constant uniqueness   : in t_uniqueness;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
@@ -5255,9 +5289,16 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "clear_config()";
     begin
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
-
-      priv_cyclic_mode := NON_CYCLIC;
-      priv_uniqueness  := NON_UNIQUE;
+      priv_name               := "**unnamed**" & fill_string(NUL, C_RAND_MAX_NAME_LENGTH-11);
+      priv_scope              := C_TB_SCOPE_DEFAULT & fill_string(NUL, C_LOG_SCOPE_WIDTH-C_TB_SCOPE_DEFAULT'length);
+      priv_rand_dist          := UNIFORM;
+      priv_weight_mode        := COMBINED_WEIGHT;
+      priv_mean_configured    := false;
+      priv_std_dev_configured := false;
+      priv_mean               := 0.0;
+      priv_std_dev            := 0.0;
+      priv_cyclic_mode        := NON_CYCLIC;
+      priv_uniqueness         := NON_UNIQUE;
 
       DEALLOCATE(priv_int_constraints.ran_incl);
       DEALLOCATE(priv_int_constraints.val_incl);
@@ -5304,8 +5345,16 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
 
+      ----------------------------------------
+      -- WEIGHTED
+      ----------------------------------------
       if priv_int_constraints.weighted_config then
-        -- TODO: can't combine with: distributions, cyclic, vector types/uniqueness, exclude. It can be combined with normal add_range/add_val
+        check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+        check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+        check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
         return rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
       end if;
 
@@ -5327,8 +5376,8 @@ package body rand_pkg is
         ----------------------------------------
         -- EXCLUDE
         ----------------------------------------
-        --when "001" => -- TODO: needed?
-          --return rand(integer'left, integer'right, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+        when "001" =>
+          return rand(integer'left, integer'right, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
         ----------------------------------------
         -- RANGE + SET OF VALUES
         ----------------------------------------
@@ -5368,7 +5417,7 @@ package body rand_pkg is
         -- NO CONSTRAINTS
         ----------------------------------------
         when "000" =>
-          return rand(integer'left, integer'right, NON_CYCLIC, msg_id_panel, ext_proc_call); -- TODO: use cyclic?
+          return rand(integer'left, integer'right, priv_cyclic_mode, msg_id_panel, ext_proc_call);
 
         when others =>
           alert(TB_ERROR, C_LOCAL_CALL & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
@@ -5398,8 +5447,16 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
 
+      ----------------------------------------
+      -- WEIGHTED
+      ----------------------------------------
       if priv_real_constraints.weighted_config then
-        -- TODO: can't combine with: distributions, cyclic, vector types/uniqueness, exclude. It can be combined with normal add_range/add_val
+        check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_real_constraints.weighted.all) & ")");
+        check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_real_constraints.weighted.all) & ")");
+        check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_real_constraints.weighted.all) & ")");
         return rand_range_weight_mode(priv_real_constraints.weighted.all, msg_id_panel);
       end if;
 
@@ -5421,8 +5478,9 @@ package body rand_pkg is
         ----------------------------------------
         -- EXCLUDE
         ----------------------------------------
-        --when "001" => -- TODO: needed?
-          --return rand(integer'left, integer'right, EXCL, priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
+        when "001" =>
+          alert(TB_ERROR, C_LOCAL_CALL & "=> Real random generator needs ""include"" constraints", priv_scope);
+          return 0.0;
         ----------------------------------------
         -- RANGE + SET OF VALUES
         ----------------------------------------
@@ -5480,6 +5538,11 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : integer_vector(0 to size-1);
     begin
+      if priv_int_constraints.weighted_config then
+        alert(TB_ERROR, "rand(" & to_string(priv_int_constraints.weighted.all) & ")=> Weighted randomization not supported for integer_vector type.", priv_scope);
+        return v_ret;
+      end if;
+
       if priv_uniqueness = NON_UNIQUE then
         -- Generate a random value for each element of the vector
         for i in 0 to size-1 loop
@@ -5525,15 +5588,24 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
 
-      --if priv_int_constraints.weighted_config then
-      --  -- TODO: can't combine with: distributions, cyclic, vector types/uniqueness, exclude. It can be combined with normal add_range/add_val
-      --  return rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
-      --end if;
+      ----------------------------------------
+      -- WEIGHTED
+      ----------------------------------------
+      if priv_int_constraints.weighted_config then
+        check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+        check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+        check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
+          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+        v_ret_int := rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
+        v_ret     := to_unsigned(v_ret_int,length);
+      end if;
 
-    -- TODO: what should happen when negative constraints are added and rand() unsigned is called?
-    --       1. print alert
-    --       2. print alert and ignore negative values
-    --       3. ignore negative values
+      -- TODO: what should happen when negative constraints are added and rand() unsigned is called?
+      --       1. print alert
+      --       2. print alert and ignore negative values
+      --       3. ignore negative values
       for i in 0 to priv_int_constraints.ran_incl'length-1 loop
         check_parameters_within_range(length, priv_int_constraints.ran_incl(i).min_value, priv_int_constraints.ran_incl(i).max_value, msg_id_panel, signed_values => false);
       end loop;
@@ -5543,15 +5615,9 @@ package body rand_pkg is
       -- TODO: check support for long vectors
       case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
         ----------------------------------------
-        -- RANGE
+        -- RANGE | SET OF VALUES | RANGE + SET OF VALUES | RANGE + EXCLUDE | SET OF VALUES + EXCLUDE | RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
-        when "100" =>
-          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
-          v_ret     := to_unsigned(v_ret_int,length);
-        ----------------------------------------
-        -- SET OF VALUES
-        ----------------------------------------
-        when "010" =>
+        when "100" | "010" | "110" | "101" | "011" | "111" =>
           v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
           v_ret     := to_unsigned(v_ret_int,length);
         ----------------------------------------
@@ -5560,30 +5626,6 @@ package body rand_pkg is
         when "001" =>
           v_ret := rand(length, EXCL, t_natural_vector(priv_int_constraints.val_excl.all), priv_cyclic_mode, msg_id_panel);
           return v_ret;
-        ----------------------------------------
-        -- RANGE + SET OF VALUES
-        ----------------------------------------
-        when "110" =>
-          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
-          v_ret     := to_unsigned(v_ret_int,length);
-        ----------------------------------------
-        -- RANGE + EXCLUDE
-        ----------------------------------------
-        when "101" =>
-          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
-          v_ret     := to_unsigned(v_ret_int,length);
-        ----------------------------------------
-        -- SET OF VALUES + EXCLUDE
-        ----------------------------------------
-        when "011" =>
-          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
-          v_ret     := to_unsigned(v_ret_int,length);
-        ----------------------------------------
-        -- RANGE + SET OF VALUES + EXCLUDE
-        ----------------------------------------
-        when "111" =>
-          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
-          v_ret     := to_unsigned(v_ret_int,length);
         ----------------------------------------
         -- NO CONSTRAINTS
         ----------------------------------------

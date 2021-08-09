@@ -205,7 +205,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(integer'left, integer'right);
         check_rand_value(v_int, (0 => (integer'left,integer'right)));
-        -- Since range of values is too big, we only check that the value is different than the previous one
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
         check_value(v_int /= v_prev_int, TB_ERROR, "Checking value is different than previous one");
         v_prev_int := v_int;
       end loop;

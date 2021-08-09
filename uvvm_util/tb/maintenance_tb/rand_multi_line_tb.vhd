@@ -33,8 +33,8 @@ end entity;
 architecture func of rand_multi_line_tb is
 
   constant C_NUM_RAND_REPETITIONS   : natural := 7;
-  --constant C_NUM_WEIGHT_REPETITIONS : natural := 1000; -- Changing this value affects check_weight_distribution() C_MARGIN.
-  --constant C_NUM_CYCLIC_REPETITIONS : natural := 3;
+  constant C_NUM_WEIGHT_REPETITIONS : natural := 1000; -- Changing this value affects check_weight_distribution() C_MARGIN.
+  constant C_NUM_CYCLIC_REPETITIONS : natural := 3;
 
 begin
 
@@ -135,7 +135,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(VOID);
         check_rand_value(v_int, (0 => (integer'left,integer'right)));
-        -- Since range of values is too big, we only check that the value is different than the previous one
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
         check_value(v_int /= v_prev_int, TB_ERROR, "Checking value is different than previous one");
         v_prev_int := v_int;
       end loop;
@@ -175,6 +175,20 @@ begin
         count_rand_value(v_value_cnt, v_int);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing integer (exclude values)");
+      v_rand.excl_val((-1,0,1));
+      v_rand.excl_val(10);
+      v_rand.excl_val(100);
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, (0 => (integer'left,integer'right)), EXCL,(-1,0,1,10,100));
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
+        check_value(v_int /= v_prev_int, TB_ERROR, "Checking value is different than previous one");
+        v_prev_int := v_int;
+      end loop;
 
       v_rand.clear_config(VOID);
 
@@ -267,7 +281,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(VOID);
         check_rand_value(v_int, (0 => (integer'left,-1)));
-        -- Since range of values is too big, we only check that the value is different than the previous one
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
         check_value(v_int /= v_prev_int, TB_ERROR, "Checking value is different than previous one");
         v_prev_int := v_int;
       end loop;
@@ -276,7 +290,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.rand(VOID);
         check_rand_value(v_int, (0 => (integer'left,integer'right)));
-        -- Since range of values is too big, we only check that the value is different than the previous one
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
         check_value(v_int /= v_prev_int, TB_ERROR, "Checking value is different than previous one");
         v_prev_int := v_int;
       end loop;
@@ -299,7 +313,7 @@ begin
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.rand(v_int_vec'length);
         check_rand_value(v_int_vec, (0 => (integer'left,integer'right)));
-        -- Since range of values is too big, we only check that the value is different than the previous one
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
         check_value(v_int_vec /= v_prev_int_vec, TB_ERROR, "Checking value is different than previous one");
         v_prev_int_vec := v_int_vec;
       end loop;
@@ -351,6 +365,20 @@ begin
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing integer_vector (exclude values)");
+      v_rand.excl_val((-1,0,1));
+      v_rand.excl_val(10);
+      v_rand.excl_val(100);
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int_vec := v_rand.rand(v_int_vec'length);
+        check_rand_value(v_int_vec, (0 => (integer'left,integer'right)), EXCL,(-1,0,1,10,100));
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
+        check_value(v_int_vec /= v_prev_int_vec, TB_ERROR, "Checking value is different than previous one");
+        v_prev_int_vec := v_int_vec;
+      end loop;
 
       v_rand.clear_config(VOID);
 
@@ -508,6 +536,13 @@ begin
 
       v_rand.clear_config(VOID);
 
+      log(ID_LOG_HDR, "Testing real (exclude values)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      v_rand.excl_val_real((-1.0,0.0,1.0));
+      v_real := v_rand.rand(VOID);
+
+      v_rand.clear_config(VOID);
+
       log(ID_LOG_HDR, "Testing real (range + set of values)");
       v_num_values := 4;
       v_rand.add_range_real(-1.0, 1.0);
@@ -583,7 +618,7 @@ begin
       v_rand.add_range_real(-5.7, -5.2);
       v_rand.add_val_real((2.7,4.6));
       v_rand.excl_val_real((-2.4,2.7));
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.rand(VOID);
         check_rand_value(v_real, ((-1.0,1.0),(-5.7,-5.2)), ADD,(-10.0,-2.4,2.7,4.6), EXCL,(-1.0,0.0,1.0,-2.4,2.7));
         count_rand_value(v_value_cnt, v_real);
@@ -754,8 +789,308 @@ begin
       v_uns := v_rand.rand_mult(v_uns'length);
       v_rand.clear_config(VOID);
 
-      v_rand.add_range(-2,2);
+      v_rand.add_range(-2, 2);
       v_uns := v_rand.rand_mult(v_uns'length);
+
+    --===================================================================================
+    elsif GC_TESTCASE = "rand_weighted" then
+    --===================================================================================
+      log(ID_SEQUENCER, "Reducing log messages from rand_pkg");
+      disable_log_msg(ID_LOG_MSG_CTRL);
+
+      ------------------------------------------------------------
+      -- Weighted integer
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted integer (single values) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val_weight(-5,1);
+      v_rand.add_val_weight(10,3);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        count_rand_value(v_value_cnt, v_int);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,1),(10,3)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.add_val_weight(-5,1);
+      v_rand.add_val_weight(10,0);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        count_rand_value(v_value_cnt, v_int);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,1),(10,0)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.add_val_weight(-5,10);
+      v_rand.add_val_weight(0,30);
+      v_rand.add_val_weight(10,60);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        count_rand_value(v_value_cnt, v_int);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,10),(0,30),(10,60)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted integer (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight(-5,-3,30);
+      v_rand.add_val_weight(0,20);
+      v_rand.add_range_weight(9,10,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        count_rand_value(v_value_cnt, v_int);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,10),(-4,10),(-3,10),(0,20),(9,25),(10,25)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight(-5,-3,30);
+      v_rand.add_val_weight(0,20);
+      v_rand.add_range_weight(9,10,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        count_rand_value(v_value_cnt, v_int);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(9,50),(10,50)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted integer (ranges w/explicit mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_range_weight(-5,-3,30,INDIVIDUAL_WEIGHT);
+      v_rand.add_val_weight(0,20);
+      v_rand.add_range_weight(9,10,50,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        count_rand_value(v_value_cnt, v_int);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(9,25),(10,25)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted integer (mixed with non-weighted constraint) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val((20,30));
+      v_rand.add_range_weight(-5,-3,4,INDIVIDUAL_WEIGHT);
+      v_rand.add_val_weight(0,2);
+      v_rand.add_range_weight(9,10,4,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        count_rand_value(v_value_cnt, v_int);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,4),(-4,4),(-3,4),(0,2),(9,2),(10,2),(20,1),(30,1)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+    --===================================================================================
+    elsif GC_TESTCASE = "rand_cyclic" then
+    --===================================================================================
+      ------------------------------------------------------------
+      -- Random cyclic integer
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing integer (unconstrained)");
+      v_rand.set_cyclic_mode(CYCLIC);
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, (0 => (integer'left,integer'right)));
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
+        check_value(v_int /= v_prev_int, TB_ERROR, "Checking value is different than previous one");
+        v_prev_int := v_int;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing integer (range)");
+      v_num_values := 5;
+      v_rand.add_range(-2, 2);
+      v_rand.set_cyclic_mode(CYCLIC);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, (0 => (-2,2)));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 12;
+      v_rand.add_range(8, 9);
+      v_rand.add_range(15, 16);
+      v_rand.add_range(-7, -5);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, ((-2,2),(8,9),(15,16),(-7,-5)));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing integer (set of values)");
+      v_num_values := 7;
+      v_rand.add_val(10);
+      v_rand.add_val(20);
+      v_rand.add_val((-5,-3,4));
+      v_rand.add_val((6,8));
+      v_rand.set_cyclic_mode(CYCLIC);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, ONLY,(-5,-3,4,6,8,10,20));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing integer (exclude values)");
+      v_rand.excl_val((-1,0,1));
+      v_rand.excl_val(10);
+      v_rand.excl_val(100);
+      v_rand.set_cyclic_mode(CYCLIC);
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, (0 => (integer'left,integer'right)), EXCL,(-1,0,1,10,100));
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
+        check_value(v_int /= v_prev_int, TB_ERROR, "Checking value is different than previous one");
+        v_prev_int := v_int;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing integer (range + set of values)");
+      v_num_values := 4;
+      v_rand.add_range(-1, 1);
+      v_rand.add_val(10);
+      v_rand.set_cyclic_mode(CYCLIC);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, (0 => (-1,1)), ADD,(0 => 10));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 9;
+      v_rand.add_range(8, 9);
+      v_rand.add_val((-5,-3,4));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, ((-1,1),(8,9)), ADD,(-5,-3,4,10));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing integer (range + exclude values)");
+      v_num_values := 2;
+      v_rand.add_range(-2, 2);
+      v_rand.excl_val((-1,0,1));
+      v_rand.set_cyclic_mode(CYCLIC);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, (0 => (-2,2)), EXCL,(-1,0,1));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 4;
+      v_rand.add_range(8, 10);
+      v_rand.excl_val(10);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, ((-2,2),(8,10)), EXCL,(-1,0,1,10));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing integer (set of values + exclude values)");
+      v_num_values := 4;
+      v_rand.add_val((-6,-4,-2,0,2,4,6));
+      v_rand.excl_val((-2,0,2));
+      v_rand.set_cyclic_mode(CYCLIC);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, ONLY,(-6,-4,4,6));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing integer (range + set of values + exclude values)");
+      v_num_values := 5;
+      v_rand.add_range(-2, 2);
+      v_rand.add_val((-5,-3,4));
+      v_rand.excl_val((-5,-1,1));
+      v_rand.set_cyclic_mode(CYCLIC);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, (0 => (-2,2)), ADD,(-5,-3,4), EXCL,(-5,-1,1));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 8;
+      v_rand.add_range(8, 10);
+      v_rand.add_val((20,30,40));
+      v_rand.excl_val((9,30,40));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_int := v_rand.rand(VOID);
+        check_rand_value(v_int, ((-2,2),(8,10)), ADD,(-5,-3,4,20,30,40), EXCL,(-5,-1,1,9,30,40));
+        count_rand_value(v_value_cnt, v_int);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
 
     end if;
 

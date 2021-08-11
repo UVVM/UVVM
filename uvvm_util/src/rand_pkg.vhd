@@ -1185,6 +1185,12 @@ package rand_pkg is
       constant uniqueness   : in t_uniqueness;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
+    procedure clear_constraints(
+      constant VOID : in t_void);
+
+    procedure clear_constraints(
+      constant msg_id_panel : in t_msg_id_panel);
+
     procedure clear_config(
       constant VOID : in t_void);
 
@@ -5253,9 +5259,9 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "set_cyclic_mode(" & to_upper(to_string(cyclic_mode)) & ")";
     begin
-      if priv_cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
+      if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Cyclic mode and " & to_upper(to_string(priv_rand_dist)) & " distribution cannot be combined.", priv_scope);
-      elsif priv_cyclic_mode = CYCLIC and priv_uniqueness = UNIQUE then
+      elsif cyclic_mode = CYCLIC and priv_uniqueness = UNIQUE then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Cyclic mode and uniqueness cannot be combined.", priv_scope);
       else
         log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
@@ -5276,6 +5282,38 @@ package body rand_pkg is
         log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
         priv_uniqueness := uniqueness;
       end if;
+    end procedure;
+
+    procedure clear_constraints(
+      constant VOID : in t_void) is
+    begin
+      clear_constraints(shared_msg_id_panel);
+    end procedure;
+
+    procedure clear_constraints(
+      constant msg_id_panel : in t_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "clear_constraints()";
+    begin
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      DEALLOCATE(priv_int_constraints.ran_incl);
+      DEALLOCATE(priv_int_constraints.val_incl);
+      DEALLOCATE(priv_int_constraints.val_excl);
+      DEALLOCATE(priv_int_constraints.weighted);
+      priv_int_constraints.ran_incl := new t_range_int_vec(1 to 0);
+      priv_int_constraints.val_incl := new integer_vector(1 to 0);
+      priv_int_constraints.val_excl := new integer_vector(1 to 0);
+      priv_int_constraints.weighted := new t_range_weight_mode_int_vec(1 to 0);
+      priv_int_constraints.weighted_config := false;
+
+      DEALLOCATE(priv_real_constraints.ran_incl);
+      DEALLOCATE(priv_real_constraints.val_incl);
+      DEALLOCATE(priv_real_constraints.val_excl);
+      DEALLOCATE(priv_real_constraints.weighted);
+      priv_real_constraints.ran_incl := new t_range_real_vec(1 to 0);
+      priv_real_constraints.val_incl := new real_vector(1 to 0);
+      priv_real_constraints.val_excl := new real_vector(1 to 0);
+      priv_real_constraints.weighted := new t_range_weight_mode_real_vec(1 to 0);
+      priv_real_constraints.weighted_config := false;
     end procedure;
 
     procedure clear_config(

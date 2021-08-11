@@ -2031,8 +2031,7 @@ package body rand_pkg is
         return 0;
       end if;
       if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -2265,12 +2264,18 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_combined_set_values : integer_vector(0 to set_values1'length+set_values2'length-1);
       variable v_gen_new_random      : boolean := true;
       variable v_ret                 : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       -- Create a new set of values in case both are the same type
       if (set_type1 = ADD and set_type2 = ADD) or (set_type1 = EXCL and set_type2 = EXCL) then
@@ -2310,6 +2315,9 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
         end if;
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2492,12 +2500,18 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & format_real(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & format_real(set_values2) & ")";
+      constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_combined_set_values : real_vector(0 to set_values1'length+set_values2'length-1);
       variable v_gen_new_random      : boolean := true;
       variable v_ret                 : real;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       -- Create a new set of values in case both are the same type
       if (set_type1 = ADD and set_type2 = ADD) or (set_type1 = EXCL and set_type2 = EXCL) then
@@ -2537,6 +2551,9 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
         end if;
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -2768,13 +2785,16 @@ package body rand_pkg is
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
     begin
+      if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
+      end if;
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
       if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope);
+        alert(TB_WARNING, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.", priv_scope);
         v_cyclic_mode := NON_CYCLIC;
       end if;
 
@@ -2825,13 +2845,12 @@ package body rand_pkg is
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
     begin
-      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
       if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope);
+        alert(TB_WARNING, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.", priv_scope);
         v_cyclic_mode := NON_CYCLIC;
       end if;
 
@@ -2900,13 +2919,12 @@ package body rand_pkg is
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
     begin
-      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
       if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope);
+        alert(TB_WARNING, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.", priv_scope);
         v_cyclic_mode := NON_CYCLIC;
       end if;
 
@@ -2999,13 +3017,12 @@ package body rand_pkg is
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to size-1);
     begin
-      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
       if uniqueness = UNIQUE and cyclic_mode = CYCLIC then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined. Changing to NON_CYCLIC.", priv_scope);
+        alert(TB_WARNING, C_LOCAL_CALL & "=> Uniqueness and cyclic mode cannot be combined. Using NON_CYCLIC instead.", priv_scope);
         v_cyclic_mode := NON_CYCLIC;
       end if;
 
@@ -3060,8 +3077,7 @@ package body rand_pkg is
       variable v_ret             : real_vector(0 to size-1);
     begin
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -3105,9 +3121,8 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
-      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -3172,9 +3187,8 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
-      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -3256,9 +3270,8 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
     begin
-      if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Ignoring " &
-          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -4454,7 +4467,8 @@ package body rand_pkg is
       end if;
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined.", priv_scope);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -4565,7 +4579,8 @@ package body rand_pkg is
       end if;
 
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined.", priv_scope);
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and weighted randomization cannot be combined. Ignoring " &
+          to_upper(to_string(priv_rand_dist)) & " configuration.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 

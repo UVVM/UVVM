@@ -2825,7 +2825,7 @@ begin
       -- Gaussian distribution can only be used with range
       -- constraints and cannot be combined with cyclic or unique
       -- parameters. The mean must be inside the range.
-      v_rand.set_rand_dist_mean(5.0);
+      v_rand.set_rand_dist_mean(1.0);
 
       increment_expected_alerts(TB_WARNING, 5);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
@@ -2838,16 +2838,16 @@ begin
 
       increment_expected_alerts(TB_WARNING, 10);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_int_vec(0 to 0) := v_rand.rand(1, ONLY,(-2,-1,0,1,2));
-      v_int_vec(0 to 0) := v_rand.rand(1, -1, 1, ADD,(-10));
-      v_int_vec(0 to 0) := v_rand.rand(1, -3, 4, EXCL,(-1,0,1));
-      v_int_vec(0 to 0) := v_rand.rand(1, -2, 2, ADD,(-10), EXCL,(1));
-      v_int_vec(0 to 0) := v_rand.rand(1, -2, 2, NON_UNIQUE, CYCLIC);
-      v_int_vec         := v_rand.rand(v_int_vec'length, -2, 2, UNIQUE);
-      v_int_vec         := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), UNIQUE);
-      v_int_vec         := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-10,15), UNIQUE);
-      v_int_vec         := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), UNIQUE);
-      v_int_vec         := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-10,15,16), EXCL,(-1,0,1), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2));
+      v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-10));
+      v_int_vec := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1));
+      v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-10), EXCL,(1));
+      v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, NON_UNIQUE, CYCLIC);
+      v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(-2,-1,0,1,2), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, -1, 1, ADD,(-10,15), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, -3, 4, EXCL,(-1,0,1), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, -2, 2, ADD,(-10,15,16), EXCL,(-1,0,1), UNIQUE);
       v_int_vec(0 to 0) := v_rand.rand(1, 1000, 2000);
 
       increment_expected_alerts(TB_WARNING, 4);
@@ -2860,15 +2860,15 @@ begin
 
       increment_expected_alerts(TB_WARNING, 9);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_real_vec(0 to 0) := v_rand.rand(1, ONLY,(-2.0,-1.1,0.25,1.1,2.0));
-      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, ADD,(15.5));
-      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, EXCL,(-1.0,0.0,1.0));
-      v_real_vec(0 to 0) := v_rand.rand(1, -1.0, 1.0, ADD,(15.5), EXCL,(-1.0));
-      v_real_vec         := v_rand.rand(v_real_vec'length, -2.0, 2.0, UNIQUE);
-      v_real_vec         := v_rand.rand(v_real_vec'length, ONLY,(-2.0,-1.1,0.25,1.1,2.0), UNIQUE);
-      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), UNIQUE);
-      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,0.0,1.0), UNIQUE);
-      v_real_vec         := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,0.0,1.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(-2.0,-1.1,0.25,1.1,2.0));
+      v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5));
+      v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,0.0,1.0));
+      v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5), EXCL,(-1.0));
+      v_real_vec := v_rand.rand(v_real_vec'length, -2.0, 2.0, UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(-2.0,-1.1,0.25,1.1,2.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, EXCL,(-1.0,0.0,1.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, -1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,0.0,1.0), UNIQUE);
       v_real_vec(0 to 0) := v_rand.rand(1, 1000.0, 2000.0);
 
       -- Gaussian distribution does not support time

@@ -1200,33 +1200,30 @@ package rand_pkg is
     ------------------------------------------------------------
     -- Randomization
     ------------------------------------------------------------
-    impure function rand(
+    impure function randm(
       constant VOID : t_void)
     return integer;
 
-    impure function rand(
+    impure function randm(
       constant msg_id_panel  : t_msg_id_panel;
       constant ext_proc_call : string := "")
     return integer;
 
-    impure function rand(
+    impure function randm(
       constant VOID : t_void)
     return real;
 
-    impure function rand(
+    impure function randm(
       constant msg_id_panel  : t_msg_id_panel;
       constant ext_proc_call : string := "")
     return real;
 
-    -- TODO: size/length as parameter or config?
-    --       length must be a config or the rand(len) function must have a different name
-    --       due to ambiguosity with single-line call
-    impure function rand(
+    impure function randm(
       constant size         : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector;
 
-    impure function rand_mult(
+    impure function randm(
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return unsigned;
@@ -5413,18 +5410,18 @@ package body rand_pkg is
     ------------------------------------------------------------
     -- Randomization
     ------------------------------------------------------------
-    impure function rand(
+    impure function randm(
       constant VOID : t_void)
     return integer is
     begin
-      return rand(shared_msg_id_panel);
+      return randm(shared_msg_id_panel);
     end function;
 
-    impure function rand(
+    impure function randm(
       constant msg_id_panel  : t_msg_id_panel;
       constant ext_proc_call : string := "")
     return integer is
-      constant C_LOCAL_CALL : string := "rand(" & get_int_constraints(VOID) & ")";
+      constant C_LOCAL_CALL : string := "randm(" & get_int_constraints(VOID) & ")";
       variable v_ran_incl_configured : std_logic;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
@@ -5439,11 +5436,11 @@ package body rand_pkg is
       ----------------------------------------
       if priv_int_constraints.weighted_config then
         check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
         check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
         return rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
       end if;
 
@@ -5515,18 +5512,18 @@ package body rand_pkg is
       end case;
     end function;
 
-    impure function rand(
+    impure function randm(
       constant VOID : t_void)
     return real is
     begin
-      return rand(shared_msg_id_panel);
+      return randm(shared_msg_id_panel);
     end function;
 
-    impure function rand(
+    impure function randm(
       constant msg_id_panel  : t_msg_id_panel;
       constant ext_proc_call : string := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(" & get_real_constraints(VOID) & ")";
+      constant C_LOCAL_CALL : string := "randm(" & get_real_constraints(VOID) & ")";
       variable v_ran_incl_configured : std_logic;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
@@ -5545,9 +5542,9 @@ package body rand_pkg is
       ----------------------------------------
       if priv_real_constraints.weighted_config then
         check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_real_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_real_constraints.weighted.all) & ")");
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_real_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_real_constraints.weighted.all) & ")");
         return rand_range_weight_mode(priv_real_constraints.weighted.all, msg_id_panel);
       end if;
 
@@ -5621,11 +5618,11 @@ package body rand_pkg is
       end case;
     end function;
 
-    impure function rand(
+    impure function randm(
       constant size         : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(" & get_int_constraints(VOID) & ")";
+      constant C_LOCAL_CALL : string := "randm(" & get_int_constraints(VOID) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
@@ -5637,7 +5634,7 @@ package body rand_pkg is
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
 
       if priv_int_constraints.weighted_config then
-        alert(TB_ERROR, "rand(" & to_string(priv_int_constraints.weighted.all) & ")=> Weighted randomization not supported for integer_vector type.", priv_scope);
+        alert(TB_ERROR, "randm(" & to_string(priv_int_constraints.weighted.all) & ")=> Weighted randomization not supported for integer_vector type.", priv_scope);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
@@ -5659,7 +5656,7 @@ package body rand_pkg is
       if priv_uniqueness = NON_UNIQUE then
         -- Generate a random value for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
@@ -5671,7 +5668,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -5689,11 +5686,11 @@ package body rand_pkg is
       return v_ret;
     end function;
 
-    impure function rand_mult(
+    impure function randm(
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      constant C_LOCAL_CALL : string := "rand(" & get_int_constraints(length) & ")";
+      constant C_LOCAL_CALL : string := "randm(" & get_int_constraints(length) & ")";
       variable v_ran_incl_configured : std_logic;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
@@ -5709,16 +5706,16 @@ package body rand_pkg is
       ----------------------------------------
       if priv_int_constraints.weighted_config then
         check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
         check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
         v_ret_int := rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
         v_ret     := to_unsigned(v_ret_int,length);
       end if;
 
-      -- TODO: what should happen when negative constraints are added and rand() unsigned is called?
+      -- TODO: what should happen when negative constraints are added and randm() unsigned is called?
       --       1. print alert
       --       2. print alert and ignore negative values
       --       3. ignore negative values
@@ -5734,7 +5731,7 @@ package body rand_pkg is
         -- RANGE | SET OF VALUES | RANGE + SET OF VALUES | RANGE + EXCLUDE | SET OF VALUES + EXCLUDE | RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "100" | "010" | "110" | "101" | "011" | "111" =>
-          v_ret_int := rand(msg_id_panel, C_LOCAL_CALL);
+          v_ret_int := randm(msg_id_panel, C_LOCAL_CALL);
           v_ret     := to_unsigned(v_ret_int,length);
         ----------------------------------------
         -- EXCLUDE

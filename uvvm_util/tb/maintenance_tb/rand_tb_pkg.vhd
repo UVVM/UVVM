@@ -1440,7 +1440,7 @@ package body rand_tb_pkg is
     for i in 1 to num_values loop
       if value_type = "INT" then
         if multi_line then
-          v_int := rand_gen.rand(VOID);
+          v_int := rand_gen.randm(VOID);
         else
           v_int := rand_gen.rand(min_value, max_value);
         end if;
@@ -1449,7 +1449,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "INT_VEC" then
         if multi_line then
-          v_int_vec := rand_gen.rand(v_int_vec'length);
+          v_int_vec := rand_gen.randm(v_int_vec'length);
         else
           v_int_vec := rand_gen.rand(v_int_vec'length, min_value, max_value);
         end if;
@@ -1458,7 +1458,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "REAL" then
         if multi_line then
-          v_real := rand_gen.rand(VOID);
+          v_real := rand_gen.randm(VOID);
         else
           v_real := rand_gen.rand(real(min_value), real(max_value));
         end if;
@@ -1468,7 +1468,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "REAL_VEC" then
         if multi_line then
-          --v_real_vec := rand_gen.rand(v_real_vec'length);
+          --v_real_vec := rand_gen.randm(v_real_vec'length);
         else
           v_real_vec := rand_gen.rand(v_real_vec'length, real(min_value), real(max_value));
         end if;
@@ -1478,7 +1478,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "UNS" then
         if multi_line then
-          v_uns := rand_gen.rand_mult(v_uns'length);
+          v_uns := rand_gen.randm(v_uns'length);
         else
           v_uns := rand_gen.rand(v_uns'length, min_value, max_value);
         end if;
@@ -1488,7 +1488,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "UNS_VEC" then
         if multi_line then
-          v_uns := rand_gen.rand_mult(v_uns'length);
+          v_uns := rand_gen.randm(v_uns'length);
         else
           v_uns := rand_gen.rand(v_uns'length);
         end if;
@@ -1498,7 +1498,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SIG" then
         if multi_line then
-          --v_sig := rand_gen.rand_mult(v_sig'length);
+          --v_sig := rand_gen.randm(v_sig'length);
         else
           v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
         end if;
@@ -1508,7 +1508,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SIG_VEC" then
         if multi_line then
-          --v_sig := rand_gen.rand_mult(v_sig'length);
+          --v_sig := rand_gen.randm(v_sig'length);
         else
           v_sig := rand_gen.rand(v_sig'length);
         end if;
@@ -1518,7 +1518,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SLV" then
         if multi_line then
-          --v_slv := rand_gen.rand_mult(v_slv'length);
+          --v_slv := rand_gen.randm(v_slv'length);
         else
           v_slv := rand_gen.rand(v_slv'length, min_value, max_value);
         end if;
@@ -1528,7 +1528,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SLV_VEC" then
         if multi_line then
-          --v_slv := rand_gen.rand_mult(v_slv'length);
+          --v_slv := rand_gen.randm(v_slv'length);
         else
           v_slv := rand_gen.rand(v_slv'length);
         end if;

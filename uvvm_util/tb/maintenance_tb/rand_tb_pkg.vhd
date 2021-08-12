@@ -440,7 +440,8 @@ package rand_tb_pkg is
     constant max_value          : in    integer;
     constant use_default_config : in    boolean := true;
     constant mean               : in    real := 0.0;
-    constant std_deviation      : in    real := 0.0);
+    constant std_deviation      : in    real := 0.0;
+    constant multi_line         : in    boolean := false);
 
   ------------------------------------------------------------
   -- Check distributions
@@ -1405,7 +1406,8 @@ package body rand_tb_pkg is
     constant max_value          : in    integer;
     constant use_default_config : in    boolean := true;
     constant mean               : in    real := 0.0;
-    constant std_deviation      : in    real := 0.0) is
+    constant std_deviation      : in    real := 0.0;
+    constant multi_line         : in    boolean := false) is
     constant C_PROC_NAME : string := "generate_gaussian_distribution";
     variable v_int       : integer;
     variable v_int_vec   : integer_vector(0 to 0);
@@ -1426,62 +1428,110 @@ package body rand_tb_pkg is
       rand_gen.set_rand_dist_std_deviation(std_deviation);
       check_value(std_deviation, rand_gen.get_rand_dist_std_deviation(VOID), ERROR, "Checking std_deviation");
     end if;
+    if multi_line then
+      rand_gen.clear_constraints(VOID);
+      if value_type = "REAL" or value_type = "REAL_VEC" then
+        rand_gen.add_range_real(real(min_value), real(max_value));
+      elsif value_type /= "UNS_VEC" and value_type /= "SIG_VEC" and value_type /= "SLV_VEC" then
+        rand_gen.add_range(min_value, max_value);
+      end if;
+    end if;
 
     for i in 1 to num_values loop
       if value_type = "INT" then
-        v_int := rand_gen.rand(min_value, max_value);
+        if multi_line then
+          v_int := rand_gen.rand(VOID);
+        else
+          v_int := rand_gen.rand(min_value, max_value);
+        end if;
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "INT_VEC" then
-        v_int_vec := rand_gen.rand(v_int_vec'length, min_value, max_value);
+        if multi_line then
+          v_int_vec := rand_gen.rand(v_int_vec'length);
+        else
+          v_int_vec := rand_gen.rand(v_int_vec'length, min_value, max_value);
+        end if;
         check_rand_value(v_int_vec(0), (0 => (min_value, max_value)));
         value_cnt(v_int_vec(0)) := value_cnt(v_int_vec(0)) + 1;
 
       elsif value_type = "REAL" then
-        v_real := rand_gen.rand(real(min_value), real(max_value));
+        if multi_line then
+          v_real := rand_gen.rand(VOID);
+        else
+          v_real := rand_gen.rand(real(min_value), real(max_value));
+        end if;
         v_int  := integer(round(v_real));
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "REAL_VEC" then
-        v_real_vec := rand_gen.rand(v_real_vec'length, real(min_value), real(max_value));
+        if multi_line then
+          --v_real_vec := rand_gen.rand(v_real_vec'length);
+        else
+          v_real_vec := rand_gen.rand(v_real_vec'length, real(min_value), real(max_value));
+        end if;
         v_int      := integer(round(v_real_vec(0)));
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "UNS" then
-        v_uns := rand_gen.rand(v_uns'length, min_value, max_value);
+        if multi_line then
+          v_uns := rand_gen.rand_mult(v_uns'length);
+        else
+          v_uns := rand_gen.rand(v_uns'length, min_value, max_value);
+        end if;
         v_int := to_integer(v_uns);
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "UNS_VEC" then
-        v_uns := rand_gen.rand(v_uns'length);
+        if multi_line then
+          v_uns := rand_gen.rand_mult(v_uns'length);
+        else
+          v_uns := rand_gen.rand(v_uns'length);
+        end if;
         v_int := to_integer(v_uns);
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "SIG" then
-        v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
+        if multi_line then
+          --v_sig := rand_gen.rand_mult(v_sig'length);
+        else
+          v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
+        end if;
         v_int := to_integer(v_sig);
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "SIG_VEC" then
-        v_sig := rand_gen.rand(v_sig'length);
+        if multi_line then
+          --v_sig := rand_gen.rand_mult(v_sig'length);
+        else
+          v_sig := rand_gen.rand(v_sig'length);
+        end if;
         v_int := to_integer(v_sig);
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "SLV" then
-        v_slv := rand_gen.rand(v_slv'length, min_value, max_value);
+        if multi_line then
+          --v_slv := rand_gen.rand_mult(v_slv'length);
+        else
+          v_slv := rand_gen.rand(v_slv'length, min_value, max_value);
+        end if;
         v_int := to_integer(unsigned(v_slv));
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
       elsif value_type = "SLV_VEC" then
-        v_slv := rand_gen.rand(v_slv'length);
+        if multi_line then
+          --v_slv := rand_gen.rand_mult(v_slv'length);
+        else
+          v_slv := rand_gen.rand(v_slv'length);
+        end if;
         v_int := to_integer(unsigned(v_slv));
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;

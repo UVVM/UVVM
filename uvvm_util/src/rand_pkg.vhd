@@ -4922,6 +4922,7 @@ package body rand_pkg is
       constant ext_proc_call : string := "")
     return integer is
       constant C_MIN_RANGE      : integer := integer'left;
+      constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_proc_call      : line;
       variable v_max_range      : signed(32 downto 0);
       variable v_max_value      : signed(32 downto 0);
@@ -4930,6 +4931,11 @@ package body rand_pkg is
       variable v_ret            : integer;
     begin
       create_proc_call(proc_call, ext_proc_call, v_proc_call);
+
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       while v_gen_new_random loop
         -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
@@ -4966,6 +4972,9 @@ package body rand_pkg is
         v_gen_new_random := check_value_in_vector(v_ret, priv_int_constraints.val_excl.all);
       end loop;
 
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
+
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -4977,6 +4986,7 @@ package body rand_pkg is
       constant proc_call     : string;
       constant ext_proc_call : string := "")
     return real is
+      constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_proc_call      : line;
       variable v_max_range      : real;
       variable v_max_value      : real;
@@ -4985,6 +4995,11 @@ package body rand_pkg is
       variable v_ret            : real;
     begin
       create_proc_call(proc_call, ext_proc_call, v_proc_call);
+
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
+      end if;
 
       while v_gen_new_random loop
         -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
@@ -5017,6 +5032,9 @@ package body rand_pkg is
         v_gen_new_random := check_value_in_vector(v_ret, priv_real_constraints.val_excl.all);
       end loop;
 
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
+
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
       return v_ret;
@@ -5028,16 +5046,25 @@ package body rand_pkg is
       constant proc_call     : string;
       constant ext_proc_call : string := "")
     return integer is
+      constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_proc_call      : line;
       variable v_gen_new_random : boolean := true;
       variable v_ret            : integer;
     begin
       create_proc_call(proc_call, ext_proc_call, v_proc_call);
 
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
+      end if;
+
       while v_gen_new_random loop
         v_ret := rand(ONLY, priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
         v_gen_new_random := check_value_in_vector(v_ret, priv_int_constraints.val_excl.all);
       end loop;
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -5050,16 +5077,25 @@ package body rand_pkg is
       constant proc_call     : string;
       constant ext_proc_call : string := "")
     return real is
+      constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_proc_call      : line;
       variable v_gen_new_random : boolean := true;
       variable v_ret            : real;
     begin
       create_proc_call(proc_call, ext_proc_call, v_proc_call);
 
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
+      end if;
+
       while v_gen_new_random loop
         v_ret := rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
         v_gen_new_random := check_value_in_vector(v_ret, priv_real_constraints.val_excl.all);
       end loop;
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -5500,13 +5536,15 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
 
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
+      end if;
+
       ----------------------------------------
       -- WEIGHTED
       ----------------------------------------
       if priv_real_constraints.weighted_config then
         check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
-          priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_real_constraints.weighted.all) & ")");
-        check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
           priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_real_constraints.weighted.all) & ")");
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
           priv_scope, ID_NEVER, caller_name => "rand(" & to_string(priv_real_constraints.weighted.all) & ")");
@@ -5588,12 +5626,34 @@ package body rand_pkg is
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
       constant C_LOCAL_CALL : string := "rand(" & get_int_constraints(VOID) & ")";
-      variable v_gen_new_random  : boolean := true;
-      variable v_ret             : integer_vector(0 to size-1);
+      constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
+      variable v_val_incl_configured : std_logic;
+      variable v_val_excl_configured : std_logic;
+      variable v_num_ranges          : natural := priv_int_constraints.ran_incl'length;
+      variable v_gen_new_random      : boolean := true;
+      variable v_ret                 : integer_vector(0 to size-1);
     begin
+      v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
+
       if priv_int_constraints.weighted_config then
         alert(TB_ERROR, "rand(" & to_string(priv_int_constraints.weighted.all) & ")=> Weighted randomization not supported for integer_vector type.", priv_scope);
         return v_ret;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        if priv_uniqueness = UNIQUE then
+          alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        elsif priv_cyclic_mode = CYCLIC then
+          alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        elsif (v_val_incl_configured = '1' or v_val_excl_configured = '1') then
+          alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        elsif v_num_ranges > 1 then
+          alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        end if;
       end if;
 
       if priv_uniqueness = NON_UNIQUE then
@@ -5621,6 +5681,9 @@ package body rand_pkg is
           end loop;
         end if;
       end if;
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return v_ret;

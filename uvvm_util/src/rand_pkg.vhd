@@ -4913,7 +4913,7 @@ package body rand_pkg is
     end function;
 
     -- Returns an integer random value supporting multiple range constraints
-    impure function rand_multiple_ranges(
+    impure function randm_ranges(
       constant msg_id_panel  : t_msg_id_panel;
       constant proc_call     : string;
       constant ext_proc_call : string := "")
@@ -4978,7 +4978,7 @@ package body rand_pkg is
     end function;
 
     -- Returns a real random value supporting multiple range constraints
-    impure function rand_multiple_ranges(
+    impure function randm_ranges(
       constant msg_id_panel  : t_msg_id_panel;
       constant proc_call     : string;
       constant ext_proc_call : string := "")
@@ -5038,7 +5038,7 @@ package body rand_pkg is
     end function;
 
     -- Returns an integer random value with ADD and EXCL constraints
-    impure function rand_add_excl(
+    impure function randm_add_excl(
       constant msg_id_panel  : t_msg_id_panel;
       constant proc_call     : string;
       constant ext_proc_call : string := "")
@@ -5069,7 +5069,7 @@ package body rand_pkg is
     end function;
 
     -- Returns a real random value with ADD and EXCL constraints
-    impure function rand_add_excl(
+    impure function randm_add_excl(
       constant msg_id_panel  : t_msg_id_panel;
       constant proc_call     : string;
       constant ext_proc_call : string := "")
@@ -5452,7 +5452,7 @@ package body rand_pkg is
           if v_num_ranges = 1 then
             return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, priv_cyclic_mode, msg_id_panel, ext_proc_call);
           else
-            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
           end if;
         ----------------------------------------
         -- SET OF VALUES
@@ -5472,7 +5472,7 @@ package body rand_pkg is
             return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
               priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
           else
-            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
           end if;
         ----------------------------------------
         -- RANGE + EXCLUDE
@@ -5482,13 +5482,13 @@ package body rand_pkg is
             return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, EXCL,
               priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
           else
-            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
           end if;
         ----------------------------------------
         -- SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "011" =>
-          return rand_add_excl(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          return randm_add_excl(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
         ----------------------------------------
         -- RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
@@ -5497,7 +5497,7 @@ package body rand_pkg is
             return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
               priv_int_constraints.val_incl.all, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
           else
-            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
           end if;
         ----------------------------------------
         -- NO CONSTRAINTS
@@ -5556,7 +5556,7 @@ package body rand_pkg is
           if v_num_ranges = 1 then
             return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, msg_id_panel, ext_proc_call);
           else
-            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
           end if;
         ----------------------------------------
         -- SET OF VALUES
@@ -5577,7 +5577,7 @@ package body rand_pkg is
             return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
               priv_real_constraints.val_incl.all, msg_id_panel, ext_proc_call);
           else
-            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
           end if;
         ----------------------------------------
         -- RANGE + EXCLUDE
@@ -5587,13 +5587,13 @@ package body rand_pkg is
             return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, EXCL,
               priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
           else
-            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
           end if;
         ----------------------------------------
         -- SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "011" =>
-          return rand_add_excl(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          return randm_add_excl(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
         ----------------------------------------
         -- RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
@@ -5602,7 +5602,7 @@ package body rand_pkg is
             return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
               priv_real_constraints.val_incl.all, EXCL, priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
           else
-            return rand_multiple_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
           end if;
         ----------------------------------------
         -- NO CONSTRAINTS

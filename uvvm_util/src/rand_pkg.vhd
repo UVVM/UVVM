@@ -4929,6 +4929,7 @@ package body rand_pkg is
         v_cnt := v_cnt + (priv_int_constraints.ran_incl(i).max_value - priv_int_constraints.ran_incl(i).min_value + 1);
       end loop;
       v_cnt := v_cnt + priv_int_constraints.val_incl'length;
+      v_cnt := integer'right when v_cnt = 0; -- When there are no INCL constaints, the whole integer range is used
       v_cnt := v_cnt - priv_int_constraints.val_excl'length;
       return v_cnt;
     end function;

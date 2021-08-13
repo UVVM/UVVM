@@ -706,7 +706,8 @@ package rand_pkg is
       constant set_type      : t_set_type;
       constant set_values    : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
     return unsigned;
 
     impure function rand(
@@ -1499,7 +1500,11 @@ package body rand_pkg is
           write(v_line, ',');
         end if;
       end loop;
-      return return_and_deallocate;
+      if v_line /= NULL then
+        return return_and_deallocate;
+      else
+        return "";
+      end if;
     end function;
 
     -- Overload
@@ -1544,7 +1549,11 @@ package body rand_pkg is
           write(v_line, ',');
         end if;
       end loop;
-      return return_and_deallocate;
+      if v_line /= NULL then
+        return return_and_deallocate;
+      else
+        return "";
+      end if;
     end function;
 
     -- Overload
@@ -1589,7 +1598,11 @@ package body rand_pkg is
           write(v_line, ',');
         end if;
       end loop;
-      return return_and_deallocate;
+      if v_line /= NULL then
+        return return_and_deallocate;
+      else
+        return "";
+      end if;
     end function;
 
     -- Returns the string representation of the mode when it is enabled, otherwise returns an empty string
@@ -3660,32 +3673,36 @@ package body rand_pkg is
       constant set_type      : t_set_type;
       constant set_values    : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
     return unsigned is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_values) &
         to_string_if_enabled(cyclic_mode) & ")";
+      variable v_proc_call       : line;
       variable v_gen_new_random  : boolean := true;
       variable v_unsigned        : unsigned(length-1 downto 0);
       variable v_ret_int         : integer;
       variable v_ret             : unsigned(length-1 downto 0);
     begin
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
       check_parameters_within_range(length, integer_vector(set_values), msg_id_panel, signed_values => false);
       -- Generate a random value within the set of values
       if set_type = ONLY then
-        v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+        v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
         v_ret     := to_unsigned(v_ret_int,length);
       -- Generate a random value in the vector's range minus the set of values
       elsif set_type = EXCL then
         -- Check whether the vector's range can handle cyclic mode
         if length < 32 then
-          v_ret_int := rand(0, 2**length-1, EXCL, integer_vector(set_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          v_ret_int := rand(0, 2**length-1, EXCL, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
           v_ret     := to_unsigned(v_ret_int,length);
         else
           if cyclic_mode = CYCLIC then
-            alert(TB_WARNING, C_LOCAL_CALL & "=> Range is too big for cyclic mode (min: 0, max: 2**" & to_string(length) & "-1)", priv_scope);
+            alert(TB_WARNING, v_proc_call.all & "=> Range is too big for cyclic mode (min: 0, max: 2**" & to_string(length) & "-1)", priv_scope);
           end if;
           while v_gen_new_random loop
-            v_unsigned := rand(length, NON_CYCLIC, msg_id_panel, C_LOCAL_CALL);
+            v_unsigned := rand(length, NON_CYCLIC, msg_id_panel, v_proc_call.all);
             -- If the random value is outside the integer range it cannot be in the exclude list
             if v_unsigned > integer'right then
               v_gen_new_random := false;
@@ -3696,10 +3713,11 @@ package body rand_pkg is
           v_ret := v_unsigned;
         end if;
       else
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
       end if;
 
-      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
 
@@ -4800,7 +4818,7 @@ package body rand_pkg is
       if length > 0 then
         write(v_line, string'("LEN:"));
         write(v_line, to_string(length));
-        if priv_int_constraints.ran_incl'length > 0 or priv_int_constraints.val_incl'length > 0 or priv_int_constraints.val_excl'length > 0 then
+        if priv_int_constraints.ran_incl'length > 0 or priv_int_constraints.val_incl'length > 0 then
           write(v_line, string'(", "));
         end if;
       end if;
@@ -4826,7 +4844,10 @@ package body rand_pkg is
         write(v_line, to_string(priv_int_constraints.val_incl.all));
       end if;
       if priv_int_constraints.val_excl'length > 0 then
-        write(v_line, string'(", EXCL:"));
+        if v_line /= NULL then
+          write(v_line, string'(", "));
+        end if;
+        write(v_line, string'("EXCL:"));
         write(v_line, to_string(priv_int_constraints.val_excl.all));
       end if;
       if priv_cyclic_mode = CYCLIC then
@@ -4914,23 +4935,19 @@ package body rand_pkg is
 
     -- Returns an integer random value supporting multiple range constraints
     impure function randm_ranges(
-      constant msg_id_panel  : t_msg_id_panel;
-      constant proc_call     : string;
-      constant ext_proc_call : string := "")
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
     return integer is
       constant C_MIN_RANGE      : integer := integer'left;
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
-      variable v_proc_call      : line;
       variable v_max_range      : signed(32 downto 0);
       variable v_max_value      : signed(32 downto 0);
       variable v_acc_range_len  : signed(32 downto 0);
       variable v_gen_new_random : boolean := true;
       variable v_ret            : integer;
     begin
-      create_proc_call(proc_call, ext_proc_call, v_proc_call);
-
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
+        alert(TB_WARNING, proc_call & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -4943,11 +4960,11 @@ package body rand_pkg is
         v_max_range := v_max_range - 1;
         v_max_value := v_max_range + priv_int_constraints.val_incl'length;
         if v_max_value > to_signed(integer'right,33) then
-          alert(TB_ERROR, v_proc_call.all & "=> Constraints are greater than integer's range", priv_scope);
+          alert(TB_ERROR, proc_call & "=> Constraints are greater than integer's range", priv_scope);
           return 0;
         end if;
 
-        v_ret := rand(C_MIN_RANGE, to_integer(v_max_value), priv_cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_ret := rand(C_MIN_RANGE, to_integer(v_max_value), priv_cyclic_mode, msg_id_panel, proc_call);
 
         -- Convert the random value to the correct range
         if v_ret <= v_max_range then
@@ -4972,29 +4989,23 @@ package body rand_pkg is
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
-      DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
 
     -- Returns a real random value supporting multiple range constraints
     impure function randm_ranges(
-      constant msg_id_panel  : t_msg_id_panel;
-      constant proc_call     : string;
-      constant ext_proc_call : string := "")
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
     return real is
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
-      variable v_proc_call      : line;
       variable v_max_range      : real;
       variable v_max_value      : real;
       variable v_acc_range_len  : real;
       variable v_gen_new_random : boolean := true;
       variable v_ret            : real;
     begin
-      create_proc_call(proc_call, ext_proc_call, v_proc_call);
-
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
+        alert(TB_WARNING, proc_call & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
@@ -5032,70 +5043,56 @@ package body rand_pkg is
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
-      DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
 
     -- Returns an integer random value with ADD and EXCL constraints
     impure function randm_add_excl(
-      constant msg_id_panel  : t_msg_id_panel;
-      constant proc_call     : string;
-      constant ext_proc_call : string := "")
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
     return integer is
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
-      variable v_proc_call      : line;
       variable v_gen_new_random : boolean := true;
       variable v_ret            : integer;
     begin
-      create_proc_call(proc_call, ext_proc_call, v_proc_call);
-
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
+        alert(TB_WARNING, proc_call & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
       while v_gen_new_random loop
-        v_ret := rand(ONLY, priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_ret := rand(ONLY, priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, proc_call);
         v_gen_new_random := check_value_in_vector(v_ret, priv_int_constraints.val_excl.all);
       end loop;
 
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
-      DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
 
     -- Returns a real random value with ADD and EXCL constraints
     impure function randm_add_excl(
-      constant msg_id_panel  : t_msg_id_panel;
-      constant proc_call     : string;
-      constant ext_proc_call : string := "")
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
     return real is
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
-      variable v_proc_call      : line;
       variable v_gen_new_random : boolean := true;
       variable v_ret            : real;
     begin
-      create_proc_call(proc_call, ext_proc_call, v_proc_call);
-
       if priv_rand_dist = GAUSSIAN then
-        alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
+        alert(TB_WARNING, proc_call & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
         priv_rand_dist := UNIFORM;
       end if;
 
       while v_gen_new_random loop
-        v_ret := rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
+        v_ret := rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, proc_call);
         v_gen_new_random := check_value_in_vector(v_ret, priv_real_constraints.val_excl.all);
       end loop;
 
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
 
-      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
-      DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
 
@@ -5423,11 +5420,14 @@ package body rand_pkg is
     return integer is
       constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(VOID) & ")";
       constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
+      variable v_proc_call           : line;
       variable v_ran_incl_configured : std_logic;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
       variable v_num_ranges          : natural := priv_int_constraints.ran_incl'length;
+      variable v_ret                 : integer;
     begin
+      create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
       v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
@@ -5442,7 +5442,9 @@ package body rand_pkg is
           priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
           priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
-        return rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
+        v_ret := rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
+        log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        return v_ret;
       end if;
 
       case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
@@ -5451,66 +5453,70 @@ package body rand_pkg is
         ----------------------------------------
         when "100" =>
           if v_num_ranges = 1 then
-            return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+            v_ret := rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
           end if;
         ----------------------------------------
         -- SET OF VALUES
         ----------------------------------------
         when "010" =>
-          return rand(ONLY, priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+          v_ret := rand(ONLY, priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
         ----------------------------------------
         -- EXCLUDE
         ----------------------------------------
         when "001" =>
-          return rand(integer'left, integer'right, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+          v_ret := rand(integer'left, integer'right, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
         ----------------------------------------
         -- RANGE + SET OF VALUES
         ----------------------------------------
         when "110" =>
           if v_num_ranges = 1 then
-            return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
-              priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+            v_ret := rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
+              priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
           end if;
         ----------------------------------------
         -- RANGE + EXCLUDE
         ----------------------------------------
         when "101" =>
           if v_num_ranges = 1 then
-            return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, EXCL,
-              priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+            v_ret := rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, EXCL,
+              priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
           end if;
         ----------------------------------------
         -- SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "011" =>
-          return randm_add_excl(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+          v_ret := randm_add_excl(msg_id_panel, v_proc_call.all);
         ----------------------------------------
         -- RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "111" =>
           if v_num_ranges = 1 then
-            return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
-              priv_int_constraints.val_incl.all, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+            v_ret := rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
+              priv_int_constraints.val_incl.all, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
           end if;
         ----------------------------------------
         -- NO CONSTRAINTS
         ----------------------------------------
         when "000" =>
-          return rand(integer'left, integer'right, priv_cyclic_mode, msg_id_panel, ext_proc_call);
+          v_ret := rand(integer'left, integer'right, priv_cyclic_mode, msg_id_panel, v_proc_call.all);
 
         when others =>
-          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+          alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
             v_val_excl_configured)), priv_scope);
           return 0;
       end case;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+      return v_ret;
     end function;
 
     impure function randm(
@@ -5526,17 +5532,20 @@ package body rand_pkg is
     return real is
       constant C_LOCAL_CALL_1 : string := "randm(" & get_real_constraints(VOID) & ")";
       constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_real_constraints.weighted.all) & ")";
+      variable v_proc_call           : line;
       variable v_ran_incl_configured : std_logic;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
       variable v_num_ranges          : natural := priv_real_constraints.ran_incl'length;
+      variable v_ret                 : real;
     begin
+      create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
       v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
 
       if priv_cyclic_mode = CYCLIC then
-        alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
+        alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
       end if;
 
       ----------------------------------------
@@ -5547,7 +5556,9 @@ package body rand_pkg is
           priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
           priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
-        return rand_range_weight_mode(priv_real_constraints.weighted.all, msg_id_panel);
+        v_ret := rand_range_weight_mode(priv_real_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
+        log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        return v_ret;
       end if;
 
       case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
@@ -5556,68 +5567,72 @@ package body rand_pkg is
         ----------------------------------------
         when "100" =>
           if v_num_ranges = 1 then
-            return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, msg_id_panel, ext_proc_call);
+            v_ret := rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, msg_id_panel, v_proc_call.all);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
           end if;
         ----------------------------------------
         -- SET OF VALUES
         ----------------------------------------
         when "010" =>
-          return rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, ext_proc_call);
+          v_ret := rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
         ----------------------------------------
         -- EXCLUDE
         ----------------------------------------
         when "001" =>
-          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Real random generator needs ""include"" constraints", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Real random generator needs ""include"" constraints", priv_scope);
           return 0.0;
         ----------------------------------------
         -- RANGE + SET OF VALUES
         ----------------------------------------
         when "110" =>
           if v_num_ranges = 1 then
-            return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
-              priv_real_constraints.val_incl.all, msg_id_panel, ext_proc_call);
+            v_ret := rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
+              priv_real_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
           end if;
         ----------------------------------------
         -- RANGE + EXCLUDE
         ----------------------------------------
         when "101" =>
           if v_num_ranges = 1 then
-            return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, EXCL,
-              priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
+            v_ret := rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, EXCL,
+              priv_real_constraints.val_excl.all, msg_id_panel, v_proc_call.all);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
           end if;
         ----------------------------------------
         -- SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "011" =>
-          return randm_add_excl(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+          v_ret := randm_add_excl(msg_id_panel, v_proc_call.all);
         ----------------------------------------
         -- RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "111" =>
           if v_num_ranges = 1 then
-            return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
-              priv_real_constraints.val_incl.all, EXCL, priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
+            v_ret := rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
+              priv_real_constraints.val_incl.all, EXCL, priv_real_constraints.val_excl.all, msg_id_panel, v_proc_call.all);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
           end if;
         ----------------------------------------
         -- NO CONSTRAINTS
         ----------------------------------------
         when "000" =>
-          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Real random generator must be constrained", priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Real random generator must be constrained", priv_scope);
           return 0.0;
 
         when others =>
-          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+          alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
             v_val_excl_configured)), priv_scope);
           return 0.0;
       end case;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+      return v_ret;
     end function;
 
     impure function randm(
@@ -5750,8 +5765,7 @@ package body rand_pkg is
         -- EXCLUDE
         ----------------------------------------
         when "001" =>
-          v_ret := rand(length, EXCL, t_natural_vector(priv_int_constraints.val_excl.all), priv_cyclic_mode, msg_id_panel);
-          return v_ret;
+          v_ret := rand(length, EXCL, t_natural_vector(priv_int_constraints.val_excl.all), priv_cyclic_mode, msg_id_panel, C_LOCAL_CALL_1);
         ----------------------------------------
         -- NO CONSTRAINTS
         ----------------------------------------

@@ -5421,7 +5421,8 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel;
       constant ext_proc_call : string := "")
     return integer is
-      constant C_LOCAL_CALL : string := "randm(" & get_int_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
       variable v_ran_incl_configured : std_logic;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
@@ -5436,11 +5437,11 @@ package body rand_pkg is
       ----------------------------------------
       if priv_int_constraints.weighted_config then
         check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
-          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
-          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
-          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         return rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
       end if;
 
@@ -5452,7 +5453,7 @@ package body rand_pkg is
           if v_num_ranges = 1 then
             return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, priv_cyclic_mode, msg_id_panel, ext_proc_call);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
           end if;
         ----------------------------------------
         -- SET OF VALUES
@@ -5472,7 +5473,7 @@ package body rand_pkg is
             return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
               priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
           end if;
         ----------------------------------------
         -- RANGE + EXCLUDE
@@ -5482,13 +5483,13 @@ package body rand_pkg is
             return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, EXCL,
               priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
           end if;
         ----------------------------------------
         -- SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "011" =>
-          return randm_add_excl(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          return randm_add_excl(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
         ----------------------------------------
         -- RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
@@ -5497,7 +5498,7 @@ package body rand_pkg is
             return rand(priv_int_constraints.ran_incl(0).min_value, priv_int_constraints.ran_incl(0).max_value, ADD,
               priv_int_constraints.val_incl.all, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, ext_proc_call);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
           end if;
         ----------------------------------------
         -- NO CONSTRAINTS
@@ -5506,7 +5507,7 @@ package body rand_pkg is
           return rand(integer'left, integer'right, priv_cyclic_mode, msg_id_panel, ext_proc_call);
 
         when others =>
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
             v_val_excl_configured)), priv_scope);
           return 0;
       end case;
@@ -5523,7 +5524,8 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel;
       constant ext_proc_call : string := "")
     return real is
-      constant C_LOCAL_CALL : string := "randm(" & get_real_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_real_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_real_constraints.weighted.all) & ")";
       variable v_ran_incl_configured : std_logic;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
@@ -5534,7 +5536,7 @@ package body rand_pkg is
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
 
       if priv_cyclic_mode = CYCLIC then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
+        alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
       end if;
 
       ----------------------------------------
@@ -5542,9 +5544,9 @@ package body rand_pkg is
       ----------------------------------------
       if priv_real_constraints.weighted_config then
         check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
-          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_real_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
-          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_real_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         return rand_range_weight_mode(priv_real_constraints.weighted.all, msg_id_panel);
       end if;
 
@@ -5556,7 +5558,7 @@ package body rand_pkg is
           if v_num_ranges = 1 then
             return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, msg_id_panel, ext_proc_call);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
           end if;
         ----------------------------------------
         -- SET OF VALUES
@@ -5567,7 +5569,7 @@ package body rand_pkg is
         -- EXCLUDE
         ----------------------------------------
         when "001" =>
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Real random generator needs ""include"" constraints", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Real random generator needs ""include"" constraints", priv_scope);
           return 0.0;
         ----------------------------------------
         -- RANGE + SET OF VALUES
@@ -5577,7 +5579,7 @@ package body rand_pkg is
             return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
               priv_real_constraints.val_incl.all, msg_id_panel, ext_proc_call);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
           end if;
         ----------------------------------------
         -- RANGE + EXCLUDE
@@ -5587,13 +5589,13 @@ package body rand_pkg is
             return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, EXCL,
               priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
           end if;
         ----------------------------------------
         -- SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "011" =>
-          return randm_add_excl(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+          return randm_add_excl(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
         ----------------------------------------
         -- RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
@@ -5602,17 +5604,17 @@ package body rand_pkg is
             return rand(priv_real_constraints.ran_incl(0).min_value, priv_real_constraints.ran_incl(0).max_value, ADD,
               priv_real_constraints.val_incl.all, EXCL, priv_real_constraints.val_excl.all, msg_id_panel, ext_proc_call);
           else
-            return randm_ranges(msg_id_panel, C_LOCAL_CALL, ext_proc_call);
+            return randm_ranges(msg_id_panel, C_LOCAL_CALL_1, ext_proc_call);
           end if;
         ----------------------------------------
         -- NO CONSTRAINTS
         ----------------------------------------
         when "000" =>
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Real random generator must be constrained", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Real random generator must be constrained", priv_scope);
           return 0.0;
 
         when others =>
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
             v_val_excl_configured)), priv_scope);
           return 0.0;
       end case;
@@ -5622,7 +5624,8 @@ package body rand_pkg is
       constant size         : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "randm(" & get_int_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
@@ -5634,21 +5637,21 @@ package body rand_pkg is
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
 
       if priv_int_constraints.weighted_config then
-        alert(TB_ERROR, "randm(" & to_string(priv_int_constraints.weighted.all) & ")=> Weighted randomization not supported for integer_vector type.", priv_scope);
+        alert(TB_ERROR, C_LOCAL_CALL_2 & "=> Weighted randomization not supported for integer_vector type.", priv_scope);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
         if priv_uniqueness = UNIQUE then
-          alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Using UNIFORM instead.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Using UNIFORM instead.", priv_scope);
           priv_rand_dist := UNIFORM;
         elsif priv_cyclic_mode = CYCLIC then
-          alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
           priv_rand_dist := UNIFORM;
         elsif (v_val_incl_configured = '1' or v_val_excl_configured = '1') then
-          alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
           priv_rand_dist := UNIFORM;
         elsif v_num_ranges > 1 then
-          alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
           priv_rand_dist := UNIFORM;
         end if;
       end if;
@@ -5656,19 +5659,19 @@ package body rand_pkg is
       if priv_uniqueness = NON_UNIQUE then
         -- Generate a random value for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         if get_int_constraints_count(VOID) < size then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
           return v_ret;
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -5682,7 +5685,7 @@ package body rand_pkg is
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
 
-      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      log(ID_RAND_GEN, C_LOCAL_CALL_1 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return v_ret;
     end function;
 
@@ -5690,7 +5693,8 @@ package body rand_pkg is
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      constant C_LOCAL_CALL : string := "randm(" & get_int_constraints(length) & ")";
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(length) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
       variable v_ran_incl_configured : std_logic;
       variable v_val_incl_configured : std_logic;
       variable v_val_excl_configured : std_logic;
@@ -5705,14 +5709,23 @@ package body rand_pkg is
       -- WEIGHTED
       ----------------------------------------
       if priv_int_constraints.weighted_config then
+        for i in 0 to priv_int_constraints.weighted'length-1 loop
+          if priv_int_constraints.weighted(i).min_value = priv_int_constraints.weighted(i).max_value then
+            check_parameters_within_range(length, (0 => priv_int_constraints.weighted(i).min_value), msg_id_panel, signed_values => false);
+          else
+            check_parameters_within_range(length, priv_int_constraints.weighted(i).min_value, priv_int_constraints.weighted(i).max_value, msg_id_panel, signed_values => false);
+          end if;
+        end loop;
         check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
-          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
-          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
-          priv_scope, ID_NEVER, caller_name => "randm(" & to_string(priv_int_constraints.weighted.all) & ")");
-        v_ret_int := rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel);
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
+        v_ret_int := rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
         v_ret     := to_unsigned(v_ret_int,length);
+        log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+        return v_ret;
       end if;
 
       -- TODO: what should happen when negative constraints are added and randm() unsigned is called?
@@ -5731,7 +5744,7 @@ package body rand_pkg is
         -- RANGE | SET OF VALUES | RANGE + SET OF VALUES | RANGE + EXCLUDE | SET OF VALUES + EXCLUDE | RANGE + SET OF VALUES + EXCLUDE
         ----------------------------------------
         when "100" | "010" | "110" | "101" | "011" | "111" =>
-          v_ret_int := randm(msg_id_panel, C_LOCAL_CALL);
+          v_ret_int := randm(msg_id_panel, C_LOCAL_CALL_1);
           v_ret     := to_unsigned(v_ret_int,length);
         ----------------------------------------
         -- EXCLUDE
@@ -5743,15 +5756,15 @@ package body rand_pkg is
         -- NO CONSTRAINTS
         ----------------------------------------
         when "000" =>
-          v_ret := rand(length, priv_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          v_ret := rand(length, priv_cyclic_mode, msg_id_panel, C_LOCAL_CALL_1);
 
         when others =>
-          alert(TB_ERROR, C_LOCAL_CALL & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
             v_val_excl_configured)), priv_scope);
           return v_ret;
       end case;
 
-      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      log(ID_RAND_GEN, C_LOCAL_CALL_1 & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
       return v_ret;
     end function;
 

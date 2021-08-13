@@ -913,6 +913,313 @@ begin
 
       v_rand.clear_config(VOID);
 
+      log(ID_LOG_HDR, "Testing weighted integer (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
+      increment_expected_alerts(TB_WARNING, 3);
+      v_rand.add_range_weight(-5,3,30);
+      v_rand.excl_val((-4));
+      v_int := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight(-5,3,30);
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_int := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight(-5,3,30);
+      v_rand.set_uniqueness(UNIQUE);
+      v_int := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_val_weight(1,0);
+      v_rand.add_val_weight(2,0);
+      v_int := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight(10,5,30);
+      v_rand.add_range_weight(1,1,30);
+
+      ------------------------------------------------------------
+      -- Weighted integer vector
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted integer vector (not supported)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      v_rand.add_range_weight(-5,-3,30);
+      v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      -- Weighted real
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted real (single values) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val_weight_real(-5.0,1);
+      v_rand.add_val_weight_real(10.1,3);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_real := v_rand.randm(VOID);
+        count_rand_value(v_value_cnt, v_real);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,1),(10,3)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.add_val_weight_real(-5.0,1);
+      v_rand.add_val_weight_real(10.1,0);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_real := v_rand.randm(VOID);
+        count_rand_value(v_value_cnt, v_real);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,1),(10,0)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.add_val_weight_real(-5.0,10);
+      v_rand.add_val_weight_real(0.0,30);
+      v_rand.add_val_weight_real(10.1,60);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_real := v_rand.randm(VOID);
+        count_rand_value(v_value_cnt, v_real);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,10),(0,30),(10,60)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted real (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight_real(-5.0,-3.0,30);
+      v_rand.add_val_weight_real(0.0,20);
+      v_rand.add_range_weight_real(9.3,10.1,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_real := v_rand.randm(VOID);
+        count_rand_value(v_value_cnt, v_real);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,-3,30),(0,0,20),(9,10,50)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      v_rand.add_range_weight_real(-5.0,-3.0,30);
+      v_rand.add_val_weight_real(0.0,20);
+      v_rand.add_range_weight_real(9.3,10.1,50);
+      v_real := v_rand.randm(VOID);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted real (ranges w/explicit mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_range_weight_real(-5.0,-3.0,30,COMBINED_WEIGHT);
+      v_rand.add_val_weight_real(0.0,20);
+      v_rand.add_range_weight_real(9.3,10.1,50,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_real := v_rand.randm(VOID);
+        count_rand_value(v_value_cnt, v_real);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,-3,30),(0,0,20),(9,10,50)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted real (mixed with non-weighted constraint) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val_real((20.0,30.0));
+      v_rand.add_range_weight_real(-5.0,-3.0,4,COMBINED_WEIGHT);
+      v_rand.add_val_weight_real(0.0,2);
+      v_rand.add_range_weight_real(9.0,10.0,4,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_real := v_rand.randm(VOID);
+        count_rand_value(v_value_cnt, v_real);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,-3,4),(0,0,2),(9,10,4),(20,20,1),(30,30,1)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted real (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
+      increment_expected_alerts(TB_WARNING, 3);
+      v_rand.add_range_weight_real(-5.0,-3.0,30);
+      v_rand.excl_val_real((-4.0));
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight_real(-5.0,-3.0,30);
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight_real(-5.0,-3.0,30);
+      v_rand.set_uniqueness(UNIQUE);
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_val_weight_real(1.0,0);
+      v_rand.add_val_weight_real(2.0,0);
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight_real(10.0,5.0,30);
+      v_rand.add_range_weight_real(1.0,1.0,30);
+
+      ------------------------------------------------------------
+      -- Weighted unsigned
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted unsigned (single values) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val_weight(5,1);
+      v_rand.add_val_weight(10,3);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        count_rand_value(v_value_cnt, v_uns);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((5,1),(10,3)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.add_val_weight(5,1);
+      v_rand.add_val_weight(10,0);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        count_rand_value(v_value_cnt, v_uns);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((5,1),(10,0)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.add_val_weight(0,10);
+      v_rand.add_val_weight(5,30);
+      v_rand.add_val_weight(10,60);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        count_rand_value(v_value_cnt, v_uns);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,10),(5,30),(10,60)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted unsigned (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight(0,2,30);
+      v_rand.add_val_weight(5,20);
+      v_rand.add_range_weight(9,10,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        count_rand_value(v_value_cnt, v_uns);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,10),(1,10),(2,10),(5,20),(9,25),(10,25)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight(0,2,30);
+      v_rand.add_val_weight(5,20);
+      v_rand.add_range_weight(9,10,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        count_rand_value(v_value_cnt, v_uns);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,30),(1,30),(2,30),(5,20),(9,50),(10,50)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted unsigned (ranges w/explicit mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_range_weight(0,2,30,INDIVIDUAL_WEIGHT);
+      v_rand.add_val_weight(5,20);
+      v_rand.add_range_weight(9,10,50,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        count_rand_value(v_value_cnt, v_uns);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,30),(1,30),(2,30),(5,20),(9,25),(10,25)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted unsigned (mixed with non-weighted constraint) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val((14,15));
+      v_rand.add_range_weight(0,2,4,INDIVIDUAL_WEIGHT);
+      v_rand.add_val_weight(5,2);
+      v_rand.add_range_weight(9,10,4,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        count_rand_value(v_value_cnt, v_uns);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,4),(1,4),(2,4),(5,2),(9,2),(10,2),(14,1),(15,1)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted unsigned (invalid parameters)");
+      increment_expected_alerts(TB_WARNING, 8);
+      v_rand.add_range_weight(0,3,30);
+      v_rand.excl_val((4));
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight(0,3,30);
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight(0,3,30);
+      v_rand.set_uniqueness(UNIQUE);
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_config(VOID);
+
+      v_rand.add_range_weight(-10,2000,30);
+      v_rand.add_range_weight(-1,0,30);
+      v_rand.add_val_weight(-4,30);
+      v_rand.add_val((4000));
+      v_uns := v_rand.randm(v_uns'length);
+
     --===================================================================================
     elsif GC_TESTCASE = "rand_cyclic" then
     --===================================================================================

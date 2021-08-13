@@ -4850,6 +4850,9 @@ package body rand_pkg is
         write(v_line, string'("EXCL:"));
         write(v_line, to_string(priv_int_constraints.val_excl.all));
       end if;
+      if v_line = NULL then
+        write(v_line, string'("UNCONSTRAINED"));
+      end if;
       if priv_cyclic_mode = CYCLIC then
         write(v_line, string'(", "));
         write(v_line, to_upper(to_string(priv_cyclic_mode)));
@@ -4857,9 +4860,6 @@ package body rand_pkg is
       if priv_uniqueness = UNIQUE then
         write(v_line, string'(", "));
         write(v_line, to_upper(to_string(priv_uniqueness)));
-      end if;
-      if v_line = NULL then
-        write(v_line, string'("UNCONSTRAINED"));
       end if;
       return return_and_deallocate;
     end function;
@@ -4909,12 +4909,12 @@ package body rand_pkg is
         write(v_line, string'(", EXCL:"));
         write(v_line, format_real(priv_real_constraints.val_excl.all));
       end if;
+      if v_line = NULL then
+        write(v_line, string'("UNCONSTRAINED"));
+      end if;
       if priv_uniqueness = UNIQUE then
         write(v_line, string'(", "));
         write(v_line, to_upper(to_string(priv_uniqueness)));
-      end if;
-      if v_line = NULL then
-        write(v_line, string'("UNCONSTRAINED"));
       end if;
       return return_and_deallocate;
     end function;

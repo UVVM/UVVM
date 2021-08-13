@@ -1419,6 +1419,297 @@ begin
 
       v_rand.clear_constraints(VOID);
 
+      ------------------------------------------------------------
+      -- Random cyclic integer vector
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing integer_vector (unconstrained)");
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.randm(v_int_vec'length);
+        check_rand_value(v_int_vec, (0 => (integer'left,integer'right)));
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
+        check_value(v_int_vec /= v_prev_int_vec, TB_ERROR, "Checking value is different than previous one");
+        v_prev_int_vec := v_int_vec;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing integer_vector (range)");
+      v_num_values := 5; -- same as v_int_vec'length
+      v_rand.add_range(-2, 2);
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.randm(v_int_vec'length);
+        check_rand_value(v_int_vec, (0 => (-2,2)));
+        count_rand_value(v_value_cnt, v_int_vec);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing integer_vector (set of values)");
+      v_num_values := 5; -- same as v_int_vec'length
+      v_rand.add_val((-2,-1,0,1,2));
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.randm(v_int_vec'length);
+        check_rand_value(v_int_vec, ONLY,(-2,-1,0,1,2));
+        count_rand_value(v_value_cnt, v_int_vec);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing integer_vector (exclude values)");
+      v_rand.excl_val((-1,0,1));
+      v_rand.excl_val(10);
+      v_rand.excl_val(100);
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.randm(v_int_vec'length);
+        check_rand_value(v_int_vec, (0 => (integer'left,integer'right)), EXCL,(-1,0,1,10,100));
+        -- Since range of values is too big to verify the distribution, we only check that the value is different than the previous one
+        check_value(v_int_vec /= v_prev_int_vec, TB_ERROR, "Checking value is different than previous one");
+        v_prev_int_vec := v_int_vec;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing integer_vector (range + set of values)");
+      v_num_values := 5; -- same as v_int_vec'length
+      v_rand.add_range(-1, 2);
+      v_rand.add_val(-5);
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.randm(v_int_vec'length);
+        check_rand_value(v_int_vec, (0 => (-1,2)), ADD,(0 => -5));
+        count_rand_value(v_value_cnt, v_int_vec);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing integer_vector (range + exclude values)");
+      v_num_values := 5; -- same as v_int_vec'length
+      v_rand.add_range(-3, 4);
+      v_rand.excl_val((-1,0,1));
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.randm(v_int_vec'length);
+        check_rand_value(v_int_vec, (0 => (-3,4)), EXCL,(-1,0,1));
+        count_rand_value(v_value_cnt, v_int_vec);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing integer_vector (set of values + exclude values)");
+      v_num_values := 5; -- same as v_int_vec'length
+      v_rand.add_val((-8,-6,-4,-2,0,2,4,6,8));
+      v_rand.excl_val((-2,0,2,4));
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.randm(v_int_vec'length);
+        check_rand_value(v_int_vec, ONLY,(-8,-6,-4,6,8));
+        count_rand_value(v_value_cnt, v_int_vec);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing integer_vector (range + set of values + exclude values)");
+      v_num_values := 5; -- same as v_int_vec'length
+      v_rand.add_range(-2, 2);
+      v_rand.add_val(-5);
+      v_rand.excl_val(1);
+      for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
+        v_int_vec := v_rand.randm(v_int_vec'length);
+        check_rand_value(v_int_vec, (0 => (-2,2)), ADD,(0 => -5), EXCL,(0 => 1));
+        count_rand_value(v_value_cnt, v_int_vec);
+        check_cyclic_distribution(v_value_cnt, v_num_values);
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing invalid parameters");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      v_rand.clear_config(VOID);
+      v_rand.set_uniqueness(UNIQUE);
+      v_rand.set_cyclic_mode(CYCLIC);
+
+      v_rand.clear_config(VOID);
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_rand.set_uniqueness(UNIQUE);
+
+      ------------------------------------------------------------
+      -- Random cyclic real & real vector
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing real (not supported)");
+      increment_expected_alerts(TB_WARNING, 1);
+      v_rand.add_range_real(-2.0, 2.0);
+      v_real := v_rand.randm(VOID);
+      --v_real_vec := v_rand.randm(v_real_vec'length); -- TODO
+
+      ------------------------------------------------------------
+      -- Random cyclic unsigned
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing unsigned (length)");
+      v_num_values := 2**v_uns'length;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, (0 => (0,2**v_uns'length-1)));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing unsigned (range)");
+      v_num_values := 4;
+      v_rand.add_range(0, 3);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, (0 => (0,3)));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 8;
+      v_rand.add_range(8, 9);
+      v_rand.add_range(14, 15);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, ((0,3),(8,9),(14,15)));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing unsigned (set of values)");
+      v_num_values := 6;
+      v_rand.add_val((0,1,2));
+      v_rand.add_val(5);
+      v_rand.add_val((7,9));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, ONLY,(0,1,2,5,7,9));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing unsigned (exclude)");
+      v_num_values := 2**v_uns'length-10;
+      v_rand.excl_val((0,1,2,3,4));
+      v_rand.excl_val((5,6,7,8,9));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, (0 => (0,2**v_uns'length-1)), EXCL,(0,1,2,3,4,5,6,7,8,9));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing unsigned (range + set of values)");
+      v_num_values := 4;
+      v_rand.add_range(0, 2);
+      v_rand.add_val(10);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, (0 => (0,2)), ADD,(0 => 10));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 8;
+      v_rand.add_range(8, 9);
+      v_rand.add_val((12,15));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, ((0,2),(8,9)), ADD,(10,12,15));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing unsigned (range + exclude values)");
+      v_num_values := 2;
+      v_rand.add_range(0, 3);
+      v_rand.excl_val((1,2));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, (0 => (0,3)), EXCL,(1,2));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 4;
+      v_rand.add_range(8, 10);
+      v_rand.excl_val(10);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, ((0,3),(8,10)), EXCL,(1,2,10));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing unsigned (set of values + exclude values)");
+      v_num_values := 4;
+      v_rand.add_val((0,2,4,6,8,10,12));
+      v_rand.excl_val((2,6,10));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, ONLY,(0,4,8,12));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing unsigned (range + set of values + exclude values)");
+      v_num_values := 3;
+      v_rand.add_range(0, 2);
+      v_rand.add_val((7,8));
+      v_rand.excl_val((1,8));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, (0 => (0,2)), ADD,(7,8), EXCL,(1,8));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 7;
+      v_rand.add_range(4, 6);
+      v_rand.add_val((10,12,15));
+      v_rand.excl_val((5,15));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value(v_uns, ((0,2),(4,6)), ADD,(7,8,10,12,15), EXCL,(1,8,5,15));
+        count_rand_value(v_value_cnt, v_uns);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_gaussian" then

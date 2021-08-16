@@ -5141,13 +5141,8 @@ package body rand_pkg is
     procedure add_val(
       constant value        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_val(" & to_string(value) & ")";
     begin
-      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
-      increment_vec_size(priv_int_constraints.val_incl, 1);
-      increment_vec_size(priv_int_constraints.weighted, 1);
-      priv_int_constraints.val_incl(priv_int_constraints.val_incl'length-1) := value;
-      priv_int_constraints.weighted(priv_int_constraints.weighted'length-1) := (value, value, 1, NA);
+      add_val((0 => value), msg_id_panel);
     end procedure;
 
     procedure add_val(
@@ -5167,11 +5162,8 @@ package body rand_pkg is
     procedure excl_val(
       constant value        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "excl_val(" & to_string(value) & ")";
     begin
-      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
-      increment_vec_size(priv_int_constraints.val_excl, 1);
-      priv_int_constraints.val_excl(priv_int_constraints.val_excl'length-1) := value;
+      excl_val((0 => value), msg_id_panel);
     end procedure;
 
     procedure excl_val(
@@ -5240,13 +5232,8 @@ package body rand_pkg is
     procedure add_val_real(
       constant value        : in real;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_val_real(" & format_real(value) & ")";
     begin
-      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
-      increment_vec_size(priv_real_constraints.val_incl, 1);
-      increment_vec_size(priv_real_constraints.weighted, 1);
-      priv_real_constraints.val_incl(priv_real_constraints.val_incl'length-1) := value;
-      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (value, value, 1, NA);
+      add_val_real((0 => value), msg_id_panel);
     end procedure;
 
     procedure add_val_real(
@@ -5266,11 +5253,8 @@ package body rand_pkg is
     procedure excl_val_real(
       constant value        : in real;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "excl_val_real(" & format_real(value) & ")";
     begin
-      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
-      increment_vec_size(priv_real_constraints.val_excl, 1);
-      priv_real_constraints.val_excl(priv_real_constraints.val_excl'length-1) := value;
+      excl_val_real((0 => value), msg_id_panel);
     end procedure;
 
     procedure excl_val_real(
@@ -5569,6 +5553,10 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
 
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
+      end if;
+
       ----------------------------------------
       -- WEIGHTED
       ----------------------------------------
@@ -5585,9 +5573,6 @@ package body rand_pkg is
       -- Assuming function is being called directly from sequencer when ext_proc_call is empty
       if ext_proc_call = "" and priv_uniqueness = UNIQUE then
         alert(TB_WARNING, v_proc_call.all & "=> Uniqueness not supported for real type. Ignoring uniqueness configuration.", priv_scope);
-      end if;
-      if priv_cyclic_mode = CYCLIC then
-        alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
       end if;
 
       case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is

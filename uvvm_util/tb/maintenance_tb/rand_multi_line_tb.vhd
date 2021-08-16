@@ -1541,6 +1541,8 @@ begin
       v_real := v_rand.randm(VOID);
       --v_real_vec := v_rand.randm(v_real_vec'length); -- TODO
 
+      v_rand.clear_constraints(VOID);
+
       ------------------------------------------------------------
       -- Random cyclic unsigned
       ------------------------------------------------------------

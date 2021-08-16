@@ -4805,7 +4805,8 @@ package body rand_pkg is
 
     -- Returns the integer constraints for randomization
     impure function get_int_constraints(
-      constant length : natural)
+      constant length    : natural;
+      constant is_vector : boolean := false)
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
@@ -4857,11 +4858,19 @@ package body rand_pkg is
         write(v_line, string'(", "));
         write(v_line, to_upper(to_string(priv_cyclic_mode)));
       end if;
-      if priv_uniqueness = UNIQUE then
+      if is_vector and priv_uniqueness = UNIQUE then
         write(v_line, string'(", "));
         write(v_line, to_upper(to_string(priv_uniqueness)));
       end if;
       return return_and_deallocate;
+    end function;
+
+    -- Overload
+    impure function get_int_constraints(
+      constant is_vector : boolean := false)
+    return string is
+    begin
+      return get_int_constraints(0, is_vector);
     end function;
 
     -- Overload
@@ -4874,7 +4883,7 @@ package body rand_pkg is
 
     -- Returns the real constraints for randomization
     impure function get_real_constraints(
-      constant VOID : t_void)
+      constant is_vector : boolean)
     return string is
       variable v_line : line;
       impure function return_and_deallocate return string is
@@ -4912,11 +4921,19 @@ package body rand_pkg is
       if v_line = NULL then
         write(v_line, string'("UNCONSTRAINED"));
       end if;
-      if priv_uniqueness = UNIQUE then
+      if is_vector and priv_uniqueness = UNIQUE then
         write(v_line, string'(", "));
         write(v_line, to_upper(to_string(priv_uniqueness)));
       end if;
       return return_and_deallocate;
+    end function;
+
+    -- Overload
+    impure function get_real_constraints(
+      constant VOID : t_void)
+    return string is
+    begin
+      return get_real_constraints(false);
     end function;
 
     -- Returns the number of values in the integer constraints
@@ -5448,6 +5465,11 @@ package body rand_pkg is
         return v_ret;
       end if;
 
+      -- Assuming function is being called directly from sequencer when ext_proc_call is empty
+      if ext_proc_call = "" and priv_uniqueness = UNIQUE then
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness not supported for integer type. Ignoring uniqueness configuration.", priv_scope);
+      end if;
+
       case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
         ----------------------------------------
         -- RANGE
@@ -5545,10 +5567,6 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
 
-      if priv_cyclic_mode = CYCLIC then
-        alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
-      end if;
-
       ----------------------------------------
       -- WEIGHTED
       ----------------------------------------
@@ -5560,6 +5578,14 @@ package body rand_pkg is
         v_ret := rand_range_weight_mode(priv_real_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
         log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
         return v_ret;
+      end if;
+
+      -- Assuming function is being called directly from sequencer when ext_proc_call is empty
+      if ext_proc_call = "" and priv_uniqueness = UNIQUE then
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness not supported for real type. Ignoring uniqueness configuration.", priv_scope);
+      end if;
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
       end if;
 
       case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
@@ -5640,7 +5666,7 @@ package body rand_pkg is
       constant size         : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(is_vector=>true) & ")";
       constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_val_incl_configured : std_logic;
@@ -5742,6 +5768,10 @@ package body rand_pkg is
         v_ret     := to_unsigned(v_ret_int,length);
         log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
         return v_ret;
+      end if;
+
+      if priv_uniqueness = UNIQUE then
+        alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Uniqueness not supported for unsigned type. Ignoring uniqueness configuration.", priv_scope);
       end if;
 
       -- TODO: what should happen when negative constraints are added and randm() unsigned is called?

@@ -3613,7 +3613,7 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
         ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
-      constant C_LEFTMOST_BIT  : natural := find_leftmost(max_value - min_value, '1');
+      constant C_LEFTMOST_BIT  : natural := find_leftmost(max_value - min_value, '1') + 1;
       variable v_proc_call     : line;
       variable v_valid         : boolean := false;
       variable v_ret           : unsigned(length-1 downto 0);
@@ -3879,9 +3879,10 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) &
         ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       constant C_PREVIOUS_DIST : t_rand_dist := priv_rand_dist;
-      constant C_LEFTMOST_BIT  : natural := find_leftmost(max_value - min_value, '1');
+      constant C_LEFTMOST_BIT  : natural := find_leftmost(max_value - min_value, '1') + 1;
       variable v_proc_call     : line;
       variable v_valid         : boolean := false;
+      variable v_uns           : unsigned(length-1 downto 0);
       variable v_ret           : signed(length-1 downto 0);
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -3901,7 +3902,8 @@ package body rand_pkg is
 
       -- Generate a random value in the range [min_value:max_value]
       while not(v_valid) loop
-        v_ret   := resize(min_value + rand(C_LEFTMOST_BIT, NON_CYCLIC, msg_id_panel, v_proc_call.all), length);
+        v_uns   := resize(rand(C_LEFTMOST_BIT, NON_CYCLIC, msg_id_panel, v_proc_call.all), length);
+        v_ret   := resize(min_value + signed(v_uns), length);
         v_valid := v_ret >= min_value and v_ret <= max_value;
       end loop;
 

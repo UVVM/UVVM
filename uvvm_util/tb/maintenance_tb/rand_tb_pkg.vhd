@@ -25,9 +25,13 @@ context uvvm_util.uvvm_util_context;
 
 package rand_tb_pkg is
 
+  type t_unsigned_vector is array (natural range <>) of unsigned;
+  type t_signed_vector   is array (natural range <>) of signed;
   type t_range_int_vec   is array (natural range <>) of integer_vector;
   type t_range_real_vec  is array (natural range <>) of real_vector;
   type t_range_time_vec  is array (natural range <>) of time_vector;
+  type t_range_uns_vec   is array (natural range <>) of t_unsigned_vector;
+  type t_range_sig_vec   is array (natural range <>) of t_signed_vector;
   type t_integer_cnt     is array (integer range <>) of integer;
   type t_weight_dist_vec is array (natural range <>) of integer_vector;
 
@@ -96,6 +100,16 @@ package rand_tb_pkg is
   procedure check_rand_value(
     constant value       : in std_logic_vector;
     constant range_vec   : in t_range_int_vec);
+
+  -- Overload (unsigned)
+  procedure check_rand_value_long(
+    constant value       : in unsigned;
+    constant range_vec   : in t_range_uns_vec);
+
+  -- Overload (signed)
+  procedure check_rand_value_long(
+    constant value       : in signed;
+    constant range_vec   : in t_range_sig_vec);
 
   ------------------------------------------------------------
   -- Check value within set of values
@@ -512,6 +526,34 @@ package body rand_tb_pkg is
     return false;
   end function;
 
+  -- Base function (unsigned)
+  function check_rand_value(
+    constant value       : unsigned;
+    constant range_vec   : t_range_uns_vec)
+  return boolean is
+  begin
+    for i in range_vec'range loop
+      if value >= range_vec(i)(0) and value <= range_vec(i)(1) then
+        return true;
+      end if;
+    end loop;
+    return false;
+  end function;
+
+  -- Base function (signed)
+  function check_rand_value(
+    constant value       : signed;
+    constant range_vec   : t_range_sig_vec)
+  return boolean is
+  begin
+    for i in range_vec'range loop
+      if value >= range_vec(i)(0) and value <= range_vec(i)(1) then
+        return true;
+      end if;
+    end loop;
+    return false;
+  end function;
+
   -- Overload (integer)
   procedure check_rand_value(
     constant value       : in integer;
@@ -626,6 +668,30 @@ package body rand_tb_pkg is
     constant range_vec : in t_range_int_vec) is
   begin
     if check_rand_value(to_integer(unsigned(value)), range_vec) then
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
+    else
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
+    end if;
+  end procedure;
+
+  -- Overload (unsigned)
+  procedure check_rand_value_long(
+    constant value     : in unsigned;
+    constant range_vec : in t_range_uns_vec) is
+  begin
+    if check_rand_value(value, range_vec) then
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
+    else
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
+    end if;
+  end procedure;
+
+  -- Overload (signed)
+  procedure check_rand_value_long(
+    constant value     : in signed;
+    constant range_vec : in t_range_sig_vec) is
+  begin
+    if check_rand_value(value, range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");

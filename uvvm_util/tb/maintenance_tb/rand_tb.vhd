@@ -857,21 +857,25 @@ begin
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
       log(ID_LOG_HDR, "Testing unsigned (range long vectors)");
+      v_num_values := 9;
       v_uns_long_min := x"0F000000000000000000000000000000";
-      v_uns_long_max := x"0F0000000000000000000000000000FF";
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_uns_long_max := x"0F000000000000000000000000000008";
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns_long := v_rand.rand(v_uns_long'length, v_uns_long_min, v_uns_long_max);
-        check_value_in_range(v_uns_long, v_uns_long_min, v_uns_long_max, TB_ERROR, "");
+        check_rand_value_long(v_uns_long, (0 => (v_uns_long_min,v_uns_long_max)));
+        count_rand_value(v_value_cnt, v_uns_long-v_uns_long_min);
       end loop;
-      -- Since the range of values is bigger than the integer range we can't verify the distribution
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
+      v_num_values := 4;
       v_uns_long_min := x"00F00000000000000000000000000000";
-      v_uns_long_max := x"00F000000000000000000000000000FF";
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_uns_long_max := x"00F00000000000000000000000000003";
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns_long := v_rand.rand(v_uns_long_min, v_uns_long_max);
-        check_value_in_range(v_uns_long, v_uns_long_min, v_uns_long_max, TB_ERROR, "");
+        check_rand_value_long(v_uns_long, (0 => (v_uns_long_min,v_uns_long_max)));
+        count_rand_value(v_value_cnt, v_uns_long-v_uns_long_min);
       end loop;
-      -- Since the range of values is bigger than the integer range we can't verify the distribution
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing unsigned (range)");
       v_num_values := 4;
@@ -1068,21 +1072,25 @@ begin
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
       log(ID_LOG_HDR, "Testing signed (range long vectors)");
+      v_num_values := 9;
       v_sig_long_min := x"8F000000000000000000000000000000";
-      v_sig_long_max := x"8F0000000000000000000000000000FF";
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_sig_long_max := x"8F000000000000000000000000000008";
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig_long := v_rand.rand(v_sig_long'length, v_sig_long_min, v_sig_long_max);
-        check_value_in_range(v_sig_long, v_sig_long_min, v_sig_long_max, TB_ERROR, "");
+        check_rand_value_long(v_sig_long, (0 => (v_sig_long_min,v_sig_long_max)));
+        count_rand_value(v_value_cnt, v_sig_long-v_sig_long_min);
       end loop;
-      -- Since the range of values is bigger than the integer range we can't verify the distribution
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
+      v_num_values := 4;
       v_sig_long_min := x"00F00000000000000000000000000000";
-      v_sig_long_max := x"00F000000000000000000000000000FF";
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_sig_long_max := x"00F00000000000000000000000000003";
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_sig_long := v_rand.rand(v_sig_long_min, v_sig_long_max);
-        check_value_in_range(v_sig_long, v_sig_long_min, v_sig_long_max, TB_ERROR, "");
+        check_rand_value_long(v_sig_long, (0 => (v_sig_long_min,v_sig_long_max)));
+        count_rand_value(v_value_cnt, v_sig_long-v_sig_long_min);
       end loop;
-      -- Since the range of values is bigger than the integer range we can't verify the distribution
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing signed (range)");
       v_num_values := 5;
@@ -1279,21 +1287,25 @@ begin
       -- Since the range of values is bigger than the integer range we can't verify the distribution
 
       log(ID_LOG_HDR, "Testing std_logic_vector (range long vectors)");
+      v_num_values := 9;
       v_slv_long_min := x"0F000000000000000000000000000000";
-      v_slv_long_max := x"0F0000000000000000000000000000FF";
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_slv_long_max := x"0F000000000000000000000000000008";
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv_long := v_rand.rand(v_slv_long'length, v_slv_long_min, v_slv_long_max);
-        check_value_in_range(unsigned(v_slv_long), unsigned(v_slv_long_min), unsigned(v_slv_long_max), TB_ERROR, "");
+        check_rand_value_long(unsigned(v_slv_long), (0 => (unsigned(v_slv_long_min),unsigned(v_slv_long_max))));
+        count_rand_value(v_value_cnt, unsigned(v_slv_long)-unsigned(v_slv_long_min));
       end loop;
-      -- Since the range of values is bigger than the integer range we can't verify the distribution
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
+      v_num_values := 4;
       v_slv_long_min := x"00F00000000000000000000000000000";
-      v_slv_long_max := x"00F000000000000000000000000000FF";
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      v_slv_long_max := x"00F00000000000000000000000000003";
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_slv_long := v_rand.rand(v_slv_long_min, v_slv_long_max);
-        check_value_in_range(unsigned(v_slv_long), unsigned(v_slv_long_min), unsigned(v_slv_long_max), TB_ERROR, "");
+        check_rand_value_long(unsigned(v_slv_long), (0 => (unsigned(v_slv_long_min),unsigned(v_slv_long_max))));
+        count_rand_value(v_value_cnt, unsigned(v_slv_long)-unsigned(v_slv_long_min));
       end loop;
-      -- Since the range of values is bigger than the integer range we can't verify the distribution
+      check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing std_logic_vector (range)");
       v_num_values := 4;

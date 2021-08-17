@@ -298,14 +298,58 @@ begin
       v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing integer (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
       v_rand.add_range(10, 0);
+
       v_rand.add_range(integer'left, 0);
       v_rand.add_range(0, integer'right);
       v_int := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      -- TODO: uncomment when implemented
+      v_rand.add_range(0, 2);
+      v_int      := v_rand.randm(VOID);
+      v_real     := v_rand.randm(VOID);
+      --v_time     := v_rand.randm(VOID);
+      v_int_vec  := v_rand.randm(v_int_vec'length);
+      --v_real_vec := v_rand.randm(v_real_vec'length);
+      --v_time_vec := v_rand.randm(v_time_vec'length);
+      v_uns      := v_rand.randm(v_uns'length);
+      --v_sig      := v_rand.randm(v_sig'length);
+      --v_slv      := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0, 2);
+      v_rand.add_range_real(0.0, 2.0);
+      --v_rand.add_range_time(0 ps, 2 ps);
+      --v_rand.add_range(x"0", x"F");
+      --v_rand.add_range(x"0", x"F");
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val((0,2,4));
+      v_rand.add_val_real((0.0,2.0,4.0));
+      --v_rand.add_val_time((0 ps,2 ps,4 ps));
+      --v_rand.add_val((x"0",x"A",x"F"));
+      --v_rand.add_val((x"0",x"A",x"F"));
+      v_rand.clear_constraints(VOID);
+
+      v_rand.excl_val(2);
+      v_rand.excl_val_real(2.0);
+      --v_rand.excl_val_time(2 ps);
+      --v_rand.excl_val(x"A");
+      --v_rand.excl_val(x"A");
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight(1, 10);
+      v_rand.add_val_weight_real(1.0, 10);
+      --v_rand.add_val_weight_time(1 ps, 10);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(1, 5, 10);
+      v_rand.add_range_weight_real(1.0, 5.0, 10);
+      --v_rand.add_range_weight_time(1 ps, 5 ps, 10);
 
       v_rand.clear_config(VOID);
-
       ------------------------------------------------------------
       -- Integer Vector
       ------------------------------------------------------------
@@ -648,9 +692,51 @@ begin
       v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing real (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 10);
       v_rand.add_range_real(10.0, 10.0);
       v_rand.add_range_real(10.0, 0.0);
+
+      -- TODO: uncomment when implemented
+      v_rand.add_range_real(0.0, 2.0);
+      v_int      := v_rand.randm(VOID);
+      v_real     := v_rand.randm(VOID);
+      --v_time     := v_rand.randm(VOID);
+      v_int_vec  := v_rand.randm(v_int_vec'length);
+      --v_real_vec := v_rand.randm(v_real_vec'length);
+      --v_time_vec := v_rand.randm(v_time_vec'length);
+      v_uns      := v_rand.randm(v_uns'length);
+      --v_sig      := v_rand.randm(v_sig'length);
+      --v_slv      := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_real(0.0, 2.0);
+      v_rand.add_range(0, 2);
+      --v_rand.add_range_time(0 ps, 2 ps);
+      --v_rand.add_range(x"0", x"F");
+      --v_rand.add_range(x"0", x"F");
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_real((0.0,2.0,4.0));
+      v_rand.add_val((0,2,4));
+      --v_rand.add_val_time((0 ps,2 ps,4 ps));
+      --v_rand.add_val((x"0",x"A",x"F"));
+      --v_rand.add_val((x"0",x"A",x"F"));
+      v_rand.clear_constraints(VOID);
+
+      v_rand.excl_val_real(2.0);
+      v_rand.excl_val(2);
+      --v_rand.excl_val_time(2 ps);
+      --v_rand.excl_val(x"A");
+      --v_rand.excl_val(x"A");
+
+      v_rand.add_val_weight_real(1.0, 10);
+      v_rand.add_val_weight(1, 10);
+      --v_rand.add_val_weight_time(1 ps, 10);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight_real(1.0, 5.0, 10);
+      v_rand.add_range_weight(1, 5, 10);
+      --v_rand.add_range_weight_time(1 ps, 5 ps, 10);
 
       v_rand.clear_config(VOID);
 

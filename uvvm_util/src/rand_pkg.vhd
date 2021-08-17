@@ -4953,6 +4953,76 @@ package body rand_pkg is
       return v_cnt;
     end function;
 
+    -- Returns true if only the correct type of constraints are configured
+    -- TODO: uncomment when implemented
+    impure function check_configured_constraints(
+      constant value_type : string;
+      constant proc_call  : string;
+      constant is_config  : boolean)
+    return boolean is
+      constant C_MSG_CONFIG : string := "constraints are already configured. Cannot add " & value_type & " constraints.";
+      constant C_MSG_RETURN : string := "constraints are configured. Cannot return " & value_type & " value.";
+      variable v_int_configured  : boolean := priv_int_constraints.ran_incl'length > 0 or priv_int_constraints.val_incl'length > 0 or
+        priv_int_constraints.val_excl'length > 0 or priv_int_constraints.weighted'length > 0;
+      variable v_real_configured : boolean := priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 or
+        priv_real_constraints.val_excl'length > 0 or priv_real_constraints.weighted'length > 0;
+      --variable v_time_configured : boolean := priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or
+      --  priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted'length > 0;
+      --variable v_uns_configured  : boolean := priv_uns_constraints.ran_incl'length > 0 or priv_uns_constraints.val_incl'length > 0 or priv_uns_constraints.val_excl'length > 0;
+      --variable v_sig_configured  : boolean := priv_sig_constraints.ran_incl'length > 0 or priv_sig_constraints.val_incl'length > 0 or priv_sig_constraints.val_excl'length > 0;
+    begin
+      if not(value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+        alert(TB_FAILURE, proc_call & "=> Undefined value type: " & value_type, priv_scope);
+      end if;
+
+      if v_int_configured and (value_type = "REAL" or value_type = "TIME" or (is_config and value_type = "UNSIGNED")) then
+        if is_config then
+          alert(TB_ERROR, proc_call & "=> Integer " & C_MSG_CONFIG, priv_scope);
+        else
+          alert(TB_ERROR, proc_call & "=> Integer " & C_MSG_RETURN, priv_scope);
+        end if;
+        return false;
+      end if;
+
+      if v_real_configured and (value_type = "INTEGER" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+        if is_config then
+          alert(TB_ERROR, proc_call & "=> Real " & C_MSG_CONFIG, priv_scope);
+        else
+          alert(TB_ERROR, proc_call & "=> Real " & C_MSG_RETURN, priv_scope);
+        end if;
+        return false;
+      end if;
+
+      --if v_time_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+      --  if is_config then
+      --    alert(TB_ERROR, proc_call & "=> Time " & C_MSG_CONFIG, priv_scope);
+      --  else
+      --    alert(TB_ERROR, proc_call & "=> Time " & C_MSG_RETURN, priv_scope);
+      --  end if;
+      --  return false;
+      --end if;
+
+      --if v_uns_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "SIGNED") then
+      --  if is_config then
+      --    alert(TB_ERROR, proc_call & "=> Unsigned " & C_MSG_CONFIG, priv_scope);
+      --  else
+      --    alert(TB_ERROR, proc_call & "=> Unsigned " & C_MSG_RETURN, priv_scope);
+      --  end if;
+      --  return false;
+      --end if;
+
+      --if v_sig_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED") then
+      --  if is_config then
+      --    alert(TB_ERROR, proc_call & "=> Signed " & C_MSG_CONFIG, priv_scope);
+      --  else
+      --    alert(TB_ERROR, proc_call & "=> Signed " & C_MSG_RETURN, priv_scope);
+      --  end if;
+      --  return false;
+      --end if;
+
+      return true;
+    end function;
+
     -- Returns an integer random value supporting multiple range constraints
     impure function randm_ranges(
       constant msg_id_panel : t_msg_id_panel;
@@ -5125,6 +5195,10 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range([" & to_string(min_value) & ":" & to_string(max_value) & "])";
     begin
+      -- Check only integer constraints have been configured
+      if not(check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       if min_value >= max_value then
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
@@ -5150,6 +5224,10 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val" & to_string(set_values);
     begin
+      -- Check only integer constraints have been configured
+      if not(check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_int_constraints.val_incl, set_values'length);
       increment_vec_size(priv_int_constraints.weighted, set_values'length);
@@ -5171,6 +5249,10 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "excl_val" & to_string(set_values);
     begin
+      -- Check only integer constraints have been configured
+      if not(check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_int_constraints.val_excl, set_values'length);
       priv_int_constraints.val_excl(priv_int_constraints.val_excl'length-1-(set_values'length-1) to priv_int_constraints.val_excl'length-1) := set_values;
@@ -5182,6 +5264,10 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_weight(" & to_string(value) & "," & to_string(weight) & ")";
     begin
+      -- Check only integer constraints have been configured
+      if not(check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_int_constraints.weighted, 1);
       priv_int_constraints.weighted(priv_int_constraints.weighted'length-1) := (value, value, weight, NA);
@@ -5198,6 +5284,10 @@ package body rand_pkg is
         to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
       variable v_weight_mode : t_weight_mode;
     begin
+      -- Check only integer constraints have been configured
+      if not(check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       if min_value >= max_value then
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
@@ -5218,6 +5308,10 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_real([" & format_real(min_value) & ":" & format_real(max_value) & "])";
     begin
+      -- Check only real constraints have been configured
+      if not(check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       if min_value >= max_value then
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
@@ -5241,6 +5335,10 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_real" & format_real(set_values);
     begin
+      -- Check only real constraints have been configured
+      if not(check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_real_constraints.val_incl, set_values'length);
       increment_vec_size(priv_real_constraints.weighted, set_values'length);
@@ -5262,6 +5360,10 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "excl_val_real" & format_real(set_values);
     begin
+      -- Check only real constraints have been configured
+      if not(check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_real_constraints.val_excl, set_values'length);
       priv_real_constraints.val_excl(priv_real_constraints.val_excl'length-1-(set_values'length-1) to priv_real_constraints.val_excl'length-1) := set_values;
@@ -5273,6 +5375,10 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_weight_real(" & format_real(value) & "," & to_string(weight) & ")";
     begin
+      -- Check only real constraints have been configured
+      if not(check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_real_constraints.weighted, 1);
       priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (value, value, weight, NA);
@@ -5289,6 +5395,10 @@ package body rand_pkg is
         to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
       variable v_weight_mode : t_weight_mode;
     begin
+      -- Check only real constraints have been configured
+      if not(check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
       if min_value >= max_value then
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
@@ -5436,6 +5546,11 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
 
+      -- Check only integer constraints are configured
+      if not(check_configured_constraints("INTEGER", v_proc_call.all, is_config => false)) then
+        return 0;
+      end if;
+
       ----------------------------------------
       -- WEIGHTED
       ----------------------------------------
@@ -5553,6 +5668,10 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
 
+      -- Check only real constraints are configured
+      if not(check_configured_constraints("REAL", v_proc_call.all, is_config => false)) then
+        return 0.0;
+      end if;
       if priv_cyclic_mode = CYCLIC then
         alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
       end if;
@@ -5665,6 +5784,11 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
 
+      -- Check only integer constraints are configured
+      if not(check_configured_constraints("INTEGER", C_LOCAL_CALL_1, is_config => false)) then
+        return v_ret;
+      end if;
+
       if priv_int_constraints.weighted_config then
         alert(TB_ERROR, C_LOCAL_CALL_2 & "=> Weighted randomization not supported for integer_vector type.", priv_scope);
         return v_ret;
@@ -5733,6 +5857,11 @@ package body rand_pkg is
       v_ran_incl_configured := '1' when priv_int_constraints.ran_incl'length > 0 else '0';
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
+
+      -- Check only unsigned constraints are configured
+      if not(check_configured_constraints("UNSIGNED", C_LOCAL_CALL_1, is_config => false)) then
+        return v_ret;
+      end if;
 
       ----------------------------------------
       -- WEIGHTED

@@ -1572,6 +1572,9 @@ package body axistream_bfm_pkg is
     -- Set the number of bytes received
     data_length := v_byte_cnt;
 
+    -- Log the received frame
+    log(ID_PACKET_PAYLOAD, v_proc_call.all & "=> Rx Frame (" & to_string(v_byte_cnt) & "B) " & to_string(data_array) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+
     -- Check if there was a timeout or it was successful
     if v_timeout then
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " & add_msg_delimiter(msg), scope);

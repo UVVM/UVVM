@@ -1190,7 +1190,8 @@ package rand_pkg is
       constant VOID : in t_void);
 
     procedure clear_constraints(
-      constant msg_id_panel : in t_msg_id_panel);
+      constant msg_id_panel  : in t_msg_id_panel;
+      constant ext_proc_call : in string := "");
 
     procedure clear_config(
       constant VOID : in t_void);
@@ -5450,10 +5451,15 @@ package body rand_pkg is
     end procedure;
 
     procedure clear_constraints(
-      constant msg_id_panel : in t_msg_id_panel) is
+      constant msg_id_panel  : in t_msg_id_panel;
+      constant ext_proc_call : in string := "") is
       constant C_LOCAL_CALL : string := "clear_constraints()";
+      variable v_proc_call  : line;
     begin
-      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      log_proc_call(ID_RAND_CONF, v_proc_call.all, ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+
       DEALLOCATE(priv_int_constraints.ran_incl);
       DEALLOCATE(priv_int_constraints.val_incl);
       DEALLOCATE(priv_int_constraints.val_excl);
@@ -5496,26 +5502,7 @@ package body rand_pkg is
       priv_std_dev            := 0.0;
       priv_cyclic_mode        := NON_CYCLIC;
       priv_uniqueness         := NON_UNIQUE;
-
-      DEALLOCATE(priv_int_constraints.ran_incl);
-      DEALLOCATE(priv_int_constraints.val_incl);
-      DEALLOCATE(priv_int_constraints.val_excl);
-      DEALLOCATE(priv_int_constraints.weighted);
-      priv_int_constraints.ran_incl := new t_range_int_vec(1 to 0);
-      priv_int_constraints.val_incl := new integer_vector(1 to 0);
-      priv_int_constraints.val_excl := new integer_vector(1 to 0);
-      priv_int_constraints.weighted := new t_range_weight_mode_int_vec(1 to 0);
-      priv_int_constraints.weighted_config := false;
-
-      DEALLOCATE(priv_real_constraints.ran_incl);
-      DEALLOCATE(priv_real_constraints.val_incl);
-      DEALLOCATE(priv_real_constraints.val_excl);
-      DEALLOCATE(priv_real_constraints.weighted);
-      priv_real_constraints.ran_incl := new t_range_real_vec(1 to 0);
-      priv_real_constraints.val_incl := new real_vector(1 to 0);
-      priv_real_constraints.val_excl := new real_vector(1 to 0);
-      priv_real_constraints.weighted := new t_range_weight_mode_real_vec(1 to 0);
-      priv_real_constraints.weighted_config := false;
+      clear_constraints(msg_id_panel, C_LOCAL_CALL);
     end procedure;
 
     ------------------------------------------------------------

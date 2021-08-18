@@ -53,7 +53,7 @@ begin
     --variable v_real_vec      : real_vector(0 to 4);
     --variable v_time_vec      : time_vector(0 to 4);
     variable v_uns           : unsigned(3 downto 0);
-    --variable v_uns_long      : unsigned(127 downto 0);
+    variable v_uns_long      : unsigned(127 downto 0);
     --variable v_uns_long_min  : unsigned(127 downto 0);
     --variable v_uns_long_max  : unsigned(127 downto 0);
     --variable v_prev_uns_long : unsigned(127 downto 0) := (others => '0');
@@ -299,26 +299,10 @@ begin
 
       log(ID_LOG_HDR, "Testing integer (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
+      increment_expected_alerts(TB_WARNING, 1);
       v_rand.add_range(10, 0);
 
-      v_rand.add_range(integer'left, 0);
-      v_rand.add_range(0, integer'right);
-      v_int := v_rand.randm(VOID);
-      v_rand.clear_constraints(VOID);
-
       -- TODO: uncomment when implemented
-      v_rand.add_range(0, 2);
-      v_int      := v_rand.randm(VOID);
-      v_real     := v_rand.randm(VOID);
-      --v_time     := v_rand.randm(VOID);
-      v_int_vec  := v_rand.randm(v_int_vec'length);
-      --v_real_vec := v_rand.randm(v_real_vec'length);
-      --v_time_vec := v_rand.randm(v_time_vec'length);
-      v_uns      := v_rand.randm(v_uns'length);
-      --v_sig      := v_rand.randm(v_sig'length);
-      --v_slv      := v_rand.randm(v_slv'length);
-      v_rand.clear_constraints(VOID);
-
       v_rand.add_range(0, 2);
       v_rand.add_range_real(0.0, 2.0);
       --v_rand.add_range_time(0 ps, 2 ps);
@@ -348,8 +332,32 @@ begin
       v_rand.add_range_weight(1, 5, 10);
       v_rand.add_range_weight_real(1.0, 5.0, 10);
       --v_rand.add_range_weight_time(1 ps, 5 ps, 10);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0, 2);
+      v_int      := v_rand.randm(VOID);
+      v_real     := v_rand.randm(VOID);
+      --v_time     := v_rand.randm(VOID);
+      v_int_vec  := v_rand.randm(v_int_vec'length);
+      --v_real_vec := v_rand.randm(v_real_vec'length);
+      --v_time_vec := v_rand.randm(v_time_vec'length);
+      v_uns      := v_rand.randm(v_uns'length);
+      --v_sig      := v_rand.randm(v_sig'length);
+      --v_slv      := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0, 2);
+      v_rand.set_uniqueness(UNIQUE);
+      v_int := v_rand.randm(VOID);
+      v_rand.set_uniqueness(NON_UNIQUE);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(integer'left, 0);
+      v_rand.add_range(0, integer'right);
+      v_int := v_rand.randm(VOID);
 
       v_rand.clear_config(VOID);
+
       ------------------------------------------------------------
       -- Integer Vector
       ------------------------------------------------------------
@@ -387,7 +395,7 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_rand.set_uniqueness(UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_int_vec := v_rand.randm(v_int_vec'length);
         check_rand_value(v_int_vec, ((-2,2),(8,9),(15,16),(-7,-5)));
         check_uniqueness(v_int_vec);
@@ -551,6 +559,7 @@ begin
       v_rand.add_val((0,1));
       v_rand.set_uniqueness(UNIQUE);
       v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
 
       v_rand.clear_config(VOID);
 
@@ -693,22 +702,11 @@ begin
 
       log(ID_LOG_HDR, "Testing real (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 10);
+      increment_expected_alerts(TB_WARNING, 1);
       v_rand.add_range_real(10.0, 10.0);
       v_rand.add_range_real(10.0, 0.0);
 
       -- TODO: uncomment when implemented
-      v_rand.add_range_real(0.0, 2.0);
-      v_int      := v_rand.randm(VOID);
-      v_real     := v_rand.randm(VOID);
-      --v_time     := v_rand.randm(VOID);
-      v_int_vec  := v_rand.randm(v_int_vec'length);
-      --v_real_vec := v_rand.randm(v_real_vec'length);
-      --v_time_vec := v_rand.randm(v_time_vec'length);
-      v_uns      := v_rand.randm(v_uns'length);
-      --v_sig      := v_rand.randm(v_sig'length);
-      --v_slv      := v_rand.randm(v_slv'length);
-      v_rand.clear_constraints(VOID);
-
       v_rand.add_range_real(0.0, 2.0);
       v_rand.add_range(0, 2);
       --v_rand.add_range_time(0 ps, 2 ps);
@@ -728,6 +726,7 @@ begin
       --v_rand.excl_val_time(2 ps);
       --v_rand.excl_val(x"A");
       --v_rand.excl_val(x"A");
+      v_rand.clear_constraints(VOID);
 
       v_rand.add_val_weight_real(1.0, 10);
       v_rand.add_val_weight(1, 10);
@@ -737,6 +736,24 @@ begin
       v_rand.add_range_weight_real(1.0, 5.0, 10);
       v_rand.add_range_weight(1, 5, 10);
       --v_rand.add_range_weight_time(1 ps, 5 ps, 10);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_real(0.0, 2.0);
+      v_int      := v_rand.randm(VOID);
+      v_real     := v_rand.randm(VOID);
+      --v_time     := v_rand.randm(VOID);
+      v_int_vec  := v_rand.randm(v_int_vec'length);
+      --v_real_vec := v_rand.randm(v_real_vec'length);
+      --v_time_vec := v_rand.randm(v_time_vec'length);
+      v_uns      := v_rand.randm(v_uns'length);
+      --v_sig      := v_rand.randm(v_sig'length);
+      --v_slv      := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_real(0.0, 2.0);
+      v_rand.set_uniqueness(UNIQUE);
+      v_real := v_rand.randm(VOID);
+      v_rand.set_uniqueness(NON_UNIQUE);
 
       v_rand.clear_config(VOID);
 
@@ -886,7 +903,7 @@ begin
       v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
-      increment_expected_alerts(TB_WARNING, 4);
+      increment_expected_alerts(TB_WARNING, 5);
       v_rand.add_range(0, 2**16);
       v_uns := v_rand.randm(v_uns'length);
       v_rand.clear_constraints(VOID);
@@ -897,6 +914,101 @@ begin
 
       v_rand.add_range(-2, 2);
       v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0, 2);
+      v_rand.set_uniqueness(UNIQUE);
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      -- Unsigned constraints
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing unsigned (range)");
+      v_num_values := 4;
+      v_rand.add_range(x"00", x"03");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value_long(v_uns, (0 => (x"0",x"3")));
+        count_rand_value(v_value_cnt, v_uns);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 9;
+      v_rand.add_range(x"007", x"00B");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns := v_rand.randm(v_uns'length);
+        check_rand_value_long(v_uns, ((x"0",x"3"),(x"7",x"B")));
+        count_rand_value(v_value_cnt, v_uns);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing unsigned (range long vectors)");
+      v_num_values := 4;
+      v_rand.add_range(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.randm(v_uns_long'length);
+        check_rand_value_long(v_uns_long, (0 => (x"0F000000000000000000000000000000",x"0F000000000000000000000000000003")));
+        count_rand_value(v_value_cnt, v_uns_long-x"0F000000000000000000000000000000");
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 9;
+      v_rand.add_range(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000B");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_uns_long := v_rand.randm(v_uns_long'length);
+        check_rand_value_long(v_uns_long, ((x"0F000000000000000000000000000000",x"0F000000000000000000000000000003"),
+          (x"0F000000000000000000000000000007",x"0F00000000000000000000000000000B")));
+        count_rand_value(v_value_cnt, v_uns_long-x"0F000000000000000000000000000000");
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 11);
+      increment_expected_alerts(TB_WARNING, 1);
+      v_rand.add_range(x"0", x"0");
+      v_rand.add_range(x"2", x"0");
+
+      v_rand.add_range(x"00000F000000000000000000000000000000", x"0F000000000000000000000000000003");
+      v_rand.add_range(x"0F000000000000000000000000000000", x"00000F000000000000000000000000000003");
+
+      -- TODO: uncomment when implemented
+      v_rand.add_range(x"0", x"F");
+      v_rand.add_range(0, 2);
+      v_rand.add_range_real(0.0, 2.0);
+      --v_rand.add_range_time(0 ps, 2 ps);
+      --v_rand.add_range(x"0", x"F");
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(x"0", x"2");
+      v_int      := v_rand.randm(VOID);
+      v_real     := v_rand.randm(VOID);
+      --v_time     := v_rand.randm(VOID);
+      v_int_vec  := v_rand.randm(v_int_vec'length);
+      --v_real_vec := v_rand.randm(v_real_vec'length);
+      --v_time_vec := v_rand.randm(v_time_vec'length);
+      v_uns      := v_rand.randm(v_uns'length);
+      --v_sig      := v_rand.randm(v_sig'length);
+      --v_slv      := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.add_range(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000B");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(x"0", x"2");
+      v_rand.set_uniqueness(UNIQUE);
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
       v_rand.clear_config(VOID);
 
 
@@ -1041,11 +1153,14 @@ begin
       v_rand.add_range_weight(-5,3,30);
       v_rand.set_cyclic_mode(CYCLIC);
       v_int := v_rand.randm(VOID);
-      v_rand.clear_config(VOID);
+      v_rand.set_cyclic_mode(NON_CYCLIC);
+      v_rand.clear_constraints(VOID);
 
       v_rand.add_range_weight(-5,3,30);
       v_rand.set_uniqueness(UNIQUE);
       v_int := v_rand.randm(VOID);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
       v_rand.clear_config(VOID);
 
       ------------------------------------------------------------
@@ -1185,11 +1300,14 @@ begin
       v_rand.add_range_weight_real(-5.0,-3.0,30);
       v_rand.set_cyclic_mode(CYCLIC);
       v_real := v_rand.randm(VOID);
-      v_rand.clear_config(VOID);
+      v_rand.set_cyclic_mode(NON_CYCLIC);
+      v_rand.clear_constraints(VOID);
 
       v_rand.add_range_weight_real(-5.0,-3.0,30);
       v_rand.set_uniqueness(UNIQUE);
       v_real := v_rand.randm(VOID);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
       v_rand.clear_config(VOID);
 
 
@@ -1325,21 +1443,25 @@ begin
       v_rand.add_range_weight(0,3,30);
       v_rand.set_cyclic_mode(CYCLIC);
       v_uns := v_rand.randm(v_uns'length);
-      v_rand.clear_config(VOID);
+      v_rand.set_cyclic_mode(NON_CYCLIC);
+      v_rand.clear_constraints(VOID);
 
       v_rand.add_range_weight(0,3,30);
       v_rand.set_uniqueness(UNIQUE);
       v_uns := v_rand.randm(v_uns'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
       v_rand.clear_config(VOID);
 
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_cyclic" then
     --===================================================================================
-      v_rand.set_cyclic_mode(CYCLIC);
       ------------------------------------------------------------
       -- Random cyclic integer
       ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
       log(ID_LOG_HDR, "Testing integer (unconstrained)");
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.randm(VOID);
@@ -1503,11 +1625,13 @@ begin
         end if;
       end loop;
 
-      v_rand.clear_constraints(VOID);
+      v_rand.clear_config(VOID);
 
       ------------------------------------------------------------
       -- Random cyclic integer vector
       ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
       log(ID_LOG_HDR, "Testing integer_vector (unconstrained)");
       for i in 1 to C_NUM_CYCLIC_REPETITIONS loop
         v_int_vec := v_rand.randm(v_int_vec'length);
@@ -1606,8 +1730,6 @@ begin
         check_cyclic_distribution(v_value_cnt, v_num_values);
       end loop;
 
-      v_rand.clear_config(VOID);
-
       log(ID_LOG_HDR, "Testing invalid parameters");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
       v_rand.clear_config(VOID);
@@ -1618,20 +1740,26 @@ begin
       v_rand.set_cyclic_mode(CYCLIC);
       v_rand.set_uniqueness(UNIQUE);
 
+      v_rand.clear_config(VOID);
+
       ------------------------------------------------------------
       -- Random cyclic real & real vector
       ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
       log(ID_LOG_HDR, "Testing real (not supported)");
       increment_expected_alerts(TB_WARNING, 1);
       v_rand.add_range_real(-2.0, 2.0);
       v_real := v_rand.randm(VOID);
       --v_real_vec := v_rand.randm(v_real_vec'length); -- TODO
 
-      v_rand.clear_constraints(VOID);
+      v_rand.clear_config(VOID);
 
       ------------------------------------------------------------
       -- Random cyclic unsigned
       ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
       log(ID_LOG_HDR, "Testing unsigned (length)");
       v_num_values := 2**v_uns'length;
       for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
@@ -1795,6 +1923,18 @@ begin
           check_cyclic_distribution(v_value_cnt, v_num_values);
         end if;
       end loop;
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      -- Random cyclic unsigned constraints
+      ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
+      log(ID_LOG_HDR, "Testing unsigned (not supported)");
+      increment_expected_alerts(TB_WARNING, 1);
+      v_rand.add_range(x"00", x"03");
+      v_uns := v_rand.randm(v_uns'length);
 
       v_rand.clear_config(VOID);
 
@@ -2178,20 +2318,20 @@ begin
       ------------------------------------------------------------
       -- Unsigned
       ------------------------------------------------------------
-      increment_expected_alerts(TB_WARNING, 11);
+      increment_expected_alerts(TB_WARNING, 13);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      -- TODO:
-      --v_uns_long_min := to_unsigned(1, v_uns_long_min'length);
-      --v_uns_long_max := to_unsigned(100, v_uns_long_max'length);
-      --v_uns_long := v_rand.randm(v_uns_long'length);
-      --v_uns_long := v_rand.randm(v_uns_long'length, v_uns_long_min, v_uns_long_max);
-      --v_uns_long := v_rand.randm(v_uns_long_min, v_uns_long_max);
 
       v_uns := v_rand.randm(v_uns'length); -- OK
+
+      v_uns_long := v_rand.randm(v_uns_long'length); -- TB_WARNING
 
       v_rand.add_range(0,2);
       v_uns := v_rand.randm(v_uns'length); -- OK
       v_rand.add_range(10,15);
+      v_uns := v_rand.randm(v_uns'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(x"0",x"2");
       v_uns := v_rand.randm(v_uns'length); -- TB_WARNING
       v_rand.clear_constraints(VOID);
 

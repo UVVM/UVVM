@@ -261,6 +261,8 @@ package adaptations_pkg is
   constant C_RAND_CYCLIC_QUEUE_MAX_ALERT         : natural  := 10000; 
   constant C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE : boolean  := false; -- Set to true to disable the alert above
 
+  constant C_RAND_ML_MAX_LONG_VECTOR_LENGTH      : natural  := 128; -- Maximum length for unsigned/signed constraints in multi-line rand
+
   --------------------------------------------------------------------------------------------------------------------------------
   -- Functional Coverage adaptations
   --------------------------------------------------------------------------------------------------------------------------------

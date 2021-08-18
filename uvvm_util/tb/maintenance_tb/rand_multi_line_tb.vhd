@@ -903,7 +903,8 @@ begin
       v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
-      increment_expected_alerts(TB_WARNING, 5);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
+      increment_expected_alerts(TB_WARNING, 1);
       v_rand.add_range(0, 2**16);
       v_uns := v_rand.randm(v_uns'length);
       v_rand.clear_constraints(VOID);
@@ -912,7 +913,7 @@ begin
       v_uns := v_rand.randm(v_uns'length);
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range(-2, 2);
+      v_rand.add_range(-4, -2);
       v_uns := v_rand.randm(v_uns'length);
       v_rand.clear_constraints(VOID);
 
@@ -1136,13 +1137,12 @@ begin
       log(ID_LOG_HDR, "Testing weighted integer (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
       increment_expected_alerts(TB_WARNING, 3);
+      v_rand.add_range_weight(1,1,30);
+      v_rand.add_range_weight(10,5,30);
+
       v_rand.add_val_weight(1,0);
       v_rand.add_val_weight(2,0);
       v_int := v_rand.randm(VOID);
-      v_rand.clear_constraints(VOID);
-
-      v_rand.add_range_weight(10,5,30);
-      v_rand.add_range_weight(1,1,30);
       v_rand.clear_constraints(VOID);
 
       v_rand.add_range_weight(-5,3,30);
@@ -1283,13 +1283,12 @@ begin
       log(ID_LOG_HDR, "Testing weighted real (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
       increment_expected_alerts(TB_WARNING, 3);
+      v_rand.add_range_weight_real(1.0,1.0,30);
+      v_rand.add_range_weight_real(10.0,5.0,30);
+
       v_rand.add_val_weight_real(1.0,0);
       v_rand.add_val_weight_real(2.0,0);
       v_real := v_rand.randm(VOID);
-      v_rand.clear_constraints(VOID);
-
-      v_rand.add_range_weight_real(10.0,5.0,30);
-      v_rand.add_range_weight_real(1.0,1.0,30);
       v_rand.clear_constraints(VOID);
 
       v_rand.add_range_weight_real(-5.0,-3.0,30);
@@ -1427,11 +1426,17 @@ begin
       v_rand.clear_config(VOID);
 
       log(ID_LOG_HDR, "Testing weighted unsigned (invalid parameters)");
-      increment_expected_alerts(TB_WARNING, 8);
-      v_rand.add_range_weight(-10,2000,30);
-      v_rand.add_range_weight(-1,0,30);
-      v_rand.add_val_weight(-4,30);
-      v_rand.add_val((4000));
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
+      increment_expected_alerts(TB_WARNING, 3);
+      v_rand.add_range_weight(0,2**16,30);
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight(2**17,30);
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(-4,-2,30);
       v_uns := v_rand.randm(v_uns'length);
       v_rand.clear_constraints(VOID);
 

@@ -1727,47 +1727,66 @@ package body rand_pkg is
       log_proc_call(ID_NEVER, proc_call, ext_proc_call, new_proc_call, shared_msg_id_panel);
     end procedure;
 
-    -- Checks that the parameters are within a valid range
-    -- for the given length
-    procedure check_parameters_within_range(
-      constant length        : in natural;
-      constant min_value     : in integer;
-      constant max_value     : in integer;
-      constant msg_id_panel  : in t_msg_id_panel;
-      constant signed_values : in boolean) is
-      constant C_PROC_NAME : string := "check_parameters_within_range";
+    -- Checks that the parameters are within a valid range for the given length
+    impure function check_parameters_within_range(
+      constant length        : natural;
+      constant min_value     : integer;
+      constant max_value     : integer;
+      constant proc_call     : string;
+      constant signed_values : boolean)
+    return boolean is
       variable v_len : natural;
     begin
       v_len := length when length < 32 else
-               31 when not(signed_values) else 32; -- Length is limited by integer size
+               31 when not(signed_values) else
+               32; -- Length is limited by integer size
       if signed_values then
-        check_value_in_range(min_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
-        check_value_in_range(max_value, -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        if min_value < -2**(v_len-1) or min_value > 2**(v_len-1)-1 or max_value < -2**(v_len-1) or max_value > 2**(v_len-1)-1 then
+          alert(TB_ERROR, proc_call & "=> constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
+          return false;
+        end if;
       else
-        check_value_in_range(min_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
-        check_value_in_range(max_value, 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
+        if min_value < 0 or max_value < 0 then
+          alert(TB_ERROR, proc_call & "=> constraints cannot be negative values when returning unsigned values", priv_scope);
+          return false;
+        elsif min_value > 2**v_len-1 or max_value > 2**v_len-1 then
+          alert(TB_ERROR, proc_call & "=> constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
+          return false;
+        end if;
       end if;
-    end procedure;
+      return true;
+    end function;
 
     -- Overload
-    procedure check_parameters_within_range(
-      constant length        : in natural;
-      constant set_values    : in integer_vector;
-      constant msg_id_panel  : in t_msg_id_panel;
-      constant signed_values : in boolean) is
-      constant C_PROC_NAME : string := "check_parameters_within_range";
+    impure function check_parameters_within_range(
+      constant length        : natural;
+      constant set_values    : integer_vector;
+      constant proc_call     : string;
+      constant signed_values : boolean)
+    return boolean is
       variable v_len : natural;
     begin
       v_len := length when length < 32 else
-               31 when not(signed_values) else 32; -- Length is limited by integer size
+               31 when not(signed_values) else
+               32; -- Length is limited by integer size
       for i in set_values'range loop
         if signed_values then
-          check_value_in_range(set_values(i), -2**(v_len-1), 2**(v_len-1)-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
+          if set_values(i) < -2**(v_len-1) or set_values(i) > 2**(v_len-1)-1 then
+            alert(TB_ERROR, proc_call & "=> constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
+            return false;
+          end if;
         else
-          check_value_in_range(set_values(i), 0, 2**v_len-1, TB_WARNING, "length is only " & to_string(v_len) & " bits.", priv_scope, ID_NEVER, msg_id_panel, C_PROC_NAME);
+          if set_values(i) < 0 then
+            alert(TB_ERROR, proc_call & "=> constraints cannot be negative values when returning unsigned values", priv_scope);
+            return false;
+          elsif set_values(i) > 2**v_len-1 then
+            alert(TB_ERROR, proc_call & "=> constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
+            return false;
+          end if;
         end if;
       end loop;
-    end procedure;
+      return true;
+    end function;
 
     -- Overload
     impure function check_parameters_within_range(
@@ -3696,7 +3715,9 @@ package body rand_pkg is
       variable v_ret       : unsigned(length-1 downto 0);
     begin
       -- Generate a random value in the range [min_value:max_value]
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
+      if not check_parameters_within_range(length, min_value, max_value, C_LOCAL_CALL, signed_values => false) then
+        return v_ret;
+      end if;
       v_ret_int := rand(min_value, max_value, cyclic_mode, msg_id_panel, C_LOCAL_CALL);
       v_ret     := to_unsigned(v_ret_int,length);
 
@@ -3722,7 +3743,9 @@ package body rand_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      check_parameters_within_range(length, integer_vector(set_values), msg_id_panel, signed_values => false);
+      if not check_parameters_within_range(length, integer_vector(set_values), C_LOCAL_CALL, signed_values => false) then
+        return v_ret;
+      end if;
       -- Generate a random value within the set of values
       if set_type = ONLY then
         v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, v_proc_call.all);
@@ -3784,10 +3807,14 @@ package body rand_pkg is
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret_int   : integer;
       variable v_ret       : unsigned(length-1 downto 0);
+      variable v_check_ok  : boolean := true;
     begin
       -- Generate a random value in the range [min_value:max_value], plus or minus the set of values
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
-      check_parameters_within_range(length, integer_vector(set_values), msg_id_panel, signed_values => false);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, min_value, max_value, C_LOCAL_CALL, signed_values => false);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, integer_vector(set_values), C_LOCAL_CALL, signed_values => false);
+      if not v_check_ok then
+        return v_ret;
+      end if;
       v_ret_int := rand(min_value, max_value, set_type, integer_vector(set_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
       v_ret     := to_unsigned(v_ret_int,length);
 
@@ -3842,13 +3869,17 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & to_string_if_enabled(cyclic_mode) & ")";
-      variable v_ret_int : integer;
-      variable v_ret     : unsigned(length-1 downto 0);
+      variable v_ret_int   : integer;
+      variable v_ret       : unsigned(length-1 downto 0);
+      variable v_check_ok  : boolean := true;
     begin
       -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => false);
-      check_parameters_within_range(length, integer_vector(set_values1), msg_id_panel, signed_values => false);
-      check_parameters_within_range(length, integer_vector(set_values2), msg_id_panel, signed_values => false);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, min_value, max_value, C_LOCAL_CALL, signed_values => false);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, integer_vector(set_values1), C_LOCAL_CALL, signed_values => false);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, integer_vector(set_values2), C_LOCAL_CALL, signed_values => false);
+      if not v_check_ok then
+        return v_ret;
+      end if;
       v_ret_int := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
       v_ret     := to_unsigned(v_ret_int,length);
 
@@ -3963,7 +3994,9 @@ package body rand_pkg is
       variable v_ret : integer;
     begin
       -- Generate a random value in the range [min_value:max_value]
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
+      if not check_parameters_within_range(length, min_value, max_value, C_LOCAL_CALL, signed_values => true) then
+        return to_signed(v_ret,length);
+      end if;
       v_ret := rand(min_value, max_value, cyclic_mode, msg_id_panel, C_LOCAL_CALL);
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
@@ -3984,7 +4017,9 @@ package body rand_pkg is
       variable v_ret_int         : integer;
       variable v_ret             : signed(length-1 downto 0);
     begin
-      check_parameters_within_range(length, set_values, msg_id_panel, signed_values => true);
+      if not check_parameters_within_range(length, set_values, C_LOCAL_CALL, signed_values => true) then
+        return v_ret;
+      end if;
       -- Generate a random value within the set of values
       if set_type = ONLY then
         v_ret_int := rand(ONLY, integer_vector(set_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
@@ -4043,11 +4078,15 @@ package body rand_pkg is
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type)) & ":" & to_string(set_values) & to_string_if_enabled(cyclic_mode) & ")";
-      variable v_ret : integer;
+      variable v_ret      : integer;
+      variable v_check_ok : boolean := true;
     begin
       -- Generate a random value in the range [min_value:max_value], plus or minus the set of values
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
-      check_parameters_within_range(length, set_values, msg_id_panel, signed_values => true);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, min_value, max_value, C_LOCAL_CALL, signed_values => true);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, set_values, C_LOCAL_CALL, signed_values => true);
+      if not v_check_ok then
+        return to_signed(v_ret,length);
+      end if;
       v_ret := rand(min_value, max_value, set_type, integer_vector(set_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
@@ -4101,12 +4140,16 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(set_type1)) & ":" & to_string(set_values1) & ", " &
         to_upper(to_string(set_type2)) & ":" & to_string(set_values2) & to_string_if_enabled(cyclic_mode) & ")";
-      variable v_ret : integer;
+      variable v_ret      : integer;
+      variable v_check_ok : boolean := true;
     begin
       -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values
-      check_parameters_within_range(length, min_value, max_value, msg_id_panel, signed_values => true);
-      check_parameters_within_range(length, set_values1, msg_id_panel, signed_values => true);
-      check_parameters_within_range(length, set_values2, msg_id_panel, signed_values => true);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, min_value, max_value, C_LOCAL_CALL, signed_values => true);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, set_values1, C_LOCAL_CALL, signed_values => true);
+      v_check_ok := v_check_ok and check_parameters_within_range(length, set_values2, C_LOCAL_CALL, signed_values => true);
+      if not v_check_ok then
+        return to_signed(v_ret,length);
+      end if;
       v_ret := rand(min_value, max_value, set_type1, integer_vector(set_values1), set_type2, integer_vector(set_values2), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
@@ -6021,11 +6064,14 @@ package body rand_pkg is
       if priv_int_constraints.weighted_config then
         for i in 0 to priv_int_constraints.weighted'length-1 loop
           if priv_int_constraints.weighted(i).min_value = priv_int_constraints.weighted(i).max_value then
-            check_parameters_within_range(length, (0 => priv_int_constraints.weighted(i).min_value), msg_id_panel, signed_values => false);
+            v_check_ok := v_check_ok and check_parameters_within_range(length, (0 => priv_int_constraints.weighted(i).min_value), C_LOCAL_CALL_2, signed_values => false);
           else
-            check_parameters_within_range(length, priv_int_constraints.weighted(i).min_value, priv_int_constraints.weighted(i).max_value, msg_id_panel, signed_values => false);
+            v_check_ok := v_check_ok and check_parameters_within_range(length, priv_int_constraints.weighted(i).min_value, priv_int_constraints.weighted(i).max_value, C_LOCAL_CALL_2, signed_values => false);
           end if;
         end loop;
+        if not v_check_ok then
+          return v_ret;
+        end if;
         check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
           priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
         check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
@@ -6045,7 +6091,7 @@ package body rand_pkg is
         for i in 0 to priv_uns_constraints.ran_incl'length-1 loop
           v_check_ok := v_check_ok and check_parameters_within_range(length, priv_uns_constraints.ran_incl(i).min_value, priv_uns_constraints.ran_incl(i).max_value, C_LOCAL_CALL_3);
         end loop;
-        if not(v_check_ok) then
+        if not v_check_ok then
           return v_ret;
         end if;
         if priv_cyclic_mode = CYCLIC then
@@ -6061,15 +6107,14 @@ package body rand_pkg is
       -- INTEGER CONSTRAINTS
       ----------------------------------------
       else
-        -- TODO: what should happen when negative constraints are added and randm() unsigned is called?
-        --       1. print alert
-        --       2. print alert and ignore negative values
-        --       3. ignore negative values
         for i in 0 to priv_int_constraints.ran_incl'length-1 loop
-          check_parameters_within_range(length, priv_int_constraints.ran_incl(i).min_value, priv_int_constraints.ran_incl(i).max_value, msg_id_panel, signed_values => false);
+          v_check_ok := v_check_ok and check_parameters_within_range(length, priv_int_constraints.ran_incl(i).min_value, priv_int_constraints.ran_incl(i).max_value, C_LOCAL_CALL_1, signed_values => false);
         end loop;
-        check_parameters_within_range(length, priv_int_constraints.val_incl.all, msg_id_panel, signed_values => false);
-        check_parameters_within_range(length, priv_int_constraints.val_excl.all, msg_id_panel, signed_values => false);
+        v_check_ok := v_check_ok and check_parameters_within_range(length, priv_int_constraints.val_incl.all, C_LOCAL_CALL_1, signed_values => false);
+        v_check_ok := v_check_ok and check_parameters_within_range(length, priv_int_constraints.val_excl.all, C_LOCAL_CALL_1, signed_values => false);
+        if not v_check_ok then
+          return v_ret;
+        end if;
         if priv_uniqueness = UNIQUE then
           alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Uniqueness not supported for unsigned type. Ignoring uniqueness configuration.", priv_scope);
         end if;

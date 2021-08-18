@@ -838,11 +838,15 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
       v_uns := v_rand.rand(v_uns'length, 5, 0);
-      increment_expected_alerts(TB_WARNING, 3);
       v_uns := v_rand.rand(v_uns'length, 0, 2**16);
       v_uns := v_rand.rand(v_uns'length, ONLY,(2**17, 2**18));
+      v_uns := v_rand.rand(v_uns'length, 0, 2**16, ADD,(0, 2));
+      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(2**17, 2**18));
+      v_uns := v_rand.rand(v_uns'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));
+      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1));
+      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18));
 
       ------------------------------------------------------------
       -- Unsigned long
@@ -1053,11 +1057,15 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing signed (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
       v_sig := v_rand.rand(v_sig'length, 5, 0);
-      increment_expected_alerts(TB_WARNING, 3);
       v_sig := v_rand.rand(v_sig'length, 0, 2**16);
       v_sig := v_rand.rand(v_sig'length, ONLY,(2**17, 2**18));
+      v_sig := v_rand.rand(v_sig'length, 0, 2**16, ADD,(0, 2));
+      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(2**17, 2**18));
+      v_sig := v_rand.rand(v_sig'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));
+      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1));
+      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18));
 
       ------------------------------------------------------------
       -- Signed long
@@ -1268,11 +1276,15 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing std_logic_vector (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
       v_slv := v_rand.rand(v_slv'length, 5, 0);
-      increment_expected_alerts(TB_WARNING, 3);
       v_slv := v_rand.rand(v_slv'length, 0, 2**16);
       v_slv := v_rand.rand(v_slv'length, ONLY,(2**17, 2**18));
+      v_slv := v_rand.rand(v_slv'length, 0, 2**16, ADD,(0, 2));
+      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(2**17, 2**18));
+      v_slv := v_rand.rand(v_slv'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));
+      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1));
+      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18));
 
       ------------------------------------------------------------
       -- Std_logic_vector long

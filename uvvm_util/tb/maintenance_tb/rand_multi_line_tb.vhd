@@ -2207,7 +2207,7 @@ begin
       v_rand.clear_constraints(VOID);
 
       v_rand.add_range(-2,2);
-      v_rand.set_cyclic_mode(CYCLIC); -- TB_ERROR
+      v_rand.set_cyclic_mode(CYCLIC);  -- TB_ERROR
       v_int := v_rand.randm(VOID);     -- OK
 
       v_rand.set_rand_dist(UNIFORM);
@@ -2251,7 +2251,7 @@ begin
       v_rand.clear_constraints(VOID);
 
       v_rand.add_range(-2,2);
-      v_rand.set_uniqueness(UNIQUE);              -- TB_ERROR
+      v_rand.set_uniqueness(UNIQUE);               -- TB_ERROR
       v_int_vec := v_rand.randm(v_int_vec'length); -- OK
 
       v_rand.set_rand_dist(UNIFORM);
@@ -2268,7 +2268,7 @@ begin
       ------------------------------------------------------------
       -- Real
       ------------------------------------------------------------
-      increment_expected_alerts(TB_WARNING, 10);
+      increment_expected_alerts(TB_WARNING, 9);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
 
       v_rand.add_range_real(0.0,10.0);
@@ -2306,14 +2306,6 @@ begin
       v_real := v_rand.randm(VOID);     -- TB_WARNING
       v_rand.add_range_real(20.0,30.0);
       v_real := v_rand.randm(VOID);     -- TB_WARNING
-      v_rand.clear_constraints(VOID);
-
-      v_rand.add_range_real(-2.0,2.0);
-      v_rand.set_rand_dist(UNIFORM);
-      v_rand.set_cyclic_mode(CYCLIC);
-      v_rand.set_rand_dist(GAUSSIAN);
-      v_real := v_rand.randm(VOID);     -- TB_WARNING
-      v_rand.set_cyclic_mode(NON_CYCLIC);
       v_rand.clear_constraints(VOID);
 
       v_rand.add_range_real(1000.0, 2000.0);
@@ -2386,6 +2378,22 @@ begin
       v_rand.add_range(10, 15);
       v_uns := v_rand.randm(v_uns'length); -- TB_ERROR
       v_rand.clear_constraints(VOID);
+
+      increment_expected_alerts(TB_WARNING, 3); -- TODO: finish when implemented
+      v_rand.add_val_weight(1,20);
+      v_int := v_rand.randm(VOID);         -- TB_WARNING
+      v_uns := v_rand.randm(v_uns'length); -- TB_WARNING
+      --v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      --v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight_real(1.0,20);
+      v_real := v_rand.randm(VOID);        -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      --v_rand.add_val_weight_time(1 ps,20);
+      --v_time := v_rand.randm(VOID);        -- TB_WARNING
+      --v_rand.clear_constraints(VOID);
 
     end if;
 

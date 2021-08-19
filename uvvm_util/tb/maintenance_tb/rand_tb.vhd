@@ -2896,8 +2896,9 @@ begin
       v_real_vec(0 to 0) := v_rand.rand(1, 1000.0, 2000.0);
 
       -- Gaussian distribution does not support time
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_time := v_rand.rand(-2 ps, 2 ps);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      v_time     := v_rand.rand(-2 ps, 2 ps);
+      v_time_vec := v_rand.rand(v_time_vec'length, -2 ps, 2 ps);
 
       increment_expected_alerts(TB_WARNING, 9);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
@@ -2943,6 +2944,14 @@ begin
       v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(7), EXCL,(1));
       v_slv := v_rand.rand(v_slv'length, 0, 3, CYCLIC);
       v_slv := v_rand.rand(v_slv'length, 10, 15);
+
+      increment_expected_alerts(TB_WARNING, 6);
+      v_int  := v_rand.rand_val_weight(((0,30),(1,20),(2,50)));
+      v_real := v_rand.rand_val_weight(((0.0,30),(1.0,20),(2.0,50)));
+      v_time := v_rand.rand_val_weight(((0 ps,30),(1 ps,20),(2 ps,50)));
+      v_uns  := v_rand.rand_val_weight(v_uns'length, ((0,30),(1,20),(2,50)));
+      v_sig  := v_rand.rand_val_weight(v_sig'length, ((0,30),(1,20),(2,50)));
+      v_slv  := v_rand.rand_val_weight(v_slv'length, ((0,30),(1,20),(2,50)));
 
     end if;
 

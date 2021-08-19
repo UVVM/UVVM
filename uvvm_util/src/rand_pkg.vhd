@@ -3383,6 +3383,11 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
     begin
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
+        return v_ret;
+      end if;
+
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
         for i in 0 to size-1 loop
@@ -3424,6 +3429,11 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
     begin
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
+        return v_ret;
+      end if;
+
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
         for i in 0 to size-1 loop
@@ -3483,6 +3493,11 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
     begin
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
+        return v_ret;
+      end if;
+
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to size-1 loop
@@ -3565,6 +3580,11 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
     begin
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
+        return v_ret;
+      end if;
+
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to size-1 loop
@@ -3625,7 +3645,7 @@ package body rand_pkg is
           priv_rand_dist := UNIFORM;
         end if;
         if cyclic_mode = CYCLIC then
-          alert(TB_WARNING, v_proc_call.all & "=> Vector is too big for cyclic mode", priv_scope);
+          alert(TB_WARNING, v_proc_call.all & "=> Vector is too big for cyclic mode. Ignoring cyclic configuration.", priv_scope);
         end if;
 
         -- Generate a random value for each bit of the vector

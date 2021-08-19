@@ -222,9 +222,11 @@ has also been modified by ``set_coverage_goal()``, they will be multiplied for t
 +==========+====================+========+==============================+=========================================================+
 | constant | percentage         | in     | positive                     | Goal percentage of each coverpoint to cover             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope             |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::

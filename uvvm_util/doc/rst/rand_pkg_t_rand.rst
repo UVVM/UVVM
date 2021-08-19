@@ -10,7 +10,7 @@ The expression 'random generator' refers to the specific variable instance of *t
 set_name()
 ----------------------------------------------------------------------------------------------------------------------------------
 Configures the name of the :ref:`random generator <random_generator>`. The maximum length is C_RAND_MAX_NAME_LENGTH defined in 
-adaptations_pkg. ::
+adaptations_pkg. Default value is \**unnamed\**. ::
 
     set_name(name)
 
@@ -100,7 +100,8 @@ distributions click :ref:`here <rand_pkg_distributions>`. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | rand_dist          | in     | :ref:`t_rand_dist`           | Randomization distribution, e.g. UNIFORM, GAUSSIAN    |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -140,7 +141,8 @@ distribution curve). ::
 +==========+====================+========+==============================+=======================================================+
 | constant | mean               | in     | real                         | Mean value for the distribution                       |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -205,7 +207,8 @@ distribution curve). ::
 | constant | std_deviation      | in     | real                         | Standard deviation value for the distribution.        |
 |          |                    |        |                              | Must be a positive value                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -268,7 +271,8 @@ overview on weighted randomization click :ref:`here <rand_pkg_weighted>`. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | mode               | in     | :ref:`t_weight_mode`         | How to divide the weight among a range of values      |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -420,9 +424,11 @@ Returns a random integer value. For more information on the probability distribu
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | integer_vector               | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled                    |
+| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
+|          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -464,7 +470,8 @@ Returns a random real value. For more information on the probability distributio
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | real_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -506,7 +513,8 @@ Returns a random time value. For more information on the probability distributio
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | time_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -550,11 +558,14 @@ Returns a vector of random integer values. For more information on the probabili
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | integer_vector               | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not      |
+| constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not.     |
+|          |                    |        |                              | Default value is NON_UNIQUE.                                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled                    |
+| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
+|          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -598,9 +609,11 @@ Returns a vector of random real values. For more information on the probability 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | real_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not      |
+| constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not.     |
+|          |                    |        |                              | Default value is NON_UNIQUE.                                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -644,9 +657,11 @@ Returns a vector of random time values. For more information on the probability 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | time_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not      |
+| constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not.     |
+|          |                    |        |                              | Default value is NON_UNIQUE.                                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -691,9 +706,11 @@ Returns a random unsigned value. For more information on the probability distrib
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | t_natural_vector             | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled                    |
+| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
+|          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -729,7 +746,8 @@ distribution click :ref:`here <rand_pkg_distributions>`. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | unsigned                     | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -769,9 +787,11 @@ Returns a random signed value. For more information on the probability distribut
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | integer_vector               | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled                    |
+| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
+|          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -807,7 +827,8 @@ distribution click :ref:`here <rand_pkg_distributions>`. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | signed                       | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -848,9 +869,11 @@ Returns a random std_logic_vector value (interpreted as unsigned). For more info
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | set_values         | in     | t_natural_vector             | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled                    |
+| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
+|          |                    |        |                              | NON_CYCLIC.                                                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -886,7 +909,8 @@ value. For more information on the probability distribution click :ref:`here <ra
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | std_logic_vector             | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -969,7 +993,8 @@ randomization. The sum of all weights could be any value since each individual p
 |          |                    |        |                              |                                                               |
 |          |                    |        | :ref:`t_val_weight_time_vec` |                                                               |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1011,7 +1036,8 @@ This mode can be changed to assigning the given weight equally to each value wit
 |          |                    |        |                               |                                                               |
 |          |                    |        | :ref:`t_range_weight_time_vec`|                                                               |
 +----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel                | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel                | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                               | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -1062,7 +1088,8 @@ values within a real/time range. ::
 |          |                    |        |                                    |                                                                |
 |          |                    |        | :ref:`t_range_weight_mode_time_vec`|                                                                |
 +----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel                     | Controls verbosity within a specified scope                    |
+| constant | msg_id_panel       | in     | t_msg_id_panel                     | Controls verbosity within a specified scope. Default value is  |
+|          |                    |        |                                    | shared_msg_id_panel.                                           |
 +----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
 
 .. code-block::

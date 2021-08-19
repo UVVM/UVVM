@@ -5,7 +5,8 @@ Protected type containing the Functional Coverage functionality.
 
 set_name()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the name of the coverpoint. The maximum length is C_FC_MAX_NAME_LENGTH defined in adaptations_pkg. ::
+Configures the name of the coverpoint. The maximum length is C_FC_MAX_NAME_LENGTH defined in adaptations_pkg. Default value is 
+"Covpt_<idx>". ::
 
     set_name(name)
 
@@ -87,7 +88,8 @@ Configures the weight of the coverpoint used when calculating the overall covera
 +==========+====================+========+==============================+=======================================================+
 | constant | weight             | in     | positive                     | Weight of the coverpoint                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -125,7 +127,8 @@ Configures the coverpoint's coverage goal. Default value is 100. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | percentage         | in     | positive                     | Goal percentage of the coverpoint to cover            |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -163,7 +166,8 @@ Configures the alert level when an illegal bin is sampled. Default value is ERRO
 +==========+====================+========+==============================+=======================================================+
 | constant | alert_level        | in     | t_alert_level                | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -201,7 +205,8 @@ Configures the alert level when overlapping bins are sampled (not including igno
 +==========+====================+========+==============================+=======================================================+
 | constant | alert_level        | in     | t_alert_level                | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -239,7 +244,8 @@ Writes the coverpoint model to a file. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | file_name          | in     | string                       | Name of the file where to store the coverpoint model  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -259,7 +265,8 @@ Loads the coverpoint model from a file. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | file_name          | in     | string                       | Name of the file where the coverpoint model is stored |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -293,7 +300,7 @@ Resets the coverpoint's coverage by clearing all the bin hit counters. ::
 set_num_allocated_bins()
 ----------------------------------------------------------------------------------------------------------------------------------
 Defines the size of the memory allocated for the list of bins in the coverpoint. It cannot be smaller than the actual number of 
-bins. ::
+bins. Default value is C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED defined in adaptations_pkg. ::
 
     set_num_allocated_bins(value, [msg_id_panel])
 
@@ -302,7 +309,8 @@ bins. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | value              | in     | positive                     | New size of the bin list                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -313,7 +321,8 @@ bins. ::
 
 set_num_allocated_bins_increment()
 ----------------------------------------------------------------------------------------------------------------------------------
-Defines how much the list of bins will be increased in size when it is full and a new bin is added. ::
+Defines how much the list of bins will be increased in size when it is full and a new bin is added. Default value is 
+C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT defined in adaptations_pkg. ::
 
     set_num_allocated_bins_increment(value)
 
@@ -369,9 +378,11 @@ Bin functions may be concatenated to add several bins at once. Default values fo
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH   |
+| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.  |
+|          |                    |        |                              | Default value is "bin_<idx>".                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -401,9 +412,11 @@ rand_weight are both 1. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH   |
+| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.  |
+|          |                    |        |                              | Default value is "bin_<idx>".                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -447,9 +460,11 @@ Default values for min_hits and rand_weight are both 1. ::
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH   |
+| constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.  |
+|          |                    |        |                              | Default value is "bin_<idx>".                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -538,7 +553,8 @@ once the bin has reached its minimum number of hits, which is by default 1, it w
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | values             | in     | integer_vector               | Values to be sampled                                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -602,7 +618,8 @@ by shared_default_log_destination in adaptations_pkg. To see an example of the g
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | constant | verbosity          | in     | :ref:`t_report_verbosity`       | Controls which bins are shown in the report           |
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
-| constant | rand_weight_col    | in     | :ref:`t_rand_weight_visibility` | Shows or hides the rand_weight column of the report   |
+| constant | rand_weight_col    | in     | :ref:`t_rand_weight_visibility` | Shows or hides the rand_weight column of the report.  |
+|          |                    |        |                                 | Default value is HIDE_RAND_WEIGHT.                    |
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 
 .. code-block::

@@ -2,232 +2,8 @@
 UVVM Utility Library
 #######################################################################################################################
 
-
 ***********************************************************************************************************************	     
-Quick Reference
-***********************************************************************************************************************	     
-
-Checks and awaits
-=======================================================================================================================
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-|[v_bool :=] **check_value** (value, [exp], [alert_level], msg, […])                                                            |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|[v_bool :=] **check_value_in_range** (value, min_value, max_value, [alert_level], msg, […])                                    |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**check_stable** (target, stable_req, [alert_level], msg, […])                                                                 |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**await_change** (target, min_time, max_time, [alert_level], msg, […])                                                         |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**await_value** (target, exp, min_time, max_time, [alert_level], msg, […])                                                     |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**await_stable** (target, stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, […])                         |   
-+-------------------------------------------------------------------------------------------------------------------------------+
-
-
-Logging and verbosity control
-=======================================================================================================================
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**set_log_file_name** (file_name)                                                                                              |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**log** ([msg_id], msg, […])                                                                                                   |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**log_text_block** (msg_id, text_block, formatting, […])                                                                       |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**enable_log_msg** (msg_id, […])                                                                                               |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**disable_log_msg** (msg_id, […])                                                                                              |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**is_log_msg_enabled** (msg_id, [msg_id_panel])                                                                                |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**set_log_destination** (log_destination, [quietness])                                                                         |
-+-------------------------------------------------------------------------------------------------------------------------------+
-
-
-Alert handling
-=======================================================================================================================
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**set_alert_file_name** (file_name)                                                                                            |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**alert** (alert_level, msg, scope)                                                                                            |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**[tb_]note** (msg, [scope])                                                                                                   |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**[tb_]warning** (msg, [scope])                                                                                                |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**manual_check** (msg, [scope])                                                                                                |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**[tb_]error** (msg, [scope])                                                                                                  |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**[tb_]failure** (msg, [scope])                                                                                                |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**set_alert_stop_limit** (alert_level, limit)                                                                                  |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_int := **get_alert_stop_limit** (alert_level)                                                                                |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**set_alert_attention** (alert_level, attention, [msg])                                                                        |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_attention := **get_alert_attention** (alert_level)                                                                           |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**increment_expected_alerts** (alert_level, number)                                                                            |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**increment_expected_alerts_and_stop_limit** (alert_level, [number, [msg, [scope]]])                                           |
-+-------------------------------------------------------------------------------------------------------------------------------+
-
-
-Reporting
-=======================================================================================================================
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**report_global_ctrl** (VOID)                                                                                                  |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**report_msg_id_panel** (VOID)                                                                                                 |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**report_alert_counters** (VOID)                                                                                               |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**report_alert_counters** (order)                                                                                              |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_natural := **shared_uvvm_status.found_unexpected_simulation_warnings_or_worse**                                              |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_natural := **shared_uvvm_status.found_unexpected_simulation_errors_or_worse**                                                |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_natural := **shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse**                                          |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_natural := **shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse**                                            |
-+-------------------------------------------------------------------------------------------------------------------------------+
-
-
-Randomization
-=======================================================================================================================
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_slv  := **random** (length)                                                                                                  |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_sl    := **random** (VOID)                                                                                                   |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|{v_int, v_real, v_time}  := **random** (min_value, max_value)                                                                  |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**random** ([min_value, [max_val]], v_seed1, v_seed2, v_target)                                                                |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**randomize** (seed1, seed2)                                                                                                   |
-+-------------------------------------------------------------------------------------------------------------------------------+
-
-
-
-String handling
-=======================================================================================================================
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **to_string** (val, […])                                                                                     |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **justify** (val, justified, width, format_spaces, truncate)                                                 |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **fill_string** (val, width)                                                                                 |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **to_upper** (val)                                                                                           |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_character := **ascii_to_char** (ascii_pos, [ascii_allow])                                                                    |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_int            := **char_to_ascii** (character)                                                                              |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_natural     := **pos_of_leftmost** (character, string, [result_if_not_found])                                                |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_natural     := **pos_of_rightmost** (character, string, [result_if_not_found])                                               |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **remove_initial_chars** (string, number of chars(natural))                                                  |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **get_procedure_name_from_instance_name** (string)                                                           |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **get_process_name_from_instance_name** (string)                                                             |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **get_entity_name_from_instance_name** (string)                                                              |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **replace** (string, target_character, exchange_character)                                                   |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**replace** (inout line, target_character, exchange_character)                                                                 |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|v_string       := **pad_string** (val, char, width, [side])                                                                    |
-+-------------------------------------------------------------------------------------------------------------------------------+
-
-
-Signal generators
-=======================================================================================================================
-
-+---------------------------------------------------------------------------------------------------------------------------------------+
-|**clock_generator** (clock, [clock_count], clock_period, [clock_high_percentage] / [clock_high_time])                                  |
-+---------------------------------------------------------------------------------------------------------------------------------------+
-|**clock_generator** (clock, clock_ena, [clock_count], clock_period, clock_name, [clock_high...])                                       |
-+---------------------------------------------------------------------------------------------------------------------------------------+
-|**adjustable_clock_generator** (clock_signal, clock_ena, clock_period, clock_high_percentage)                                          |
-+---------------------------------------------------------------------------------------------------------------------------------------+
-|**adjustable_clock_generator** (clock_signal, clock_ena, clock_period, clock_name, clock_high_percentage)                              |
-+---------------------------------------------------------------------------------------------------------------------------------------+
-|**adjustable_clock_generator** (clock_signal, clock_ena, clock_count, clock_period, clock_name, clock_high_percentage)                 |
-+---------------------------------------------------------------------------------------------------------------------------------------+
-|**gen_pulse** (target, [pulse_value] pulse_duration, [blocking_mode], msg) or (target, [pulse_value], clock_signal, num_periods, msg)  |
-+---------------------------------------------------------------------------------------------------------------------------------------+
-
-
-
-Synchronisation
-=======================================================================================================================
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**block_flag** (flag_name, msg, [already_blocked_severity, [scope]])                                                           |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**unblock_flag** (flag_name, msg, trigger, [scope])                                                                            |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**await_unblock_flag** (flag_name, timeout, msg, [flag_returning, [timeout_severity, [scope]]]                                 |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**await_barrier** (barrier_signal, timeout, msg, [timeout_severity, [scope]]                                                   |
-+-------------------------------------------------------------------------------------------------------------------------------+
-
-
-
-BFM common package
-=======================================================================================================================
-
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|**normalize_and_check** (value, target, mode, value_name, target_name, msg)                                                                                                |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|**wait_until_given_time_after_rising_edge** (clk, wait_time)                                                                                                               |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|**wait_until_given_time_before_rising_edge** (clk, time_to_edge, clk_period)                                                                                               |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|**wait_num_rising_edge** (clk, num_rising_edge)                                                                                                                            |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|**wait_num_rising_edge_plus_margin** (clk, num_rising_edge, margin)                                                                                                        |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|**wait_on_bfm_sync_start** (clk, bfm_sync, setup_time, config_clock_period, time_of_falling_edge, time_of_rising_edge)                                                     |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|**wait_on_bfm_exit** (clk, bfm_sync, hold_time, time_of_falling_edge, time_of_rising_edge)                                                                                 |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|**check_clock_period_margin** (clock, bfm_sync, time_of_falling_edge, time_of_rising_edge, config_clock_period, config_clock_period_margin, config_clock_margin_severity)  |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
-
-Watchdog
-=======================================================================================================================
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**watchdog_timer** (watchdog_ctrl, timeout, [alert_level, [msg]])                                                              |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**extend_watchdog** (watchdog_ctrl, [time_extend])                                                                             |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**reinitialize_watchdog** (watchdog_ctrl, timeout)                                                                             |
-+-------------------------------------------------------------------------------------------------------------------------------+
-|**terminate_watchdog** (watchdog_ctrl)                                                                                         |
-+-------------------------------------------------------------------------------------------------------------------------------+
-
-
-
-
-
-
-***********************************************************************************************************************	     
-Methods description
+Methods
 ***********************************************************************************************************************	     
 
 
@@ -247,11 +23,16 @@ Checks and awaits
 assign the most fitting alert_level for any given check or await.
 
 
-[v_bool :=] check_value() 
--------------------------
+check_value()
+-------------
 
 Checks if val equals exp, and alerts with severity alert_level if the values do not match.
 The result of the check is returned as a boolean if the method is called as a function.
+
+Returns
+^^^^^^^
+
+Boolean
 
 
 Parameters
@@ -329,11 +110,17 @@ Examples
     v_check := check_value(v_slv5_a, “11100”, MATCH_EXACT, “Checking the SLV”, “My Scope”, HEX, SKIP_LEADING_0, ID_SEQUENCER, shared_msg_id_panel);
 
 
-[v_bool :=] check_value_in_range()
-----------------------------------
+check_value_in_range()
+----------------------
 
 Checks if min_value ≤ val ≤ max_value, and alerts with severity alert_level if val is outside the range.
 The result of the check is returned as a boolean if the method is called as a function.    
+
+Returns
+^^^^^^^
+
+Boolean
+
 
 Parameters
 ^^^^^^^^^^
@@ -809,10 +596,16 @@ Examples
 
 
 
-[v_bool :=] is_log_msg_enabled ()
----------------------------------
+is_log_msg_enabled ()
+---------------------
 
 Returns Boolean ‘true’ if given message ID is enabled. Otherwise ‘false’
+
+Returns
+^^^^^^^
+
+Boolean
+
 
 Parameters
 ^^^^^^^^^^
@@ -1011,10 +804,16 @@ Examples
     increment_expected_alerts_and_stop_limit(WARNING, 2, “Expecting two more warnings”);
 
 
-v_int := get_alert_stop_limit()
--------------------------------
+get_alert_stop_limit()
+----------------------
 
 Returns current stop limit for given alert type.
+
+Returns
+^^^^^^^
+
+Integer
+
 
 Parameters
 ^^^^^^^^^^
@@ -1060,10 +859,16 @@ Examples
     set_alert_attention(NOTE, IGNORE, “Ignoring all note-alerts”);
 
 
-v_attention := get_alert_attention()
-------------------------------------
+get_alert_attention()
+---------------------
 
 Returns current attention (IGNORE or REGARD) for given alert type.
+
+
+Returns
+^^^^^^^
+
+t_attention
 
 
 Parameters
@@ -1208,10 +1013,16 @@ The variable is set when there is a mismatch between the expected and the actual
 Randomization
 =======================================================================================================================
 
-v_slv := random()
------------------
+random()
+--------
 
 Returns a random std_logic_vector of size length. The function uses and updates a global seed.
+
+
+Returns
+^^^^^^^
+
+std_logic_vector
 
 
 Parameters
@@ -1230,10 +1041,15 @@ Examples
     v_slv := random(v_slv’length);
 
 
-v_sl := random()
-----------------
+random()
+--------
 
 Returns a random std_logic. The function uses and updates a global seed
+
+Returns
+^^^^^^^
+
+std_logic_vector
 
 
 Parameters
@@ -1252,10 +1068,17 @@ Examples
     v_sl := random(VOID);
 
 
-{v_int,v_real,v_time} := random()
----------------------------------
+random()
+--------
 
 Returns a random integer, real or time between min_value and max_value. The function uses and updates a global seed
+
+Returns
+^^^^^^^
+
+- Integer
+- Real
+- Time
 
 
 Parameters
@@ -1331,11 +1154,16 @@ String handling
 =======================================================================================================================
 
 
-v_string := to_string()
------------------------
+to_string()
+-----------
 
 IEEE defined to_string functions.
 Return a string with the value of the argument ‘value’.
+
+Returns
+^^^^^^^
+
+String
 
 
 Parameters
@@ -1354,8 +1182,8 @@ Parameters
     value(real), format(string) -- C-style formatting
 
 
-v_string := to_string()
------------------------
+to_string()
+-----------
 
 Additions to the IEEE defined to_string functions.
 Return a string with the value of the argument ‘val’.
@@ -1366,6 +1194,12 @@ Return a string with the value of the argument ‘val’.
 - type t_format_zeros is (AS_IS, SKIP_LEADING_0)
 - type t_radix_prefix is (EXCL_RADIX, INCL_RADIX)
 - type t_format_zeros is (KEEP_LEADING_0, SKIP_LEADING_0)
+
+
+Returns
+^^^^^^^
+
+String
 
 
 Parameters
@@ -1408,10 +1242,16 @@ Examples
     v_string := to_string(v_slv8, HEX, AS_IS, INCL_RADIX);
 
 
-v_string := to_upper()
-----------------------
+to_upper()
+----------
 
 Returns a string containing an upper case version of the argument ‘val’
+
+Returns
+^^^^^^^
+
+String
+
 
 Parameters
 ^^^^^^^^^^
@@ -1428,11 +1268,17 @@ Examples
     v_string := to_upper(“lowercase string”);
 
 
-v_string := justify()
----------------------
+justify()
+---------
 
 IEEE implementation of justify. 
 Returns a string where ‘value’ is justified to the side given by ‘justified’ (right, left).
+
+Returns
+^^^^^^^
+
+String
+
 
 Parameters
 ^^^^^^^^^^
@@ -1453,13 +1299,18 @@ Defaults
 +-----------------------+-------------------------------+
 
 
-v_string := justify()
----------------------
+justify()
+---------
 
 Addition to the IEEE implementation of justify(). 
 Returns a string where ‘val’ is justified to the side given by ‘justified’ (right, left, center). In addition to right and left, center is also an option. 
 The string can be truncated with the ‘truncate’ parameter (ALLOW_TRUNCATE, DISALLOW_TRUNCATE) or leading spaces can be removed 
 with ‘format_spaces’ (KEEP_LEADING_SPACE, SKIP_LEADING_SPACE).
+
+Returns
+^^^^^^^
+
+String
 
 
 Parameters
@@ -1478,10 +1329,15 @@ Examples
     v_string := justify(“string”, RIGHT, C_STRING_LENGTH, ALLOW_TRUNCATE, KEEP_LEADING_SPACE);
 
 
-v_string := fill_string()
--------------------------
+fill_string()
+-------------
 
 Returns a string filled with the character ‘val’.
+
+Returns
+^^^^^^^
+
+String
 
 
 Parameters
@@ -1500,12 +1356,18 @@ Examples
     v_string := fill_string(‘X’, 10);
 
 
-v_character := ascii_to_char()
-------------------------------
+ascii_to_char()
+---------------
 
 Return the ASCII to character located at the argument ‘ascii_pos’
 
 - type t_ascii_allow is (ALLOW_ALL, ALLOW_PRINTABLE_ONLY)
+
+
+Returns
+^^^^^^^
+
+Character
 
 
 Parameters
@@ -1532,10 +1394,15 @@ Examples
     v_char := ascii_to_char(65); -- ASCII ‘A’
 
 
-v_int := char_to_ascii()
-------------------------
+char_to_ascii()
+---------------
 
 Return the ASCII value (integer) of the argument ‘char’
+
+Returns
+^^^^^^^
+
+Integer
 
 
 Parameters
@@ -1554,10 +1421,15 @@ Examples
     v_int := char_to_ascii(‘A’); -- Returns 65
 
 
-v_natural := pos_of_leftmost()
-------------------------------
+pos_of_leftmost()
+-----------------
 
 Returns position of left most ‘character’ in ‘string’, alternatively return-value if not found.
+
+Returns
+^^^^^^^
+
+Natural
 
 
 Parameters
@@ -1585,10 +1457,15 @@ Examples
     v_natural := pos_of_leftmost(‘x’, v_string);
 
 
-v_natural := pos_of_rightmost()
--------------------------------
+pos_of_rightmost()
+------------------
 
 Returns position of right most ‘character’ in ‘string’, alternatively return- value if not found.
+
+Returns
+^^^^^^^
+
+Natural
 
 
 Parameters
@@ -1615,10 +1492,14 @@ Examples
     v_natural := pos_of_rightmost(‘A’, v_string);
 
 
-v_string := remove_initial_chars()
-----------------------------------
+remove_initial_chars()
+----------------------
 
 Return string less the num (number of chars) first characters
+
+Returns
+^^^^^^^
+String
 
 
 Parameters
@@ -1637,12 +1518,18 @@ Examples
     v_string :=remove_initial_chars(“abcde”,1); -- Returns “bcde”
 
 
-v_string := get_[procedure|process|entity]_name from_instance_name()
---------------------------------------------------------------------
+get_[procedure|process|entity]_name from_instance_name()
+--------------------------------------------------------
 
 Returns procedure, process or entity name from the given instance name as string.
 The instance name must be <object>’instance_name, where object is a signal, variable or constant defined in the procedure,
 process and entity or process respectively. E.g. get_entity_name_from_instance_name(my_process_variable’instance-name)
+
+Returns
+^^^^^^^
+
+String
+
 
 Parameters
 ^^^^^^^^^^
@@ -1664,10 +1551,15 @@ Examples
     v_string := get_entity_name_from_instance_name(c_int’instance_name);
 
 
-v_string := replace()
----------------------
+replace()
+---------
 
 String function returns a string where the target character has been replaced by the exchange character.
+
+Returns
+^^^^^^^
+
+String
 
 
 Parameters
@@ -1709,11 +1601,16 @@ Examples
     replace(str, ‘a’, ‘b’);
 
 
-v_string := pad_string()
-------------------------
+pad_string()
+------------
 
 Returns a string of width ‘width’ with the string ‘val’ on the side of the string given in ‘side’ (LEFT, RIGHT).
 The remaining width is padded with ‘char’.
+
+Returns
+^^^^^^^
+
+String
 
 
 Parameters

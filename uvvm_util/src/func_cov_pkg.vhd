@@ -77,62 +77,62 @@ package func_cov_pkg is
   ------------------------------------------------------------
   -- Creates a bin with a single value
   impure function bin(
-    constant value      : integer)
+    constant value         : integer)
   return t_new_bin_array;
 
   -- Creates a bin with multiple values
   impure function bin(
-    constant set_values : integer_vector)
+    constant set_of_values : integer_vector)
   return t_new_bin_array;
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
   impure function bin_range(
-    constant min_value  : integer;
-    constant max_value  : integer;
-    constant num_bins   : natural := 0)
+    constant min_value     : integer;
+    constant max_value     : integer;
+    constant num_bins      : natural := 0)
   return t_new_bin_array;
 
   -- Divides a vector's range into a number bins. If num_bins is 0 then a bin is created for each value.
   impure function bin_vector(
-    constant vector     : std_logic_vector;
-    constant num_bins   : natural := 0)
+    constant vector        : std_logic_vector;
+    constant num_bins      : natural := 0)
   return t_new_bin_array;
 
   -- Creates a bin with a transition of values
   impure function bin_transition(
-    constant set_values : integer_vector)
+    constant set_of_values : integer_vector)
   return t_new_bin_array;
 
   -- Creates an ignore bin with a single value
   impure function ignore_bin(
-    constant value      : integer)
+    constant value         : integer)
   return t_new_bin_array;
 
   -- Creates an ignore bin with a range of values
   impure function ignore_bin_range(
-    constant min_value  : integer;
-    constant max_value  : integer)
+    constant min_value     : integer;
+    constant max_value     : integer)
   return t_new_bin_array;
 
   -- Creates an ignore bin with a transition of values
   impure function ignore_bin_transition(
-    constant set_values : integer_vector)
+    constant set_of_values : integer_vector)
   return t_new_bin_array;
 
   -- Creates an illegal bin with a single value
   impure function illegal_bin(
-    constant value      : integer)
+    constant value         : integer)
   return t_new_bin_array;
 
   -- Creates an illegal bin with a range of values
   impure function illegal_bin_range(
-    constant min_value  : integer;
-    constant max_value  : integer)
+    constant min_value     : integer;
+    constant max_value     : integer)
   return t_new_bin_array;
 
   -- Creates an illegal bin with a transition of values
   impure function illegal_bin_transition(
-    constant set_values : integer_vector)
+    constant set_of_values : integer_vector)
   return t_new_bin_array;
 
   ------------------------------------------------------------
@@ -509,20 +509,20 @@ package body func_cov_pkg is
 
   -- Creates a bin with multiple values
   impure function create_bin_multiple(
-    constant contains   : t_cov_bin_type;
-    constant set_values : integer_vector;
+    constant contains      : t_cov_bin_type;
+    constant set_of_values : integer_vector;
     constant proc_call  : string)
   return t_new_bin_array is
     variable v_ret : t_new_bin_array(0 to 0);
   begin
     v_ret(0).bin_vector(0).contains := contains;
-    if set_values'length <= C_FC_MAX_NUM_BIN_VALUES then
-      v_ret(0).bin_vector(0).values(0 to set_values'length-1) := set_values;
-      v_ret(0).bin_vector(0).num_values                       := set_values'length;
+    if set_of_values'length <= C_FC_MAX_NUM_BIN_VALUES then
+      v_ret(0).bin_vector(0).values(0 to set_of_values'length-1) := set_of_values;
+      v_ret(0).bin_vector(0).num_values                       := set_of_values'length;
     else
-      v_ret(0).bin_vector(0).values                           := set_values(0 to C_FC_MAX_NUM_BIN_VALUES-1);
+      v_ret(0).bin_vector(0).values                           := set_of_values(0 to C_FC_MAX_NUM_BIN_VALUES-1);
       v_ret(0).bin_vector(0).num_values                       := C_FC_MAX_NUM_BIN_VALUES;
-      alert(TB_WARNING, proc_call & "=> Number of values (" & to_string(set_values'length) &
+      alert(TB_WARNING, proc_call & "=> Number of values (" & to_string(set_of_values'length) &
         ") exceeds C_FC_MAX_NUM_BIN_VALUES.\n Increase C_FC_MAX_NUM_BIN_VALUES in adaptations package.", C_TB_SCOPE_DEFAULT);
     end if;
     v_ret(0).num_bins := 1;
@@ -611,7 +611,7 @@ package body func_cov_pkg is
   ------------------------------------------------------------
   -- Creates a bin with a single value
   impure function bin(
-    constant value      : integer)
+    constant value         : integer)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "bin(" & to_string(value) & ")";
   begin
@@ -620,18 +620,18 @@ package body func_cov_pkg is
 
   -- Creates a bin with multiple values
   impure function bin(
-    constant set_values : integer_vector)
+    constant set_of_values : integer_vector)
   return t_new_bin_array is
-    constant C_LOCAL_CALL : string := "bin(" & to_string(set_values) & ")";
+    constant C_LOCAL_CALL : string := "bin(" & to_string(set_of_values) & ")";
   begin
-    return create_bin_multiple(VAL, set_values, C_LOCAL_CALL);
+    return create_bin_multiple(VAL, set_of_values, C_LOCAL_CALL);
   end function;
 
   -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
   impure function bin_range(
-    constant min_value  : integer;
-    constant max_value  : integer;
-    constant num_bins   : natural := 0)
+    constant min_value     : integer;
+    constant max_value     : integer;
+    constant num_bins      : natural := 0)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "bin_range(" & to_string(min_value) & ", " & to_string(max_value) &
       return_string_if_true(", num_bins:" & to_string(num_bins), num_bins > 0) & ")";
@@ -641,8 +641,8 @@ package body func_cov_pkg is
 
   -- Divides a vector's range into a number bins. If num_bins is 0 then a bin is created for each value.
   impure function bin_vector(
-    constant vector     : std_logic_vector;
-    constant num_bins   : natural := 0)
+    constant vector        : std_logic_vector;
+    constant num_bins      : natural := 0)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "bin_vector(LEN:" & to_string(vector'length) & return_string_if_true(", num_bins:" &
       to_string(num_bins), num_bins > 0) & ")";
@@ -652,16 +652,16 @@ package body func_cov_pkg is
 
   -- Creates a bin with a transition of values
   impure function bin_transition(
-    constant set_values : integer_vector)
+    constant set_of_values : integer_vector)
   return t_new_bin_array is
-    constant C_LOCAL_CALL : string := "bin_transition(" & to_string(set_values) & ")";
+    constant C_LOCAL_CALL : string := "bin_transition(" & to_string(set_of_values) & ")";
   begin
-    return create_bin_multiple(TRN, set_values, C_LOCAL_CALL);
+    return create_bin_multiple(TRN, set_of_values, C_LOCAL_CALL);
   end function;
 
   -- Creates an ignore bin with a single value
   impure function ignore_bin(
-    constant value      : integer)
+    constant value         : integer)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "ignore_bin(" & to_string(value) & ")";
   begin
@@ -670,8 +670,8 @@ package body func_cov_pkg is
 
   -- Creates an ignore bin with a range of values
   impure function ignore_bin_range(
-    constant min_value  : integer;
-    constant max_value  : integer)
+    constant min_value     : integer;
+    constant max_value     : integer)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "ignore_bin_range(" & to_string(min_value) & "," & to_string(max_value) & ")";
   begin
@@ -680,16 +680,16 @@ package body func_cov_pkg is
 
   -- Creates an ignore bin with a transition of values
   impure function ignore_bin_transition(
-    constant set_values : integer_vector)
+    constant set_of_values : integer_vector)
   return t_new_bin_array is
-    constant C_LOCAL_CALL : string := "ignore_bin_transition(" & to_string(set_values) & ")";
+    constant C_LOCAL_CALL : string := "ignore_bin_transition(" & to_string(set_of_values) & ")";
   begin
-    return create_bin_multiple(TRN_IGNORE, set_values, C_LOCAL_CALL);
+    return create_bin_multiple(TRN_IGNORE, set_of_values, C_LOCAL_CALL);
   end function;
 
   -- Creates an illegal bin with a single value
   impure function illegal_bin(
-    constant value      : integer)
+    constant value         : integer)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "illegal_bin(" & to_string(value) & ")";
   begin
@@ -698,8 +698,8 @@ package body func_cov_pkg is
 
   -- Creates an illegal bin with a range of values
   impure function illegal_bin_range(
-    constant min_value  : integer;
-    constant max_value  : integer)
+    constant min_value     : integer;
+    constant max_value     : integer)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "illegal_bin_range(" & to_string(min_value) & "," & to_string(max_value) & ")";
   begin
@@ -708,11 +708,11 @@ package body func_cov_pkg is
 
   -- Creates an illegal bin with a transition of values
   impure function illegal_bin_transition(
-    constant set_values : integer_vector)
+    constant set_of_values : integer_vector)
   return t_new_bin_array is
-    constant C_LOCAL_CALL : string := "illegal_bin_transition(" & to_string(set_values) & ")";
+    constant C_LOCAL_CALL : string := "illegal_bin_transition(" & to_string(set_of_values) & ")";
   begin
-    return create_bin_multiple(TRN_ILLEGAL, set_values, C_LOCAL_CALL);
+    return create_bin_multiple(TRN_ILLEGAL, set_of_values, C_LOCAL_CALL);
   end function;
 
   ------------------------------------------------------------

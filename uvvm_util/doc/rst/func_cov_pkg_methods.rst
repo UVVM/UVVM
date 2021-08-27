@@ -12,14 +12,14 @@ of them needs to be sampled for the bin to collect coverage. The maximum number 
 defined in adaptations_pkg. ::
 
     t_new_bin_array := bin(value)
-    t_new_bin_array := bin(set_values)
+    t_new_bin_array := bin(set_of_values)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
 | constant | value              | in     | integer                      | Single value contained in the bin                     |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | set_values         | in     | integer_vector               | Set of values contained in the bin                    |
+| constant | set_of_values      | in     | integer_vector               | Set of values contained in the bin                    |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -82,12 +82,12 @@ bin_transition()
 Returns a t_new_bin_array containing a bin with a transition of values. The maximum number of transition values is 
 C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
-    t_new_bin_array := bin_transition(set_values)
+    t_new_bin_array := bin_transition(set_of_values)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | set_values         | in     | integer_vector               | Transition of values contained in the bin             |
+| constant | set_of_values      | in     | integer_vector               | Transition of values contained in the bin             |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -139,12 +139,12 @@ ignore_bin_transition()
 Returns a t_new_bin_array containing an ignore bin with a transition of values. The maximum number of transition values is 
 C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
-    t_new_bin_array := ignore_bin_transition(set_values)
+    t_new_bin_array := ignore_bin_transition(set_of_values)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | set_values         | in     | integer_vector               | Transition of values contained in the bin             |
+| constant | set_of_values      | in     | integer_vector               | Transition of values contained in the bin             |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -196,12 +196,12 @@ illegal_bin_transition()
 Returns a t_new_bin_array containing an illegal bin with a transition of values. The maximum number of transition values is 
 C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
 
-    t_new_bin_array := illegal_bin_transition(set_values)
+    t_new_bin_array := illegal_bin_transition(set_of_values)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | set_values         | in     | integer_vector               | Transition of values contained in the bin             |
+| constant | set_of_values      | in     | integer_vector               | Transition of values contained in the bin             |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::

@@ -404,12 +404,12 @@ return integer
 Returns a random integer value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     integer := rand(min_value, max_value, [cyclic_mode, [msg_id_panel]])
-    integer := rand(set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    integer := rand(set_type, set_of_values, [cyclic_mode, [msg_id_panel]])
     integer := rand(min_value, max_value, set_type, value, [cyclic_mode, [msg_id_panel]])
-    integer := rand(min_value, max_value, set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    integer := rand(min_value, max_value, set_type, set_of_values, [cyclic_mode, [msg_id_panel]])
     integer := rand(min_value, max_value, set_type1, value1, set_type2, value2, [cyclic_mode, [msg_id_panel]])
-    integer := rand(min_value, max_value, set_type1, value1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
-    integer := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
+    integer := rand(min_value, max_value, set_type1, value1, set_type2, set_of_values2, [cyclic_mode, [msg_id_panel]])
+    integer := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -422,7 +422,7 @@ Returns a random integer value. For more information on the probability distribu
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | integer                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | integer_vector               | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | integer_vector               | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
 |          |                    |        |                              | NON_CYCLIC.                                                   |
@@ -450,12 +450,12 @@ return real
 Returns a random real value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     real := rand(min_value, max_value, [msg_id_panel])
-    real := rand(set_type, set_values, [msg_id_panel])
+    real := rand(set_type, set_of_values, [msg_id_panel])
     real := rand(min_value, max_value, set_type, value, [msg_id_panel])
-    real := rand(min_value, max_value, set_type, set_values, [msg_id_panel])
+    real := rand(min_value, max_value, set_type, set_of_values, [msg_id_panel])
     real := rand(min_value, max_value, set_type1, value1, set_type2, value2, [msg_id_panel])
-    real := rand(min_value, max_value, set_type1, value1, set_type2, set_values2, [msg_id_panel])
-    real := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [msg_id_panel])
+    real := rand(min_value, max_value, set_type1, value1, set_type2, set_of_values2, [msg_id_panel])
+    real := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -468,7 +468,7 @@ Returns a random real value. For more information on the probability distributio
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | real                         | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | real_vector                  | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | real_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
@@ -493,12 +493,12 @@ return time
 Returns a random time value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     time := rand(min_value, max_value, [msg_id_panel])
-    time := rand(set_type, set_values, [msg_id_panel])
+    time := rand(set_type, set_of_values, [msg_id_panel])
     time := rand(min_value, max_value, set_type, value, [msg_id_panel])
-    time := rand(min_value, max_value, set_type, set_values, [msg_id_panel])
+    time := rand(min_value, max_value, set_type, set_of_values, [msg_id_panel])
     time := rand(min_value, max_value, set_type1, value1, set_type2, value2, [msg_id_panel])
-    time := rand(min_value, max_value, set_type1, value1, set_type2, set_values2, [msg_id_panel])
-    time := rand(min_value, max_value, set_type1, set_values1, set_type2, set_values2, [msg_id_panel])
+    time := rand(min_value, max_value, set_type1, value1, set_type2, set_of_values2, [msg_id_panel])
+    time := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -511,7 +511,7 @@ Returns a random time value. For more information on the probability distributio
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | time                         | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | time_vector                  | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | time_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
@@ -536,12 +536,12 @@ return integer_vector
 Returns a vector of random integer values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     integer_vector := rand(size, min_value, max_value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, set_type, set_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(size, set_type, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
     integer_vector := rand(size, min_value, max_value, set_type, value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, set_type, set_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(size, min_value, max_value, set_type, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
     integer_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, value2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, set_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(size, min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -556,7 +556,7 @@ Returns a vector of random integer values. For more information on the probabili
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | integer                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | integer_vector               | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | integer_vector               | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not.     |
 |          |                    |        |                              | Default value is NON_UNIQUE.                                  |
@@ -587,12 +587,12 @@ return real_vector
 Returns a vector of random real values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     real_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, set_type, set_values, [uniqueness, [msg_id_panel]])
+    real_vector := rand(size, set_type, set_of_values, [uniqueness, [msg_id_panel]])
     real_vector := rand(size, min_value, max_value, set_type, value, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, set_type, set_values, [uniqueness, [msg_id_panel]])
+    real_vector := rand(size, min_value, max_value, set_type, set_of_values, [uniqueness, [msg_id_panel]])
     real_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, value2, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, set_values2, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [uniqueness, [msg_id_panel]])
+    real_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, set_of_values2, [uniqueness, [msg_id_panel]])
+    real_vector := rand(size, min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -607,7 +607,7 @@ Returns a vector of random real values. For more information on the probability 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | real                         | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | real_vector                  | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | real_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not.     |
 |          |                    |        |                              | Default value is NON_UNIQUE.                                  |
@@ -635,12 +635,12 @@ return time_vector
 Returns a vector of random time values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     time_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, set_type, set_values, [uniqueness, [msg_id_panel]])
+    time_vector := rand(size, set_type, set_of_values, [uniqueness, [msg_id_panel]])
     time_vector := rand(size, min_value, max_value, set_type, value, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, set_type, set_values, [uniqueness, [msg_id_panel]])
+    time_vector := rand(size, min_value, max_value, set_type, set_of_values, [uniqueness, [msg_id_panel]])
     time_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, value2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, set_values2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(size, min_value, max_value, set_type1, value1, set_type2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(size, min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -655,7 +655,7 @@ Returns a vector of random time values. For more information on the probability 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | time                         | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | time_vector                  | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | time_vector                  | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in the vector should be unique or not.     |
 |          |                    |        |                              | Default value is NON_UNIQUE.                                  |
@@ -684,12 +684,12 @@ Returns a random unsigned value. For more information on the probability distrib
 
     unsigned := rand(length, [cyclic_mode, [msg_id_panel]])
     unsigned := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
-    unsigned := rand(length, set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    unsigned := rand(length, set_type, set_of_values, [cyclic_mode, [msg_id_panel]])
     unsigned := rand(length, min_value, max_value, set_type, value, [cyclic_mode, [msg_id_panel]])
-    unsigned := rand(length, min_value, max_value, set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    unsigned := rand(length, min_value, max_value, set_type, set_of_values, [cyclic_mode, [msg_id_panel]])
     unsigned := rand(length, min_value, max_value, set_type1, value1, set_type2, value2, [cyclic_mode, [msg_id_panel]])
-    unsigned := rand(length, min_value, max_value, set_type1, value1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
-    unsigned := rand(length, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
+    unsigned := rand(length, min_value, max_value, set_type1, value1, set_type2, set_of_values2, [cyclic_mode, [msg_id_panel]])
+    unsigned := rand(length, min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -704,7 +704,7 @@ Returns a random unsigned value. For more information on the probability distrib
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | natural                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | t_natural_vector             | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | t_natural_vector             | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
 |          |                    |        |                              | NON_CYCLIC.                                                   |
@@ -765,12 +765,12 @@ Returns a random signed value. For more information on the probability distribut
 
     signed := rand(length, [cyclic_mode, [msg_id_panel]])
     signed := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
-    signed := rand(length, set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    signed := rand(length, set_type, set_of_values, [cyclic_mode, [msg_id_panel]])
     signed := rand(length, min_value, max_value, set_type, value, [cyclic_mode, [msg_id_panel]])
-    signed := rand(length, min_value, max_value, set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    signed := rand(length, min_value, max_value, set_type, set_of_values, [cyclic_mode, [msg_id_panel]])
     signed := rand(length, min_value, max_value, set_type1, value1, set_type2, value2, [cyclic_mode, [msg_id_panel]])
-    signed := rand(length, min_value, max_value, set_type1, value1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
-    signed := rand(length, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
+    signed := rand(length, min_value, max_value, set_type1, value1, set_type2, set_of_values2, [cyclic_mode, [msg_id_panel]])
+    signed := rand(length, min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -785,7 +785,7 @@ Returns a random signed value. For more information on the probability distribut
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | integer                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | integer_vector               | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | integer_vector               | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
 |          |                    |        |                              | NON_CYCLIC.                                                   |
@@ -847,12 +847,12 @@ Returns a random std_logic_vector value (interpreted as unsigned). For more info
 
     std_logic_vector := rand(length, [cyclic_mode, [msg_id_panel]])
     std_logic_vector := rand(length, min_value, max_value, [cyclic_mode, [msg_id_panel]])
-    std_logic_vector := rand(length, set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    std_logic_vector := rand(length, set_type, set_of_values, [cyclic_mode, [msg_id_panel]])
     std_logic_vector := rand(length, min_value, max_value, set_type, value, [cyclic_mode, [msg_id_panel]])
-    std_logic_vector := rand(length, min_value, max_value, set_type, set_values, [cyclic_mode, [msg_id_panel]])
+    std_logic_vector := rand(length, min_value, max_value, set_type, set_of_values, [cyclic_mode, [msg_id_panel]])
     std_logic_vector := rand(length, min_value, max_value, set_type1, value1, set_type2, value2, [cyclic_mode, [msg_id_panel]])
-    std_logic_vector := rand(length, min_value, max_value, set_type1, value1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
-    std_logic_vector := rand(length, min_value, max_value, set_type1, set_values1, set_type2, set_values2, [cyclic_mode, [msg_id_panel]])
+    std_logic_vector := rand(length, min_value, max_value, set_type1, value1, set_type2, set_of_values2, [cyclic_mode, [msg_id_panel]])
+    std_logic_vector := rand(length, min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, [cyclic_mode, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -867,7 +867,7 @@ Returns a random std_logic_vector value (interpreted as unsigned). For more info
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | natural                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_values         | in     | t_natural_vector             | A set of values used for the generation of the random number  |
+| constant | set_of_values      | in     | t_natural_vector             | A set of values used for the generation of the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled. Default value is  |
 |          |                    |        |                              | NON_CYCLIC.                                                   |

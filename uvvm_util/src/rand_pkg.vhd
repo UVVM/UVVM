@@ -258,7 +258,7 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type      : t_value_specifier;
-      constant set_value     : integer;
+      constant value         : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer;
@@ -277,9 +277,9 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : integer;
+      constant value2        : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer;
@@ -288,7 +288,7 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
       constant set_values2   : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -328,7 +328,7 @@ package rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type      : t_value_specifier;
-      constant set_value     : real;
+      constant value         : real;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real;
 
@@ -345,7 +345,7 @@ package rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : real;
+      constant value1        : real;
       constant set_type2     : t_value_specifier;
       constant set_values2   : real_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -355,9 +355,9 @@ package rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : real;
+      constant value1        : real;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : real;
+      constant value2        : real;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real;
 
@@ -393,7 +393,7 @@ package rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type      : t_value_specifier;
-      constant set_value     : time;
+      constant value         : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time;
 
@@ -410,7 +410,7 @@ package rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : time;
+      constant value1        : time;
       constant set_type2     : t_value_specifier;
       constant set_values2   : time_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -420,9 +420,9 @@ package rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : time;
+      constant value1        : time;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : time;
+      constant value2        : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time;
 
@@ -463,7 +463,7 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type      : t_value_specifier;
-      constant set_value     : integer;
+      constant value         : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -485,7 +485,7 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
       constant set_values2   : integer_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -498,9 +498,9 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : integer;
+      constant value2        : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -543,7 +543,7 @@ package rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type      : t_value_specifier;
-      constant set_value     : real;
+      constant value         : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector;
@@ -563,7 +563,7 @@ package rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : real;
+      constant value1        : real;
       constant set_type2     : t_value_specifier;
       constant set_values2   : real_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -575,9 +575,9 @@ package rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : real;
+      constant value1        : real;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : real;
+      constant value2        : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector;
@@ -618,7 +618,7 @@ package rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type      : t_value_specifier;
-      constant set_value     : time;
+      constant value         : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector;
@@ -638,7 +638,7 @@ package rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : time;
+      constant value1        : time;
       constant set_type2     : t_value_specifier;
       constant set_values2   : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -650,9 +650,9 @@ package rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : time;
+      constant value1        : time;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : time;
+      constant value2        : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector;
@@ -715,7 +715,7 @@ package rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type      : t_value_specifier;
-      constant set_value     : natural;
+      constant value         : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned;
@@ -735,7 +735,7 @@ package rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : natural;
+      constant value1        : natural;
       constant set_type2     : t_value_specifier;
       constant set_values2   : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -747,9 +747,9 @@ package rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : natural;
+      constant value1        : natural;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : natural;
+      constant value2        : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned;
@@ -811,7 +811,7 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type      : t_value_specifier;
-      constant set_value     : integer;
+      constant value         : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed;
@@ -831,7 +831,7 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
       constant set_values2   : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -843,9 +843,9 @@ package rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : integer;
+      constant value2        : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed;
@@ -907,7 +907,7 @@ package rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type      : t_value_specifier;
-      constant set_value     : natural;
+      constant value         : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector;
@@ -927,7 +927,7 @@ package rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : natural;
+      constant value1        : natural;
       constant set_type2     : t_value_specifier;
       constant set_values2   : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -939,9 +939,9 @@ package rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : natural;
+      constant value1        : natural;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : natural;
+      constant value2        : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector;
@@ -2217,11 +2217,11 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type      : t_value_specifier;
-      constant set_value     : integer;
+      constant value         : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer is
-      variable v_set_values : integer_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : integer_vector(0 to 0) := (0 => value);
     begin
       return rand(min_value, max_value, set_type, v_set_values, cyclic_mode, msg_id_panel);
     end function;
@@ -2288,14 +2288,14 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : integer;
+      constant value2        : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer is
-      variable v_set_values1 : integer_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : integer_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : integer_vector(0 to 0) := (0 => value2);
     begin
       return rand(min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, cyclic_mode, msg_id_panel);
     end function;
@@ -2304,13 +2304,13 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
       constant set_values2   : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer is
-      variable v_set_values1 : integer_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
     begin
       return rand(min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, cyclic_mode, msg_id_panel);
     end function;
@@ -2467,10 +2467,10 @@ package body rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type      : t_value_specifier;
-      constant set_value     : real;
+      constant value         : real;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real is
-      variable v_set_values : real_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : real_vector(0 to 0) := (0 => value);
     begin
       return rand(min_value, max_value, set_type, v_set_values, msg_id_panel);
     end function;
@@ -2527,13 +2527,13 @@ package body rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : real;
+      constant value1        : real;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : real;
+      constant value2        : real;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real is
-      variable v_set_values1 : real_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : real_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : real_vector(0 to 0) := (0 => value2);
     begin
       return rand(min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, msg_id_panel);
     end function;
@@ -2542,12 +2542,12 @@ package body rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : real;
+      constant value1        : real;
       constant set_type2     : t_value_specifier;
       constant set_values2   : real_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real is
-      variable v_set_values1 : real_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
     begin
       return rand(min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, msg_id_panel);
     end function;
@@ -2691,10 +2691,10 @@ package body rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type      : t_value_specifier;
-      constant set_value     : time;
+      constant value         : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time is
-      variable v_set_values : time_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : time_vector(0 to 0) := (0 => value);
     begin
       return rand(min_value, max_value, set_type, v_set_values, msg_id_panel);
     end function;
@@ -2742,13 +2742,13 @@ package body rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : time;
+      constant value1        : time;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : time;
+      constant value2        : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time is
-      variable v_set_values1 : time_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : time_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
     begin
       return rand(min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, msg_id_panel);
     end function;
@@ -2757,12 +2757,12 @@ package body rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : time;
+      constant value1        : time;
       constant set_type2     : t_value_specifier;
       constant set_values2   : time_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time is
-      variable v_set_values1 : time_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
     begin
       return rand(min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, msg_id_panel);
     end function;
@@ -2956,12 +2956,12 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type      : t_value_specifier;
-      constant set_value     : integer;
+      constant value         : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      variable v_set_values : integer_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : integer_vector(0 to 0) := (0 => value);
     begin
       return rand(size, min_value, max_value, set_type, v_set_values, uniqueness, cyclic_mode, msg_id_panel);
     end function;
@@ -3031,15 +3031,15 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : integer;
+      constant value2        : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      variable v_set_values1 : integer_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : integer_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : integer_vector(0 to 0) := (0 => value2);
     begin
       return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, uniqueness, cyclic_mode, msg_id_panel);
     end function;
@@ -3049,14 +3049,14 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
       constant set_values2   : integer_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      variable v_set_values1 : integer_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
     begin
       return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, uniqueness, cyclic_mode, msg_id_panel);
     end function;
@@ -3228,11 +3228,11 @@ package body rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type      : t_value_specifier;
-      constant set_value     : real;
+      constant value         : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      variable v_set_values : real_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : real_vector(0 to 0) := (0 => value);
     begin
       return rand(size, min_value, max_value, set_type, v_set_values, uniqueness, msg_id_panel);
     end function;
@@ -3289,14 +3289,14 @@ package body rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : real;
+      constant value1        : real;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : real;
+      constant value2        : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      variable v_set_values1 : real_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : real_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : real_vector(0 to 0) := (0 => value2);
     begin
       return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, uniqueness, msg_id_panel);
     end function;
@@ -3306,13 +3306,13 @@ package body rand_pkg is
       constant min_value     : real;
       constant max_value     : real;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : real;
+      constant value1        : real;
       constant set_type2     : t_value_specifier;
       constant set_values2   : real_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      variable v_set_values1 : real_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
     begin
       return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, uniqueness, msg_id_panel);
     end function;
@@ -3468,11 +3468,11 @@ package body rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type      : t_value_specifier;
-      constant set_value     : time;
+      constant value         : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      variable v_set_values : time_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : time_vector(0 to 0) := (0 => value);
     begin
       return rand(size, min_value, max_value, set_type, v_set_values, uniqueness, msg_id_panel);
     end function;
@@ -3533,14 +3533,14 @@ package body rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : time;
+      constant value1        : time;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : time;
+      constant value2        : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      variable v_set_values1 : time_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : time_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
     begin
       return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, uniqueness, msg_id_panel);
     end function;
@@ -3550,13 +3550,13 @@ package body rand_pkg is
       constant min_value     : time;
       constant max_value     : time;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : time;
+      constant value1        : time;
       constant set_type2     : t_value_specifier;
       constant set_values2   : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      variable v_set_values1 : time_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
     begin
       return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, uniqueness, msg_id_panel);
     end function;
@@ -3805,11 +3805,11 @@ package body rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type      : t_value_specifier;
-      constant set_value     : natural;
+      constant value         : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      variable v_set_values : t_natural_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : t_natural_vector(0 to 0) := (0 => value);
     begin
       return rand(length, min_value, max_value, set_type, v_set_values, cyclic_mode, msg_id_panel);
     end function;
@@ -3847,14 +3847,14 @@ package body rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : natural;
+      constant value1        : natural;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : natural;
+      constant value2        : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      variable v_set_values1 : t_natural_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : t_natural_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : t_natural_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : t_natural_vector(0 to 0) := (0 => value2);
     begin
       return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, cyclic_mode, msg_id_panel);
     end function;
@@ -3864,13 +3864,13 @@ package body rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : natural;
+      constant value1        : natural;
       constant set_type2     : t_value_specifier;
       constant set_values2   : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      variable v_set_values1 : t_natural_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : t_natural_vector(0 to 0) := (0 => value1);
     begin
       return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, cyclic_mode, msg_id_panel);
     end function;
@@ -4078,11 +4078,11 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type      : t_value_specifier;
-      constant set_value     : integer;
+      constant value         : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      variable v_set_values : integer_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : integer_vector(0 to 0) := (0 => value);
     begin
       return rand(length, min_value, max_value, set_type, v_set_values, cyclic_mode, msg_id_panel);
     end function;
@@ -4118,14 +4118,14 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : integer;
+      constant value2        : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      variable v_set_values1 : integer_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : integer_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : integer_vector(0 to 0) := (0 => value2);
     begin
       return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, cyclic_mode, msg_id_panel);
     end function;
@@ -4135,13 +4135,13 @@ package body rand_pkg is
       constant min_value     : integer;
       constant max_value     : integer;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : integer;
+      constant value1        : integer;
       constant set_type2     : t_value_specifier;
       constant set_values2   : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      variable v_set_values1 : integer_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
     begin
       return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, cyclic_mode, msg_id_panel);
     end function;
@@ -4246,11 +4246,11 @@ package body rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type      : t_value_specifier;
-      constant set_value     : natural;
+      constant value         : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
-      variable v_set_values : t_natural_vector(0 to 0) := (0 => set_value);
+      variable v_set_values : t_natural_vector(0 to 0) := (0 => value);
     begin
       return rand(length, min_value, max_value, set_type, v_set_values, cyclic_mode, msg_id_panel);
     end function;
@@ -4275,14 +4275,14 @@ package body rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : natural;
+      constant value1        : natural;
       constant set_type2     : t_value_specifier;
-      constant set_value2    : natural;
+      constant value2        : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
-      variable v_set_values1 : t_natural_vector(0 to 0) := (0 => set_value1);
-      variable v_set_values2 : t_natural_vector(0 to 0) := (0 => set_value2);
+      variable v_set_values1 : t_natural_vector(0 to 0) := (0 => value1);
+      variable v_set_values2 : t_natural_vector(0 to 0) := (0 => value2);
     begin
       return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, cyclic_mode, msg_id_panel);
     end function;
@@ -4292,13 +4292,13 @@ package body rand_pkg is
       constant min_value     : natural;
       constant max_value     : natural;
       constant set_type1     : t_value_specifier;
-      constant set_value1    : natural;
+      constant value1        : natural;
       constant set_type2     : t_value_specifier;
       constant set_values2   : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
-      variable v_set_values1 : t_natural_vector(0 to 0) := (0 => set_value1);
+      variable v_set_values1 : t_natural_vector(0 to 0) := (0 => value1);
     begin
       return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, set_values2, cyclic_mode, msg_id_panel);
     end function;

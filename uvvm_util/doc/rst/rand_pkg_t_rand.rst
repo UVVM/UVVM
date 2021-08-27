@@ -418,7 +418,7 @@ Returns a random integer value. For more information on the probability distribu
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | integer                      | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | integer                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -464,7 +464,7 @@ Returns a random real value. For more information on the probability distributio
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | real                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | real                         | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -507,7 +507,7 @@ Returns a random time value. For more information on the probability distributio
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | time                         | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -552,7 +552,7 @@ Returns a vector of random integer values. For more information on the probabili
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | integer                      | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | integer                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -603,7 +603,7 @@ Returns a vector of random real values. For more information on the probability 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | real                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | real                         | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -651,7 +651,7 @@ Returns a vector of random time values. For more information on the probability 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | time                         | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -700,7 +700,7 @@ Returns a random unsigned value. For more information on the probability distrib
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | natural                      | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | natural                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -781,7 +781,7 @@ Returns a random signed value. For more information on the probability distribut
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | integer                      | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | integer                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -863,7 +863,7 @@ Returns a random std_logic_vector value (interpreted as unsigned). For more info
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | natural                      | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle the set of values                       |
+| constant | set_type           | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | value              | in     | natural                      | A single value used for the generation of the random number   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+

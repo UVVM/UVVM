@@ -10,9 +10,9 @@ t_rand_dist
 UNIFORM, GAUSSIAN
 
 
-.. _t_set_type:
+.. _t_value_specifier:
 
-t_set_type
+t_value_specifier
 ----------------------------------------------------------------------------------------------------------------------------------
 ONLY, ADD, EXCL
 

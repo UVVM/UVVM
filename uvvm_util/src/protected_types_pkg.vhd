@@ -84,7 +84,8 @@ package protected_types_pkg is
     procedure set_total_bin_hits(coverpoint_idx : in integer; hits : in natural);
     procedure set_total_bin_min_hits(coverpoint_idx : in integer; min_hits : in natural);
     procedure set_coverage_weight(coverpoint_idx : in integer; weight : in positive);
-    procedure set_coverage_goal(coverpoint_idx : in integer; percentage : in positive);
+    procedure set_bins_coverage_goal(coverpoint_idx : in integer; percentage : in positive range 1 to 100);
+    procedure set_hits_coverage_goal(coverpoint_idx : in integer; percentage : in positive);
     procedure set_covergroup_coverage_goal(percentage : in positive);
     procedure increment_valid_bin_count(coverpoint_idx : in integer);
     procedure increment_illegal_bin_count(coverpoint_idx : in integer);
@@ -100,7 +101,8 @@ package protected_types_pkg is
     impure function get_total_bin_hits(coverpoint_idx : in integer) return natural;
     impure function get_total_bin_min_hits(coverpoint_idx : in integer) return natural;
     impure function get_coverage_weight(coverpoint_idx : in integer) return positive;
-    impure function get_coverage_goal(coverpoint_idx : in integer) return positive;
+    impure function get_bins_coverage_goal(coverpoint_idx : in integer) return positive;
+    impure function get_hits_coverage_goal(coverpoint_idx : in integer) return positive;
     impure function get_covergroup_coverage_goal(VOID : in t_void) return positive;
     impure function get_combined_coverage_goal(coverpoint_idx : in integer) return positive;
     impure function get_bins_coverage(coverpoint_idx : in integer) return real;
@@ -244,7 +246,8 @@ package body protected_types_pkg is
       total_bin_hits     : natural;
       total_bin_min_hits : natural;
       coverage_weight    : positive;
-      coverage_goal      : positive;
+      bins_coverage_goal : positive;
+      hits_coverage_goal : positive;
     end record;
     constant C_COVERPOINT_STATUS_DEFAULT : t_coverpoint_status := (
       initialized        => false,
@@ -255,7 +258,8 @@ package body protected_types_pkg is
       total_bin_hits     => 0,
       total_bin_min_hits => 0,
       coverage_weight    => 1,
-      coverage_goal      => 100
+      bins_coverage_goal => 100,
+      hits_coverage_goal => 100
     );
     type t_coverpoint_status_array is array (natural range <>) of t_coverpoint_status;
 
@@ -345,11 +349,18 @@ package body protected_types_pkg is
       priv_coverpoint_status_list(coverpoint_idx).coverage_weight := weight;
     end procedure;
 
-    procedure set_coverage_goal(
+    procedure set_bins_coverage_goal(
       constant coverpoint_idx : in integer; 
+      constant percentage     : in positive range 1 to 100) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal := percentage;
+    end procedure;
+
+    procedure set_hits_coverage_goal(
+      constant coverpoint_idx : in integer;
       constant percentage     : in positive) is
     begin
-      priv_coverpoint_status_list(coverpoint_idx).coverage_goal := percentage;
+      priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal := percentage;
     end procedure;
 
     procedure set_covergroup_coverage_goal(
@@ -452,11 +463,18 @@ package body protected_types_pkg is
       return priv_coverpoint_status_list(coverpoint_idx).coverage_weight;
     end function;
 
-    impure function get_coverage_goal(
+    impure function get_bins_coverage_goal(
       constant coverpoint_idx : in integer)
     return positive is
     begin
-      return priv_coverpoint_status_list(coverpoint_idx).coverage_goal;
+      return priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal;
+    end function;
+
+    impure function get_hits_coverage_goal(
+      constant coverpoint_idx : in integer)
+    return positive is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal;
     end function;
 
     impure function get_covergroup_coverage_goal(
@@ -508,7 +526,7 @@ package body protected_types_pkg is
       for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
         if priv_coverpoint_status_list(i).initialized then
           v_tot_bin_hits     := v_tot_bin_hits + priv_coverpoint_status_list(i).total_bin_hits * priv_coverpoint_status_list(i).coverage_weight;
-          v_tot_bin_min_hits := v_tot_bin_min_hits + priv_coverpoint_status_list(i).total_bin_min_hits * priv_coverpoint_status_list(i).coverage_weight * priv_coverpoint_status_list(i).coverage_goal/100;
+          v_tot_bin_min_hits := v_tot_bin_min_hits + priv_coverpoint_status_list(i).total_bin_min_hits * priv_coverpoint_status_list(i).coverage_weight * priv_coverpoint_status_list(i).hits_coverage_goal/100;
         end if;
       end loop;
       v_coverage := real(v_tot_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;

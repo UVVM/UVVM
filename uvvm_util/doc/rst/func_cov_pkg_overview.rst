@@ -393,14 +393,38 @@ Also, if a sampled value is contained in both ignore and illegal bins, then the 
 Coverage goal
 **********************************************************************************************************************************
 Defines a percentage of the total coverage to complete. This can be used to scale the simulation time without changing the minimum 
-coverage for each bin. It must be set at the beginning of the testbench, before sampling any coverage. Default is 100.
+coverage for each bin. It must be set at the beginning of the testbench, before sampling any coverage. There are 2 types:
+
+Bins coverage goal
+==================================================================================================================================
+This value defines the percentage of the number of bins which need to be covered and therefore the range is between 1 and 100. 
+Default is 100.
+
+.. code-block::
+
+    -- Cover only 75% of the total number of bins
+    my_coverpoint.set_bins_coverage_goal(75);
+
+    -- Cover only 10% of the total number of bins
+    my_coverpoint.set_bins_coverage_goal(10);
+
+Hits coverage goal
+==================================================================================================================================
+This value defines the percentage of the min_hits which need to be covered for each bin in the coverpoint. Default is 100.
+
+.. code-block::
+
+    -- Cover only half the min_hits
+    my_coverpoint.set_hits_coverage_goal(50);
+
+    -- Cover twice the min_hits
+    my_coverpoint.set_hits_coverage_goal(200);
+
+TODO: rewrite rest of section
 
 It can be set for a single coverpoint/cross or all the coverpoints/crosses in the testbench.
 
 .. code-block::
-
-    -- Set the coverpoint coverage goal to 200%
-    my_coverpoint.set_coverage_goal(200);
 
     -- Set the overall coverage goal to 150%
     fc_set_overall_coverage_goal(150);

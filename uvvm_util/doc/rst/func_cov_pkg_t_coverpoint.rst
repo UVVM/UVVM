@@ -116,16 +116,17 @@ Returns the coverpoint's coverage weight. ::
     log(ID_SEQUENCER, "Weight: " & to_string(my_coverpoint.get_coverage_weight(VOID)));
 
 
-set_coverage_goal()
+set_bins_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the coverpoint's coverage goal. Default value is 100. ::
+Configures the coverpoint's bins coverage goal, which represents the percentage of the number of bins that need to be covered. 
+Default value is 100. ::
 
-    set_coverage_goal(percentage, [msg_id_panel])
+    set_bins_coverage_goal(percentage, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | percentage         | in     | positive                     | Goal percentage of the coverpoint to cover            |
+| constant | percentage         | in     | positive range 1 to 100      | Goal percentage of the coverpoint's bins to cover     |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -134,14 +135,14 @@ Configures the coverpoint's coverage goal. Default value is 100. ::
 .. code-block::
 
     -- Example:
-    my_coverpoint.set_coverage_goal(150);
+    my_coverpoint.set_bins_coverage_goal(75); -- Cover only 75% of the total number of bins
 
 
-get_coverage_goal()
+get_bins_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns the coverpoint's coverage goal. ::
+Returns the coverpoint's bins coverage goal. ::
 
-    positive := get_coverage_goal(VOID)
+    positive := get_bins_coverage_goal(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
@@ -152,7 +153,48 @@ Returns the coverpoint's coverage goal. ::
 .. code-block::
 
     -- Example:
-    log(ID_SEQUENCER, "Goal: " & to_string(my_coverpoint.get_coverage_goal(VOID)));
+    log(ID_SEQUENCER, "Bins Goal: " & to_string(my_coverpoint.get_bins_coverage_goal(VOID)));
+
+
+set_hits_coverage_goal()
+----------------------------------------------------------------------------------------------------------------------------------
+Configures the coverpoint's hits coverage goal, which represents the percentage of the min_hits that need to be covered for each 
+bin in the coverpoint. Default value is 100. ::
+
+    set_hits_coverage_goal(percentage, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | percentage         | in     | positive                     | Goal percentage of the coverpoint's min_hits to cover |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    my_coverpoint.set_hits_coverage_goal(50);  -- Cover only half the min_hits
+    my_coverpoint.set_hits_coverage_goal(200); -- Cover twice the min_hits
+
+
+get_hits_coverage_goal()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns the coverpoint's hits coverage goal. ::
+
+    positive := get_hits_coverage_goal(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    log(ID_SEQUENCER, "Hits Goal: " & to_string(my_coverpoint.get_hits_coverage_goal(VOID)));
 
 
 set_illegal_bin_alert_level()

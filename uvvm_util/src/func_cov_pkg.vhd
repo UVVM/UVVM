@@ -191,11 +191,19 @@ package func_cov_pkg is
       constant VOID : t_void)
     return positive;
 
-    procedure set_coverage_goal(
+    procedure set_bins_coverage_goal(
+      constant percentage   : in positive range 1 to 100;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    impure function get_bins_coverage_goal(
+      constant VOID : t_void)
+    return positive;
+
+    procedure set_hits_coverage_goal(
       constant percentage   : in positive;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-    impure function get_coverage_goal(
+    impure function get_hits_coverage_goal(
       constant VOID : t_void)
     return positive;
 
@@ -774,7 +782,7 @@ package body func_cov_pkg is
                       "Uncovered bins:  " & to_string(protected_covergroup_status.get_num_uncovered_bins(i)) & LF &
                       "Illegal bins:    " & to_string(protected_covergroup_status.get_num_illegal_bins(i)) & LF &
                       "Coverage:        bins: " & to_string(protected_covergroup_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(i),2)
-                        & "% (goal: " & to_string(protected_covergroup_status.get_coverage_goal(i)) & "%)" & LF &
+                        & "% (goal: " & to_string(protected_covergroup_status.get_bins_coverage_goal(i)) & "%)" & LF &
                       "Coverage weight: " & to_string(protected_covergroup_status.get_coverage_weight(i)) & LF &
                       fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
       end if;
@@ -1030,12 +1038,12 @@ package body func_cov_pkg is
       return v_is_illegal;
     end function;
 
-    -- Returns the minimum number of hits multiplied by the coverage goal
+    -- Returns the minimum number of hits multiplied by the hits coverage goal
     impure function get_total_min_hits(
       constant min_hits : natural)
     return natural is
     begin
-      return integer(real(min_hits)*real(protected_covergroup_status.get_combined_coverage_goal(priv_id))/100.0);
+      return integer(real(min_hits)*real(protected_covergroup_status.get_hits_coverage_goal(priv_id))/100.0);
     end function;
 
     -- Returns the percentage of hits/min_hits in a bin. Note that it saturates at 100%
@@ -1404,22 +1412,43 @@ package body func_cov_pkg is
       end if;
     end function;
 
-    procedure set_coverage_goal(
-      constant percentage   : in positive;
+    procedure set_bins_coverage_goal(
+      constant percentage   : in positive range 1 to 100;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "set_coverage_goal(" & to_string(percentage) & ")";
+      constant C_LOCAL_CALL : string := "set_bins_coverage_goal(" & to_string(percentage) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
-      protected_covergroup_status.set_coverage_goal(priv_id, percentage);
+      protected_covergroup_status.set_bins_coverage_goal(priv_id, percentage);
     end procedure;
 
-    impure function get_coverage_goal(
+    impure function get_bins_coverage_goal(
       constant VOID : t_void)
     return positive is
     begin
       if priv_id /= C_DEALLOCATED_ID then
-        return protected_covergroup_status.get_coverage_goal(priv_id);
+        return protected_covergroup_status.get_bins_coverage_goal(priv_id);
+      else
+        return 100;
+      end if;
+    end function;
+
+    procedure set_hits_coverage_goal(
+      constant percentage   : in positive;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "set_hits_coverage_goal(" & to_string(percentage) & ")";
+    begin
+      initialize_coverpoint(C_LOCAL_CALL);
+      log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      protected_covergroup_status.set_hits_coverage_goal(priv_id, percentage);
+    end procedure;
+
+    impure function get_hits_coverage_goal(
+      constant VOID : t_void)
+    return positive is
+    begin
+      if priv_id /= C_DEALLOCATED_ID then
+        return protected_covergroup_status.get_hits_coverage_goal(priv_id);
       else
         return 100;
       end if;
@@ -1549,7 +1578,8 @@ package body func_cov_pkg is
         write_value(protected_covergroup_status.get_total_bin_hits(priv_id));
         write_value(protected_covergroup_status.get_total_bin_min_hits(priv_id));
         write_value(protected_covergroup_status.get_coverage_weight(priv_id));
-        write_value(protected_covergroup_status.get_coverage_goal(priv_id));
+        write_value(protected_covergroup_status.get_bins_coverage_goal(priv_id));
+        write_value(protected_covergroup_status.get_hits_coverage_goal(priv_id));
         write_value(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
         -- Bin structure
         write_bins(priv_bins_idx, priv_bins);
@@ -1685,7 +1715,9 @@ package body func_cov_pkg is
       read_value(v_value);
       protected_covergroup_status.set_coverage_weight(priv_id, v_value);
       read_value(v_value);
-      protected_covergroup_status.set_coverage_goal(priv_id, v_value);
+      protected_covergroup_status.set_bins_coverage_goal(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_hits_coverage_goal(priv_id, v_value);
       read_value(v_value);
       protected_covergroup_status.set_covergroup_coverage_goal(v_value);
       -- Bin structure
@@ -2462,7 +2494,7 @@ package body func_cov_pkg is
     return boolean is
     begin
       if priv_id /= C_DEALLOCATED_ID then
-        return protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_coverage_goal(priv_id));
+        return protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_hits_coverage_goal(priv_id));
       else
         return false;
       end if;
@@ -2512,7 +2544,7 @@ package body func_cov_pkg is
                       "Illegal bins:   " & to_string(protected_covergroup_status.get_num_illegal_bins(priv_id)) & LF &
                       "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2)
                         & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2)
-                        & "% (goal: " & to_string(protected_covergroup_status.get_coverage_goal(priv_id)) & "%)" & LF &
+                        & "% (goal: " & to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)) & "%)" & LF &
                       fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
       else
         write(v_line, "Coverpoint:     " & priv_name & LF &
@@ -2664,10 +2696,12 @@ package body func_cov_pkg is
       write(v_line, "          " & justify("BIN OVERLAP ALERT LEVEL", left, C_COLUMN1_WIDTH)  & ": " & justify(to_upper(to_string(priv_bin_overlap_alert_level)), right, C_COLUMN2_WIDTH) & LF);
       if priv_id /= C_DEALLOCATED_ID then
         write(v_line, "          " & justify("COVERAGE WEIGHT", left, C_COLUMN1_WIDTH)        & ": " & justify(to_string(protected_covergroup_status.get_coverage_weight(priv_id)), right, C_COLUMN2_WIDTH) & LF);
-        write(v_line, "          " & justify("COVERAGE GOAL", left, C_COLUMN1_WIDTH)          & ": " & justify(to_string(protected_covergroup_status.get_coverage_goal(priv_id)), right, C_COLUMN2_WIDTH) & LF);
+        write(v_line, "          " & justify("BINS COVERAGE GOAL", left, C_COLUMN1_WIDTH)     & ": " & justify(to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)), right, C_COLUMN2_WIDTH) & LF);
+        write(v_line, "          " & justify("HITS COVERAGE GOAL", left, C_COLUMN1_WIDTH)     & ": " & justify(to_string(protected_covergroup_status.get_hits_coverage_goal(priv_id)), right, C_COLUMN2_WIDTH) & LF);
       else
         write(v_line, "          " & justify("COVERAGE WEIGHT", left, C_COLUMN1_WIDTH)        & ": " & justify(to_string(1), right, C_COLUMN2_WIDTH) & LF);
-        write(v_line, "          " & justify("COVERAGE GOAL", left, C_COLUMN1_WIDTH)          & ": " & justify(to_string(100), right, C_COLUMN2_WIDTH) & LF);
+        write(v_line, "          " & justify("BINS COVERAGE GOAL", left, C_COLUMN1_WIDTH)     & ": " & justify(to_string(100), right, C_COLUMN2_WIDTH) & LF);
+        write(v_line, "          " & justify("HITS COVERAGE GOAL", left, C_COLUMN1_WIDTH)     & ": " & justify(to_string(100), right, C_COLUMN2_WIDTH) & LF);
       end if;
       write(v_line, "          " & justify("OVERALL GOAL", left, C_COLUMN1_WIDTH)             & ": " & justify(to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)), right, C_COLUMN2_WIDTH) & LF);
       write(v_line, "          " & justify("NUMBER OF BINS", left, C_COLUMN1_WIDTH)           & ": " & justify(to_string(priv_bins_idx+priv_invalid_bins_idx), right, C_COLUMN2_WIDTH) & LF);

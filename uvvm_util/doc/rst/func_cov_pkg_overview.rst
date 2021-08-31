@@ -492,7 +492,7 @@ By using the parameter verbosity, different types of bins can be printed out.
 
 .. code-block::
 
-    my_coverpoint.report_coverage(VERBOSE); -- Prints illegal, ignore, uncovered and covered bins
+    my_coverpoint.report_coverage(VERBOSE); -- Prints illegal, ignore and valid bins
 
 .. code-block:: none
 
@@ -523,7 +523,7 @@ By using the parameter verbosity, different types of bins can be printed out.
 
 .. code-block::
 
-    my_coverpoint.report_coverage(VOID); -- Same as NON_VERBOSE. Prints illegal (when hits > 0), uncovered and covered bins
+    my_coverpoint.report_coverage(VOID); -- Same as NON_VERBOSE. Prints illegal (when hits > 0) and valid bins
 
 .. code-block:: none
 

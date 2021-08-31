@@ -2600,9 +2600,9 @@ package body func_cov_pkg is
         end loop;
       end if;
 
-      -- Print uncovered bins
+      -- Print valid bins
       for i in 0 to priv_bins_idx-1 loop
-        if priv_bins(i).hits < priv_bins(i).min_hits then
+        if verbosity = VERBOSE or verbosity = NON_VERBOSE or (verbosity = HOLES_ONLY and priv_bins(i).hits < get_total_min_hits(priv_bins(i).min_hits)) then
           v_rand_weight := priv_bins(i).min_hits when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else priv_bins(i).rand_weight;
           write(v_line, justify(
             fill_string(' ', v_log_extra_space) &
@@ -2616,25 +2616,6 @@ package body func_cov_pkg is
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
-
-      -- Print covered bins
-      if verbosity = VERBOSE or verbosity = NON_VERBOSE then
-        for i in 0 to priv_bins_idx-1 loop
-          if priv_bins(i).hits >= priv_bins(i).min_hits then
-            v_rand_weight := priv_bins(i).min_hits when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else priv_bins(i).rand_weight;
-            write(v_line, justify(
-              fill_string(' ', v_log_extra_space) &
-              justify(get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH) , center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify(to_string(priv_bins(i).hits)                     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify(to_string(priv_bins(i).min_hits)                 , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify(to_string(get_bin_coverage(priv_bins(i)),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              return_string_if_true(justify(to_string(v_rand_weight)   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),rand_weight_col = SHOW_RAND_WEIGHT) &
-              justify(to_string(priv_bins(i).name)                     , center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-              justify("-"                                              , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-              left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
-          end if;
-        end loop;
-      end if;
 
       write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
@@ -2656,7 +2637,7 @@ package body func_cov_pkg is
         end loop;
       end if;
       for i in 0 to priv_bins_idx-1 loop
-        if verbosity = VERBOSE or verbosity = NON_VERBOSE or (verbosity = HOLES_ONLY and priv_bins(i).hits < priv_bins(i).min_hits) then
+        if verbosity = VERBOSE or verbosity = NON_VERBOSE or (verbosity = HOLES_ONLY and priv_bins(i).hits < get_total_min_hits(priv_bins(i).min_hits)) then
           if get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH) = to_string(priv_bins(i).name) then
             write(v_line, to_string(priv_bins(i).name) & ": " & get_bin_values(priv_bins(i)) & LF);
           end if;

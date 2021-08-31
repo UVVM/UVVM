@@ -7,12 +7,14 @@ Methods
 ***********************************************************************************************************************	     
 
 
-*Note 1*: Arguments common for most methods (green text) are described in chapter 1.12.
-
-*Note 2*: All methods are defined in uvvm_util.methods_pkg, unless otherwise noted.
-
-*Legend*: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
-``*`` IEEE=Method is native for VHDL2008 (Method is listed here for completeness.)
+.. note::
+   **1**: Arguments common for most methods (green text) are described in chapter 1.12.
+   
+   **2**: All methods are defined in uvvm_util.methods_pkg, unless otherwise noted.
+   
+   **Legend**: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
+   
+   ``*`` IEEE=Method is native for VHDL2008 (Method is listed here for completeness.)
 
 
 

@@ -5,15 +5,17 @@
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
+   uvvm_getting_started.rst
    utility_library.rst
    vvc_framework.rst
    fifo_collection.rst
    generic_queue.rst
    sbi_vip.rst
    uart_vip.rst
+
 
 
 Indices and tables

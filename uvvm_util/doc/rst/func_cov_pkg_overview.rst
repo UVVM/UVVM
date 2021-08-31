@@ -390,6 +390,29 @@ the valid bin will be skipped.
 Also, if a sampled value is contained in both ignore and illegal bins, then the illegal bin will take precedence.
 
 **********************************************************************************************************************************
+Coverage status
+**********************************************************************************************************************************
+It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()``, which returns the 
+percentage in a real number, and also determine if the coverage is completed with ``coverage_completed()``.
+
+Similar functions for the overall status are ``fc_get_overall_coverage()`` and ``fc_overall_coverage_completed()``.
+
+.. code-block::
+
+    log(ID_SEQUENCER, "My Coverpoint Coverage: " & to_string(my_coverpoint.get_coverage(VOID),2) & "%");
+    log(ID_SEQUENCER, "Overall Coverage: " & to_string(fc_get_overall_coverage(VOID),2) & "%");
+
+    -- Do something while the coverpoint's coverage is incomplete
+    while not(my_coverpoint.coverage_completed(VOID)) loop
+    ...
+    end loop;
+
+    -- Do something while the overall coverage is incomplete
+    while not(fc_overall_coverage_completed(VOID)) loop
+    ...
+    end loop;
+
+**********************************************************************************************************************************
 Coverage goal
 **********************************************************************************************************************************
 Defines a percentage of the total coverage to complete. This can be used to scale the simulation time without changing the minimum 
@@ -442,29 +465,6 @@ testbench, before sampling any coverage. Default is 1.
 
     my_coverpoint_1.set_coverage_weight(3);  -- If only this coverpoint is covered, total coverage will be 75%
     my_coverpoint_2.set_coverage_weight(1);  -- If only this coverpoint is covered, total coverage will be 25%
-
-**********************************************************************************************************************************
-Coverage status
-**********************************************************************************************************************************
-It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()``, which returns the 
-percentage in a real number, and also determine if the coverage is completed with ``coverage_completed()``.
-
-Similar functions for the overall status are ``fc_get_overall_coverage()`` and ``fc_overall_coverage_completed()``.
-
-.. code-block::
-
-    log(ID_SEQUENCER, "My Coverpoint Coverage: " & to_string(my_coverpoint.get_coverage(VOID),2) & "%");
-    log(ID_SEQUENCER, "Overall Coverage: " & to_string(fc_get_overall_coverage(VOID),2) & "%");
-
-    -- Do something while the coverpoint's coverage is incomplete
-    while not(my_coverpoint.coverage_completed(VOID)) loop
-    ...
-    end loop;
-
-    -- Do something while the overall coverage is incomplete
-    while not(fc_overall_coverage_completed(VOID)) loop
-    ...
-    end loop;
 
 **********************************************************************************************************************************
 Coverpoint name

@@ -32,6 +32,7 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -498,7 +499,7 @@ generic_queue.delete<span class="o">(</span><span class="m">2</span>, ENTRY_NUM,
 <p>This function returns an element from the generic queue without deleting it.
 Element can be specified by POSITION or ENTRY_NUM.</p>
 <p><strong>Examples</strong></p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_data_packet :<span class="o">=</span> generic_queue.peek<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span> --first element <span class="k">in</span> queue, instance <span class="m">1</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_data_packet :<span class="o">=</span> generic_queue.peek<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span> --first element in queue, instance <span class="m">1</span>
 v_data_packet :<span class="o">=</span> generic_queue.peek<span class="o">(</span><span class="m">2</span>, ENTRY_NUM, <span class="m">8</span><span class="o">)</span><span class="p">;</span>
 v_data_packet :<span class="o">=</span> generic_queue.peek<span class="o">(</span><span class="m">2</span>, POSITION, <span class="m">2</span><span class="o">)</span><span class="p">;</span>
 </pre></div>

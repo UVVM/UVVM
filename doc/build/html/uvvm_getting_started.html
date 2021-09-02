@@ -32,6 +32,7 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -96,6 +97,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#testbench">Testbench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation">Compilation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">UVVM Utility Library</a></li>
@@ -227,6 +229,40 @@ Note that this will overwrite any local changes to UVVM, e.g. local changes in t
 </div>
 <p>The context files will ensure that everything necessary are made available from within the testbench, e.g.</p>
 <a class="reference internal image-reference" href="_images/testbench_with_sbi_vvc.png" id="testbench-example"><img alt="_images/testbench_with_sbi_vvc.png" class="align-center" id="testbench-example" src="_images/testbench_with_sbi_vvc.png" style="width: 500px;" /></a>
+</div>
+<div class="section" id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this headline">¶</a></h2>
+<p>UVVM can be compiled by calling the <code class="docutils literal notranslate"><span class="pre">UVVM/script/compile_all.do</span></code> file using simulator GUI or from the command line.
+This will compile all of UVVM. Each of the modules/VIPs in UVVM also have their own compilation scripts in a <code class="docutils literal notranslate"><span class="pre">/script</span></code>
+folder, e.g. for the SBI VIP <code class="docutils literal notranslate"><span class="pre">bitvis_vip_sbi/script/compile_src.do</span></code>. The compile_src.do script can take two arguments,
+where the first argument is the module/VIP installation path and the second is the target path of the compilation,
+i.e. <code class="docutils literal notranslate"><span class="pre">compile_src.do</span> <span class="pre">&lt;source_path&gt;</span> <span class="pre">&lt;target_path&gt;</span></code>.</p>
+<p>The following example of compiling UVVM from the command line and with Modelsim GUI have the following directory structure:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">/UVVM</span>
+<span class="go">  ...</span>
+<span class="go">  /bitvis_vip_sbi</span>
+<span class="go">  /uvvm_util</span>
+<span class="go">  /uvvm_vvc_framework</span>
+
+<span class="go">/my_project</span>
+<span class="go">  /sim</span>
+<span class="go">  /my_src</span>
+<span class="go">  ...</span>
+</pre></div>
+</div>
+<p>and the vsim command / Modelsim GUI is run from the /my_project folder with the /sim folder as compilation target:</p>
+<ul>
+<li><p>Command line example for UVVM Utility Library compilation:</p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">vsim</span> <span class="pre">-c</span> <span class="pre">-do</span> <span class="pre">&quot;do</span> <span class="pre">../../UVVM/uvvm_util/script/compile_src.do</span> <span class="pre">../../UVVM</span> <span class="pre">./sim&quot;</span></code></p>
+</li>
+<li><p>Modelsim GUI example is shown in Figure 3.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">../../UVVM/uvvm_util/script/compile_src.do</span></code> is the relative path to the <code class="docutils literal notranslate"><span class="pre">compile_src.do</span></code> script for the UVVM
+Utility Library, <code class="docutils literal notranslate"><span class="pre">../../UVVM</span> <span class="pre">is</span></code> the relative path to UVVM installation (source path), and <code class="docutils literal notranslate"><span class="pre">./sim</span></code> is the relative
+path to the compilation target (target path).</p>
+</div>
 </div>
 </div>
 

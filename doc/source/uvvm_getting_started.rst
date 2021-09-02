@@ -87,4 +87,43 @@ The context files will ensure that everything necessary are made available from 
 
 
 
+***********************************************************************************************************************	     
+Compilation
+***********************************************************************************************************************
 	  
+UVVM can be compiled by calling the ``UVVM/script/compile_all.do`` file using simulator GUI or from the command line. 
+This will compile all of UVVM. Each of the modules/VIPs in UVVM also have their own compilation scripts in a ``/script`` 
+folder, e.g. for the SBI VIP ``bitvis_vip_sbi/script/compile_src.do``. The compile_src.do script can take two arguments, 
+where the first argument is the module/VIP installation path and the second is the target path of the compilation,
+i.e. ``compile_src.do <source_path> <target_path>``.
+
+The following example of compiling UVVM from the command line and with Modelsim GUI have the following directory structure:
+
+.. code-block:: console
+
+  /UVVM 
+    ...
+    /bitvis_vip_sbi 
+    /uvvm_util 
+    /uvvm_vvc_framework
+
+  /my_project 
+    /sim
+    /my_src 
+    ...
+
+
+and the vsim command / Modelsim GUI is run from the /my_project folder with the /sim folder as compilation target:
+
+* Command line example for UVVM Utility Library compilation:
+  
+  ``$ vsim -c -do "do ../../UVVM/uvvm_util/script/compile_src.do ../../UVVM ./sim"``
+
+* Modelsim GUI example is shown in Figure 3.
+
+
+.. note::
+  ``../../UVVM/uvvm_util/script/compile_src.do`` is the relative path to the ``compile_src.do`` script for the UVVM 
+  Utility Library, ``../../UVVM is`` the relative path to UVVM installation (source path), and ``./sim`` is the relative 
+  path to the compilation target (target path).
+

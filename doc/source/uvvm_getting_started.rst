@@ -36,7 +36,7 @@ easiest way to receive the updates is by cloning UVVM with git.
 	  
 #. Navigate to the UVVM repository on GitHub: https://github.com/UVVM/UVVM
 
-#. Select “Clone or download” marked with a red circle in Figure :numref:`github`
+#. Select “Clone or download” marked with a red circle:
    
    * Clone by copying the repository address (green circle) and from the project folder running the
      command: ``git clone https://github.com/UVVM/UVVM.git``
@@ -66,3 +66,25 @@ The method for updating UVVM depends on the chosen installation method:
 Testbench
 ***********************************************************************************************************************
 
+Include ``uvvm_util_context`` and the VVCs or BFMs you will be using in your testbench to start using UVVM:
+
+.. code-block:: vhdl
+		
+   library uvvm_util;
+   context uvvm_util.uvvm_util_context;
+   library uvvm_vvc_framework;
+   use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+   Library bitvis_vip_sbi;
+   context bitvis_vip_sbi.vvc_context;
+
+
+The context files will ensure that everything necessary are made available from within the testbench, e.g.
+   
+.. image:: images/uvvm_getting_started/testbench_with_sbi_vvc.png
+  :width: 500
+  :name: testbench_example
+  :align: center
+
+
+
+	  

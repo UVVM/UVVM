@@ -28,12 +28,6 @@ UVVM can be downloaded as a zip file or cloned using git. We are continuously ad
 easiest way to receive the updates is by cloning UVVM with git.
 
 
-.. image:: images/uvvm_getting_started/clone_download_instructions.png
-  :width: 700
-  :name: github
-  :align: center
-
-	  
 #. Navigate to the UVVM repository on GitHub: https://github.com/UVVM/UVVM
 
 #. Select “Clone or download” marked with a red circle:
@@ -46,6 +40,11 @@ easiest way to receive the updates is by cloning UVVM with git.
 #. After cloning or unzipping UVVM you have all that is needed to start using UVVM and all of its features with
    your testbench.
 
+
+.. figure:: images/uvvm_getting_started/clone_download_instructions.png
+  :width: 700
+  :align: center
+  :alt: UVVM on GitHub
 
 
    
@@ -83,9 +82,10 @@ The context files will ensure that everything necessary are made available from 
 .. image:: images/uvvm_getting_started/testbench_with_sbi_vvc.png
   :width: 500
   :name: testbench_example
-  :align: center
+  :align: left
 
 
+|  
 
 ***********************************************************************************************************************	     
 Compilation
@@ -117,13 +117,48 @@ and the vsim command / Modelsim GUI is run from the /my_project folder with the 
 
 * Command line example for UVVM Utility Library compilation:
   
-  ``$ vsim -c -do "do ../../UVVM/uvvm_util/script/compile_src.do ../../UVVM ./sim"``
+  ``$ vsim -c -do "do ../UVVM/uvvm_util/script/compile_src.do ../UVVM ./sim"``
 
-* Modelsim GUI example is shown in Figure 3.
+* Modelsim GUI example:
+
+.. image:: images/uvvm_getting_started/modelsim_gui_compilation.png
+  :width: 500
+  :name: modelsim_gui
+  :align: left
+
 
 
 .. note::
-  ``../../UVVM/uvvm_util/script/compile_src.do`` is the relative path to the ``compile_src.do`` script for the UVVM 
-  Utility Library, ``../../UVVM is`` the relative path to UVVM installation (source path), and ``./sim`` is the relative 
+  ``../UVVM/uvvm_util/script/compile_src.do`` is the relative path to the ``compile_src.do`` script for the UVVM 
+  Utility Library, ``../UVVM is`` the relative path to UVVM installation (source path), and ``./sim`` is the relative 
   path to the compilation target (target path).
+
+
+***********************************************************************************************************************	     
+Compilation Order
+***********************************************************************************************************************
+  
+Most of the modules/VIPs have some dependencies, thus compilation has to be performed in a specific order. The 
+compilation order of the source files for a module/VIP is listed in the ``script/compile_order.txt`` file and in 
+the quick reference PDF in the /doc folder. The library dependencies, i.e. other modules/VIPs that needs to be 
+compiled prior to compiling a particular module/VIP, is listed in the quick reference PDF of each module/VIP.
+
+As a rule of thumb, every module/VIP have the following dependencies:
+
+#. UVVM Utility Library
+#. UVVM VVC Framework
+#. Bitvis VIP Scoreboard (most of the VVCs have built in scoreboard functionality)
+
+
+***********************************************************************************************************************
+Further Reading
+***********************************************************************************************************************
+
+We recommend that everyone new to UVVM have a look at the Simple_TB_step_by_step.pps and 
+``UVVM_Utility_Library_Concepts_and_Usage.pps`` power point presentations located in the ``UVVM/uvvm_util/doc`` folder. 
+There are several other documents to explore and we recommend that you start reading those located in the 
+``UVVM/uvvm_vvc_framework/doc`` folder when you feel ready to advance with the many features of UVVM.
+
+We encourage the UVVM community to participate in the UVVM user forum with questions and discussions at 
+https://forum.uvvm.org, and to visit the UVVM news site at https://uvvm.org.
 

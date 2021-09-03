@@ -1,26 +1,36 @@
-UVVM (Universal VHDL Verification Methodology) is a free and Open Source Methodology and Library for making very structured VHDL-based testbenches.
+UVVM (Universal VHDL Verification Methodology) is a free and Open Source Methodology and Library for making 
+very structured VHDL-based testbenches.
 
-Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency and quality.
-UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.
+Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency 
+and quality. UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.
+
 
 UVVM consists currently of the following elements:
-- [Utility Library](./uvvm_util/README.md)
-- [VVC (VHDL Verification Component) Framework](./uvvm_vvc_framework/README.md)  - Including Utility Library
+- `Utility Library <https://github.com/UVVM/UVVM/tree/master/uvvm_util#readme>`
+- `VVC (VHDL Verification Component) Framework <https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework#readme>` - Including Utility Library
 - BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
 - VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)
+
 more to come...
+
 
 =======================================================================================================================
 For starters
 =======================================================================================================================
 
-Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
-Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](./uvvm_util/README.md) for an introduction. 
-The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development of good quality testbenches.
+Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced 
+testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
+Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold 
+and you will be up and running in an hour. 
+Please see `Utility Library <https://github.com/UVVM/UVVM/tree/master/uvvm_util#readme>` for an introduction. 
+The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development 
+of good quality testbenches.
 
-Note that a dedicated repository (UVVM_Light)](https://github.com/UVVM/UVVM_Light) has been provided to simplify getting started using Utility Library and BFMs. Here all the code and documentation have been collected in a single directory, and only a single VHDL library is used. The documentation and code are 100% the same as for the full UVVM. 
+Note that a dedicated repository `UVVM_Light <https://github.com/UVVM/UVVM_Light>` has been provided to simplify 
+getting started using Utility Library and BFMs. Here all the code and documentation have been collected in a single 
+directory, and only a single VHDL library is used. The documentation and code are 100% the same as for the full UVVM. 
 
-Please also see [Getting Started](./GETTING_STARTED.md) with UVVM.
+Please also see `Getting Started With UVVM <https://github.com/UVVM/UVVM/blob/master/GETTING_STARTED.md>`.
 
 =======================================================================================================================
 For what do I need this VVC Framework?

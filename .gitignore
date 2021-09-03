@@ -26,3 +26,8 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# rst
+*.doctree
+*.js
+*.css

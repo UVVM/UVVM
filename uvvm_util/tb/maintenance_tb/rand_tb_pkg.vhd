@@ -135,55 +135,55 @@ package rand_tb_pkg is
   -- Overload (integer)
   procedure check_rand_value(
     constant value         : in integer;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector);
 
   -- Overload (real)
   procedure check_rand_value(
     constant value         : in real;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector);
 
   -- Overload (time)
   procedure check_rand_value(
     constant value         : in time;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector);
 
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values        : in integer_vector;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector);
 
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values        : in real_vector;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector);
 
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values        : in time_vector;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector);
 
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value         : in unsigned;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in t_natural_vector);
 
   -- Overload (signed)
   procedure check_rand_value(
     constant value         : in signed;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector);
 
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value         : in std_logic_vector;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in t_natural_vector);
 
   ------------------------------------------------------------
@@ -193,7 +193,7 @@ package rand_tb_pkg is
   function check_rand_value(
     constant value         : integer;
     constant range_vec     : t_range_int_vec;
-    constant set_type      : t_value_specifier;
+    constant specifier     : t_value_specifier;
     constant set_of_values : integer_vector)
   return boolean;
 
@@ -201,7 +201,7 @@ package rand_tb_pkg is
   function check_rand_value(
     constant value         : real;
     constant range_vec     : t_range_real_vec;
-    constant set_type      : t_value_specifier;
+    constant specifier     : t_value_specifier;
     constant set_of_values : real_vector)
   return boolean;
 
@@ -209,7 +209,7 @@ package rand_tb_pkg is
   function check_rand_value(
     constant value         : time;
     constant range_vec     : t_range_time_vec;
-    constant set_type      : t_value_specifier;
+    constant specifier     : t_value_specifier;
     constant set_of_values : time_vector)
   return boolean;
 
@@ -217,63 +217,63 @@ package rand_tb_pkg is
   procedure check_rand_value(
     constant value         : in integer;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector);
 
   -- Overload (real)
   procedure check_rand_value(
     constant value         : in real;
     constant range_vec     : in t_range_real_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector);
 
   -- Overload (time)
   procedure check_rand_value(
     constant value         : in time;
     constant range_vec     : in t_range_time_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector);
 
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values        : in integer_vector;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector);
 
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values        : in real_vector;
     constant range_vec     : in t_range_real_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector);
 
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values        : in time_vector;
     constant range_vec     : in t_range_time_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector);
 
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value         : in unsigned;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in t_natural_vector);
 
   -- Overload (signed)
   procedure check_rand_value(
     constant value         : in signed;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector);
 
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value         : in std_logic_vector;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in t_natural_vector);
 
   ------------------------------------------------------------
@@ -283,9 +283,9 @@ package rand_tb_pkg is
   impure function check_rand_value(
     constant value          : integer;
     constant range_vec      : t_range_int_vec;
-    constant set_type1      : t_value_specifier;
+    constant specifier1     : t_value_specifier;
     constant set_of_values1 : integer_vector;
-    constant set_type2      : t_value_specifier;
+    constant specifier2     : t_value_specifier;
     constant set_of_values2 : integer_vector)
   return boolean;
 
@@ -293,9 +293,9 @@ package rand_tb_pkg is
   impure function check_rand_value(
     constant value          : real;
     constant range_vec      : t_range_real_vec;
-    constant set_type1      : t_value_specifier;
+    constant specifier1     : t_value_specifier;
     constant set_of_values1 : real_vector;
-    constant set_type2      : t_value_specifier;
+    constant specifier2     : t_value_specifier;
     constant set_of_values2 : real_vector)
   return boolean;
 
@@ -303,9 +303,9 @@ package rand_tb_pkg is
   impure function check_rand_value(
     constant value          : time;
     constant range_vec      : t_range_time_vec;
-    constant set_type1      : t_value_specifier;
+    constant specifier1     : t_value_specifier;
     constant set_of_values1 : time_vector;
-    constant set_type2      : t_value_specifier;
+    constant specifier2     : t_value_specifier;
     constant set_of_values2 : time_vector)
   return boolean;
 
@@ -313,81 +313,81 @@ package rand_tb_pkg is
   procedure check_rand_value(
     constant value          : in integer;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in integer_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in integer_vector);
 
   -- Overload (real)
   procedure check_rand_value(
     constant value          : in real;
     constant range_vec      : in t_range_real_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in real_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in real_vector);
 
   -- Overload (time)
   procedure check_rand_value(
     constant value          : in time;
     constant range_vec      : in t_range_time_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in time_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in time_vector);
 
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values         : in integer_vector;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in integer_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in integer_vector);
 
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values         : in real_vector;
     constant range_vec      : in t_range_real_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in real_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in real_vector);
 
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values         : in time_vector;
     constant range_vec      : in t_range_time_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in time_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in time_vector);
 
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value          : in unsigned;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in t_natural_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in t_natural_vector);
 
   -- Overload (signed)
   procedure check_rand_value(
     constant value          : in signed;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in integer_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in integer_vector);
 
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value          : in std_logic_vector;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in t_natural_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in t_natural_vector);
 
   ------------------------------------------------------------
@@ -746,10 +746,10 @@ package body rand_tb_pkg is
   -- Overload (integer)
   procedure check_rand_value(
     constant value         : in integer;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector) is
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     if check_rand_value(value, set_of_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
@@ -760,10 +760,10 @@ package body rand_tb_pkg is
   -- Overload (real)
   procedure check_rand_value(
     constant value         : in real;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector) is
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     if check_rand_value(value, set_of_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
@@ -774,10 +774,10 @@ package body rand_tb_pkg is
   -- Overload (time)
   procedure check_rand_value(
     constant value         : in time;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector) is
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     if check_rand_value(value, set_of_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
@@ -788,11 +788,11 @@ package body rand_tb_pkg is
   -- Overload (integer_vector)
   procedure check_rand_value(
     constant values        : in integer_vector;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), set_of_values);
     end loop;
@@ -806,11 +806,11 @@ package body rand_tb_pkg is
   -- Overload (real_vector)
   procedure check_rand_value(
     constant values        : in real_vector;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), set_of_values);
     end loop;
@@ -824,11 +824,11 @@ package body rand_tb_pkg is
   -- Overload (time_vector)
   procedure check_rand_value(
     constant values        : in time_vector;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector) is
     variable v_check_ok  : boolean := true;
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), set_of_values);
     end loop;
@@ -842,10 +842,10 @@ package body rand_tb_pkg is
   -- Overload (unsigned)
   procedure check_rand_value(
     constant value         : in unsigned;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in t_natural_vector) is
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     if check_rand_value(to_integer(value), integer_vector(set_of_values)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
@@ -856,10 +856,10 @@ package body rand_tb_pkg is
   -- Overload (signed)
   procedure check_rand_value(
     constant value         : in signed;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector) is
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     if check_rand_value(to_integer(value), set_of_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, DEC) & ".");
     else
@@ -870,10 +870,10 @@ package body rand_tb_pkg is
   -- Overload (std_logic_vector)
   procedure check_rand_value(
     constant value          : in std_logic_vector;
-    constant set_type       : in t_value_specifier;
+    constant specifier      : in t_value_specifier;
     constant set_of_values  : in t_natural_vector) is
   begin
-    check_value(set_type = ONLY, TB_ERROR, "Set type must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
+    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     if check_rand_value(to_integer(unsigned(value)), integer_vector(set_of_values)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
@@ -888,17 +888,17 @@ package body rand_tb_pkg is
   function check_rand_value(
     constant value         : integer;
     constant range_vec     : t_range_int_vec;
-    constant set_type      : t_value_specifier;
+    constant specifier     : t_value_specifier;
     constant set_of_values : integer_vector)
   return boolean is
   begin
     -- Check in range plus a set of values
-    if set_type = ADD then
+    if specifier = ADD then
       if check_rand_value(value, range_vec) or check_rand_value(value, set_of_values) then
         return true;
       end if;
     -- Check in range except a set of values
-    elsif set_type = EXCL then
+    elsif specifier = EXCL then
       if check_rand_value(value, range_vec) and not(check_rand_value(value, set_of_values)) then
         return true;
       end if;
@@ -910,17 +910,17 @@ package body rand_tb_pkg is
   function check_rand_value(
     constant value         : real;
     constant range_vec     : t_range_real_vec;
-    constant set_type      : t_value_specifier;
+    constant specifier     : t_value_specifier;
     constant set_of_values : real_vector)
   return boolean is
   begin
     -- Check in range plus a set of values
-    if set_type = ADD then
+    if specifier = ADD then
       if check_rand_value(value, range_vec) or check_rand_value(value, set_of_values) then
         return true;
       end if;
     -- Check in range except a set of values
-    elsif set_type = EXCL then
+    elsif specifier = EXCL then
       if check_rand_value(value, range_vec) and not(check_rand_value(value, set_of_values)) then
         return true;
       end if;
@@ -932,17 +932,17 @@ package body rand_tb_pkg is
   function check_rand_value(
     constant value         : time;
     constant range_vec     : t_range_time_vec;
-    constant set_type      : t_value_specifier;
+    constant specifier     : t_value_specifier;
     constant set_of_values : time_vector)
   return boolean is
   begin
     -- Check in range plus a set of values
-    if set_type = ADD then
+    if specifier = ADD then
       if check_rand_value(value, range_vec) or check_rand_value(value, set_of_values) then
         return true;
       end if;
     -- Check in range except a set of values
-    elsif set_type = EXCL then
+    elsif specifier = EXCL then
       if check_rand_value(value, range_vec) and not(check_rand_value(value, set_of_values)) then
         return true;
       end if;
@@ -954,10 +954,10 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value         : in integer;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector) is
   begin
-    if check_rand_value(value, range_vec, set_type, set_of_values) then
+    if check_rand_value(value, range_vec, specifier, set_of_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -968,10 +968,10 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value         : in real;
     constant range_vec     : in t_range_real_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector) is
   begin
-    if check_rand_value(value, range_vec, set_type, set_of_values) then
+    if check_rand_value(value, range_vec, specifier, set_of_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -982,10 +982,10 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value         : in time;
     constant range_vec     : in t_range_time_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector) is
   begin
-    if check_rand_value(value, range_vec, set_type, set_of_values) then
+    if check_rand_value(value, range_vec, specifier, set_of_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -996,12 +996,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant values        : in integer_vector;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type, set_of_values);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier, set_of_values);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1014,12 +1014,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant values        : in real_vector;
     constant range_vec     : in t_range_real_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type, set_of_values);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier, set_of_values);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1032,12 +1032,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant values        : in time_vector;
     constant range_vec     : in t_range_time_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type, set_of_values);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier, set_of_values);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1050,10 +1050,10 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value         : in unsigned;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(value), range_vec, set_type, integer_vector(set_of_values)) then
+    if check_rand_value(to_integer(value), range_vec, specifier, integer_vector(set_of_values)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -1064,10 +1064,10 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value         : in signed;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector) is
   begin
-    if check_rand_value(to_integer(value), range_vec, set_type, set_of_values) then
+    if check_rand_value(to_integer(value), range_vec, specifier, set_of_values) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, DEC) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, DEC) & ".");
@@ -1078,10 +1078,10 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value         : in std_logic_vector;
     constant range_vec     : in t_range_int_vec;
-    constant set_type      : in t_value_specifier;
+    constant specifier     : in t_value_specifier;
     constant set_of_values : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(unsigned(value)), range_vec, set_type, integer_vector(set_of_values)) then
+    if check_rand_value(to_integer(unsigned(value)), range_vec, specifier, integer_vector(set_of_values)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -1095,19 +1095,19 @@ package body rand_tb_pkg is
   impure function check_rand_value(
     constant value          : integer;
     constant range_vec      : t_range_int_vec;
-    constant set_type1      : t_value_specifier;
+    constant specifier1     : t_value_specifier;
     constant set_of_values1 : integer_vector;
-    constant set_type2      : t_value_specifier;
+    constant specifier2     : t_value_specifier;
     constant set_of_values2 : integer_vector)
   return boolean is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
-    if set_type1 = ADD then
+    check_value(specifier1 /= specifier2, TB_ERROR, "Specifiers must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    if specifier1 = ADD then
       if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not(check_rand_value(value, set_of_values2)) then
         return true;
       end if;
-    elsif set_type1 = EXCL then
+    elsif specifier1 = EXCL then
       if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not(check_rand_value(value, set_of_values1)) then
         return true;
       end if;
@@ -1119,19 +1119,19 @@ package body rand_tb_pkg is
   impure function check_rand_value(
     constant value          : real;
     constant range_vec      : t_range_real_vec;
-    constant set_type1      : t_value_specifier;
+    constant specifier1     : t_value_specifier;
     constant set_of_values1 : real_vector;
-    constant set_type2      : t_value_specifier;
+    constant specifier2     : t_value_specifier;
     constant set_of_values2 : real_vector)
   return boolean is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
-    if set_type1 = ADD then
+    check_value(specifier1 /= specifier2, TB_ERROR, "Specifiers must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    if specifier1 = ADD then
       if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not(check_rand_value(value, set_of_values2)) then
         return true;
       end if;
-    elsif set_type1 = EXCL then
+    elsif specifier1 = EXCL then
       if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not(check_rand_value(value, set_of_values1)) then
         return true;
       end if;
@@ -1143,19 +1143,19 @@ package body rand_tb_pkg is
   impure function check_rand_value(
     constant value          : time;
     constant range_vec      : t_range_time_vec;
-    constant set_type1      : t_value_specifier;
+    constant specifier1     : t_value_specifier;
     constant set_of_values1 : time_vector;
-    constant set_type2      : t_value_specifier;
+    constant specifier2     : t_value_specifier;
     constant set_of_values2 : time_vector)
   return boolean is
     constant C_PROC_NAME : string := "check_rand_value";
   begin
-    check_value(set_type1 /= set_type2, TB_ERROR, "Set types must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
-    if set_type1 = ADD then
+    check_value(specifier1 /= specifier2, TB_ERROR, "Specifiers must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+    if specifier1 = ADD then
       if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not(check_rand_value(value, set_of_values2)) then
         return true;
       end if;
-    elsif set_type1 = EXCL then
+    elsif specifier1 = EXCL then
       if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not(check_rand_value(value, set_of_values1)) then
         return true;
       end if;
@@ -1167,12 +1167,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value          : in integer;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in integer_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in integer_vector) is
   begin
-    if check_rand_value(value, range_vec, set_type1, set_of_values1, set_type2, set_of_values2) then
+    if check_rand_value(value, range_vec, specifier1, set_of_values1, specifier2, set_of_values2) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -1183,12 +1183,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value          : in real;
     constant range_vec      : in t_range_real_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in real_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in real_vector) is
   begin
-    if check_rand_value(value, range_vec, set_type1, set_of_values1, set_type2, set_of_values2) then
+    if check_rand_value(value, range_vec, specifier1, set_of_values1, specifier2, set_of_values2) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -1199,12 +1199,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value          : in time;
     constant range_vec      : in t_range_time_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in time_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in time_vector) is
   begin
-    if check_rand_value(value, range_vec, set_type1, set_of_values1, set_type2, set_of_values2) then
+    if check_rand_value(value, range_vec, specifier1, set_of_values1, specifier2, set_of_values2) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
@@ -1215,14 +1215,14 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant values         : in integer_vector;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in integer_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in integer_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type1, set_of_values1, set_type2, set_of_values2);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier1, set_of_values1, specifier2, set_of_values2);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1235,14 +1235,14 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant values         : in real_vector;
     constant range_vec      : in t_range_real_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in real_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in real_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type1, set_of_values1, set_type2, set_of_values2);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier1, set_of_values1, specifier2, set_of_values2);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1255,14 +1255,14 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant values         : in time_vector;
     constant range_vec      : in t_range_time_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in time_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in time_vector) is
     variable v_check_ok  : boolean := true;
   begin
     for i in values'range loop
-      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, set_type1, set_of_values1, set_type2, set_of_values2);
+      v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier1, set_of_values1, specifier2, set_of_values2);
     end loop;
     if v_check_ok then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(values) & ".");
@@ -1275,12 +1275,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value          : in unsigned;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in t_natural_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(value), range_vec, set_type1, integer_vector(set_of_values1), set_type2, integer_vector(set_of_values2)) then
+    if check_rand_value(to_integer(value), range_vec, specifier1, integer_vector(set_of_values1), specifier2, integer_vector(set_of_values2)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
@@ -1291,12 +1291,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value          : in signed;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in integer_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in integer_vector) is
   begin
-    if check_rand_value(to_integer(value), range_vec, set_type1, set_of_values1, set_type2, set_of_values2) then
+    if check_rand_value(to_integer(value), range_vec, specifier1, set_of_values1, specifier2, set_of_values2) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, DEC) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, DEC) & ".");
@@ -1307,12 +1307,12 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant value          : in std_logic_vector;
     constant range_vec      : in t_range_int_vec;
-    constant set_type1      : in t_value_specifier;
+    constant specifier1     : in t_value_specifier;
     constant set_of_values1 : in t_natural_vector;
-    constant set_type2      : in t_value_specifier;
+    constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(unsigned(value)), range_vec, set_type1, integer_vector(set_of_values1), set_type2, integer_vector(set_of_values2)) then
+    if check_rand_value(to_integer(unsigned(value)), range_vec, specifier1, integer_vector(set_of_values1), specifier2, integer_vector(set_of_values2)) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");

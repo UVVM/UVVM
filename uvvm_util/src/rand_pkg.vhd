@@ -247,7 +247,7 @@ package rand_pkg is
     return integer;
 
     impure function rand(
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
@@ -257,7 +257,7 @@ package rand_pkg is
     impure function rand(
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -266,7 +266,7 @@ package rand_pkg is
     impure function rand(
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
@@ -276,9 +276,9 @@ package rand_pkg is
     impure function rand(
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : integer;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -287,9 +287,9 @@ package rand_pkg is
     impure function rand(
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : integer;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -298,9 +298,9 @@ package rand_pkg is
     impure function rand(
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : integer_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
@@ -318,7 +318,7 @@ package rand_pkg is
     return real;
 
     impure function rand(
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
@@ -327,7 +327,7 @@ package rand_pkg is
     impure function rand(
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : real;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real;
@@ -335,7 +335,7 @@ package rand_pkg is
     impure function rand(
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
@@ -344,9 +344,9 @@ package rand_pkg is
     impure function rand(
       constant min_value      : real;
       constant max_value      : real;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : real;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : real_vector;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return real;
@@ -354,9 +354,9 @@ package rand_pkg is
     impure function rand(
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : real;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : real;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real;
@@ -364,9 +364,9 @@ package rand_pkg is
     impure function rand(
       constant min_value      : real;
       constant max_value      : real;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : real_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : real_vector;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call  : string         := "")
@@ -383,7 +383,7 @@ package rand_pkg is
     return time;
 
     impure function rand(
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
@@ -392,7 +392,7 @@ package rand_pkg is
     impure function rand(
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time;
@@ -400,7 +400,7 @@ package rand_pkg is
     impure function rand(
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
@@ -409,9 +409,9 @@ package rand_pkg is
     impure function rand(
       constant min_value      : time;
       constant max_value      : time;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : time;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : time_vector;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return time;
@@ -419,9 +419,9 @@ package rand_pkg is
     impure function rand(
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : time;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time;
@@ -429,9 +429,9 @@ package rand_pkg is
     impure function rand(
       constant min_value      : time;
       constant max_value      : time;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : time_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : time_vector;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call  : string         := "")
@@ -451,7 +451,7 @@ package rand_pkg is
 
     impure function rand(
       constant size          : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -462,7 +462,7 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -473,7 +473,7 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -484,9 +484,9 @@ package rand_pkg is
       constant size           : positive;
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : integer;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
@@ -497,9 +497,9 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : integer;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -510,9 +510,9 @@ package rand_pkg is
       constant size           : positive;
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : integer_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
@@ -532,7 +532,7 @@ package rand_pkg is
 
     impure function rand(
       constant size          : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -542,7 +542,7 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -552,7 +552,7 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -562,9 +562,9 @@ package rand_pkg is
       constant size           : positive;
       constant min_value      : real;
       constant max_value      : real;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : real;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : real_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -574,9 +574,9 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : real;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -586,9 +586,9 @@ package rand_pkg is
       constant size           : positive;
       constant min_value      : real;
       constant max_value      : real;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : real_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : real_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -607,7 +607,7 @@ package rand_pkg is
 
     impure function rand(
       constant size          : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -617,7 +617,7 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -627,7 +627,7 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -637,9 +637,9 @@ package rand_pkg is
       constant size           : positive;
       constant min_value      : time;
       constant max_value      : time;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : time;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : time_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -649,9 +649,9 @@ package rand_pkg is
       constant size          : positive;
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : time;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -661,9 +661,9 @@ package rand_pkg is
       constant size           : positive;
       constant min_value      : time;
       constant max_value      : time;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : time_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : time_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -703,7 +703,7 @@ package rand_pkg is
 
     impure function rand(
       constant length        : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
@@ -714,7 +714,7 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -724,7 +724,7 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -734,9 +734,9 @@ package rand_pkg is
       constant length         : positive;
       constant min_value      : natural;
       constant max_value      : natural;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : natural;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : t_natural_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -746,9 +746,9 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : natural;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -758,9 +758,9 @@ package rand_pkg is
       constant length         : positive;
       constant min_value      : natural;
       constant max_value      : natural;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : t_natural_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : t_natural_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -800,7 +800,7 @@ package rand_pkg is
 
     impure function rand(
       constant length        : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -810,7 +810,7 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -820,7 +820,7 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -830,9 +830,9 @@ package rand_pkg is
       constant length         : positive;
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : integer;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -842,9 +842,9 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : integer;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -854,9 +854,9 @@ package rand_pkg is
       constant length         : positive;
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : integer_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -896,7 +896,7 @@ package rand_pkg is
 
     impure function rand(
       constant length        : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -906,7 +906,7 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -916,7 +916,7 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -926,9 +926,9 @@ package rand_pkg is
       constant length         : positive;
       constant min_value      : natural;
       constant max_value      : natural;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : natural;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : t_natural_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -938,9 +938,9 @@ package rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : natural;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -950,9 +950,9 @@ package rand_pkg is
       constant length         : positive;
       constant min_value      : natural;
       constant max_value      : natural;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : t_natural_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : t_natural_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
@@ -1402,7 +1402,7 @@ package body rand_pkg is
     variable priv_seed2                   : positive                            := C_RAND_INIT_SEED_2;
     variable priv_rand_dist               : t_rand_dist                         := UNIFORM;
     variable priv_weight_mode             : t_weight_mode                       := COMBINED_WEIGHT;
-    variable priv_warned_same_set_type    : boolean                             := false;
+    variable priv_warned_same_specifier   : boolean                             := false;
     variable priv_warned_simulation_slow  : boolean                             := false;
     variable priv_cyclic_current_function : line                                := new string'("");
     variable priv_cyclic_list             : t_cyclic_list_ptr                   := NULL;
@@ -1804,13 +1804,13 @@ package body rand_pkg is
     end function;
 
     -- Generates an alert (only once)
-    procedure alert_same_set_type(
-      constant set_type  : in t_value_specifier;
+    procedure alert_same_specifier(
+      constant specifier : in t_value_specifier;
       constant proc_call : in string) is
     begin
-      if not(priv_warned_same_set_type) then
-        alert(TB_WARNING, proc_call & "=> Used same type for both set of values: " & to_upper(to_string(set_type)), priv_scope);
-        priv_warned_same_set_type := true;
+      if not(priv_warned_same_specifier) then
+        alert(TB_WARNING, proc_call & "=> Used same specifier for both set of values: " & to_upper(to_string(specifier)), priv_scope);
+        priv_warned_same_specifier := true;
       end if;
     end procedure;
 
@@ -2180,13 +2180,13 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return integer is
-      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       alias normalized_set_values : integer_vector(0 to set_of_values'length-1) is set_of_values;
@@ -2194,8 +2194,8 @@ package body rand_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+      if specifier /= ONLY then
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -2216,27 +2216,27 @@ package body rand_pkg is
     impure function rand(
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer is
       variable v_set_values : integer_vector(0 to 0) := (0 => value);
     begin
-      return rand(min_value, max_value, set_type, v_set_values, cyclic_mode, msg_id_panel);
+      return rand(min_value, max_value, specifier, v_set_values, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return integer is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       alias normalized_set_values : integer_vector(0 to set_of_values'length-1) is set_of_values;
@@ -2251,7 +2251,7 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
-      if set_type = ADD then
+      if specifier = ADD then
         -- Avoid an integer overflow by adding the set_of_values to the max_value or subtracting them from the min_value
         if max_value <= integer'right-set_of_values'length then
           v_ret := rand(min_value, max_value+set_of_values'length, cyclic_mode, msg_id_panel, v_proc_call.all);
@@ -2267,13 +2267,13 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Constraints are greater than integer's range", priv_scope);
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
-      elsif set_type = EXCL then
+      elsif specifier = EXCL then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
 
       -- Restore previous distribution
@@ -2287,9 +2287,9 @@ package body rand_pkg is
     impure function rand(
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : integer;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -2297,38 +2297,38 @@ package body rand_pkg is
       variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : integer_vector(0 to 0) := (0 => value2);
     begin
-      return rand(min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, cyclic_mode, msg_id_panel);
+      return rand(min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : integer;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return integer is
       variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
     begin
-      return rand(min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, cyclic_mode, msg_id_panel);
+      return rand(min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : integer_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call  : string         := "")
     return integer is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_combined_set_values : integer_vector(0 to set_of_values1'length+set_of_values2'length-1);
@@ -2343,7 +2343,7 @@ package body rand_pkg is
       end if;
 
       -- Create a new set of values in case both are the same type
-      if (set_type1 = ADD and set_type2 = ADD) or (set_type1 = EXCL and set_type2 = EXCL) then
+      if (specifier1 = ADD and specifier2 = ADD) or (specifier1 = EXCL and specifier2 = EXCL) then
         for i in v_combined_set_values'range loop
           if i < set_of_values1'length then
             v_combined_set_values(i) := set_of_values1(i);
@@ -2354,30 +2354,30 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus both sets of values
-      if set_type1 = ADD and set_type2 = ADD then
-        alert_same_set_type(set_type1, v_proc_call.all);
+      if specifier1 = ADD and specifier2 = ADD then
+        alert_same_specifier(specifier1, v_proc_call.all);
         v_ret := rand(min_value, max_value, ADD, v_combined_set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] minus both sets of values
-      elsif set_type1 = EXCL and set_type2 = EXCL then
-        alert_same_set_type(set_type1, v_proc_call.all);
+      elsif specifier1 = EXCL and specifier2 = EXCL then
+        alert_same_specifier(specifier1, v_proc_call.all);
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
-      elsif set_type1 = ADD and set_type2 = EXCL then
+      elsif specifier1 = ADD and specifier2 = EXCL then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, ADD, set_of_values1, cyclic_mode, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values2);
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
-      elsif set_type1 = EXCL and set_type2 = ADD then
+      elsif specifier1 = EXCL and specifier2 = ADD then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, ADD, set_of_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values1);
         end loop;
       else
-        if not(set_type1 = ADD or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
+        if not(specifier1 = ADD or specifier1 = EXCL) then
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier2)), priv_scope);
         end if;
       end if;
 
@@ -2431,12 +2431,12 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
-      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & format_real(set_of_values) & ")";
+      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(specifier)) & ":" & format_real(set_of_values) & ")";
       constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       alias normalized_set_values : real_vector(0 to set_of_values'length-1) is set_of_values;
@@ -2444,8 +2444,8 @@ package body rand_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+      if specifier /= ONLY then
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -2466,25 +2466,25 @@ package body rand_pkg is
     impure function rand(
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : real;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real is
       variable v_set_values : real_vector(0 to 0) := (0 => value);
     begin
-      return rand(min_value, max_value, set_type, v_set_values, msg_id_panel);
+      return rand(min_value, max_value, specifier, v_set_values, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return real is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
-        to_upper(to_string(set_type)) & ":" & format_real(set_of_values) & ")";
+        to_upper(to_string(specifier)) & ":" & format_real(set_of_values) & ")";
       constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       variable v_gen_new_random   : boolean := true;
@@ -2500,19 +2500,19 @@ package body rand_pkg is
       -- Generate a random value in the range [min_value:max_value] plus the set of values
       -- It is impossible to give the same weight to an added value than to a single value in the real range,
       -- therefore we split the probability to 50% range and 50% added values.
-      if set_type = ADD then
+      if specifier = ADD then
         v_ret := rand(min_value, max_value + (max_value-min_value), msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
           v_ret := rand(ONLY, set_of_values, msg_id_panel, v_proc_call.all);
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
-      elsif set_type = EXCL then
+      elsif specifier = EXCL then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
 
       -- Restore previous distribution
@@ -2526,45 +2526,45 @@ package body rand_pkg is
     impure function rand(
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : real;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : real;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real is
       variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : real_vector(0 to 0) := (0 => value2);
     begin
-      return rand(min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, msg_id_panel);
+      return rand(min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value      : real;
       constant max_value      : real;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : real;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : real_vector;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return real is
       variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
     begin
-      return rand(min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, msg_id_panel);
+      return rand(min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value      : real;
       constant max_value      : real;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : real_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : real_vector;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call  : string         := "")
     return real is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
-        to_upper(to_string(set_type1)) & ":" & format_real(set_of_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & format_real(set_of_values2) & ")";
+        to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_combined_set_values : real_vector(0 to set_of_values1'length+set_of_values2'length-1);
@@ -2579,7 +2579,7 @@ package body rand_pkg is
       end if;
 
       -- Create a new set of values in case both are the same type
-      if (set_type1 = ADD and set_type2 = ADD) or (set_type1 = EXCL and set_type2 = EXCL) then
+      if (specifier1 = ADD and specifier2 = ADD) or (specifier1 = EXCL and specifier2 = EXCL) then
         for i in v_combined_set_values'range loop
           if i < set_of_values1'length then
             v_combined_set_values(i) := set_of_values1(i);
@@ -2590,30 +2590,30 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus both sets of values
-      if set_type1 = ADD and set_type2 = ADD then
-        alert_same_set_type(set_type1, v_proc_call.all);
+      if specifier1 = ADD and specifier2 = ADD then
+        alert_same_specifier(specifier1, v_proc_call.all);
         v_ret := rand(min_value, max_value, ADD, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] minus both sets of values
-      elsif set_type1 = EXCL and set_type2 = EXCL then
-        alert_same_set_type(set_type1, v_proc_call.all);
+      elsif specifier1 = EXCL and specifier2 = EXCL then
+        alert_same_specifier(specifier1, v_proc_call.all);
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
-      elsif set_type1 = ADD and set_type2 = EXCL then
+      elsif specifier1 = ADD and specifier2 = EXCL then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, ADD, set_of_values1, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values2);
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
-      elsif set_type1 = EXCL and set_type2 = ADD then
+      elsif specifier1 = EXCL and specifier2 = ADD then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, ADD, set_of_values2, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values1);
         end loop;
       else
-        if not(set_type1 = ADD or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
+        if not(specifier1 = ADD or specifier1 = EXCL) then
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier2)), priv_scope);
         end if;
       end if;
 
@@ -2663,20 +2663,20 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return time is
-      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(set_type)) & ":" & to_string(set_of_values) & ")";
+      constant C_LOCAL_CALL : string := "rand(" & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & ")";
       variable v_proc_call        : line;
       alias normalized_set_values : time_vector(0 to set_of_values'length-1) is set_of_values;
       variable v_ret              : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
-      if set_type /= ONLY then
-        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+      if specifier /= ONLY then
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
 
       -- Generate a random value within the set of values
@@ -2690,25 +2690,25 @@ package body rand_pkg is
     impure function rand(
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time is
       variable v_set_values : time_vector(0 to 0) := (0 => value);
     begin
-      return rand(min_value, max_value, set_type, v_set_values, msg_id_panel);
+      return rand(min_value, max_value, specifier, v_set_values, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return time is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type)) & ":" & to_string(set_of_values) & ")";
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_proc_call        : line;
       alias normalized_set_values : time_vector(0 to set_of_values'length-1) is set_of_values;
@@ -2718,19 +2718,19 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Generate a random value in the range [min_value:max_value] plus the set of values
-      if set_type = ADD then
+      if specifier = ADD then
         v_ret := rand(min_value, max_value+(set_of_values'length*C_TIME_UNIT), msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
           v_ret := normalized_set_values((v_ret-max_value)/C_TIME_UNIT-1);
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
-      elsif set_type = EXCL then
+      elsif specifier = EXCL then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values);
         end loop;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2741,45 +2741,45 @@ package body rand_pkg is
     impure function rand(
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : time;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : time;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
     begin
-      return rand(min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, msg_id_panel);
+      return rand(min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value      : time;
       constant max_value      : time;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : time;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : time_vector;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return time is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
     begin
-      return rand(min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, msg_id_panel);
+      return rand(min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, msg_id_panel);
     end function;
 
     impure function rand(
       constant min_value      : time;
       constant max_value      : time;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : time_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : time_vector;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call  : string         := "")
     return time is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & to_string(set_of_values2) & ")";
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_proc_call           : line;
       variable v_combined_set_values : time_vector(0 to set_of_values1'length+set_of_values2'length-1);
@@ -2789,7 +2789,7 @@ package body rand_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       -- Create a new set of values in case both are the same type
-      if (set_type1 = ADD and set_type2 = ADD) or (set_type1 = EXCL and set_type2 = EXCL) then
+      if (specifier1 = ADD and specifier2 = ADD) or (specifier1 = EXCL and specifier2 = EXCL) then
         for i in v_combined_set_values'range loop
           if i < set_of_values1'length then
             v_combined_set_values(i) := set_of_values1(i);
@@ -2800,30 +2800,30 @@ package body rand_pkg is
       end if;
 
       -- Generate a random value in the range [min_value:max_value] plus both sets of values
-      if set_type1 = ADD and set_type2 = ADD then
-        alert_same_set_type(set_type1, v_proc_call.all);
+      if specifier1 = ADD and specifier2 = ADD then
+        alert_same_specifier(specifier1, v_proc_call.all);
         v_ret := rand(min_value, max_value, ADD, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] minus both sets of values
-      elsif set_type1 = EXCL and set_type2 = EXCL then
-        alert_same_set_type(set_type1, v_proc_call.all);
+      elsif specifier1 = EXCL and specifier2 = EXCL then
+        alert_same_specifier(specifier1, v_proc_call.all);
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
-      elsif set_type1 = ADD and set_type2 = EXCL then
+      elsif specifier1 = ADD and specifier2 = EXCL then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, ADD, set_of_values1, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values2);
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
-      elsif set_type1 = EXCL and set_type2 = ADD then
+      elsif specifier1 = EXCL and specifier2 = ADD then
         while v_gen_new_random loop
           v_ret := rand(min_value, max_value, ADD, set_of_values2, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values1);
         end loop;
       else
-        if not(set_type1 = ADD or set_type1 = EXCL) then
-          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type1)), priv_scope);
+        if not(specifier1 = ADD or specifier1 = EXCL) then
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier1)), priv_scope);
         else
-          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type2)), priv_scope);
+          alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier2)), priv_scope);
         end if;
       end if;
 
@@ -2897,13 +2897,13 @@ package body rand_pkg is
 
     impure function rand(
       constant size          : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_of_values) &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
         to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean     := true;
@@ -2922,7 +2922,7 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(set_type, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
@@ -2933,7 +2933,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(set_type, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := rand(specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -2955,7 +2955,7 @@ package body rand_pkg is
       constant size          : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -2963,21 +2963,21 @@ package body rand_pkg is
     return integer_vector is
       variable v_set_values : integer_vector(0 to 0) := (0 => value);
     begin
-      return rand(size, min_value, max_value, set_type, v_set_values, uniqueness, cyclic_mode, msg_id_panel);
+      return rand(size, min_value, max_value, specifier, v_set_values, uniqueness, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant size          : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer     := 0;
       variable v_gen_new_random  : boolean     := true;
@@ -2996,11 +2996,11 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, set_type, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        v_set_values_len := (0-set_of_values'length) when set_type = EXCL else set_of_values'length;
+        v_set_values_len := (0-set_of_values'length) when specifier = EXCL else set_of_values'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
@@ -3008,7 +3008,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, set_type, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := rand(min_value, max_value, specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -3030,9 +3030,9 @@ package body rand_pkg is
       constant size          : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : integer;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
@@ -3041,16 +3041,16 @@ package body rand_pkg is
       variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : integer_vector(0 to 0) := (0 => value2);
     begin
-      return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, uniqueness, cyclic_mode, msg_id_panel);
+      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant size           : positive;
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : integer;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
@@ -3058,23 +3058,23 @@ package body rand_pkg is
     return integer_vector is
       variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
     begin
-      return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, uniqueness, cyclic_mode, msg_id_panel);
+      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant size           : positive;
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : integer_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(set_type2)) & ":" & to_string(set_of_values2) &
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) &
         to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer     := 0;
@@ -3094,12 +3094,12 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        v_set_values_len := (0-set_of_values1'length) when set_type1 = EXCL else set_of_values1'length;
-        v_set_values_len := (v_set_values_len-set_of_values2'length) when set_type2 = EXCL else v_set_values_len+set_of_values2'length;
+        v_set_values_len := (0-set_of_values1'length) when specifier1 = EXCL else set_of_values1'length;
+        v_set_values_len := (v_set_values_len-set_of_values2'length) when specifier2 = EXCL else v_set_values_len+set_of_values2'length;
         if (max_value - min_value + 1 + v_set_values_len) < size then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
@@ -3107,7 +3107,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -3175,12 +3175,12 @@ package body rand_pkg is
 
     impure function rand(
       constant size          : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & format_real(set_of_values) &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(specifier)) & ":" & format_real(set_of_values) &
         to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
@@ -3194,7 +3194,7 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(set_type, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
@@ -3205,7 +3205,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(set_type, set_of_values, msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -3227,27 +3227,27 @@ package body rand_pkg is
       constant size          : positive;
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
       variable v_set_values : real_vector(0 to 0) := (0 => value);
     begin
-      return rand(size, min_value, max_value, set_type, v_set_values, uniqueness, msg_id_panel);
+      return rand(size, min_value, max_value, specifier, v_set_values, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
       constant size          : positive;
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
-        to_upper(to_string(set_type)) & ":" & format_real(set_of_values) & to_string_if_enabled(uniqueness) & ")";
+        to_upper(to_string(specifier)) & ":" & format_real(set_of_values) & to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
@@ -3260,14 +3260,14 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, set_type, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to size-1 loop
           v_gen_new_random := true;
           while v_gen_new_random loop
-            v_ret(i) := rand(min_value, max_value, set_type, set_of_values, msg_id_panel, C_LOCAL_CALL);
+            v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
             if i > 0 then
               v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
             else
@@ -3288,9 +3288,9 @@ package body rand_pkg is
       constant size          : positive;
       constant min_value     : real;
       constant max_value     : real;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : real;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -3298,39 +3298,39 @@ package body rand_pkg is
       variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : real_vector(0 to 0) := (0 => value2);
     begin
-      return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, uniqueness, msg_id_panel);
+      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
       constant size           : positive;
       constant min_value      : real;
       constant max_value      : real;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : real;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : real_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
       variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
     begin
-      return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, uniqueness, msg_id_panel);
+      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
       constant size           : positive;
       constant min_value      : real;
       constant max_value      : real;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : real_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : real_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
-        to_upper(to_string(set_type1)) & ":" & format_real(set_of_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & format_real(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
+        to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : real_vector(0 to size-1);
@@ -3343,14 +3343,14 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to size-1 loop
           v_gen_new_random := true;
           while v_gen_new_random loop
-            v_ret(i) := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+            v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
             if i > 0 then
               v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
             else
@@ -3419,12 +3419,12 @@ package body rand_pkg is
 
     impure function rand(
       constant size          : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_of_values) &
+      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
         to_string_if_enabled(uniqueness) & ")";
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to size-1);
@@ -3437,7 +3437,7 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(set_type, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
@@ -3448,7 +3448,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(set_type, set_of_values, msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -3467,27 +3467,27 @@ package body rand_pkg is
       constant size          : positive;
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
       variable v_set_values : time_vector(0 to 0) := (0 => value);
     begin
-      return rand(size, min_value, max_value, set_type, v_set_values, uniqueness, msg_id_panel);
+      return rand(size, min_value, max_value, specifier, v_set_values, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
       constant size          : positive;
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & ")";
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_set_values_len  : integer := 0;
       variable v_gen_new_random  : boolean := true;
@@ -3501,11 +3501,11 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, set_type, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        v_set_values_len := (0-set_of_values'length) when set_type = EXCL else set_of_values'length;
+        v_set_values_len := (0-set_of_values'length) when specifier = EXCL else set_of_values'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
@@ -3513,7 +3513,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, set_type, set_of_values, msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -3532,9 +3532,9 @@ package body rand_pkg is
       constant size          : positive;
       constant min_value     : time;
       constant max_value     : time;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : time;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -3542,39 +3542,39 @@ package body rand_pkg is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
     begin
-      return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, uniqueness, msg_id_panel);
+      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
       constant size           : positive;
       constant min_value      : time;
       constant max_value      : time;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : time;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : time_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
     begin
-      return rand(size, min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, uniqueness, msg_id_panel);
+      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
       constant size           : positive;
       constant min_value      : time;
       constant max_value      : time;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : time_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : time_vector;
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
       constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_set_values_len  : integer := 0;
       variable v_gen_new_random  : boolean := true;
@@ -3588,12 +3588,12 @@ package body rand_pkg is
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to size-1 loop
-          v_ret(i) := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+          v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        v_set_values_len := (0-set_of_values1'length) when set_type1 = EXCL else set_of_values1'length;
-        v_set_values_len := (v_set_values_len-set_of_values2'length) when set_type2 = EXCL else v_set_values_len+set_of_values2'length;
+        v_set_values_len := (0-set_of_values1'length) when specifier1 = EXCL else set_of_values1'length;
+        v_set_values_len := (v_set_values_len-set_of_values2'length) when specifier2 = EXCL else v_set_values_len+set_of_values2'length;
         if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
@@ -3601,7 +3601,7 @@ package body rand_pkg is
           for i in 0 to size-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+              v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
               if i > 0 then
                 v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
               else
@@ -3747,13 +3747,13 @@ package body rand_pkg is
 
     impure function rand(
       constant length        : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string         := "")
     return unsigned is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_of_values) &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
         to_string_if_enabled(cyclic_mode) & ")";
       variable v_proc_call       : line;
       variable v_gen_new_random  : boolean := true;
@@ -3767,11 +3767,11 @@ package body rand_pkg is
         return v_ret;
       end if;
       -- Generate a random value within the set of values
-      if set_type = ONLY then
+      if specifier = ONLY then
         v_ret_int := rand(ONLY, integer_vector(set_of_values), cyclic_mode, msg_id_panel, v_proc_call.all);
         v_ret     := to_unsigned(v_ret_int,length);
       -- Generate a random value in the vector's range minus the set of values
-      elsif set_type = EXCL then
+      elsif specifier = EXCL then
         -- Check whether the vector's range can handle cyclic mode
         if length < 32 then
           v_ret_int := rand(0, 2**length-1, EXCL, integer_vector(set_of_values), cyclic_mode, msg_id_panel, v_proc_call.all);
@@ -3792,7 +3792,7 @@ package body rand_pkg is
           v_ret := v_unsigned;
         end if;
       else
-        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
@@ -3804,27 +3804,27 @@ package body rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
       variable v_set_values : t_natural_vector(0 to 0) := (0 => value);
     begin
-      return rand(length, min_value, max_value, set_type, v_set_values, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier, v_set_values, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret_int   : integer;
       variable v_ret       : unsigned(length-1 downto 0);
       variable v_check_ok  : boolean := true;
@@ -3835,7 +3835,7 @@ package body rand_pkg is
       if not v_check_ok then
         return v_ret;
       end if;
-      v_ret_int := rand(min_value, max_value, set_type, integer_vector(set_of_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+      v_ret_int := rand(min_value, max_value, specifier, integer_vector(set_of_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
       v_ret     := to_unsigned(v_ret_int,length);
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
@@ -3846,9 +3846,9 @@ package body rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : natural;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -3856,39 +3856,39 @@ package body rand_pkg is
       variable v_set_values1 : t_natural_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : t_natural_vector(0 to 0) := (0 => value2);
     begin
-      return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length         : positive;
       constant min_value      : natural;
       constant max_value      : natural;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : natural;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : t_natural_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
       variable v_set_values1 : t_natural_vector(0 to 0) := (0 => value1);
     begin
-      return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length         : positive;
       constant min_value      : natural;
       constant max_value      : natural;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : t_natural_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : t_natural_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret_int   : integer;
       variable v_ret       : unsigned(length-1 downto 0);
       variable v_check_ok  : boolean := true;
@@ -3900,7 +3900,7 @@ package body rand_pkg is
       if not v_check_ok then
         return v_ret;
       end if;
-      v_ret_int := rand(min_value, max_value, set_type1, integer_vector(set_of_values1), set_type2, integer_vector(set_of_values2), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+      v_ret_int := rand(min_value, max_value, specifier1, integer_vector(set_of_values1), specifier2, integer_vector(set_of_values2), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
       v_ret     := to_unsigned(v_ret_int,length);
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
@@ -4025,12 +4025,12 @@ package body rand_pkg is
 
     impure function rand(
       constant length        : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(set_type)) & ":" & to_string(set_of_values) &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
         to_string_if_enabled(cyclic_mode) & ")";
       variable v_gen_new_random  : boolean := true;
       variable v_signed          : signed(length-1 downto 0);
@@ -4041,11 +4041,11 @@ package body rand_pkg is
         return v_ret;
       end if;
       -- Generate a random value within the set of values
-      if set_type = ONLY then
+      if specifier = ONLY then
         v_ret_int := rand(ONLY, integer_vector(set_of_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
         v_ret     := to_signed(v_ret_int,length);
       -- Generate a random value in the vector's range minus the set of values
-      elsif set_type = EXCL then
+      elsif specifier = EXCL then
         -- Check whether the vector's range can handle cyclic mode
         if length < 33 then
           v_ret_int := rand(-2**(length-1), 2**(length-1)-1, EXCL, integer_vector(set_of_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
@@ -4066,7 +4066,7 @@ package body rand_pkg is
           v_ret := v_signed;
         end if;
       else
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Invalid parameter: " & to_upper(to_string(set_type)), priv_scope);
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
@@ -4077,27 +4077,27 @@ package body rand_pkg is
       constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
       variable v_set_values : integer_vector(0 to 0) := (0 => value);
     begin
-      return rand(length, min_value, max_value, set_type, v_set_values, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier, v_set_values, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret      : integer;
       variable v_check_ok : boolean := true;
     begin
@@ -4107,7 +4107,7 @@ package body rand_pkg is
       if not v_check_ok then
         return to_signed(v_ret,length);
       end if;
-      v_ret := rand(min_value, max_value, set_type, integer_vector(set_of_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+      v_ret := rand(min_value, max_value, specifier, integer_vector(set_of_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return to_signed(v_ret,length);
@@ -4117,9 +4117,9 @@ package body rand_pkg is
       constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : integer;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : integer;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -4127,39 +4127,39 @@ package body rand_pkg is
       variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : integer_vector(0 to 0) := (0 => value2);
     begin
-      return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length         : positive;
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : integer;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return signed is
       variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
     begin
-      return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length         : positive;
       constant min_value      : integer;
       constant max_value      : integer;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : integer_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : integer_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
-        to_upper(to_string(set_type1)) & ":" & to_string(set_of_values1) & ", " &
-        to_upper(to_string(set_type2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret      : integer;
       variable v_check_ok : boolean := true;
     begin
@@ -4170,7 +4170,7 @@ package body rand_pkg is
       if not v_check_ok then
         return to_signed(v_ret,length);
       end if;
-      v_ret := rand(min_value, max_value, set_type1, integer_vector(set_of_values1), set_type2, integer_vector(set_of_values2), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+      v_ret := rand(min_value, max_value, specifier1, integer_vector(set_of_values1), specifier2, integer_vector(set_of_values2), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return to_signed(v_ret,length);
@@ -4230,14 +4230,14 @@ package body rand_pkg is
 
     impure function rand(
       constant length        : positive;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
       variable v_ret : unsigned(length-1 downto 0);
     begin
-      v_ret := rand(length, set_type, set_of_values, cyclic_mode, msg_id_panel);
+      v_ret := rand(length, specifier, set_of_values, cyclic_mode, msg_id_panel);
       return std_logic_vector(v_ret);
     end function;
 
@@ -4245,28 +4245,28 @@ package body rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant value         : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
       variable v_set_values : t_natural_vector(0 to 0) := (0 => value);
     begin
-      return rand(length, min_value, max_value, set_type, v_set_values, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier, v_set_values, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type      : t_value_specifier;
+      constant specifier     : t_value_specifier;
       constant set_of_values : t_natural_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
       variable v_ret : unsigned(length-1 downto 0);
     begin
-      v_ret := rand(length, min_value, max_value, set_type, set_of_values, cyclic_mode, msg_id_panel);
+      v_ret := rand(length, min_value, max_value, specifier, set_of_values, cyclic_mode, msg_id_panel);
       return std_logic_vector(v_ret);
     end function;
 
@@ -4274,9 +4274,9 @@ package body rand_pkg is
       constant length        : positive;
       constant min_value     : natural;
       constant max_value     : natural;
-      constant set_type1     : t_value_specifier;
+      constant specifier1    : t_value_specifier;
       constant value1        : natural;
-      constant set_type2     : t_value_specifier;
+      constant specifier2    : t_value_specifier;
       constant value2        : natural;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
@@ -4284,39 +4284,39 @@ package body rand_pkg is
       variable v_set_values1 : t_natural_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : t_natural_vector(0 to 0) := (0 => value2);
     begin
-      return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, v_set_values2, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length         : positive;
       constant min_value      : natural;
       constant max_value      : natural;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant value1         : natural;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : t_natural_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
       variable v_set_values1 : t_natural_vector(0 to 0) := (0 => value1);
     begin
-      return rand(length, min_value, max_value, set_type1, v_set_values1, set_type2, set_of_values2, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
       constant length         : positive;
       constant min_value      : natural;
       constant max_value      : natural;
-      constant set_type1      : t_value_specifier;
+      constant specifier1     : t_value_specifier;
       constant set_of_values1 : t_natural_vector;
-      constant set_type2      : t_value_specifier;
+      constant specifier2     : t_value_specifier;
       constant set_of_values2 : t_natural_vector;
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
       variable v_ret : unsigned(length-1 downto 0);
     begin
-      v_ret := rand(length, min_value, max_value, set_type1, set_of_values1, set_type2, set_of_values2, cyclic_mode, msg_id_panel);
+      v_ret := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, cyclic_mode, msg_id_panel);
       return std_logic_vector(v_ret);
     end function;
 

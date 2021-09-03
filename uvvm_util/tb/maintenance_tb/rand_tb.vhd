@@ -88,7 +88,7 @@ begin
     --===================================================================================
     if GC_TESTCASE = "rand_basic" then
     --===================================================================================
-      increment_expected_alerts(TB_WARNING, 1); -- Single warning for using same set_type in rand()
+      increment_expected_alerts(TB_WARNING, 1); -- Single warning for using same specifier in rand()
 
       v_rand.set_name("long_string_abcdefghijklmnopqrstuvwxyz");
       check_value(v_rand.get_name(VOID), "long_string_abcdefgh", ERROR, "Checking name"); -- C_RAND_MAX_NAME_LENGTH = 20

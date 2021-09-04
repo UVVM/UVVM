@@ -608,38 +608,43 @@ once the bin has reached its minimum number of hits, which is by default 1, it w
 
 get_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns the accumulated coverage for all the bins in the coverpoint. ::
+Returns either the bins coverage or the hits coverage of the coverpoint. For an overview on the types of coverage click 
+:ref:`here <func_cov_pkg_coverage_status>`. ::
 
-    real := get_coverage(VOID)
+    real := get_coverage(coverage_type)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | coverage_type      | in     | :ref:`t_coverage_type`       | Selects which coverage value to return, either BINS   |
+|          |                    |        |                              | or HITS                                               |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
-    -- Example:
-    log(ID_SEQUENCER, "Coverage: " & to_string(my_coverpoint.get_coverage(VOID),2) & "%");
+    -- Examples:
+    log(ID_SEQUENCER, "Bins Coverage: " & to_string(my_coverpoint.get_coverage(BINS),2) & "%");
+    log(ID_SEQUENCER, "Hits Coverage: " & to_string(my_coverpoint.get_coverage(HITS),2) & "%");
 
 
 coverage_completed()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns true if the accumulated coverage for all the bins in the coverpoint has reached the goal. Default goal is 100. ::
+Returns true if the coverage of the coverpoint has reached the goal. Default goal is 100. For an overview on the types of coverage 
+click :ref:`here <func_cov_pkg_coverage_status>`. ::
 
-    boolean := coverage_completed(VOID)
+    boolean := coverage_completed(coverage_type)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | coverage_type      | in     | :ref:`t_coverage_type`       | Selects which coverage value to check, either BINS,   |
+|          |                    |        |                              | HITS or BINS_AND_HITS                                 |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     -- Example:
-    if my_coverpoint.coverage_completed(VOID) then
+    if my_coverpoint.coverage_completed(BINS_AND_HITS) then
     ...
     end if;
 

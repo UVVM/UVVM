@@ -35,6 +35,7 @@ package func_cov_pkg is
   ------------------------------------------------------------
   type t_report_verbosity is (NON_VERBOSE, VERBOSE, HOLES_ONLY);
   type t_rand_weight_visibility is (SHOW_RAND_WEIGHT, HIDE_RAND_WEIGHT);
+  type t_coverage_type is (BINS, HITS, BINS_AND_HITS);
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
 
   type t_new_bin is record
@@ -457,11 +458,11 @@ package func_cov_pkg is
       constant ext_proc_call : in string         := "");
 
     impure function get_coverage(
-      constant VOID : t_void)
+      constant coverage_type : t_coverage_type)
     return real;
 
     impure function coverage_completed(
-      constant VOID : t_void)
+      constant coverage_type : t_coverage_type)
     return boolean;
 
     procedure report_coverage(
@@ -2479,22 +2480,36 @@ package body func_cov_pkg is
     end procedure;
 
     impure function get_coverage(
-      constant VOID : t_void)
+      constant coverage_type : t_coverage_type)
     return real is
+      constant C_LOCAL_CALL : string := "get_coverage(" & to_upper(to_string(coverage_type)) & ")";
     begin
       if priv_id /= C_DEALLOCATED_ID then
-        return protected_covergroup_status.get_hits_coverage(priv_id);
+        if coverage_type = BINS then
+          return protected_covergroup_status.get_bins_coverage(priv_id);
+        elsif coverage_type = HITS then
+          return protected_covergroup_status.get_hits_coverage(priv_id);
+        else -- BINS_AND_HITS
+          alert(TB_ERROR, C_LOCAL_CALL & "=> Use either BINS or HITS.", priv_scope);
+        end if;
       else
         return 0.0;
       end if;
     end function;
 
     impure function coverage_completed(
-      constant VOID : t_void)
+      constant coverage_type : t_coverage_type)
     return boolean is
     begin
       if priv_id /= C_DEALLOCATED_ID then
-        return protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_hits_coverage_goal(priv_id));
+        if coverage_type = BINS then
+          return protected_covergroup_status.get_bins_coverage(priv_id) >= real(protected_covergroup_status.get_bins_coverage_goal(priv_id));
+        elsif coverage_type = HITS then
+          return protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_hits_coverage_goal(priv_id));
+        else -- BINS_AND_HITS
+          return protected_covergroup_status.get_bins_coverage(priv_id) >= real(protected_covergroup_status.get_bins_coverage_goal(priv_id)) and
+            protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_hits_coverage_goal(priv_id));
+        end if;
       else
         return false;
       end if;

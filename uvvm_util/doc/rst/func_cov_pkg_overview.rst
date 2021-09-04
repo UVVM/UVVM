@@ -389,23 +389,39 @@ the valid bin will be skipped.
 
 Also, if a sampled value is contained in both ignore and illegal bins, then the illegal bin will take precedence.
 
+.. _func_cov_pkg_coverage_status:
+
 **********************************************************************************************************************************
 Coverage status
 **********************************************************************************************************************************
 It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()``, which returns the 
-percentage in a real number, and also determine if the coverage is completed with ``coverage_completed()``.
+percentage value in a real number. There are 2 coverage interpretations:
+
+* **Bins Coverage**: represents the percentage of the number of bins which are covered *(covered_bins/total_bins)*
+* **Hits Coverage**: represents the percentage of the number of hits in relation to the number of min_hits for all the bins in the 
+  coverpoint *(bin1_hits/bin1_min_hits + bin2_hits/bin2_min_hits + ...)*
+
+It is also possible to check if the bins and/or hits coverage is completed using the function ``coverage_completed()``. Normally, 
+both the bins and the hits coverage are completed at the same time, except when they have a different coverage goal (explained in 
+the next section).
+
+.. code-block::
+
+    log(ID_SEQUENCER, "Bins Coverage: " & to_string(my_coverpoint.get_coverage(BINS),2) & "%");
+    log(ID_SEQUENCER, "Hits Coverage: " & to_string(my_coverpoint.get_coverage(HITS),2) & "%");
+
+    -- Do something while the coverpoint's coverage is incomplete
+    while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
+    ...
+    end loop;
+
+TODO: rewrite rest of section
 
 Similar functions for the overall status are ``fc_get_overall_coverage()`` and ``fc_overall_coverage_completed()``.
 
 .. code-block::
 
-    log(ID_SEQUENCER, "My Coverpoint Coverage: " & to_string(my_coverpoint.get_coverage(VOID),2) & "%");
     log(ID_SEQUENCER, "Overall Coverage: " & to_string(fc_get_overall_coverage(VOID),2) & "%");
-
-    -- Do something while the coverpoint's coverage is incomplete
-    while not(my_coverpoint.coverage_completed(VOID)) loop
-    ...
-    end loop;
 
     -- Do something while the overall coverage is incomplete
     while not(fc_overall_coverage_completed(VOID)) loop

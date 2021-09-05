@@ -1576,6 +1576,8 @@ package body func_cov_pkg is
         write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
         write_value(protected_covergroup_status.get_num_illegal_bins(priv_id));
         write_value(protected_covergroup_status.get_num_covered_bins(priv_id));
+        write_value(protected_covergroup_status.get_total_coverage_bin_hits(priv_id));
+        write_value(protected_covergroup_status.get_total_goal_bin_hits(priv_id));
         write_value(protected_covergroup_status.get_total_bin_hits(priv_id));
         write_value(protected_covergroup_status.get_total_bin_min_hits(priv_id));
         write_value(protected_covergroup_status.get_coverage_weight(priv_id));
@@ -1710,6 +1712,10 @@ package body func_cov_pkg is
       read_value(v_value);
       protected_covergroup_status.set_num_covered_bins(priv_id, v_value);
       read_value(v_value);
+      protected_covergroup_status.set_total_coverage_bin_hits(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_total_goal_bin_hits(priv_id, v_value);
+      read_value(v_value);
       protected_covergroup_status.set_total_bin_hits(priv_id, v_value);
       read_value(v_value);
       protected_covergroup_status.set_total_bin_min_hits(priv_id, v_value);
@@ -1761,6 +1767,8 @@ package body func_cov_pkg is
       priv_rand_transition_bin_value_idx := (others => 0);
 
       protected_covergroup_status.set_num_covered_bins(priv_id, 0);
+      protected_covergroup_status.set_total_coverage_bin_hits(priv_id, 0);
+      protected_covergroup_status.set_total_goal_bin_hits(priv_id, 0);
       protected_covergroup_status.set_total_bin_hits(priv_id, 0);
     end procedure;
 
@@ -2452,12 +2460,15 @@ package body func_cov_pkg is
             priv_bins(i).hits := priv_bins(i).hits + 1;
             v_num_occurrences := v_num_occurrences + 1;
             -- Update covergroup status register
-            -- Stop accumulating the coverage contribution of the bin when the goal has been reached
+            protected_covergroup_status.increment_hits_count(priv_id);            -- Count the total hits
+            if priv_bins(i).hits <= priv_bins(i).min_hits then
+              protected_covergroup_status.increment_coverage_hits_count(priv_id); -- Count until min_hits has been reached
+            end if;
             if priv_bins(i).hits <= get_total_min_hits(priv_bins(i).min_hits) then
-              protected_covergroup_status.increment_hits_count(priv_id);
+              protected_covergroup_status.increment_goal_hits_count(priv_id);     -- Count until min_hits x goal has been reached
             end if;
             if priv_bins(i).hits = priv_bins(i).min_hits and priv_bins(i).min_hits /= 0 then
-              protected_covergroup_status.increment_covered_bin_count(priv_id);
+              protected_covergroup_status.increment_covered_bin_count(priv_id);   -- Count the covered bins
             end if;
           end if;
           v_value_match := (others => '0');

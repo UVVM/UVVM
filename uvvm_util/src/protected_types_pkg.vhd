@@ -75,7 +75,7 @@ package protected_types_pkg is
 
 
   type t_protected_covergroup_status is protected
-    impure function add_coverpoint(VOID : in t_void) return integer;
+    impure function add_coverpoint(VOID : t_void) return integer;
     procedure remove_coverpoint(coverpoint_idx : in integer);
     procedure set_name(coverpoint_idx : in integer; name : in string);
     procedure set_num_valid_bins(coverpoint_idx : in integer; num_bins : in natural);
@@ -92,22 +92,22 @@ package protected_types_pkg is
     procedure increment_covered_bin_count(coverpoint_idx : in integer);
     procedure increment_hits_count(coverpoint_idx : in integer);
     procedure increment_min_hits_count(coverpoint_idx : in integer; min_hits : in natural);
-    impure function is_initialized(coverpoint_idx : in integer) return boolean;
-    impure function get_name(coverpoint_idx : in integer) return string;
-    impure function get_num_valid_bins(coverpoint_idx : in integer) return natural;
-    impure function get_num_illegal_bins(coverpoint_idx : in integer) return natural;
-    impure function get_num_covered_bins(coverpoint_idx : in integer) return natural;
-    impure function get_num_uncovered_bins(coverpoint_idx : in integer) return natural;
-    impure function get_total_bin_hits(coverpoint_idx : in integer) return natural;
-    impure function get_total_bin_min_hits(coverpoint_idx : in integer) return natural;
-    impure function get_coverage_weight(coverpoint_idx : in integer) return positive;
-    impure function get_bins_coverage_goal(coverpoint_idx : in integer) return positive;
-    impure function get_hits_coverage_goal(coverpoint_idx : in integer) return positive;
-    impure function get_covergroup_coverage_goal(VOID : in t_void) return positive;
-    impure function get_combined_coverage_goal(coverpoint_idx : in integer) return positive;
-    impure function get_bins_coverage(coverpoint_idx : in integer) return real;
-    impure function get_hits_coverage(coverpoint_idx : in integer) return real;
-    impure function get_total_hits_coverage(VOID : in t_void) return real;
+    impure function is_initialized(coverpoint_idx : integer) return boolean;
+    impure function get_name(coverpoint_idx : integer) return string;
+    impure function get_num_valid_bins(coverpoint_idx : integer) return natural;
+    impure function get_num_illegal_bins(coverpoint_idx : integer) return natural;
+    impure function get_num_covered_bins(coverpoint_idx : integer) return natural;
+    impure function get_num_uncovered_bins(coverpoint_idx : integer) return natural;
+    impure function get_total_bin_hits(coverpoint_idx : integer) return natural;
+    impure function get_total_bin_min_hits(coverpoint_idx : integer) return natural;
+    impure function get_coverage_weight(coverpoint_idx : integer) return positive;
+    impure function get_bins_coverage_goal(coverpoint_idx : integer) return positive;
+    impure function get_hits_coverage_goal(coverpoint_idx : integer) return positive;
+    impure function get_covergroup_coverage_goal(VOID : t_void) return positive;
+    impure function get_combined_coverage_goal(coverpoint_idx : integer) return positive;
+    impure function get_bins_coverage(coverpoint_idx : integer) return real;
+    impure function get_hits_coverage(coverpoint_idx : integer) return real;
+    impure function get_total_hits_coverage(VOID : t_void) return real;
   end protected t_protected_covergroup_status;
 
 
@@ -268,7 +268,7 @@ package body protected_types_pkg is
     variable priv_coverage_goal          : positive := 100;
 
     impure function add_coverpoint(
-      constant VOID : in t_void)
+      constant VOID : t_void)
     return integer is
       constant C_COVERPOINT_NUM      : string  := to_string(priv_coverpoint_name_idx);
       variable v_next_coverpoint_idx : natural := 0;
@@ -401,77 +401,77 @@ package body protected_types_pkg is
     end procedure;
 
     impure function is_initialized(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return boolean is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).initialized;
     end function;
 
     impure function get_name(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return string is
     begin
       return to_string(priv_coverpoint_status_list(coverpoint_idx).name);
     end function;
 
     impure function get_num_valid_bins(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return natural is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).num_valid_bins;
     end function;
 
     impure function get_num_illegal_bins(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return natural is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).num_illegal_bins;
     end function;
 
     impure function get_num_covered_bins(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return natural is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).num_covered_bins;
     end function;
 
     impure function get_num_uncovered_bins(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return natural is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).num_valid_bins - priv_coverpoint_status_list(coverpoint_idx).num_covered_bins;
     end function;
 
     impure function get_total_bin_hits(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return natural is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).total_bin_hits;
     end function;
 
     impure function get_total_bin_min_hits(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return natural is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits;
     end function;
 
     impure function get_coverage_weight(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return positive is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).coverage_weight;
     end function;
 
     impure function get_bins_coverage_goal(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return positive is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal;
     end function;
 
     impure function get_hits_coverage_goal(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return positive is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal;
@@ -485,7 +485,7 @@ package body protected_types_pkg is
     end function;
 
     impure function get_combined_coverage_goal(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return positive is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).coverage_goal * priv_coverage_goal / 100;
@@ -493,7 +493,7 @@ package body protected_types_pkg is
 
     -- Returns the percentage of covered_bins/valid_bins in the coverpoint
     impure function get_bins_coverage(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return real is
       variable v_num_covered_bins : natural := priv_coverpoint_status_list(coverpoint_idx).num_covered_bins;
       variable v_num_valid_bins   : natural := priv_coverpoint_status_list(coverpoint_idx).num_valid_bins;
@@ -505,7 +505,7 @@ package body protected_types_pkg is
 
     -- Returns the percentage of total_hits/total_min_hits in the coverpoint
     impure function get_hits_coverage(
-      constant coverpoint_idx : in integer)
+      constant coverpoint_idx : integer)
     return real is
       variable v_tot_bin_hits     : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_hits;
       variable v_tot_bin_min_hits : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits;

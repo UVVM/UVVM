@@ -110,7 +110,6 @@ package protected_types_pkg is
     impure function get_bins_coverage_goal(coverpoint_idx : integer) return positive;
     impure function get_hits_coverage_goal(coverpoint_idx : integer) return positive;
     impure function get_covergroup_coverage_goal(VOID : t_void) return positive;
-    impure function get_combined_coverage_goal(coverpoint_idx : integer) return positive;
     impure function get_bins_coverage(coverpoint_idx : integer) return real;
     impure function get_hits_coverage(coverpoint_idx : integer) return real;
     impure function get_total_hits_coverage(VOID : t_void) return real;
@@ -532,13 +531,6 @@ package body protected_types_pkg is
     return positive is
     begin
       return priv_coverage_goal;
-    end function;
-
-    impure function get_combined_coverage_goal(
-      constant coverpoint_idx : integer)
-    return positive is
-    begin
-      return priv_coverpoint_status_list(coverpoint_idx).coverage_goal * priv_coverage_goal / 100;
     end function;
 
     -- Returns the percentage of covered_bins/valid_bins in the coverpoint

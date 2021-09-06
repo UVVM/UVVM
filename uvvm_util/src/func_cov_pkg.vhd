@@ -2569,31 +2569,46 @@ package body func_cov_pkg is
 
       -- Print summary
       if priv_id /= C_DEALLOCATED_ID then
-        write(v_line, "Coverpoint:     " & priv_name & LF &
-                      "Uncovered bins: " & to_string(protected_covergroup_status.get_num_uncovered_bins(priv_id)) & LF &
-                      "Illegal bins:   " & to_string(protected_covergroup_status.get_num_illegal_bins(priv_id)) & LF &
-                      "Coverage:       bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id),2)
-                        & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id),2)
-                        & "% (goal: " & to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)) & "%)" & LF &
-                      fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+        if protected_covergroup_status.get_bins_coverage_goal(priv_id) /= 100 or protected_covergroup_status.get_hits_coverage_goal(priv_id) /= 100 then
+          write(v_line, "Coverpoint:              " & priv_name & LF &
+                        "Goal:                    " &
+                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage_goal(priv_id)) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                        "% of Goal:               " &
+                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_CAPPED),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_CAPPED),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                        "% of Goal (uncapped):    " &
+                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_UNCAPPED),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_UNCAPPED),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                        "Coverage (for goal 100): " &
+                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, NO_GOAL),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, NO_GOAL),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                        fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+        else
+          write(v_line, "Coverpoint:              " & priv_name & LF &
+                        "Coverage (for goal 100): " &
+                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, NO_GOAL),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, NO_GOAL),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                        fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+        end if;
       else
-        write(v_line, "Coverpoint:     " & priv_name & LF &
-                      "Uncovered bins: 0" & LF &
-                      "Illegal bins:   0" & LF &
-                      "Coverage:       bins: 0.0% hits: 0.0% (goal: 0.0%)" & LF &
+        write(v_line, "Coverpoint:              " & priv_name & LF &
+                      "Coverage (for goal 100): " &
+                        justify("Bins: 0.0%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: 0.0%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
                       fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
       end if;
 
       -- Print column headers
       write(v_line, justify(
         fill_string(' ', v_log_extra_space) &
-        justify("BINS"        , center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("HITS"        , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("MIN HITS"    , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("HIT COVERAGE", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("BINS"           , center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("HITS"           , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("MIN HITS"       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("HIT COVERAGE"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         return_string_if_true(justify("RAND WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),rand_weight_col = SHOW_RAND_WEIGHT) &
-        justify("NAME"        , center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("EXCL STATUS" , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+        justify("NAME"           , center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("ILLEGAL/IGNORE" , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       -- Print illegal bins

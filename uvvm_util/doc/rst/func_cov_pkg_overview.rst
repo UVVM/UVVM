@@ -496,15 +496,15 @@ The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in 
 Coverage report
 **********************************************************************************************************************************
 A detailed report for the coverage and the bins in the coverpoint/cross can be printed using the ``report_coverage()`` procedure.
-By using the parameter verbosity, different types of bins can be printed out.
-
-* *bins coverage* = bins_covered/num_bins (this value has a maximum of 100%)
-* *hits coverage* = tot_hits/tot_min_hits (this value increments gradually and has a maximum equal to the coverage goal)
+The amount of information can be adjusted by using the parameter verbosity.
 
 .. note::
 
     When the bin values don't fit under the BINS column, the bin name is printed instead and the values are printed at the bottom 
     of the report.
+
+Verbose
+==================================================================================================================================
 
 .. code-block::
 
@@ -515,52 +515,54 @@ By using the parameter verbosity, different types of bins can be printed out.
     # UVVM:  =================================================================================================================
     # UVVM:  0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): TB seq. ***                                                          
     # UVVM:  =================================================================================================================
-    # UVVM:  Coverpoint:     Covpt_1
-    # UVVM:  Uncovered bins: 1
-    # UVVM:  Illegal bins:   3
-    # UVVM:  Coverage:       bins: 80.00% hits: 77.78% (goal: 100%)
+    # UVVM:  Coverpoint:              Covpt_1
+    # UVVM:  Coverage (for goal 100): Bins: 80.00%,   Hits: 77.78%  
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
-    # UVVM:               BINS               HITS      MIN_HITS      COVERAGE             NAME               STATUS           
-    # UVVM:              (3000)               1          N/A           N/A            illegal_addr          ILLEGAL           
-    # UVVM:           (256 to 511)            0          N/A           N/A            illegal_addr          ILLEGAL           
-    # UVVM:        illegal_transition         0          N/A           N/A         illegal_transition       ILLEGAL           
-    # UVVM:               (255)               0          N/A           N/A             ignore_addr           IGNORE           
-    # UVVM:         ignore_transition         0          N/A           N/A          ignore_transition        IGNORE           
-    # UVVM:           (0->1->2->3)            0           2           0.00%           transition_1         UNCOVERED          
-    # UVVM:             (0 to 15)             6           2          100.00%          mem_addr_low          COVERED           
-    # UVVM:               (127)               3           1          100.00%          mem_addr_mid          COVERED           
-    # UVVM:           (248 to 254)            14          2          100.00%          mem_addr_high         COVERED           
-    # UVVM:           transition_2            2           2          100.00%          transition_2          COVERED           
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
+    # UVVM:              (3000)               1          N/A           N/A             illegal_addr           ILLEGAL         
+    # UVVM:           (256 to 511)            0          N/A           N/A             illegal_addr           ILLEGAL         
+    # UVVM:        illegal_transition         0          N/A           N/A          illegal_transition        ILLEGAL         
+    # UVVM:               (255)               0          N/A           N/A              ignore_addr            IGNORE         
+    # UVVM:         ignore_transition         0          N/A           N/A           ignore_transition         IGNORE         
+    # UVVM:             (0 to 15)             6           2          100.00%           mem_addr_low              -            
+    # UVVM:               (127)               3           1          100.00%           mem_addr_mid              -            
+    # UVVM:           (248 to 254)            14          2          100.00%           mem_addr_high             -            
+    # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
+    # UVVM:           transition_2            2           2          100.00%           transition_2              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  illegal_transition: (2000->15->127->248->249->250->251->252->253->254)
     # UVVM:  ignore_transition: (1000->15->127->248->249->250->251->252->253->254)
     # UVVM:  transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM:  =================================================================================================================
 
+Non-Verbose
+==================================================================================================================================
+
 .. code-block::
 
-    my_coverpoint.report_coverage(VOID); -- Same as NON_VERBOSE. Prints illegal (when hits > 0) and valid bins
+    my_coverpoint.report_coverage(VOID); -- Same as using NON_VERBOSE. Prints illegal (only when hits > 0) and valid bins
 
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** COVERAGE SUMMARY REPORT (NON_VERBOSE): TB seq. ***                                                      
+    # UVVM:  0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***                                                      
     # UVVM:  =================================================================================================================
-    # UVVM:  Coverpoint:     Covpt_1
-    # UVVM:  Uncovered bins: 1
-    # UVVM:  Illegal bins:   3
-    # UVVM:  Coverage:       bins: 80.00% hits: 77.78% (goal: 100%)
+    # UVVM:  Coverpoint:              Covpt_1
+    # UVVM:  Coverage (for goal 100): Bins: 80.00%,   Hits: 77.78%  
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
-    # UVVM:               BINS               HITS      MIN_HITS      COVERAGE             NAME               STATUS           
-    # UVVM:              (3000)               1          N/A           N/A            illegal_addr          ILLEGAL           
-    # UVVM:           (0->1->2->3)            0           2           0.00%           transition_1         UNCOVERED          
-    # UVVM:             (0 to 15)             6           2          100.00%          mem_addr_low          COVERED           
-    # UVVM:               (127)               3           1          100.00%          mem_addr_mid          COVERED           
-    # UVVM:           (248 to 254)            14          2          100.00%          mem_addr_high         COVERED           
-    # UVVM:           transition_2            2           2          100.00%          transition_2          COVERED           
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
+    # UVVM:              (3000)               1          N/A           N/A             illegal_addr           ILLEGAL         
+    # UVVM:             (0 to 15)             6           2          100.00%           mem_addr_low              -            
+    # UVVM:               (127)               3           1          100.00%           mem_addr_mid              -            
+    # UVVM:           (248 to 254)            14          2          100.00%           mem_addr_high             -            
+    # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
+    # UVVM:           transition_2            2           2          100.00%           transition_2              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM:  =================================================================================================================
+
+Holes
+==================================================================================================================================
 
 .. code-block::
 
@@ -569,17 +571,50 @@ By using the parameter verbosity, different types of bins can be printed out.
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                          
+    # UVVM:  0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                      
     # UVVM:  =================================================================================================================
-    # UVVM:  Coverpoint:     Covpt_1
-    # UVVM:  Uncovered bins: 1
-    # UVVM:  Illegal bins:   3
-    # UVVM:  Coverage:       bins: 80.00% hits: 77.78% (goal: 100%)
+    # UVVM:  Coverpoint:              Covpt_1
+    # UVVM:  Coverage (for goal 100): Bins: 80.00%,   Hits: 77.78%  
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
-    # UVVM:               BINS               HITS      MIN_HITS      COVERAGE             NAME               STATUS           
-    # UVVM:           (0->1->2->3)            0           2           0.00%           transition_1         UNCOVERED          
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
+    # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
+
+Using goal
+==================================================================================================================================
+
+When either the bins goal or the hits goal is configured with a value different than 100, the report shows 3 extra lines:
+
+* **Goal** = configured goal value.
+* **% of Goal** = represents the percentage of the covered goal, stops at 100%.
+* **% of Goal (uncapped)** = represents the percentage of the covered goal without limits. This is useful to see if there are bins 
+  which are oversampled.
+
+.. code-block:: none
+
+    # UVVM: ==================================================================================================================
+    # UVVM: 0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***                                                       
+    # UVVM: ==================================================================================================================
+    # UVVM: Coverpoint:              Covpt_1
+    # UVVM: Goal:                    Bins: 75%,      Hits: 100%    
+    # UVVM: % of Goal:               Bins: 100.00%,  Hits: 77.78%  
+    # UVVM: % of Goal (uncapped):    Bins: 106.67%,  Hits: 277.78% 
+    # UVVM: Coverage (for goal 100): Bins: 80.00%,   Hits: 77.78%  
+    # UVVM: ------------------------------------------------------------------------------------------------------------------
+    # UVVM:              BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE      
+    # UVVM:             (3000)               1          N/A           N/A             illegal_addr           ILLEGAL          
+    # UVVM:            (0 to 15)             6           2          100.00%           mem_addr_low              -             
+    # UVVM:              (127)               3           1          100.00%           mem_addr_mid              -             
+    # UVVM:          (248 to 254)            14          2          100.00%           mem_addr_high             -             
+    # UVVM:          (0->1->2->3)            0           2           0.00%            transition_1              -             
+    # UVVM:          transition_2            2           2          100.00%           transition_2              -             
+    # UVVM: ------------------------------------------------------------------------------------------------------------------
+    # UVVM: transition_2: (0->15->127->248->249->250->251->252->253->254)
+    # UVVM: ==================================================================================================================
+
+Overall
+==================================================================================================================================
 
 A summary report for all the coverpoints in the testbench can be printed using the ``fc_report_overall_coverage()`` procedure. 
 Only the main information is contained in the report, i.e. bins are not included.

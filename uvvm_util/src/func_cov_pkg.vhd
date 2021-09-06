@@ -1382,10 +1382,6 @@ package body func_cov_pkg is
             priv_invalid_bins(priv_invalid_bins_idx).rand_weight := 0;
             priv_invalid_bins(priv_invalid_bins_idx).name        := get_bin_name(bin_name, to_string(priv_bins_idx+priv_invalid_bins_idx));
             priv_invalid_bins_idx := priv_invalid_bins_idx + 1;
-            -- Update covergroup status register
-            if v_bin_is_illegal then
-              protected_covergroup_status.increment_illegal_bin_count(priv_id);
-            end if;
           end if;
 
         -- Go to the next element of the array
@@ -1619,7 +1615,6 @@ package body func_cov_pkg is
         write_value(t_alert_level'pos(priv_bin_overlap_alert_level));
         -- Covergroup config
         write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
-        write_value(protected_covergroup_status.get_num_illegal_bins(priv_id));
         write_value(protected_covergroup_status.get_num_covered_bins(priv_id));
         write_value(protected_covergroup_status.get_total_coverage_bin_hits(priv_id));
         write_value(protected_covergroup_status.get_total_goal_bin_hits(priv_id));
@@ -1752,8 +1747,6 @@ package body func_cov_pkg is
       protected_covergroup_status.set_name(priv_id, priv_name); -- Previously read from the file
       read_value(v_value);
       protected_covergroup_status.set_num_valid_bins(priv_id, v_value);
-      read_value(v_value);
-      protected_covergroup_status.set_num_illegal_bins(priv_id, v_value);
       read_value(v_value);
       protected_covergroup_status.set_num_covered_bins(priv_id, v_value);
       read_value(v_value);

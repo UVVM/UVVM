@@ -110,8 +110,8 @@ package protected_types_pkg is
     impure function get_bins_coverage_goal(coverpoint_idx : integer) return positive;
     impure function get_hits_coverage_goal(coverpoint_idx : integer) return positive;
     impure function get_covergroup_coverage_goal(VOID : t_void) return positive;
-    impure function get_bins_coverage(coverpoint_idx : integer) return real;
-    impure function get_hits_coverage(coverpoint_idx : integer) return real;
+    impure function get_bins_coverage(coverpoint_idx : integer; cov_representation : t_coverage_representation) return real;
+    impure function get_hits_coverage(coverpoint_idx : integer; cov_representation : t_coverage_representation) return real;
     impure function get_total_hits_coverage(VOID : t_void) return real;
   end protected t_protected_covergroup_status;
 
@@ -535,25 +535,43 @@ package body protected_types_pkg is
 
     -- Returns the percentage of covered_bins/valid_bins in the coverpoint
     impure function get_bins_coverage(
-      constant coverpoint_idx : integer)
+      constant coverpoint_idx     : integer;
+      constant cov_representation : t_coverage_representation)
     return real is
       variable v_num_covered_bins : natural := priv_coverpoint_status_list(coverpoint_idx).num_covered_bins;
       variable v_num_valid_bins   : natural := priv_coverpoint_status_list(coverpoint_idx).num_valid_bins;
       variable v_coverage         : real;
     begin
       v_coverage := real(v_num_covered_bins)*100.0/real(v_num_valid_bins) when v_num_valid_bins > 0 else 0.0;
+      if cov_representation = GOAL_CAPPED or cov_representation = GOAL_UNCAPPED then
+        v_coverage := v_coverage*100.0/real(priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal);
+      end if;
+      if cov_representation = GOAL_CAPPED and v_coverage > 100.0 then
+        v_coverage := 100.0;
+      end if;
       return v_coverage;
     end function;
 
     -- Returns the percentage of total_hits/total_min_hits in the coverpoint
     impure function get_hits_coverage(
-      constant coverpoint_idx : integer)
+      constant coverpoint_idx     : integer;
+      constant cov_representation : t_coverage_representation)
     return real is
-      variable v_tot_bin_hits     : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_hits;
-      variable v_tot_bin_min_hits : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits;
-      variable v_coverage         : real;
+      variable v_tot_coverage_bin_hits : natural := priv_coverpoint_status_list(coverpoint_idx).total_coverage_bin_hits;
+      variable v_tot_goal_bin_hits     : natural := priv_coverpoint_status_list(coverpoint_idx).total_goal_bin_hits;
+      variable v_tot_bin_hits          : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_hits;
+      variable v_tot_bin_min_hits      : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits;
+      variable v_tot_goal_bin_min_hits : real    := real(priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits*priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal)/100.0;
+      variable v_coverage              : real;
     begin
-      v_coverage := real(v_tot_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
+      if cov_representation = GOAL_CAPPED then
+        v_coverage := real(v_tot_goal_bin_hits)*100.0/v_tot_goal_bin_min_hits when v_tot_goal_bin_min_hits > 0.0 else 0.0;
+        v_coverage := 100.0 when v_coverage > 100.0;
+      elsif cov_representation = GOAL_UNCAPPED then
+        v_coverage := real(v_tot_bin_hits)*100.0/v_tot_goal_bin_min_hits when v_tot_goal_bin_min_hits > 0.0 else 0.0;
+      else -- NO_GOAL
+        v_coverage := real(v_tot_coverage_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
+      end if;
       return v_coverage;
     end function;
 
@@ -567,8 +585,8 @@ package body protected_types_pkg is
     begin
       for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
         if priv_coverpoint_status_list(i).initialized then
-          v_tot_bin_hits     := v_tot_bin_hits + priv_coverpoint_status_list(i).total_bin_hits * priv_coverpoint_status_list(i).coverage_weight;
-          v_tot_bin_min_hits := v_tot_bin_min_hits + priv_coverpoint_status_list(i).total_bin_min_hits * priv_coverpoint_status_list(i).coverage_weight * priv_coverpoint_status_list(i).hits_coverage_goal/100;
+          v_tot_bin_hits     := v_tot_bin_hits + priv_coverpoint_status_list(i).total_coverage_bin_hits * priv_coverpoint_status_list(i).coverage_weight;
+          v_tot_bin_min_hits := v_tot_bin_min_hits + priv_coverpoint_status_list(i).total_bin_min_hits * priv_coverpoint_status_list(i).coverage_weight;
         end if;
       end loop;
       v_coverage := real(v_tot_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;

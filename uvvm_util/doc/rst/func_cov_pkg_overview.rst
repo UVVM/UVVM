@@ -394,8 +394,8 @@ Also, if a sampled value is contained in both ignore and illegal bins, then the 
 **********************************************************************************************************************************
 Coverage status
 **********************************************************************************************************************************
-It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()``, which returns the 
-percentage value in a real number. There are 2 coverage interpretations:
+It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()``, which returns a real  
+number representing the percentage value. There are 2 coverage interpretations:
 
 * **Bins Coverage**: represents the percentage of the number of bins which are covered *(covered_bins/total_bins)*
 * **Hits Coverage**: represents the percentage of the number of hits in relation to the number of min_hits for all the bins in the 

@@ -458,7 +458,8 @@ package func_cov_pkg is
       constant ext_proc_call : in string         := "");
 
     impure function get_coverage(
-      constant coverage_type : t_coverage_type)
+      constant coverage_type      : t_coverage_type;
+      constant percentage_of_goal : boolean := false)
     return real;
 
     impure function coverage_completed(
@@ -2491,15 +2492,18 @@ package body func_cov_pkg is
     end procedure;
 
     impure function get_coverage(
-      constant coverage_type : t_coverage_type)
+      constant coverage_type      : t_coverage_type;
+      constant percentage_of_goal : boolean := false)
     return real is
       constant C_LOCAL_CALL : string := "get_coverage(" & to_upper(to_string(coverage_type)) & ")";
+      variable v_coverage_representation : t_coverage_representation;
     begin
       if priv_id /= C_DEALLOCATED_ID then
+        v_coverage_representation := GOAL_CAPPED when percentage_of_goal else NO_GOAL;
         if coverage_type = BINS then
-          return protected_covergroup_status.get_bins_coverage(priv_id);
+          return protected_covergroup_status.get_bins_coverage(priv_id, v_coverage_representation);
         elsif coverage_type = HITS then
-          return protected_covergroup_status.get_hits_coverage(priv_id);
+          return protected_covergroup_status.get_hits_coverage(priv_id, v_coverage_representation);
         else -- BINS_AND_HITS
           alert(TB_ERROR, C_LOCAL_CALL & "=> Use either BINS or HITS.", priv_scope);
         end if;
@@ -2514,12 +2518,12 @@ package body func_cov_pkg is
     begin
       if priv_id /= C_DEALLOCATED_ID then
         if coverage_type = BINS then
-          return protected_covergroup_status.get_bins_coverage(priv_id) >= real(protected_covergroup_status.get_bins_coverage_goal(priv_id));
+          return protected_covergroup_status.get_bins_coverage(priv_id, GOAL_CAPPED) = 100.0;
         elsif coverage_type = HITS then
-          return protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_hits_coverage_goal(priv_id));
+          return protected_covergroup_status.get_hits_coverage(priv_id, GOAL_CAPPED) = 100.0;
         else -- BINS_AND_HITS
-          return protected_covergroup_status.get_bins_coverage(priv_id) >= real(protected_covergroup_status.get_bins_coverage_goal(priv_id)) and
-            protected_covergroup_status.get_hits_coverage(priv_id) >= real(protected_covergroup_status.get_hits_coverage_goal(priv_id));
+          return protected_covergroup_status.get_bins_coverage(priv_id, GOAL_CAPPED) = 100.0 and
+            protected_covergroup_status.get_hits_coverage(priv_id, GOAL_CAPPED) = 100.0;
         end if;
       else
         return false;

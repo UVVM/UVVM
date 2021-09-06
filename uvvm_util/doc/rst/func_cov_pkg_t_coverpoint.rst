@@ -619,12 +619,17 @@ Returns either the bins coverage or the hits coverage of the coverpoint. For an 
 | constant | coverage_type      | in     | :ref:`t_coverage_type`       | Selects which coverage value to return, either BINS   |
 |          |                    |        |                              | or HITS                                               |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | percentage_of_goal | in     | boolean                      | When true, the percentage of the covered goal will be |
+|          |                    |        |                              | returned instead. Default value is false.             |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
     log(ID_SEQUENCER, "Bins Coverage: " & to_string(my_coverpoint.get_coverage(BINS),2) & "%");
     log(ID_SEQUENCER, "Hits Coverage: " & to_string(my_coverpoint.get_coverage(HITS),2) & "%");
+    log(ID_SEQUENCER, "Bins % of Goal: " & to_string(my_coverpoint.get_coverage(BINS, percentage_of_goal => true),2) & "%");
+    log(ID_SEQUENCER, "Hits % of Goal: " & to_string(my_coverpoint.get_coverage(HITS, percentage_of_goal => true),2) & "%");
 
 
 coverage_completed()

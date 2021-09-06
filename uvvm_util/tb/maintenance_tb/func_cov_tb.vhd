@@ -286,7 +286,8 @@ begin
       constant coverage   : in    real) is
       constant C_PROC_NAME : string := "check_bins_coverage";
     begin
-      if coverpoint.get_coverage(BINS) /= coverage then
+      -- Use string representation to round the real number
+      if to_string(coverpoint.get_coverage(BINS),2) /= to_string(coverage,2) then
         alert(ERROR, C_PROC_NAME & " => Failed, for " & to_string(coverpoint.get_coverage(BINS),2) & "%, expected " & to_string(coverage,2) & "%");
         return;
       end if;
@@ -295,7 +296,7 @@ begin
       elsif not(coverpoint.coverage_completed(BINS)) and coverage < 100.0 then
         log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_string(coverage,2) & "%");
       else
-        alert(ERROR, C_PROC_NAME & " => Failed, coverage_completed() returned wrong value");
+        alert(ERROR, C_PROC_NAME & " => Failed, coverage_completed() returned wrong value: " & to_upper(to_string(coverpoint.coverage_completed(HITS))));
       end if;
     end procedure;
 
@@ -305,7 +306,8 @@ begin
       constant coverage   : in    real) is
       constant C_PROC_NAME : string := "check_hits_coverage";
     begin
-      if coverpoint.get_coverage(HITS) /= coverage then
+      -- Use string representation to round the real number
+      if to_string(coverpoint.get_coverage(HITS),2) /= to_string(coverage,2) then
         alert(ERROR, C_PROC_NAME & " => Failed, for " & to_string(coverpoint.get_coverage(HITS),2) & "%, expected " & to_string(coverage,2) & "%");
         return;
       end if;
@@ -314,7 +316,7 @@ begin
       elsif not(coverpoint.coverage_completed(HITS)) and coverage < 100.0 then
         log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_string(coverage,2) & "%");
       else
-        alert(ERROR, C_PROC_NAME & " => Failed, coverage_completed() returned wrong value");
+        alert(ERROR, C_PROC_NAME & " => Failed, coverage_completed() returned wrong value: " & to_upper(to_string(coverpoint.coverage_completed(HITS))));
       end if;
     end procedure;
 
@@ -2107,6 +2109,10 @@ begin
     --===================================================================================
     elsif GC_TESTCASE = "fc_database" then
     --===================================================================================
+      -- 1. Load from non-existing file
+      -- 2. Write sampled coverpoint to file1
+      -- 3. Write sampled cross to file2
+      -- 4. Write sampled max-sized cross to file3
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a non-existing file");
       ------------------------------------------------------------
@@ -2164,7 +2170,7 @@ begin
         v_value := v_coverpoint.rand(VOID);
       end loop;
 
-      v_coverpoint.report_coverage(VERBOSE);
+      v_coverpoint.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 30.19%
       v_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
@@ -2218,7 +2224,7 @@ begin
         v_values_x2 := v_cross_x2.rand(VOID);
       end loop;
 
-      v_cross_x2.report_coverage(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 30.19%
       v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
@@ -2232,7 +2238,7 @@ begin
         v_cross_x3.sample_coverage((i, 200, 300));
       end loop;
 
-      v_cross_x3.report_coverage(VERBOSE);
+      v_cross_x3.report_coverage(VERBOSE); -- Bins: 25.00%, Hits: 25.00%
       v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
       fc_report_overall_coverage(VOID);
@@ -2241,6 +2247,12 @@ begin
     elsif GC_TESTCASE = "fc_database_2" then
     -- IMPORTANT: This testcase must be run after fc_database since it checks the accumulated coverage
     --===================================================================================
+      -- 1. Load coverpoint from file1, check, modify and write back to file1
+      -- 2. Load cross from file2, check, modify and write back to file2
+      -- 3. Load max-sized cross from file3, check, modify and write back to file3
+      -- 4. Load coverpoint from file1 into coverpoint_b, check and modify
+      -- 5. Load cross from file2 into cross_b, check and modify
+      -- 6. Load max-sized cross from file3 into max-sized cross_b, check and modify
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
@@ -2264,7 +2276,8 @@ begin
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 4);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 1);
       check_num_bins(v_coverpoint, 6, 8);
-      --check_coverage(v_coverpoint, 66.67); -- TODO: wait until coverage discussion is resolved
+      check_bins_coverage(v_coverpoint, 0.0);
+      check_hits_coverage(v_coverpoint, 30.19);
       check_value(v_coverpoint.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
 
       -- Check configuration
@@ -2306,7 +2319,7 @@ begin
       sample_bins(v_coverpoint, (231,237,237,238,235,231), 1);
       sample_bins(v_coverpoint, (50,51,52,53), 1); -- To check transition_idx
 
-      v_coverpoint.report_coverage(VERBOSE);
+      v_coverpoint.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 59.26%
       v_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
@@ -2332,7 +2345,8 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (226,229), (1226,1229), "illegal_range", hits => 4);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (231,237,237), (1231,1237,1237), "illegal_transition", hits => 1);
       check_num_bins(v_cross_x2, 6, 8);
-      --check_coverage(v_cross_x2, 66.67); -- TODO: wait until coverage discussion is resolved
+      check_bins_coverage(v_cross_x2, 0.0);
+      check_hits_coverage(v_cross_x2, 30.19);
       check_value(v_cross_x2.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
 
       -- Check configuration
@@ -2379,7 +2393,7 @@ begin
       sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
       sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052),(53,1053)), 1); -- To check transition_idx
 
-      v_cross_x2.report_coverage(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 59.26%
       v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
@@ -2398,7 +2412,8 @@ begin
         end if;
       end loop;
       check_num_bins(v_cross_x3, 100, 0);
-      --check_coverage(v_cross_x3, 25.0); -- TODO: wait until coverage discussion is resolved
+      check_bins_coverage(v_cross_x3, 25.0);
+      check_hits_coverage(v_cross_x3, 25.0);
       check_value(v_cross_x3.get_num_bins_crossed(VOID), 3, ERROR, "Checking num_bins_crossed");
 
       -- Sample coverage
@@ -2406,7 +2421,7 @@ begin
         v_cross_x3.sample_coverage((i, 200, 300));
       end loop;
 
-      v_cross_x3.report_coverage(VERBOSE);
+      v_cross_x3.report_coverage(VERBOSE); -- Bins: 50.00%, Hits: 50.00%
       v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
       fc_report_overall_coverage(VOID);
@@ -2434,19 +2449,20 @@ begin
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 8);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 2);
       check_num_bins(v_coverpoint_b, 7, 10);
-      --check_coverage(v_coverpoint_b, 66.67); -- TODO: wait until coverage discussion is resolved
+      check_bins_coverage(v_coverpoint_b, 0.0);
+      check_hits_coverage(v_coverpoint_b, 59.26);
       check_value(v_coverpoint_b.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
 
       -- Sample coverage
-      sample_bins(v_coverpoint_b, (10), 1);
-      sample_bins(v_coverpoint_b, (20), 4);
-      sample_bins(v_coverpoint_b, (30,35,39), 1);
-      sample_bins(v_coverpoint_b, (40,41,42,43,44), 1);
-      sample_bins(v_coverpoint_b, (45,46,47,48,49), 1);
-      sample_bins(v_coverpoint_b, (50,51,52,53,54,55,56,57,58,59), 3);
-      sample_bins(v_coverpoint_b, (1000), 1);
-      --check_coverage(v_coverpoint_b, 100.0); -- TODO: wait until coverage discussion is resolved
+      sample_bins(v_coverpoint_b, (10), 2);
+      sample_bins(v_coverpoint_b, (20), 12);
+      sample_bins(v_coverpoint_b, (30,35,39), 4);
+      sample_bins(v_coverpoint_b, (40,41,42,43,44), 4);
+      sample_bins(v_coverpoint_b, (45,46,47,48,49), 4);
+      sample_bins(v_coverpoint_b, (50,51,52,53,54,55,56,57,58,59), 8);
+      sample_bins(v_coverpoint_b, (1000), 2);
 
+      check_coverage_completed(v_coverpoint_b);
       v_coverpoint_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
@@ -2472,7 +2488,8 @@ begin
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (226,229), (1226,1229), "illegal_range", hits => 8);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (231,237,237), (1231,1237,1237), "illegal_transition", hits => 2);
       check_num_bins(v_cross_x2_b, 7, 10);
-      --check_coverage(v_cross_x2_b, 66.67); -- TODO: wait until coverage discussion is resolved
+      check_bins_coverage(v_cross_x2_b, 0.0);
+      check_hits_coverage(v_cross_x2_b, 59.26);
       check_value(v_cross_x2_b.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
 
       -- Sample coverage
@@ -2483,8 +2500,8 @@ begin
       sample_cross_bins(v_cross_x2_b, ((45,1045),(46,1046),(47,1047),(48,1048),(49,1049)), 1);
       sample_cross_bins(v_cross_x2_b, ((50,1050),(51,1051),(52,1052),(53,1053),(54,1054),(55,1055)), 3);
       sample_cross_bins(v_cross_x2_b, (0 => (1000,2000)), 1);
-      --check_coverage(v_cross_x2_b, 100.0); -- TODO: wait until coverage discussion is resolved
 
+      check_coverage_completed(v_cross_x2_b);
       v_cross_x2_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
@@ -2503,15 +2520,16 @@ begin
         end if;
       end loop;
       check_num_bins(v_cross_x3_b, 100, 0);
-      --check_coverage(v_cross_x3_b, 50.0); -- TODO: wait until coverage discussion is resolved
+      check_bins_coverage(v_cross_x3_b, 50.0);
+      check_hits_coverage(v_cross_x3_b, 50.0);
       check_value(v_cross_x3_b.get_num_bins_crossed(VOID), 3, ERROR, "Checking num_bins_crossed");
 
       -- Sample coverage
       for i in 51 to 100 loop
         v_cross_x3_b.sample_coverage((i, 200, 300));
       end loop;
-      --check_coverage(v_cross_x3_b, 100.0); -- TODO: wait until coverage discussion is resolved
 
+      check_coverage_completed(v_cross_x3_b);
       v_cross_x3_b.report_coverage(VERBOSE);
 
       fc_report_overall_coverage(VOID);

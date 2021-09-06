@@ -2506,6 +2506,7 @@ package body func_cov_pkg is
           return protected_covergroup_status.get_hits_coverage(priv_id, v_coverage_representation);
         else -- BINS_AND_HITS
           alert(TB_ERROR, C_LOCAL_CALL & "=> Use either BINS or HITS.", priv_scope);
+          return 0.0;
         end if;
       else
         return 0.0;
@@ -2545,6 +2546,8 @@ package body func_cov_pkg is
       constant C_HEADER_3         : string := "*** COVERAGE HOLES REPORT: " & to_string(priv_scope) & " ***";
       constant C_BIN_COLUMN_WIDTH : positive := 40;
       constant C_COLUMN_WIDTH     : positive := 15;
+      constant C_PRINT_GOAL       : boolean := protected_covergroup_status.get_bins_coverage_goal(priv_id) /= 100 or
+                                               protected_covergroup_status.get_hits_coverage_goal(priv_id) /= 100;
       variable v_line             : line;
       variable v_log_extra_space  : integer := 0;
       variable v_rand_weight      : natural;
@@ -2569,28 +2572,20 @@ package body func_cov_pkg is
 
       -- Print summary
       if priv_id /= C_DEALLOCATED_ID then
-        if protected_covergroup_status.get_bins_coverage_goal(priv_id) /= 100 or protected_covergroup_status.get_hits_coverage_goal(priv_id) /= 100 then
-          write(v_line, "Coverpoint:              " & priv_name & LF &
-                        "Goal:                    " &
-                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage_goal(priv_id)) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-                        "% of Goal:               " &
-                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_CAPPED),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_CAPPED),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-                        "% of Goal (uncapped):    " &
-                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_UNCAPPED),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_UNCAPPED),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-                        "Coverage (for goal 100): " &
-                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, NO_GOAL),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, NO_GOAL),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-                        fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
-        else
-          write(v_line, "Coverpoint:              " & priv_name & LF &
-                        "Coverage (for goal 100): " &
-                          justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, NO_GOAL),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
-                          justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, NO_GOAL),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
-                        fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
-        end if;
+        write(v_line, "Coverpoint:              " & priv_name & LF &
+                      return_string_if_true("Goal:                    " &
+                        justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage_goal(priv_id)) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, C_PRINT_GOAL) &
+                      return_string_if_true("% of Goal:               " &
+                        justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_CAPPED),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_CAPPED),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, C_PRINT_GOAL) &
+                      return_string_if_true("% of Goal (uncapped):    " &
+                        justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_UNCAPPED),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_UNCAPPED),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, C_PRINT_GOAL) &
+                      "Coverage (for goal 100): " &
+                        justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, NO_GOAL),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, NO_GOAL),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                      fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
       else
         write(v_line, "Coverpoint:              " & priv_name & LF &
                       "Coverage (for goal 100): " &
@@ -2602,13 +2597,13 @@ package body func_cov_pkg is
       -- Print column headers
       write(v_line, justify(
         fill_string(' ', v_log_extra_space) &
-        justify("BINS"           , center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("HITS"           , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("MIN HITS"       , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("HIT COVERAGE"   , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("BINS"          , center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("HITS"          , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("MIN HITS"      , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("HIT COVERAGE"  , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         return_string_if_true(justify("RAND WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),rand_weight_col = SHOW_RAND_WEIGHT) &
-        justify("NAME"           , center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("ILLEGAL/IGNORE" , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+        justify("NAME"          , center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("ILLEGAL/IGNORE", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       -- Print illegal bins

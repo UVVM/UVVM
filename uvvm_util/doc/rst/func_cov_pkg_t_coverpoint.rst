@@ -668,7 +668,8 @@ by shared_default_log_destination in adaptations_pkg. To see an example of the g
 +==========+====================+========+=================================+=======================================================+
 | constant | VOID               | in     | t_void                          | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
-| constant | verbosity          | in     | :ref:`t_report_verbosity`       | Controls which bins are shown in the report           |
+| constant | verbosity          | in     | :ref:`t_report_verbosity`       | Controls which bins are shown in the report. Default  |
+|          |                    |        |                                 | value is NON_VERBOSE.                                 |
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | constant | rand_weight_col    | in     | :ref:`t_rand_weight_visibility` | Shows or hides the rand_weight column of the report.  |
 |          |                    |        |                                 | Default value is HIDE_RAND_WEIGHT.                    |

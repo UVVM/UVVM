@@ -293,22 +293,27 @@ Returns true if the accumulated coverage for all the coverpoints in the testbenc
 
 fc_report_overall_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints the overall coverage summary containing the main information of all the coverpoints, however it does not print the bins. 
-The printing destination can be log and/or console and is defined by shared_default_log_destination in adaptations_pkg.::
+Prints the overall coverage summary for all the coverpoints in the testbench. The printing destination can be log and/or console 
+and is defined by shared_default_log_destination in adaptations_pkg. To see an example of the generated report click 
+:ref:`here <func_cov_pkg_coverage_report>`. ::
 
     fc_report_overall_coverage(VOID)
-    fc_report_overall_coverage(scope)
+    fc_report_overall_coverage(verbosity, [scope])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | verbosity          | in     | :ref:`t_report_verbosity`    | Controls if the coverpoints are shown in the report.    |
+|          |                    |        |                              | Default value is NON_VERBOSE.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
     fc_report_overall_coverage(VOID);
-    fc_report_overall_coverage(my_scope);
+    fc_report_overall_coverage(VERBOSE);

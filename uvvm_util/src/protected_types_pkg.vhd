@@ -112,7 +112,9 @@ package protected_types_pkg is
     impure function get_covergroup_coverage_goal(VOID : t_void) return positive;
     impure function get_bins_coverage(coverpoint_idx : integer; cov_representation : t_coverage_representation) return real;
     impure function get_hits_coverage(coverpoint_idx : integer; cov_representation : t_coverage_representation) return real;
+    impure function get_total_bins_coverage(VOID : t_void) return real;
     impure function get_total_hits_coverage(VOID : t_void) return real;
+    impure function get_total_covpts_coverage(cov_representation : t_coverage_representation) return real;
   end protected t_protected_covergroup_status;
 
 
@@ -561,7 +563,8 @@ package body protected_types_pkg is
       variable v_tot_goal_bin_hits     : natural := priv_coverpoint_status_list(coverpoint_idx).total_goal_bin_hits;
       variable v_tot_bin_hits          : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_hits;
       variable v_tot_bin_min_hits      : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits;
-      variable v_tot_goal_bin_min_hits : real    := real(priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits*priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal)/100.0;
+      variable v_tot_goal_bin_min_hits : real    := real(priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits*
+                                                    priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal)/100.0;
       variable v_coverage              : real;
     begin
       if cov_representation = GOAL_CAPPED then
@@ -572,6 +575,24 @@ package body protected_types_pkg is
       else -- NO_GOAL
         v_coverage := real(v_tot_coverage_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
       end if;
+      return v_coverage;
+    end function;
+
+    -- Returns the percentage of covered_bins/valid_bins for all the coverpoints
+    impure function get_total_bins_coverage(
+      constant VOID : t_void)
+    return real is
+      variable v_tot_covered_bins : natural := 0;
+      variable v_tot_valid_bins   : natural := 0;
+      variable v_coverage         : real;
+    begin
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if priv_coverpoint_status_list(i).initialized then
+          v_tot_covered_bins := v_tot_covered_bins + priv_coverpoint_status_list(i).num_covered_bins * priv_coverpoint_status_list(i).coverage_weight;
+          v_tot_valid_bins   := v_tot_valid_bins + priv_coverpoint_status_list(i).num_valid_bins * priv_coverpoint_status_list(i).coverage_weight;
+        end if;
+      end loop;
+      v_coverage := real(v_tot_covered_bins)*100.0/real(v_tot_valid_bins) when v_tot_valid_bins > 0 else 0.0;
       return v_coverage;
     end function;
 
@@ -590,6 +611,31 @@ package body protected_types_pkg is
         end if;
       end loop;
       v_coverage := real(v_tot_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
+      return v_coverage;
+    end function;
+
+    -- Returns the percentage of covered_coverpoints/total_coverpoints
+    impure function get_total_covpts_coverage(
+      constant cov_representation : t_coverage_representation)
+    return real is
+      variable v_tot_covered_covpts : natural := 0;
+      variable v_tot_covpts         : natural := 0;
+      variable v_coverage           : real;
+    begin
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if priv_coverpoint_status_list(i).initialized then
+          v_tot_covered_covpts := v_tot_covered_covpts + priv_coverpoint_status_list(i).coverage_weight when
+                                  priv_coverpoint_status_list(i).total_coverage_bin_hits >= priv_coverpoint_status_list(i).total_bin_min_hits;
+          v_tot_covpts         := v_tot_covpts + priv_coverpoint_status_list(i).coverage_weight;
+        end if;
+      end loop;
+      v_coverage := real(v_tot_covered_covpts)*100.0/real(v_tot_covpts) when v_tot_covpts > 0 else 0.0;
+      if cov_representation = GOAL_CAPPED or cov_representation = GOAL_UNCAPPED then
+        v_coverage := v_coverage*100.0/real(priv_coverage_goal);
+      end if;
+      if cov_representation = GOAL_CAPPED and v_coverage > 100.0 then
+        v_coverage := 100.0;
+      end if;
       return v_coverage;
     end function;
 

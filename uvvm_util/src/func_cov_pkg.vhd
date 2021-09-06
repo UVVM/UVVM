@@ -160,7 +160,8 @@ package func_cov_pkg is
     constant VOID : in t_void);
 
   procedure fc_report_overall_coverage(
-    constant scope : in string);
+    constant verbosity : in t_report_verbosity;
+    constant scope     : in string := C_TB_SCOPE_DEFAULT);
 
   ------------------------------------------------------------
   -- Protected type
@@ -762,36 +763,72 @@ package body func_cov_pkg is
   procedure fc_report_overall_coverage(
     constant VOID : in t_void) is
   begin
-    fc_report_overall_coverage(C_TB_SCOPE_DEFAULT);
+    fc_report_overall_coverage(NON_VERBOSE);
   end procedure;
 
   procedure fc_report_overall_coverage(
-    constant scope : in string) is
-    constant C_PREFIX : string := C_LOG_PREFIX & "     ";
-    constant C_HEADER : string := "*** OVERALL COVERAGE REPORT: " & to_string(scope) & " ***";
-    variable v_line   : line;
+    constant verbosity : in t_report_verbosity;
+    constant scope     : in string := C_TB_SCOPE_DEFAULT) is
+    constant C_PREFIX          : string := C_LOG_PREFIX & "     ";
+    constant C_HEADER          : string := "*** OVERALL COVERAGE REPORT: " & to_string(scope) & " ***";
+    constant C_COLUMN_WIDTH    : positive := 20;
+    constant C_PRINT_GOAL      : boolean := protected_covergroup_status.get_covergroup_coverage_goal(VOID) /= 100;
+    variable v_line            : line;
+    variable v_log_extra_space : integer := 0;
   begin
-    -- Print report header
+    -- Calculate how much space we can insert between the columns of the report
+    v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_FC_MAX_NAME_LENGTH - C_COLUMN_WIDTH*5)/7;
+    if v_log_extra_space < 1 then
+      alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_FC_MAX_NAME_LENGTH is too big, the report will not be properly aligned.", scope);
+      v_log_extra_space := 1;
+    end if;
+
+    -- Print report header and summary
     write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
                   timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-                  "Total Hits Coverage: " & to_string(protected_covergroup_status.get_total_hits_coverage(VOID),2) & "% (goal: " & to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)) & "%)" & LF &
-                  fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)));
+                  return_string_if_true("Goal:                    Covpts: " & to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)) & "%" & LF, C_PRINT_GOAL) &
+                  return_string_if_true("% of Goal:               Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_CAPPED),2) & "%" & LF, C_PRINT_GOAL) &
+                  return_string_if_true("% of Goal (uncapped):    Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_UNCAPPED),2) & "%" & LF, C_PRINT_GOAL) &
+                  "Coverage (for goal 100): " &
+                    justify("Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(NO_GOAL),2) & "%, ", left, 18, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                    justify("Bins: " & to_string(protected_covergroup_status.get_total_bins_coverage(VOID),2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                    justify("Hits: " & to_string(protected_covergroup_status.get_total_hits_coverage(VOID),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                  fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
-    -- Print coverpoints summaries
-    for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
-      if protected_covergroup_status.is_initialized(i) then
-        write(v_line, "Coverpoint:      " & protected_covergroup_status.get_name(i) & LF &
-                      "Uncovered bins:  " & to_string(protected_covergroup_status.get_num_uncovered_bins(i)) & LF &
-                      "Illegal bins:    " & to_string(protected_covergroup_status.get_num_illegal_bins(i)) & LF &
-                      "Coverage:        bins: " & to_string(protected_covergroup_status.get_bins_coverage(i),2) & "% hits: " & to_string(protected_covergroup_status.get_hits_coverage(i),2)
-                        & "% (goal: " & to_string(protected_covergroup_status.get_bins_coverage_goal(i)) & "%)" & LF &
-                      "Coverage weight: " & to_string(protected_covergroup_status.get_coverage_weight(i)) & LF &
-                      fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
-      end if;
-    end loop;
+    if verbosity = VERBOSE then
+      -- Print column headers
+      write(v_line, justify(
+        fill_string(' ', v_log_extra_space) &
+        justify("COVERPOINT"          , center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("COVERAGE WEIGHT"     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("COVERED BINS"        , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("COVERAGE(BINS|HITS)" , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("GOAL(BINS|HITS)"     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("% OF GOAL(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+        left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
-    -- Print report bottom line
-    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+      -- Print coverpoints
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if protected_covergroup_status.is_initialized(i) then
+          write(v_line, justify(
+            fill_string(' ', v_log_extra_space) &
+            justify(protected_covergroup_status.get_name(i), center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(protected_covergroup_status.get_coverage_weight(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(protected_covergroup_status.get_num_covered_bins(i)) & " / " &
+                    to_string(protected_covergroup_status.get_num_valid_bins(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(protected_covergroup_status.get_bins_coverage(i, NO_GOAL),2) & "% | " &
+                    to_string(protected_covergroup_status.get_hits_coverage(i, NO_GOAL),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(protected_covergroup_status.get_bins_coverage_goal(i)) & "% | " &
+                    to_string(protected_covergroup_status.get_hits_coverage_goal(i)) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(protected_covergroup_status.get_bins_coverage(i, GOAL_CAPPED),2) & "% | " &
+                    to_string(protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+        end if;
+      end loop;
+
+      -- Print report bottom line
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+    end if;
 
     -- Write the info string to transcript
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
@@ -2534,7 +2571,7 @@ package body func_cov_pkg is
     procedure report_coverage(
       constant VOID : in t_void) is
     begin
-      report_coverage(NON_VERBOSE, HIDE_RAND_WEIGHT);
+      report_coverage(NON_VERBOSE);
     end procedure;
 
     procedure report_coverage(

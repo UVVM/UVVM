@@ -496,6 +496,10 @@ The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in 
 Coverage report
 **********************************************************************************************************************************
 A detailed report for the coverage and the bins in the coverpoint/cross can be printed using the ``report_coverage()`` procedure.
+
+An overall report for all the coverpoints in the testbench can be printed using the ``fc_report_overall_coverage()`` procedure. 
+Note that only key information is contained in the report, i.e. bins are not included.
+
 The amount of information can be adjusted by using the parameter verbosity.
 
 .. note::
@@ -503,7 +507,7 @@ The amount of information can be adjusted by using the parameter verbosity.
     When the bin values don't fit under the BINS column, the bin name is printed instead and the values are printed at the bottom 
     of the report.
 
-Verbose
+Coverpoint Verbose
 ==================================================================================================================================
 
 .. code-block::
@@ -535,7 +539,7 @@ Verbose
     # UVVM:  transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM:  =================================================================================================================
 
-Non-Verbose
+Coverpoint Non-Verbose
 ==================================================================================================================================
 
 .. code-block::
@@ -561,7 +565,7 @@ Non-Verbose
     # UVVM:  transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM:  =================================================================================================================
 
-Holes
+Coverpoint Holes
 ==================================================================================================================================
 
 .. code-block::
@@ -581,10 +585,44 @@ Holes
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
 
-Using goal
+Overall Verbose
 ==================================================================================================================================
 
-When either the bins goal or the hits goal is configured with a value different than 100, the report shows 3 extra lines:
+.. code-block::
+
+    fc_report_overall_coverage(VERBOSE); -- Prints all the coverpoints
+
+.. code-block:: none
+
+    # UVVM:  =================================================================================================================
+    # UVVM:  0 ns *** OVERALL COVERAGE REPORT: TB seq. ***                                                                    
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
+    # UVVM:  =================================================================================================================
+    # UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS) 
+    # UVVM:        Covpt_1            1              4 / 5         80.00% | 77.78%       100% | 100%        80.00% | 77.78%   
+    # UVVM:        Covpt_2            1              1 / 1        100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
+    # UVVM:        Covpt_3            1              1 / 1        100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
+    # UVVM:        Covpt_4            1              1 / 2         50.00% | 50.00%       100% | 100%        50.00% | 50.00%   
+    # UVVM:  =================================================================================================================
+
+Overall Non-Verbose
+==================================================================================================================================
+
+.. code-block::
+
+    fc_report_overall_coverage(VOID); -- Same as using NON_VERBOSE. Prints only the summary
+
+.. code-block:: none
+
+    # UVVM:  =================================================================================================================
+    # UVVM:  0 ns *** OVERALL COVERAGE REPORT: TB seq. ***                                                                    
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
+    # UVVM:  =================================================================================================================
+
+Using goal
+==================================================================================================================================
+When either the bins goal, the hits goal or the coverpoints goal is configured with a value different than 100, the corresponding 
+report shows 3 extra lines:
 
 * **Goal** = configured goal value.
 * **% of Goal** = represents the percentage of the covered goal, stops at 100%.
@@ -613,37 +651,14 @@ When either the bins goal or the hits goal is configured with a value different 
     # UVVM: transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM: ==================================================================================================================
 
-Overall
-==================================================================================================================================
-
-A summary report for all the coverpoints in the testbench can be printed using the ``fc_report_overall_coverage()`` procedure. 
-Only the main information is contained in the report, i.e. bins are not included.
-
-* *total hits coverage* = tot_hits_across_covpoints/tot_min_hits_across_covpoints (this value increments gradually and has a maximum 
-  equal to the coverage goal)
-
-.. code-block::
-
-    fc_report_overall_coverage(VOID);
-
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** OVERALL COVERAGE REPORT: TB seq. ***                                                          
-    # UVVM:  Total Hits Coverage: 44.44% (goal: 100%)
-    # UVVM:  =================================================================================================================
-    # UVVM:  Coverpoint:      Covpt_1
-    # UVVM:  Uncovered bins:  1
-    # UVVM:  Illegal bins:    1
-    # UVVM:  Coverage:        bins: 75.00% hits: 66.67% (goal: 100%)
-    # UVVM:  Coverage weight: 1
-    # UVVM:  -----------------------------------------------------------------------------------------------------------------
-    # UVVM:  Coverpoint:      Covpt_2
-    # UVVM:  Uncovered bins:  3
-    # UVVM:  Illegal bins:    0
-    # UVVM:  Coverage:        bins: 0.00% hits: 0.00% (goal: 100%)
-    # UVVM:  Coverage weight: 1
-    # UVVM:  -----------------------------------------------------------------------------------------------------------------
+    # UVVM:  0 ns *** OVERALL COVERAGE REPORT: TB seq. ***                                                                    
+    # UVVM:  Goal:                    Covpts: 75%
+    # UVVM:  % of Goal:               Covpts: 66.67%
+    # UVVM:  % of Goal (uncapped):    Covpts: 66.67%
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
     # UVVM:  =================================================================================================================
 
 .. _func_cov_pkg_config_report:

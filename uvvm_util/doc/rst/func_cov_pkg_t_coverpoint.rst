@@ -118,8 +118,8 @@ Returns the coverpoint's coverage weight. ::
 
 set_bins_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the coverpoint's bins coverage goal, which represents the percentage of the number of bins that need to be covered. 
-Default value is 100. ::
+Configures the coverpoint's bins coverage goal, which represents the percentage of the number of bins that need to be covered in 
+the coverpoint. Default value is 100. ::
 
     set_bins_coverage_goal(percentage, [msg_id_panel])
 
@@ -135,7 +135,7 @@ Default value is 100. ::
 .. code-block::
 
     -- Example:
-    my_coverpoint.set_bins_coverage_goal(75); -- Cover only 75% of the total number of bins
+    my_coverpoint.set_bins_coverage_goal(75); -- Cover only 75% of the total number of bins in the coverpoint
 
 
 get_bins_coverage_goal()
@@ -175,8 +175,8 @@ bin in the coverpoint. Default value is 100. ::
 .. code-block::
 
     -- Examples:
-    my_coverpoint.set_hits_coverage_goal(50);  -- Cover only half the min_hits
-    my_coverpoint.set_hits_coverage_goal(200); -- Cover twice the min_hits
+    my_coverpoint.set_hits_coverage_goal(50);  -- Cover only half the min_hits of each bin in the coverpoint
+    my_coverpoint.set_hits_coverage_goal(200); -- Cover twice the min_hits of each bin in the coverpoint
 
 
 get_hits_coverage_goal()

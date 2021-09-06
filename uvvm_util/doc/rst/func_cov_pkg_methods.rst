@@ -255,25 +255,28 @@ Returns the overall coverage goal. ::
 
 fc_get_overall_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns the accumulated coverage for all the coverpoints in the testbench. ::
+Returns either the coverpoints coverage, bins coverage or hits coverage accumulated from all the coverpoints. For an overview on 
+the types of coverage click :ref:`here <func_cov_pkg_coverage_status>`. ::
 
-    real := fc_get_overall_coverage(VOID)
+    real := fc_get_overall_coverage(coverage_type)
 
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                           |
-+==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
++----------+--------------------+--------+--------------------------------+-------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                           | Description                                           |
++==========+====================+========+================================+=======================================================+
+| constant | coverage_type      | in     | :ref:`t_overall_coverage_type` | Selects which coverage value to return                |
++----------+--------------------+--------+--------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
-    -- Example:
-    log(ID_SEQUENCER, "Overall coverage: " & to_string(fc_get_overall_coverage(VOID),2) & "%");
+    -- Examples:
+    log(ID_SEQUENCER, "Covpts Overall Coverage: " & to_string(fc_get_overall_coverage(COVPTS),2) & "%");
+    log(ID_SEQUENCER, "Bins Overall Coverage: " & to_string(fc_get_overall_coverage(BINS),2) & "%");
+    log(ID_SEQUENCER, "Hits Overall Coverage: " & to_string(fc_get_overall_coverage(HITS),2) & "%");
 
 
 fc_overall_coverage_completed()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns true if the accumulated coverage for all the coverpoints in the testbench has reached the goal. Default goal is 100. ::
+Returns true if the coverpoints coverage has reached the goal. Default goal is 100. ::
 
     boolean := fc_overall_coverage_completed(VOID)
 

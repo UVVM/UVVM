@@ -1974,7 +1974,9 @@ begin
       check_value(v_coverpoint.get_num_invalid_bins(VOID), 1, ERROR, "Checking num_invalid_bins");
       check_value(v_coverpoint.get_coverage(BINS), 50.0, ERROR, "Checking bins coverage");
       check_value(v_coverpoint.get_coverage(HITS), 50.0, ERROR, "Checking hits coverage");
-      check_value(fc_get_overall_coverage(VOID), 50.0, ERROR, "Checking overall coverage");
+      check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "Checking covpts overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 50.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 50.0, ERROR, "Checking hits overall coverage");
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
       fc_report_overall_coverage(VOID);
@@ -1994,7 +1996,9 @@ begin
       check_value(v_coverpoint.get_num_invalid_bins(VOID), 0, ERROR, "Checking num_invalid_bins");
       check_value(v_coverpoint.get_coverage(BINS), 0.0, ERROR, "Checking bins coverage");
       check_value(v_coverpoint.get_coverage(HITS), 0.0, ERROR, "Checking hits coverage");
-      check_value(fc_get_overall_coverage(VOID), 0.0, ERROR, "Checking overall coverage");
+      check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "Checking covpts overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 0.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 0.0, ERROR, "Checking hits overall coverage");
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
       fc_report_overall_coverage(VOID);
@@ -2027,7 +2031,9 @@ begin
       log(ID_LOG_HDR, "Testing default configuration values");
       ------------------------------------------------------------
       check_value(fc_get_overall_coverage_goal(VOID), 100, ERROR, "fc_get_overall_coverage_goal(VOID)");
-      check_value(fc_get_overall_coverage(VOID), 0.0, ERROR, "fc_get_overall_coverage(VOID)");
+      check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "fc_get_overall_coverage(COVPTS)");
+      check_value(fc_get_overall_coverage(BINS), 0.0, ERROR, "fc_get_overall_coverage(BINS)");
+      check_value(fc_get_overall_coverage(HITS), 0.0, ERROR, "fc_get_overall_coverage(HITS)");
       check_value(fc_overall_coverage_completed(VOID), false, ERROR, "fc_overall_coverage_completed(VOID)");
       fc_report_overall_coverage(VOID);
 

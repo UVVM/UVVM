@@ -36,6 +36,7 @@ package func_cov_pkg is
   type t_report_verbosity is (NON_VERBOSE, VERBOSE, HOLES_ONLY);
   type t_rand_weight_visibility is (SHOW_RAND_WEIGHT, HIDE_RAND_WEIGHT);
   type t_coverage_type is (BINS, HITS, BINS_AND_HITS);
+  type t_overall_coverage_type is (COVPTS, BINS, HITS);
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
 
   type t_new_bin is record
@@ -149,7 +150,7 @@ package func_cov_pkg is
   return positive;
 
   impure function fc_get_overall_coverage(
-    constant VOID : t_void)
+    constant coverage_type : t_overall_coverage_type)
   return real;
 
   impure function fc_overall_coverage_completed(
@@ -747,17 +748,23 @@ package body func_cov_pkg is
   end function;
 
   impure function fc_get_overall_coverage(
-    constant VOID : t_void)
+    constant coverage_type : t_overall_coverage_type)
   return real is
   begin
-    return protected_covergroup_status.get_total_hits_coverage(VOID);
+    if coverage_type = BINS then
+      return protected_covergroup_status.get_total_bins_coverage(VOID);
+    elsif coverage_type = HITS then
+      return protected_covergroup_status.get_total_hits_coverage(VOID);
+    else -- COVPTS
+      return protected_covergroup_status.get_total_covpts_coverage(NO_GOAL);
+    end if;
   end function;
 
   impure function fc_overall_coverage_completed(
     constant VOID : t_void)
   return boolean is
   begin
-    return protected_covergroup_status.get_total_hits_coverage(VOID) >= real(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
+    return protected_covergroup_status.get_total_covpts_coverage(GOAL_CAPPED) = 100.0;
   end function;
 
   procedure fc_report_overall_coverage(

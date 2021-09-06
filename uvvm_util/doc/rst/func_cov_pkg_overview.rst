@@ -395,13 +395,13 @@ Also, if a sampled value is contained in both ignore and illegal bins, then the 
 Coverage status
 **********************************************************************************************************************************
 It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()``, which returns a real  
-number representing the percentage value. There are 2 coverage interpretations:
+number representing the percentage value. There are 2 coverage types:
 
-* **Bins Coverage**: represents the percentage of the number of bins which are covered *(covered_bins/total_bins)*
-* **Hits Coverage**: represents the percentage of the number of hits in relation to the number of min_hits for all the bins in the 
+* **Bins Coverage**: percentage of the number of bins which are covered in the coverpoint *(covered_bins/total_bins)*
+* **Hits Coverage**: percentage of the number of hits in relation to the number of min_hits for all the bins in the 
   coverpoint *(bin1_hits/bin1_min_hits + bin2_hits/bin2_min_hits + ...)*
 
-It is also possible to check if the bins and/or hits coverage is completed using the function ``coverage_completed()``. Normally, 
+It is also possible to check if the bins and/or hits coverage is complete using the function ``coverage_completed()``. Normally, 
 both the bins and the hits coverage are completed at the same time, except when they have a different coverage goal (explained in 
 the next section).
 
@@ -415,13 +415,16 @@ the next section).
     ...
     end loop;
 
-TODO: rewrite rest of section
+Similar functions for the overall status of the coverpoints are ``fc_get_overall_coverage()`` and ``fc_overall_coverage_completed()``. 
+Thus, an additional coverage type is defined:
 
-Similar functions for the overall status are ``fc_get_overall_coverage()`` and ``fc_overall_coverage_completed()``.
+* **Covpts Coverage**: percentage of the number of coverpoints which are covered *(covered_covpts/total_covpts)*
 
 .. code-block::
 
-    log(ID_SEQUENCER, "Overall Coverage: " & to_string(fc_get_overall_coverage(VOID),2) & "%");
+    log(ID_SEQUENCER, "Covpts Overall Coverage: " & to_string(fc_get_overall_coverage(COVPTS),2) & "%");
+    log(ID_SEQUENCER, "Bins Overall Coverage: " & to_string(fc_get_overall_coverage(BINS),2) & "%");
+    log(ID_SEQUENCER, "Hits Overall Coverage: " & to_string(fc_get_overall_coverage(HITS),2) & "%");
 
     -- Do something while the overall coverage is incomplete
     while not(fc_overall_coverage_completed(VOID)) loop
@@ -475,7 +478,7 @@ my_coverpoint = 200*150/100=300.
 Coverage weight
 **********************************************************************************************************************************
 It specifies the weight of a coverpoint/cross used when calculating the overall coverage. It must be set at the beginning of the 
-testbench, before sampling any coverage. Default is 1.
+testbench, before sampling any coverage. Default value is 1.
 
 .. code-block::
 
@@ -625,8 +628,8 @@ When either the bins goal, the hits goal or the coverpoints goal is configured w
 report shows 3 extra lines:
 
 * **Goal** = configured goal value.
-* **% of Goal** = represents the percentage of the covered goal, stops at 100%.
-* **% of Goal (uncapped)** = represents the percentage of the covered goal without limits. This is useful to see if there are bins 
+* **% of Goal** = percentage of the covered goal, stops at 100%.
+* **% of Goal (uncapped)** = percentage of the covered goal without limits. This is useful to see if there are bins 
   which are oversampled.
 
 .. code-block:: none

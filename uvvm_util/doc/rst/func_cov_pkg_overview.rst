@@ -435,44 +435,45 @@ Thus, an additional coverage type is defined:
 Coverage goal
 **********************************************************************************************************************************
 Defines a percentage of the total coverage to complete. This can be used to scale the simulation time without changing the minimum 
-coverage for each bin. It must be set at the beginning of the testbench, before sampling any coverage. There are 2 types:
+coverage for each bin. It must be set at the beginning of the testbench, before sampling any coverage. There are 3 types:
 
 Bins coverage goal
 ==================================================================================================================================
-This value defines the percentage of the number of bins which need to be covered and therefore the range is between 1 and 100. 
-Default is 100.
+This value defines the percentage of the number of bins which need to be covered in the coverpoint and therefore the range is 
+between 1 and 100. Default value is 100.
 
 .. code-block::
 
-    -- Cover only 75% of the total number of bins
+    -- Cover only 75% of the total number of bins in the coverpoint
     my_coverpoint.set_bins_coverage_goal(75);
 
-    -- Cover only 10% of the total number of bins
+    -- Cover only 10% of the total number of bins in the coverpoint
     my_coverpoint.set_bins_coverage_goal(10);
 
 Hits coverage goal
 ==================================================================================================================================
-This value defines the percentage of the min_hits which need to be covered for each bin in the coverpoint. Default is 100.
+This value defines the percentage of the min_hits which need to be covered for each bin in the coverpoint. Default value is 100.
 
 .. code-block::
 
-    -- Cover only half the min_hits
+    -- Cover only half the min_hits of each bin in the coverpoint
     my_coverpoint.set_hits_coverage_goal(50);
 
-    -- Cover twice the min_hits
+    -- Cover twice the min_hits of each bin in the coverpoint
     my_coverpoint.set_hits_coverage_goal(200);
 
-TODO: rewrite rest of section
-
-It can be set for a single coverpoint/cross or all the coverpoints/crosses in the testbench.
+Coverpoints coverage goal
+==================================================================================================================================
+This value defines the percentage of the number of coverpoints which need to be covered and therefore the range is between 1 and 
+100. Default value is 100.
 
 .. code-block::
 
-    -- Set the overall coverage goal to 150%
-    fc_set_overall_coverage_goal(150);
+    -- Cover only 25% of the total number of coverpoints
+    fc_set_covpts_coverage_goal(25);
 
-If both coverpoint and overall goals are set, they will be multiplied for that given coverpoint, e.g. coverage goal for 
-my_coverpoint = 200*150/100=300.
+    -- Cover only 80% of the total number of coverpoints
+    fc_set_covpts_coverage_goal(80);
 
 **********************************************************************************************************************************
 Coverage weight

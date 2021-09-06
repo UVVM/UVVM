@@ -210,17 +210,17 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg. ::
     my_coverpoint.add_bins(illegal_bin_transition(30,10,0));
 
 
-fc_set_overall_coverage_goal()
+fc_set_covpts_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the overall coverage goal. This is an easy way to apply the same goal to all the coverpoints. If a coverpoint's goal 
-has also been modified by ``set_coverage_goal()``, they will be multiplied for the given coverpoint. Default value is 100. ::
+Configures the coverpoints coverage goal, which represents the percentage of the number of coverpoints that need to be covered. 
+Default value is 100. ::
 
-    fc_set_overall_coverage_goal(percentage, [scope, [msg_id_panel]])
+    fc_set_covpts_coverage_goal(percentage, [scope, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
 +==========+====================+========+==============================+=========================================================+
-| constant | percentage         | in     | positive                     | Goal percentage of each coverpoint to cover             |
+| constant | percentage         | in     | positive range 1 to 100      | Goal percentage of the coverpoints to cover             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
 |          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
@@ -232,14 +232,14 @@ has also been modified by ``set_coverage_goal()``, they will be multiplied for t
 .. code-block::
 
     -- Example:
-    fc_set_overall_coverage_goal(200);
+    fc_set_covpts_coverage_goal(75); -- Cover only 75% of the total number of coverpoints
 
 
-fc_get_overall_coverage_goal()
+fc_get_covpts_coverage_goal()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns the overall coverage goal. ::
+Returns the coverpoints coverage goal. ::
 
-    positive := fc_get_overall_coverage_goal(VOID)
+    positive := fc_get_covpts_coverage_goal(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
@@ -250,7 +250,7 @@ Returns the overall coverage goal. ::
 .. code-block::
 
     -- Example:
-    log(ID_SEQUENCER, "Overall goal: " & to_string(fc_get_overall_coverage_goal(VOID)));
+    log(ID_SEQUENCER, "Covpts goal: " & to_string(fc_get_covpts_coverage_goal(VOID)));
 
 
 fc_get_overall_coverage()

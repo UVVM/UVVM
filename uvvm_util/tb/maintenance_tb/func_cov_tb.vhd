@@ -2030,7 +2030,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing default configuration values");
       ------------------------------------------------------------
-      check_value(fc_get_overall_coverage_goal(VOID), 100, ERROR, "fc_get_overall_coverage_goal(VOID)");
+      check_value(fc_get_covpts_coverage_goal(VOID), 100, ERROR, "fc_get_covpts_coverage_goal(VOID)");
       check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "fc_get_overall_coverage(COVPTS)");
       check_value(fc_get_overall_coverage(BINS), 0.0, ERROR, "fc_get_overall_coverage(BINS)");
       check_value(fc_get_overall_coverage(HITS), 0.0, ERROR, "fc_get_overall_coverage(HITS)");
@@ -2151,7 +2151,7 @@ begin
       v_coverpoint.set_coverage_weight(5);
       v_coverpoint.set_bins_coverage_goal(50);
       v_coverpoint.set_hits_coverage_goal(200);
-      fc_set_overall_coverage_goal(150);
+      fc_set_covpts_coverage_goal(80);
 
       -- Sample coverage
       increment_expected_alerts(TB_NOTE, 6);
@@ -2205,7 +2205,7 @@ begin
       v_cross_x2.set_coverage_weight(8);
       v_cross_x2.set_bins_coverage_goal(50);
       v_cross_x2.set_hits_coverage_goal(75);
-      fc_set_overall_coverage_goal(125);
+      fc_set_covpts_coverage_goal(90);
 
       -- Sample coverage
       increment_expected_alerts(TB_WARNING, 6);
@@ -2294,7 +2294,7 @@ begin
       check_value(v_coverpoint.get_coverage_weight(VOID), 5, ERROR, "Checking coverage weight");
       check_value(v_coverpoint.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
       check_value(v_coverpoint.get_hits_coverage_goal(VOID), 200, ERROR, "Checking hits coverage goal");
-      check_value(fc_get_overall_coverage_goal(VOID), 150, ERROR, "Checking overall coverage goal");
+      check_value(fc_get_covpts_coverage_goal(VOID), 80, ERROR, "Checking coverpoints coverage goal");
 
       -- Check randomization state
       check_value(v_coverpoint.rand(VOID), 56, ERROR, "Checking rand transition");
@@ -2363,7 +2363,7 @@ begin
       check_value(v_cross_x2.get_coverage_weight(VOID), 8, ERROR, "Checking coverage weight");
       check_value(v_cross_x2.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
       check_value(v_cross_x2.get_hits_coverage_goal(VOID), 75, ERROR, "Checking hits coverage goal");
-      check_value(fc_get_overall_coverage_goal(VOID), 125, ERROR, "Checking overall coverage goal");
+      check_value(fc_get_covpts_coverage_goal(VOID), 90, ERROR, "Checking coverpoints coverage goal");
 
       -- Check randomization state
       v_values_x2 := v_cross_x2.rand(VOID);

@@ -88,7 +88,7 @@ package protected_types_pkg is
     procedure set_coverage_weight(coverpoint_idx : in integer; weight : in positive);
     procedure set_bins_coverage_goal(coverpoint_idx : in integer; percentage : in positive range 1 to 100);
     procedure set_hits_coverage_goal(coverpoint_idx : in integer; percentage : in positive);
-    procedure set_covergroup_coverage_goal(percentage : in positive);
+    procedure set_covpts_coverage_goal(percentage : in positive range 1 to 100);
     procedure increment_valid_bin_count(coverpoint_idx : in integer);
     procedure increment_illegal_bin_count(coverpoint_idx : in integer);
     procedure increment_covered_bin_count(coverpoint_idx : in integer);
@@ -109,7 +109,7 @@ package protected_types_pkg is
     impure function get_coverage_weight(coverpoint_idx : integer) return positive;
     impure function get_bins_coverage_goal(coverpoint_idx : integer) return positive;
     impure function get_hits_coverage_goal(coverpoint_idx : integer) return positive;
-    impure function get_covergroup_coverage_goal(VOID : t_void) return positive;
+    impure function get_covpts_coverage_goal(VOID : t_void) return positive;
     impure function get_bins_coverage(coverpoint_idx : integer; cov_representation : t_coverage_representation) return real;
     impure function get_hits_coverage(coverpoint_idx : integer; cov_representation : t_coverage_representation) return real;
     impure function get_total_bins_coverage(VOID : t_void) return real;
@@ -388,8 +388,8 @@ package body protected_types_pkg is
       priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal := percentage;
     end procedure;
 
-    procedure set_covergroup_coverage_goal(
-      constant percentage : in positive) is
+    procedure set_covpts_coverage_goal(
+      constant percentage : in positive range 1 to 100) is
     begin
       priv_coverage_goal := percentage;
     end procedure;
@@ -528,7 +528,7 @@ package body protected_types_pkg is
       return priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal;
     end function;
 
-    impure function get_covergroup_coverage_goal(
+    impure function get_covpts_coverage_goal(
       constant VOID : t_void)
     return positive is
     begin

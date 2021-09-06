@@ -140,12 +140,12 @@ package func_cov_pkg is
   ------------------------------------------------------------
   -- Overall coverage
   ------------------------------------------------------------
-  procedure fc_set_overall_coverage_goal(
-    constant percentage   : in positive;
+  procedure fc_set_covpts_coverage_goal(
+    constant percentage   : in positive range 1 to 100;
     constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-  impure function fc_get_overall_coverage_goal(
+  impure function fc_get_covpts_coverage_goal(
     constant VOID : t_void)
   return positive;
 
@@ -730,21 +730,21 @@ package body func_cov_pkg is
   ------------------------------------------------------------
   -- Overall coverage
   ------------------------------------------------------------
-  procedure fc_set_overall_coverage_goal(
-    constant percentage   : in positive;
+  procedure fc_set_covpts_coverage_goal(
+    constant percentage   : in positive range 1 to 100;
     constant scope        : in string         := C_TB_SCOPE_DEFAULT;
     constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-    constant C_LOCAL_CALL : string := "fc_set_overall_coverage_goal(" & to_string(percentage) & ")";
+    constant C_LOCAL_CALL : string := "fc_set_covpts_coverage_goal(" & to_string(percentage) & ")";
   begin
     log(ID_FUNC_COV_CONFIG, C_LOCAL_CALL, scope, msg_id_panel);
-    protected_covergroup_status.set_covergroup_coverage_goal(percentage);
+    protected_covergroup_status.set_covpts_coverage_goal(percentage);
   end procedure;
 
-  impure function fc_get_overall_coverage_goal(
+  impure function fc_get_covpts_coverage_goal(
     constant VOID : t_void)
   return positive is
   begin
-    return protected_covergroup_status.get_covergroup_coverage_goal(VOID);
+    return protected_covergroup_status.get_covpts_coverage_goal(VOID);
   end function;
 
   impure function fc_get_overall_coverage(
@@ -779,7 +779,7 @@ package body func_cov_pkg is
     constant C_PREFIX          : string := C_LOG_PREFIX & "     ";
     constant C_HEADER          : string := "*** OVERALL COVERAGE REPORT: " & to_string(scope) & " ***";
     constant C_COLUMN_WIDTH    : positive := 20;
-    constant C_PRINT_GOAL      : boolean := protected_covergroup_status.get_covergroup_coverage_goal(VOID) /= 100;
+    constant C_PRINT_GOAL      : boolean := protected_covergroup_status.get_covpts_coverage_goal(VOID) /= 100;
     variable v_line            : line;
     variable v_log_extra_space : integer := 0;
   begin
@@ -793,7 +793,7 @@ package body func_cov_pkg is
     -- Print report header and summary
     write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
                   timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-                  return_string_if_true("Goal:                    Covpts: " & to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)) & "%" & LF, C_PRINT_GOAL) &
+                  return_string_if_true("Goal:                    Covpts: " & to_string(protected_covergroup_status.get_covpts_coverage_goal(VOID)) & "%" & LF, C_PRINT_GOAL) &
                   return_string_if_true("% of Goal:               Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_CAPPED),2) & "%" & LF, C_PRINT_GOAL) &
                   return_string_if_true("% of Goal (uncapped):    Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_UNCAPPED),2) & "%" & LF, C_PRINT_GOAL) &
                   "Coverage (for goal 100): " &
@@ -1628,7 +1628,7 @@ package body func_cov_pkg is
         write_value(protected_covergroup_status.get_coverage_weight(priv_id));
         write_value(protected_covergroup_status.get_bins_coverage_goal(priv_id));
         write_value(protected_covergroup_status.get_hits_coverage_goal(priv_id));
-        write_value(protected_covergroup_status.get_covergroup_coverage_goal(VOID));
+        write_value(protected_covergroup_status.get_covpts_coverage_goal(VOID));
         -- Bin structure
         write_bins(priv_bins_idx, priv_bins);
         write_bins(priv_invalid_bins_idx, priv_invalid_bins);
@@ -1771,7 +1771,7 @@ package body func_cov_pkg is
       read_value(v_value);
       protected_covergroup_status.set_hits_coverage_goal(priv_id, v_value);
       read_value(v_value);
-      protected_covergroup_status.set_covergroup_coverage_goal(v_value);
+      protected_covergroup_status.set_covpts_coverage_goal(v_value);
       -- Bin structure
       read_value(priv_bins_idx);
       read_bins(priv_bins_idx, priv_bins);
@@ -2769,7 +2769,7 @@ package body func_cov_pkg is
         write(v_line, "          " & justify("BINS COVERAGE GOAL", left, C_COLUMN1_WIDTH)     & ": " & justify(to_string(100), right, C_COLUMN2_WIDTH) & LF);
         write(v_line, "          " & justify("HITS COVERAGE GOAL", left, C_COLUMN1_WIDTH)     & ": " & justify(to_string(100), right, C_COLUMN2_WIDTH) & LF);
       end if;
-      write(v_line, "          " & justify("OVERALL GOAL", left, C_COLUMN1_WIDTH)             & ": " & justify(to_string(protected_covergroup_status.get_covergroup_coverage_goal(VOID)), right, C_COLUMN2_WIDTH) & LF);
+      write(v_line, "          " & justify("COVERPOINTS GOAL", left, C_COLUMN1_WIDTH)         & ": " & justify(to_string(protected_covergroup_status.get_covpts_coverage_goal(VOID)), right, C_COLUMN2_WIDTH) & LF);
       write(v_line, "          " & justify("NUMBER OF BINS", left, C_COLUMN1_WIDTH)           & ": " & justify(to_string(priv_bins_idx+priv_invalid_bins_idx), right, C_COLUMN2_WIDTH) & LF);
       write(v_line, "          " & justify("CROSS DIMENSIONS", left, C_COLUMN1_WIDTH)         & ": " & justify(to_string(priv_num_bins_crossed), right, C_COLUMN2_WIDTH) & LF);
 

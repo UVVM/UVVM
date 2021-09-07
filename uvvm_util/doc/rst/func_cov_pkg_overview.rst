@@ -52,14 +52,18 @@ Bins are implemented as record elements inside the protected type t_coverpoint, 
 **********************************************************************************************************************************
 Creating and adding bins
 **********************************************************************************************************************************
-There are different ways of creating bins using the following :ref:`bin functions <bin_functions>`:
+Different functions are used to create bins, while a procedure is used to add them to the coverpoint. This is necessary for 
+several reasons: better readability, avoiding conflicts with overloads which have similar parameters and supporting adding 
+multiple types of bins in a single line.
+
+Bins can be created using the following :ref:`bin functions <bin_functions>`:
 
 .. code-block::
 
-    -- 1. Create a single bin using a single value
+    -- 1. Create a single bin for a single value
     bin(0)
 
-    -- 2. Create a single bin using multiple values (the values are ORed)
+    -- 2. Create a single bin for multiple values (the values are ORed)
     bin((2,4,6,8))
 
     -- 3. Create a single bin for each value in a given range
@@ -75,17 +79,17 @@ There are different ways of creating bins using the following :ref:`bin function
     -- 6. Create a number of bins from a vector's range
     bin_vector(addr, 16) -- creates 16 bins
 
-    -- 7. Create a single bin with a transition of values
+    -- 7. Create a single bin for a transition of values
     bin_transition((1,3,5,7))
 
-With the functions above and the procedure ``add_bins()`` we can add bins to the coverpoint.
+With the functions above and the procedure ``add_bins()``, bins can be added to the coverpoint.
 
 .. code-block::
 
-    -- 1. Add a single bin using a single value
+    -- 1. Add a single bin for a single value
     my_coverpoint.add_bins(bin(0));
 
-    -- 2. Add a single bin using multiple values (the values are ORed)
+    -- 2. Add a single bin for multiple values (the values are ORed)
     my_coverpoint.add_bins(bin((2,4,6,8)));
 
     -- 3. Add a single bin for each value in a given range
@@ -100,7 +104,7 @@ With the functions above and the procedure ``add_bins()`` we can add bins to the
     -- 6. Add a number of bins from a vector's range
     my_coverpoint.add_bins(bin_vector(addr, 16));
 
-    -- 7. Add a single bin with a transition of values
+    -- 7. Add a single bin for a transition of values
     my_coverpoint.add_bins(bin_transition((1,3,5,7)));
 
 The bin functions may be concatenated to add several bins at once.
@@ -116,14 +120,36 @@ The bin functions may be concatenated to add several bins at once.
 
 Ignore bins
 ==================================================================================================================================
-Specific values or transitions can be excluded from the coverage by using ignore bins. This can be useful when creating a big range 
-or many bins automatically and want to discard one or several values.
+Specific values or transitions can be excluded from the coverage by using ignore bins. This is useful to:
+
+* Discard one or more values in a range
+* Discard one or more values after automatically creating bins
+* Discard complete or partial transitions
 
 .. code-block::
 
-    my_coverpoint.add_bins(ignore_bin(255));
-    my_coverpoint.add_bins(ignore_bin_range(50, 60));
-    my_coverpoint.add_bins(ignore_bin_transition((0,100,200)));
+    -- Example 1
+    my_coverpoint.add_bins(bin_range(0,99,1));
+    my_coverpoint.add_bins(ignore_bin(50));
+    my_coverpoint.add_bins(ignore_bin_range(25,30) & ignore_bin_range(75,80));
+
+    -- Example 2
+    my_coverpoint.add_bins(bin_vector(addr));
+    my_coverpoint.add_bins(ignore_bin(0));
+
+    -- Example 3
+    my_coverpoint.add_bins(bin_transition((0,1,10))); --> Ignored
+    my_coverpoint.add_bins(bin_transition((0,1,20)));
+    my_coverpoint.add_bins(bin_transition((0,1,30)));
+    my_coverpoint.add_bins(bin_transition((0,2,10)));
+    my_coverpoint.add_bins(bin_transition((0,2,20)));
+    my_coverpoint.add_bins(bin_transition((0,2,30))); --> Ignored
+    my_coverpoint.add_bins(bin_transition((5,3,10))); --> Ignored
+    my_coverpoint.add_bins(bin_transition((5,3,20))); --> Ignored
+    my_coverpoint.add_bins(bin_transition((5,3,30))); --> Ignored
+    my_coverpoint.add_bins(ignore_bin_transition((0,2,30)); -- Ignores all transitions which include 0,2,30
+    my_coverpoint.add_bins(ignore_bin_transition((1,10)));  -- Ignores all transitions which include 1,10
+    my_coverpoint.add_bins(ignore_bin(5));                  -- Ignores any bin which contains 5, including transitions
 
 Illegal bins
 ==================================================================================================================================
@@ -187,7 +213,7 @@ The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in 
 Minimum coverage
 **********************************************************************************************************************************
 By default all bins created have a minimum coverage of 1, i.e. they only need to be sampled once to be covered. The parameter 
-*min_hits* in the ``add_bins()`` procedure specifies how many times the bin must be sampled so that it is marked as covered.
+*min_hits* in the ``add_bins()`` procedure specifies how many times the bin must be sampled in order to be marked as covered.
 
 .. code-block::
 
@@ -245,9 +271,9 @@ bins have been covered, their respective randomization weights will be reset to 
     my_coverpoint.add_bins(bin(0), 10); -- Selected 50% of the time (rand_weight = 10)
     my_coverpoint.add_bins(bin(2), 5);  -- Selected 25% of the time (rand_weight = 5)
     my_coverpoint.add_bins(bin(4), 5);  -- Selected 25% of the time (rand_weight = 5)
-    my_coverpoint.sample_coverage(0);   -- bin(0) Selected 47% of the time (rand_weight = 9)
-    my_coverpoint.sample_coverage(0);   -- bin(0) Selected 44% of the time (rand_weight = 8)
-    my_coverpoint.sample_coverage(0);   -- bin(0) Selected 41% of the time (rand_weight = 7)
+    my_coverpoint.sample_coverage(0);   -- bin(0) Will be selected 47% of the time (rand_weight = 9)
+    my_coverpoint.sample_coverage(0);   -- bin(0) Will be selected 44% of the time (rand_weight = 8)
+    my_coverpoint.sample_coverage(0);   -- bin(0) Will be selected 41% of the time (rand_weight = 7)
 
 **********************************************************************************************************************************
 Cross coverage
@@ -374,8 +400,8 @@ Overlapping bins
 If a sampled value is contained in more than one valid bin (not ignore or illegal), all the valid bins will collect the coverage, 
 i.e. increment the number of hits.
 
-In case this in unintended behaviour in the testbench, an alert can be generated when overlapping valid bins are sampled by using 
-the procedure ``set_bin_overlap_alert_level()`` to select the severity of the alert.
+In case this is unintended behaviour in the testbench, an alert can be generated when overlapping valid bins are sampled, by using 
+the procedure ``set_bin_overlap_alert_level()``, to select the severity of the alert.
 
 .. code-block::
 
@@ -715,7 +741,7 @@ A report containing all the configuration parameters can be printed using the ``
 **********************************************************************************************************************************
 Coverage database
 **********************************************************************************************************************************
-In order to accumulate coverage by running several testcases we need to store the coverpoint model at the end of one testcase and 
+In order to accumulate coverage when running several testcases we need to store the coverpoint model at the end of one testcase and 
 load it at the beginning of the next. This can be done with ``write_coverage_db()`` which writes all the necessary information to 
 a file and ``load_coverage_db()`` which reads it back into a new coverpoint. Note that this must be done for every coverpoint in 
 the testbench and they must be written to separate files.

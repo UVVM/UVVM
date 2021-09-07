@@ -77,12 +77,12 @@ package func_cov_pkg is
   ------------------------------------------------------------
   -- Bin functions
   ------------------------------------------------------------
-  -- Creates a bin with a single value
+  -- Creates a bin for a single value
   impure function bin(
     constant value         : integer)
   return t_new_bin_array;
 
-  -- Creates a bin with multiple values
+  -- Creates a bin for multiple values
   impure function bin(
     constant set_of_values : integer_vector)
   return t_new_bin_array;
@@ -100,39 +100,39 @@ package func_cov_pkg is
     constant num_bins      : natural := 0)
   return t_new_bin_array;
 
-  -- Creates a bin with a transition of values
+  -- Creates a bin for a transition of values
   impure function bin_transition(
     constant set_of_values : integer_vector)
   return t_new_bin_array;
 
-  -- Creates an ignore bin with a single value
+  -- Creates an ignore bin for a single value
   impure function ignore_bin(
     constant value         : integer)
   return t_new_bin_array;
 
-  -- Creates an ignore bin with a range of values
+  -- Creates an ignore bin for a range of values
   impure function ignore_bin_range(
     constant min_value     : integer;
     constant max_value     : integer)
   return t_new_bin_array;
 
-  -- Creates an ignore bin with a transition of values
+  -- Creates an ignore bin for a transition of values
   impure function ignore_bin_transition(
     constant set_of_values : integer_vector)
   return t_new_bin_array;
 
-  -- Creates an illegal bin with a single value
+  -- Creates an illegal bin for a single value
   impure function illegal_bin(
     constant value         : integer)
   return t_new_bin_array;
 
-  -- Creates an illegal bin with a range of values
+  -- Creates an illegal bin for a range of values
   impure function illegal_bin_range(
     constant min_value     : integer;
     constant max_value     : integer)
   return t_new_bin_array;
 
-  -- Creates an illegal bin with a transition of values
+  -- Creates an illegal bin for a transition of values
   impure function illegal_bin_transition(
     constant set_of_values : integer_vector)
   return t_new_bin_array;
@@ -621,7 +621,7 @@ package body func_cov_pkg is
   ------------------------------------------------------------
   -- Bin functions
   ------------------------------------------------------------
-  -- Creates a bin with a single value
+  -- Creates a bin for a single value
   impure function bin(
     constant value         : integer)
   return t_new_bin_array is
@@ -630,7 +630,7 @@ package body func_cov_pkg is
     return create_bin_single(VAL, value, C_LOCAL_CALL);
   end function;
 
-  -- Creates a bin with multiple values
+  -- Creates a bin for multiple values
   impure function bin(
     constant set_of_values : integer_vector)
   return t_new_bin_array is
@@ -662,7 +662,7 @@ package body func_cov_pkg is
     return create_bin_range(RAN, 0, 2**vector'length-1, num_bins, C_LOCAL_CALL);
   end function;
 
-  -- Creates a bin with a transition of values
+  -- Creates a bin for a transition of values
   impure function bin_transition(
     constant set_of_values : integer_vector)
   return t_new_bin_array is
@@ -671,7 +671,7 @@ package body func_cov_pkg is
     return create_bin_multiple(TRN, set_of_values, C_LOCAL_CALL);
   end function;
 
-  -- Creates an ignore bin with a single value
+  -- Creates an ignore bin for a single value
   impure function ignore_bin(
     constant value         : integer)
   return t_new_bin_array is
@@ -680,7 +680,7 @@ package body func_cov_pkg is
     return create_bin_single(VAL_IGNORE, value, C_LOCAL_CALL);
   end function;
 
-  -- Creates an ignore bin with a range of values
+  -- Creates an ignore bin for a range of values
   impure function ignore_bin_range(
     constant min_value     : integer;
     constant max_value     : integer)
@@ -690,7 +690,7 @@ package body func_cov_pkg is
     return create_bin_range(RAN_IGNORE, min_value, max_value, 1, C_LOCAL_CALL);
   end function;
 
-  -- Creates an ignore bin with a transition of values
+  -- Creates an ignore bin for a transition of values
   impure function ignore_bin_transition(
     constant set_of_values : integer_vector)
   return t_new_bin_array is
@@ -699,7 +699,7 @@ package body func_cov_pkg is
     return create_bin_multiple(TRN_IGNORE, set_of_values, C_LOCAL_CALL);
   end function;
 
-  -- Creates an illegal bin with a single value
+  -- Creates an illegal bin for a single value
   impure function illegal_bin(
     constant value         : integer)
   return t_new_bin_array is
@@ -708,7 +708,7 @@ package body func_cov_pkg is
     return create_bin_single(VAL_ILLEGAL, value, C_LOCAL_CALL);
   end function;
 
-  -- Creates an illegal bin with a range of values
+  -- Creates an illegal bin for a range of values
   impure function illegal_bin_range(
     constant min_value     : integer;
     constant max_value     : integer)
@@ -718,7 +718,7 @@ package body func_cov_pkg is
     return create_bin_range(RAN_ILLEGAL, min_value, max_value, 1, C_LOCAL_CALL);
   end function;
 
-  -- Creates an illegal bin with a transition of values
+  -- Creates an illegal bin for a transition of values
   impure function illegal_bin_transition(
     constant set_of_values : integer_vector)
   return t_new_bin_array is

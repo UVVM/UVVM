@@ -777,7 +777,9 @@ package body func_cov_pkg is
     constant verbosity : in t_report_verbosity;
     constant scope     : in string := C_TB_SCOPE_DEFAULT) is
     constant C_PREFIX          : string := C_LOG_PREFIX & "     ";
-    constant C_HEADER          : string := "*** OVERALL COVERAGE REPORT: " & to_string(scope) & " ***";
+    constant C_HEADER_1        : string := "*** OVERALL COVERAGE REPORT (VERBOSE): " & to_string(scope) & " ***";
+    constant C_HEADER_2        : string := "*** OVERALL COVERAGE REPORT (NON VERBOSE): " & to_string(scope) & " ***";
+    constant C_HEADER_3        : string := "*** OVERALL HOLES REPORT: " & to_string(scope) & " ***";
     constant C_COLUMN_WIDTH    : positive := 20;
     constant C_PRINT_GOAL      : boolean := protected_covergroup_status.get_covpts_coverage_goal(VOID) /= 100;
     variable v_line            : line;
@@ -790,10 +792,20 @@ package body func_cov_pkg is
       v_log_extra_space := 1;
     end if;
 
-    -- Print report header and summary
-    write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
-                  timestamp_header(now, justify(C_HEADER, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF &
-                  return_string_if_true("Goal:                    Covpts: " & to_string(protected_covergroup_status.get_covpts_coverage_goal(VOID)) & "%" & LF, C_PRINT_GOAL) &
+    -- Print report header
+    write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+    if verbosity = VERBOSE then
+      write(v_line, timestamp_header(now, justify(C_HEADER_1, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
+    elsif verbosity = NON_VERBOSE then
+      write(v_line, timestamp_header(now, justify(C_HEADER_2, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
+    elsif verbosity = HOLES_ONLY then
+      write(v_line, timestamp_header(now, justify(C_HEADER_3, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
+    end if;
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+
+
+    -- Print summary
+    write(v_line, return_string_if_true("Goal:                    Covpts: " & to_string(protected_covergroup_status.get_covpts_coverage_goal(VOID)) & "%" & LF, C_PRINT_GOAL) &
                   return_string_if_true("% of Goal:               Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_CAPPED),2) & "%" & LF, C_PRINT_GOAL) &
                   return_string_if_true("% of Goal (uncapped):    Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_UNCAPPED),2) & "%" & LF, C_PRINT_GOAL) &
                   "Coverage (for goal 100): " &
@@ -802,7 +814,7 @@ package body func_cov_pkg is
                     justify("Hits: " & to_string(protected_covergroup_status.get_total_hits_coverage(VOID),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
                   fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
-    if verbosity = VERBOSE then
+    if verbosity = VERBOSE or verbosity = HOLES_ONLY then
       -- Print column headers
       write(v_line, justify(
         fill_string(' ', v_log_extra_space) &
@@ -817,19 +829,21 @@ package body func_cov_pkg is
       -- Print coverpoints
       for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
         if protected_covergroup_status.is_initialized(i) then
-          write(v_line, justify(
-            fill_string(' ', v_log_extra_space) &
-            justify(protected_covergroup_status.get_name(i), center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(protected_covergroup_status.get_coverage_weight(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(protected_covergroup_status.get_num_covered_bins(i)) & " / " &
-                    to_string(protected_covergroup_status.get_num_valid_bins(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(protected_covergroup_status.get_bins_coverage(i, NO_GOAL),2) & "% | " &
-                    to_string(protected_covergroup_status.get_hits_coverage(i, NO_GOAL),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(protected_covergroup_status.get_bins_coverage_goal(i)) & "% | " &
-                    to_string(protected_covergroup_status.get_hits_coverage_goal(i)) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-            justify(to_string(protected_covergroup_status.get_bins_coverage(i, GOAL_CAPPED),2) & "% | " &
-                    to_string(protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
-            left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+          if verbosity /= HOLES_ONLY or not(protected_covergroup_status.get_bins_coverage(i, GOAL_CAPPED) = 100.0 and protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED) = 100.0) then
+            write(v_line, justify(
+              fill_string(' ', v_log_extra_space) &
+              justify(protected_covergroup_status.get_name(i), center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_coverage_weight(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_num_covered_bins(i)) & " / " &
+                      to_string(protected_covergroup_status.get_num_valid_bins(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_bins_coverage(i, NO_GOAL),2) & "% | " &
+                      to_string(protected_covergroup_status.get_hits_coverage(i, NO_GOAL),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_bins_coverage_goal(i)) & "% | " &
+                      to_string(protected_covergroup_status.get_hits_coverage_goal(i)) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_bins_coverage(i, GOAL_CAPPED),2) & "% | " &
+                      to_string(protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+              left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
+          end if;
         end if;
       end loop;
 

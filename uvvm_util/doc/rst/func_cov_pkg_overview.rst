@@ -599,7 +599,7 @@ Overall Verbose
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** OVERALL COVERAGE REPORT: TB seq. ***                                                                    
+    # UVVM:  0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                          
     # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
     # UVVM:  =================================================================================================================
     # UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS) 
@@ -619,8 +619,26 @@ Overall Non-Verbose
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** OVERALL COVERAGE REPORT: TB seq. ***                                                                    
+    # UVVM:  0 ns *** OVERALL COVERAGE REPORT (NON VERBOSE): TB seq. ***                                                      
     # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
+    # UVVM:  =================================================================================================================
+
+Overall Holes
+==================================================================================================================================
+
+.. code-block::
+
+    fc_report_overall_coverage(HOLES_ONLY); -- Prints the uncovered coverpoints
+
+.. code-block:: none
+
+    # UVVM:  =================================================================================================================
+    # UVVM:  0 ns *** OVERALL HOLES REPORT: TB seq. ***                                                                       
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
+    # UVVM:  =================================================================================================================
+    # UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS) 
+    # UVVM:        Covpt_1            1              4 / 5         80.00% | 77.78%       100% | 100%        80.00% | 77.78%   
+    # UVVM:        Covpt_4            1              1 / 2         50.00% | 50.00%       100% | 100%        50.00% | 50.00%   
     # UVVM:  =================================================================================================================
 
 Using goal

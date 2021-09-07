@@ -320,3 +320,4 @@ and is defined by shared_default_log_destination in adaptations_pkg. To see an e
     -- Examples:
     fc_report_overall_coverage(VOID);
     fc_report_overall_coverage(VERBOSE);
+    fc_report_overall_coverage(HOLES_ONLY);

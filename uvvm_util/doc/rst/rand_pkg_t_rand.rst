@@ -183,7 +183,8 @@ Clears the configured mean value. A value depending on the parameters of each ``
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -249,7 +250,8 @@ Clears the configured standard deviation value. A value depending on the paramet
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -312,7 +314,8 @@ on cyclic randomization click :ref:`here <rand_pkg_cyclic>`. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -934,7 +937,8 @@ Returns a random std_logic value. ::
 +==========+====================+========+==============================+===============================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default          |
+|          |                    |        |                              | value is shared_msg_id_panel.                                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
@@ -958,7 +962,8 @@ Returns a random boolean value. ::
 +==========+====================+========+==============================+===============================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope                   |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default          |
+|          |                    |        |                              | value is shared_msg_id_panel.                                 |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::

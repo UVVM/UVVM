@@ -329,7 +329,8 @@ Resets the coverpoint's coverage by clearing all the bin hit counters. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -392,7 +393,8 @@ Deallocates the list of bins and resets all configuration settings to their defa
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -405,7 +407,7 @@ Deallocates the list of bins and resets all configuration settings to their defa
 add_bins()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds bins to the coverpoint. Must be used together with the :ref:`bin functions <bin_functions>` which return a t_new_bin_array. 
-Bin functions may be concatenated to add several bins at once. Default values for min_hits and rand_weight are both 1. ::
+Bin functions may be concatenated to add several bins at once. ::
 
     add_bins(bin, min_hits, rand_weight, [bin_name, [msg_id_panel]])
     add_bins(bin, min_hits, [bin_name, [msg_id_panel]])
@@ -416,9 +418,15 @@ Bin functions may be concatenated to add several bins at once. Default values fo
 +==========+====================+========+==============================+=======================================================+
 | constant | bin                | in     | t_new_bin_array              | Array containing one or several bins                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | min_hits           | in     | positive                     | Minimum number of hits for the bin to be covered      |
+| constant | min_hits           | in     | positive                     | Minimum number of hits for the bin to be covered.     |
+|          |                    |        |                              | Default value is 1. When using ignore or illegal bins,|
+|          |                    |        |                              | this value does not need to be specified since it will|
+|          |                    |        |                              | automatically be 0.                                   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
+| constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin. Default     |
+|          |                    |        |                              | value is 1. When using ignore or illegal bins, this   |
+|          |                    |        |                              | value does not need to be specified since it will     |
+|          |                    |        |                              | automatically be 0.                                   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.  |
 |          |                    |        |                              | Default value is "bin_<idx>".                         |
@@ -430,16 +438,17 @@ Bin functions may be concatenated to add several bins at once. Default values fo
 .. code-block::
 
     -- Examples:
+    my_coverpoint.add_bins(ignore_bin(0), "ignore_value");
     my_coverpoint.add_bins(bin(10), 5, 3, "low_value");
     my_coverpoint.add_bins(bin(20), 5, "middle_value");
     my_coverpoint.add_bins(bin(30) & bin(40) & bin(50), "high_values");
+    my_coverpoint.add_bins(illegal_bin(100), "illegal_value");
 
 
 add_cross() {bin_array}
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a cross between two t_new_bin_array elements to the coverpoint. Must be used together with the :ref:`bin functions <bin_functions>` 
-which return a t_new_bin_array. Bin functions may be concatenated to add several bins at once. Default values for min_hits and 
-rand_weight are both 1. ::
+which return a t_new_bin_array. Bin functions may be concatenated to add several bins at once. ::
 
     add_cross(bin1, bin2, min_hits, rand_weight, [bin_name, [msg_id_panel]])
     add_cross(bin1, bin2, min_hits, [bin_name, [msg_id_panel]])
@@ -450,9 +459,15 @@ rand_weight are both 1. ::
 +==========+====================+========+==============================+=======================================================+
 | constant | bin(n)             | in     | t_new_bin_array              | Array containing one or several bins                  |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | min_hits           | in     | positive                     | Minimum number of hits for the bin to be covered      |
+| constant | min_hits           | in     | positive                     | Minimum number of hits for the bin to be covered.     |
+|          |                    |        |                              | Default value is 1. When using ignore or illegal bins,|
+|          |                    |        |                              | this value does not need to be specified since it will|
+|          |                    |        |                              | automatically be 0.                                   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
+| constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin. Default     |
+|          |                    |        |                              | value is 1. When using ignore or illegal bins, this   |
+|          |                    |        |                              | value does not need to be specified since it will     |
+|          |                    |        |                              | automatically be 0.                                   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.  |
 |          |                    |        |                              | Default value is "bin_<idx>".                         |
@@ -464,6 +479,7 @@ rand_weight are both 1. ::
 .. code-block::
 
     -- Examples:
+    my_cross.add_cross(ignore_bin(0), bin_range(0,63,1), "ignore_values");
     my_cross.add_cross(bin(10), bin_range(0,15,1), 5, 3, "low_values");
     my_cross.add_cross(bin(20), bin_range(16,31,1), 5, "middle_values");
     my_cross.add_cross(bin(30), bin_range(32,63,1), "high_values");
@@ -486,8 +502,7 @@ This procedure has overloads which support crossing up to 5 t_new_bin_array elem
 
 add_cross() {coverpoint}
 ----------------------------------------------------------------------------------------------------------------------------------
-Adds a cross between two coverpoints to the coverpoint. Note that the coverpoints being crossed must contain at least one bin. 
-Default values for min_hits and rand_weight are both 1. ::
+Adds a cross between two coverpoints to the coverpoint. Note that the coverpoints being crossed must contain at least one bin. ::
 
     add_cross(coverpoint1, coverpoint2, min_hits, rand_weight, [bin_name, [msg_id_panel]])
     add_cross(coverpoint1, coverpoint2, min_hits, [bin_name, [msg_id_panel]])
@@ -498,9 +513,15 @@ Default values for min_hits and rand_weight are both 1. ::
 +==========+====================+========+==============================+=======================================================+
 | variable | coverpoint(n)      | inout  | t_coverpoint                 | Protected type containing a coverpoint                |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | min_hits           | in     | positive                     | Minimum number of hits for the bin to be covered      |
+| constant | min_hits           | in     | positive                     | Minimum number of hits for the bin to be covered.     |
+|          |                    |        |                              | Default value is 1. When using ignore or illegal bins,|
+|          |                    |        |                              | this value does not need to be specified since it will|
+|          |                    |        |                              | automatically be 0.                                   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin              |
+| constant | rand_weight        | in     | natural                      | Randomization weight assigned to the bin. Default     |
+|          |                    |        |                              | value is 1. When using ignore or illegal bins, this   |
+|          |                    |        |                              | value does not need to be specified since it will     |
+|          |                    |        |                              | automatically be 0.                                   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | bin_name           | in     | string                       | Name of the bin. Max length is C_FC_MAX_NAME_LENGTH.  |
 |          |                    |        |                              | Default value is "bin_<idx>".                         |
@@ -548,7 +569,8 @@ it will return a random value among all the valid bins. Note that ignore and ill
 +==========+====================+========+==============================+=======================================================+
 | constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope           |
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
@@ -611,7 +633,7 @@ get_coverage()
 Returns either the bins coverage or the hits coverage of the coverpoint. For an overview on the types of coverage click 
 :ref:`here <func_cov_pkg_coverage_status>`. ::
 
-    real := get_coverage(coverage_type)
+    real := get_coverage(coverage_type, [percentage_of_goal])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |

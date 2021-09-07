@@ -187,12 +187,12 @@ package func_cov_pkg is
     return string;
 
     procedure set_coverage_weight(
-      constant weight       : in positive;
+      constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     impure function get_coverage_weight(
       constant VOID : t_void)
-    return positive;
+    return natural;
 
     procedure set_bins_coverage_goal(
       constant percentage   : in positive range 1 to 100;
@@ -1448,7 +1448,7 @@ package body func_cov_pkg is
     end function;
 
     procedure set_coverage_weight(
-      constant weight       : in positive;
+      constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "set_coverage_weight(" & to_string(weight) & ")";
     begin
@@ -1459,7 +1459,7 @@ package body func_cov_pkg is
 
     impure function get_coverage_weight(
       constant VOID : t_void)
-    return positive is
+    return natural is
     begin
       if priv_id /= C_DEALLOCATED_ID then
         return protected_covergroup_status.get_coverage_weight(priv_id);

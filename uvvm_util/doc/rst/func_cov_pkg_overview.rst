@@ -479,12 +479,14 @@ This value defines the percentage of the number of coverpoints which need to be 
 Coverage weight
 **********************************************************************************************************************************
 It specifies the weight of a coverpoint/cross used when calculating the overall coverage. It must be set at the beginning of the 
-testbench, before sampling any coverage. Default value is 1.
+testbench, before sampling any coverage. If set to 0, the coverpoint will be excluded from the overall coverage calculation. 
+Default value is 1.
 
 .. code-block::
 
     my_coverpoint_1.set_coverage_weight(3);  -- If only this coverpoint is covered, total coverage will be 75%
     my_coverpoint_2.set_coverage_weight(1);  -- If only this coverpoint is covered, total coverage will be 25%
+    my_coverpoint_3.set_coverage_weight(0);  -- This coverpoint is excluded from the total coverage calculation
 
 **********************************************************************************************************************************
 Coverpoint name

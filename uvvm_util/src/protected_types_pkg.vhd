@@ -84,7 +84,7 @@ package protected_types_pkg is
     procedure set_total_bin_hits(coverpoint_idx : in integer; hits : in natural);
     procedure set_total_coverage_bin_hits(coverpoint_idx : in integer; hits : in natural);
     procedure set_total_goal_bin_hits(coverpoint_idx : in integer; hits : in natural);
-    procedure set_coverage_weight(coverpoint_idx : in integer; weight : in positive);
+    procedure set_coverage_weight(coverpoint_idx : in integer; weight : in natural);
     procedure set_bins_coverage_goal(coverpoint_idx : in integer; percentage : in positive range 1 to 100);
     procedure set_hits_coverage_goal(coverpoint_idx : in integer; percentage : in positive);
     procedure set_covpts_coverage_goal(percentage : in positive range 1 to 100);
@@ -102,7 +102,7 @@ package protected_types_pkg is
     impure function get_total_bin_hits(coverpoint_idx : integer) return natural;
     impure function get_total_coverage_bin_hits(coverpoint_idx : integer) return natural;
     impure function get_total_goal_bin_hits(coverpoint_idx : integer) return natural;
-    impure function get_coverage_weight(coverpoint_idx : integer) return positive;
+    impure function get_coverage_weight(coverpoint_idx : integer) return natural;
     impure function get_bins_coverage_goal(coverpoint_idx : integer) return positive;
     impure function get_hits_coverage_goal(coverpoint_idx : integer) return positive;
     impure function get_covpts_coverage_goal(VOID : t_void) return positive;
@@ -249,7 +249,7 @@ package body protected_types_pkg is
       total_bin_hits          : natural;
       total_coverage_bin_hits : natural;
       total_goal_bin_hits     : natural;
-      coverage_weight         : positive;
+      coverage_weight         : natural;
       bins_coverage_goal      : positive;
       hits_coverage_goal      : positive;
     end record;
@@ -356,7 +356,7 @@ package body protected_types_pkg is
 
     procedure set_coverage_weight(
       constant coverpoint_idx : in integer;
-      constant weight         : in positive) is
+      constant weight         : in natural) is
     begin
       priv_coverpoint_status_list(coverpoint_idx).coverage_weight := weight;
     end procedure;
@@ -476,7 +476,7 @@ package body protected_types_pkg is
 
     impure function get_coverage_weight(
       constant coverpoint_idx : integer)
-    return positive is
+    return natural is
     begin
       return priv_coverpoint_status_list(coverpoint_idx).coverage_weight;
     end function;

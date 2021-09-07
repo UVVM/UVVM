@@ -79,14 +79,15 @@ Returns the configured scope. ::
 
 set_coverage_weight()
 ----------------------------------------------------------------------------------------------------------------------------------
-Configures the weight of the coverpoint used when calculating the overall coverage. Default value is 1. ::
+Configures the weight of the coverpoint used when calculating the overall coverage. If set to 0, the coverpoint will be excluded 
+from the overall coverage calculation. Default value is 1. ::
 
     set_coverage_weight(weight, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | weight             | in     | positive                     | Weight of the coverpoint                              |
+| constant | weight             | in     | natural                      | Weight of the coverpoint                              |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -94,15 +95,17 @@ Configures the weight of the coverpoint used when calculating the overall covera
 
 .. code-block::
 
-    -- Example:
-    my_coverpoint.set_coverage_weight(3);
+    -- Examples:
+    my_coverpoint_1.set_coverage_weight(3);  -- If only this coverpoint is covered, total coverage will be 75%
+    my_coverpoint_2.set_coverage_weight(1);  -- If only this coverpoint is covered, total coverage will be 25%
+    my_coverpoint_3.set_coverage_weight(0);  -- This coverpoint is excluded from the total coverage calculation
 
 
 get_coverage_weight()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns the coverpoint's coverage weight. ::
 
-    positive := get_coverage_weight(VOID)
+    natural := get_coverage_weight(VOID)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
@@ -113,7 +116,7 @@ Returns the coverpoint's coverage weight. ::
 .. code-block::
 
     -- Example:
-    log(ID_SEQUENCER, "Weight: " & to_string(my_coverpoint.get_coverage_weight(VOID)));
+    log(ID_SEQUENCER, "Coverage Weight: " & to_string(my_coverpoint.get_coverage_weight(VOID)));
 
 
 set_bins_coverage_goal()

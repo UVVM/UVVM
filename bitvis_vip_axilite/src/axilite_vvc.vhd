@@ -86,7 +86,7 @@ architecture behave of axilite_vvc is
   signal write_response_channel_queue_is_increasing : boolean := false;
   signal read_address_channel_queue_is_increasing   : boolean := false;
   signal read_data_channel_queue_is_increasing      : boolean := false;
-  signal last_cmd_idx_executed                      : natural := 0;
+  signal last_cmd_idx_executed                      : natural := natural'high;
   signal last_write_response_channel_idx_executed   : natural := 0;
   signal last_read_data_channel_idx_executed        : natural := 0;
   signal terminate_current_cmd                      : t_flag_record;
@@ -267,6 +267,26 @@ begin
   end process;
 --===============================================================================================
 
+--===============================================================================================
+-- Updating the activity register
+--===============================================================================================
+  p_activity_register_update : process
+    variable v_cmd_queues_are_empty : boolean;
+  begin
+    -- Wait until active and set the activity register to ACTIVE
+    if not any_executors_busy then
+      wait until any_executors_busy;
+    end if;
+    v_cmd_queues_are_empty := queues_are_empty(VOID);
+    update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
+    -- Wait until inactive and set the activity register to INACTIVE
+    if any_executors_busy then
+      wait until not any_executors_busy;
+    end if;
+    v_cmd_queues_are_empty := queues_are_empty(VOID);
+    update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
+  end process p_activity_register_update;
+
 
 --===============================================================================================
 -- Command executor
@@ -301,18 +321,9 @@ begin
 
     loop
 
-      -- update vvc activity
-      v_cmd_queues_are_empty := queues_are_empty(VOID);
-      if v_cmd_queues_are_empty and not (write_address_channel_executor_is_busy or write_data_channel_executor_is_busy or write_response_channel_executor_is_busy or read_address_channel_executor_is_busy or read_data_channel_executor_is_busy) then
-        update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
-      end if;
-
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
-
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
@@ -414,7 +425,16 @@ begin
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
 
-      last_cmd_idx_executed <= v_cmd.cmd_idx;
+      -- In case we only allow a single pending transaction, wait here until every channel is finished. 
+      -- Even though this wait doesn't have a timeout, each of the executors have timeouts.
+      if vvc_config.force_single_pending_transaction and v_command_is_bfm_access then
+        wait until not write_address_channel_executor_is_busy and
+                   not write_data_channel_executor_is_busy and
+                   not write_response_channel_executor_is_busy and
+                   not read_address_channel_executor_is_busy and
+                   not read_data_channel_executor_is_busy;
+      end if;
+
     end loop;
   end process;
 --===============================================================================================
@@ -454,13 +474,16 @@ begin
           -- Set vvc transaction info
           set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
           -- Start transaction
-          read_address_channel_write(araddr_value       => std_logic_vector(v_normalised_addr),
-                                     msg                => format_msg(v_cmd),
-                                     clk                => clk,
-                                     read_addr_channel  => axilite_vvc_master_if.read_address_channel,
-                                     scope              => C_CHANNEL_SCOPE,
-                                     msg_id_panel       => v_msg_id_panel,
-                                     config             => vvc_config.bfm_config);
+          read_address_channel_write(araddr_value => std_logic_vector(v_normalised_addr),
+                                     msg          => format_msg(v_cmd),
+                                     clk          => clk,
+                                     araddr       => axilite_vvc_master_if.read_address_channel.araddr,
+                                     arvalid      => axilite_vvc_master_if.read_address_channel.arvalid,
+                                     arprot       => axilite_vvc_master_if.read_address_channel.arprot,
+                                     arready      => axilite_vvc_master_if.read_address_channel.arready,
+                                     scope        => C_CHANNEL_SCOPE,
+                                     msg_id_panel => v_msg_id_panel,
+                                     config       => vvc_config.bfm_config);
 
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
@@ -494,11 +517,6 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
     loop
-      -- update vvc activity
-      v_cmd_queues_are_empty := queues_are_empty(VOID);
-      if v_cmd_queues_are_empty and not (executor_is_busy or write_address_channel_executor_is_busy or write_data_channel_executor_is_busy or write_response_channel_executor_is_busy or read_address_channel_executor_is_busy) then
-        update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_read_data_channel_idx_executed, v_cmd_queues_are_empty, C_CHANNEL_SCOPE);
-      end if;
       -- Fetch commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, read_data_channel_queue, vvc_config, vvc_status, read_data_channel_queue_is_increasing, read_data_channel_executor_is_busy, C_CHANNEL_VVC_LABELS, shared_msg_id_panel, ID_CHANNEL_EXECUTOR, ID_CHANNEL_EXECUTOR_WAIT);
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
@@ -512,13 +530,16 @@ begin
           -- Set vvc transaction info
           set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
           -- Start transaction
-          read_data_channel_receive(rdata_value       => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                                    msg               => format_msg(v_cmd),
-                                    clk               => clk,
-                                    read_data_channel => axilite_vvc_master_if.read_data_channel,
-                                    scope             => C_CHANNEL_SCOPE,
-                                    msg_id_panel      => v_msg_id_panel,
-                                    config            => vvc_config.bfm_config);
+          read_data_channel_receive(rdata_value  => v_read_data(GC_DATA_WIDTH-1 downto 0),
+                                    msg          => format_msg(v_cmd),
+                                    clk          => clk,
+                                    rready       => axilite_vvc_master_if.read_data_channel.rready,
+                                    rdata        => axilite_vvc_master_if.read_data_channel.rdata,
+                                    rresp        => axilite_vvc_master_if.read_data_channel.rresp,
+                                    rvalid       => axilite_vvc_master_if.read_data_channel.rvalid,
+                                    scope        => C_CHANNEL_SCOPE,
+                                    msg_id_panel => v_msg_id_panel,
+                                    config       => vvc_config.bfm_config);
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
@@ -534,14 +555,17 @@ begin
           -- Set vvc transaction info
           set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
           -- Start transaction
-          read_data_channel_check(rdata_exp           => v_normalised_data,
-                                  msg                 => format_msg(v_cmd),
-                                  clk                 => clk,
-                                  read_data_channel   => axilite_vvc_master_if.read_data_channel,
-                                  alert_level         => v_cmd.alert_level,
-                                  scope               => C_CHANNEL_SCOPE,
-                                  msg_id_panel        => v_msg_id_panel,
-                                  config              => vvc_config.bfm_config);
+          read_data_channel_check(rdata_exp    => v_normalised_data,
+                                  msg          => format_msg(v_cmd),
+                                  clk          => clk,
+                                  rready       => axilite_vvc_master_if.read_data_channel.rready,
+                                  rdata        => axilite_vvc_master_if.read_data_channel.rdata,
+                                  rresp        => axilite_vvc_master_if.read_data_channel.rresp,
+                                  rvalid       => axilite_vvc_master_if.read_data_channel.rvalid,
+                                  alert_level  => v_cmd.alert_level,
+                                  scope        => C_CHANNEL_SCOPE,
+                                  msg_id_panel => v_msg_id_panel,
+                                  config       => vvc_config.bfm_config);
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
       end case;
@@ -585,13 +609,16 @@ begin
       -- Set vvc transaction info
       set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Start transaction
-      write_address_channel_write(awaddr_value      => std_logic_vector(v_normalised_addr),
-                                  msg                => format_msg(v_cmd),
-                                  clk                => clk,
-                                  write_addr_channel => axilite_vvc_master_if.write_address_channel,
-                                  scope              => C_CHANNEL_SCOPE,
-                                  msg_id_panel       => v_msg_id_panel,
-                                  config             => vvc_config.bfm_config);
+      write_address_channel_write(awaddr_value  => std_logic_vector(v_normalised_addr),
+                                  msg           => format_msg(v_cmd),
+                                  clk           => clk,
+                                  awaddr        => axilite_vvc_master_if.write_address_channel.awaddr,
+                                  awvalid       => axilite_vvc_master_if.write_address_channel.awvalid,
+                                  awprot        => axilite_vvc_master_if.write_address_channel.awprot,
+                                  awready       => axilite_vvc_master_if.write_address_channel.awready,
+                                  scope         => C_CHANNEL_SCOPE,
+                                  msg_id_panel  => v_msg_id_panel,
+                                  config        => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
@@ -631,14 +658,17 @@ begin
       -- Set vvc transaction info
       set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Start transaction
-      write_data_channel_write(wdata_value        => v_normalised_data,
-                               wstrb_value        => v_cmd.byte_enable((GC_DATA_WIDTH/8-1) downto 0),
-                               msg                => format_msg(v_cmd),
-                               clk                => clk,
-                               write_data_channel => axilite_vvc_master_if.write_data_channel,
-                               scope              => C_CHANNEL_SCOPE,
-                               msg_id_panel       => v_msg_id_panel,
-                               config             => vvc_config.bfm_config);
+      write_data_channel_write(wdata_value  => v_normalised_data,
+                               wstrb_value  => v_cmd.byte_enable((GC_DATA_WIDTH/8-1) downto 0),
+                               msg          => format_msg(v_cmd),
+                               clk          => clk,
+                               wdata        => axilite_vvc_master_if.write_data_channel.wdata,
+                               wstrb        => axilite_vvc_master_if.write_data_channel.wstrb,
+                               wvalid       => axilite_vvc_master_if.write_data_channel.wvalid,
+                               wready       => axilite_vvc_master_if.write_data_channel.wready,
+                               scope        => C_CHANNEL_SCOPE,
+                               msg_id_panel => v_msg_id_panel,
+                               config       => vvc_config.bfm_config);
 
       -- Set vvc transaction info back to default values
       reset_w_vvc_transaction_info(vvc_transaction_info);
@@ -668,12 +698,6 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
     loop
-      -- update vvc activity
-      wait for 0 ns;
-      v_cmd_queues_are_empty := queues_are_empty(VOID);
-      if v_cmd_queues_are_empty and not (executor_is_busy or write_address_channel_executor_is_busy or write_data_channel_executor_is_busy or read_address_channel_executor_is_busy or read_data_channel_executor_is_busy) then
-        update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_write_response_channel_idx_executed, v_cmd_queues_are_empty, C_CHANNEL_SCOPE);
-      end if;
       -- Fetch commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, write_response_channel_queue, vvc_config, vvc_status, write_response_channel_queue_is_increasing, write_response_channel_executor_is_busy, C_CHANNEL_VVC_LABELS, shared_msg_id_panel, ID_CHANNEL_EXECUTOR, ID_CHANNEL_EXECUTOR_WAIT);
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
@@ -682,13 +706,15 @@ begin
       -- Set vvc transaction info
       set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
       -- Receiving a write response
-      write_response_channel_check(msg                => format_msg(v_cmd),
-                                    clk                => clk,
-                                    write_resp_channel => axilite_vvc_master_if.write_response_channel,
-                                    alert_level        => error,
-                                    scope              => C_CHANNEL_SCOPE,
-                                    msg_id_panel       => v_msg_id_panel,
-                                    config             => vvc_config.bfm_config);
+      write_response_channel_check(msg          => format_msg(v_cmd),
+                                   clk          => clk,
+                                   bready       => axilite_vvc_master_if.write_response_channel.bready,
+                                   bresp        => axilite_vvc_master_if.write_response_channel.bresp,
+                                   bvalid       => axilite_vvc_master_if.write_response_channel.bvalid,
+                                   alert_level  => error,
+                                   scope        => C_CHANNEL_SCOPE,
+                                   msg_id_panel => v_msg_id_panel,
+                                   config       => vvc_config.bfm_config);
 
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
       -- Set vvc transaction info back to default values

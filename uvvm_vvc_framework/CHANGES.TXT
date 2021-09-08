@@ -2,6 +2,24 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.2
+----------
+Released: 2021-XX-XX
+- Fixed generic_queue deleting wrong element when position is different from entry_num.
+- Fixed generic_queue print_queue() crashing when queue is empty.
+
+v2.12.1
+----------
+Released: 2021-05-26
+- Corrected timeout value parameter for await_completion() in Common VVC Methods QR.
+- Fixed issue where calling the same VVC at the same time from different processes 
+  could lead to a timeout.
+
+v2.12.0
+----------
+Released: 2021-04-08
+- vvc_generator now includes activity watchdog by default.
+- Added missing result in log message for fetch_result() method.
 
 v2.11.1
 ----------
@@ -12,7 +30,6 @@ Released: 2020-08-18
 - Fixed wrongly commented code generated from vvc_generator.
 - Generated code from vvc_generator.py will now compile without user editing.
 - Removed VVC_Framework_Documentation_Overview.txt from /doc
-
 
 v2.11.0
 ----------

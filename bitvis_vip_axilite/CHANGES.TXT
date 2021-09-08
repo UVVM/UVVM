@@ -1,6 +1,25 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+vX.X.X
+Released: XXXX-XX-XX
+-Added support to force the VVC to execute only one transaction at a time
+-Fixed bug where await_completion in certain cases didn't detect that the VVC was finished
+-Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential problems with fetch_result
+
+v2.8.3
+----------
+Released: 2021-05-26
+- Corrected message ID for check_value() in BFM.
+
+
+v2.8.2
+----------
+Released: 2021-04-08
+- Fixed "bad handle or reference" fatal error that happened in some versions of Modelsim
+- Fixed wrong file and library names in compile_bfm.do
+- Fixed compilation error in Riviera Pro
+
 v2.8.1
 ----------
 Released: 2020-12-08

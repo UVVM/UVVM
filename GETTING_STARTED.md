@@ -2,7 +2,7 @@
 
 # Getting started using UVVM
 
-UVVM is Free and Open source, under the very flexible [MIT license](./LICENSE).
+UVVM is Free and Open source, under the very flexible [Apache license](./LICENSE).
 UVVM basically has two levels of usage: Basic/Introductory and Advanced.
 With the Basic/Introductory level you are given a library and methodology that provide common functionality for all testbenches from simple to expert with things like logging, alert handling, checking signals, waiting for signals, checking timing properties, simple randomisation, etc. This is explained directly below this chapter.
 A number of BFMs (Bus Functional Models) compatible with the Utility Library are provided as free and open source code as a kick-start for testbenches using interfaces like AXI lite/stream, Avalon, I2C, SPI, UART, SBI, GPIO, etc.

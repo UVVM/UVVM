@@ -24,10 +24,11 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
+--hdlunit:tb
 -- Test case entity
 entity generic_sb_slv_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity generic_sb_slv_tb;
 
@@ -1332,6 +1333,15 @@ architecture func of generic_sb_slv_tb is
 
       sb_under_test.reset(VOID);
 
+
+      log(ID_LOG_HDR, "check insert_expected to empty SB with identifier_option=POSITION, identifier=1", scope);
+      sb_under_test.insert_expected(POSITION, 1, x"AA", TAG, "inserted, 1", "insert in position 2");
+
+      sb_under_test.report_counters(ALL_INSTANCES);
+      sb_under_test.report_counters(VOID);
+
+      sb_under_test.reset(VOID);
+        
     end procedure test_insert_expected;
 
     procedure test_insert_expected_no_tag is
@@ -1708,8 +1718,8 @@ architecture func of generic_sb_slv_tb is
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -1730,22 +1740,22 @@ architecture func of generic_sb_slv_tb is
     sb_under_test.set_scope("SB slv");
     sb_under_test.enable("Enable SB");
 
-    test_add_expected;
-    test_check_received;
-    test_check_received_out_of_order;
-    test_check_received_lossy;
-    test_initial_garbage;
-    test_overdue_time_limit;
-    test_find;
-    test_peek;
-    test_fetch;
+--    test_add_expected;
+--    test_check_received;
+--    test_check_received_out_of_order;
+--    test_check_received_lossy;
+--    test_initial_garbage;
+--    test_overdue_time_limit;
+--    test_find;
+--    test_peek;
+--    test_fetch;
     test_insert_expected;
-    test_insert_expected_no_tag;
-    test_delete_expected;
-    test_exists;
-    test_multiple_instances;
-    test_instance_is_enabled;
-
+--    test_insert_expected_no_tag;
+--    test_delete_expected;
+--    test_exists;
+--    test_multiple_instances;
+--    test_instance_is_enabled;
+      
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------

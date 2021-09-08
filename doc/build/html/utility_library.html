@@ -1,0 +1,3263 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>UVVM Utility Library &mdash; UVVM  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UVVM VVC Framework" href="vvc_framework.html" />
+    <link rel="prev" title="UVVM Getting Started" href="uvvm_getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/uvvm_3.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">UVVM Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UVVM Utility Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#checks-and-awaits">Checks and awaits</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#check-value">check_value()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#returns">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#defaults">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#check-value-in-range">check_value_in_range()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id1">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id2">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id3">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id4">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#check-stable">check_stable()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id5">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id6">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id7">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#await-change">await_change()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id8">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id9">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id10">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#await-value">await_value()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id11">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id12">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id13">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#await-stable">await_stable()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id14">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id15">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id16">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#logging-and-verbosity-control">Logging and verbosity control</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#set-log-file-name">set_log_file_name()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id17">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id18">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id19">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#log">log()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id20">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#general-string-handling-features-for-log">General string handling features for log()</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id21">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id22">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#log-text-block">log_text_block()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id23">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id24">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id25">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-log-msg">enable_log_msg()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id26">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id27">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id28">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#disable-log-msg">disable_log_msg()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id29">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id30">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id31">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#is-log-msg-enabled">is_log_msg_enabled ()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id32">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id33">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id34">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id35">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#set-log-destination">set_log_destination()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id36">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id37">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id38">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#alert-handling">Alert handling</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#set-alert-file-name">set_alert_file_name()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id39">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id40">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id41">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#alert">alert()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id42">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id43">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id44">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#alert-overloads">alert() overloads</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id45">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id46">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id47">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#increment-expected-alerts">increment_expected_alerts()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id48">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id49">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id50">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#get-alert-stop-limit">get_alert_stop_limit()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id51">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id52">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id53">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#set-alert-attention">set_alert_attention()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id54">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id55">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id56">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#get-alert-attention">get_alert_attention()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id57">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id58">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id59">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#reporting">Reporting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#report-global-ctrl">report_global_ctrl()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id60">Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#report-msg-id-panel">report_msg_id_panel()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id61">Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#report-alert-counters">report_alert_counters()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id62">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id63">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#report-check-counters">report_check_counters()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id64">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id65">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#shared-variables">Shared variables</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#shared-uvvm-status-found-unexpected-simulation-warnings-or-worse">shared_uvvm_status.found_unexpected_simulation_warnings_or_worse</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#shared-uvvm-status-found-unexpected-simulation-errors-or-worse">shared_uvvm_status.found_unexpected_simulation_errors_or_worse</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#shared-uvvm-status-mismatch-on-expected-simulation-warnings-or-worse">shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#shared-uvvm-status-mismatch-on-expected-simulation-errors-or-worse">shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#randomization">Randomization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#random">random()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id66">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id67">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id68">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#id69">random()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id70">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id71">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id72">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#id73">random()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id74">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id75">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id76">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#id77">random()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id78">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id79">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#randomize">randomize()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id80">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id81">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#string-handling">String handling</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#to-string">to_string()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id82">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id83">Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#id84">to_string()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id85">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id86">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id87">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id88">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#to-upper">to_upper()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id89">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id90">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id91">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#justify">justify()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id92">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id93">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id94">Defaults</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#id95">justify()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id96">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id97">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id98">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#fill-string">fill_string()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id99">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id100">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id101">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#ascii-to-char">ascii_to_char()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id102">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id103">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id104">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id105">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#char-to-ascii">char_to_ascii()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id106">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id107">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id108">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pos-of-leftmost">pos_of_leftmost()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id109">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id110">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id111">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id112">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pos-of-rightmost">pos_of_rightmost()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id113">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id114">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id115">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id116">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#remove-initial-chars">remove_initial_chars()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id117">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id118">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id119">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#get-procedure-process-entity-name-from-instance-name">get_[procedure|process|entity]_name from_instance_name()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id120">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id121">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id122">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#replace">replace()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id123">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id124">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id125">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#id126">replace()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id127">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id128">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pad-string">pad_string()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id129">Returns</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id130">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id131">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id132">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#signal-generators">Signal generators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#clock-generator">clock_generator()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id133">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id134">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id135">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#adjustable-clock-generator">adjustable_clock_generator()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id136">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id137">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#gen-pulse">gen_pulse()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id138">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id139">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id140">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#synchronisation">Synchronisation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#block-flag">block_flag()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id141">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id142">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id143">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#unblock-flag">unblock_flag()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id144">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#mandatory">Mandatory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id145">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id146">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#await-unblock-flag">await_unblock_flag()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id147">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id148">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id149">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#await-barrier">await_barrier()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id150">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id151">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bfm-common-package">BFM Common package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#normalize-and-check">normalize_and_check()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id152">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id153">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#wait-until-given-time-after-rising-edge">wait_until_given_time_after_rising_edge()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id154">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id155">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#wait-until-given-time-before-rising-edge">wait_until_given_time_before_rising_edge()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id156">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id157">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#wait-num-rising-edge-plus-margin">wait_num_rising_edge_plus_margin()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id158">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id159">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#wait-on-bfm-sync-start">wait_on_bfm_sync_start()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id160">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id161">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#wait-on-bfm-exit">wait_on_bfm_exit()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id162">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id163">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#check-clock-period-margin">check_clock_period_margin()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id164">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id165">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#general-watchdog">General Watchdog</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#watchdog-timer">watchdog_timer()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id166">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id167">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#extend-watchdog">extend_watchdog()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id168">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id169">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#reinitialize-watchdog">reinitialize_watchdog()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id170">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id171">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#terminate-watchdog">terminate_watchdog()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id172">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id173">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#message-ids">Message IDs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-arguments-in-checks-and-awaits">Common arguments in checks and awaits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-hierarchical-alert-reporting">Using Hierarchical Alert Reporting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#add-to-alert-hierarchy">add_to_alert_hierarchy()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id174">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id175">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id176">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#id177">increment_expected_alerts()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id178">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id179">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id180">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#set-expected-alerts">set_expected_alerts()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id181">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id182">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#increment-stop-limit">increment_stop_limit()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id183">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id184">Defaults</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id185">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#set-stop-limit">set_stop_limit()</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id186">Parameters</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id187">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#adaptation-package">Adaptation package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation">Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intellectual-property">INTELLECTUAL PROPERTY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">UVVM VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sbi_vip.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart_vip.html">Bitvis VIP UART</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>UVVM Utility Library</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/utility_library.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="uvvm-utility-library">
+<h1>UVVM Utility Library<a class="headerlink" href="#uvvm-utility-library" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>1</strong>: Arguments common for most methods (green text) are described in chapter 1.12.</p>
+<p><strong>2</strong>: All methods are defined in uvvm_util.methods_pkg, unless otherwise noted.</p>
+<p><strong>Legend</strong>: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer</p>
+<p><code class="docutils literal notranslate"><span class="pre">*</span></code> IEEE=Method is native for VHDL2008 (Method is listed here for completeness.)</p>
+</div>
+<div class="section" id="checks-and-awaits">
+<h3>Checks and awaits<a class="headerlink" href="#checks-and-awaits" title="Permalink to this headline">¶</a></h3>
+<p><strong>Note:</strong> Although all check and await methods have optional [alert_level], it is best practice to always evaluate and
+assign the most fitting alert_level for any given check or await.</p>
+<div class="section" id="check-value">
+<h4>check_value()<a class="headerlink" href="#check-value" title="Permalink to this headline">¶</a></h4>
+<p>Checks if val equals exp, and alerts with severity alert_level if the values do not match.
+The result of the check is returned as a boolean if the method is called as a function.</p>
+<div class="section" id="returns">
+<h5>Returns<a class="headerlink" href="#returns" title="Permalink to this headline">¶</a></h5>
+<p>Boolean</p>
+</div>
+<div class="section" id="parameters">
+<h5>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>value<span class="o">(</span>bool<span class="o">)</span>, <span class="o">[</span>exp<span class="o">(</span>bool<span class="o">)]</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+value<span class="o">(</span>sl<span class="o">)</span>, exp<span class="o">(</span>sl<span class="o">)</span>, <span class="o">[</span>match_strictness<span class="o">]</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+value<span class="o">(</span>slv<span class="o">)</span>, exp<span class="o">(</span>slv<span class="o">)</span>, <span class="o">[</span>match_strictness<span class="o">]</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>radix, <span class="o">[</span>format, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]]]</span>
+
+value<span class="o">(</span>t_slv_array<span class="o">)</span>, exp<span class="o">(</span>t_slv_array<span class="o">)</span>, <span class="o">[</span>match_strictness<span class="o">]</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>radix, <span class="o">[</span>format, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]]]</span>
+
+value<span class="o">(</span>u<span class="o">)</span>, exp<span class="o">(</span>u<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>radix, <span class="o">[</span>format, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]]]</span>
+
+value<span class="o">(</span>t_unsigned_array<span class="o">)</span>, exp<span class="o">(</span>t_unsigned_array<span class="o">)</span>, <span class="o">[</span>match_strictness<span class="o">]</span>, alert_level, msg, <span class="o">[</span>scope, <span class="o">[</span>radix, <span class="o">[</span>format, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]]]</span>
+
+value<span class="o">(</span>s<span class="o">)</span>, exp<span class="o">(</span>s<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>radix, <span class="o">[</span>format, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]]]</span>
+
+value<span class="o">(</span>t_signed_array<span class="o">)</span>, exp<span class="o">(</span>t_signed_array<span class="o">)</span>, <span class="o">[</span>match_strictness<span class="o">]</span>, alert_level, msg, <span class="o">[</span>scope, <span class="o">[</span>radix, <span class="o">[</span>format, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]]]</span>
+
+value<span class="o">(</span>int<span class="o">)</span>, exp<span class="o">(</span>int<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+value<span class="o">(</span>real<span class="o">)</span>, exp<span class="o">(</span>real<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>,exp<span class="o">(</span><span class="nb">time</span><span class="o">)</span>,<span class="o">[</span>alert_level<span class="o">]</span>,msg, <span class="o">[</span>scope,<span class="o">[</span>msg_id,<span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+</pre></div>
+</div>
+<p>If val is of type slv, unsigned or signed, there are additional optional arguments:</p>
+<p><strong>match_strictness</strong>  - Specifies if match needs to be exact or std_match, e.g. ‘H’ = ‘1’.
+(MATCH_EXACT, MATCH_STD, MATCH_STD_INCL_Z)</p>
+<p><strong>radix</strong> - For the vector representation in the log: BIN, HEX, DEC or HEX_BIN_IF_INVALID.
+(HEX_BIN_IF_INVALID means hexadecimal, unless there are the vector contains any U,
+X, Z or W, - in which case it is also logged in binary radix.)</p>
+<p><strong>format</strong> - KEEP_LEADING_0 or SKIP_LEADING_0. Controls how the vector is formatted in the log.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Vectors are checked with MSB as left most and that the range is converted from “0 to N” to “N downto 0”.
+A WARNING is given if arrays are of defined with opposite directions. Different ranges in any dimension will not match.</p>
+</div>
+</div>
+<div class="section" id="defaults">
+<h5>Defaults<a class="headerlink" href="#defaults" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 55%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>alert_level</p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>match_strictness</p></td>
+<td><p>MATCH_STD</p></td>
+</tr>
+<tr class="row-even"><td><p>radix</p></td>
+<td><p>HEX_BIN_IF_INVALID</p></td>
+</tr>
+<tr class="row-odd"><td><p>format</p></td>
+<td><p>KEEP_LEADING_0</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id</p></td>
+<td><p>ID_POS_ACK</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="examples">
+<h5>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>check_value<span class="o">(</span>v_int_a, <span class="m">42</span>, WARNING, “Checking the integer”<span class="o">)</span><span class="p">;</span>
+
+v_check :<span class="o">=</span> check_value<span class="o">(</span>v_slv5_a, “11100”, MATCH_EXACT, “Checking the SLV”, “My Scope”, HEX, SKIP_LEADING_0, ID_SEQUENCER, shared_msg_id_panel<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="check-value-in-range">
+<h4>check_value_in_range()<a class="headerlink" href="#check-value-in-range" title="Permalink to this headline">¶</a></h4>
+<p>Checks if min_value ≤ val ≤ max_value, and alerts with severity alert_level if val is outside the range.
+The result of the check is returned as a boolean if the method is called as a function.</p>
+<div class="section" id="id1">
+<h5>Returns<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h5>
+<p>Boolean</p>
+</div>
+<div class="section" id="id2">
+<h5>Parameters<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>value<span class="o">(</span>u<span class="o">)</span>, min_value<span class="o">(</span>u<span class="o">)</span>, max_value<span class="o">(</span>u<span class="o">)</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+value<span class="o">(</span>s<span class="o">)</span>, min_value<span class="o">(</span>s<span class="o">)</span>, max_value<span class="o">(</span>s<span class="o">)</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+value<span class="o">(</span>int<span class="o">)</span>, min_value<span class="o">(</span>int<span class="o">)</span>, max_value<span class="o">(</span>int<span class="o">)</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, min_value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, max_value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+value<span class="o">(</span>real<span class="o">)</span>, min_value<span class="o">(</span>real<span class="o">)</span>, max_value<span class="o">(</span>real<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h5>Defaults<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 55%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>alert_level</p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id</p></td>
+<td><p>ID_POS_ACK</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id4">
+<h5>Examples<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>check_value_in_range<span class="o">(</span>v_int_a, <span class="m">10</span>, <span class="m">100</span>, “Checking that integer is in range”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="check-stable">
+<h4>check_stable()<a class="headerlink" href="#check-stable" title="Permalink to this headline">¶</a></h4>
+<p>Checks if the target signal has been stable in stable_req time. If not, an alert is asserted.</p>
+<div class="section" id="id5">
+<h5>Parameters<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>target<span class="o">(</span>bool<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>sl<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>slv<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>u<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>s<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>int<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>real<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h5>Defaults<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 55%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>alert_level</p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id</p></td>
+<td><p>ID_POS_ACK</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id7">
+<h5>Examples<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>check_stable<span class="o">(</span>slv8, <span class="m">9</span> ns, “Checking <span class="k">if</span> SLV is stable”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="await-change">
+<h4>await_change()<a class="headerlink" href="#await-change" title="Permalink to this headline">¶</a></h4>
+<p>Waits until the target signal changes, or times out after max_time. An alert is asserted if the signal does not change between min_time
+and max_time.
+Note that if the value changes at exactly max_time, the timeout gets
+precedence.</p>
+<div class="section" id="id8">
+<h5>Parameters<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>target<span class="o">(</span>bool<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>sl<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>slv<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>u<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>s<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>int<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>real<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h5>Defaults<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 55%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>alert_level</p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id</p></td>
+<td><p>ID_POS_ACK</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id10">
+<h5>Examples<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>await_change<span class="o">(</span>bol, <span class="m">3</span> ns, <span class="m">5</span> ns, “Awaiting change on bol signal”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="await-value">
+<h4>await_value()<a class="headerlink" href="#await-value" title="Permalink to this headline">¶</a></h4>
+<p>Waits until the target signal equals the exp signal, or times out after max_time.
+An alert is asserted if the signal does not equal the expected value between min_time and max_time.
+<em>Note</em> that if the value changes to the expected value at exactly max_time, the timeout gets precedence.</p>
+<div class="section" id="id11">
+<h5>Parameters<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>target<span class="o">(</span>sl<span class="o">)</span>, exp<span class="o">(</span>sl<span class="o">)</span>, <span class="o">[</span>match_strictness<span class="o">]</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+
+target<span class="o">(</span>slv<span class="o">)</span>, exp<span class="o">(</span>slv<span class="o">)</span>, <span class="o">[</span>match_strictness<span class="o">]</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+
+target<span class="o">(</span>bool<span class="o">)</span>, exp<span class="o">(</span>bool<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]]</span>
+
+target<span class="o">(</span>u<span class="o">)</span>, exp<span class="o">(</span>u<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]]</span>
+
+target<span class="o">(</span>s<span class="o">)</span>, exp<span class="o">(</span>s<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]]</span>
+
+target<span class="o">(</span>int<span class="o">)</span>, exp<span class="o">(</span>int<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]]</span>
+
+target<span class="o">(</span>real<span class="o">)</span>, exp<span class="o">(</span>real<span class="o">)</span>, min_time, max_time, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]]</span>
+</pre></div>
+</div>
+<p><strong>match_strictness</strong> - Specifies if match needs to be exact or std_match , e.g. ‘H’ = ‘1’. (MATCH_EXACT, MATCH_STD)</p>
+</div>
+<div class="section" id="id12">
+<h5>Defaults<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 55%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>alert_level</p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id</p></td>
+<td><p>ID_POS_ACK</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id13">
+<h5>Examples<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>await_value<span class="o">(</span>bol, true, <span class="m">10</span> ns, <span class="m">20</span> ns, “Waiting <span class="k">for</span> bol to become true”<span class="o">)</span><span class="p">;</span>
+
+await_value<span class="o">(</span>slv8, “10101010”, MATCH_STD, <span class="m">3</span> ns, <span class="m">7</span> ns, WARNING, “Waiting <span class="k">for</span> slv8 value”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="await-stable">
+<h4>await_stable()<a class="headerlink" href="#await-stable" title="Permalink to this headline">¶</a></h4>
+<p>Wait until the target signal has been stable for at least ‘stable_req’. Report an error if this does not occurr within the time specified by ‘timeout’.
+<em>Note:</em> ‘Stable’ refers to that the signal has not had an event (i.e. not changed value).</p>
+<div class="section" id="id14">
+<h5>Parameters<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>target<span class="o">(</span>bool<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, stable_req_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>, timeout_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+
+target<span class="o">(</span>sl<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, stable_req_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>, timeout_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+
+target<span class="o">(</span>slv<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, stable_req_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>, timeout_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+
+target<span class="o">(</span>u<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, stable_req_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>, timeout_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+
+target<span class="o">(</span>s<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, stable_req_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>, timeout_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+
+target<span class="o">(</span>int<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, stable_req_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>, timeout_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+
+target<span class="o">(</span>real<span class="o">)</span>, stable_req<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, stable_req_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>, timeout_from<span class="o">(</span>t_from_point_in_time<span class="o">)</span>, <span class="o">[</span>alert_level<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">(</span>etc.<span class="o">)]</span>
+</pre></div>
+</div>
+<p>Description of special arguments:</p>
+<p>stable_req_from :</p>
+<ul class="simple">
+<li><p>FROM_NOW: Target must be stable ‘stable_req’ from now.</p></li>
+<li><p>FROM_LAST_EVENT: Target must be stable ‘stable_req’ from the last event of target.</p></li>
+</ul>
+<p>timeout_from :</p>
+<ul class="simple">
+<li><p>FROM_NOW: The timeout argument is given in time from now.</p></li>
+<li><p>FROM_LAST_EVENT: The timeout argument is given in time the last event of target.</p></li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h5>Defaults<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 55%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>alert_level</p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id</p></td>
+<td><p>ID_POS_ACK</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id16">
+<h5>Examples<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>await_stable<span class="o">(</span>u8, <span class="m">20</span> ns, FROM_LAST_EVENT, <span class="m">100</span> ns, FROM_NOW, ERROR, “Waiting <span class="k">for</span> u8 to stabilize”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="logging-and-verbosity-control">
+<h3>Logging and verbosity control<a class="headerlink" href="#logging-and-verbosity-control" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="set-log-file-name">
+<h4>set_log_file_name()<a class="headerlink" href="#set-log-file-name" title="Permalink to this headline">¶</a></h4>
+<p>Sets the log file name. To ensure that the entire log transcript is written to a single file,
+this should be called prior to any other procedures (except set_alert_file_name()).
+If file name is set after a log message has been written to the log file, a warning will be reported.
+This warning can be disabled by setting C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME false in the adaptations_pkg.</p>
+<div class="section" id="id17">
+<h5>Parameters<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>file_name<span class="o">(</span>string<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id18">
+<h5>Defaults<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 55%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>file_name</p></td>
+<td><p>C_LOG_FILE_NAME</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id19">
+<h5>Examples<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_log_file_name<span class="o">(</span>“new_log_file_name.txt”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="log">
+<h4>log()<a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h4>
+<p>Writes message to log. If the msg_id is enabled in msg_id_panel, log the msg. Log destination defines where the message will
+be written to (CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY). If log destination is not specified, the default value in
+shared_default_log_destination found in the adaptations_pkg.vhd will be used. log_file_name defines the log file that the text
+block shall be written to. The “open_mode” parameter indicates how the log file shall be opened (write_mode, append_mode).</p>
+<div class="section" id="id20">
+<h5>Parameters<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>msg_id<span class="o">]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id_panel, <span class="o">[</span>log_destination<span class="o">(</span>t_log_destination<span class="o">)</span>, <span class="o">[</span>log_file_name<span class="o">(</span>string<span class="o">)</span>, <span class="o">[</span>open_mode<span class="o">(</span>file_open_kind<span class="o">)]]]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="general-string-handling-features-for-log">
+<h5>General string handling features for log()<a class="headerlink" href="#general-string-handling-features-for-log" title="Permalink to this headline">¶</a></h5>
+<ul class="simple">
+<li><p>All log messages will be given using the user defined layout in adaptations_pkg.vhd</p></li>
+<li><p>\n may be used to force line shifts. Line shift will occur after scope column, before message column</p></li>
+<li><p>\r may be used to force line shift at start of log message. The result will be a blank line apart from prefix
+(message ID, timestamp and scope will be omitted on the first line)</p></li>
+</ul>
+</div>
+<div class="section" id="id21">
+<h5>Defaults<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 62%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>msg_id</p></td>
+<td><p>C_TB_MSG_ID_DEFAULT</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+<tr class="row-even"><td><p>log_destination</p></td>
+<td><p>shared_default_log_destination</p></td>
+</tr>
+<tr class="row-odd"><td><p>log_file_name</p></td>
+<td><p>C_LOG_FILE_NAME</p></td>
+</tr>
+<tr class="row-even"><td><p>open_mode</p></td>
+<td><p>append_mode</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id22">
+<h5>Examples<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>log<span class="o">(</span>ID_SEQUENCER, “message to log”<span class="o">)</span><span class="p">;</span>
+
+log<span class="o">(</span>ID_BFM, “Msg”, “MyScope”, local_msg_id_panel, LOG_ONLY, “new_log.txt”, write_mode<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="log-text-block">
+<h4>log_text_block()<a class="headerlink" href="#log-text-block" title="Permalink to this headline">¶</a></h4>
+<p>Writes text block from VHDL line to log. Formatting either FORMATTED or UNFORMATTED. msg_header is an optional header message for the text_block.
+log_if_block_empty defines how an empty text block is handled (WRITE_HDR_IF_BLOCK_EMPTY/SKIP_LOG_IF_BLOCK_EMPTY/NOTIFY_IF_BLOCK_EMPTY).
+Log destination defines where the message will be written to (CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY). Log file name defines the log file that
+the text block shall be written to. open_mode indicates how the log file shall be opened (write_mode, append_mode).</p>
+<div class="section" id="id23">
+<h5>Parameters<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>log_text_block<span class="o">(</span>ID_SEQUENCER, v_line, UNFORMATTED<span class="o">)</span><span class="p">;</span>
+
+log_text_block<span class="o">(</span>ID_BFM, v_line, FORMATTED, “Header”, “MyScope”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id24">
+<h5>Defaults<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>msg_header</p></td>
+<td><p>“”</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+<tr class="row-even"><td><p>log_if_block_empty</p></td>
+<td><p>WRITE_HDR_IF_BLOCK_EMPTY</p></td>
+</tr>
+<tr class="row-odd"><td><p>log_destination</p></td>
+<td><p>shared_default_log_destination</p></td>
+</tr>
+<tr class="row-even"><td><p>log_file_name</p></td>
+<td><p>C_LOG_FILE_NAME</p></td>
+</tr>
+<tr class="row-odd"><td><p>open_mode</p></td>
+<td><p>append_mode</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id25">
+<h5>Examples<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>log_text_block<span class="o">(</span>ID_SEQUENCER, v_line, UNFORMATTED<span class="o">)</span><span class="p">;</span>
+
+log_text_block<span class="o">(</span>ID_BFM, v_line, FORMATTED, “Header”, “MyScope”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="enable-log-msg">
+<h4>enable_log_msg()<a class="headerlink" href="#enable-log-msg" title="Permalink to this headline">¶</a></h4>
+<p>Enables logging for the given msg_id. (See ID-list on front page for special purpose IDs).
+Logging of enable_log_msg() can be turned off by setting quietness=QUIET.</p>
+<div class="section" id="id26">
+<h5>Parameters<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>msg_id, <span class="o">[</span>quietness<span class="o">(</span>t_quietness<span class="o">)</span>, <span class="o">[</span>scope<span class="o">]]</span>
+
+msg_id, msg, <span class="o">[</span>quietness<span class="o">(</span>t_quietness<span class="o">)</span>, <span class="o">[</span>scope<span class="o">]]</span>
+
+msg_id, msg_id_panel, <span class="o">[</span>msg, <span class="o">[</span>scope, <span class="o">[</span>quietness<span class="o">(</span>t_quietness<span class="o">)]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id27">
+<h5>Defaults<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+<tr class="row-even"><td><p>msg</p></td>
+<td><p>””</p></td>
+</tr>
+<tr class="row-odd"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-even"><td><p>quietness</p></td>
+<td><p>NON_QUIET</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id28">
+<h5>Examples<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>enable_log_msg<span class="o">(</span>ID_SEQUENCER<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="disable-log-msg">
+<h4>disable_log_msg()<a class="headerlink" href="#disable-log-msg" title="Permalink to this headline">¶</a></h4>
+<p>Disables logging for the given msg_id. (See ID-list on front page for special purpose IDs).
+Logging of disable_log_msg() can be turned off by setting quietness=QUIET.</p>
+<div class="section" id="id29">
+<h5>Parameters<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>msg_id, <span class="o">[</span>quietness<span class="o">(</span>t_quietness<span class="o">)</span>, <span class="o">[</span>scope<span class="o">]]</span>
+
+msg_id, msg, <span class="o">[</span>quietness<span class="o">(</span>t_quietness<span class="o">)</span>, <span class="o">[</span>scope<span class="o">]]</span>
+
+msg_id, msg_id_panel, <span class="o">[</span>msg, <span class="o">[</span>scope, <span class="o">[</span>quietness<span class="o">(</span>t_quietness<span class="o">)]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id30">
+<h5>Defaults<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+<tr class="row-even"><td><p>msg</p></td>
+<td><p>””</p></td>
+</tr>
+<tr class="row-odd"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-even"><td><p>quietness</p></td>
+<td><p>NON_QUIET</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id31">
+<h5>Examples<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>disable_log_msg<span class="o">(</span>ID_LOG_HDR<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="is-log-msg-enabled">
+<h4>is_log_msg_enabled ()<a class="headerlink" href="#is-log-msg-enabled" title="Permalink to this headline">¶</a></h4>
+<p>Returns Boolean ‘true’ if given message ID is enabled. Otherwise ‘false’</p>
+<div class="section" id="id32">
+<h5>Returns<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h5>
+<p>Boolean</p>
+</div>
+<div class="section" id="id33">
+<h5>Parameters<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id34">
+<h5>Defaults<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id35">
+<h5>Examples<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_is_enabled :<span class="o">=</span> is_log_msg_enabled<span class="o">(</span>ID_SEQUENCER<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="set-log-destination">
+<h4>set_log_destination()<a class="headerlink" href="#set-log-destination" title="Permalink to this headline">¶</a></h4>
+<p>Sets the default log destination for all log procedures (CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY).
+The destination specified in this log_destination will be used unless the log_destination argument in
+the log procedure is specified. A log message is written to log ID ID_LOG_MSG_CTRL if quietness is set to NON_QUIET .</p>
+<div class="section" id="id36">
+<h5>Parameters<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>t_log_destination, <span class="o">[</span>quietness<span class="o">(</span>t_quietness<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id37">
+<h5>Defaults<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Quietness</p></td>
+<td><p>NON_QUIET</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id38">
+<h5>Examples<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_log_destination<span class="o">(</span>CONSOLE_ONLY<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="alert-handling">
+<h3>Alert handling<a class="headerlink" href="#alert-handling" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="set-alert-file-name">
+<h4>set_alert_file_name()<a class="headerlink" href="#set-alert-file-name" title="Permalink to this headline">¶</a></h4>
+<p>Sets the alert file name. To ensure that the entire log transcript is written to a single file,
+this should be called prior to any other procedures (except set_alert_file_name()). If file name is set after a
+log message has been written to the log file, a warning will be reported. This warning can be disabled by
+setting C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME false in the adaptations_pkg.</p>
+<div class="section" id="id39">
+<h5>Parameters<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>file_name<span class="o">(</span>string<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id40">
+<h5>Defaults<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>file_name</p></td>
+<td><p>C_ALERT_FILE_NAME</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id41">
+<h5>Examples<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_alert_file_name<span class="o">(</span>“new_alert_log_file.txt”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="alert">
+<h4>alert()<a class="headerlink" href="#alert" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>Asserts an alert with severity given by alert_level.</p></li>
+<li><p>Increment the counters for the given alert_level.</p></li>
+<li><p>If the stop_limit for the given alert_level is reached, stop the simulation.</p></li>
+</ul>
+<div class="section" id="id42">
+<h5>Parameters<a class="headerlink" href="#id42" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>alert_level, msg , <span class="o">[</span>scope<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id43">
+<h5>Defaults<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id44">
+<h5>Examples<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>alert<span class="o">(</span>TB_WARNING, “This is a TB warning”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="alert-overloads">
+<h4>alert() overloads<a class="headerlink" href="#alert-overloads" title="Permalink to this headline">¶</a></h4>
+<p>Overloads for alert().
+Note that: warning(msg, [scope]) = alert(warning, msg, [scope]).</p>
+<ul class="simple">
+<li><p>note() tb_note()</p></li>
+<li><p>warning() tb_warning()</p></li>
+<li><p>error() tb_error()</p></li>
+<li><p>failure() tb_failure()</p></li>
+<li><p>manual_check()</p></li>
+</ul>
+<div class="section" id="id45">
+<h5>Parameters<a class="headerlink" href="#id45" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>msg, <span class="o">[</span>scope<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id46">
+<h5>Defaults<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id47">
+<h5>Examples<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>note<span class="o">(</span>“This is a note”<span class="o">)</span><span class="p">;</span>
+
+tb_failure<span class="o">(</span>“This is a TB failure”, “tb_scope”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="increment-expected-alerts">
+<h4>increment_expected_alerts()<a class="headerlink" href="#increment-expected-alerts" title="Permalink to this headline">¶</a></h4>
+<p>Increments the expected alert counter for the given alert_level.</p>
+<div class="section" id="id48">
+<h5>Parameters<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>alert_level, <span class="o">[</span>number <span class="o">(</span>natural<span class="o">)</span> , <span class="o">[</span>msg, <span class="o">[</span>scope<span class="o">]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id49">
+<h5>Defaults<a class="headerlink" href="#id49" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>number</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>msg</p></td>
+<td><p>“”</p></td>
+</tr>
+<tr class="row-odd"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id50">
+<h5>Examples<a class="headerlink" href="#id50" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>increment_expected_alerts_and_stop_limit<span class="o">(</span>WARNING, <span class="m">2</span>, “Expecting two more warnings”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="get-alert-stop-limit">
+<h4>get_alert_stop_limit()<a class="headerlink" href="#get-alert-stop-limit" title="Permalink to this headline">¶</a></h4>
+<p>Returns current stop limit for given alert type.</p>
+<div class="section" id="id51">
+<h5>Returns<a class="headerlink" href="#id51" title="Permalink to this headline">¶</a></h5>
+<p>Integer</p>
+</div>
+<div class="section" id="id52">
+<h5>Parameters<a class="headerlink" href="#id52" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>alert_level
+</pre></div>
+</div>
+</div>
+<div class="section" id="id53">
+<h5>Examples<a class="headerlink" href="#id53" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_int :<span class="o">=</span> get_alert_stop_limit<span class="o">(</span>FAILURE<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="set-alert-attention">
+<h4>set_alert_attention()<a class="headerlink" href="#set-alert-attention" title="Permalink to this headline">¶</a></h4>
+<p>Set given alert type to t_attention: IGNORE or REGARD.</p>
+<div class="section" id="id54">
+<h5>Parameters<a class="headerlink" href="#id54" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>alert_level, attention <span class="o">(</span>t_attention<span class="o">)</span>, <span class="o">[</span>msg<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id55">
+<h5>Defaults<a class="headerlink" href="#id55" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>msg</p></td>
+<td><p>“”</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id56">
+<h5>Examples<a class="headerlink" href="#id56" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_alert_attention<span class="o">(</span>NOTE, IGNORE, “Ignoring all note-alerts”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="get-alert-attention">
+<h4>get_alert_attention()<a class="headerlink" href="#get-alert-attention" title="Permalink to this headline">¶</a></h4>
+<p>Returns current attention (IGNORE or REGARD) for given alert type.</p>
+<div class="section" id="id57">
+<h5>Returns<a class="headerlink" href="#id57" title="Permalink to this headline">¶</a></h5>
+<p>t_attention</p>
+</div>
+<div class="section" id="id58">
+<h5>Parameters<a class="headerlink" href="#id58" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>alert_level
+</pre></div>
+</div>
+</div>
+<div class="section" id="id59">
+<h5>Examples<a class="headerlink" href="#id59" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_attention :<span class="o">=</span> get_alert_attention<span class="o">(</span>WARNING<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="reporting">
+<h3>Reporting<a class="headerlink" href="#reporting" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="report-global-ctrl">
+<h4>report_global_ctrl()<a class="headerlink" href="#report-global-ctrl" title="Permalink to this headline">¶</a></h4>
+<p>Logs the values in the global_ctrl signal, which is described in chapter 1.13 <strong>TODO! Enter link!</strong></p>
+<div class="section" id="id60">
+<h5>Parameters<a class="headerlink" href="#id60" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>VOID
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="report-msg-id-panel">
+<h4>report_msg_id_panel()<a class="headerlink" href="#report-msg-id-panel" title="Permalink to this headline">¶</a></h4>
+<p>Logs the values in the msg_id_panel, which is described in chapter 1.13 <strong>TODO! Enter link!</strong></p>
+<div class="section" id="id61">
+<h5>Parameters<a class="headerlink" href="#id61" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>VOID
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="report-alert-counters">
+<h4>report_alert_counters()<a class="headerlink" href="#report-alert-counters" title="Permalink to this headline">¶</a></h4>
+<p>Logs the status of all alert counters, typically at the end of simulation.
+For each alert_level, the alert counter is compared with the expected counter.
+If parameter is FINAL, an additional summary concluding success or failure is logged. - type t_order is (FINAL, INTERMEDIATE)
+VOID parameter gives same result as FINAL.</p>
+<div class="section" id="id62">
+<h5>Parameters<a class="headerlink" href="#id62" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>VOID
+
+order <span class="o">(</span>t_order<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id63">
+<h5>Examples<a class="headerlink" href="#id63" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>report_alert_counters<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+
+report_alert_counters<span class="o">(</span>FINAL<span class="o">)</span><span class="p">;</span>
+
+report_alert_counters<span class="o">(</span>INTERMEDIATE<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="report-check-counters">
+<h4>report_check_counters()<a class="headerlink" href="#report-check-counters" title="Permalink to this headline">¶</a></h4>
+<p>Logs the status of all check counters, typically at the end of simulation.
+- type t_order is (FINAL, INTERMEDIATE)</p>
+<p>VOID parameter gives same result as FINAL.</p>
+<div class="section" id="id64">
+<h5>Parameters<a class="headerlink" href="#id64" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>VOID
+
+order <span class="o">(</span>t_order<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id65">
+<h5>Examples<a class="headerlink" href="#id65" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>report_check_counters<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+
+report_check_counters<span class="o">(</span>FINAL<span class="o">)</span><span class="p">;</span>
+
+report_check_counters<span class="o">(</span>INTERMEDIATE<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="shared-variables">
+<h4>Shared variables<a class="headerlink" href="#shared-variables" title="Permalink to this headline">¶</a></h4>
+<p><em>Note!</em> The shared variables are natural, read only types.</p>
+<div class="section" id="shared-uvvm-status-found-unexpected-simulation-warnings-or-worse">
+<h5>shared_uvvm_status.found_unexpected_simulation_warnings_or_worse<a class="headerlink" href="#shared-uvvm-status-found-unexpected-simulation-warnings-or-worse" title="Permalink to this headline">¶</a></h5>
+<p>Status is ‘0’ on success and ‘1’ on failure.
+The variable is set when actual &gt; expected for WARNING, ERROR or FAILURE alerts.</p>
+</div>
+<div class="section" id="shared-uvvm-status-found-unexpected-simulation-errors-or-worse">
+<h5>shared_uvvm_status.found_unexpected_simulation_errors_or_worse<a class="headerlink" href="#shared-uvvm-status-found-unexpected-simulation-errors-or-worse" title="Permalink to this headline">¶</a></h5>
+<p>Status is ‘0’ on success and ‘1’ on failure.
+The variable is set when actual &gt; expected for ERROR or FAILURE alerts.</p>
+</div>
+<div class="section" id="shared-uvvm-status-mismatch-on-expected-simulation-warnings-or-worse">
+<h5>shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse<a class="headerlink" href="#shared-uvvm-status-mismatch-on-expected-simulation-warnings-or-worse" title="Permalink to this headline">¶</a></h5>
+<p>Status is ‘0’ on success and ‘1’ on failure.
+The variable is set when there is a mismatch between the expected and the actual WARNING, ERROR or FAILURE alerts.</p>
+</div>
+<div class="section" id="shared-uvvm-status-mismatch-on-expected-simulation-errors-or-worse">
+<h5>shared_uvvm_status.mismatch_on_expected_simulation_errors_or_worse<a class="headerlink" href="#shared-uvvm-status-mismatch-on-expected-simulation-errors-or-worse" title="Permalink to this headline">¶</a></h5>
+<p>Status is ‘0’ on success and ‘1’ on failure.
+The variable is set when there is a mismatch between the expected and the actual ERROR or FAILURE alerts.</p>
+</div>
+</div>
+</div>
+<div class="section" id="randomization">
+<h3>Randomization<a class="headerlink" href="#randomization" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="random">
+<h4>random()<a class="headerlink" href="#random" title="Permalink to this headline">¶</a></h4>
+<p>Returns a random std_logic_vector of size length. The function uses and updates a global seed.</p>
+<div class="section" id="id66">
+<h5>Returns<a class="headerlink" href="#id66" title="Permalink to this headline">¶</a></h5>
+<p>std_logic_vector</p>
+</div>
+<div class="section" id="id67">
+<h5>Parameters<a class="headerlink" href="#id67" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>length<span class="o">(</span>int<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id68">
+<h5>Examples<a class="headerlink" href="#id68" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_slv :<span class="o">=</span> random<span class="o">(</span>v_slv’length<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id69">
+<h4>random()<a class="headerlink" href="#id69" title="Permalink to this headline">¶</a></h4>
+<p>Returns a random std_logic. The function uses and updates a global seed</p>
+<div class="section" id="id70">
+<h5>Returns<a class="headerlink" href="#id70" title="Permalink to this headline">¶</a></h5>
+<p>std_logic_vector</p>
+</div>
+<div class="section" id="id71">
+<h5>Parameters<a class="headerlink" href="#id71" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>VOID
+</pre></div>
+</div>
+</div>
+<div class="section" id="id72">
+<h5>Examples<a class="headerlink" href="#id72" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_sl :<span class="o">=</span> random<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id73">
+<h4>random()<a class="headerlink" href="#id73" title="Permalink to this headline">¶</a></h4>
+<p>Returns a random integer, real or time between min_value and max_value. The function uses and updates a global seed</p>
+<div class="section" id="id74">
+<h5>Returns<a class="headerlink" href="#id74" title="Permalink to this headline">¶</a></h5>
+<ul class="simple">
+<li><p>Integer</p></li>
+<li><p>Real</p></li>
+<li><p>Time</p></li>
+</ul>
+</div>
+<div class="section" id="id75">
+<h5>Parameters<a class="headerlink" href="#id75" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>min_value<span class="o">(</span>int<span class="o">)</span>, max_value<span class="o">(</span>int<span class="o">)</span>
+
+min_value<span class="o">(</span>real<span class="o">)</span>, max_value<span class="o">(</span>real<span class="o">)</span>
+
+min_value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, max_value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id76">
+<h5>Examples<a class="headerlink" href="#id76" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_int :<span class="o">=</span> random<span class="o">(</span><span class="m">1</span>, <span class="m">10</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id77">
+<h4>random()<a class="headerlink" href="#id77" title="Permalink to this headline">¶</a></h4>
+<p>Sets v_target to a random value. The procedure uses and updates v_seed1 and v_seed2.</p>
+<div class="section" id="id78">
+<h5>Parameters<a class="headerlink" href="#id78" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>min_value<span class="o">(</span>int<span class="o">)</span>, max_value<span class="o">(</span>int<span class="o">)</span>, v_seed1<span class="o">(</span>positive var<span class="o">)</span>, v_seed2<span class="o">(</span>positive var<span class="o">)</span>, v_target<span class="o">(</span>int var<span class="o">)</span>
+
+min_value<span class="o">(</span>real<span class="o">)</span>, max_value<span class="o">(</span>real<span class="o">)</span>, v_seed1<span class="o">(</span>positive var<span class="o">)</span>, v_seed2<span class="o">(</span>positive var<span class="o">)</span>, v_target<span class="o">(</span>real var<span class="o">)</span>
+
+min_value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, max_value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, v_seed1<span class="o">(</span>positive var<span class="o">)</span>, v_seed2<span class="o">(</span>positive var<span class="o">)</span>, v_target<span class="o">(</span><span class="nb">time</span> var<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id79">
+<h5>Examples<a class="headerlink" href="#id79" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>random<span class="o">(</span><span class="m">0</span>.01, <span class="m">0</span>.03, v_seed1, v_seed2, v_real<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="randomize">
+<h4>randomize()<a class="headerlink" href="#randomize" title="Permalink to this headline">¶</a></h4>
+<p>Sets the global seeds to seed1 and seed2.</p>
+<div class="section" id="id80">
+<h5>Parameters<a class="headerlink" href="#id80" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>seed1<span class="o">(</span>positive<span class="o">)</span>, seed2<span class="o">(</span>positive<span class="o">)</span> , <span class="o">[</span>msg, <span class="o">[</span>scope<span class="o">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id81">
+<h5>Examples<a class="headerlink" href="#id81" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>randomize<span class="o">(</span><span class="m">12</span>, <span class="m">14</span>, “Setting global seeds”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="string-handling">
+<h3>String handling<a class="headerlink" href="#string-handling" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="to-string">
+<h4>to_string()<a class="headerlink" href="#to-string" title="Permalink to this headline">¶</a></h4>
+<p>IEEE defined to_string functions.
+Return a string with the value of the argument ‘value’.</p>
+<div class="section" id="id82">
+<h5>Returns<a class="headerlink" href="#id82" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id83">
+<h5>Parameters<a class="headerlink" href="#id83" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>value<span class="o">({</span>ANY_SCALAR_TYPE<span class="o">})</span>
+
+value<span class="o">(</span>slv<span class="o">)</span>
+
+value<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, unit<span class="o">(</span><span class="nb">time</span><span class="o">)</span>
+
+value<span class="o">(</span>real<span class="o">)</span>, digits<span class="o">(</span>natural<span class="o">)</span>
+
+value<span class="o">(</span>real<span class="o">)</span>, format<span class="o">(</span>string<span class="o">)</span> -- C-style formatting
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id84">
+<h4>to_string()<a class="headerlink" href="#id84" title="Permalink to this headline">¶</a></h4>
+<p>Additions to the IEEE defined to_string functions.
+Return a string with the value of the argument ‘val’.</p>
+<ul class="simple">
+<li><p>type t_radix is (BIN, HEX, DEC, HEX_BIN_IF_INVALID)</p></li>
+<li><p>type t_format_spaces is (KEEP_LEADING_SPACE, SKIP_LEADING_SPACE)</p></li>
+<li><p>type t_truncate_string is (DISALLOW_TRUNCATE, ALLOW_TRUNCATE)</p></li>
+<li><p>type t_format_zeros is (AS_IS, SKIP_LEADING_0)</p></li>
+<li><p>type t_radix_prefix is (EXCL_RADIX, INCL_RADIX)</p></li>
+<li><p>type t_format_zeros is (KEEP_LEADING_0, SKIP_LEADING_0)</p></li>
+</ul>
+<div class="section" id="id85">
+<h5>Returns<a class="headerlink" href="#id85" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id86">
+<h5>Parameters<a class="headerlink" href="#id86" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>val<span class="o">(</span>bool<span class="o">)</span>, width<span class="o">(</span>natural<span class="o">)</span>, justified<span class="o">(</span>side<span class="o">)</span>, format_spaces<span class="o">(</span>t_format_spaces<span class="o">)</span>, <span class="o">[</span>truncate<span class="o">(</span>t_truncate_string<span class="o">)]</span>
+
+val<span class="o">(</span>int<span class="o">)</span>, width<span class="o">(</span>natural<span class="o">)</span>, justified<span class="o">(</span>side<span class="o">)</span>, format_spaces<span class="o">(</span>t_format_spaces<span class="o">)</span>, <span class="o">[</span>truncate<span class="o">(</span>t_truncate_string<span class="o">)</span>, <span class="o">[</span>radix<span class="o">(</span>t_radix<span class="o">)</span>, <span class="o">[</span>prefix<span class="o">(</span>t_radix_prefix<span class="o">)</span>, <span class="o">[</span>format<span class="o">(</span>t_format_zeros<span class="o">)]]]]</span>
+
+val<span class="o">(</span>int<span class="o">)</span>, radix<span class="o">(</span>t_radix<span class="o">)</span>, prefix<span class="o">(</span>t_radix_prefix<span class="o">)</span>, <span class="o">[</span>format<span class="o">(</span>t_format_zeros<span class="o">)]</span> val<span class="o">(</span>slv<span class="o">)</span>, radix<span class="o">(</span>t_radix<span class="o">)</span>, <span class="o">[</span>format<span class="o">(</span>t_format_zeros<span class="o">)</span>, <span class="o">[</span>prefix<span class="o">(</span>t_radix_prefix<span class="o">)]]</span> val<span class="o">(</span>t_slv_array<span class="o">)</span>, radix<span class="o">(</span>t_radix<span class="o">)</span>, <span class="o">[</span>format<span class="o">(</span>t_format_zeros<span class="o">)</span>, <span class="o">[</span>prefix<span class="o">(</span>t_radix_prefix<span class="o">)]]</span>
+
+val<span class="o">(</span>u<span class="o">)</span>, radix<span class="o">(</span>t_radix<span class="o">)</span>, <span class="o">[</span>format<span class="o">(</span>t_format_zeros<span class="o">)</span>, <span class="o">[</span>prefix<span class="o">(</span>t_radix_prefix<span class="o">)]]</span> val<span class="o">(</span>t_unsigned_array<span class="o">)</span>, radix<span class="o">(</span>t_radix<span class="o">)</span>, <span class="o">[</span>format<span class="o">(</span>t_format_zeros<span class="o">)</span>, <span class="o">[</span>prefix<span class="o">(</span>t_radix_prefix<span class="o">)]]</span>
+
+val<span class="o">(</span>s<span class="o">)</span>, radix<span class="o">(</span>t_radix<span class="o">)</span>, <span class="o">[</span>format<span class="o">(</span>t_format_zeros<span class="o">)</span>, <span class="o">[</span>prefix<span class="o">(</span>t_radix_prefix<span class="o">)]]</span> val<span class="o">(</span>t_signed_array<span class="o">)</span>, radix<span class="o">(</span>t_radix<span class="o">)</span>, <span class="o">[</span>format<span class="o">(</span>t_format_zeros<span class="o">)</span>, <span class="o">[</span>prefix<span class="o">(</span>t_radix_prefix<span class="o">)]]</span>
+
+val<span class="o">(</span>string<span class="o">)</span> -- Removes non printable ascii characters
+</pre></div>
+</div>
+</div>
+<div class="section" id="id87">
+<h5>Defaults<a class="headerlink" href="#id87" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>justified</p></td>
+<td><p>RIGHT</p></td>
+</tr>
+<tr class="row-even"><td><p>truncate</p></td>
+<td><p>DISALLOW_TRUNCATE</p></td>
+</tr>
+<tr class="row-odd"><td><p>prefix</p></td>
+<td><p>EXCL_RADIX</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id88">
+<h5>Examples<a class="headerlink" href="#id88" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_string :<span class="o">=</span> to_string<span class="o">(</span>v_u8, DEC<span class="o">)</span><span class="p">;</span>
+
+v_string :<span class="o">=</span> to_string<span class="o">(</span>v_slv8, HEX, AS_IS, INCL_RADIX<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="to-upper">
+<h4>to_upper()<a class="headerlink" href="#to-upper" title="Permalink to this headline">¶</a></h4>
+<p>Returns a string containing an upper case version of the argument ‘val’</p>
+<div class="section" id="id89">
+<h5>Returns<a class="headerlink" href="#id89" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id90">
+<h5>Parameters<a class="headerlink" href="#id90" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>val<span class="o">(</span>string<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id91">
+<h5>Examples<a class="headerlink" href="#id91" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_string :<span class="o">=</span> to_upper<span class="o">(</span>“lowercase string”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="justify">
+<h4>justify()<a class="headerlink" href="#justify" title="Permalink to this headline">¶</a></h4>
+<p>IEEE implementation of justify.
+Returns a string where ‘value’ is justified to the side given by ‘justified’ (right, left).</p>
+<div class="section" id="id92">
+<h5>Returns<a class="headerlink" href="#id92" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id93">
+<h5>Parameters<a class="headerlink" href="#id93" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>value<span class="o">(</span>string<span class="o">)</span>, <span class="o">[</span>justified<span class="o">(</span>side<span class="o">)]</span>, <span class="o">[</span>field<span class="o">(</span>width<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id94">
+<h5>Defaults<a class="headerlink" href="#id94" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>justified</p></td>
+<td><p>RIGHT</p></td>
+</tr>
+<tr class="row-even"><td><p>field</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id95">
+<h4>justify()<a class="headerlink" href="#id95" title="Permalink to this headline">¶</a></h4>
+<p>Addition to the IEEE implementation of justify().
+Returns a string where ‘val’ is justified to the side given by ‘justified’ (right, left, center). In addition to right and left, center is also an option.
+The string can be truncated with the ‘truncate’ parameter (ALLOW_TRUNCATE, DISALLOW_TRUNCATE) or leading spaces can be removed
+with ‘format_spaces’ (KEEP_LEADING_SPACE, SKIP_LEADING_SPACE).</p>
+<div class="section" id="id96">
+<h5>Returns<a class="headerlink" href="#id96" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id97">
+<h5>Parameters<a class="headerlink" href="#id97" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>val<span class="o">(</span>string<span class="o">)</span>, justified<span class="o">(</span>side<span class="o">)</span>, width<span class="o">(</span>natural<span class="o">)</span>, format_spaces<span class="o">(</span>t_format_spaces<span class="o">)</span>, truncate<span class="o">(</span>t_truncate_string<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id98">
+<h5>Examples<a class="headerlink" href="#id98" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_string :<span class="o">=</span> justify<span class="o">(</span>“string”, RIGHT, C_STRING_LENGTH, ALLOW_TRUNCATE, KEEP_LEADING_SPACE<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="fill-string">
+<h4>fill_string()<a class="headerlink" href="#fill-string" title="Permalink to this headline">¶</a></h4>
+<p>Returns a string filled with the character ‘val’.</p>
+<div class="section" id="id99">
+<h5>Returns<a class="headerlink" href="#id99" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id100">
+<h5>Parameters<a class="headerlink" href="#id100" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>val<span class="o">(</span>character<span class="o">)</span>, width<span class="o">(</span>natural<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id101">
+<h5>Examples<a class="headerlink" href="#id101" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_string :<span class="o">=</span> fill_string<span class="o">(</span>‘X’, <span class="m">10</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="ascii-to-char">
+<h4>ascii_to_char()<a class="headerlink" href="#ascii-to-char" title="Permalink to this headline">¶</a></h4>
+<p>Return the ASCII to character located at the argument ‘ascii_pos’</p>
+<ul class="simple">
+<li><p>type t_ascii_allow is (ALLOW_ALL, ALLOW_PRINTABLE_ONLY)</p></li>
+</ul>
+<div class="section" id="id102">
+<h5>Returns<a class="headerlink" href="#id102" title="Permalink to this headline">¶</a></h5>
+<p>Character</p>
+</div>
+<div class="section" id="id103">
+<h5>Parameters<a class="headerlink" href="#id103" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ascii_pos<span class="o">(</span>int<span class="o">)</span>, <span class="o">[</span>ascii_allow <span class="o">(</span>t_ascii_allow<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id104">
+<h5>Defaults<a class="headerlink" href="#id104" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>ascii_allow</p></td>
+<td><p>ALLOW_ALL</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id105">
+<h5>Examples<a class="headerlink" href="#id105" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_char :<span class="o">=</span> ascii_to_char<span class="o">(</span><span class="m">65</span><span class="o">)</span><span class="p">;</span> -- ASCII ‘A’
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="char-to-ascii">
+<h4>char_to_ascii()<a class="headerlink" href="#char-to-ascii" title="Permalink to this headline">¶</a></h4>
+<p>Return the ASCII value (integer) of the argument ‘char’</p>
+<div class="section" id="id106">
+<h5>Returns<a class="headerlink" href="#id106" title="Permalink to this headline">¶</a></h5>
+<p>Integer</p>
+</div>
+<div class="section" id="id107">
+<h5>Parameters<a class="headerlink" href="#id107" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>char <span class="o">(</span>character<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id108">
+<h5>Examples<a class="headerlink" href="#id108" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_int :<span class="o">=</span> char_to_ascii<span class="o">(</span>‘A’<span class="o">)</span><span class="p">;</span> -- Returns <span class="m">65</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pos-of-leftmost">
+<h4>pos_of_leftmost()<a class="headerlink" href="#pos-of-leftmost" title="Permalink to this headline">¶</a></h4>
+<p>Returns position of left most ‘character’ in ‘string’, alternatively return-value if not found.</p>
+<div class="section" id="id109">
+<h5>Returns<a class="headerlink" href="#id109" title="Permalink to this headline">¶</a></h5>
+<p>Natural</p>
+</div>
+<div class="section" id="id110">
+<h5>Parameters<a class="headerlink" href="#id110" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>target<span class="o">(</span>character<span class="o">)</span>, vector<span class="o">(</span>string<span class="o">)</span>, <span class="o">[</span>result_if_not_found <span class="o">(</span>natural<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id111">
+<h5>Defaults<a class="headerlink" href="#id111" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>result_if_not_found</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id112">
+<h5>Examples<a class="headerlink" href="#id112" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_natural :<span class="o">=</span> pos_of_leftmost<span class="o">(</span>‘x’, v_string<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pos-of-rightmost">
+<h4>pos_of_rightmost()<a class="headerlink" href="#pos-of-rightmost" title="Permalink to this headline">¶</a></h4>
+<p>Returns position of right most ‘character’ in ‘string’, alternatively return- value if not found.</p>
+<div class="section" id="id113">
+<h5>Returns<a class="headerlink" href="#id113" title="Permalink to this headline">¶</a></h5>
+<p>Natural</p>
+</div>
+<div class="section" id="id114">
+<h5>Parameters<a class="headerlink" href="#id114" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>target<span class="o">(</span>character<span class="o">)</span>, vector<span class="o">(</span>string<span class="o">)</span>, <span class="o">[</span>result_if_not_found <span class="o">(</span>natural<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id115">
+<h5>Defaults<a class="headerlink" href="#id115" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>result_if_not_found</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id116">
+<h5>Examples<a class="headerlink" href="#id116" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_natural :<span class="o">=</span> pos_of_rightmost<span class="o">(</span>‘A’, v_string<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="remove-initial-chars">
+<h4>remove_initial_chars()<a class="headerlink" href="#remove-initial-chars" title="Permalink to this headline">¶</a></h4>
+<p>Return string less the num (number of chars) first characters</p>
+<div class="section" id="id117">
+<h5>Returns<a class="headerlink" href="#id117" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id118">
+<h5>Parameters<a class="headerlink" href="#id118" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>source<span class="o">(</span>string<span class="o">)</span>, num<span class="o">(</span>natural<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id119">
+<h5>Examples<a class="headerlink" href="#id119" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_string :<span class="o">=</span>remove_initial_chars<span class="o">(</span>“abcde”,1<span class="o">)</span><span class="p">;</span> -- Returns “bcde”
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="get-procedure-process-entity-name-from-instance-name">
+<h4>get_[procedure|process|entity]_name from_instance_name()<a class="headerlink" href="#get-procedure-process-entity-name-from-instance-name" title="Permalink to this headline">¶</a></h4>
+<p>Returns procedure, process or entity name from the given instance name as string.
+The instance name must be &lt;object&gt;’instance_name, where object is a signal, variable or constant defined in the procedure,
+process and entity or process respectively. E.g. get_entity_name_from_instance_name(my_process_variable’instance-name)</p>
+<div class="section" id="id120">
+<h5>Returns<a class="headerlink" href="#id120" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id121">
+<h5>Parameters<a class="headerlink" href="#id121" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>val<span class="o">(</span>string<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id122">
+<h5>Examples<a class="headerlink" href="#id122" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_string :<span class="o">=</span> get_procedure_name_from_instance_name<span class="o">(</span>c_int’instance_name<span class="o">)</span><span class="p">;</span>
+
+v_string :<span class="o">=</span> get_process_name_from_instance_name<span class="o">(</span>c_int’instance_name<span class="o">)</span><span class="p">;</span>
+
+v_string :<span class="o">=</span> get_entity_name_from_instance_name<span class="o">(</span>c_int’instance_name<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="replace">
+<h4>replace()<a class="headerlink" href="#replace" title="Permalink to this headline">¶</a></h4>
+<p>String function returns a string where the target character has been replaced by the exchange character.</p>
+<div class="section" id="id123">
+<h5>Returns<a class="headerlink" href="#id123" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id124">
+<h5>Parameters<a class="headerlink" href="#id124" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>val<span class="o">(</span>string<span class="o">)</span>, target_char<span class="o">(</span>character<span class="o">)</span>, exchange_char<span class="o">(</span>character<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id125">
+<h5>Examples<a class="headerlink" href="#id125" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_string :<span class="o">=</span> replace<span class="o">(</span>“string_x”, ‘x’, ‘y’<span class="o">)</span><span class="p">;</span> -- Returns “string_y”
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id126">
+<h4>replace()<a class="headerlink" href="#id126" title="Permalink to this headline">¶</a></h4>
+<p>Similar to function version of replace().
+Line procedure replaces the input with a line where the target character has been replaced by the exchange character.</p>
+<div class="section" id="id127">
+<h5>Parameters<a class="headerlink" href="#id127" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>variable text_line<span class="o">(</span>inout line<span class="o">)</span>, target_char<span class="o">(</span>character<span class="o">)</span>, exchange_char<span class="o">(</span>character<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id128">
+<h5>Examples<a class="headerlink" href="#id128" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>replace<span class="o">(</span>str, ‘a’, ‘b’<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pad-string">
+<h4>pad_string()<a class="headerlink" href="#pad-string" title="Permalink to this headline">¶</a></h4>
+<p>Returns a string of width ‘width’ with the string ‘val’ on the side of the string given in ‘side’ (LEFT, RIGHT).
+The remaining width is padded with ‘char’.</p>
+<div class="section" id="id129">
+<h5>Returns<a class="headerlink" href="#id129" title="Permalink to this headline">¶</a></h5>
+<p>String</p>
+</div>
+<div class="section" id="id130">
+<h5>Parameters<a class="headerlink" href="#id130" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>val<span class="o">(</span>string<span class="o">)</span>, char<span class="o">(</span>character<span class="o">)</span>, width<span class="o">(</span>natural<span class="o">)</span>, <span class="o">[</span>side<span class="o">(</span>side<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id131">
+<h5>Defaults<a class="headerlink" href="#id131" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>side</p></td>
+<td><p>LEFT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id132">
+<h5>Examples<a class="headerlink" href="#id132" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_string :<span class="o">=</span> pad_string<span class="o">(</span>“abcde”, ‘-’, <span class="m">10</span>, LEFT<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="signal-generators">
+<h3>Signal generators<a class="headerlink" href="#signal-generators" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="clock-generator">
+<h4>clock_generator()<a class="headerlink" href="#clock-generator" title="Permalink to this headline">¶</a></h4>
+<p>Generates a clock signal.
+Usage: Include the clock_generator as a concurrent procedure from your test bench.
+By using the variant with the clock_ena input, the clock can be started and stopped during simulation. Each start/stop is logged (if the msg_id ID_CLOCK_GEN is enabled).
+Duty cycle can be set either by percentage or time.
+An optional output signal clock_count can be used to keep track of the number of clock cycles that have passed. Always starts on 0.</p>
+<div class="section" id="id133">
+<h5>Parameters<a class="headerlink" href="#id133" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clock_signal<span class="o">(</span>sl<span class="o">)</span>, <span class="o">[</span>clock_count <span class="o">(</span>natural<span class="o">)]</span>, clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>clock_high_percentage<span class="o">(</span>natural<span class="o">)]</span>
+
+clock_signal<span class="o">(</span>sl<span class="o">)</span>, <span class="o">[</span>clock_count <span class="o">(</span>natural<span class="o">)]</span>, clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>clock_high_time<span class="o">(</span><span class="nb">time</span><span class="o">)]</span>
+
+clock_signal<span class="o">(</span>sl<span class="o">)</span>, clock_ena<span class="o">(</span>boolean<span class="o">)</span>, <span class="o">[</span>clock_count<span class="o">(</span>natural<span class="o">)]</span>, clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, clock_name<span class="o">(</span>string<span class="o">)</span>, <span class="o">[</span>clock_high_percentage<span class="o">(</span>natural range <span class="m">1</span> to <span class="m">99</span><span class="o">)]</span>
+
+clock_signal<span class="o">(</span>sl<span class="o">)</span>, clock_ena<span class="o">(</span>boolean<span class="o">)</span>, <span class="o">[</span>clock_count<span class="o">(</span>natural<span class="o">)]</span>, clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, clock_name<span class="o">(</span>string<span class="o">)</span>, <span class="o">[</span>clock_high_time<span class="o">(</span><span class="nb">time</span><span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id134">
+<h5>Defaults<a class="headerlink" href="#id134" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>clock_high_percentage</p></td>
+<td><p>50</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id135">
+<h5>Examples<a class="headerlink" href="#id135" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clock_generator<span class="o">(</span>clk50M, <span class="m">20</span> ns<span class="o">)</span><span class="p">;</span>
+
+clock_generator<span class="o">(</span>clk100M, clk100M_ena, <span class="m">10</span> ns, “100 MHz with <span class="m">60</span>% duty cycle”, <span class="m">60</span><span class="o">)</span><span class="p">;</span>
+
+clock_generator<span class="o">(</span>clk100M, clk100M_ena, clk100M_cnt, <span class="m">10</span> ns, “100 MHz with <span class="m">60</span>% duty cycle”, <span class="m">6</span> ns<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="adjustable-clock-generator">
+<h4>adjustable_clock_generator()<a class="headerlink" href="#adjustable-clock-generator" title="Permalink to this headline">¶</a></h4>
+<p>Generates a clock with adjustable duty cycle.
+Usage: Include the adjustable_clock_generator as a concurrent procedure from your test bench.</p>
+<p>Duty cycle can be adjusted by changing the clock_high_percentage.</p>
+<p><em>Note</em> that clock_high_percentage has to be set in the range of 1 to 99, and that an TB_ERROR will be raised if scale limits are exceeded. Input parameter clock_period and clock_name are constants.</p>
+<p>An optional output signal clock_count can be used to keep track of the number of clock cycles that have passed. Always starts on 0.</p>
+<div class="section" id="id136">
+<h5>Parameters<a class="headerlink" href="#id136" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clock_signal<span class="o">(</span>sl<span class="o">)</span>, clock_ena<span class="o">(</span>boolean<span class="o">)</span>, clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, clock_high_percentage<span class="o">(</span>natural<span class="o">)</span>
+
+clock_signal<span class="o">(</span>sl<span class="o">)</span>, clock_ena<span class="o">(</span>boolean<span class="o">)</span>, clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, clock_name<span class="o">(</span>string<span class="o">)</span>,clock_high_percentage<span class="o">(</span>natural<span class="o">)</span>
+
+clock_signal<span class="o">(</span>sl<span class="o">)</span>, clock_ena<span class="o">(</span>boolean<span class="o">)</span>, clock_count<span class="o">(</span>natural<span class="o">)</span>, clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>,clock_name<span class="o">(</span>string<span class="o">)</span>, clock_high_percentage<span class="o">(</span>natural<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id137">
+<h5>Examples<a class="headerlink" href="#id137" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adjustable_clock_generator<span class="o">(</span>clk50M, clk50M_ena, <span class="m">20</span> ns, <span class="m">50</span><span class="o">)</span><span class="p">;</span>
+
+adjustable_clock_generator<span class="o">(</span>clk50M, clk50M_ena, <span class="m">20</span> ns, “100MHz clock with <span class="m">50</span>% duty cycle”, <span class="m">50</span><span class="o">)</span><span class="p">;</span>
+
+adjustable_clock_generator<span class="o">(</span>clk50M, clk50M_ena, clk50M_cnt, <span class="m">20</span> ns, “100MHz clock with <span class="m">60</span>% duty cycle”, <span class="m">60</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="gen-pulse">
+<h4>gen_pulse()<a class="headerlink" href="#gen-pulse" title="Permalink to this headline">¶</a></h4>
+<p>Generates a pulse on the target signal for a certain amount of time or a number of clock cycles.</p>
+<ul class="simple">
+<li><p>If blocking_mode = BLOCKING: Procedure blocks the caller (e.g. the test sequencer) until the pulse is done. (default)</p></li>
+<li><p>If blocking_mode = NON_BLOCKING : Procedure starts the pulse and schedules the end of the pulse, so that the caller can continue immediately.</p></li>
+</ul>
+<p><em>Note</em> that the clock_signal version will synchronize the pulse to clock signal and begin the pulse on falling edge and end the pulse on a succeeding falling edge.</p>
+<div class="section" id="id138">
+<h5>Parameters<a class="headerlink" href="#id138" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>target<span class="o">(</span>sl<span class="o">)</span>, <span class="o">[</span>pulse_value<span class="o">(</span>sl<span class="o">)]</span>, pulse_duration<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>blocking_mode<span class="o">(</span>t_blocking_mode<span class="o">)]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>sl<span class="o">)</span>, <span class="o">[</span>pulse_value<span class="o">(</span>sl<span class="o">)]</span>, clock_signal<span class="o">(</span>sl<span class="o">)</span>, num_periods<span class="o">(</span>int<span class="o">)</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>boolean<span class="o">)</span>, <span class="o">[</span>pulse_value<span class="o">(</span>boolean<span class="o">)]</span>, pulse_duration<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>blocking_mode<span class="o">(</span>t_blocking_mode<span class="o">)]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>boolean<span class="o">)</span>, <span class="o">[</span>pulse_value<span class="o">(</span>boolean<span class="o">)]</span>, clock_signal<span class="o">(</span>sl<span class="o">)</span>, num_periods<span class="o">(</span>int<span class="o">)</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>slv<span class="o">)</span>, <span class="o">[</span>pulse_value<span class="o">(</span>slv<span class="o">)]</span>, pulse_duration<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>blocking_mode<span class="o">(</span>t_blocking_mode<span class="o">)]</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+
+target<span class="o">(</span>slv<span class="o">)</span>, <span class="o">[</span>pulse_value<span class="o">(</span>slv<span class="o">)]</span>, clock_signal<span class="o">(</span>sl<span class="o">)</span>, num_periods<span class="o">(</span>int<span class="o">)</span>, msg, <span class="o">[</span>scope, <span class="o">[</span>msg_id, <span class="o">[</span>msg_id_panel<span class="o">]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id139">
+<h5>Defaults<a class="headerlink" href="#id139" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>pulse_value</p></td>
+<td><p>’1’|true|(others=&gt;’1’)</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id</p></td>
+<td><p>ID_GEN_PULSE</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>shared_msg_id_panel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id140">
+<h5>Examples<a class="headerlink" href="#id140" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>gen_pulse<span class="o">(</span>sl_1, <span class="m">50</span> ns, BLOCKING, “Pulsing <span class="k">for</span> <span class="m">50</span> ns”<span class="o">)</span><span class="p">;</span>
+
+gen_pulse<span class="o">(</span>sl_1, ’1’, <span class="m">50</span> ns, BLOCKING, “Pulsing <span class="k">for</span> <span class="m">50</span> ns”<span class="o">)</span><span class="p">;</span>
+
+gen_pulse<span class="o">(</span>slv8, <span class="m">50</span> ns, “Pulsing SLV <span class="k">for</span> <span class="m">50</span> ns”, ALLOW_PULSE_CONTINUATION<span class="o">)</span><span class="p">;</span> gen_pulse<span class="o">(</span>slv8, x”AB”, clk100M, <span class="m">2</span>, “Pulsing SLV <span class="k">for</span> <span class="m">2</span> clock periods”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="synchronisation">
+<h3>Synchronisation<a class="headerlink" href="#synchronisation" title="Permalink to this headline">¶</a></h3>
+<p><strong>Note:</strong> It is recommended to use a constant for flag_name to avoid typing errors in methods block_flag(),
+unblock_flag() and await_unblock_flag().</p>
+<div class="section" id="block-flag">
+<h4>block_flag()<a class="headerlink" href="#block-flag" title="Permalink to this headline">¶</a></h4>
+<p>Blocks a flag to allow synchronisation between processes. Adds a new blocked flag if it does not already exist.
+Maximum number of flags can be modified in adaptation_pkg.
+Sets an alert with already_blocked_severity if the flag already is blocked.</p>
+<div class="section" id="id141">
+<h5>Parameters<a class="headerlink" href="#id141" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>flag_name<span class="o">(</span>string<span class="o">)</span>, msg, <span class="o">[</span>already_blocked_severity<span class="o">(</span>t_alert_level<span class="o">)</span>, <span class="o">[</span>scope<span class="o">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id142">
+<h5>Defaults<a class="headerlink" href="#id142" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>already_blocked_severity</p></td>
+<td><p>WARNING</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id143">
+<h5>Examples<a class="headerlink" href="#id143" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>block_flag<span class="o">(</span>“my_flag“,“blocking my flag“<span class="o">)</span>
+
+block_flag<span class="o">(</span>C_MY_FLAG_1,“blocking “ <span class="p">&amp;</span> C_MY_FLAG_1, WARNING, “My Scope”<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="unblock-flag">
+<h4>unblock_flag()<a class="headerlink" href="#unblock-flag" title="Permalink to this headline">¶</a></h4>
+<p>Unblocks a flag to allow a process that is waiting on that flag to continue.
+Adds a new unblocked flag if it does not already exist. Parameter trigger is included to pulse
+the global signal global_trigger used to allow await_unblock_flag() to detect unblocking.</p>
+<div class="section" id="id144">
+<h5>Parameters<a class="headerlink" href="#id144" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>flag_name<span class="o">(</span>string<span class="o">)</span>, msg, trigger<span class="o">(</span>sl<span class="o">)</span>, <span class="o">[</span>scope<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mandatory">
+<h5>Mandatory<a class="headerlink" href="#mandatory" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>trigger</p></td>
+<td><p>global_trigger</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id145">
+<h5>Defaults<a class="headerlink" href="#id145" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id146">
+<h5>Examples<a class="headerlink" href="#id146" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unblock_flag<span class="o">(</span>“my_flag“,“unblocking my flag“, global_trigger<span class="o">)</span>
+
+unblock_flag<span class="o">(</span>C_MY_FLAG_1,“unblocking“ <span class="p">&amp;</span> C_MY_FLAG_1, global_trigger, “My Scope”<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="await-unblock-flag">
+<h4>await_unblock_flag()<a class="headerlink" href="#await-unblock-flag" title="Permalink to this headline">¶</a></h4>
+<p>Waits for a flag to be unblocked. Continues immediately if the flag already is unblocked.
+Adds a new blocked flag if it does not already exist. If so await_unblock_flag() will wait for
+the flag to be unblocked. Sets an alert with timeout_severity if the flag is not unblocked within timeout.
+A timeout of 0 ns means wait forever.
+The flag can be re-blocked when leaving the process by setting flag_returning=RETURN_TO_BLOCK.</p>
+<div class="section" id="id147">
+<h5>Parameters<a class="headerlink" href="#id147" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>flag_name<span class="o">(</span>string<span class="o">)</span>, timeout<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, msg, <span class="o">[</span>flag_returning<span class="o">(</span>t_flag_returning<span class="o">)</span>, <span class="o">[</span>timeout_severity<span class="o">(</span>t_alert_level<span class="o">)</span>, <span class="o">[</span>scope<span class="o">]]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id148">
+<h5>Defaults<a class="headerlink" href="#id148" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>flag_returning</p></td>
+<td><p>KEEP_UNBLOCKED</p></td>
+</tr>
+<tr class="row-even"><td><p>timeout_severity</p></td>
+<td><p>ERROR</p></td>
+</tr>
+<tr class="row-odd"><td><p>scope</p></td>
+<td><p>C_TB_SCOPE_DEFAULT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id149">
+<h5>Examples<a class="headerlink" href="#id149" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>await_unblock_flag<span class="o">(</span>“my_flag“, <span class="m">0</span> ns, “waiting <span class="k">for</span> my_flag to be unblocked<span class="o">)</span>
+
+await_unblock_flag<span class="o">(</span>“my_flag“, <span class="m">10</span> us, “waiting <span class="k">for</span> my_flag to be unblocked”, RETURN_TO_BLOCK, WARNING<span class="o">)</span>
+
+await_unblock_flag<span class="o">(</span>C_MY_FLAG_1, <span class="m">10</span> us, “waiting <span class="k">for</span> “C_MY_FLAG_1 <span class="p">&amp;</span> ” to be unblocked”, RETURN_TO_BLOCK, WARNING, “My Scope”<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="await-barrier">
+<h4>await_barrier()<a class="headerlink" href="#await-barrier" title="Permalink to this headline">¶</a></h4>
+<p>For the barrier_signal you may use the predefined global_barrier or define your own barrier_signal of type sl.
+The function can be used to synchronise between several sequencers.
+When the function is called, it waits for all sequencer using the same barrier_signal to reach their call of await_barrier.</p>
+<div class="section" id="id150">
+<h5>Parameters<a class="headerlink" href="#id150" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>barrier_signal<span class="o">(</span>sl<span class="o">)</span>, timeout<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, msg, <span class="o">[</span>timeout_severity<span class="o">(</span>t_alert_level<span class="o">)</span>, <span class="o">[</span>scope<span class="o">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id151">
+<h5>Examples<a class="headerlink" href="#id151" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>await_barrier<span class="o">(</span>global_barrier, <span class="m">100</span> us, “waiting <span class="k">for</span> global barrier”, ERROR, “My Scope”<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="bfm-common-package">
+<h3>BFM Common package<a class="headerlink" href="#bfm-common-package" title="Permalink to this headline">¶</a></h3>
+<p><em>Methods are defined in uvvm_util.bfm_common_pkg</em></p>
+<div class="section" id="normalize-and-check">
+<h4>normalize_and_check()<a class="headerlink" href="#normalize-and-check" title="Permalink to this headline">¶</a></h4>
+<p>Normalize ‘value’ to the width given by ‘target’.
+If value’length &gt; target’length, remove leading zeros (or sign bits) from value.
+If value’length &lt; target’length, add padding (leading zeros, or sign bits) to value.</p>
+<p>Mode (t_normalization_mode) is used for sanity checks, and can be one of :</p>
+<ul class="simple">
+<li><p>ALLOW_WIDER : Allow only value’length &gt;= target’length</p></li>
+<li><p>ALLOW_NARROWER : Allow only value’length &lt;= target’length</p></li>
+<li><p>ALLOW_WIDER_NARROWER : Allow both of the above</p></li>
+<li><p>ALLOW_EXACT_ONLY: Allow only value’length = target’length</p></li>
+</ul>
+<p><strong>Returns:</strong> slv, u, s, t_slv_array, t_signed_array, t_unsigned_array</p>
+<div class="section" id="id152">
+<h5>Parameters<a class="headerlink" href="#id152" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>value<span class="o">(</span>slv<span class="o">)</span>, target<span class="o">(</span>slv<span class="o">)</span>, mode <span class="o">(</span>t_normalization_mode<span class="o">)</span>, value_name, target_name, msg
+
+value<span class="o">(</span>t_slv_array<span class="o">)</span>, target<span class="o">(</span>t_slv_array<span class="o">)</span>, mode <span class="o">(</span>t_normalization_mode<span class="o">)</span>, value_name, target_name, msg
+
+value<span class="o">(</span>u<span class="o">)</span>, target <span class="o">(</span>u<span class="o">)</span>, mode <span class="o">(</span>t_normalization_mode<span class="o">)</span>, value_name, target_name, msg
+
+value<span class="o">(</span>t_unsigned_array<span class="o">)</span>, target<span class="o">(</span>t_unsigned_array<span class="o">)</span>, mode<span class="o">(</span>t_normalization_mode<span class="o">)</span>, value_name, target_name, msg
+
+value<span class="o">(</span>s<span class="o">)</span>, target <span class="o">(</span>s<span class="o">)</span>, mode <span class="o">(</span>t_normalization_mode<span class="o">)</span>, value_name, target_name, msg
+
+value<span class="o">(</span>t_signed_array<span class="o">)</span>, target<span class="o">(</span>t_signed_array<span class="o">)</span>, mode <span class="o">(</span>t_normalization_mode<span class="o">)</span>, value_name, target_name, msg
+</pre></div>
+</div>
+</div>
+<div class="section" id="id153">
+<h5>Examples<a class="headerlink" href="#id153" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_slv8 :<span class="o">=</span> normalize_and_check<span class="o">(</span>v_slv5, v_slv8, ALLOW_NARROWER, “8bit slv”, “5bit slv”, “Normalizing and checking slv”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="wait-until-given-time-after-rising-edge">
+<h4>wait_until_given_time_after_rising_edge()<a class="headerlink" href="#wait-until-given-time-after-rising-edge" title="Permalink to this headline">¶</a></h4>
+<p>Wait until wait_time after rising_edge(clk)
+If the time passed since the previous rising_edge is less than wait_time,
+don’t wait until the next rising_edge, just wait_time after the previous rising_edge.</p>
+<div class="section" id="id154">
+<h5>Parameters<a class="headerlink" href="#id154" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clk<span class="o">(</span>sl<span class="o">)</span>, wait_time<span class="o">(</span><span class="nb">time</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id155">
+<h5>Examples<a class="headerlink" href="#id155" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>wait_until_given_time_after_rising_edge<span class="o">(</span>clk50M, <span class="m">5</span> ns<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="wait-until-given-time-before-rising-edge">
+<h4>wait_until_given_time_before_rising_edge()<a class="headerlink" href="#wait-until-given-time-before-rising-edge" title="Permalink to this headline">¶</a></h4>
+<p>Wait until time_to_edge before rising_edge(clk)
+If the time until rising_edge is less than time_to_edge, wait until the next rising_edge and afterwards until time_to_edge before rising_edge</p>
+<div class="section" id="id156">
+<h5>Parameters<a class="headerlink" href="#id156" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clk<span class="o">(</span>sl<span class="o">)</span>, time_to_edge<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, clk_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id157">
+<h5>Examples<a class="headerlink" href="#id157" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>wait_until_given_time_after_rising_edge<span class="o">(</span>clk50M, <span class="m">2</span> ns, <span class="m">10</span> ns<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="wait-num-rising-edge-plus-margin">
+<h4>wait_num_rising_edge_plus_margin()<a class="headerlink" href="#wait-num-rising-edge-plus-margin" title="Permalink to this headline">¶</a></h4>
+<p>Waits for ‘num_rising_edge’ rising edges of the clk signal, and then waits for ‘margin’.</p>
+<div class="section" id="id158">
+<h5>Parameters<a class="headerlink" href="#id158" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clk<span class="o">(</span>sl<span class="o">)</span>, num_rising_edge<span class="o">(</span>natural<span class="o">)</span>, margin<span class="o">(</span><span class="nb">time</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id159">
+<h5>Examples<a class="headerlink" href="#id159" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>wait_num_rising_edge_plus_margin<span class="o">(</span>clk50M, <span class="m">3</span>, <span class="m">4</span> ns<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="wait-on-bfm-sync-start">
+<h4>wait_on_bfm_sync_start()<a class="headerlink" href="#wait-on-bfm-sync-start" title="Permalink to this headline">¶</a></h4>
+<p>Synchronizes the start of a BFM procedure depending on bfm_sync:</p>
+<p>-SYNC_ON_CLOCK_ONLY: waits until the falling_edge of the clk signal.
+-SYNC_WITH_SETUP_AND_HOLD: waits until the setup time before the clock’s rising_edge.</p>
+<p>It returns the times of falling and rising edges. When not found returns -1 ns.</p>
+<div class="section" id="id160">
+<h5>Parameters<a class="headerlink" href="#id160" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clk<span class="o">(</span>sl<span class="o">)</span>, bfm_sync<span class="o">(</span>t_bfm_sync<span class="o">)</span>, setup_time<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, config_clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, time_of_falling_edge<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, time_of_rising_edge<span class="o">(</span><span class="nb">time</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id161">
+<h5>Examples<a class="headerlink" href="#id161" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>wait_on_bfm_sync_start<span class="o">(</span>clk, config.bfm_sync, <span class="m">2</span>.5 ns, <span class="m">10</span> ns, v_time_of_falling_edge, v_time_of_rising_edge<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="wait-on-bfm-exit">
+<h4>wait_on_bfm_exit()<a class="headerlink" href="#wait-on-bfm-exit" title="Permalink to this headline">¶</a></h4>
+<p>Synchronizes the exit of a BFM procedure depending on bfm_sync:</p>
+<p>-SYNC_ON_CLOCK_ONLY: waits until one quarter of the clock period (measured with the falling and rising edges) after the clock’s rising_edge.</p>
+<p>-SYNC_WITH_SETUP_AND_HOLD: waits until the hold time after the clock’s rising_edge.</p>
+<p>The times of falling and rising edges must be consecutive to be able to calculate the correct clock period.</p>
+<div class="section" id="id162">
+<h5>Parameters<a class="headerlink" href="#id162" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clk<span class="o">(</span>sl<span class="o">)</span>, bfm_sync<span class="o">(</span>t_bfm_sync<span class="o">)</span>, hold_time<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, time_of_falling_edge<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, time_of_rising_edge<span class="o">(</span><span class="nb">time</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id163">
+<h5>Examples<a class="headerlink" href="#id163" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>wait_on_bfm_exit<span class="o">(</span>clk, config.bfm_sync, <span class="m">2</span>.5 ns, v_time_of_falling_edge, v_time_of_rising_edge<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="check-clock-period-margin">
+<h4>check_clock_period_margin()<a class="headerlink" href="#check-clock-period-margin" title="Permalink to this headline">¶</a></h4>
+<p>Checks that the clock signal behaves according to configured specifications. Only when bfm_sync = SYNC_WITH_SETUP_AND_HOLD.
+The procedure must be called after the clock’s rising_edge.</p>
+<div class="section" id="id164">
+<h5>Parameters<a class="headerlink" href="#id164" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>clock<span class="o">(</span>sl<span class="o">)</span>, bfm_sync<span class="o">(</span>t_bfm_sync<span class="o">)</span>, time_of_falling_edge<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, time_of_rising_edge<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, config_clock_period<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, config_clock_period_margin<span class="o">(</span><span class="nb">time</span><span class="o">)</span>, config_clock_margin_severity<span class="o">(</span>t_alert_level<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id165">
+<h5>Examples<a class="headerlink" href="#id165" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>check_clock_period_margin<span class="o">(</span>clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge, <span class="m">10</span> ns, <span class="m">2</span> ns, TB_ERROR<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="general-watchdog">
+<h3>General Watchdog<a class="headerlink" href="#general-watchdog" title="Permalink to this headline">¶</a></h3>
+<p><em>Note 1</em> – the general watchdog will terminate with the alert_level when timeout expires.</p>
+<p><em>Note 2</em> – the VVCs support an activity watchdog. See UVVM Essential Mechanisms PDF in UVVM VVC Framework for more details.</p>
+<div class="section" id="watchdog-timer">
+<h4>watchdog_timer()<a class="headerlink" href="#watchdog-timer" title="Permalink to this headline">¶</a></h4>
+<p>This procedure has to be instantiated as a concurrent procedure in the testbench or test harness.
+Initializes the watchdog timer as a concurrent procedure that will run until
+the timeout expires. A signal of the type t_watchdog_ctrl must be defined in the testbench, this is needed to call the other procedures on the watchdog.</p>
+<div class="section" id="id166">
+<h5>Parameters<a class="headerlink" href="#id166" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>watchdog_timer<span class="o">(</span>t_watchdog_ctrl<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>, <span class="o">[</span>alert_level, <span class="o">[</span>msg<span class="o">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id167">
+<h5>Examples<a class="headerlink" href="#id167" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>watchdog_timer<span class="o">(</span>watchdog_ctrl, <span class="m">500</span> us, ERROR, “Watchdog timer”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="extend-watchdog">
+<h4>extend_watchdog()<a class="headerlink" href="#extend-watchdog" title="Permalink to this headline">¶</a></h4>
+<p>Extends the timeout of the watchdog timer by the specified time.
+If no time is given, the original timeout will be used as the time extension.</p>
+<div class="section" id="id168">
+<h5>Parameters<a class="headerlink" href="#id168" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>extend_watchdog <span class="o">(</span>t_watchdog_ctrl<span class="o">)</span>, <span class="o">[</span>time_extend <span class="o">(</span><span class="nb">time</span><span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id169">
+<h5>Examples<a class="headerlink" href="#id169" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>extend_watchdog<span class="o">(</span>watchdog_ctrl, <span class="m">100</span> us<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="reinitialize-watchdog">
+<h4>reinitialize_watchdog()<a class="headerlink" href="#reinitialize-watchdog" title="Permalink to this headline">¶</a></h4>
+<p>Reinitializes the watchdog timer with a new timeout.</p>
+<div class="section" id="id170">
+<h5>Parameters<a class="headerlink" href="#id170" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>reinitialize_watchdog<span class="o">(</span>t_watchdog_ctrl<span class="o">)</span>, timeout <span class="o">(</span><span class="nb">time</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id171">
+<h5>Examples<a class="headerlink" href="#id171" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>reinitialize_watchdog<span class="o">(</span>watchdog_ctrl, <span class="m">1</span> ms<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="terminate-watchdog">
+<h4>terminate_watchdog()<a class="headerlink" href="#terminate-watchdog" title="Permalink to this headline">¶</a></h4>
+<p>Terminates the concurrent procedure where the watchdog timer is running.
+Once this is done the watchdog can’t be started again.
+This should normally be called at the end of the simulation.</p>
+<div class="section" id="id172">
+<h5>Parameters<a class="headerlink" href="#id172" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>terminate_watchdog <span class="o">(</span>t_watchdog_ctrl<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id173">
+<h5>Examples<a class="headerlink" href="#id173" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>terminate_watchdog<span class="o">(</span>watchdog_ctrl<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="message-ids">
+<h3>Message IDs<a class="headerlink" href="#message-ids" title="Permalink to this headline">¶</a></h3>
+<p>A sub set of message IDs is listed in this table. All the message IDs are defined in uvvm_util.adaptations_pkg.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 74%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Message ID</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>ID_LOG_HDR</p></td>
+<td><p>For all test sequencer log headers.
+Special format with preceding empty line and underlined message
+(also applies to ID_LOG_HDR_LARGE and ID_LOG_HDR_XL).</p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_SEQUENCER</p></td>
+<td><p>For all other test sequencer messages</p></td>
+</tr>
+<tr class="row-even"><td><p>ID_SEQUENCER_SUB</p></td>
+<td><p>For general purpose procedures defined inside TB and called from
+test sequencer</p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_POS_ACK</p></td>
+<td><p>A general positive acknowledge for check routines (incl. awaits)</p></td>
+</tr>
+<tr class="row-even"><td><p>ID_BFM</p></td>
+<td><p>BFM operation (e.g. message that a write operation is completed)
+(BFM: Bus Functional Model, basically a procedure to handle a
+physical interface)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_BFM_WAIT</p></td>
+<td><p>Typically BFM is waiting for response (e.g. waiting for ready, or
+predefined number of wait states)</p></td>
+</tr>
+<tr class="row-even"><td><p>ID_BFM_POLL</p></td>
+<td><p>Used inside a BFM when polling until reading a given value, i.e.,
+to show all reads until expected value found.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_PACKET_INITIATE</p></td>
+<td><p>A packet has been initiated (Either about to start or just started</p></td>
+</tr>
+<tr class="row-even"><td><p>ID_PACKET_COMPLETE</p></td>
+<td><p>Packet completion</p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_PACKET_HDR</p></td>
+<td><p>Packet header information</p></td>
+</tr>
+<tr class="row-even"><td><p>ID_PACKET_DATA</p></td>
+<td><p>Packet data information</p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_LOG_MSG_CTRL</p></td>
+<td><p>Dedicated ID for enable/disable_log_msg</p></td>
+</tr>
+<tr class="row-even"><td><p>ID_CLOCK_GEN</p></td>
+<td><p>Used for logging when clock generators are enabled or disabled</p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_GEN_PULSE</p></td>
+<td><p>Used for logging when a gen_pulse procedure starts pulsing a signal</p></td>
+</tr>
+<tr class="row-even"><td><p>ID_NEVER</p></td>
+<td><p>Used for avoiding log entry. Cannot be enabled.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ALL_MESSAGES</p></td>
+<td><p>Not an ID. Applies to all IDs (apart from ID_NEVER)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Message IDs are used for verbosity control in many of the procedures and functions in UVVM-Util,
+and are toggled by using the procedures enable_log_msg() and disable_log_msg() that are described in this document.</p>
+<p><strong>Example:</strong> A check is performed each clock cycle;
+check_value(my_boolean_condition, error, “Verifying condition”, C_SCOPE, ID_POS_ACK, my_msg_id_panel);
+The message ID “ID_POS_ACK” is enabled by default, and will report a positive acknowledge if the check passes.
+Since the check is performed each clock cycle, the positive acknowledge will be printed each clock cycle.
+There are two possibilities if you wish to turn off the positive acknowledge message:</p>
+<ul class="simple">
+<li><p>Disable “ID_POS_ACK” in my_msg_id_panel (or use another msg_id_panel) by calling disable_log_msg(ID_POS_ACK, my_msg_id_panel).
+This will disable positive acknowledge messages for any procedure call that uses this msg_id_panel.</p></li>
+<li><p>Call check_value() with “ID_NEVER” instead of “ID_POS_ACK”. This will disable the positive acknowledge for this
+particular call of check_value(), but all other calls to check_value() will report a positive acknowledge.</p></li>
+</ul>
+</div>
+<div class="section" id="common-arguments-in-checks-and-awaits">
+<h3>Common arguments in checks and awaits<a class="headerlink" href="#common-arguments-in-checks-and-awaits" title="Permalink to this headline">¶</a></h3>
+<p>Most check and await methods have two groups of arguments:</p>
+<ul class="simple">
+<li><p>arguments specific to this function/procedure</p></li>
+<li><dl class="simple">
+<dt>common_args: arguments common for all functions/procedures:</dt><dd><ul>
+<li><p>alert_level, msg, [scope], [msg_id], [msg_id_panel]</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>For example: check_value(val, exp, ERROR, “Check that the val signal equals the exp signal”, C_SCOPE);
+The common arguments are described in the following table.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 16%" />
+<col style="width: 23%" />
+<col style="width: 47%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Argument</strong></p></td>
+<td><p><strong>Type</strong></p></td>
+<td><p><strong>Example</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>alert_level</p></td>
+<td><p>t_alert_level;</p></td>
+<td><p>ERROR</p></td>
+<td><p>Set the severity for the alert that may be asserted
+by the method.</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg</p></td>
+<td><p>string;</p></td>
+<td><p>“Check that bus is stable”</p></td>
+<td><p>A custom message to be appended in the log/alert.</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>string;</p></td>
+<td><p>“TB Sequencer”</p></td>
+<td><p>A string describing the scope from which the
+log/alert originates.</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg_id</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM</p></td>
+<td><p>Optional message ID, defined in the adaptations
+package.
+Default value for check routines = ID_POS_ACK;</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>local_msg_id_panel</p></td>
+<td><p>Optional msg_id_panel, controlling verbosity within a
+specified scope.
+Defaults to a common ID panel defined in the
+adaptations package.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="using-hierarchical-alert-reporting">
+<h3>Using Hierarchical Alert Reporting<a class="headerlink" href="#using-hierarchical-alert-reporting" title="Permalink to this headline">¶</a></h3>
+<p>Enable hierarchical alerts via the constant C_ENABLE_HIERARCHICAL_ALERTS in the adaptations package.
+The procedures used for hierarchical alert reporting are described in the following table.</p>
+<ul class="simple">
+<li><p>By default, there is only one level in the hierarchy tree, and one scope with name given by C_BASE_HIERARCHY_LEVEL in
+the adaptations package. This scope has a stop limit of 0 by default.</p></li>
+<li><p>To add a scope to the hierarchy, call add_to_alert_hierarchy().</p></li>
+<li><p>Any scope that is not registered in the hierarchy will be automatically registered if an alert is triggered in that scope.
+The parent scope will then be C_BASE_HIERARCHY_LEVEL. Changing the parent is possible by calling add_to_alert_hierarchy()
+with another scope as parent. This is only allowed if the parent is C_BASE_HIERARCHY_LEVEL and may cause an odd-looking
+summary (total summary will be correct).</p></li>
+</ul>
+<p>Intended use:
+In UVVM mostly use the scope to describe components, e.g. VVCs. It can also be smaller structures, but it has to have its own sequencer.
+A good way to set up the hierarchy is to let every scope register themselves with the default parent scope, and then in addition make
+every parent register each of its children. This is because the child scope doesn’t have to have the same parent scope in all
+testbenches/testharnesses, i.e. the child doesn’t know its parent.</p>
+<ul class="simple">
+<li><p>In the child, call add_to_alert_hierarchy(&lt;child scope&gt;). This will add the scope of the child to the hierarchy with the default (base) parent.</p></li>
+<li><p>In the parent, first call add_to_alert_hierarchy(&lt;parent scope&gt;). Then call immediately add_to_alert_hierarchy(&lt;child scope&gt;, &lt;parent scope&gt;) for
+each of the scopes that shall be children of this parent scope. This will re-register the children to the correct parent.</p></li>
+</ul>
+<p><strong>Example output</strong></p>
+<img alt="_images/hierarhical_alerts.png" src="_images/hierarhical_alerts.png" />
+<div class="section" id="add-to-alert-hierarchy">
+<h4>add_to_alert_hierarchy()<a class="headerlink" href="#add-to-alert-hierarchy" title="Permalink to this headline">¶</a></h4>
+<p>Add a scope in the alert hierarchy tree.</p>
+<div class="section" id="id174">
+<h5>Parameters<a class="headerlink" href="#id174" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>scope<span class="o">(</span>string<span class="o">)</span>, <span class="o">[</span>parent_scope<span class="o">(</span>string<span class="o">)</span>, <span class="o">[</span>stop_limit<span class="o">(</span>t_alert_counters<span class="o">)]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id175">
+<h5>Defaults<a class="headerlink" href="#id175" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>parent_scope</p></td>
+<td><p>C_BASE_HIERARCHY_LEVEL</p></td>
+</tr>
+<tr class="row-even"><td><p>stop_limit</p></td>
+<td><p>(others =&gt; ‘0’)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id176">
+<h5>Examples<a class="headerlink" href="#id176" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>add_to_alert_hierarchy<span class="o">(</span>“tier_2”, “tier_1”<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id177">
+<h4>increment_expected_alerts()<a class="headerlink" href="#id177" title="Permalink to this headline">¶</a></h4>
+<p>Increment the expected alert counter for a scope.</p>
+<div class="section" id="id178">
+<h5>Parameters<a class="headerlink" href="#id178" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>scope<span class="o">(</span>string<span class="o">)</span>, alert_level, <span class="o">[</span>amount<span class="o">(</span>natural<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id179">
+<h5>Defaults<a class="headerlink" href="#id179" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>amount</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id180">
+<h5>Examples<a class="headerlink" href="#id180" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>increment_expected_alerts<span class="o">(</span>“tier_2”, ERROR, <span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="set-expected-alerts">
+<h4>set_expected_alerts()<a class="headerlink" href="#set-expected-alerts" title="Permalink to this headline">¶</a></h4>
+<p>Set the expected alert counter for a scope.</p>
+<div class="section" id="id181">
+<h5>Parameters<a class="headerlink" href="#id181" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>scope<span class="o">(</span>string<span class="o">)</span>, alert_level, expected_alerts<span class="o">(</span>natural<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id182">
+<h5>Examples<a class="headerlink" href="#id182" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_expected_alerts<span class="o">(</span>“tier_2”, WARNING, <span class="m">5</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="increment-stop-limit">
+<h4>increment_stop_limit()<a class="headerlink" href="#increment-stop-limit" title="Permalink to this headline">¶</a></h4>
+<p>Increment the stop limit for a scope.</p>
+<div class="section" id="id183">
+<h5>Parameters<a class="headerlink" href="#id183" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>scope<span class="o">(</span>string<span class="o">)</span>, alert_level, <span class="o">[</span>amount<span class="o">(</span>natural<span class="o">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id184">
+<h5>Defaults<a class="headerlink" href="#id184" title="Permalink to this headline">¶</a></h5>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>amount</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id185">
+<h5>Examples<a class="headerlink" href="#id185" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>increment_stop_limit<span class="o">(</span>“tier_1”, ERROR<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="set-stop-limit">
+<h4>set_stop_limit()<a class="headerlink" href="#set-stop-limit" title="Permalink to this headline">¶</a></h4>
+<p>Set the stop limit for a scope.</p>
+<div class="section" id="id186">
+<h5>Parameters<a class="headerlink" href="#id186" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>scope<span class="o">(</span>string<span class="o">)</span>, alert_level, stop_limit <span class="o">(</span>natural<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id187">
+<h5>Examples<a class="headerlink" href="#id187" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_stop_limit<span class="o">(</span>“tier_1”, ERROR, <span class="m">5</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="adaptation-package">
+<h3>Adaptation package<a class="headerlink" href="#adaptation-package" title="Permalink to this headline">¶</a></h3>
+<p>The adaptations_pkg.vhd is intended for local modifications to library behaviour and log layout.
+This way only one file needs to merge when a new version of the library is released.
+This package may of course also be used to set up a company or project specific behaviour and layout.
+The layout constants and global signals are described in the following tables.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 59%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Constant</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>C_ALERT_FILE_NAME</p></td>
+<td><p>Name of the alert file.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_LOG_FILE_NAME</p></td>
+<td><p>Name of the log file.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_SHOW_UVVM_UTILITY_LIBRARY_INFO</p></td>
+<td><p>General information about the UVVM Utility Library will be shown
+when this is enabled.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_SHOW_UVVM_UTILITY_LIBRARY_RELEASE_INFO</p></td>
+<td><p>Release information will be shown when this is enabled.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_UVVM_TIMEOUT</p></td>
+<td><p>General timeout for UVVM wait statements.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_LOG_PREFIX</p></td>
+<td><p>The prefix to all log messages. “UVVM: ” by default.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_LOG_PREFIX_WIDTH</p></td>
+<td><p>Number of characters to be used for the log prefix.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_LOG_MSG_ID_WIDTH</p></td>
+<td><p>Number of characters to be used for the message ID.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_LOG_TIME_WIDTH</p></td>
+<td><p>Number of characters to be used for the log time. Three characters
+are used for time unit, e.g., ‘ ns’.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_LOG_TIME_BASE</p></td>
+<td><p>The unit in which time is shown in the log. Either ns or ps.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_LOG_TIME_DECIMALS</p></td>
+<td><p>Number of decimals to show for the time.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_LOG_SCOPE_WIDTH</p></td>
+<td><p>Number of characters to be used to show log scope.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_LOG_LINE_WIDTH</p></td>
+<td><p>Number of characters allowed in each line in the log.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_LOG_INFO_WIDTH</p></td>
+<td><p>Number of characters of information allowed in each line in the
+log. By default, this is set to
+C_LOG_LINE_WIDTH – C_LOG_PREFIX_WIDTH.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_LOG_HDR_FOR_WAVEVIEW_WIDTH</p></td>
+<td><p>Number of characters for a string in the waveview indicating last
+log header.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME</p></td>
+<td><p>Whether or not to report a warning if the log or alert files are
+renamed after they have been written.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_USE_BACKSLASH_N_AS_LF</p></td>
+<td><p>If true ‘n’ will be interpreted as line feed.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_USE_BACKSLASH_R_AS_LF</p></td>
+<td><p>If true ‘r’ placed as the first character in the string will be
+interpreted as a LF where the timestamp, Id etc. will be omitted.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_SINGLE_LINE_ALERT</p></td>
+<td><p>If true prints alerts on a single line. Default false.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_SINGLE_LINE_LOG</p></td>
+<td><p>If true prints logs messages on a single line. Default false.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_TB_SCOPE_DEFAULT</p></td>
+<td><p>The default scope in the test sequencer.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_LOG_TIME_TRUNC_WARNING</p></td>
+<td><p>Yields a single TB_WARNING if time stamp truncated.
+Otherwise none.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_DEFAULT_MSG_ID_PANEL</p></td>
+<td><p>Sets the default message IDs that shall be shown in the log.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_MSG_ID_INDENT</p></td>
+<td><p>Sets the indentation for each message ID.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_DEFAULT_ALERT_ATTENTION</p></td>
+<td><p>Sets the default alert attention.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_DEFAULT_STOP_LIMIT</p></td>
+<td><p>Sets the default alert stop limit.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_ENABLE_HIERARCHICAL_ALERTS</p></td>
+<td><p>Whether or not to enable hierarchical alert summary.
+Default false.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_BASE_HIERARCHY_LEVEL</p></td>
+<td><p>The name of the base/top level node that all other nodes in the
+tree will originate from.</p></td>
+</tr>
+<tr class="row-even"><td><p>C_DEPRECATE_SETTING</p></td>
+<td><p>Sets how the user is to be notified if a procedure has been
+deprecated and will be removed in later versions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_VVC_RESULT_DEFAULT_ARRAY_DEPTH</p></td>
+<td><p>Default for how many results (e.g. reads) a VVC can store before
+overwriting old results</p></td>
+</tr>
+<tr class="row-even"><td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>Default message ID panel to use in VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>C_SHOW_LOG_ID</p></td>
+<td><p>Whether or not to show the Log ID field</p></td>
+</tr>
+<tr class="row-even"><td><p>C_SHOW_LOG_SCOPE</p></td>
+<td><p>Whether or not to show the Log Scope field</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 17%" />
+<col style="width: 52%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Global signal</strong></p></td>
+<td><p><strong>Signal type</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>global_show_msg_for_uvvm_cmd</p></td>
+<td><p>boolean</p></td>
+<td><p>If true messages for Bitvis UVVM commands will be shown
+if applicable.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 17%" />
+<col style="width: 52%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Global variable</strong></p></td>
+<td><p><strong>Variable type</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>shared_default_log_destination</p></td>
+<td><p>t_log_destination</p></td>
+<td><p>The default destination for the log messages
+(Default: CONSOLE_AND_LOG)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="additional-documentation">
+<h4>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Permalink to this headline">¶</a></h4>
+<p>There are two other main documents for the UVVM Utility Library (available from our Downloads page)
+- ‘Making a simple, structured and efficient VHDL testbench – Step-by-step’
+- ‘Bitvis Utility Library – Concepts and Usage’</p>
+<p>There is also a webinar available on ‘Making a simple, structured and efficient VHDL testbench – Step-by-step’
+(via Aldec). Link on our downloads page.</p>
+</div>
+</div>
+</div>
+<div class="section" id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this headline">¶</a></h2>
+<p>UVVM Utility Library may only be compiled with VHDL 2008.
+Compile order for UVVM Utility Library:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Compile to library</strong></p></td>
+<td><p><strong>File</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/types_pkg.vhd</p></td>
+</tr>
+<tr class="row-odd"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/adaptations_pkg.vhd</p></td>
+</tr>
+<tr class="row-even"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/string_methods_pkg.vhd</p></td>
+</tr>
+<tr class="row-odd"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/protected_types_pkg.vhd</p></td>
+</tr>
+<tr class="row-even"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/global_signals_and_shared_variables_pkg.vhd</p></td>
+</tr>
+<tr class="row-odd"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/hierarchy_linked_list_pkg.vhd</p></td>
+</tr>
+<tr class="row-even"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/alert_hierarchy_pkg.vhd</p></td>
+</tr>
+<tr class="row-odd"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/license_pkg.vhd</p></td>
+</tr>
+<tr class="row-even"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/methods_pkg.vhd</p></td>
+</tr>
+<tr class="row-odd"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/bfm_common_pkg.vhd</p></td>
+</tr>
+<tr class="row-even"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/generic_queue_pkg.vhd</p></td>
+</tr>
+<tr class="row-odd"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/data_queue_pkg.vhd</p></td>
+</tr>
+<tr class="row-even"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/data_fifo_pkg.vhd</p></td>
+</tr>
+<tr class="row-odd"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/data_stack_pkg.vhd</p></td>
+</tr>
+<tr class="row-even"><td><p>uvvm_util</p></td>
+<td><p>uvvm_util/src/uvvm_util_context.vhd</p></td>
+</tr>
+</tbody>
+</table>
+<p>Modelsim and Riviera-PRO users can compile the library by sourcing the following files:
+<code class="docutils literal notranslate"><span class="pre">script/compile_src.do</span></code></p>
+<p><em>Note</em> that the compile script compiles the Utility Library with the following Modelsim directives for the vcom command:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 77%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Directive</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>-suppress 1346,1236</p></td>
+<td><p>Suppress warnings about the use of protected types. These can be ignored.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The uvvm_util project is opened by opening <code class="docutils literal notranslate"><span class="pre">sim/uvvm_util.mpf</span></code> in Modelsim.</p>
+</div>
+<div class="section" id="simulator-compatibility-and-setup">
+<h2>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Permalink to this headline">¶</a></h2>
+<p>UVVM Utility Library has been compiled and tested with Modelsim, Riviera-PRO and Active HDL. See README.md for a list of supported simulators.
+Required setup:
+- Textio buffering should be removed or reduced. (Modelsim.ini: Set UnbufferedOutput to 1)
+- Simulator transcript (and log file viewer) should be set to a fixed width font type for proper alignment (e.g. Courier New 8)
+- Simulator must be set up to break the simulation on failure (or lower severity)</p>
+</div>
+<div class="section" id="intellectual-property">
+<h2>INTELLECTUAL PROPERTY<a class="headerlink" href="#intellectual-property" title="Permalink to this headline">¶</a></h2>
+<p><strong>Copyright (c) 2017 by Bitvis AS. All rights reserved. See VHDL code for complete Copyright notice.</strong></p>
+<p><strong>Disclaimer:</strong> UVVM Utility Library and any part thereof are provided “as is”, without warranty
+of any kind, express or implied, including but not limited to the warranties of merchantability, fitness
+for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable
+for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from,
+out of or in connection with UVVM Utility Library.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="vvc_framework.html" class="btn btn-neutral float-right" title="UVVM VVC Framework" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="uvvm_getting_started.html" class="btn btn-neutral float-left" title="UVVM Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, UVVM.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

@@ -33,7 +33,7 @@ use std.env.all;
 package methods_pkg is
 
 
-  constant C_UVVM_VERSION : string := "v2 2020.12.21";
+  constant C_UVVM_VERSION : string := "v2 2021.05.26";
 
 
 -- -- ============================================================================
@@ -3160,6 +3160,7 @@ package body methods_pkg is
   begin
     write (v_line, my_line.all);
     writeline(file_handle, v_line);
+    deallocate(v_line);
   end procedure tee;
 
   -- Open, append/write to and close file. Also deallocates contents of the line
@@ -3347,6 +3348,7 @@ package body methods_pkg is
               write_to_file(log_file_name, open_mode, v_info_final);
             end if;
         end case;
+        deallocate_line_if_exists(v_info_final);
       end if;
     end if;
   end;
@@ -3478,6 +3480,8 @@ package body methods_pkg is
 
         -- Deallocate text block to give writeline()-like behaviour
         -- for formatted output
+        deallocate(v_header_line);
+        deallocate(v_log_body);
         deallocate(text_block);
       end if;
     end if;
@@ -3689,6 +3693,7 @@ package body methods_pkg is
           tee(OUTPUT, v_info);
           tee(ALERT_FILE, v_info);
           writeline(LOG_FILE, v_info);
+          deallocate_line_if_exists(v_info);
 
           -- 6. Stop simulation if stop-limit is reached for number of this alert
           if (get_alert_stop_limit(alert_level) /= 0) then
@@ -3848,7 +3853,7 @@ package body methods_pkg is
     -- Write the info string to the target file
     tee(OUTPUT, v_line);
     writeline(LOG_FILE, v_line);
-
+    deallocate(v_line);
   end;
 
   procedure report_msg_id_panel(
@@ -3879,7 +3884,7 @@ package body methods_pkg is
     -- Write the info string to the target file
     tee(OUTPUT, v_line);
     writeline(LOG_FILE, v_line);
-
+    deallocate(v_line);
   end;
 
   procedure set_alert_attention(
@@ -7306,6 +7311,15 @@ package body methods_pkg is
       if (target = exp) then
         success := true;
       end if;
+  
+    elsif match_strictness = MATCH_STD_INCL_Z then
+      if not(std_match(target, exp) or (target = 'Z' and exp = 'Z')) then
+        wait until (std_match(target, exp) or (target = 'Z' and exp = 'Z')) for max_time;
+      end if;
+      if std_match(target, exp) or (target = 'Z' and exp = 'Z') then
+        success := true;
+      end if;
+
     else
       if ((exp = '1' or exp = 'H') and (target /= '1') and (target /= 'H')) then
         wait until (target = '1' or target = 'H') for max_time;
@@ -7382,6 +7396,11 @@ package body methods_pkg is
           wait until matching_values(target, exp) for max_time;
         end if;
         check_time_window(matching_values(target, exp), now-start_time, min_time, max_time, alert_level, v_proc_call.all, success, msg, scope, msg_id, msg_id_panel);
+      elsif match_strictness = MATCH_STD_INCL_Z then
+        if not matching_values(target, exp, MATCH_STD_INCL_Z) then
+          wait until matching_values(target, exp, MATCH_STD_INCL_Z) for max_time;
+        end if;
+        check_time_window(matching_values(target, exp, MATCH_STD_INCL_Z), now-start_time, min_time, max_time, alert_level, v_proc_call.all, success, msg, scope, msg_id, msg_id_panel);
       else
         if (target /= exp) then
           wait until (target = exp) for max_time;

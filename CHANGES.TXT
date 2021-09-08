@@ -9,6 +9,59 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2021.XX.XX
+--------------------
+Released: 2021-XX-XX
+- Fixed generic_queue deleting wrong element when position is different from entry_num.
+- Fixed generic_queue print_queue() crashing when queue is empty.
+
+
+v2 2021.05.26
+--------------------
+Released: 2021-05-26
+- Corrected message ID for check_value() methods in BFM packages.
+- Added MATCH_STD_INCL_Z to await_value() for SL and SLV.
+- Corrected timeout value parameter for await_completion() in Common VVC Methods QR.
+- Summary alert report and hierarchical alerts report updated to 
+  warn for minor alert mismatch.
+- Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occure if a requirement 
+  and testcase were listed in combination multiple times.
+- Generic queue allow to insert to an empty queue with identifier position
+  set to POSITION and position set to 1.
+- Insert_expected() to an empty Scoreboard using identifier_position=POSITION
+  and identifier=1 is now allowed.
+- Fixed bug in check_counters that would cause the counter value to
+  increase to quickly.
+- Added C_ENABLE_CHECK_COUNTER to adaptations_pkg, default set to True.
+- Fixed incorrect VIP name in AXI-Stream compile_bfm.do script.
+- Added Bitvis VIP Wishbone BETA to the main UVVM repository.
+- Added data_length to AXI-Stream VVC transaction info.
+- Fixed an issue with VVC name indexing in ti_protected_types_pkg priv_get_vvc_idx().
+- Added some missing deallocating of lines in in methods_pkg.
+- Fixed issue where calling the same VVC at the same time from different processes 
+  could lead to a timeout.
+
+
+v2 2021.04.08
+--------------------
+Released: 2021-04-08
+- Fixed width detection method for to_string() functions that would make
+  GHDL simulator fail or create null arrays.
+- Minor update in uart_receive example in VVC QuickRef.
+- Removed duplicate setting of shared_vvc_cmd.operation in several VVC procedures and vvc_generator script.
+- Added new line charecter in compile order txt files.
+- Updated the GPIO VVC QR with information on how to use the VVC as input, output or inout.
+- Moved timestamp_header() function from generic_sb_pkg to string_methods_pkg.
+- Added t_natural_vector and t_positive_vector types to types_pkg.
+- Added to_string() overloads for t_natural_vector, integer_vector, real_vector and time_vector types.
+- Improved log message from axistream_expect_bytes() BFM procedure.
+- vvc_generator now includes activity watchdog by default.
+- Improved log messages from Clock Generator VVC.
+- Bug fix and improved compability with some Modelsim version in AXI and AXI-Lite VIPs.
+- Improved Clock Generator VVC set_clock_period() method description in the QR.
+- Added missing result in log message for fetch_result() method.
+- Fixed compilation error for the AXI and AXI-Lite VIPs in Riviera Pro.
+
 
 v2 2020.XX.XX
 --------------------

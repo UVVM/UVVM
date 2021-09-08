@@ -27,10 +27,11 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
+--hdlunit:tb
 -- Test case entity
 entity sbi_tb_multi_cycle_read is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -109,8 +110,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     await_uvvm_initialization(VOID);
 
@@ -143,7 +144,7 @@ begin
     --------------------------------------------------------------------------------------
     -- Verifying
     --------------------------------------------------------------------------------------
-    if GC_TEST = "fixed_wait_read_test" then
+    if GC_TESTCASE = "fixed_wait_read_test" then
       log(ID_LOG_HDR, "Check that the fixed wait cycles are working correct");
 
       enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
@@ -180,9 +181,6 @@ begin
       check_value(v_result_from_fetch(7 downto 0), x"00" , ERROR, "Reading to fast should return 00");
 
       shared_sbi_vvc_config(1).bfm_config.fixed_wait_cycles_read := 2; -- setting fixed_wait_cycles_read to one leading to wrong data
-
-    else
-      log(ID_LOG_HDR, "Unknown test", C_SCOPE);
     end if;
 
 

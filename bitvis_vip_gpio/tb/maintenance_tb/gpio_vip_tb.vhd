@@ -29,10 +29,11 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_gpio;
 context bitvis_vip_gpio.vvc_context;
 
+--hdlunit:tb
 -- Test case entity
 entity gpio_vip_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -46,6 +47,7 @@ architecture func of gpio_vip_tb is
 
   signal gpio_1_input  : std_logic_vector(C_GPIO_WIDTH-1 downto 0);
   signal gpio_2_output : std_logic_vector(C_GPIO_WIDTH-1 downto 0);
+  signal gpio_3_inout  : std_logic_vector(C_GPIO_WIDTH-1 downto 0);
 
   procedure set_gpio(
     signal pins   : out std_logic_vector;
@@ -91,6 +93,16 @@ begin
       gpio_vvc_if => gpio_2_output
       );
 
+  -- GPIO as input/output
+  i3_gpio_vvc : entity work.gpio_vvc
+    generic map(
+      GC_DATA_WIDTH         => C_GPIO_WIDTH,
+      GC_INSTANCE_IDX       => 3,
+      GC_DEFAULT_LINE_VALUE => x"ZZ"
+      )
+    port map (
+      gpio_vvc_if => gpio_3_inout
+      );
 
   ------------------------------------------------
   -- PROCESS: p_main
@@ -109,8 +121,8 @@ begin
 
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     await_uvvm_initialization(VOID);
 
@@ -131,6 +143,9 @@ begin
 
     disable_log_msg(GPIO_VVCT, 2, ALL_MESSAGES);
     enable_log_msg(GPIO_VVCT, 2, ID_BFM);
+
+    disable_log_msg(GPIO_VVCT, 3, ALL_MESSAGES);
+    enable_log_msg(GPIO_VVCT, 3, ID_BFM);
 
     log(ID_LOG_HDR, "Verifying TLM + GPIO executor + BFM", C_SCOPE);
     wait for C_CLK_PERIOD*10;
@@ -443,6 +458,59 @@ begin
     v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 1);  -- for last get
     await_completion(GPIO_VVCT, 1, v_cmd_idx, 100 ns, "Wait for gpio_expect_stable to finish");
 
+
+    --------------------------------------------------------------------------------------
+    --
+    -- Test of GPIO VVC as inout port
+    --
+    --------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Test of GPIO VVC as inout port", C_SCOPE);
+
+    for i in 0 to 1 loop
+      log("GPIO 3 port is 'Z', set data using the DUT to configure as input");
+      v_set_data    := x"55";
+      v_expect_data := v_set_data;
+      set_gpio(gpio_3_inout, v_set_data, "Setting GPIO 3 input to " & to_string(v_set_data, HEX, KEEP_LEADING_0, INCL_RADIX));
+      gpio_expect(GPIO_VVCT, 3, v_expect_data, 0 ns, "Checking GPIO 3", error);
+      v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 3);  -- for last get
+      await_completion(GPIO_VVCT, 3, v_cmd_idx, 100 ns, "Wait for gpio_expect to finish");
+      wait for C_CLK_PERIOD;
+
+      v_set_data    := x"AA";
+      v_expect_data := v_set_data;
+      set_gpio(gpio_3_inout, v_set_data, "Setting GPIO 3 input to " & to_string(v_set_data, HEX, KEEP_LEADING_0, INCL_RADIX));
+      gpio_expect(GPIO_VVCT, 3, v_expect_data, 0 ns, "Checking GPIO 3", error);
+      v_cmd_idx     := get_last_received_cmd_idx(GPIO_VVCT, 3);  -- for last get
+      await_completion(GPIO_VVCT, 3, v_cmd_idx, 100 ns, "Wait for gpio_expect to finish");
+      wait for C_CLK_PERIOD;
+
+      log("Set GPIO 3 port to 'Z' from the DUT to release the port");
+      v_set_data    := x"ZZ";
+      set_gpio(gpio_3_inout, v_set_data, "Releasing the port");
+      await_completion(GPIO_VVCT, 3, C_GPIO_SET_MAX_TIME);
+      wait for C_CLK_PERIOD;
+
+      log("GPIO 3 port is 'Z', set data using the VVC to configure as output");
+      v_set_data    := x"FF";
+      v_expect_data := v_set_data;
+      gpio_set(GPIO_VVCT, 3, v_set_data, "Setting GPIO 3 input to " & to_string(v_set_data, HEX, KEEP_LEADING_0, INCL_RADIX));
+      await_completion(GPIO_VVCT, 3, C_GPIO_SET_MAX_TIME);
+      check_value(gpio_3_inout, v_expect_data, error, "Checking value of GPIO VVC 3");
+      wait for C_CLK_PERIOD;
+
+      v_set_data    := x"33";
+      v_expect_data := v_set_data;
+      gpio_set(GPIO_VVCT, 3, v_set_data, "Setting GPIO 3 input to " & to_string(v_set_data, HEX, KEEP_LEADING_0, INCL_RADIX));
+      await_completion(GPIO_VVCT, 3, C_GPIO_SET_MAX_TIME);
+      check_value(gpio_3_inout, v_expect_data, error, "Checking value of GPIO VVC 3");
+      wait for C_CLK_PERIOD;
+
+      log("Set GPIO 3 port to 'Z' from the VVC to release the port");
+      v_set_data    := x"ZZ";
+      gpio_set(GPIO_VVCT, 3, v_set_data, "Releasing the port");
+      await_completion(GPIO_VVCT, 3, C_GPIO_SET_MAX_TIME);
+      wait for C_CLK_PERIOD;
+    end loop;
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

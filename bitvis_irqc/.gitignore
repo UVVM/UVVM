@@ -1,5 +1,4 @@
 # Modelsim files - keep the mpf file in this dir
-!sim/bitvis_irqc.mpf
 sim/*
 # Sigasi files
 .library_mapping.xml

@@ -31,10 +31,11 @@ use IEEE.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
+--hdlunit:tb
 -- Test case entity
 entity generic_queue_tb is
   generic (
-    GC_TEST : string := "UVVM"
+    GC_TESTCASE : string := "UVVM"
     );
 end entity;
 
@@ -275,6 +276,30 @@ architecture func of generic_queue_tb is
       check_value(queue_under_test.find_entry_num(v_element_integer), C_NO_MATCH, ERROR, "Check C_NO_MATCH from find_entry_num", C_SCOPE);
 
       -----------------------------
+      -- Test insert with POSITION
+      -----------------------------
+      queue_under_test.reset(void); -- to start with entry_num = 0
+
+      log(ID_LOG_HDR, "Testing insert with POSITION and identifier = 1 and identifier /=1");
+
+      v_element_integer := 654321;
+
+      log("\nInsert at position 2 to an empty queue - expecting a TB_ERROR");
+      increment_expected_alerts(TB_ERROR, 1);-- supposed to result in a TB_ERROR.
+      queue_under_test.insert(POSITION, 2, v_element_integer);
+
+      log("\nInsert at position 1 to an empty queue - expecting add() OK");
+      queue_under_test.insert(POSITION, 1, v_element_integer);
+
+      log("\nPrinting queue");
+      queue_under_test.print_queue(VOID);
+
+      log("\nVerify queue content");
+      check_value(queue_under_test.find_position(v_element_integer), 1, ERROR, "Check that element = " & to_string(v_element_integer) & " is at POSITION 1", C_SCOPE);
+      check_value(queue_under_test.find_entry_num(v_element_integer), 1, ERROR, "Check that element = " & to_string(v_element_integer) & " has entry_num=1", C_SCOPE);
+
+
+      -----------------------------
       -- Reset the queue by calling flush.
       queue_under_test.flush(VOID);
       queue_under_test.set_queue_count_threshold(0);
@@ -444,14 +469,16 @@ architecture func of generic_queue_tb is
       queue_under_test.print_queue(void) ;
       check_value(queue_under_test.get_count(VOID), v_num_entries, ERROR, "Pre test: Checking if queue initially has " & to_string(v_num_entries) & " entries", C_SCOPE);
 
-      v_value := random(0, v_num_entries-1);
-      log("deleting element v_value=" & to_string(v_value) );
-      queue_under_test.delete(v_value);
-      v_num_entries := v_num_entries-1;
-      queue_under_test.print_queue(void) ;
+      for i in 0 to v_num_entries-1 loop
+        v_value := i;
+        log("deleting element v_value=" & to_string(v_value) );
+        queue_under_test.delete(v_value);
+        v_num_entries := v_num_entries-1;
+        queue_under_test.print_queue(void) ;
 
-      check_value(not queue_under_test.exists(v_value), ERROR, "post delete test: Check that Element doens't exists ", C_SCOPE);
-      check_value(queue_under_test.get_count(VOID), v_num_entries, ERROR, "post delete test: Checking that queue now has only " & to_string(v_num_entries) & " entries", C_SCOPE);
+        check_value(not queue_under_test.exists(v_value), ERROR, "post delete test: Check that Element doens't exists ", C_SCOPE);
+        check_value(queue_under_test.get_count(VOID), v_num_entries, ERROR, "post delete test: Checking that queue now has only " & to_string(v_num_entries) & " entries", C_SCOPE);
+      end loop;
 
     end procedure;
 
@@ -919,8 +946,8 @@ architecture func of generic_queue_tb is
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -938,10 +965,7 @@ architecture func of generic_queue_tb is
     test_of_insert(VOID);
     test_of_delete_by_position(VOID);
 
-    for i in 0 to 10 loop
-      log(ID_LOG_HDR, "Start of test_of_delete_by_element tests, i="&to_string(i), C_SCOPE);
-      test_of_delete_by_element(VOID);
-    end loop;
+    test_of_delete_by_element(VOID);
 
     for i in 0 to 10 loop
       log(ID_LOG_HDR, "Start of test_of_delete_by_position_random tests, i="&to_string(i), C_SCOPE);

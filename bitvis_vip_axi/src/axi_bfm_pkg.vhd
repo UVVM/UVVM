@@ -222,11 +222,11 @@ package axi_bfm_pkg is
   ) return std_logic_vector;
 
   function bytes_to_axsize(
-    bytes : positive
+    constant bytes : positive
   ) return std_logic_vector;
 
   function axlock_to_sl(
-    axlock : t_axlock
+    constant axlock : t_axlock
   ) return std_logic;
 
   ------------------------------------------
@@ -760,7 +760,6 @@ package body axi_bfm_pkg is
     variable v_proc_call              : line;
     variable v_await_arready          : boolean := true;
     variable v_await_rvalid           : boolean := true;
-    variable v_data_value             : std_logic_vector(axi_if.read_data_channel.rdata'length-1 downto 0);
     variable v_time_of_rising_edge    : time := -1 ns;  -- time stamp for clk period checking
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
   begin
@@ -881,7 +880,7 @@ package body axi_bfm_pkg is
     end loop;
 
     if ext_proc_call = "" then
-      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(rdata_value(0 to to_integer(unsigned(arlen_value))), HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
       -- Log will be handled by calling procedure (e.g. axi_check)
     end if;

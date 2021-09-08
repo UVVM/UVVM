@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>For starters &mdash; UVVM  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/uvvm_3.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">UVVM Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">UVVM Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">UVVM VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sbi_vip.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart_vip.html">Bitvis VIP UART</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>For starters</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/uvvm_intro.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <p>UVVM (Universal VHDL Verification Methodology) is a free and Open Source Methodology and Library for making
+very structured VHDL-based testbenches.</p>
+<p>Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency
+and quality. UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.</p>
+<p>UVVM consists currently of the following elements:
+- <cite>Utility Library &lt;https://github.com/UVVM/UVVM/tree/master/uvvm_util#readme&gt;</cite>
+- <cite>VVC (VHDL Verification Component) Framework &lt;https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework#readme&gt;</cite> - Including Utility Library
+- BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
+- VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)</p>
+<p>more to come…</p>
+<div class="section" id="for-starters">
+<h1>For starters<a class="headerlink" href="#for-starters" title="Permalink to this headline">¶</a></h1>
+<p>Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced
+testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
+Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a <em>very</em> low user threshold
+and you will be up and running in an hour.
+Please see <cite>Utility Library &lt;https://github.com/UVVM/UVVM/tree/master/uvvm_util#readme&gt;</cite> for an introduction.
+The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development
+of good quality testbenches.</p>
+<p>Note that a dedicated repository <cite>UVVM_Light &lt;https://github.com/UVVM/UVVM_Light&gt;</cite> has been provided to simplify
+getting started using Utility Library and BFMs. Here all the code and documentation have been collected in a single
+directory, and only a single VHDL library is used. The documentation and code are 100% the same as for the full UVVM.</p>
+<p>Please also see <cite>Getting Started With UVVM &lt;https://github.com/UVVM/UVVM/blob/master/GETTING_STARTED.md&gt;</cite>.</p>
+</div>
+<div class="section" id="for-what-do-i-need-this-vvc-framework">
+<h1>For what do I need this VVC Framework?<a class="headerlink" href="#for-what-do-i-need-this-vvc-framework" title="Permalink to this headline">¶</a></h1>
+<p>UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle any verification complexity - from really simple to really complex. A key benefit of this system is the very simple software-like VHDL test sequencer that may control your complete testbench architecture with any number of verification components. This takes overview, readability and maintainability to a new level.
+As an example a simple command like uart_expect(UART_VVCT, my_data), or axilite_write(AXILITE_VVCT, my_addr, my_data, my_message) will automatically tell the respective VVC (for UART or AXI-Lite) to execute the uart_receive() or axilite_write() BFM respectively.</p>
+</div>
+<div class="section" id="what-are-the-main-benefits-of-using-this-system">
+<h1>What are the main benefits of using this system?<a class="headerlink" href="#what-are-the-main-benefits-of-using-this-system" title="Permalink to this headline">¶</a></h1>
+<p>The really great benefit here is the unique overview, readability, maintainability, extensibility and reuse you get from having the best testbench architecture possible - much in the same way as a good architecture is also critical for any complex design.
+Another major benefit here is that any number of commands may be issued at the same time from the test sequencer - thus allowing full control of when an access is to be performed, and the commands are understandable “even” for a software developer ;-)   The commands may be queued, skewed, delayed, synchronised, etc. - and a super-set for applying constrained random or other sequences of data may of course also be applied.
+This yields an excellent control over your testbench and VVCs.</p>
+<p>For debugging you can select logging of a command when it is issued from the sequencer, when it is received by the VVC, when it is initiated by the VVC and/or when it has been executed towards the DUT. This allows full overview of all actions in your complete testbench.</p>
+<p>UVVM is free and open source and has standardised the way to build good testbench architectures and VVCs so that reuse is dead simple, and allows the FPGA community to share VVCs that will work together in a well-structured test harness.</p>
+<p>You may of course combine UVVM with any other legacy or 3rd party testbenches or verification models.
+[This post on LinkedIn](<a class="reference external" href="https://www.linkedin.com/pulse/what-uvvm-espen-tallaksen">https://www.linkedin.com/pulse/what-uvvm-espen-tallaksen</a>) will give you some more info on why you should use this library.</p>
+</div>
+<div class="section" id="main-features">
+<h1>Main Features<a class="headerlink" href="#main-features" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Very useful support for checking values, ranges, time aspects, and for waiting for events inside a given window</p></li>
+<li><p>An extremely low user threshold for the basic functionality - like logging, alert handling and checkers</p></li>
+<li><p>A very structured testbench architecture that allows LEGO-like testbench/harness implementation</p></li>
+<li><p>A very structured VHDL Verification Component (VVC) architecture that allows simultaneous activity (stimuli and checking) on multiple interfaces in a very easily understandable manner</p></li>
+<li><p>An easily understandable command syntax to control a complete testbench with multiple VVCs</p></li>
+<li><p>The structure and overview are easily kept even for a testbench with a large number of VVCs</p></li>
+<li><p>A VVC architecture that is almost exactly the same from one VVC to another - sometimes with only the BFM calls as the differentiator, thus allowing an extremely efficient reuse from one VVC to another</p></li>
+<li><p>A VVC architecture that easily allows multiple threads for e.g. simultaneous Avalon Command and Response</p></li>
+<li><p>A VVC architecture that allows simple encapsulation for ALL verification functionality for any given interface or protocol</p></li>
+<li><p>Allows VVCs to be included anywhere in the test harness - or even inside the design itself</p></li>
+<li><p>A logging and alert system that supports full verbosity control of functionality and hierarchy</p></li>
+<li><p>A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through the execution queue - until it is executed and completed towards the DUT</p></li>
+<li><p>Allows 3rd party randomisation and functional coverage to be included in the central test sequencer - or even better - inside the VVCs in the local sequencers for better control and encapsulation</p></li>
+<li><p>Simple integration with regression test tools like Jenkins</p></li>
+<li><p>Quick references are available for UVVM Utility Library, VVC Framework and all the BFMs/VVCs</p></li>
+</ul>
+</div>
+<div class="section" id="available-vvcs-and-bfms">
+<h1>Available VVCs and BFMs<a class="headerlink" href="#available-vvcs-and-bfms" title="Permalink to this headline">¶</a></h1>
+<p>These VVCs and BFMs could be used inside a typical UVVM testbench, but they could also be used stand-alone - e.g. as a BFM or VVC to handle just the AXI4-Lite interface with everything else being your proprietary testbench and methodology.</p>
+<ul class="simple">
+<li><p>Avalon MM</p></li>
+<li><p>Avalon ST - master and slave</p></li>
+<li><p>AXI4-Lite</p></li>
+<li><p>AXI-Stream - master and slave</p></li>
+<li><p>SBI (Simple Bus Interface - A single cycle simple parallel bus interface)</p></li>
+<li><p>UART</p></li>
+<li><p>SPI - master and slave</p></li>
+<li><p>I2C - master and slave</p></li>
+<li><p>GPIO</p></li>
+<li><p>GMII</p></li>
+<li><p>RGMII</p></li>
+<li><p>More are coming</p></li>
+</ul>
+<p><strong>IMPORTANT</strong>
+The VIPs complies with respective protocols and thus allows a
+normal access towards the interface. The VIPs are not protocol checkers.</p>
+</div>
+<div class="section" id="prerequisites">
+<h1>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h1>
+<p>UVVM is tool and library independent, but it must be compiled with VHDL 2008.
+UVVM has been tested with the following simulators:
+- Modelsim version 19.1
+- Riviera-PRO version: 2018.10.137.7135
+- Questa Sim version 19.1
+- GHDL version 0.36</p>
+<p><strong>Note</strong> Questa Sim version 19.2 and Modelsim version 19.2 have known bugs that might prevent UVVM from working properly.</p>
+<p>Python is required <strong>if</strong> you want to execute the VVC generation scripts</p>
+</div>
+<div class="section" id="introduction-to-vvc-framework-including-manuals">
+<h1>Introduction to VVC Framework - including manuals<a class="headerlink" href="#introduction-to-vvc-framework-including-manuals" title="Permalink to this headline">¶</a></h1>
+<p>All documents including powerpoint presentations are available in the <em>uvvm_vvc_framework/doc</em> directory on GitHub.
+These are just fast access links to some interesting info:
+- <em>[‘The critically missing VHDL testbench feature - Finally a structured approach’</em> - A brief introduction](./uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
+- <em>[‘VVC Framework Manual’</em>  - The user manual](./uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)</p>
+</div>
+<div class="section" id="license">
+<h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
+<p>Copyright 2020 Bitvis
+Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License. You may obtain a copy of the License at <a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a> and in the provided LICENSE.TXT.</p>
+<p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
+</div>
+<div class="section" id="uvvm-maintainers">
+<h1>UVVM Maintainers<a class="headerlink" href="#uvvm-maintainers" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="http://bitvis.no">Bitvis</a> (Norway) has released UVVM as open source and we are committed to develop this system further.
+We do however appreciate contributions and suggestions from users.</p>
+<p>Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch and handle any required verification and documentation.</p>
+<p>Please note the new repository for external UVVM compatible community VIP (Verification IP): <a class="reference external" href="https://github.com/UVVM/UVVM_Community_VIPs">UVVM_Community_VIPs</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, UVVM.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

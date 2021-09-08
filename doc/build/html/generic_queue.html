@@ -1,0 +1,707 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>UVVM Generic Queue &mdash; UVVM  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bitvis VIP SBI" href="sbi_vip.html" />
+    <link rel="prev" title="UVVM FIFO Collection" href="fifo_collection.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/uvvm_3.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">UVVM Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">UVVM Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">UVVM VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UVVM Generic Queue</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functional-parameters">Functional Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generics">Generics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#package-declaration-example">Package declaration example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#queue-declaration-example">Queue declaration example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-queue-details">Generic Queue Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#add">add()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fetch">fetch()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get">get()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flush">flush()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reset">reset()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#is-empty">is_empty()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-scope">set_scope()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-scope">get_scope()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-count">get_count()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#insert">insert()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete">delete()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#peek">peek()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#find-position">find_position()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#find-entry-num">find_entry_num()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-entry-num">get_entry_num()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exists">exists()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#print-queue">print_queue()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-queue-count-max">set_queue_count_max()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-queue-count-max">get_queue_count_max()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-queue-count-threshold">set_queue_count_threshold()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-queue-count-threshold">get_queue_count_threshold()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-queue-count-threshold-severity">set_queue_count_threshold_severity()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-queue-count-threshold-severity">get_queue_count_threshold_severity()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sbi_vip.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart_vip.html">Bitvis VIP UART</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>UVVM Generic Queue</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/generic_queue.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="uvvm-generic-queue">
+<h1>UVVM Generic Queue<a class="headerlink" href="#uvvm-generic-queue" title="Permalink to this headline">¶</a></h1>
+<p>UVVM Support Component</p>
+<p>The Generic Queue operate as a FIFO that can hold generic elements, which enable large FIFO and e.g. record elements possibilities.</p>
+<div class="section" id="functional-parameters">
+<h2>Functional Parameters<a class="headerlink" href="#functional-parameters" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 17%" />
+<col style="width: 23%" />
+<col style="width: 40%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Name</strong></p></td>
+<td><p><strong>Type</strong></p></td>
+<td><p><strong>Example(s)</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>instance</p></td>
+<td><p>integer</p></td>
+<td><p>2</p></td>
+<td><p>One generic queue variable can have multiple
+independent queues referred to as instances.</p></td>
+</tr>
+<tr class="row-odd"><td><p>identifier_option</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>POSITION, ENTRY_NUM</p></td>
+<td><p>A queue element can be identified by POSITION or
+ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-even"><td><p>identifier</p></td>
+<td><p>integer</p></td>
+<td><p>2</p></td>
+<td><p>The position or entry number.</p></td>
+</tr>
+<tr class="row-odd"><td><p>identifier_min</p></td>
+<td><p>integer</p></td>
+<td><p>3</p></td>
+<td><p>The minimum position or entry number of a range.</p></td>
+</tr>
+<tr class="row-even"><td><p>identifier_max</p></td>
+<td><p>integer</p></td>
+<td><p>10</p></td>
+<td><p>The maximum position or entry number of a range.</p></td>
+</tr>
+<tr class="row-odd"><td><p>range_option</p></td>
+<td><p>t_range_option</p></td>
+<td><p>SINGLE, AND_LOWER, AND_HIGHER</p></td>
+<td><p>The range that is affected.</p></td>
+</tr>
+<tr class="row-even"><td><p>scope</p></td>
+<td><p>String</p></td>
+<td><p>C_QUEUE_SCOPE</p></td>
+<td><p>The scope for the generic queue. Has to be set
+prior to usage of several procedure and functions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>name</p></td>
+<td><p>String</p></td>
+<td><p>“rx_packet_queue”</p></td>
+<td><p>The name of the generic queue.</p></td>
+</tr>
+<tr class="row-even"><td><p>element</p></td>
+<td><p>t_generic_elment</p></td>
+<td><p>v_rx_data</p></td>
+<td><p>The element that shall be pushed to the queue.</p></td>
+</tr>
+<tr class="row-odd"><td><p>void</p></td>
+<td><p>t_void</p></td>
+<td><p>VOID</p></td>
+<td><p>Unused, empty input parameter.</p></td>
+</tr>
+<tr class="row-even"><td><p>queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>1000</p></td>
+<td><p>The maximum number of elements the queue shall
+hold.</p></td>
+</tr>
+<tr class="row-odd"><td><p>queue_count_alert_level</p></td>
+<td><p>natural</p></td>
+<td><p>950</p></td>
+<td><p>The number of elements the queue can hold before
+an alert is raised.</p></td>
+</tr>
+<tr class="row-even"><td><p>alert_level</p></td>
+<td><p>t_alert_level</p></td>
+<td><p>TB_WARNING</p></td>
+<td><p>The alert level is raised when the number of
+elements in the queue exceeds
+queue_count_alert_level.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Default queue size is 2048 bits and the size can be adjusted with the C_NUMBER_OF_BITS_IN_DATA_BUFFER located in the adaptations package.</p>
+</div>
+</div>
+<div class="section" id="generics">
+<h2>Generics<a class="headerlink" href="#generics" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 28%" />
+<col style="width: 34%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Generic element</strong></p></td>
+<td><p><strong>Type</strong></p></td>
+<td><p><strong>Default</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;generic_element&gt;</p></td>
+<td><p>t_generic_element</p></td>
+<td><p>&lt;none&gt;</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>1000</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_QUEUE_COUNT_MAX_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>950</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="package-declaration-example">
+<h3>Package declaration example<a class="headerlink" href="#package-declaration-example" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-vhdl notranslate"><div class="highlight"><pre><span></span><span class="k">Package</span> <span class="n">queue_pkg</span> <span class="k">is</span> <span class="k">new</span> <span class="n">uvvm_util</span><span class="p">.</span><span class="n">generic_queue_pkg</span>
+             <span class="k">generic</span> <span class="k">map</span><span class="p">(</span> <span class="n">t_generic_element</span> <span class="o">=&gt;</span> <span class="kt">integer</span><span class="p">,</span>
+                          <span class="n">GC_QUEUE_COUNT_MAX</span> <span class="o">=&gt;</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">GC_QUEUE_COUNT_THRESHOLD</span> <span class="o">=&gt;</span> <span class="mi">950</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="queue-declaration-example">
+<h3>Queue declaration example<a class="headerlink" href="#queue-declaration-example" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-vhdl notranslate"><div class="highlight"><pre><span></span><span class="k">use</span> <span class="nn">work.queue_pkg.</span><span class="k">all</span><span class="p">;</span>
+<span class="k">shared</span> <span class="k">variable</span> <span class="n">generic_queue</span> <span class="o">:</span> <span class="n">t_generic_queue</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="generic-queue-details">
+<h2>Generic Queue Details<a class="headerlink" href="#generic-queue-details" title="Permalink to this headline">¶</a></h2>
+<p>All Generic Queue functions and procedures are defined in the UVVM Generic Queue package, generic_queue_pkg.vhd. The generic
+queue can be used with a single instance or with multiple instances. An instance is a separate queue. When multiple instances
+are used the methods are called with the instance parameter. When only using a single generic queue instance, the instance
+parameter may be omitted if that instance is instance 1. Multiple instances are typically used when multiple queues with
+the same data types are needed. All parameters in brackets are optional.</p>
+<div class="section" id="add">
+<h3>add()<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>add<span class="o">([</span>instance<span class="o">]</span>, element<span class="o">)</span>
+</pre></div>
+</div>
+<p>This procedure adds an element at the back of a generic queue.
+The queue element is generic, meaning that it can be of any type, specified by the package declaration (see page 2 for example).
+Note that if no scope is set for the queue, a TB_WARNING will be raised. An alert, set by set_queue_count_threshold_severity(),
+will be raised when the queue reach a level, set by set_queue_count_threshold(). Also note that trying to add() to a full
+queue will raise a TB_ERROR.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.add<span class="o">(</span>v_data_packet<span class="o">)</span><span class="p">;</span>
+generic_queue.add<span class="o">(</span><span class="m">2</span>, v_data_packet<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fetch">
+<h3>fetch()<a class="headerlink" href="#fetch" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>fetch<span class="o">([</span>instance<span class="o">]</span>, <span class="o">[</span>identifier_option, identifier<span class="o">])</span>
+</pre></div>
+</div>
+<p>This function returns an element from the generic queue and removes it from the queue.
+Note that the oldest element in the queue is returned first if no identifier is specified. Attempting to fetch() from
+the queue without setting queue scope first (see set_scope()), will trigger a TB_WARNING, and attempting to fetch()
+from an empty queue will trigger a TB_ERROR.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_data_packet :<span class="o">=</span> generic_queue.fetch<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+v_data_packet :<span class="o">=</span> generic_queue.fetch<span class="o">(</span><span class="m">2</span>, POSITION, <span class="m">5</span><span class="o">)</span><span class="p">;</span>
+v_data_packet :<span class="o">=</span> generic_queue.fetch<span class="o">(</span><span class="m">2</span>, ENTRY_NUM, <span class="m">14</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get">
+<h3>get()<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>get<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use fetch.</p>
+</div>
+</div>
+<div class="section" id="flush">
+<h3>flush()<a class="headerlink" href="#flush" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>flush<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<p>This procedure empties the queue. A TB_WARNING will be raised if no scope is set for the queue prior to calling flush().</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.flush<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+generic_queue.flush<span class="o">(</span><span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reset">
+<h3>reset()<a class="headerlink" href="#reset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>reset<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<p>This procedure empties the queue and resets the entry number. A TB_WARNING will be raised if no
+scope is set for the queue prior to calling reset().</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.reset<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+generic_queue.reset<span class="o">(</span><span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="is-empty">
+<h3>is_empty()<a class="headerlink" href="#is-empty" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>is_empty<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<p>This function returns true if the queue is empty and false otherwise.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>If generic_queue.is_empty<span class="o">(</span>VOID<span class="o">)</span> <span class="k">then</span> ...
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-scope">
+<h3>set_scope()<a class="headerlink" href="#set-scope" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_scope<span class="o">([</span>instance<span class="o">]</span>,scope<span class="o">)</span>
+</pre></div>
+</div>
+<p>This procedure will set the scope of the queue.
+Note that most of the procedures and functions in the generic queue will raise a TB_WARNING if no scope has been set for the queue.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.set_scope<span class="o">(</span>C_QUEUE_SCOPE<span class="o">)</span><span class="p">;</span>
+generic_queue.set_scope<span class="o">(</span><span class="m">2</span>, C_QUEUE_SCOPE<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-scope">
+<h3>get_scope()<a class="headerlink" href="#get-scope" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>get_scope<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<p>This function returns the scope of the queue as a string.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_queue_scope :<span class="o">=</span> generic_queue.get_scope<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+v_queue_scope :<span class="o">=</span> generic_queue.get_scope<span class="o">(</span><span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-count">
+<h3>get_count()<a class="headerlink" href="#get-count" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>get_count<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<p>This function returns the number of elements currently in the queue.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_num_elements :<span class="o">=</span> generic_queue.get_count<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+v_num_elements :<span class="o">=</span> generic_queue.get_count<span class="o">(</span><span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="insert">
+<h3>insert()<a class="headerlink" href="#insert" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>insert<span class="o">([</span>instance<span class="o">]</span>, identifier_option, identifier, element<span class="o">)</span>
+</pre></div>
+</div>
+<p>This procedure inserts an element at the specified position in the generic queue. If identifier_option is POSITION,
+the element is inserted at that position. If identifier_option is ENTRY_NUM, the element is inserted after that entry number.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.insert<span class="o">(</span>POSITION, <span class="m">5</span>, v_data_packet<span class="o">)</span><span class="p">;</span>
+generic_queue.insert<span class="o">(</span><span class="m">2</span>, ENTRY_NUM, <span class="m">8</span>, v_data_packet<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete">
+<h3>delete()<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>delete<span class="o">([</span>instance<span class="o">]</span>, <span class="o">[</span>element<span class="o">])</span>
+delete<span class="o">([</span>instance<span class="o">]</span>, identifier_option, identifier, range_option<span class="o">)</span>
+delete<span class="o">([</span>instance<span class="o">]</span>, identifier_option, identifier_min, identifier_max<span class="o">)</span>
+</pre></div>
+</div>
+<p>This procedure deletes the specified element from the generic queue. Element to be deleted
+can be specified by a matching element or by identifier and range.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.delete<span class="o">(</span>v_data_packet<span class="o">)</span><span class="p">;</span>
+generic_queue.delete<span class="o">(</span><span class="m">2</span>, ENTRY_NUM, <span class="m">8</span>, SINGLE<span class="o">)</span><span class="p">;</span>
+generic_queue.delete<span class="o">(</span><span class="m">2</span>, POSITION, <span class="m">12</span>, AND_HIGHER<span class="o">)</span><span class="p">;</span>
+generic_queue.delete<span class="o">(</span><span class="m">2</span>, ENTRY_NUM, <span class="m">3</span>, <span class="m">6</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="peek">
+<h3>peek()<a class="headerlink" href="#peek" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>peek<span class="o">([</span>instance<span class="o">]</span>, <span class="o">[</span>identifier_option, identifier<span class="o">])</span>
+</pre></div>
+</div>
+<p>This function returns an element from the generic queue without deleting it.
+Element can be specified by POSITION or ENTRY_NUM.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_data_packet :<span class="o">=</span> generic_queue.peek<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span> --first element in queue, instance <span class="m">1</span>
+v_data_packet :<span class="o">=</span> generic_queue.peek<span class="o">(</span><span class="m">2</span>, ENTRY_NUM, <span class="m">8</span><span class="o">)</span><span class="p">;</span>
+v_data_packet :<span class="o">=</span> generic_queue.peek<span class="o">(</span><span class="m">2</span>, POSITION, <span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="find-position">
+<h3>find_position()<a class="headerlink" href="#find-position" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>find_position<span class="o">([</span>instance<span class="o">]</span>, element<span class="o">)</span>
+</pre></div>
+</div>
+<p>This function returns the position of the matching element. Returns -1 if no matching element is found.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_position :<span class="o">=</span> generic_queue.find_position<span class="o">(</span>v_data_packet<span class="o">)</span><span class="p">;</span>
+v_position :<span class="o">=</span> generic_queue.find_position<span class="o">(</span><span class="m">2</span>, v_data_packet<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="find-entry-num">
+<h3>find_entry_num()<a class="headerlink" href="#find-entry-num" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>find_entry_num<span class="o">([</span>instance<span class="o">]</span>, element<span class="o">)</span>
+</pre></div>
+</div>
+<p>This function returns the entry number of the matching element. Returns -1 if no matching element is found.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_entry_num :<span class="o">=</span> generic_queue.find_entry_num<span class="o">(</span>v_data_packet<span class="o">)</span><span class="p">;</span>
+v_entry_num :<span class="o">=</span> generic_queue.find_entry_num<span class="o">(</span><span class="m">2</span>, v_data_packet<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-entry-num">
+<h3>get_entry_num()<a class="headerlink" href="#get-entry-num" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>get_entry_num<span class="o">([</span>instance<span class="o">]</span>, position_val<span class="o">)</span>
+</pre></div>
+</div>
+<p>This function returns the entry number of the element in the specified position.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_entry_num :<span class="o">=</span> generic_queue.get_entry_num<span class="o">(</span><span class="m">6</span><span class="o">)</span><span class="p">;</span>
+v_entry_num :<span class="o">=</span> generic_queue.get_entry_num<span class="o">(</span><span class="m">2</span>, <span class="m">8</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exists">
+<h3>exists()<a class="headerlink" href="#exists" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>exists<span class="o">([</span>instance<span class="o">]</span>, element<span class="o">)</span>
+</pre></div>
+</div>
+<p>This function returns true if a matching element is found in the generic queue and false otherwise.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> generic_queue.exists<span class="o">(</span>element<span class="o">)</span> <span class="k">then</span> ...
+<span class="k">if</span> generic_queue.exists<span class="o">(</span><span class="m">2</span>, element<span class="o">)</span> <span class="k">then</span> ...
+</pre></div>
+</div>
+</div>
+<div class="section" id="print-queue">
+<h3>print_queue()<a class="headerlink" href="#print-queue" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>print_queue<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<p>This procedure prints the position and entry number for all elements in the generic queue.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.print_queue<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+generic_queue.print_queue<span class="o">(</span><span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-queue-count-max">
+<h3>set_queue_count_max()<a class="headerlink" href="#set-queue-count-max" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_queue_count_max<span class="o">([</span>instance<span class="o">]</span>, queue_count_max<span class="o">)</span>
+</pre></div>
+</div>
+<p>This procedure sets the maximum number of elements the queue can hold.
+Note that a TB_ERROR is raised if parameter queue_count_max is less than the number of elements currently in the queue.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.set_queue_count_max<span class="o">(</span><span class="m">1000</span><span class="o">)</span><span class="p">;</span>
+generic_queue.set_queue_count_max<span class="o">(</span><span class="m">2</span>, <span class="m">1000</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-queue-count-max">
+<h3>get_queue_count_max()<a class="headerlink" href="#get-queue-count-max" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>get_queue_count_max<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<p>This function returns the maximum number of elements the queue can hold.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_queue_max_elements :<span class="o">=</span> generic_queue.get_queue_count_max<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+v_queue_max_elements :<span class="o">=</span> generic_queue.get_queue_count_max<span class="o">(</span><span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-queue-count-threshold">
+<h3>set_queue_count_threshold()<a class="headerlink" href="#set-queue-count-threshold" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_queue_count_threshold<span class="o">([</span>instance<span class="o">]</span>, queue_count_alert_level<span class="o">)</span>
+</pre></div>
+</div>
+<p>This procedure sets the threshold value that will raise an alert, set by set_queue_count_threshold_severity(),
+if the number of queue elements exceeds the queue_count_alert_level.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.set_queue_count_threshold<span class="o">(</span><span class="m">950</span><span class="o">)</span><span class="p">;</span>
+generic_queue.set_queue_count_threshold<span class="o">(</span><span class="m">2</span>, <span class="m">950</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-queue-count-threshold">
+<h3>get_queue_count_threshold()<a class="headerlink" href="#get-queue-count-threshold" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>get_queue_count_threshold<span class="o">([</span>instance<span class="o">])</span>
+</pre></div>
+</div>
+<p>This function returns the threshold value that will raise an alert, set by set_queue_count_threshold_severity(),
+if the number of queue elements exceeds the queue_count_alert_level.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_queue_threshold :<span class="o">=</span> generic_queue.get_queue_count_threshold<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+v_queue_threshold :<span class="o">=</span> generic_queue.get_queue_count_threshold<span class="o">(</span><span class="m">2</span><span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-queue-count-threshold-severity">
+<h3>set_queue_count_threshold_severity()<a class="headerlink" href="#set-queue-count-threshold-severity" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>set_queue_count_threshold_severity<span class="o">(</span>severity_level<span class="o">)</span>
+</pre></div>
+</div>
+<p>This procedure sets the severity level for the alert that is raised when the number of
+queue elements exceeds the value set by set_queue_count_threshold().</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>generic_queue.set_queue_count_threshold_severity<span class="o">(</span>TB_WARNING<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-queue-count-threshold-severity">
+<h3>get_queue_count_threshold_severity()<a class="headerlink" href="#get-queue-count-threshold-severity" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>get_queue_count_threshold_severity<span class="o">(</span>void<span class="o">)</span>
+</pre></div>
+</div>
+<p>This function return the severity level for the alert that is raised when the number of queue
+elements exceeds the value set by set_queue_count_threshold().</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>v_queue_level_severity :<span class="o">=</span> generic_queue.get_queue_count_threshold_severity<span class="o">(</span>VOID<span class="o">)</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied,
+including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement.
+In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in
+an action of contract, tort or otherwise, arising from, out of or in connection with this IP.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="sbi_vip.html" class="btn btn-neutral float-right" title="Bitvis VIP SBI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="fifo_collection.html" class="btn btn-neutral float-left" title="UVVM FIFO Collection" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, UVVM.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

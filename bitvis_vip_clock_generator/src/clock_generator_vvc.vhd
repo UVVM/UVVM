@@ -241,27 +241,27 @@ begin
           else
             clock_ena <= true;
             wait for 0 ns;
-            log(ID_CLOCK_GEN, "Clock " & clock_name & " started", C_SCOPE);
+            log(ID_CLOCK_GEN, "Clock '" & clock_name & "' started", C_SCOPE);
           end if;
 
         when STOP_CLOCK =>
           if not clock_ena then
-            tb_error("Clock " & clock_name & " already stopped. " & format_msg(v_cmd), C_SCOPE);
+            tb_error("Clock '" & clock_name & "' already stopped. " & format_msg(v_cmd), C_SCOPE);
           else
             clock_ena <= false;
             if clk then
               wait until not clk;
             end if;
-            log(ID_CLOCK_GEN, "Clock" & clock_name & " stopped", C_SCOPE);
+            log(ID_CLOCK_GEN, "Clock '" & clock_name & "' stopped", C_SCOPE);
           end if;
 
         when SET_CLOCK_PERIOD =>
           clock_period := v_cmd.clock_period;
-          log(ID_CLOCK_GEN, "Clock " & clock_name & " period set to " & to_string(clock_period), C_SCOPE);
+          log(ID_CLOCK_GEN, "Clock '" & clock_name & "' period set to " & to_string(clock_period), C_SCOPE);
 
         when SET_CLOCK_HIGH_TIME =>
           clock_high_time := v_cmd.clock_high_time;
-          log(ID_CLOCK_GEN, "Clock " & clock_name & " high time set to " & to_string(clock_high_time), C_SCOPE);
+          log(ID_CLOCK_GEN, "Clock '" & clock_name & "' high time set to " & to_string(clock_high_time), C_SCOPE);
 
 
         -- UVVM common operations

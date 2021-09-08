@@ -2,6 +2,13 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ==============================================================
 ----------------------------------------------------------------------
 
+
+v2.8.1
+----------
+Released: 2021-05-26
+- Corrected message ID for check_value() in BFM.
+
+
 v2.8.0
 ----------
 Released: 2020-10-06

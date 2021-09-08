@@ -37,10 +37,10 @@ context bitvis_vip_spi.vvc_context;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
-
+--hdlunit:tb
 entity spi_vvc_tb is
   generic (
-    GC_TEST             : string               := "UVVM";
+    GC_TESTCASE         : string               := "UVVM";
     GC_SPI_MODE         : natural range 0 to 3 := 0;
     GC_DATA_WIDTH       : positive             := 32;
     GC_DATA_ARRAY_WIDTH : positive             := 8
@@ -711,8 +711,8 @@ begin  -- architecture behav
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
-    set_log_file_name(GC_TEST & "_Log.txt");
-    set_alert_file_name(GC_TEST & "_Alert.txt");
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     await_uvvm_initialization(VOID);
 
@@ -736,7 +736,7 @@ begin  -- architecture behav
     powerup;
     randomize(GC_DATA_WIDTH, GC_DATA_WIDTH+10, "Setting global seeds");
 
-    if GC_TEST = "VVC-to-VVC" then
+    if GC_TESTCASE = "VVC-to-VVC" then
       -- configure single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -750,190 +750,190 @@ begin  -- architecture behav
         spi_master_transmit_and_check(master_tx_data_word, slave_tx_data_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
       end loop;
 
-      --
-      -- Single-word transfer
-      --
-      for iteration in 0 to 5 loop
-        tx_word := random(GC_DATA_WIDTH);
-        rx_word := random(GC_DATA_WIDTH);
-        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
-        spi_slave_check_only(tx_word, C_VVC_IDX_SLAVE_1);
-        spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1);
-        spi_slave_transmit_only(rx_word, 1);
-        spi_master_check_only(rx_word, 0);
-      end loop;
+     --
+     -- Single-word transfer
+     --
+     for iteration in 0 to 5 loop
+       tx_word := random(GC_DATA_WIDTH);
+       rx_word := random(GC_DATA_WIDTH);
+       -- Master TX must be active for any transactions to occur; drives sclk and ss_n
+       spi_slave_check_only(tx_word, C_VVC_IDX_SLAVE_1);
+       spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1);
+       spi_slave_transmit_only(rx_word, 1);
+       spi_master_check_only(rx_word, 0);
+     end loop;
 
-      --
-      -- Slave start on next SS
-      --
-      for idx in 1 to 5 loop
-        tx_word := random(GC_DATA_WIDTH); --std_logic_vector(to_unsigned(idx, GC_DATA_WIDTH)); --random(GC_DATA_WIDTH);
-        -- transfer missed word
-        spi_master_transmit_only(not(tx_word), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);  -- transfer missed by slave
-        -- delay and start slave
-        insert_delay(SPI_VVCT, C_VVC_IDX_SLAVE_1, random(5, GC_DATA_WIDTH)*C_CLK_PERIOD, "Skew SPI BFM start.");
-        increment_expected_alerts(warning, 1);
-        spi_slave_check_only(tx_word, C_VVC_IDX_SLAVE_1, START_TRANSFER_ON_NEXT_SS);
-        -- transfer received word
-        spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);  -- next transfer, slave will receive this
-      end loop;
-
-      await_master_tx_completion(50 ms);
-      await_slave_rx_completion(50 ms);
-      await_slave_tx_completion(50 ms);
-      await_master_rx_completion(50 ms);
-
-      -- Set inter_bfm_delay for multi-word transfer
-      set_multi_word_inter_bfm_delay;
-
-      --
-      -- Multi-word transfer
-      --
-      for iteration in 0 to 5 loop
-        -- Generate word array
-        for idx in 0 to GC_DATA_ARRAY_WIDTH-1 loop
-          master_word_array(idx) := random(GC_DATA_WIDTH);
-          slave_word_array(idx)  := random(GC_DATA_WIDTH);
-        end loop;
-        -- transmit and check
-        spi_master_transmit_and_check(master_word_array, slave_word_array, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
-        spi_slave_transmit_and_check(slave_word_array, master_word_array, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
-      end loop;
-
-      --
-      -- Multi-word transfer with different number of words
-      --
-      for iteration in 0 to 5 loop
-        v_num_words := random(1, GC_DATA_ARRAY_WIDTH);
-        -- Generate word array
-        for idx in 0 to v_num_words-1 loop
-          master_word_array(idx) := random(GC_DATA_WIDTH);
-          slave_word_array(idx)  := random(GC_DATA_WIDTH);
-        end loop;
-        -- transmit and check
-        spi_master_transmit_and_check(master_word_array(v_num_words-1 downto 0), slave_word_array(v_num_words-1 downto 0), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
-        spi_slave_transmit_and_check(slave_word_array(v_num_words-1 downto 0), master_word_array(v_num_words-1 downto 0), C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
-      end loop;
+     --
+     -- Slave start on next SS
+     --
+     for idx in 1 to 5 loop
+       tx_word := random(GC_DATA_WIDTH); --std_logic_vector(to_unsigned(idx, GC_DATA_WIDTH)); --random(GC_DATA_WIDTH);
+       -- transfer missed word
+       spi_master_transmit_only(not(tx_word), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);  -- transfer missed by slave
+       -- delay and start slave
+       insert_delay(SPI_VVCT, C_VVC_IDX_SLAVE_1, random(5, GC_DATA_WIDTH)*C_CLK_PERIOD, "Skew SPI BFM start.");
+       increment_expected_alerts(warning, 1);
+       spi_slave_check_only(tx_word, C_VVC_IDX_SLAVE_1, START_TRANSFER_ON_NEXT_SS);
+       -- transfer received word
+       spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);  -- next transfer, slave will receive this
+     end loop;
 
       await_master_tx_completion(50 ms);
       await_slave_rx_completion(50 ms);
       await_slave_tx_completion(50 ms);
       await_master_rx_completion(50 ms);
 
+     -- Set inter_bfm_delay for multi-word transfer
+     set_multi_word_inter_bfm_delay;
 
-      --
-      -- Transfer array of words with SS_N deasserted between each word
-      --
-      shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 250 ns;
+     --
+     -- Multi-word transfer
+     --
+     for iteration in 0 to 5 loop
+       -- Generate word array
+       for idx in 0 to GC_DATA_ARRAY_WIDTH-1 loop
+         master_word_array(idx) := random(GC_DATA_WIDTH);
+         slave_word_array(idx)  := random(GC_DATA_WIDTH);
+       end loop;
+       -- transmit and check
+       spi_master_transmit_and_check(master_word_array, slave_word_array, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
+       spi_slave_transmit_and_check(slave_word_array, master_word_array, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
+     end loop;
 
-      for iteration in 0 to 5 loop
-        -- Generate word array
-        for idx in 0 to master_word_array'length-1 loop
-          master_word_array(idx) := random(GC_DATA_WIDTH);
-          slave_word_array(idx)  := random(GC_DATA_WIDTH);
-        end loop;
-        -- transmit and check
-        spi_slave_transmit_and_check(slave_word_array, master_word_array, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
-        spi_master_transmit_and_check(master_word_array, slave_word_array, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
-        for i in 0 to master_word_array'length-2 loop
-          check_inter_word_delay(250 ns);
-        end loop;
-        await_value(spi_vvc_if_1.ss_n, '1', 0 ns, 10 ms, ERROR, "await inative ss_n");
-      end loop;
+     --
+     -- Multi-word transfer with different number of words
+     --
+     for iteration in 0 to 5 loop
+       v_num_words := random(1, GC_DATA_ARRAY_WIDTH);
+       -- Generate word array
+       for idx in 0 to v_num_words-1 loop
+         master_word_array(idx) := random(GC_DATA_WIDTH);
+         slave_word_array(idx)  := random(GC_DATA_WIDTH);
+       end loop;
+       -- transmit and check
+       spi_master_transmit_and_check(master_word_array(v_num_words-1 downto 0), slave_word_array(v_num_words-1 downto 0), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
+       spi_slave_transmit_and_check(slave_word_array(v_num_words-1 downto 0), master_word_array(v_num_words-1 downto 0), C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
+     end loop;
 
-      await_master_tx_completion(50 ms);
-      await_slave_rx_completion(50 ms);
-      await_slave_tx_completion(50 ms);
-      await_master_rx_completion(50 ms);
+     await_master_tx_completion(50 ms);
+     await_slave_rx_completion(50 ms);
+     await_slave_tx_completion(50 ms);
+     await_master_rx_completion(50 ms);
 
 
-      --
-      -- Transfer array with different number of words with SS_N deasserted between each word
-      --
-      shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 150 ns;
+     --
+     -- Transfer array of words with SS_N deasserted between each word
+     --
+     shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 250 ns;
 
-      for iteration in 0 to 5 loop
-        v_num_words := random(2, GC_DATA_ARRAY_WIDTH);
-        -- Generate word array
-        for idx in 0 to v_num_words-1 loop
-          master_word_array(idx) := random(GC_DATA_WIDTH);
-          slave_word_array(idx)  := random(GC_DATA_WIDTH);
-        end loop;
-        -- transmit and check
-        spi_slave_transmit_and_check(slave_word_array(v_num_words-1 downto 0), master_word_array(v_num_words-1 downto 0), C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
-        spi_master_transmit_and_check(master_word_array(v_num_words-1 downto 0), slave_word_array(v_num_words-1 downto 0), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
-        for i in 0 to v_num_words-2 loop
-          check_inter_word_delay(150 ns);
-        end loop;
-        await_value(spi_vvc_if_1.ss_n, '1', 0 ns, 10 ms, ERROR, "await inative ss_n");
-      end loop;
+     for iteration in 0 to 5 loop
+       -- Generate word array
+       for idx in 0 to master_word_array'length-1 loop
+         master_word_array(idx) := random(GC_DATA_WIDTH);
+         slave_word_array(idx)  := random(GC_DATA_WIDTH);
+       end loop;
+       -- transmit and check
+       spi_slave_transmit_and_check(slave_word_array, master_word_array, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
+       spi_master_transmit_and_check(master_word_array, slave_word_array, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
+       for i in 0 to master_word_array'length-2 loop
+         check_inter_word_delay(250 ns);
+       end loop;
+       await_value(spi_vvc_if_1.ss_n, '1', 0 ns, 10 ms, ERROR, "await inative ss_n");
+     end loop;
 
-      await_master_tx_completion(50 ms);
-      await_slave_rx_completion(50 ms);
-      await_slave_tx_completion(50 ms);
-      await_master_rx_completion(50 ms);
+     await_master_tx_completion(50 ms);
+     await_slave_rx_completion(50 ms);
+     await_slave_tx_completion(50 ms);
+     await_master_rx_completion(50 ms);
 
-      --
-      -- Receive only, one word
-      --
-      -- master --> slave
-      tx_word := random(GC_DATA_WIDTH);
-      spi_slave_receive_only(1, C_VVC_IDX_SLAVE_1);
-      v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_SLAVE_1);
-      spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
-      await_slave_rx_completion(50 ms);
-      await_master_tx_completion(50 ms);
-      fetch_result(SPI_VVCT, C_VVC_IDX_SLAVE_1, v_cmd_idx, result);
-      check_value(tx_word, result(GC_DATA_WIDTH-1 downto 0), ERROR, "check received data");
 
-      -- slave --> master
-      tx_word := random(GC_DATA_WIDTH);
-      spi_master_receive_only(1, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
-      v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_MASTER_1);
-      spi_slave_transmit_only(tx_word, C_VVC_IDX_SLAVE_1);
-      await_slave_rx_completion(50 ms);
-      await_master_tx_completion(50 ms);
-      fetch_result(SPI_VVCT, C_VVC_IDX_MASTER_1, v_cmd_idx, result);
-      check_value(tx_word, result(GC_DATA_WIDTH-1 downto 0), ERROR, "check received data");
+     --
+     -- Transfer array with different number of words with SS_N deasserted between each word
+     --
+     shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 150 ns;
 
-      --
-      -- Receive only, multi-word
-      --
-      -- master --> slave
-      for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
-        for i in 1 to iteration loop
-          master_word_array(i-1) := random(GC_DATA_WIDTH);
-        end loop;
-        spi_slave_receive_only(iteration, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
-        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_SLAVE_1);
-        spi_master_transmit_only(master_word_array(iteration-1 downto 0), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
-        await_slave_rx_completion(50 ms);
-        await_master_tx_completion(50 ms);
-        for i in 1 to iteration loop
-          fetch_result(SPI_VVCT, C_VVC_IDX_SLAVE_1, v_cmd_idx, result);
-          check_value(master_word_array(i-1), result(GC_DATA_WIDTH-1 downto 0), ERROR, "check received data");
-        end loop;
-      end loop;
+     for iteration in 0 to 5 loop
+       v_num_words := random(2, GC_DATA_ARRAY_WIDTH);
+       -- Generate word array
+       for idx in 0 to v_num_words-1 loop
+         master_word_array(idx) := random(GC_DATA_WIDTH);
+         slave_word_array(idx)  := random(GC_DATA_WIDTH);
+       end loop;
+       -- transmit and check
+       spi_slave_transmit_and_check(slave_word_array(v_num_words-1 downto 0), master_word_array(v_num_words-1 downto 0), C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
+       spi_master_transmit_and_check(master_word_array(v_num_words-1 downto 0), slave_word_array(v_num_words-1 downto 0), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
+       for i in 0 to v_num_words-2 loop
+         check_inter_word_delay(150 ns);
+       end loop;
+       await_value(spi_vvc_if_1.ss_n, '1', 0 ns, 10 ms, ERROR, "await inative ss_n");
+     end loop;
 
-      -- slave --> master
-      for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
-        for i in 1 to iteration loop
-          master_word_array(i-1) := random(GC_DATA_WIDTH);
-        end loop;
-        spi_master_receive_only(iteration, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
-        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_MASTER_1);
-        spi_slave_transmit_only(master_word_array(iteration-1 downto 0), C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
-        await_slave_rx_completion(50 ms);
-        await_master_tx_completion(50 ms);
-        for i in 1 to iteration loop
-          fetch_result(SPI_VVCT, C_VVC_IDX_MASTER_1, v_cmd_idx, result);
-          check_value(master_word_array(i-1), result(GC_DATA_WIDTH-1 downto 0), ERROR, "check received data");
-        end loop;
-      end loop;
+     await_master_tx_completion(50 ms);
+     await_slave_rx_completion(50 ms);
+     await_slave_tx_completion(50 ms);
+     await_master_rx_completion(50 ms);
 
-      shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 0 ns;
+     --
+     -- Receive only, one word
+     --
+     -- master --> slave
+     tx_word := random(GC_DATA_WIDTH);
+     spi_slave_receive_only(1, C_VVC_IDX_SLAVE_1);
+     v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_SLAVE_1);
+     spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
+     await_slave_rx_completion(50 ms);
+     await_master_tx_completion(50 ms);
+     fetch_result(SPI_VVCT, C_VVC_IDX_SLAVE_1, v_cmd_idx, result);
+     check_value(tx_word, result(GC_DATA_WIDTH-1 downto 0), ERROR, "check received data");
 
-    elsif GC_TEST = "spi_master_dut_to_slave_VVC" then
+     -- slave --> master
+     tx_word := random(GC_DATA_WIDTH);
+     spi_master_receive_only(1, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
+     v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_MASTER_1);
+     spi_slave_transmit_only(tx_word, C_VVC_IDX_SLAVE_1);
+     await_slave_rx_completion(50 ms);
+     await_master_tx_completion(50 ms);
+     fetch_result(SPI_VVCT, C_VVC_IDX_MASTER_1, v_cmd_idx, result);
+     check_value(tx_word, result(GC_DATA_WIDTH-1 downto 0), ERROR, "check received data");
+
+     --
+     -- Receive only, multi-word
+     --
+     -- master --> slave
+     for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
+       for i in 1 to iteration loop
+         master_word_array(i-1) := random(GC_DATA_WIDTH);
+       end loop;
+       spi_slave_receive_only(iteration, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
+       v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_SLAVE_1);
+       spi_master_transmit_only(master_word_array(iteration-1 downto 0), C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
+       await_slave_rx_completion(50 ms);
+       await_master_tx_completion(50 ms);
+       for i in 1 to iteration loop
+         fetch_result(SPI_VVCT, C_VVC_IDX_SLAVE_1, v_cmd_idx, result);
+         check_value(master_word_array(i-1), result(GC_DATA_WIDTH-1 downto 0), ERROR, "check received data");
+       end loop;
+     end loop;
+
+     -- slave --> master
+     for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
+       for i in 1 to iteration loop
+         master_word_array(i-1) := random(GC_DATA_WIDTH);
+       end loop;
+       spi_master_receive_only(iteration, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
+       v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_MASTER_1);
+       spi_slave_transmit_only(master_word_array(iteration-1 downto 0), C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
+       await_slave_rx_completion(50 ms);
+       await_master_tx_completion(50 ms);
+       for i in 1 to iteration loop
+         fetch_result(SPI_VVCT, C_VVC_IDX_MASTER_1, v_cmd_idx, result);
+         check_value(master_word_array(i-1), result(GC_DATA_WIDTH-1 downto 0), ERROR, "check received data");
+       end loop;
+     end loop;
+
+     shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 0 ns;
+
+    elsif GC_TESTCASE = "spi_master_dut_to_slave_VVC" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -1099,7 +1099,7 @@ begin  -- architecture behav
         end loop;
       end loop;
 
-    elsif GC_TEST = "spi_slave_vvc_to_master_dut" then
+    elsif GC_TESTCASE = "spi_slave_vvc_to_master_dut" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -1147,47 +1147,55 @@ begin  -- architecture behav
         sbi_await_completion(50 ms);
       end if;
 
-    elsif GC_TEST = "spi_master_vvc_to_slave_dut" then
+    elsif GC_TESTCASE = "spi_master_vvc_to_slave_dut" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
-      for iteration in 0 to 10 loop
-        tx_word := random(GC_DATA_WIDTH);
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
-        spi_master_transmit_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
-        sbi_slave_check(tx_word);  -- this will read what the DUT just received via SPI
-        sbi_await_completion(50 ms);
-      end loop;
+      tx_word := random(GC_DATA_WIDTH);
+      log("Transmit: " & to_string(tx_word), C_SCOPE);
+      ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
+      spi_master_transmit_only(tx_word, 3);
+      await_master_tx_completion(50 ms, 3);
+      sbi_slave_check(tx_word);  -- this will read what the DUT just received via SPI
+      sbi_await_completion(50 ms);
 
-      -- Verify corner cases
-      if GC_DATA_WIDTH = 32 then
-        tx_word := x"5555_5555";
-        spi_master_transmit_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
-        sbi_slave_check(tx_word);
-        sbi_await_completion(50 ms);
+      -- for iteration in 0 to 10 loop
+      --   tx_word := random(GC_DATA_WIDTH);
+      --   ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
+      --   spi_master_transmit_only(tx_word, 3);
+      --   await_master_tx_completion(50 ms, 3);
+      --   sbi_slave_check(tx_word);  -- this will read what the DUT just received via SPI
+      --   sbi_await_completion(50 ms);
+      -- end loop;
 
-        tx_word := x"AAAA_AAAA";
-        spi_master_transmit_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
-        sbi_slave_check(tx_word);
-        sbi_await_completion(50 ms);
+      -- -- Verify corner cases
+      -- if GC_DATA_WIDTH = 32 then
+      --   tx_word := x"5555_5555";
+      --   spi_master_transmit_only(tx_word, 3);
+      --   await_master_tx_completion(50 ms, 3);
+      --   sbi_slave_check(tx_word);
+      --   sbi_await_completion(50 ms);
 
-        tx_word := x"FFFF_FFFF";
-        spi_master_transmit_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
-        sbi_slave_check(tx_word);
-        sbi_await_completion(50 ms);
+      --   tx_word := x"AAAA_AAAA";
+      --   spi_master_transmit_only(tx_word, 3);
+      --   await_master_tx_completion(50 ms, 3);
+      --   sbi_slave_check(tx_word);
+      --   sbi_await_completion(50 ms);
 
-        tx_word := x"0000_0000";
-        spi_master_transmit_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
-        sbi_slave_check(tx_word);
-        sbi_await_completion(50 ms);
-      end if;
+      --   tx_word := x"FFFF_FFFF";
+      --   spi_master_transmit_only(tx_word, 3);
+      --   await_master_tx_completion(50 ms, 3);
+      --   sbi_slave_check(tx_word);
+      --   sbi_await_completion(50 ms);
 
-    elsif GC_TEST = "spi_slave_dut_to_master_vvc" then
+      --   tx_word := x"0000_0000";
+      --   spi_master_transmit_only(tx_word, 3);
+      --   await_master_tx_completion(50 ms, 3);
+      --   sbi_slave_check(tx_word);
+      --   sbi_await_completion(50 ms);
+      -- end if;
+
+    elsif GC_TESTCASE = "spi_slave_dut_to_master_vvc" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -1256,7 +1264,7 @@ begin  -- architecture behav
       --
       -- Not posible with DUT
 
-    elsif GC_TEST = "scoreboard_test" then
+    elsif GC_TESTCASE = "scoreboard_test" then
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
@@ -1273,9 +1281,6 @@ begin  -- architecture behav
       await_master_rx_completion(50 ms);
 
       SPI_VVC_SB.report_counters(ALL_INSTANCES);
-
-    else
-      alert(tb_error, "Unsupported test");
     end if;
 
 

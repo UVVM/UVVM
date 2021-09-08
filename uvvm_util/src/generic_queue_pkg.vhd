@@ -724,9 +724,13 @@ package body generic_queue_pkg is
     check_value(vr_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
     perform_pre_add_checks(instance);
     check_value(vr_num_elements_in_queue(instance) < vr_queue_count_max(instance), TB_ERROR, proc_name & "() into generic queue (of size " & to_string(vr_queue_count_max(instance)) & ") when full", vr_scope(instance), ID_NEVER);
-    check_value(vr_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() into empty queue isn't supported. Use add() instead", vr_scope(instance), ID_NEVER);
-    if identifier_option = POSITION then
-      check_value(vr_num_elements_in_queue(instance) >= identifier, TB_ERROR, proc_name & "() into position larger than number of elements in queue. Use add() instead when inserting at the back of the queue", vr_scope(instance), ID_NEVER);
+
+    if (identifier /= 1) then
+      if (identifier_option = POSITION) then
+        check_value(vr_num_elements_in_queue(instance) >= identifier, TB_ERROR, proc_name & "() into position larger than number of elements in queue. Use add() instead when inserting at the back of the queue", vr_scope(instance), ID_NEVER);
+      else -- identifier_option /= POSITION
+        check_value(vr_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() into empty queue isn't supported. Use add() instead", vr_scope(instance), ID_NEVER);       
+      end if;
     end if;
 
     -- Search from front to back element.
@@ -764,6 +768,12 @@ package body generic_queue_pkg is
         v_element_ptr.next_element := v_new_element_ptr;  -- Insert the new element into the linked list
       end if;
       vr_num_elements_in_queue(instance) := vr_num_elements_in_queue(instance) + 1;  -- Increment number of elements
+    
+    elsif identifier_option = POSITION then -- v_found_match = false
+      if identifier = 1 then
+        add(instance, element);
+      end if;
+
     elsif identifier_option = ENTRY_NUM then
       if (vr_num_elements_in_queue(instance) > 0) then  -- if not already reported tb_error due to empty
         tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " &
@@ -957,7 +967,7 @@ package body generic_queue_pkg is
   ) is
     variable v_entry_num : integer:= find_entry_num(element);
   begin
-    delete(instance, POSITION, v_entry_num, v_entry_num);
+    delete(instance, ENTRY_NUM, v_entry_num, v_entry_num);
   end procedure;
 
   procedure delete(
@@ -1306,6 +1316,9 @@ package body generic_queue_pkg is
   begin
     -- Search from front to back element. Initalise pointers/counters to the first entry:
     v_element_ptr := vr_first_element(instance);
+    if v_element_ptr = NULL then
+      return; -- Return if queue is empty
+    end if;
 
     loop
       log(ID_UVVM_DATA_QUEUE, "Pos=" & to_string(v_position_ctr) & ", entry_num=" & to_string(v_element_ptr.entry_num) , scope);

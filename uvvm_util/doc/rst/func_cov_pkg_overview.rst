@@ -11,7 +11,7 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
     library uvvm_util;
     context uvvm_util.uvvm_util_context;
     ...
-    signal dut_size : natural;
+    signal bus_addr : natural;
     shared variable my_coverpoint : t_coverpoint;
     ...
     p_main : process
@@ -22,10 +22,10 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
       my_coverpoint.add_bins(bin(255), "bin_max");
 
       -- Sample the data
-      while not(my_coverpoint.coverage_completed(VOID)) loop
-        dut_size <= my_coverpoint.rand(VOID);
+      while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
+        bus_addr <= my_coverpoint.rand(VOID);
         wait for C_CLK_PERIOD;
-        my_coverpoint.sample_coverage(dut_size);
+        my_coverpoint.sample_coverage(bus_addr);
       end loop;
       
       -- Print the coverage report
@@ -41,13 +41,53 @@ Concepts
 **********************************************************************************************************************************
 There are three main elements in the functional coverage data structure: bin, coverpoint and cross.
 
-* A bin associates a count with a value, a set of values or a transitions of values. The count is incremented when the coverpoint 
-  or cross is sampled.
+* A bin associates a counter with a value, a set of values or a transitions of values. The counter is incremented when the 
+  coverpoint or cross is sampled.
 * A coverpoint represents a specification point to verify, e.g. a packet size or a memory address. It is associated with one or 
   several bins.
-* A cross represents a combination of two or more coverpoints.
+* A cross represents a combination of two or more objects (variable/signal/coverpoint).
 
 Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.
+
+In Figure 1, we can see a coverpoint named *memory_address* which contains six different bins: four bins with a single value each, 
+one bin with a range of values and one bin with a transition of values. Each of the bins has a different counter value reflecting 
+how many times the coverpoint has been sampled with the corresponding values of the bins.
+
+.. figure:: images/func_cov_coverpoint.png
+   :width: 400pt
+   :align: center
+
+   Figure 1
+
+In Figure 2, we can see a cross named *src_addr_x_dst_addr* which contains eight different bins. Each bin contains different 
+combinations of values for *src_addr* and *dst_addr*.
+
+.. figure:: images/func_cov_cross.png
+   :width: 400pt
+   :align: center
+
+   Figure 2
+
+.. note::
+
+    The bin values are represented as integer numbers. In order to use functional coverage for other types of values, such as 
+    unsigned, enumerated, etc., they must be converted to integer values first.
+
+.. code-block::
+
+    -- Example 1
+    my_coverpoint.add_bins(bin(t_state'pos(IDLE)));
+    my_coverpoint.add_bins(bin(t_state'pos(RUNNING)));
+    my_coverpoint.sample_coverage(t_state'pos(fsm_state));
+    rand_state_int := my_coverpoint.rand(VOID);
+    rand_state     <= t_state'val(rand_state_int);
+
+    -- Example 2
+    my_coverpoint.add_bins(bin(to_integer(unsigned'(x"00"))));
+    my_coverpoint.add_bins(bin(to_integer(unsigned'(x"FF"))));
+    my_coverpoint.sample_coverage(to_integer(address));
+    rand_addr_int := my_coverpoint.rand(VOID);
+    rand_addr     <= to_unsigned(rand_addr_int,rand_addr'length);
 
 **********************************************************************************************************************************
 Creating and adding bins
@@ -63,24 +103,24 @@ Bins can be created using the following :ref:`bin functions <bin_functions>`:
     -- 1. Create a single bin for a single value
     bin(0)
 
-    -- 2. Create a single bin for multiple values (the values are ORed)
-    bin((2,4,6,8))
+    -- 2. Create a single bin for multiple values (sample any of the values to increase the bin counter)
+    bin((2,4,6,8))             -- Note the use of double parentheses due to the integer_vector parameter
 
     -- 3. Create a single bin for each value in a given range
-    bin_range(0, 5)      -- creates 6 bins: 0,1,2,3,4,5
+    bin_range(0, 5)            -- creates 6 bins: 0,1,2,3,4,5
 
     -- 4. Create a number of bins from a range of values
-    bin_range(1, 10, 1)  -- creates 1 bin:  1 to 10
-    bin_range(1, 10, 2)  -- creates 2 bins: 1 to 5, 6 to 10
+    bin_range(1, 10, 1)        -- creates 1 bin:  1 to 10
+    bin_range(1, 10, 2)        -- creates 2 bins: 1 to 5, 6 to 10
 
     -- 5. Create a single bin for each value in a vector's range
-    bin_vector(addr)     -- creates 2^(addr'length) bins
+    bin_vector(addr)           -- creates 2^(addr'length) bins
 
     -- 6. Create a number of bins from a vector's range
-    bin_vector(addr, 16) -- creates 16 bins
+    bin_vector(addr, 16)       -- creates 16 bins
 
     -- 7. Create a single bin for a transition of values
-    bin_transition((1,3,5,7))
+    bin_transition((1,3,5,7))  -- Note the use of double parentheses due to the integer_vector parameter
 
 With the functions above and the procedure ``add_bins()``, bins can be added to the coverpoint.
 
@@ -89,7 +129,7 @@ With the functions above and the procedure ``add_bins()``, bins can be added to 
     -- 1. Add a single bin for a single value
     my_coverpoint.add_bins(bin(0));
 
-    -- 2. Add a single bin for multiple values (the values are ORed)
+    -- 2. Add a single bin for multiple values (sample any of the values to increase the bin counter)
     my_coverpoint.add_bins(bin((2,4,6,8)));
 
     -- 3. Add a single bin for each value in a given range
@@ -125,6 +165,8 @@ Specific values or transitions can be excluded from the coverage by using ignore
 * Discard one or more values in a range
 * Discard one or more values after automatically creating bins
 * Discard complete or partial transitions
+
+Note that the order in which the bins are added, both valid and ignore, does not matter.
 
 .. code-block::
 
@@ -188,9 +230,9 @@ it before the sequencer has added the bins, the testbench will generate a TB_ERR
 
 Bin memory allocation
 ==================================================================================================================================
-For users who want more control over the memory usage during simulation, it is possible to configure how large the bin list is and 
-how much the size increments when the list becomes full, by using the constants C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED and 
-C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT defined in adaptations_pkg.
+For users who want more control over the memory usage during simulation, it is possible to configure how large the bin list is 
+initially (C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED) and how much the size increments (C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT) 
+when the list becomes full. These constants are defined in adaptations_pkg.
 
 Moreover, the procedures ``set_num_allocated_bins()`` and ``set_num_allocated_bins_increment()`` can be used to reconfigure a 
 coverpoint's respective values.
@@ -199,7 +241,7 @@ coverpoint's respective values.
 Bin name
 **********************************************************************************************************************************
 Bins can be named by using the optional parameter *bin_name* in the ``add_bins()`` procedure. If no name is given to the bin, a 
-default name will be automatically given. This is useful when reading the reports.
+default name will be automatically given. Having a bin name is useful when reading the reports.
 
 .. code-block::
 
@@ -278,8 +320,9 @@ bins have been covered, their respective randomization weights will be reset to 
 **********************************************************************************************************************************
 Cross coverage
 **********************************************************************************************************************************
-Whenever we need to track combinations of values from two or more coverpoints we can use cross coverage. This can be done in two 
-different ways using the ``add_cross()`` procedure and :ref:`bin functions <bin_functions>`.
+It can be used to track combinations of values from two or more objects (variable/signal/coverpoint). 
+For example, when certain combinations of source address and destination address of the Ethernet protocol need to be verified.
+This can be done in two different ways using the ``add_cross()`` procedure and :ref:`bin functions <bin_functions>`.
 
 Using bins
 ==================================================================================================================================

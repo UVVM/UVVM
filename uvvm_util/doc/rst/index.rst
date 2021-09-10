@@ -8,6 +8,7 @@ General Randomization and Functional Coverage
 
    rand_pkg_overview.rst
    func_cov_pkg_overview.rst
+   optimized_rand.rst
 
 **********************************************************************************************************************************
 What is UVVM

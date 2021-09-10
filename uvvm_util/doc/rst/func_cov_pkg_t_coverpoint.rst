@@ -560,7 +560,8 @@ This procedure has overloads which support crossing up to 16 coverpoints. ::
 rand()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value (or values for crossed bins) generated from the uncovered bins. Once all the bins have been covered, 
-it will return a random value among all the valid bins. Note that ignore and illegal bins will never be selected for randomization. ::
+it will return a random value among all the valid bins. Note that ignore and illegal bins will never be selected for randomization. 
+For a complete overview on Optimized Randomization click :ref:`here <optimized_randomization>`.::
 
     integer        := rand(VOID)
     integer        := rand(msg_id_panel)

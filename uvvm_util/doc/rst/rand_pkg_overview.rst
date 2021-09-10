@@ -65,17 +65,17 @@ There are different ways of constraining the random value in a clear and consist
 .. code-block::
 
     -- 1. min & max values
-    addr := my_rand.rand(0, 99); -- Generates a value between 0 and 99
+    addr := my_rand.rand(0, 99); -- Generates a value in the range [0:99]
 
     -- 2. set of values
     addr := my_rand.rand(ONLY,(0,5,10)); -- Generates a value which is either 0, 5 or 10
 
     -- 3. min & max + set of values
-    addr := my_rand.rand(0, 50, ADD,(60,70,80)); -- Generates a value between 0 and 50 and either 60, 70 or 80
-    addr := my_rand.rand(0, 50, EXCL,(25));      -- Generates a value between 0 and 50 except for 25
+    addr := my_rand.rand(0, 50, ADD,(60,70,80)); -- Generates a value in the range [0:50] and either 60, 70 or 80
+    addr := my_rand.rand(0, 50, EXCL,(25));      -- Generates a value in the range [0:50] except for 25
 
     -- 4. min & max + two sets of values
-    addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(25)); -- Generates a value between 0 and 50 and either 60, 70 or 80, except for 25
+    addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(25)); -- Generates a value in the range [0:50] and either 60, 70 or 80, except for 25
 
 For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`.
 
@@ -247,12 +247,12 @@ it is possible to explicitly define the mode while generating the random number 
     addr := my_rand.rand_val_weight(((-5,1),(0,3),(5,1))); -- Generates a value which is either -5, 0 or 5 with their corresponding weights
 
     -- Example 2: range(min/max), weight
-    addr := my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value between -5 and -3, 0 and between 1 and 5 with 
+    addr := my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value in the range [-5:-3], 0 and the range [1:5] with 
                                                                        -- their corresponding weights and default mode
 
     -- Example 3: range(min/max), weight, weight mode
-    addr := my_rand.rand_range_weight_mode(((-5,-3,30,COMBINED_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT))); -- Generates a value between -5 and -3, 0 and between 
-                                                                                                               -- 1 and 5 with their corresponding weights and explicit modes
+    addr := my_rand.rand_range_weight_mode(((-5,-3,30,COMBINED_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT))); -- Generates a value in the range [-5:-3], 0 and the range 
+                                                                                                               -- [1:5] with their corresponding weights and explicit modes
 
 The supported types are integer, real, time, unsigned, signed and std_logic_vector.
 

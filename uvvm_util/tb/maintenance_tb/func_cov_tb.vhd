@@ -401,8 +401,8 @@ begin
     -------------------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Functional Coverage package - " & GC_TESTCASE);
     -------------------------------------------------------------------------------------------
-    enable_log_msg(ID_FUNC_COV);
     enable_log_msg(ID_FUNC_COV_BINS);
+    enable_log_msg(ID_FUNC_COV_BINS_INFO);
     enable_log_msg(ID_FUNC_COV_RAND);
     enable_log_msg(ID_FUNC_COV_SAMPLE);
     enable_log_msg(ID_FUNC_COV_CONFIG);

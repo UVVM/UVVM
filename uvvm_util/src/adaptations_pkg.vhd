@@ -94,8 +94,8 @@ package adaptations_pkg is
     ID_WATCHDOG,              -- Used for logging the activity of the watchdog
     ID_RAND_GEN,              -- Used for logging general randomization values returned by rand()
     ID_RAND_CONF,             -- Used for logging general randomization configuration changes, except from name and scope
-    ID_FUNC_COV,              -- Used for logging functional coverage add_bins() and add_cross() methods
-    ID_FUNC_COV_BINS,         -- Used for logging functional coverage add_bins() and add_cross() methods detailed information
+    ID_FUNC_COV_BINS,         -- Used for logging functional coverage add_bins() and add_cross() methods
+    ID_FUNC_COV_BINS_INFO,    -- Used for logging functional coverage add_bins() and add_cross() methods detailed information
     ID_FUNC_COV_RAND,         -- Used for logging functional coverage "optimized randomization" values returned by rand()
     ID_FUNC_COV_SAMPLE,       -- Used for logging functional coverage sampling
     ID_FUNC_COV_CONFIG,       -- Used for logging functional coverage configuration changes
@@ -186,20 +186,20 @@ package adaptations_pkg is
   -- Default message Id panel to be used for all message Id panels, except:
   --  - VVC message Id panels, see constant C_VVC_MSG_ID_PANEL_DEFAULT
   constant C_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
-    ID_NEVER            => DISABLED,
-    ID_UTIL_BURIED      => DISABLED,
-    ID_BITVIS_DEBUG     => DISABLED,
-    ID_COVERAGE_MAKEBIN => DISABLED,
-    ID_COVERAGE_ADDBIN  => DISABLED,
-    ID_COVERAGE_ICOVER  => DISABLED,
-    ID_RAND_GEN         => DISABLED,
-    ID_RAND_CONF        => DISABLED,
-    ID_FUNC_COV         => DISABLED,
-    ID_FUNC_COV_BINS    => DISABLED,
-    ID_FUNC_COV_RAND    => DISABLED,
-    ID_FUNC_COV_SAMPLE  => DISABLED,
-    ID_FUNC_COV_CONFIG  => DISABLED,
-    others              => ENABLED
+    ID_NEVER              => DISABLED,
+    ID_UTIL_BURIED        => DISABLED,
+    ID_BITVIS_DEBUG       => DISABLED,
+    ID_COVERAGE_MAKEBIN   => DISABLED,
+    ID_COVERAGE_ADDBIN    => DISABLED,
+    ID_COVERAGE_ICOVER    => DISABLED,
+    ID_RAND_GEN           => DISABLED,
+    ID_RAND_CONF          => DISABLED,
+    ID_FUNC_COV_BINS      => DISABLED,
+    ID_FUNC_COV_BINS_INFO => DISABLED,
+    ID_FUNC_COV_RAND      => DISABLED,
+    ID_FUNC_COV_SAMPLE    => DISABLED,
+    ID_FUNC_COV_CONFIG    => DISABLED,
+    others                => ENABLED
   );
 
   type  t_msg_id_indent is array (t_msg_id'left to t_msg_id'right) of string(1 to 4);
@@ -214,7 +214,7 @@ package adaptations_pkg is
     ID_NEW_HVVC_CMD_SEQ      => "  "   & NUL & NUL,
     ID_AWAIT_COMPLETION_WAIT => ".."   & NUL & NUL,
     ID_AWAIT_COMPLETION_END  => "  "   & NUL & NUL,
-    ID_FUNC_COV_BINS         => "  "   & NUL & NUL,
+    ID_FUNC_COV_BINS_INFO    => "  "   & NUL & NUL,
     others                   => ""     & NUL & NUL & NUL & NUL
   );
 

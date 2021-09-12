@@ -2001,8 +2001,8 @@ package body func_cov_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
-      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding bins: " &  get_bin_array_values(bin) & ", min_hits:" & to_string(min_hits) &
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding bins: " &  get_bin_array_values(bin) & ", min_hits:" & to_string(min_hits) &
         ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
@@ -2053,8 +2053,8 @@ package body func_cov_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
-      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) &
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) &
         ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
@@ -2109,8 +2109,8 @@ package body func_cov_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
-      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) & " x "  &  get_bin_array_values(bin3) &
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) & " x "  &  get_bin_array_values(bin3) &
         ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
@@ -2166,8 +2166,8 @@ package body func_cov_pkg is
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, coverpoint1.get_num_bins_crossed(VOID), coverpoint2.get_num_bins_crossed(VOID));
-      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  coverpoint1.get_all_bins_string(VOID) & " x "  &  coverpoint2.get_all_bins_string(VOID) &
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " &  coverpoint1.get_all_bins_string(VOID) & " x "  &  coverpoint2.get_all_bins_string(VOID) &
         ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
@@ -2224,8 +2224,8 @@ package body func_cov_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, coverpoint1.get_num_bins_crossed(VOID), coverpoint2.get_num_bins_crossed(VOID),
         coverpoint3.get_num_bins_crossed(VOID));
-      log(ID_FUNC_COV, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & "Adding cross: " &  coverpoint1.get_all_bins_string(VOID) & " x "  &  coverpoint2.get_all_bins_string(VOID) &
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " &  coverpoint1.get_all_bins_string(VOID) & " x "  &  coverpoint2.get_all_bins_string(VOID) &
         " x "  &  coverpoint3.get_all_bins_string(VOID) &
         ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
         ", """ & bin_name & """", priv_scope, msg_id_panel);

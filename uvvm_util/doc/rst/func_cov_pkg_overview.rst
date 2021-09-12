@@ -48,9 +48,9 @@ There are three main elements in the functional coverage data structure: bin, co
 
 * A bin associates a counter with a value, a set of values or a transitions of values. The counter is incremented when the 
   coverpoint or cross is sampled.
-* A coverpoint represents a specification point to verify, e.g. a packet size or a memory address. It is associated with one or 
-  several bins.
 * A cross represents a combination of two or more objects (variable/signal/coverpoint).
+* A coverpoint represents a specification point to verify, e.g. a packet size, a memory address or a cross of the two. It is 
+  associated with one or several bins.
 
 Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.
 
@@ -210,6 +210,24 @@ sampled. The default severity of the alert is ERROR and can be configured using 
     my_coverpoint.add_bins(illegal_bin_range(220, 250));
     my_coverpoint.add_bins(illegal_bin_transition((200,100,0)));
 
+Using predefined bins
+==================================================================================================================================
+Sometimes it is useful to define bins which have a particular meaning or which are used several times. A constant or a variable 
+can be created using the type *t_new_bin_array(0 to 0)* which is returned by any of the bin functions. 
+
+.. code-block::
+
+    constant C_BIN_IDLE    : t_new_bin_array(0 to 0) := bin(0);
+    constant C_BIN_RUNNING : t_new_bin_array(0 to 0) := bin(1);
+    constant C_BIN_ILLEGAL : t_new_bin_array(0 to 0) := illegal_bin(2);
+    ...
+    variable v_bin_sequence : t_new_bin_array(0 to 0) := bin_transition((0,2,4,8,16,32,64,128));
+    variable v_bin_ranges   : t_new_bin_array(0 to 0) := bin_range(0,255,2);
+    ...
+    my_coverpoint.add_cross(C_BIN_IDLE, v_bin_sequence & v_bin_ranges);
+    my_coverpoint.add_cross(C_BIN_RUNNING, v_bin_sequence & v_bin_ranges);
+    my_coverpoint.add_cross(C_BIN_ILLEGAL, v_bin_sequence & v_bin_ranges);
+
 Adding bins from separate process
 ==================================================================================================================================
 In some cases there is one process that creates the coverpoint model and another process that samples the data, e.g. a sequencer 
@@ -279,8 +297,8 @@ This can be done in two different ways using the ``add_cross()`` procedure and :
 
 Using bins
 ==================================================================================================================================
-This is a "faster" way of doing it and useful when we need specific combinations of values. The ``add_cross()`` overloads support 
-up to 5 crossed elements.
+This is a "faster" way of creating the crosses and useful when we need specific combinations of values. The ``add_cross()`` 
+overloads support up to 5 crossed elements.
 
 .. code-block::
 
@@ -294,34 +312,31 @@ up to 5 crossed elements.
 .. code-block:: none
 
     # UVVM:  --------------------------------------------------------------------------------------------------------
-    # UVVM:               BINS               HITS      MIN_HITS      COVERAGE        NAME           STATUS    
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE      NAME       ILLEGAL/IGNORE
     # UVVM:     (10, 20, 30)x(64 to 127)      0          N/A           N/A        illegal_bin      ILLEGAL    
-    # UVVM:          (10)x(0 to 15)           0           1           0.00%          bin_0        UNCOVERED   
-    # UVVM:          (20)x(16 to 31)          0           1           0.00%          bin_1        UNCOVERED   
-    # UVVM:          (30)x(32 to 63)          0           1           0.00%          bin_2        UNCOVERED   
+    # UVVM:          (10)x(0 to 15)           0           1           0.00%          bin_0            -       
+    # UVVM:          (20)x(16 to 31)          0           1           0.00%          bin_1            -       
+    # UVVM:          (30)x(32 to 63)          0           1           0.00%          bin_2            -       
     # UVVM:  ========================================================================================================
 
 The bin functions may also be concatenated to add several bins at once.
 
 .. code-block::
 
-    my_cross.add_cross(bin(10), bin_range(0,7,1) & bin_range(8,15,1));
-    my_cross.add_cross(bin(20), bin_range(16,23,1) & bin_range(24,31,1));
-    my_cross.add_cross(bin(30), bin_range(32,47,1) & bin_range(48,63,1));
-    my_cross.add_cross(bin((10,20,30)), illegal_bin_range(64,95) & illegal_bin_range(96,127));
+    add_cross(bin1, bin2, bin3, [bin_name])
+
+    my_cross.add_cross(bin(10) & bin(20) & bin(30), bin_range(0,7,1) & bin_range(8,15,1), bin(1000));
 
 .. code-block:: none
 
     # UVVM:  --------------------------------------------------------------------------------------------------------
-    # UVVM:               BINS               HITS      MIN_HITS      COVERAGE        NAME           STATUS    
-    # UVVM:      (10, 20, 30)x(64 to 95)      0          N/A           N/A           bin_6         ILLEGAL    
-    # UVVM:     (10, 20, 30)x(96 to 127)      0          N/A           N/A           bin_7         ILLEGAL    
-    # UVVM:           (10)x(0 to 7)           0           1           0.00%          bin_0        UNCOVERED   
-    # UVVM:          (10)x(8 to 15)           0           1           0.00%          bin_1        UNCOVERED   
-    # UVVM:          (20)x(16 to 23)          0           1           0.00%          bin_2        UNCOVERED   
-    # UVVM:          (20)x(24 to 31)          0           1           0.00%          bin_3        UNCOVERED   
-    # UVVM:          (30)x(32 to 47)          0           1           0.00%          bin_4        UNCOVERED   
-    # UVVM:          (30)x(48 to 63)          0           1           0.00%          bin_5        UNCOVERED   
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE      NAME       ILLEGAL/IGNORE
+    # UVVM:       (10)x(0 to 7)x(1000)        0           1           0.00%          bin_0            -       
+    # UVVM:       (10)x(8 to 15)x(1000)       0           1           0.00%          bin_1            -       
+    # UVVM:       (20)x(0 to 7)x(1000)        0           1           0.00%          bin_2            -       
+    # UVVM:       (20)x(8 to 15)x(1000)       0           1           0.00%          bin_3            -       
+    # UVVM:       (30)x(0 to 7)x(1000)        0           1           0.00%          bin_4            -       
+    # UVVM:       (30)x(8 to 15)x(1000)       0           1           0.00%          bin_5            -       
     # UVVM:  ========================================================================================================
 
 Using coverpoints
@@ -338,11 +353,11 @@ This alternative is useful when the coverpoints are already created and we don't
 .. code-block:: none
 
     # UVVM:  --------------------------------------------------------------------------------------------------------
-    # UVVM:               BINS               HITS      MIN_HITS      COVERAGE        NAME           STATUS    
-    # UVVM:          (0)x(0 to 127)           0           1           0.00%          bin_0        UNCOVERED   
-    # UVVM:          (1)x(0 to 127)           0           1           0.00%          bin_1        UNCOVERED   
-    # UVVM:          (2)x(0 to 127)           0           1           0.00%          bin_2        UNCOVERED   
-    # UVVM:          (3)x(0 to 127)           0           1           0.00%          bin_3        UNCOVERED   
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE      NAME       ILLEGAL/IGNORE
+    # UVVM:          (0)x(0 to 127)           0           1           0.00%          bin_0            -       
+    # UVVM:          (1)x(0 to 127)           0           1           0.00%          bin_1            -       
+    # UVVM:          (2)x(0 to 127)           0           1           0.00%          bin_2            -       
+    # UVVM:          (3)x(0 to 127)           0           1           0.00%          bin_3            -       
     # UVVM:  ========================================================================================================
 
 Another benefit of this alternative is that we can cross already crossed coverpoints.
@@ -359,19 +374,19 @@ Another benefit of this alternative is that we can cross already crossed coverpo
 .. code-block:: none
 
     # UVVM:  --------------------------------------------------------------------------------------------------------
-    # UVVM:               BINS               HITS      MIN_HITS      COVERAGE        NAME           STATUS    
-    # UVVM:       (0)x(0 to 127)x(1000)       0           1           0.00%          bin_0        UNCOVERED   
-    # UVVM:       (0)x(0 to 127)x(2000)       0           1           0.00%          bin_1        UNCOVERED   
-    # UVVM:       (0)x(0 to 127)x(3000)       0           1           0.00%          bin_2        UNCOVERED   
-    # UVVM:       (1)x(0 to 127)x(1000)       0           1           0.00%          bin_3        UNCOVERED   
-    # UVVM:       (1)x(0 to 127)x(2000)       0           1           0.00%          bin_4        UNCOVERED   
-    # UVVM:       (1)x(0 to 127)x(3000)       0           1           0.00%          bin_5        UNCOVERED   
-    # UVVM:       (2)x(0 to 127)x(1000)       0           1           0.00%          bin_6        UNCOVERED   
-    # UVVM:       (2)x(0 to 127)x(2000)       0           1           0.00%          bin_7        UNCOVERED   
-    # UVVM:       (2)x(0 to 127)x(3000)       0           1           0.00%          bin_8        UNCOVERED   
-    # UVVM:       (3)x(0 to 127)x(1000)       0           1           0.00%          bin_9        UNCOVERED   
-    # UVVM:       (3)x(0 to 127)x(2000)       0           1           0.00%         bin_10        UNCOVERED   
-    # UVVM:       (3)x(0 to 127)x(3000)       0           1           0.00%         bin_11        UNCOVERED   
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE      NAME       ILLEGAL/IGNORE
+    # UVVM:       (0)x(0 to 127)x(1000)       0           1           0.00%          bin_0            -       
+    # UVVM:       (0)x(0 to 127)x(2000)       0           1           0.00%          bin_1            -       
+    # UVVM:       (0)x(0 to 127)x(3000)       0           1           0.00%          bin_2            -       
+    # UVVM:       (1)x(0 to 127)x(1000)       0           1           0.00%          bin_3            -       
+    # UVVM:       (1)x(0 to 127)x(2000)       0           1           0.00%          bin_4            -       
+    # UVVM:       (1)x(0 to 127)x(3000)       0           1           0.00%          bin_5            -       
+    # UVVM:       (2)x(0 to 127)x(1000)       0           1           0.00%          bin_6            -       
+    # UVVM:       (2)x(0 to 127)x(2000)       0           1           0.00%          bin_7            -       
+    # UVVM:       (2)x(0 to 127)x(3000)       0           1           0.00%          bin_8            -       
+    # UVVM:       (3)x(0 to 127)x(1000)       0           1           0.00%          bin_9            -       
+    # UVVM:       (3)x(0 to 127)x(2000)       0           1           0.00%         bin_10            -       
+    # UVVM:       (3)x(0 to 127)x(3000)       0           1           0.00%         bin_11            -       
     # UVVM:  ========================================================================================================
 
 * Every type of bin (single value, multiple values, range, transition, ignore & illegal) can be crossed with each other.
@@ -416,7 +431,7 @@ Also, if a sampled value is contained in both ignore and illegal bins, then the 
 **********************************************************************************************************************************
 Coverage status
 **********************************************************************************************************************************
-It is possible to track the current coverage in the coverpoint/cross with the function ``get_coverage()``, which returns a real  
+It is possible to track the current coverage in the coverpoint with the function ``get_coverage()``, which returns a real  
 number representing the percentage value. There are 2 coverage types:
 
 * **Bins Coverage**: percentage of the number of bins which are covered in the coverpoint *(covered_bins/total_bins)*
@@ -462,7 +477,7 @@ coverage for each bin. It must be set at the beginning of the testbench, before 
 Bins coverage goal
 ==================================================================================================================================
 This value defines the percentage of the number of bins which need to be covered in the coverpoint and therefore the range is 
-between 1 and 100. Default value is 100.
+between 1 and 100. Default value is 100 (as in 100%).
 
 .. code-block::
 
@@ -474,7 +489,8 @@ between 1 and 100. Default value is 100.
 
 Hits coverage goal
 ==================================================================================================================================
-This value defines the percentage of the min_hits which need to be covered for each bin in the coverpoint. Default value is 100.
+This value defines the percentage of the min_hits which need to be covered for each bin in the coverpoint. Default value is 100 
+(as in 100%).
 
 .. code-block::
 
@@ -487,7 +503,7 @@ This value defines the percentage of the min_hits which need to be covered for e
 Coverpoints coverage goal
 ==================================================================================================================================
 This value defines the percentage of the number of coverpoints which need to be covered and therefore the range is between 1 and 
-100. Default value is 100.
+100. Default value is 100 (as in 100%).
 
 .. code-block::
 
@@ -500,7 +516,7 @@ This value defines the percentage of the number of coverpoints which need to be 
 **********************************************************************************************************************************
 Coverage weight
 **********************************************************************************************************************************
-It specifies the weight of a coverpoint/cross used when calculating the overall coverage. It must be set at the beginning of the 
+It specifies the weight of a coverpoint used when calculating the overall coverage. It must be set at the beginning of the 
 testbench, before sampling any coverage. If set to 0, the coverpoint will be excluded from the overall coverage calculation. 
 Default value is 1.
 
@@ -523,7 +539,7 @@ The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in 
 **********************************************************************************************************************************
 Coverage report
 **********************************************************************************************************************************
-A detailed report for the coverage and the bins in the coverpoint/cross can be printed using the ``report_coverage()`` procedure.
+A detailed report for the coverage and the bins in the coverpoint can be printed using the ``report_coverage()`` procedure.
 
 An overall report for all the coverpoints in the testbench can be printed using the ``fc_report_overall_coverage()`` procedure. 
 Note that only key information is contained in the report, i.e. bins are not included.
@@ -728,8 +744,9 @@ A report containing all the configuration parameters can be printed using the ``
     # UVVM:            ILLEGAL BIN ALERT LEVEL :                        WARNING
     # UVVM:            DETECT BIN OVERLAP      :                          false
     # UVVM:            COVERAGE WEIGHT         :                              1
-    # UVVM:            COVERAGE GOAL           :                            100
-    # UVVM:            OVERALL GOAL            :                            100
+    # UVVM:            BINS COVERAGE GOAL      :                            100
+    # UVVM:            HITS COVERAGE GOAL      :                            100
+    # UVVM:            COVERPOINTS GOAL        :                            100
     # UVVM:            NUMBER OF BINS          :                             36
     # UVVM:            CROSS DIMENSIONS        :                              2
     # UVVM:  =================================================================================================================
@@ -737,10 +754,10 @@ A report containing all the configuration parameters can be printed using the ``
 **********************************************************************************************************************************
 Coverage database
 **********************************************************************************************************************************
-In order to accumulate coverage when running several testcases we need to store the coverpoint model at the end of one testcase and 
-load it at the beginning of the next. This can be done with ``write_coverage_db()`` which writes all the necessary information to 
-a file and ``load_coverage_db()`` which reads it back into a new coverpoint. Note that this must be done for every coverpoint in 
-the testbench and they must be written to separate files.
+In order to accumulate coverage when running several testcases we need to store the coverpoint model, configuration and the 
+accumulated counters at the end of one testcase and load it at the beginning of the next. This can be done with ``write_coverage_db()`` 
+which writes all the necessary information to a file and ``load_coverage_db()`` which reads it back into a new coverpoint. Note 
+that this must be done for every coverpoint in the testbench and they must be written to separate files.
 
 *Example 1: The testcases are in different files and are run in a specified order.*
 
@@ -774,14 +791,14 @@ the testbench and they must be written to separate files.
 
 Clearing coverage
 ==================================================================================================================================
-A coverpoint's coverage status can be reset with ``clear_coverage()``. This might be useful for example when running several 
-testcases in a single testbench and the coverage needs to be restarted after each testcase or when loading a coverpoint model 
-and only want to keep the bin structure.
+A coverpoint's coverage counters can be reset with ``clear_coverage()``. This might be useful for example when running several 
+testcases in a single testbench and the coverage needs to be restarted after each testcase or when loading a coverpoint database 
+and only want to keep the model and configuration.
 
 **********************************************************************************************************************************
 Clearing a coverpoint
 **********************************************************************************************************************************
-A coverpoint's complete configuration and content (bins, coverage, etc.) can be reset with ``clear_coverpoint()``.
+A coverpoint's complete model, configuration and counters can be reset with ``clear_coverpoint()``.
 
 **********************************************************************************************************************************
 Additional info

@@ -798,7 +798,7 @@ and only want to keep the model and configuration.
 **********************************************************************************************************************************
 Clearing a coverpoint
 **********************************************************************************************************************************
-A coverpoint's complete model, configuration and counters can be reset with ``clear_coverpoint()``.
+A coverpoint's complete model, configuration and counters can be reset with ``delete_coverpoint()``.
 
 **********************************************************************************************************************************
 Additional info

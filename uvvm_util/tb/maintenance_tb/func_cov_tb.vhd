@@ -1939,12 +1939,12 @@ begin
     elsif GC_TESTCASE = "fc_reset_init" then
     --===================================================================================
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing clearing an empty coverpoint");
+      log(ID_LOG_HDR, "Testing deleting an empty coverpoint");
       ------------------------------------------------------------
-      v_coverpoint.clear_coverpoint(VOID);
+      v_coverpoint.delete_coverpoint(VOID);
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing clearing a coverpoint");
+      log(ID_LOG_HDR, "Testing deleting a coverpoint");
       ------------------------------------------------------------
       log(ID_SEQUENCER, "Set up the coverpoint");
       v_coverpoint.set_name("MY_COVERPOINT");
@@ -1982,7 +1982,7 @@ begin
       fc_report_overall_coverage(VOID);
 
       log(ID_SEQUENCER, "Clear and check the coverpoint has default values");
-      v_coverpoint.clear_coverpoint(VOID);
+      v_coverpoint.delete_coverpoint(VOID);
       check_value(v_coverpoint.get_name(VOID), "", ERROR, "Checking name");
       check_value(v_coverpoint.get_scope(VOID), C_TB_SCOPE_DEFAULT, ERROR, "Checking scope");
       check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "Checking illegal bin alert level");
@@ -2004,7 +2004,7 @@ begin
       fc_report_overall_coverage(VOID);
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing clearing several coverpoints");
+      log(ID_LOG_HDR, "Testing deleting several coverpoints");
       ------------------------------------------------------------
       v_coverpoint.add_bins(bin(1));
       v_coverpoint_b.add_bins(bin(2));
@@ -2012,9 +2012,9 @@ begin
       v_coverpoint_d.add_bins(bin(4));
       fc_report_overall_coverage(VOID);
 
-      v_coverpoint.clear_coverpoint(VOID);   -- 1st
-      v_coverpoint_c.clear_coverpoint(VOID); -- 3rd
-      v_coverpoint_d.clear_coverpoint(VOID); -- 4th
+      v_coverpoint.delete_coverpoint(VOID);   -- 1st
+      v_coverpoint_c.delete_coverpoint(VOID); -- 3rd
+      v_coverpoint_d.delete_coverpoint(VOID); -- 4th
       fc_report_overall_coverage(VOID);
 
       v_coverpoint.add_cross(bin(1000), bin(2000));
@@ -2022,10 +2022,10 @@ begin
       v_coverpoint_d.add_cross(bin(1002), bin(2002));
       fc_report_overall_coverage(VOID);
 
-      v_coverpoint.clear_coverpoint(VOID);
-      v_coverpoint_b.clear_coverpoint(VOID);
-      v_coverpoint_c.clear_coverpoint(VOID);
-      v_coverpoint_d.clear_coverpoint(VOID);
+      v_coverpoint.delete_coverpoint(VOID);
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_c.delete_coverpoint(VOID);
+      v_coverpoint_d.delete_coverpoint(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing default configuration values");

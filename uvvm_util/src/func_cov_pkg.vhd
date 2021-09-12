@@ -247,10 +247,10 @@ package func_cov_pkg is
     procedure set_num_allocated_bins_increment(
       constant value : in positive);
 
-    procedure clear_coverpoint(
+    procedure delete_coverpoint(
       constant VOID : in t_void);
 
-    procedure clear_coverpoint(
+    procedure delete_coverpoint(
       constant msg_id_panel : in t_msg_id_panel);
 
     -- Returns the number of bins crossed in the coverpoint
@@ -1844,15 +1844,15 @@ package body func_cov_pkg is
       priv_num_bins_allocated_increment := value;
     end procedure;
 
-    procedure clear_coverpoint(
+    procedure delete_coverpoint(
       constant VOID : in t_void) is
     begin
-      clear_coverpoint(shared_msg_id_panel);
+      delete_coverpoint(shared_msg_id_panel);
     end procedure;
 
-    procedure clear_coverpoint(
+    procedure delete_coverpoint(
       constant msg_id_panel : in t_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "clear_coverpoint()";
+      constant C_LOCAL_CALL : string := "delete_coverpoint()";
     begin
       log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       if priv_id /= C_DEALLOCATED_ID then

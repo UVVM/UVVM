@@ -384,12 +384,12 @@ C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT defined in adaptations_pkg. ::
     my_coverpoint.set_num_allocated_bins_increment(3);
 
 
-clear_coverpoint()
+delete_coverpoint()
 ----------------------------------------------------------------------------------------------------------------------------------
 Deallocates the list of bins and resets all configuration settings to their default values. ::
 
-    clear_coverpoint(VOID)
-    clear_coverpoint(msg_id_panel)
+    delete_coverpoint(VOID)
+    delete_coverpoint(msg_id_panel)
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
@@ -403,8 +403,8 @@ Deallocates the list of bins and resets all configuration settings to their defa
 .. code-block::
 
     -- Examples:
-    my_coverpoint.clear_coverpoint(VOID);
-    my_coverpoint.clear_coverpoint(my_msg_id_panel);
+    my_coverpoint.delete_coverpoint(VOID);
+    my_coverpoint.delete_coverpoint(my_msg_id_panel);
 
 
 add_bins()

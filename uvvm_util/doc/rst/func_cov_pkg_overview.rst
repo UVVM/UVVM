@@ -522,9 +522,9 @@ Default value is 1.
 
 .. code-block::
 
-    my_coverpoint_1.set_coverage_weight(3);  -- If only this coverpoint is covered, total coverage will be 75%
-    my_coverpoint_2.set_coverage_weight(1);  -- If only this coverpoint is covered, total coverage will be 25%
-    my_coverpoint_3.set_coverage_weight(0);  -- This coverpoint is excluded from the total coverage calculation
+    my_coverpoint_1.set_overall_coverage_weight(3);  -- If only this coverpoint is covered, total coverage will be 75%
+    my_coverpoint_2.set_overall_coverage_weight(1);  -- If only this coverpoint is covered, total coverage will be 25%
+    my_coverpoint_3.set_overall_coverage_weight(0);  -- This coverpoint is excluded from the total coverage calculation
 
 **********************************************************************************************************************************
 Coverpoint name

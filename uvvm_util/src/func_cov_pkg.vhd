@@ -186,11 +186,11 @@ package func_cov_pkg is
       constant VOID : t_void)
     return string;
 
-    procedure set_coverage_weight(
+    procedure set_overall_coverage_weight(
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
-    impure function get_coverage_weight(
+    impure function get_overall_coverage_weight(
       constant VOID : t_void)
     return natural;
 
@@ -1447,17 +1447,17 @@ package body func_cov_pkg is
       return to_string(priv_scope);
     end function;
 
-    procedure set_coverage_weight(
+    procedure set_overall_coverage_weight(
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "set_coverage_weight(" & to_string(weight) & ")";
+      constant C_LOCAL_CALL : string := "set_overall_coverage_weight(" & to_string(weight) & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       protected_covergroup_status.set_coverage_weight(priv_id, weight);
     end procedure;
 
-    impure function get_coverage_weight(
+    impure function get_overall_coverage_weight(
       constant VOID : t_void)
     return natural is
     begin

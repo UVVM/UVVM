@@ -101,3 +101,26 @@ bins have been covered, their respective randomization weights will be reset to 
     my_coverpoint.sample_coverage(0);   -- bin(0) Will now be selected 47% of the time (rand_weight = 9)
     my_coverpoint.sample_coverage(0);   -- bin(0) Will now be selected 44% of the time (rand_weight = 8)
     my_coverpoint.sample_coverage(0);   -- bin(0) Will now be selected 41% of the time (rand_weight = 7)
+
+**********************************************************************************************************************************
+Randomization using transitions
+**********************************************************************************************************************************
+The Optimized Randomization mechanism will always select random values among the bins. In the case of a transition bin, when it is 
+selected for randomization, it will return each value of the bin in sequence until the complete transition is generated, this 
+ensures that the complete sequence can be randomly generated. However, if we also want to generate random transitions which are 
+not included in the transition bins, we can use a range bin:
+
+.. code-block::
+
+    -- The range bin will generate random values in the range [1:20]. Note that it has a min_hits value of 9 since the bin 
+    -- values overlap with those of the transition bins, therefore if a transition bin is sampled, the range bin will also 
+    -- be sampled.
+    my_coverpoint.add_bins(bin_transition((1,5,10)), 1);
+    my_coverpoint.add_bins(bin_transition((1,6,20)), 1);
+    my_coverpoint.add_bins(bin_range(1,20,1), 9);
+
+    while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
+      my_addr := my_coverpoint.rand(VOID);
+      wait for C_CLK_PERIOD;
+      my_coverpoint.sample_coverage(my_addr);
+    end loop;

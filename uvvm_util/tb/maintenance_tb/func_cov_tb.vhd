@@ -61,6 +61,7 @@ begin
     variable v_prev_min_hits    : natural := 0;
     variable v_value            : integer;
     variable v_values_x2        : integer_vector(0 to 1);
+    variable v_values_x3        : integer_vector(0 to 2);
 
     ------------------------------------------------------------------------------
     -- Procedures and functions
@@ -2077,7 +2078,7 @@ begin
       v_values_x2(0 to 0) := v_cross_x3.rand(VOID);
       v_cross_x3.sample_coverage(5);
       v_cross_x3.sample_coverage((5,6,7));
-      v_cross_x3.write_coverage_db("file.txt");
+      v_cross_x3.write_coverage_db(GC_FILE_PATH & "file.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing initialized coverpoint without bins");
@@ -2104,7 +2105,7 @@ begin
       check_value(v_coverpoint.coverage_completed(BINS_AND_HITS), false, ERROR, "coverage_completed(BINS_AND_HITS)");
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
-      v_coverpoint.write_coverage_db("file.txt");
+      v_coverpoint.write_coverage_db(GC_FILE_PATH & "file.txt");
 
       increment_expected_alerts_and_stop_limit(TB_ERROR,4);
       v_value             := v_coverpoint.rand(VOID);
@@ -2123,7 +2124,7 @@ begin
       log(ID_LOG_HDR, "Testing load database from a non-existing file");
       ------------------------------------------------------------
       increment_expected_alerts(TB_WARNING,1);
-      v_coverpoint.load_coverage_db("dummy.txt");
+      v_coverpoint.load_coverage_db(GC_FILE_PATH & "dummy.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - coverpoint");
@@ -2577,6 +2578,101 @@ begin
       check_bins_coverage(v_coverpoint_b, 0.0);
       check_hits_coverage(v_coverpoint_b, 0.0);
       v_coverpoint_b.report_coverage(VERBOSE);
+
+    --===================================================================================
+    elsif GC_TESTCASE = "fc_reports" then
+    --===================================================================================
+      disable_log_msg(ID_FUNC_COV_SAMPLE);
+      disable_log_msg(ID_FUNC_COV_RAND);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverpoint reports");
+      ------------------------------------------------------------
+      v_coverpoint.add_bins(bin_range(0,125,1), 8, "mem_addr_low");
+      v_coverpoint.add_bins(bin((126,127,128)), "mem_addr_mid");
+      v_coverpoint.add_bins(bin_range(129,255,1), 4, "mem_addr_high");
+      v_coverpoint.add_bins(bin_transition((0,1,2,3)), 2, 10, "transition_1");
+      v_coverpoint.add_bins(bin_transition((0,15,127,248,249,250,251,252,253,254)), 2, 10, "transition_2");
+      v_coverpoint.add_bins(ignore_bin(100), 10, 10, "ignore_addr");             -- min_hits and rand_weight are discarded
+      v_coverpoint.add_bins(ignore_bin_transition((1000,15,127,248,249,250,251,252,253,254)), "ignore_transition");
+      v_coverpoint.add_bins(illegal_bin_range(256,511), 10, 10, "illegal_addr"); -- min_hits and rand_weight are discarded
+      v_coverpoint.add_bins(illegal_bin_transition((2000,15,127,248,249,250,251,252,253,254)), 2, "illegal_transition");
+      v_coverpoint.sample_coverage(1);
+      v_coverpoint.sample_coverage(2);
+      v_coverpoint.sample_coverage(127);
+      increment_expected_alerts_and_stop_limit(ERROR, 1);
+      v_coverpoint.sample_coverage(500);
+      sample_bins(v_coverpoint, (0,15,127,248,249,250,251,252,253,254), 2);
+
+      v_coverpoint.report_coverage(VERBOSE);
+      v_coverpoint.report_coverage(NON_VERBOSE);
+      v_coverpoint.report_coverage(VOID);
+      v_coverpoint.report_coverage(HOLES_ONLY);
+
+      v_coverpoint.report_coverage(VERBOSE, SHOW_RAND_WEIGHT);
+      v_coverpoint.report_coverage(NON_VERBOSE, SHOW_RAND_WEIGHT);
+      v_coverpoint.report_coverage(HOLES_ONLY, SHOW_RAND_WEIGHT);
+
+      v_coverpoint.set_bins_coverage_goal(50);
+      v_coverpoint.report_coverage(VERBOSE);
+      v_coverpoint.report_coverage(NON_VERBOSE);
+      v_coverpoint.report_coverage(HOLES_ONLY);
+
+      v_coverpoint.report_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross reports");
+      ------------------------------------------------------------
+      v_cross_x2.add_cross(bin(10), bin_range(0,15,1));
+      v_cross_x2.add_cross(bin(20), bin_range(16,31,1));
+      v_cross_x2.add_cross(bin(30), bin_range(32,63,1));
+      v_cross_x2.add_cross(bin((10,20,30)), illegal_bin_range(64,127), "illegal_bin");
+      v_cross_x2.report_coverage(VERBOSE);
+
+      v_cross_x3.add_cross(bin(10) & bin(20) & bin(30), bin_range(0,7,1) & bin_range(8,15,1), bin(1000));
+      v_cross_x3.report_coverage(VERBOSE);
+
+      v_coverpoint_b.add_bins(bin_vector(v_vector));
+      v_coverpoint_c.add_bins(bin_range(0,127,1));
+      v_cross_x2_b.add_cross(v_coverpoint_b, v_coverpoint_c);
+      v_cross_x2_b.report_coverage(VERBOSE);
+
+      v_coverpoint_d.add_bins(bin(1000) & bin(2000) & bin(3000));
+      v_cross_x3_b.add_cross(v_cross_x2_b, v_coverpoint_d);
+      v_cross_x3_b.report_coverage(VERBOSE);
+
+      v_cross_x2.report_config(VOID);
+      v_cross_x3.report_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing overall reports");
+      ------------------------------------------------------------
+      while not(v_cross_x2.coverage_completed(BINS_AND_HITS)) loop
+        v_values_x2 := v_cross_x2.rand(VOID);
+        v_cross_x2.sample_coverage(v_values_x2);
+      end loop;
+      while not(v_cross_x3.coverage_completed(BINS_AND_HITS)) loop
+        v_values_x3 := v_cross_x3.rand(VOID);
+        v_cross_x3.sample_coverage(v_values_x3);
+      end loop;
+      while not(v_cross_x2_b.coverage_completed(BINS_AND_HITS)) loop
+        v_values_x2 := v_cross_x2_b.rand(VOID);
+        v_cross_x2_b.sample_coverage(v_values_x2);
+      end loop;
+      while not(v_cross_x3_b.coverage_completed(BINS_AND_HITS)) loop
+        v_values_x3 := v_cross_x3_b.rand(VOID);
+        v_cross_x3_b.sample_coverage(v_values_x3);
+      end loop;
+
+      fc_report_overall_coverage(VERBOSE);
+      fc_report_overall_coverage(NON_VERBOSE);
+      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(HOLES_ONLY);
+
+      fc_set_covpts_coverage_goal(25);
+      fc_report_overall_coverage(VERBOSE);
+      fc_report_overall_coverage(NON_VERBOSE);
+      fc_report_overall_coverage(HOLES_ONLY);
 
     end if;
 

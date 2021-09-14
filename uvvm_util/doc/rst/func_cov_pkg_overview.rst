@@ -564,17 +564,16 @@ Coverpoint Verbose
     # UVVM:  0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): TB seq. ***                                                          
     # UVVM:  =================================================================================================================
     # UVVM:  Coverpoint:              Covpt_1
-    # UVVM:  Coverage (for goal 100): Bins: 80.00%,   Hits: 77.78%  
+    # UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%  
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
-    # UVVM:              (3000)               1          N/A           N/A             illegal_addr           ILLEGAL         
-    # UVVM:           (256 to 511)            0          N/A           N/A             illegal_addr           ILLEGAL         
+    # UVVM:           (256 to 511)            1          N/A           N/A             illegal_addr           ILLEGAL         
     # UVVM:        illegal_transition         0          N/A           N/A          illegal_transition        ILLEGAL         
-    # UVVM:               (255)               0          N/A           N/A              ignore_addr            IGNORE         
+    # UVVM:               (100)               0          N/A           N/A              ignore_addr            IGNORE         
     # UVVM:         ignore_transition         0          N/A           N/A           ignore_transition         IGNORE         
-    # UVVM:             (0 to 15)             6           2          100.00%           mem_addr_low              -            
-    # UVVM:               (127)               3           1          100.00%           mem_addr_mid              -            
-    # UVVM:           (248 to 254)            14          2          100.00%           mem_addr_high             -            
+    # UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -            
+    # UVVM:          (126, 127, 128)          3           1          100.00%           mem_addr_mid              -            
+    # UVVM:           (129 to 255)            14          4          100.00%           mem_addr_high             -            
     # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
     # UVVM:           transition_2            2           2          100.00%           transition_2              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
@@ -596,13 +595,13 @@ Coverpoint Non-Verbose
     # UVVM:  0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***                                                      
     # UVVM:  =================================================================================================================
     # UVVM:  Coverpoint:              Covpt_1
-    # UVVM:  Coverage (for goal 100): Bins: 80.00%,   Hits: 77.78%  
+    # UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%  
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
-    # UVVM:              (3000)               1          N/A           N/A             illegal_addr           ILLEGAL         
-    # UVVM:             (0 to 15)             6           2          100.00%           mem_addr_low              -            
-    # UVVM:               (127)               3           1          100.00%           mem_addr_mid              -            
-    # UVVM:           (248 to 254)            14          2          100.00%           mem_addr_high             -            
+    # UVVM:           (256 to 511)            1          N/A           N/A             illegal_addr           ILLEGAL         
+    # UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -            
+    # UVVM:          (126, 127, 128)          3           1          100.00%           mem_addr_mid              -            
+    # UVVM:           (129 to 255)            14          4          100.00%           mem_addr_high             -            
     # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
     # UVVM:           transition_2            2           2          100.00%           transition_2              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
@@ -622,9 +621,10 @@ Coverpoint Holes
     # UVVM:  0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                      
     # UVVM:  =================================================================================================================
     # UVVM:  Coverpoint:              Covpt_1
-    # UVVM:  Coverage (for goal 100): Bins: 80.00%,   Hits: 77.78%  
+    # UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%  
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
+    # UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -            
     # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
@@ -640,13 +640,17 @@ Overall Verbose
 
     # UVVM:  =================================================================================================================
     # UVVM:  0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                          
-    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
     # UVVM:  =================================================================================================================
     # UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS) 
-    # UVVM:        Covpt_1            1              4 / 5         80.00% | 77.78%       100% | 100%        80.00% | 77.78%   
-    # UVVM:        Covpt_2            1              1 / 1        100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
-    # UVVM:        Covpt_3            1              1 / 1        100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
-    # UVVM:        Covpt_4            1              1 / 2         50.00% | 50.00%       100% | 100%        50.00% | 50.00%   
+    # UVVM:        Covpt_1            1              3 / 5         60.00% | 76.47%       50% | 100%        100.00% | 76.47%   
+    # UVVM:        Covpt_2            1              3 / 3        100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
+    # UVVM:        Covpt_3            1              6 / 6        100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
+    # UVVM:        Covpt_4            1              0 / 4          0.00% | 0.00%        100% | 100%         0.00% | 0.00%    
+    # UVVM:        Covpt_5            1              0 / 1          0.00% | 0.00%        100% | 100%         0.00% | 0.00%    
+    # UVVM:        Covpt_6            1              4 / 4        100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
+    # UVVM:        Covpt_7            1              0 / 3          0.00% | 0.00%        100% | 100%         0.00% | 0.00%    
+    # UVVM:        Covpt_8            1             12 / 12       100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
     # UVVM:  =================================================================================================================
 
 Overall Non-Verbose
@@ -660,7 +664,7 @@ Overall Non-Verbose
 
     # UVVM:  =================================================================================================================
     # UVVM:  0 ns *** OVERALL COVERAGE REPORT (NON VERBOSE): TB seq. ***                                                      
-    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
     # UVVM:  =================================================================================================================
 
 Overall Holes
@@ -674,11 +678,13 @@ Overall Holes
 
     # UVVM:  =================================================================================================================
     # UVVM:  0 ns *** OVERALL HOLES REPORT: TB seq. ***                                                                       
-    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
     # UVVM:  =================================================================================================================
     # UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS) 
-    # UVVM:        Covpt_1            1              4 / 5         80.00% | 77.78%       100% | 100%        80.00% | 77.78%   
-    # UVVM:        Covpt_4            1              1 / 2         50.00% | 50.00%       100% | 100%        50.00% | 50.00%   
+    # UVVM:        Covpt_1            1              3 / 5         60.00% | 76.47%       50% | 100%        100.00% | 76.47%   
+    # UVVM:        Covpt_4            1              0 / 4          0.00% | 0.00%        100% | 100%         0.00% | 0.00%    
+    # UVVM:        Covpt_5            1              0 / 1          0.00% | 0.00%        100% | 100%         0.00% | 0.00%    
+    # UVVM:        Covpt_7            1              0 / 3          0.00% | 0.00%        100% | 100%         0.00% | 0.00%    
     # UVVM:  =================================================================================================================
 
 Using goal
@@ -697,18 +703,18 @@ report shows 3 extra lines:
     # UVVM: 0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***                                                       
     # UVVM: ==================================================================================================================
     # UVVM: Coverpoint:              Covpt_1
-    # UVVM: Goal:                    Bins: 75%,      Hits: 100%    
-    # UVVM: % of Goal:               Bins: 100.00%,  Hits: 77.78%  
-    # UVVM: % of Goal (uncapped):    Bins: 106.67%,  Hits: 277.78% 
-    # UVVM: Coverage (for goal 100): Bins: 80.00%,   Hits: 77.78%  
+    # UVVM: Goal:                    Bins: 50%,      Hits: 100%    
+    # UVVM: % of Goal:               Bins: 100.00%,  Hits: 76.47%  
+    # UVVM: % of Goal (uncapped):    Bins: 120.00%,  Hits: 147.06% 
+    # UVVM: Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%  
     # UVVM: ------------------------------------------------------------------------------------------------------------------
-    # UVVM:              BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE      
-    # UVVM:             (3000)               1          N/A           N/A             illegal_addr           ILLEGAL          
-    # UVVM:            (0 to 15)             6           2          100.00%           mem_addr_low              -             
-    # UVVM:              (127)               3           1          100.00%           mem_addr_mid              -             
-    # UVVM:          (248 to 254)            14          2          100.00%           mem_addr_high             -             
-    # UVVM:          (0->1->2->3)            0           2           0.00%            transition_1              -             
-    # UVVM:          transition_2            2           2          100.00%           transition_2              -             
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
+    # UVVM:           (256 to 511)            1          N/A           N/A             illegal_addr           ILLEGAL         
+    # UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -            
+    # UVVM:          (126, 127, 128)          3           1          100.00%           mem_addr_mid              -            
+    # UVVM:           (129 to 255)            14          4          100.00%           mem_addr_high             -            
+    # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
+    # UVVM:           transition_2            2           2          100.00%           transition_2              -            
     # UVVM: ------------------------------------------------------------------------------------------------------------------
     # UVVM: transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM: ==================================================================================================================
@@ -716,11 +722,12 @@ report shows 3 extra lines:
 .. code-block:: none
 
     # UVVM:  =================================================================================================================
-    # UVVM:  0 ns *** OVERALL COVERAGE REPORT: TB seq. ***                                                                    
-    # UVVM:  Goal:                    Covpts: 75%
-    # UVVM:  % of Goal:               Covpts: 66.67%
-    # UVVM:  % of Goal (uncapped):    Covpts: 66.67%
-    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 77.78%,   Hits: 76.92%  
+    # UVVM:  0 ns *** OVERALL COVERAGE REPORT (NON VERBOSE): TB seq. ***                                                      
+    # UVVM:  =================================================================================================================
+    # UVVM:  Goal:                    Covpts: 25%
+    # UVVM:  % of Goal:               Covpts: 100.00%
+    # UVVM:  % of Goal (uncapped):    Covpts: 200.00%
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
     # UVVM:  =================================================================================================================
 
 .. _func_cov_pkg_config_report:

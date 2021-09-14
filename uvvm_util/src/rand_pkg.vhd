@@ -232,7 +232,7 @@ package rand_pkg is
 
     ------------------------------------------------------------------------------------------------------------------------------
     -- ***************************************************************************************************************************
-    -- Single-line rand() implementation
+    -- Single-method rand() implementation
     -- ***************************************************************************************************************************
     ------------------------------------------------------------------------------------------------------------------------------
     ------------------------------------------------------------
@@ -1100,7 +1100,7 @@ package rand_pkg is
 
     ------------------------------------------------------------------------------------------------------------------------------
     -- ***************************************************************************************************************************
-    -- Multi-line rand() implementation
+    -- Multi-method rand() implementation
     -- ***************************************************************************************************************************
     ------------------------------------------------------------------------------------------------------------------------------
     ------------------------------------------------------------
@@ -1275,9 +1275,9 @@ package body rand_pkg is
     range_len : time;
   end record;
   type t_range_uns is record
-    min_value : unsigned(C_RAND_ML_MAX_LONG_VECTOR_LENGTH-1 downto 0);
-    max_value : unsigned(C_RAND_ML_MAX_LONG_VECTOR_LENGTH-1 downto 0);
-    range_len : unsigned(C_RAND_ML_MAX_LONG_VECTOR_LENGTH downto 0);
+    min_value : unsigned(C_RAND_MM_MAX_LONG_VECTOR_LENGTH-1 downto 0);
+    max_value : unsigned(C_RAND_MM_MAX_LONG_VECTOR_LENGTH-1 downto 0);
+    range_len : unsigned(C_RAND_MM_MAX_LONG_VECTOR_LENGTH downto 0);
   end record;
 
   type t_range_int_vec  is array (natural range <>) of t_range_int;
@@ -1413,7 +1413,7 @@ package body rand_pkg is
     -- Default values for the mean and standard deviation are relative to the given range, i.e. default values below are ignored
     variable priv_mean                    : real                                := 0.0;
     variable priv_std_dev                 : real                                := 0.0;
-    -- Multi-line rand() configuration
+    -- Multi-method rand() configuration
     variable priv_cyclic_mode             : t_cyclic                            := NON_CYCLIC;
     variable priv_uniqueness              : t_uniqueness                        := NON_UNIQUE;
     variable priv_int_constraints         : t_int_constraints                   := (ran_incl        => new t_range_int_vec(1 to 0),
@@ -2067,7 +2067,7 @@ package body rand_pkg is
 
     ------------------------------------------------------------------------------------------------------------------------------
     -- ***************************************************************************************************************************
-    -- Single-line rand() implementation
+    -- Single-method rand() implementation
     -- ***************************************************************************************************************************
     ------------------------------------------------------------------------------------------------------------------------------
     ------------------------------------------------------------
@@ -4829,7 +4829,7 @@ package body rand_pkg is
 
     ------------------------------------------------------------------------------------------------------------------------------
     -- ***************************************************************************************************************************
-    -- Multi-line rand() implementation
+    -- Multi-method rand() implementation
     -- ***************************************************************************************************************************
     ------------------------------------------------------------------------------------------------------------------------------
     -- Increases the size of the vector pointer variable
@@ -5287,7 +5287,7 @@ package body rand_pkg is
       constant msg_id_panel : t_msg_id_panel;
       constant proc_call    : string)
     return unsigned is
-      alias C_MAX_LENGTH is C_RAND_ML_MAX_LONG_VECTOR_LENGTH;
+      alias C_MAX_LENGTH is C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
       constant C_MIN_RANGE      : unsigned(C_MAX_LENGTH downto 0) := (others => '0');
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_max_range      : unsigned(C_MAX_LENGTH downto 0);
@@ -5607,15 +5607,15 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range([" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ":" &
         to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
-      constant C_MAX_LENGTH : natural := C_RAND_ML_MAX_LONG_VECTOR_LENGTH + 1;
+      constant C_MAX_LENGTH : natural := C_RAND_MM_MAX_LONG_VECTOR_LENGTH + 1;
     begin
       -- Check only unsigned constraints have been configured
       if not(check_configured_constraints("UNSIGNED", C_LOCAL_CALL, is_config => true)) then
         return;
       end if;
-      if min_value'length > C_RAND_ML_MAX_LONG_VECTOR_LENGTH or max_value'length > C_RAND_ML_MAX_LONG_VECTOR_LENGTH then
-        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value and max_value lengths must be less or equal than C_RAND_ML_MAX_LONG_VECTOR_LENGTH." &
-          "Increase C_RAND_ML_MAX_LONG_VECTOR_LENGTH in adaptations package.", priv_scope);
+      if min_value'length > C_RAND_MM_MAX_LONG_VECTOR_LENGTH or max_value'length > C_RAND_MM_MAX_LONG_VECTOR_LENGTH then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value and max_value lengths must be less or equal than C_RAND_MM_MAX_LONG_VECTOR_LENGTH." &
+          "Increase C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations package.", priv_scope);
         return;
       end if;
       if min_value >= max_value then

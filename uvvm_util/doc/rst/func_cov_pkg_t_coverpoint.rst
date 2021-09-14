@@ -557,35 +557,6 @@ This procedure has overloads which support crossing up to 16 coverpoints. ::
     ...
 
 
-rand()
-----------------------------------------------------------------------------------------------------------------------------------
-Returns a random value (or values for crossed bins) generated from the uncovered bins. Once all the bins have been covered, 
-it will return a random value among all the valid bins. Note that ignore and illegal bins will never be selected for randomization. 
-For a complete overview on Optimized Randomization click :ref:`here <optimized_randomization>`.::
-
-    integer        := rand(VOID)
-    integer        := rand(msg_id_panel)
-    integer_vector := rand(VOID)
-    integer_vector := rand(msg_id_panel)
-
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                           |
-+==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-
-.. code-block::
-
-    -- Examples:
-    addr := my_coverpoint.rand(VOID);
-    addr := my_coverpoint.rand(my_msg_id_panel);
-    addr_vec := my_coverpoint.rand(VOID);
-    addr_vec := my_coverpoint.rand(my_msg_id_panel);
-
-
 is_defined()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns true if the coverpoint contains at least one bin. ::
@@ -726,3 +697,32 @@ Prints a report containing the coverpoints's configuration parameters. To see an
 
     -- Example:
     my_coverpoint.report_config(VOID);
+
+
+rand()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns a random value (or values for crossed bins) generated from the uncovered bins. Once all the bins have been covered, 
+it will return a random value among all the valid bins. Note that ignore and illegal bins will never be selected for randomization. 
+For a complete overview on Optimized Randomization click :ref:`here <optimized_randomization>`.::
+
+    integer        := rand(VOID)
+    integer        := rand(msg_id_panel)
+    integer_vector := rand(VOID)
+    integer_vector := rand(msg_id_panel)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                    |        |                              | value is shared_msg_id_panel.                         |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    addr := my_coverpoint.rand(VOID);
+    addr := my_coverpoint.rand(my_msg_id_panel);
+    addr_vec := my_coverpoint.rand(VOID);
+    addr_vec := my_coverpoint.rand(my_msg_id_panel);

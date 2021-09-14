@@ -774,7 +774,7 @@ that this must be done for every coverpoint in the testbench and they must be wr
 
 *Example 2: There is a single testcase file which is run using different generics in a specified order.*
 
-* Same as Example 1, but using the generics to identify the first TC and avoid loading the database.
+* Same as Example 1, but using the generics to identify the first TC which should not load the database.
 
 .. note::
 
@@ -788,6 +788,44 @@ that this must be done for every coverpoint in the testbench and they must be wr
 .. note::
 
     The downside of this approach is that the accumulated coverage will not be visible in simulation.
+
+Overall coverage accumulation
+==================================================================================================================================
+Since the ``write_coverage_db()`` procedure is defined in a protected type, every single coverpoint needs to call the procedure to 
+store its corresponding database, which can be tedious with many coverpoints. One way to simplify this, could be to define the 
+coverpoints in a global package as shared variables and create a procedure, e.g. ``write_overall_coverage_db()``, which calls the 
+``write_coverage_db()`` from every coverpoint defined in the package. The same applies for ``load_coverage_db()``.
+
+.. code-block::
+
+    package global_fc_pkg is
+      -- Global coverpoints
+      shared variable shared_coverpoint1   : t_coverpoint;
+      shared variable shared_coverpoint2   : t_coverpoint;
+      shared variable shared_coverpoint3   : t_coverpoint;
+      ...
+      shared variable shared_coverpoint100 : t_coverpoint;
+
+      procedure write_overall_coverage_db(
+        constant VOID : in t_void
+      );
+      procedure load_overall_coverage_db(
+        constant VOID : in t_void
+      );
+    end package global_fc_pkg;
+
+    package body global_fc_pkg is
+      procedure write_overall_coverage_db(
+        constant VOID : in t_void) is
+      begin
+        shared_coverpoint1.write_coverage_db("covpt1.txt");
+        shared_coverpoint2.write_coverage_db("covpt2.txt");
+        shared_coverpoint3.write_coverage_db("covpt3.txt");
+        ...
+        shared_coverpoint100.write_coverage_db("covpt100.txt");
+      end procedure;
+      ...
+    end package body global_fc_pkg;
 
 Clearing coverage
 ==================================================================================================================================
@@ -808,7 +846,7 @@ Log messages within the procedures and functions in the *func_cov_pkg* use the f
 * ID_FUNC_COV_BINS: Used for logging functional coverage ``add_bins()`` and ``add_cross()`` methods. Note that each bin function within 
   the ``add_bins()`` and ``add_cross()`` log has a string length limited by C_FC_MAX_PROC_CALL_LENGTH defined in adaptations_pkg.
 * ID_FUNC_COV_BINS_INFO: Used for logging functional coverage ``add_bins()`` and ``add_cross()`` methods detailed information.
-* ID_FUNC_COV_RAND: Used for logging functional coverage "optimized randomization" values returned by rand().
+* ID_FUNC_COV_RAND: Used for logging functional coverage "Optimized Randomization" values returned by rand().
 * ID_FUNC_COV_SAMPLE: Used for logging functional coverage sampling.
 * ID_FUNC_COV_CONFIG: Used for logging functional coverage configuration changes.
 

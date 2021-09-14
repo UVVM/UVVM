@@ -96,7 +96,7 @@ package adaptations_pkg is
     ID_RAND_CONF,             -- Used for logging general randomization configuration changes, except from name and scope
     ID_FUNC_COV_BINS,         -- Used for logging functional coverage add_bins() and add_cross() methods
     ID_FUNC_COV_BINS_INFO,    -- Used for logging functional coverage add_bins() and add_cross() methods detailed information
-    ID_FUNC_COV_RAND,         -- Used for logging functional coverage "optimized randomization" values returned by rand()
+    ID_FUNC_COV_RAND,         -- Used for logging functional coverage "Optimized Randomization" values returned by rand()
     ID_FUNC_COV_SAMPLE,       -- Used for logging functional coverage sampling
     ID_FUNC_COV_CONFIG,       -- Used for logging functional coverage configuration changes
     -- General

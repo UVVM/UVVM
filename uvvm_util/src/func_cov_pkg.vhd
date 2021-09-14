@@ -1630,10 +1630,10 @@ package body func_cov_pkg is
         -- Covergroup config
         write_value(protected_covergroup_status.get_num_valid_bins(priv_id));
         write_value(protected_covergroup_status.get_num_covered_bins(priv_id));
+        write_value(protected_covergroup_status.get_total_bin_min_hits(priv_id));
+        write_value(protected_covergroup_status.get_total_bin_hits(priv_id));
         write_value(protected_covergroup_status.get_total_coverage_bin_hits(priv_id));
         write_value(protected_covergroup_status.get_total_goal_bin_hits(priv_id));
-        write_value(protected_covergroup_status.get_total_bin_hits(priv_id));
-        write_value(protected_covergroup_status.get_total_bin_min_hits(priv_id));
         write_value(protected_covergroup_status.get_coverage_weight(priv_id));
         write_value(protected_covergroup_status.get_bins_coverage_goal(priv_id));
         write_value(protected_covergroup_status.get_hits_coverage_goal(priv_id));
@@ -1764,13 +1764,13 @@ package body func_cov_pkg is
       read_value(v_value);
       protected_covergroup_status.set_num_covered_bins(priv_id, v_value);
       read_value(v_value);
-      protected_covergroup_status.set_total_coverage_bin_hits(priv_id, v_value);
-      read_value(v_value);
-      protected_covergroup_status.set_total_goal_bin_hits(priv_id, v_value);
+      protected_covergroup_status.set_total_bin_min_hits(priv_id, v_value);
       read_value(v_value);
       protected_covergroup_status.set_total_bin_hits(priv_id, v_value);
       read_value(v_value);
-      protected_covergroup_status.set_total_bin_min_hits(priv_id, v_value);
+      protected_covergroup_status.set_total_coverage_bin_hits(priv_id, v_value);
+      read_value(v_value);
+      protected_covergroup_status.set_total_goal_bin_hits(priv_id, v_value);
       read_value(v_value);
       protected_covergroup_status.set_coverage_weight(priv_id, v_value);
       read_value(v_value);

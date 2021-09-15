@@ -13,9 +13,10 @@ For a more balanced randomization between small and large ranges/sets, the :ref:
 may be used.
 
 To generate a random value using General Randomization it is necessary to import the utility library, create a variable with the 
-protected type *t_rand* and call the ``rand()`` function from the variable. There are two ways of doing this:
+protected type *t_rand* and call either the ``rand()`` or the ``randm()`` function from the variable depending on which approach 
+is being used:
 
-**1. Single-method approach:** The ``rand()`` function is constrained by the parameters it receives and additional configuration 
+**1. Single-method approach:** The ``rand()`` function is constrained by the parameters it receives plus additional configuration 
 values. This approach is useful for simple constraints or constraints which are not repeated constantly throughout the code.
 
 .. code-block::
@@ -33,10 +34,10 @@ values. This approach is useful for simple constraints or constraints which are 
       size := my_rand.rand(0, 64, ADD,(128,256), EXCL,(32));
       ...
 
-**2. Multi-method approach:** The constraints for the ``rand()`` function need to be previously configured by using different 
+**2. Multi-method approach:** The constraints for the ``randm()`` function need to be previously configured by using different 
 procedures. The benefit of this approach is that the constraints only need to be defined once, instead of being repeated on every 
-``rand()`` call, resulting in a code which is more structured and easier to read for complex constraints. It also supports multiple 
-ranges, unlike the single-method approach. 
+``randm()`` call, resulting in a code which is more structured and easier to read for complex constraints. It also supports 
+multiple ranges, unlike the single-method approach. 
 
 .. code-block::
 
@@ -49,7 +50,7 @@ ranges, unlike the single-method approach.
       -- Generate a random value in the range [0:255] and [500:511]
       my_rand.add_range(0, 255);
       my_rand.add_range(500, 511);
-      addr := my_rand.rand(VOID);
+      addr := my_rand.randm(VOID);
 
       -- Clear the constraints so we can reuse the random generator variable
       my_rand.clear_constraints(VOID);
@@ -58,12 +59,93 @@ ranges, unlike the single-method approach.
       my_rand.add_range(0, 64);
       my_rand.add_val((128,256));
       my_rand.excl_val(32);
-      size := my_rand.rand(VOID);
+      size := my_rand.randm(VOID);
       ...
 
 .. note::
 
     The syntax for all methods is given in :ref:`rand_pkg`.
+
+**********************************************************************************************************************************
+Single-method approach
+**********************************************************************************************************************************
+Constraints
+==================================================================================================================================
+There are different ways of constraining the random value in a clear and consistent manner when using the ``rand()`` function.
+
+.. code-block::
+
+    -- 1. min & max values
+    addr := my_rand.rand(0, 99); -- Generates a value in the range [0:99]
+
+    -- 2. set of values
+    addr := my_rand.rand(ONLY,(0,5,10)); -- Generates a value which is either 0, 5 or 10
+
+    -- 3. min & max + set of values
+    addr := my_rand.rand(0, 50, ADD,(60,70,80)); -- Generates a value in the range [0:50] and either 60, 70 or 80
+    addr := my_rand.rand(0, 50, EXCL,(25));      -- Generates a value in the range [0:50] except for 25
+
+    -- 4. min & max + two sets of values
+    addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(25)); -- Generates a value in the range [0:50] and either 60, 70 or 80, except for 25
+
+For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`.
+
+Return types
+==================================================================================================================================
+The ``rand()`` function can return the following types:
+
+    * :ref:`integer <rand_int>`
+    * :ref:`integer_vector <rand_int_vec>`
+    * :ref:`real <rand_real>`
+    * :ref:`real_vector <rand_real_vec>`
+    * :ref:`time <rand_time>`
+    * :ref:`time_vector <rand_time_vec>`
+    * :ref:`unsigned <rand_uns>`
+    * :ref:`signed <rand_sig>`
+    * :ref:`std_logic_vector <rand_slv>`
+    * :ref:`std_logic <rand_sl>`
+    * :ref:`boolean <rand_bool>`
+
+.. code-block::
+
+    rand_int      := my_rand.rand(-50, 50);
+    rand_int_vec  := my_rand.rand(rand_int_vec'length, -50, 50);
+    rand_real     := my_rand.rand(ONLY, (0.5,1.0,1.5,2.0));
+    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99);
+    rand_time     := my_rand.rand(0 ps, 100 ps);
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 0 ps, 100 ps);
+    rand_uns      := my_rand.rand(rand_uns'length, 0, 50, ADD,(60));
+    rand_sign     := my_rand.rand(rand_sign'length, -50, 50, EXCL,(-25,25));
+    rand_slv      := my_rand.rand(rand_slv'length, 0, 50, ADD,(60), EXCL,(25,35)); -- SLV is interpreted as unsigned
+    rand_sl       := my_rand.rand(VOID);
+    rand_bool     := my_rand.rand(VOID);
+
+The unsigned, signed and std_logic_vector functions can return vectors of any size, however the min and max constraints are 
+limited by the integer's 32-bit range. Additional overloads for these types using unsigned/signed/std_logic_vector corresponding 
+min and max constraints are provided as well.
+
+    * :ref:`unsigned <rand_uns_long>`
+    * :ref:`signed <rand_sig_long>`
+    * :ref:`std_logic_vector <rand_slv_long>`
+
+.. code-block::
+
+    rand_uns  := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_uns  := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
+    rand_sign := my_rand.rand(C_MIN_RANGE, v_max_range);
+    rand_sign := my_rand.rand(rand_sign'length, C_MIN_RANGE, v_max_range);
+    rand_slv  := my_rand.rand(C_MIN_RANGE, v_max_range);                   -- SLV is interpreted as unsigned
+    rand_slv  := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);  -- SLV is interpreted as unsigned
+
+**********************************************************************************************************************************
+Multi-method approach
+**********************************************************************************************************************************
+
+Constraints
+==================================================================================================================================
+
+Return types
+==================================================================================================================================
 
 **********************************************************************************************************************************
 Seeds
@@ -95,115 +177,66 @@ This method will return the seeds as two positive integers or a positive integer
     seed_vector := my_rand.get_rand_seeds(VOID);
 
 **********************************************************************************************************************************
-Constraints
-**********************************************************************************************************************************
-There are different ways of constraining the random value in a clear and consistent manner when using the ``rand()`` function.
-
-.. code-block::
-
-    -- 1. min & max values
-    addr := my_rand.rand(0, 99); -- Generates a value in the range [0:99]
-
-    -- 2. set of values
-    addr := my_rand.rand(ONLY,(0,5,10)); -- Generates a value which is either 0, 5 or 10
-
-    -- 3. min & max + set of values
-    addr := my_rand.rand(0, 50, ADD,(60,70,80)); -- Generates a value in the range [0:50] and either 60, 70 or 80
-    addr := my_rand.rand(0, 50, EXCL,(25));      -- Generates a value in the range [0:50] except for 25
-
-    -- 4. min & max + two sets of values
-    addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(25)); -- Generates a value in the range [0:50] and either 60, 70 or 80, except for 25
-
-For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`.
-
-**********************************************************************************************************************************
-Return types
-**********************************************************************************************************************************
-The ``rand()`` function can return the following types:
-
-    * :ref:`integer <rand_int>`
-    * :ref:`integer_vector <rand_int_vec>`
-    * :ref:`real <rand_real>`
-    * :ref:`real_vector <rand_real_vec>`
-    * :ref:`time <rand_time>`
-    * :ref:`time_vector <rand_time_vec>`
-    * :ref:`unsigned <rand_uns>`
-    * :ref:`signed <rand_sig>`
-    * :ref:`std_logic_vector <rand_slv>`
-    * :ref:`std_logic <rand_sl>`
-    * :ref:`boolean <rand_bool>`
-
-.. code-block::
-
-    rand_int      := my_rand.rand(-50, 50);
-    rand_int_vec  := my_rand.rand(rand_int_vec'length, -50, 50);
-    rand_real     := my_rand.rand(ONLY, (0.5,1.0,1.5,2.0));
-    rand_real_vec := my_rand.rand(rand_real_vec'length, 0.0, 9.99);
-    rand_time     := my_rand.rand(0 ps, 100 ps);
-    rand_time_vec := my_rand.rand(rand_time_vec'length, 0 ps, 100 ps);
-    rand_uns      := my_rand.rand(rand_uns'length, 0, 50, ADD,(60));
-    rand_sign     := my_rand.rand(rand_sign'length, -50, 50, EXCL,(-25,25));
-    rand_slv      := my_rand.rand(rand_slv'length, 0, 50, ADD,(60), EXCL,(25,35)); -- SLV is interpreted as unsigned
-    rand_sl       := my_rand.rand(VOID);
-    rand_bool     := my_rand.rand(VOID);
-
-The unsigned, signed and std_logic_vector functions can return any size vector, however the min and max constraints are limited 
-by the integer's 32-bit range. Additional overloads for these types using unsigned/signed/std_logic_vector corresponding min and 
-max constraints are provided as well.
-
-    * :ref:`unsigned <rand_uns_long>`
-    * :ref:`signed <rand_sig_long>`
-    * :ref:`std_logic_vector <rand_slv_long>`
-
-.. code-block::
-
-    rand_uns  := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_uns  := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
-    rand_sign := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_sign := my_rand.rand(rand_sign'length, C_MIN_RANGE, v_max_range);
-    rand_slv  := my_rand.rand(C_MIN_RANGE, v_max_range);                   -- SLV is interpreted as unsigned
-    rand_slv  := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);  -- SLV is interpreted as unsigned
-
-**********************************************************************************************************************************
 Uniqueness
 **********************************************************************************************************************************
 When returning a vector type (integer_vector, real_vector or time_vector) it is possible to generate unique random values for each 
-element of the vector by setting the parameter *uniqueness = UNIQUE* in the ``rand()`` function. The uniqueness applies only within 
-the values returned from a single ``rand()`` call, i.e. unique values may not generated across two or more ``rand()`` calls.
+element of the vector by using *uniqueness = UNIQUE*. The uniqueness applies only within the values returned from a single 
+``rand()/randm()`` call, i.e. unique values may not generated across two or more ``rand()/randm()`` calls.
 
 .. code-block::
 
+    -- Single-method approach
     unique_addresses := my_rand.rand(unique_addresses'length, 0, 50, UNIQUE);
+
+    -- Multi-method approach
+    my_rand.set_uniqueness(UNIQUE);
+    my_rand.add_range(0, 50);
+    unique_addresses := my_rand.randm(unique_addresses'length);
 
 If the constraints are not enough to generate unique values for the whole vector, an error will be reported.
 
 .. code-block::
 
+    -- Single-method approach
     unique_addresses := my_rand.rand(63, 0, 50, UNIQUE);
+
+    -- Multi-method approach
+    my_rand.set_uniqueness(UNIQUE);
+    my_rand.add_range(0, 50);
+    unique_addresses := my_rand.randm(63);
 
 .. _rand_pkg_cyclic:
 
 **********************************************************************************************************************************
 Cyclic generation
 **********************************************************************************************************************************
-By setting the parameter *cyclic_mode = CYCLIC* in the ``rand()`` function, it is possible to generate random values which will
-not repeat until all the values within the constraints have been generated. Once this happens, the process starts over.
+By using *cyclic_mode = CYCLIC*, it is possible to generate random values which will not repeat until all the values within the 
+constraints have been generated. Once this happens, the process starts over.
 
 .. code-block::
 
+    -- Single-method approach
     for i in 0 to num_addr-1 loop
       addr := my_rand.rand(0, 63, CYCLIC);
       ...
     end loop;
 
+    -- Multi-method approach
+    my_rand.set_cyclic_mode(CYCLIC);
+    my_rand.add_range(0, 63);
+    for i in 0 to num_addr-1 loop
+      addr := my_rand.randm(VOID);
+      ...
+    end loop;
+
 * The supported types are integer, integer_vector, unsigned, signed and std_logic_vector. Note that unsigned, signed and 
   std_logic_vector lengths bigger than 32 bits are not supported however.
-* Cyclic generation cannot be combined with the uniqueness parameter in the vector types.
-* The state of the cyclic generation (which values have been generated) will be reset every time a ``rand()`` function with 
-  a different signature is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
-* By default, a list is created to store the state of all the possible values to be generated. This list can require a lot of memory 
-  for big ranges or even cause problems for the simulator. To avoid this, a different implementation using a dynamic queue will be 
-  used instead when the range of values is greater than C_RAND_CYCLIC_LIST_MAX_NUM_VALUES defined in adaptations_pkg.
+* Cannot be combined with the UNIQUE configuration.
+* The state of the cyclic generation (which values have been generated) will be reset every time a ``rand()/randm()`` function 
+  with a different signature (constraints) is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
+* By default, a list is created to store the state of all the possible values to be generated. This list can require a lot of 
+  memory for big ranges or even cause problems for the simulator. To avoid this, a different implementation using a dynamic queue 
+  will be used instead when the range of values is greater than C_RAND_CYCLIC_LIST_MAX_NUM_VALUES defined in adaptations_pkg.
 
 .. caution::
     When using the dynamic queue implementation, the simulation might slow down after a few thousand iterations due to the 
@@ -218,52 +251,66 @@ not repeat until all the values within the constraints have been generated. Once
 **********************************************************************************************************************************
 Distributions
 **********************************************************************************************************************************
-By default, the Uniform distribution is used with the ``rand()`` function, however it is also possible to select other distributions
-with the procedure ``set_rand_dist()``.
+By default, the Uniform distribution is used with the ``rand()/randm()`` functions, however it is also possible to select other 
+distributions with the procedure ``set_rand_dist()``.
 
 Uniform
 ==================================================================================================================================
 * Default distribution.
-* The supported types are integer, integer_vector, real, real_vector, time, time_vector, unsigned, signed, std_logic_vector, std_logic 
-  and boolean.
+* The supported types are integer, integer_vector, real, real_vector, time, time_vector, unsigned, signed, std_logic_vector, 
+  std_logic and boolean.
 * No restrictions on configuration parameters.
-* When combining a range with a set of values, the probability of generating any legal number is 1/(number of legal numbers). The 
-  only exception to this rule is for real numbers.
-* When combining a real range with a set of values, the probability will be 50% for the range and 50% for the set of values, hence 
-  any number in the set of values will have a higher probability than any single number within the range, otherwise the set of values 
-  would be rarely generated due to the large number of values within a real range.
+* When combining a range with a set of values, the probability of generating any legal value is 1/(number of legal values). The 
+  only exception to this rule is for real values.
+* When combining a real range with a set of real values, the probability will be 50% for the range and 50% for the set of values, 
+  hence any number in the set of values will have a higher probability than any single number within the range, otherwise the set 
+  of values would be rarely generated due to the large number of values within a real range.
 
 Gaussian (Normal)
 ==================================================================================================================================
 * The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned, 
   signed and std_logic_vector lengths bigger than 32 bits are not supported however.
-* The types *time* and *time_vector* are not supported with this distribution. Use instead *integer* and multiply by time unit.
-* Only the range (min/max) constraints are supported when using this distribution, i.e. no set of values are supported.
-* Cannot be combined with cyclic or uniqueness parameters.
-* Cannot be combined with weighted randomization functions.
-* To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures respectively.
-* If not configured, the default mean will be (max-min)/2 and the default std_deviation will be (max-min)/6. These two default values 
-  have no special meaning other than giving a fair distribution curve.
-* To clear the configured mean and std_deviation and go back to the default, use ``clear_rand_dist_mean()`` and ``clear_rand_dist_std_deviation()`` 
-  procedures respectively.
+* The types *time* and *time_vector* are not supported, use instead *integer* and multiply by the time unit.
+* Only the range (min/max) constraints are supported, i.e. no set of values are supported.
+* Cannot be combined with CYCLIC or UNIQUE configurations.
+* Cannot be combined with weighted randomization methods.
+* To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures 
+  respectively.
+* If not configured, the default mean will be (max-min)/2 and the default std_deviation will be (max-min)/6. These two default 
+  values have no special meaning other than giving a fair distribution curve.
+* To clear the configured mean and std_deviation and go back to the default, use ``clear_rand_dist_mean()`` and 
+  ``clear_rand_dist_std_deviation()`` procedures respectively.
 
 .. code-block::
 
+    -- Single-method approach
     my_rand.set_rand_dist(GAUSSIAN);
     for i in 1 to 5000 loop
       addr := my_rand.rand(-10, 10);
+    end loop;
+
+    -- Multi-method approach
+    my_rand.set_rand_dist(GAUSSIAN);
+    my_rand.add_range(-10, 10);
+    for i in 1 to 5000 loop
+      addr := my_rand.randm(VOID);
     end loop;
 
 .. _rand_pkg_weighted:
 
 Weighted
 ==================================================================================================================================
-This distribution does NOT use the ``set_rand_dist()`` procedure, but instead uses different randomization functions with parameters
-of (value + weight) or (range of values + weight). The function names contain the order of the parameters for better readability.
+This distribution does NOT use the ``set_rand_dist()`` procedure, but instead uses different methods with parameters of 
+(value + weight) or (range of values + weight). The method names contain the order of the parameters for better readability.
 
+**Single-method approach**
     * :ref:`rand_val_weight`
     * :ref:`rand_range_weight`
     * :ref:`rand_range_weight_mode`
+
+**Multi-method approach**
+    * add_val_weight()
+    * add_range_weight()
 
 .. important::
     The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights.
@@ -272,33 +319,61 @@ When specifying a weight for a range of values there are two possible interpreta
 
 #. COMBINED_WEIGHT: The given weight is assigned to the range as a whole, i.e. each value within the range has an equal fraction 
    of the given weight.
-#. INDIVIDUAL_WEIGHT: The given weight is assigned equally to each value within the range, hence the range will have a total weight 
-   higher than the given weight.
+#. INDIVIDUAL_WEIGHT: The given weight is assigned equally to each value within the range, hence the range will have a total 
+   weight higher than the given weight.
 
-The default mode is COMBINED_WEIGHT, however this can be changed using the ``set_range_weight_default_mode()`` procedure. Alternatively,
-it is possible to explicitly define the mode while generating the random number in the ``rand_range_weight_mode()`` function.
+The default mode is COMBINED_WEIGHT, however this can be changed using the ``set_range_weight_default_mode()`` procedure. 
+Alternatively, it is possible to explicitly define the mode when using ``rand_range_weight_mode()`` or ``add_range_weight()``.
 
 .. code-block::
 
+    --------------------------------------------------------------------------------------------------------------------
     -- Example 1: value, weight
-    addr := my_rand.rand_val_weight(((-5,1),(0,3),(5,1))); -- Generates a value which is either -5, 0 or 5 with their corresponding weights
+    -- Generate a value which is either -5, 0 or 5 with their corresponding weights
+    --------------------------------------------------------------------------------------------------------------------
+    -- Single-method approach
+    addr := my_rand.rand_val_weight(((-5,1),(0,3),(5,1)));
 
+    -- Multi-method approach
+    my_rand.add_val_weight(-5,1);
+    my_rand.add_val_weight(0,3);
+    my_rand.add_val_weight(5,1);
+    addr := my_rand.randm(VOID);
+
+    --------------------------------------------------------------------------------------------------------------------
     -- Example 2: range(min/max), weight
-    addr := my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50))); -- Generates a value in the range [-5:-3], 0 and the range [1:5] with 
-                                                                       -- their corresponding weights and default mode
+    -- Generate a value in the range [-5:-3], 0 and the range [1:5] with their corresponding weights and default mode
+    --------------------------------------------------------------------------------------------------------------------
+    -- Single-method approach
+    addr := my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50)));
 
+    -- Multi-method approach
+    my_rand.add_range_weight(-5,-3,30);
+    my_rand.add_val_weight(0,20);
+    my_rand.add_range_weight(1,5,50);
+    addr := my_rand.randm(VOID);
+
+    --------------------------------------------------------------------------------------------------------------------
     -- Example 3: range(min/max), weight, weight mode
-    addr := my_rand.rand_range_weight_mode(((-5,-3,30,COMBINED_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT))); -- Generates a value in the range [-5:-3], 0 and the range 
-                                                                                                               -- [1:5] with their corresponding weights and explicit modes
+    -- Generate a value in the range [-5:-3], 0 and the range [1:5] with their corresponding weights and explicit modes
+    --------------------------------------------------------------------------------------------------------------------
+    -- Single-method approach
+    addr := my_rand.rand_range_weight_mode(((-5,-3,30,COMBINED_WEIGHT),(0,0,20,NA),(1,5,50,COMBINED_WEIGHT)));
+
+    -- Multi-method approach
+    my_rand.add_range_weight(-5,-3,30,COMBINED_WEIGHT);
+    my_rand.add_val_weight(0,20);
+    my_rand.add_range_weight(1,5,50,COMBINED_WEIGHT);
+    addr := my_rand.randm(VOID);
 
 The supported types are integer, real, time, unsigned, signed and std_logic_vector.
 
 .. note::
-    While it is possible to use different weight modes on each range in a single procedure call, it is recommended to use the same 
-    ones to avoid confusion regarding the distribution of the weights.
+    While it is possible to use different weight modes for each range in the same randomization call, it is recommended to use the 
+    same modes to avoid confusion regarding the distribution of the weights.
 
 .. note::
-    The real and time weighted randomization functions only support the COMBINED_WEIGHT mode due to the very large number of values 
+    The real and time weighted randomization methods only support the COMBINED_WEIGHT mode due to the very large number of values 
     within a real/time range.
 
 .. _rand_pkg_config_report:
@@ -308,8 +383,8 @@ Configuration report
 **********************************************************************************************************************************
 A report containing all the configuration parameters can be printed using the ``report_config()`` procedure.
 
-A name can be given to the random generator by calling the ``set_name()`` procedure. This is useful when printing reports for several 
-random generator instances.
+A name can be given to the random generator by calling the ``set_name()`` procedure. This is useful when printing reports for 
+several random generator instances.
 The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined in adaptations_pkg.
 
 .. code-block::
@@ -338,8 +413,8 @@ Additional info
 **********************************************************************************************************************************
 Log messages within the procedures and functions in the *rand_pkg* use the following message IDs (disabled by default):
 
-* ID_RAND_GEN: Used for logging general randomization values returned by rand().
-* ID_RAND_CONF: Used for logging general randomization configuration changes, except from name and scope.
+* ID_RAND_GEN: Used for logging "General Randomization" values returned by ``rand()/randm()``.
+* ID_RAND_CONF: Used for logging "General Randomization" configuration changes, except from name and scope.
 
 The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure ``set_scope()``. 
 The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.

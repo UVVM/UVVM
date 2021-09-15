@@ -36,8 +36,8 @@ values. This approach is useful for simple constraints or constraints which are 
 
 **2. Multi-method approach:** The constraints for the ``randm()`` function need to be previously configured by using different 
 procedures. The benefit of this approach is that the constraints only need to be defined once, instead of being repeated on every 
-``randm()`` call, resulting in a code which is more structured and easier to read for complex constraints. It also supports 
-multiple ranges, unlike the single-method approach. 
+``randm()`` call, resulting in a code which is more structured and easier to read for complex constraints. It also supports more 
+combinations of different constraints, such as multiple ranges.
 
 .. code-block::
 
@@ -75,18 +75,24 @@ There are different ways of constraining the random value in a clear and consist
 
 .. code-block::
 
-    -- 1. min & max values
+    -- 1. Range
     addr := my_rand.rand(0, 99); -- Generates a value in the range [0:99]
 
-    -- 2. set of values
+    -- 2. Set of values
     addr := my_rand.rand(ONLY,(0,5,10)); -- Generates a value which is either 0, 5 or 10
 
-    -- 3. min & max + set of values
+    -- 3. Range and set of values
+    addr := my_rand.rand(0, 50, ADD,(100));      -- Generates a value in the range [0:50] or 100
     addr := my_rand.rand(0, 50, ADD,(60,70,80)); -- Generates a value in the range [0:50] and either 60, 70 or 80
-    addr := my_rand.rand(0, 50, EXCL,(25));      -- Generates a value in the range [0:50] except for 25
 
-    -- 4. min & max + two sets of values
-    addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(25)); -- Generates a value in the range [0:50] and either 60, 70 or 80, except for 25
+    -- 4. Range and exclude values
+    addr := my_rand.rand(0, 50, EXCL,(25));      -- Generates a value in the range [0:50] except for 25
+    addr := my_rand.rand(0, 50, EXCL,(20,30));   -- Generates a value in the range [0:50] except for 20 and 30
+
+    -- 5. Range, set of values and exclude values
+    addr := my_rand.rand(0, 50, ADD,(100), EXCL,(25));         -- Generates a value in the range [0:50] or 100, except for 25
+    addr := my_rand.rand(0, 50, ADD,(100), EXCL,(20,30));      -- Generates a value in the range [0:50] or 100, except for 20 and 30
+    addr := my_rand.rand(0, 50, ADD,(60,70,80), EXCL,(20,30)); -- Generates a value in the range [0:50] and either 60, 70 or 80, except for 20 and 30
 
 For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`.
 
@@ -140,9 +146,59 @@ min and max constraints are provided as well.
 **********************************************************************************************************************************
 Multi-method approach
 **********************************************************************************************************************************
-
 Constraints
 ==================================================================================================================================
+By using the following procedures, different combinations of constraints can be added for the ``randm()`` function.
+
+.. code-block::
+
+    -- 1. Single range
+    my_rand.add_range(0, 99);
+    addr := my_rand.randm(VOID); -- Generates a value in the range [0:99]
+
+    -- 2. Multiple ranges
+    my_rand.add_range(0, 99);
+    my_rand.add_range(200, 299);
+    my_rand.add_range(400, 499);
+    addr := my_rand.randm(VOID); -- Generates a value in the ranges [0:99], [200:299] and [400:499]
+
+    -- 3. Set of values
+    my_rand.add_val((0,5,10));
+    addr := my_rand.randm(VOID); -- Generates a value which is either 0, 5 or 10
+
+    -- 4. Exclude values (e.g. using integer return type)
+    my_rand.excl_val((0,100,500));
+    addr := my_rand.randm(VOID); -- Generates a value from the complete integer range except for 0, 100 and 500
+
+    -- 5. Range and set of values
+    my_rand.add_range(0, 50);
+    my_rand.add_range(100, 150);
+    my_rand.add_val((60));
+    my_rand.add_val((160,170,180));
+    addr := my_rand.randm(VOID); -- Generates a value in the ranges [0:50], [100:150] and either 60, 160, 170 or 180
+
+    -- 6. Range and exclude values
+    my_rand.add_range(0, 50);
+    my_rand.add_range(100, 150);
+    my_rand.excl_val((25));
+    my_rand.excl_val((20,30));
+    addr := my_rand.randm(VOID); -- Generates a value in the ranges [0:50], [100:150] except for 20, 25 and 30
+
+    -- 7. Set of values and exclude values
+    my_rand.add_val((10,20,30,40,50,60,70));
+    my_rand.excl_val((20,40,60));
+    addr := my_rand.randm(VOID); -- Generates a value which is either 10, 30, 50 or 70
+
+    -- 8. Range, set of values and exclude values
+    my_rand.add_range(0, 50);
+    my_rand.add_range(100, 150);
+    my_rand.add_val((60));
+    my_rand.add_val((160,170,180));
+    my_rand.excl_val((25));
+    my_rand.excl_val((20,30));
+    addr := my_rand.randm(VOID); -- Generates a value in the ranges [0:50], [100:150] and either 60, 160, 170 or 180, except for 20, 25 and 30
+
+For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`.
 
 Return types
 ==================================================================================================================================

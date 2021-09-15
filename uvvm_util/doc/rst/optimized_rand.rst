@@ -95,12 +95,14 @@ bins have been covered, their respective randomization weights will be reset to 
 
 .. code-block::
 
-    my_coverpoint.add_bins(bin(0), 10); -- Selected 50% of the time (rand_weight = 10)
-    my_coverpoint.add_bins(bin(2), 5);  -- Selected 25% of the time (rand_weight = 5)
-    my_coverpoint.add_bins(bin(4), 5);  -- Selected 25% of the time (rand_weight = 5)
-    my_coverpoint.sample_coverage(0);   -- bin(0) Will now be selected 47% of the time (rand_weight = 9)
-    my_coverpoint.sample_coverage(0);   -- bin(0) Will now be selected 44% of the time (rand_weight = 8)
-    my_coverpoint.sample_coverage(0);   -- bin(0) Will now be selected 41% of the time (rand_weight = 7)
+    add_bins(bin, min_hits, [bin_name])
+
+    my_coverpoint.add_bins(bin(0), 10); -- Selected 50% of the time (rand_weight = min_hits = 10)
+    my_coverpoint.add_bins(bin(2), 5);  -- Selected 25% of the time (rand_weight = min_hits = 5)
+    my_coverpoint.add_bins(bin(4), 5);  -- Selected 25% of the time (rand_weight = min_hits = 5)
+    my_coverpoint.sample_coverage(0);   -- bin(0) will now be selected 47% of the time (rand_weight = 9)
+    my_coverpoint.sample_coverage(0);   -- bin(0) will now be selected 44% of the time (rand_weight = 8)
+    my_coverpoint.sample_coverage(0);   -- bin(0) will now be selected 41% of the time (rand_weight = 7)
 
 **********************************************************************************************************************************
 Randomization using transitions

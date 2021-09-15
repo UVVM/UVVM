@@ -13,7 +13,10 @@ For a more balanced randomization between small and large ranges/sets, the :ref:
 may be used.
 
 To generate a random value using General Randomization it is necessary to import the utility library, create a variable with the 
-protected type *t_rand* and call the ``rand()`` function from the variable.
+protected type *t_rand* and call the ``rand()`` function from the variable. There are two ways of doing this:
+
+**1. Single-method approach:** The ``rand()`` function is constrained by the parameters it receives and additional configuration 
+values. This approach is useful for simple constraints or constraints which are not repeated constantly throughout the code.
 
 .. code-block::
 
@@ -25,6 +28,37 @@ protected type *t_rand* and call the ``rand()`` function from the variable.
     begin
       -- Generate a random value in the range [0:255]
       addr := my_rand.rand(0, 255);
+
+      -- Generate a random value in the range [0:64] and either 128 or 256, except for 32
+      size := my_rand.rand(0, 64, ADD,(128,256), EXCL,(32));
+      ...
+
+**2. Multi-method approach:** The constraints for the ``rand()`` function need to be previously configured by using different 
+procedures. The benefit of this approach is that the constraints only need to be defined once, instead of being repeated on every 
+``rand()`` call, resulting in a code which is more structured and easier to read for complex constraints. It also supports multiple 
+ranges, unlike the single-method approach. 
+
+.. code-block::
+
+    library uvvm_util;
+    context uvvm_util.uvvm_util_context;
+    ...
+    p_main : process
+      variable my_rand : t_rand;
+    begin
+      -- Generate a random value in the range [0:255] and [500:511]
+      my_rand.add_range(0, 255);
+      my_rand.add_range(500, 511);
+      addr := my_rand.rand(VOID);
+
+      -- Clear the constraints so we can reuse the random generator variable
+      my_rand.clear_constraints(VOID);
+
+      -- Generate a random value in the range [0:64] and either 128 or 256, except for 32
+      my_rand.add_range(0, 64);
+      my_rand.add_val((128,256));
+      my_rand.excl_val(32);
+      size := my_rand.rand(VOID);
       ...
 
 .. note::

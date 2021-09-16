@@ -7,6 +7,9 @@ Protected type containing the General Randomization functionality.
 
 The expression 'random generator' refers to the specific variable instance of *t_rand*.
 
+Common configuration
+==================================================================================================================================
+
 set_name()
 ----------------------------------------------------------------------------------------------------------------------------------
 Configures the name of the :ref:`random generator <random_generator>`. The maximum length is C_RAND_MAX_NAME_LENGTH defined in 
@@ -396,6 +399,9 @@ Returns the randomization seeds. ::
     my_rand.get_rand_seeds(seed1, seed2);
     seed_vector := my_rand.get_rand_seeds(VOID);
 
+
+Single-method approach
+==================================================================================================================================
 
 rand()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1106,3 +1112,779 @@ values within a real/time range. ::
     rand_uns  := my_rand.rand_range_weight_mode(rand_uns'length, ((10,15,1,INDIVIDUAL_WEIGHT),(20,20,3,NA),(30,35,6,INDIVIDUAL_WEIGHT)));
     rand_sign := my_rand.rand_range_weight_mode(rand_sign'length, ((-5,-3,1,INDIVIDUAL_WEIGHT),(0,0,2,NA),(5,10,2,INDIVIDUAL_WEIGHT)));
     rand_slv  := my_rand.rand_range_weight_mode(rand_slv'length, ((10,15,5,INDIVIDUAL_WEIGHT),(20,20,1,NA),(30,35,1,INDIVIDUAL_WEIGHT))); -- SLV is interpreted as unsigned
+
+
+Multi-method approach
+==================================================================================================================================
+
+add_range()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a range which will be included in the randomized values. ::
+
+    add_range(min_value, max_value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | min_value          | in     | integer                      | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | integer                      | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range(1,10);
+
+
+add_range_real()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a range which will be included in the randomized values. ::
+
+    add_range_real(min_value, max_value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | min_value          | in     | real                         | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | real                         | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range_real(1.0,10.0);
+
+
+add_range_time()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a range which will be included in the randomized values. ::
+
+    add_range_time(min_value, max_value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | min_value          | in     | time                         | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range_time(1 ns,10 ns);
+
+
+add_range_unsigned()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a range which will be included in the randomized values. This procedure can be used for min and max 
+values bigger than the integer’s 32-bit range. ::
+
+    add_range_unsigned(min_value, max_value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | min_value          | in     | unsigned                     | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | unsigned                     | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range_unsigned(x"0F00000000000000", x"0F00000000000003");
+
+
+add_range_signed()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a range which will be included in the randomized values. This procedure can be used for min and max 
+values bigger than the integer’s 32-bit range. ::
+
+    add_range_signed(min_value, max_value, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | min_value          | in     | signed                       | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | signed                       | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range_signed(x"F000000000000000", x"F000000000000003");
+
+
+add_val()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value or a set of values which will be included in the randomized values. ::
+
+    add_val(value, [msg_id_panel])
+    add_val(set_of_values, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | integer                      | A single value used for the generation of the random number   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | set_of_values      | in     | integer_vector               | A set of values used for the generation of the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_val(20);
+    my_rand.add_val((30,32,34,36,38));
+
+
+add_val_real()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value or a set of values which will be included in the randomized values. ::
+
+    add_val_real(value, [msg_id_panel])
+    add_val_real(set_of_values, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | real                         | A single value used for the generation of the random number   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | set_of_values      | in     | real_vector                  | A set of values used for the generation of the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_val_real(20.0);
+    my_rand.add_val_real((30.0,32.2,34.4,36.6,38.8));
+
+
+add_val_time()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value or a set of values which will be included in the randomized values. ::
+
+    add_val_time(value, [msg_id_panel])
+    add_val_time(set_of_values, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | time                         | A single value used for the generation of the random number   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | set_of_values      | in     | time_vector                  | A set of values used for the generation of the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_val_time(20 ps);
+    my_rand.add_val_time((30 ps,32 ps,34 ps,36 ps,38 ps));
+
+
+excl_val()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value or a set of values which will be excluded from the randomized values. ::
+
+    excl_val(value, [msg_id_panel])
+    excl_val(set_of_values, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | integer                      | A single value excluded from the generated random numbers     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | set_of_values      | in     | integer_vector               | A set of values excluded from the generated random numbers    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.excl_val(5);
+    my_rand.excl_val((3,7,9));
+
+
+excl_val_real()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value or a set of values which will be excluded from the randomized values. ::
+
+    excl_val_real(value, [msg_id_panel])
+    excl_val_real(set_of_values, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | real                         | A single value excluded from the generated random numbers     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | set_of_values      | in     | real_vector                  | A set of values excluded from the generated random numbers    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.excl_val_real(5.0);
+    my_rand.excl_val_real((3.0,7.0,9.0));
+
+
+excl_val_time()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value or a set of values which will be excluded from the randomized values. ::
+
+    excl_val_time(value, [msg_id_panel])
+    excl_val_time(set_of_values, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | time                         | A single value excluded from the generated random numbers     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | set_of_values      | in     | time_vector                  | A set of values excluded from the generated random numbers    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.excl_val_time(5 ps);
+    my_rand.excl_val_time((3 ps,7 ps,9 ps));
+
+
+add_val_weight()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value with a weight which will be included in the randomized values. ::
+
+    add_val_weight(value, weight, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | integer                      | A single value used for the generation of the random number   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | weight             | in     | natural                      | Determines how often the value is chosen during randomization |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_val_weight(10, 1);
+    my_rand.add_val_weight(20, 3);
+
+
+add_val_weight_real()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value with a weight which will be included in the randomized values. ::
+
+    add_val_weight_real(value, weight, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | real                         | A single value used for the generation of the random number   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | weight             | in     | natural                      | Determines how often the value is chosen during randomization |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_val_weight_real(10.0, 1);
+    my_rand.add_val_weight_real(20.0, 3);
+
+
+add_val_weight_time()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a single value with a weight which will be included in the randomized values. ::
+
+    add_val_weight_time(value, weight, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | value              | in     | time                         | A single value used for the generation of the random number   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | weight             | in     | natural                      | Determines how often the value is chosen during randomization |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_val_weight_time(10 ns, 1);
+    my_rand.add_val_weight_time(20 ns, 3);
+
+
+add_range_weight()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a range with a weight which will be included in the randomized values. ::
+
+    add_range_weight(min_value, max_value, weight, [mode, [msg_id_panel]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | min_value          | in     | integer                      | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | integer                      | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | mode               | in     | :ref:`t_weight_mode`         | Determines how to divide the weight among the range of values.|
+|          |                    |        |                              | Default value is COMBINED_WEIGHT and can be updated via       |
+|          |                    |        |                              | ``set_range_weight_default_mode()``.                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range_weight(10,19, 1);
+    my_rand.add_range_weight(20,29, 3);
+
+    -- Example 2:
+    my_rand.add_range_weight(10,19, 1, INDIVIDUAL_WEIGHT);
+    my_rand.add_range_weight(20,29, 3, INDIVIDUAL_WEIGHT);
+
+
+add_range_weight_real()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a range with a weight which will be included in the randomized values. ::
+
+    add_range_weight_real(min_value, max_value, weight, [mode, [msg_id_panel]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | min_value          | in     | real                         | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | real                         | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | mode               | in     | :ref:`t_weight_mode`         | Determines how to divide the weight among the range of values.|
+|          |                    |        |                              | Default value is COMBINED_WEIGHT and can be updated via       |
+|          |                    |        |                              | ``set_range_weight_default_mode()``.                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range_weight_real(10.0,19.0, 1);
+    my_rand.add_range_weight_real(20.0,29.0, 3);
+
+    -- Example 2:
+    my_rand.add_range_weight_real(10.0,19.0, 1, INDIVIDUAL_WEIGHT);
+    my_rand.add_range_weight_real(20.0,29.0, 3, INDIVIDUAL_WEIGHT);
+
+
+add_range_weight_time()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a constraint specifying a range with a weight which will be included in the randomized values. ::
+
+    add_range_weight_time(min_value, max_value, weight, [mode, [msg_id_panel]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | min_value          | in     | time                         | The minimum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | mode               | in     | :ref:`t_weight_mode`         | Determines how to divide the weight among the range of values.|
+|          |                    |        |                              | Default value is COMBINED_WEIGHT and can be updated via       |
+|          |                    |        |                              | ``set_range_weight_default_mode()``.                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range_weight_time(10 us,19 us, 1);
+    my_rand.add_range_weight_time(20 us,29 us, 3);
+
+    -- Example 2:
+    my_rand.add_range_weight_time(10 us,19 us, 1, INDIVIDUAL_WEIGHT);
+    my_rand.add_range_weight_time(20 us,29 us, 3, INDIVIDUAL_WEIGHT);
+
+
+set_cyclic_mode()
+----------------------------------------------------------------------------------------------------------------------------------
+Configures whether cyclic mode is enabled or disabled. Default value is NON_CYCLIC. For an overview on cyclic randomization click 
+:ref:`here <rand_pkg_cyclic>`. ::
+
+    set_cyclic_mode(cyclic_mode, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | cyclic_mode        | in     | :ref:`t_cyclic`              | Whether cyclic mode is enabled or disabled                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.set_cyclic_mode(CYCLIC);
+
+
+set_uniqueness()
+----------------------------------------------------------------------------------------------------------------------------------
+Configures whether uniqueness is enabled or disabled. Default value is NON_UNIQUE. For an overview on uniqueness click 
+:ref:`here <rand_pkg_uniqueness>`. ::
+
+    set_uniqueness(uniqueness, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | uniqueness         | in     | :ref:`t_uniqueness`          | Whether the values in a vector should be unique or not        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.set_uniqueness(UNIQUE);
+
+
+clear_constraints()
+----------------------------------------------------------------------------------------------------------------------------------
+Removes all the randomization constraints in the :ref:`random generator <random_generator>`. ::
+
+    clear_constraints(VOID)
+    clear_constraints(msg_id_panel)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.clear_constraints(VOID);
+
+
+clear_config()
+----------------------------------------------------------------------------------------------------------------------------------
+Resets all the configuration parameters to their default values and removes all the randomization constraints in the 
+:ref:`random generator <random_generator>`. ::
+
+    clear_config(VOID)
+    clear_config(msg_id_panel)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.clear_config(VOID);
+
+
+randm()
+----------------------------------------------------------------------------------------------------------------------------------
+
+return integer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random integer value using the configured constraints. For more information on the probability distribution click 
+:ref:`here <rand_pkg_distributions>`. ::
+
+    integer := randm(VOID)
+    integer := randm(msg_id_panel)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range(0, 50);
+    my_rand.add_val((100,150,200));
+    my_rand.excl_val((25));
+    rand_int := my_rand.randm(VOID);
+
+
+return real
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random real value using the configured constraints. For more information on the probability distribution click 
+:ref:`here <rand_pkg_distributions>`. ::
+
+    real := randm(VOID)
+    real := randm(msg_id_panel)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range_real(0.0, 1.0);
+    my_rand.add_val_real((10.0,15.0,20.0));
+    my_rand.excl_val_real((0.5));
+    rand_real := my_rand.randm(VOID);
+
+
+return time
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random time value using the configured constraints. For more information on the probability distribution click 
+:ref:`here <rand_pkg_distributions>`. ::
+
+    time := randm(VOID)
+    time := randm(msg_id_panel)
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range_time(0 ps, 50 ps);
+    my_rand.add_val_time((100 ps,150 ps,200 ps));
+    my_rand.excl_val_time((25 ps));
+    rand_time := my_rand.randm(VOID);
+
+
+return integer_vector
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a vector of random integer values using the configured constraints. For more information on the probability distribution 
+click :ref:`here <rand_pkg_distributions>`. ::
+
+    integer_vector := randm(size, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | size               | in     | positive                     | The size of the vector to be returned                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range(0, 50);
+    my_rand.add_val((100,150,200));
+    my_rand.excl_val((25));
+    rand_int_vec := my_rand.randm(rand_int_vec'length);
+
+
+return real_vector
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a vector of random real values using the configured constraints. For more information on the probability distribution 
+click :ref:`here <rand_pkg_distributions>`. ::
+
+    real_vector := randm(size, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | size               | in     | positive                     | The size of the vector to be returned                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range_real(0.0, 1.0);
+    my_rand.add_val_real((10.0,15.0,20.0));
+    my_rand.excl_val_real((0.5));
+    rand_real_vec := my_rand.randm(rand_real_vec'length);
+
+
+return time_vector
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a vector of random time values using the configured constraints. For more information on the probability distribution 
+click :ref:`here <rand_pkg_distributions>`. ::
+
+    time_vector := randm(size, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | size               | in     | positive                     | The size of the vector to be returned                         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.add_range_time(0 ps, 50 ps);
+    my_rand.add_val_time((100 ps,150 ps,200 ps));
+    my_rand.excl_val_time((25 ps));
+    rand_time_vec := my_rand.randm(rand_time_vec'length);
+
+
+return unsigned
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random unsigned value using the configured constraints. For more information on the probability distribution click 
+:ref:`here <rand_pkg_distributions>`. ::
+
+    unsigned := randm(length, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range(0, 50);
+    my_rand.add_val((100,150,200));
+    my_rand.excl_val((25));
+    rand_uns := my_rand.randm(rand_uns'length);
+
+    -- Example 2:
+    my_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
+    rand_uns := my_rand.randm(rand_uns'length);
+
+
+return signed
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random signed value using the configured constraints. For more information on the probability distribution click 
+:ref:`here <rand_pkg_distributions>`. ::
+
+    signed := randm(length, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range(-50, 50);
+    my_rand.add_val((-100,100));
+    my_rand.excl_val((0));
+    rand_sign := my_rand.randm(rand_sign'length);
+
+    -- Example 2:
+    my_rand.add_range_signed(x"F000000000000000000000000000000", x"F000000000000000000000000000003");
+    rand_sign := my_rand.randm(rand_sign'length);
+
+
+return std_logic_vector
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Returns a random std_logic_vector value (interpreted as unsigned) using the configured constraints. For more information on the 
+probability distribution click :ref:`here <rand_pkg_distributions>`. ::
+
+    std_logic_vector := randm(length, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example 1:
+    my_rand.add_range(0, 50);
+    my_rand.add_val((100,150,200));
+    my_rand.excl_val((25));
+    rand_slv := my_rand.randm(rand_slv'length);
+
+    -- Example 2:
+    my_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
+    rand_slv := my_rand.randm(rand_slv'length);

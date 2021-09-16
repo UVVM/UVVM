@@ -232,6 +232,8 @@ This method will return the seeds as two positive integers or a positive integer
     -- Example 2
     seed_vector := my_rand.get_rand_seeds(VOID);
 
+.. _rand_pkg_uniqueness:
+
 **********************************************************************************************************************************
 Uniqueness
 **********************************************************************************************************************************

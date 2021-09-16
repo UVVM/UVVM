@@ -929,7 +929,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing unsigned (range)");
       v_num_values := 4;
-      v_rand.add_range(x"00", x"03");
+      v_rand.add_range_unsigned(x"00", x"03");
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns := v_rand.randm(v_uns'length);
         check_rand_value_long(v_uns, (0 => (x"0",x"3")));
@@ -938,7 +938,7 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 9;
-      v_rand.add_range(x"007", x"00B");
+      v_rand.add_range_unsigned(x"007", x"00B");
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns := v_rand.randm(v_uns'length);
         check_rand_value_long(v_uns, ((x"0",x"3"),(x"7",x"B")));
@@ -950,7 +950,7 @@ begin
 
       log(ID_LOG_HDR, "Testing unsigned (range long vectors)");
       v_num_values := 4;
-      v_rand.add_range(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
+      v_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns_long := v_rand.randm(v_uns_long'length);
         check_rand_value_long(v_uns_long, (0 => (x"0F000000000000000000000000000000",x"0F000000000000000000000000000003")));
@@ -959,7 +959,7 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 9;
-      v_rand.add_range(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000B");
+      v_rand.add_range_unsigned(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000B");
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_uns_long := v_rand.randm(v_uns_long'length);
         check_rand_value_long(v_uns_long, ((x"0F000000000000000000000000000000",x"0F000000000000000000000000000003"),
@@ -973,21 +973,21 @@ begin
       log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 11);
       increment_expected_alerts(TB_WARNING, 1);
-      v_rand.add_range(x"0", x"0");
-      v_rand.add_range(x"2", x"0");
+      v_rand.add_range_unsigned(x"0", x"0");
+      v_rand.add_range_unsigned(x"2", x"0");
 
-      v_rand.add_range(x"00000F000000000000000000000000000000", x"0F000000000000000000000000000003");
-      v_rand.add_range(x"0F000000000000000000000000000000", x"00000F000000000000000000000000000003");
+      v_rand.add_range_unsigned(x"00000F000000000000000000000000000000", x"0F000000000000000000000000000003");
+      v_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"00000F000000000000000000000000000003");
 
       -- TODO: uncomment when implemented
-      v_rand.add_range(x"0", x"F");
+      v_rand.add_range_unsigned(x"0", x"F");
       v_rand.add_range(0, 2);
       v_rand.add_range_real(0.0, 2.0);
       --v_rand.add_range_time(0 ps, 2 ps);
-      --v_rand.add_range(x"0", x"F");
+      --v_rand.add_range_signed(x"0", x"F");
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range(x"0", x"2");
+      v_rand.add_range_unsigned(x"0", x"2");
       v_int      := v_rand.randm(VOID);
       v_real     := v_rand.randm(VOID);
       --v_time     := v_rand.randm(VOID);
@@ -999,13 +999,13 @@ begin
       --v_slv      := v_rand.randm(v_slv'length);
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
+      v_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
       v_uns := v_rand.randm(v_uns'length);
-      v_rand.add_range(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000B");
+      v_rand.add_range_unsigned(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000B");
       v_uns := v_rand.randm(v_uns'length);
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range(x"0", x"2");
+      v_rand.add_range_unsigned(x"0", x"2");
       v_rand.set_uniqueness(UNIQUE);
       v_uns := v_rand.randm(v_uns'length);
       v_rand.set_uniqueness(NON_UNIQUE);
@@ -1938,7 +1938,7 @@ begin
 
       log(ID_LOG_HDR, "Testing unsigned (not supported)");
       increment_expected_alerts(TB_WARNING, 1);
-      v_rand.add_range(x"00", x"03");
+      v_rand.add_range_unsigned(x"00", x"03");
       v_uns := v_rand.randm(v_uns'length);
 
       v_rand.clear_config(VOID);
@@ -2328,7 +2328,7 @@ begin
       v_uns := v_rand.randm(v_uns'length); -- TB_WARNING
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range(x"0",x"2");
+      v_rand.add_range_unsigned(x"0",x"2");
       v_uns := v_rand.randm(v_uns'length); -- TB_WARNING
       v_rand.clear_constraints(VOID);
 

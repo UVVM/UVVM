@@ -1178,7 +1178,7 @@ package rand_pkg is
     ------------------------------------------------------------
     -- Unsigned constraints
     ------------------------------------------------------------
-    procedure add_range(
+    procedure add_range_unsigned(
       constant min_value    : in unsigned;
       constant max_value    : in unsigned;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
@@ -5601,7 +5601,7 @@ package body rand_pkg is
     ------------------------------------------------------------
     -- Unsigned constraints
     ------------------------------------------------------------
-    procedure add_range(
+    procedure add_range_unsigned(
       constant min_value    : in unsigned;
       constant max_value    : in unsigned;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is

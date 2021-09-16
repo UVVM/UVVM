@@ -2500,7 +2500,7 @@ package body func_cov_pkg is
       if priv_id /= C_DEALLOCATED_ID then
         v_print_goal := protected_covergroup_status.get_bins_coverage_goal(priv_id) /= 100 or
                         protected_covergroup_status.get_hits_coverage_goal(priv_id) /= 100;
-        write(v_line, "Coverpoint:              " & priv_name & LF &
+        write(v_line, "Coverpoint:              " & to_string(priv_name) & LF &
                       return_string_if_true("Goal:                    " &
                         justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
                         justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage_goal(priv_id)) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, v_print_goal) &
@@ -2515,7 +2515,7 @@ package body func_cov_pkg is
                         justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, NO_GOAL),2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
                       fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
       else
-        write(v_line, "Coverpoint:              " & priv_name & LF &
+        write(v_line, "Coverpoint:              " & to_string(priv_name) & LF &
                       "Coverage (for goal 100): " &
                         justify("Bins: 0.0%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
                         justify("Hits: 0.0%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &

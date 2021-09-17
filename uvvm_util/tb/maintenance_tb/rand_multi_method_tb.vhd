@@ -1970,35 +1970,35 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing Gaussian distribution (integer)");
       ------------------------------------------------------------
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, -10, 10, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, -10, 10, multi_method => true);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, 0, 10, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, 0, 10, multi_method => true);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, -10, 0, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, -10, 0, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.1;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.5;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 5.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 3.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 6.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       wait for 200 ns;
       v_rand.clear_rand_dist_mean(VOID);
@@ -2007,35 +2007,35 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing Gaussian distribution (integer_vector)");
       ------------------------------------------------------------
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, -10, 10, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, -10, 10, multi_method => true);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, 0, 10, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, 0, 10, multi_method => true);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, -10, 0, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, -10, 0, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.1;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.5;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 5.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 3.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 6.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "INT_VEC", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       wait for 200 ns;
       v_rand.clear_rand_dist_mean(VOID);
@@ -2044,35 +2044,35 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing Gaussian distribution (real)");
       ------------------------------------------------------------
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, -10, 10, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, -10, 10, multi_method => true);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, 0, 10, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, 0, 10, multi_method => true);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, -10, 0, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, -10, 0, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.1;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.5;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 5.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 3.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 6.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "REAL", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       wait for 200 ns;
       v_rand.clear_rand_dist_mean(VOID);
@@ -2081,65 +2081,65 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing Gaussian distribution (unsigned)");
       ------------------------------------------------------------
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, 20, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, 20, multi_method => true);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 10, 20, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 10, 20, multi_method => true);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, 10, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, 10, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.1;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.5;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 5.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 3.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 6.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
 
       wait for 200 ns;
       v_rand.clear_rand_dist_mean(VOID);
       v_rand.clear_rand_dist_std_deviation(VOID);
 
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.1;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 0.5;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 5.0;
       v_std_deviation := 1.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 3.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
 
       v_mean          := 0.0;
       v_std_deviation := 6.0;
-      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_line => true);
+      generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
 
       wait for 200 ns;
       v_rand.clear_rand_dist_mean(VOID);

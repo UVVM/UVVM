@@ -618,7 +618,7 @@ begin
       v_num_values := 4;
       v_rand.add_range_real(-1.0, 1.0);
       v_rand.add_val_real(-10.0);
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.randm(VOID);
         check_rand_value(v_real, (0 => (-1.0,1.0)), ADD,(0 => -10.0));
         count_rand_value(v_value_cnt, v_real);

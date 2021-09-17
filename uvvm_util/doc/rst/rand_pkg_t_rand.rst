@@ -1186,6 +1186,8 @@ Adds a constraint specifying a range which will be included in the randomized va
     my_rand.add_range_time(1 ns,10 ns);
 
 
+.. _add_range_unsigned:
+
 add_range_unsigned()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range which will be included in the randomized values. This procedure can be used for min and max 
@@ -1207,8 +1209,10 @@ values bigger than the integer’s 32-bit range. ::
 .. code-block::
 
     -- Example:
-    my_rand.add_range_unsigned(x"0F00000000000000", x"0F00000000000003");
+    my_rand.add_range_unsigned(x"0000000000000000", x"FFFF000000000000"); -- [0:18446462598732840960]
 
+
+.. _add_range_signed:
 
 add_range_signed()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1231,7 +1235,7 @@ values bigger than the integer’s 32-bit range. ::
 .. code-block::
 
     -- Example:
-    my_rand.add_range_signed(x"F000000000000000", x"F000000000000003");
+    my_rand.add_range_signed(x"F000000000000000", x"0000000000000005"); -- [-1152921504606846976:5]
 
 
 add_val()
@@ -1384,6 +1388,8 @@ Adds a constraint specifying a single value or a set of values which will be exc
     my_rand.excl_val_time((3 ps,7 ps,9 ps));
 
 
+.. _add_val_weight:
+
 add_val_weight()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a single value with a weight which will be included in the randomized values. ::
@@ -1407,6 +1413,8 @@ Adds a constraint specifying a single value with a weight which will be included
     my_rand.add_val_weight(10, 1);
     my_rand.add_val_weight(20, 3);
 
+
+.. _add_val_weight_real:
 
 add_val_weight_real()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1432,6 +1440,8 @@ Adds a constraint specifying a single value with a weight which will be included
     my_rand.add_val_weight_real(20.0, 3);
 
 
+.. _add_val_weight_time:
+
 add_val_weight_time()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a single value with a weight which will be included in the randomized values. ::
@@ -1455,6 +1465,8 @@ Adds a constraint specifying a single value with a weight which will be included
     my_rand.add_val_weight_time(10 ns, 1);
     my_rand.add_val_weight_time(20 ns, 3);
 
+
+.. _add_range_weight:
 
 add_range_weight()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1490,6 +1502,8 @@ Adds a constraint specifying a range with a weight which will be included in the
     my_rand.add_range_weight(20,29, 3, INDIVIDUAL_WEIGHT);
 
 
+.. _add_range_weight_real:
+
 add_range_weight_real()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range with a weight which will be included in the randomized values. ::
@@ -1523,6 +1537,8 @@ Adds a constraint specifying a range with a weight which will be included in the
     my_rand.add_range_weight_real(10.0,19.0, 1, INDIVIDUAL_WEIGHT);
     my_rand.add_range_weight_real(20.0,29.0, 3, INDIVIDUAL_WEIGHT);
 
+
+.. _add_range_weight_time:
 
 add_range_weight_time()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1650,6 +1666,8 @@ Resets all the configuration parameters to their default values and removes all 
 randm()
 ----------------------------------------------------------------------------------------------------------------------------------
 
+.. _randm_int:
+
 return integer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random integer value using the configured constraints. For more information on the probability distribution click 
@@ -1675,6 +1693,8 @@ Returns a random integer value using the configured constraints. For more inform
     my_rand.excl_val((25));
     rand_int := my_rand.randm(VOID);
 
+
+.. _randm_real:
 
 return real
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1702,6 +1722,8 @@ Returns a random real value using the configured constraints. For more informati
     rand_real := my_rand.randm(VOID);
 
 
+.. _randm_time:
+
 return time
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random time value using the configured constraints. For more information on the probability distribution click 
@@ -1728,6 +1750,8 @@ Returns a random time value using the configured constraints. For more informati
     rand_time := my_rand.randm(VOID);
 
 
+.. _randm_int_vec:
+
 return integer_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random integer values using the configured constraints. For more information on the probability distribution 
@@ -1752,6 +1776,8 @@ click :ref:`here <rand_pkg_distributions>`. ::
     my_rand.excl_val((25));
     rand_int_vec := my_rand.randm(rand_int_vec'length);
 
+
+.. _randm_real_vec:
 
 return real_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1778,6 +1804,8 @@ click :ref:`here <rand_pkg_distributions>`. ::
     rand_real_vec := my_rand.randm(rand_real_vec'length);
 
 
+.. _randm_time_vec:
+
 return time_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values using the configured constraints. For more information on the probability distribution 
@@ -1802,6 +1830,8 @@ click :ref:`here <rand_pkg_distributions>`. ::
     my_rand.excl_val_time((25 ps));
     rand_time_vec := my_rand.randm(rand_time_vec'length);
 
+
+.. _randm_uns:
 
 return unsigned
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1832,6 +1862,8 @@ Returns a random unsigned value using the configured constraints. For more infor
     rand_uns := my_rand.randm(rand_uns'length);
 
 
+.. _randm_sig:
+
 return signed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random signed value using the configured constraints. For more information on the probability distribution click 
@@ -1860,6 +1892,8 @@ Returns a random signed value using the configured constraints. For more informa
     my_rand.add_range_signed(x"F000000000000000000000000000000", x"F000000000000000000000000000003");
     rand_sign := my_rand.randm(rand_sign'length);
 
+
+.. _randm_slv:
 
 return std_logic_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

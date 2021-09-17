@@ -148,7 +148,8 @@ Multi-method approach
 **********************************************************************************************************************************
 Constraints
 ==================================================================================================================================
-By using the following procedures, different combinations of constraints can be added for the ``randm()`` function.
+By using the following procedures, different combinations of constraints can be added for the ``randm()`` function. Note that when 
+reusing the same *my_rand* variable, the ``clear_constraints()`` procedure must be called to remove any previous constraints.
 
 .. code-block::
 
@@ -157,20 +158,24 @@ By using the following procedures, different combinations of constraints can be 
     addr := my_rand.randm(VOID); -- Generates a value in the range [0:99]
 
     -- 2. Multiple ranges
+    my_rand.clear_constraints(VOID);
     my_rand.add_range(0, 99);
     my_rand.add_range(200, 299);
     my_rand.add_range(400, 499);
     addr := my_rand.randm(VOID); -- Generates a value in the ranges [0:99], [200:299] and [400:499]
 
     -- 3. Set of values
+    my_rand.clear_constraints(VOID);
     my_rand.add_val((0,5,10));
     addr := my_rand.randm(VOID); -- Generates a value which is either 0, 5 or 10
 
     -- 4. Exclude values (e.g. using integer return type)
+    my_rand.clear_constraints(VOID);
     my_rand.excl_val((0,100,500));
     addr := my_rand.randm(VOID); -- Generates a value from the complete integer range except for 0, 100 and 500
 
     -- 5. Range and set of values
+    my_rand.clear_constraints(VOID);
     my_rand.add_range(0, 50);
     my_rand.add_range(100, 150);
     my_rand.add_val((60));
@@ -178,6 +183,7 @@ By using the following procedures, different combinations of constraints can be 
     addr := my_rand.randm(VOID); -- Generates a value in the ranges [0:50], [100:150] and either 60, 160, 170 or 180
 
     -- 6. Range and exclude values
+    my_rand.clear_constraints(VOID);
     my_rand.add_range(0, 50);
     my_rand.add_range(100, 150);
     my_rand.excl_val((25));
@@ -185,11 +191,13 @@ By using the following procedures, different combinations of constraints can be 
     addr := my_rand.randm(VOID); -- Generates a value in the ranges [0:50], [100:150] except for 20, 25 and 30
 
     -- 7. Set of values and exclude values
+    my_rand.clear_constraints(VOID);
     my_rand.add_val((10,20,30,40,50,60,70));
     my_rand.excl_val((20,40,60));
     addr := my_rand.randm(VOID); -- Generates a value which is either 10, 30, 50 or 70
 
     -- 8. Range, set of values and exclude values
+    my_rand.clear_constraints(VOID);
     my_rand.add_range(0, 50);
     my_rand.add_range(100, 150);
     my_rand.add_val((60));
@@ -202,6 +210,64 @@ For more information on the probability distribution click :ref:`here <rand_pkg_
 
 Return types
 ==================================================================================================================================
+The ``randm()`` function can return the following types:
+
+    * :ref:`integer <randm_int>`
+    * :ref:`integer_vector <randm_int_vec>`
+    * :ref:`real <randm_real>`
+    * :ref:`real_vector <randm_real_vec>`
+    * :ref:`time <randm_time>`
+    * :ref:`time_vector <randm_time_vec>`
+    * :ref:`unsigned <randm_uns>`
+    * :ref:`signed <randm_sig>`
+    * :ref:`std_logic_vector <randm_slv>`
+
+For *std_logic* and *boolean* types use the ``rand(VOID)`` function, since they do not require any constraints.
+
+.. code-block::
+
+    my_rand.add_range(-50, 50);
+    my_rand.add_val((60,70));
+    my_rand.excl_val(0);
+    rand_int      := my_rand.randm(VOID);
+    rand_int_vec  := my_rand.randm(rand_int_vec'length);
+
+    my_rand.clear_constraints(VOID);
+    my_rand.add_range_real(0.0,0.2);
+    my_rand.add_val_real((0.5,1.0,1.5,2.0));
+    my_rand.excl_val_real(0.1);
+    rand_real     := my_rand.randm(VOID);
+    rand_real_vec := my_rand.randm(rand_real_vec'length);
+
+    my_rand.clear_constraints(VOID);
+    my_rand.add_range_time(0 ps, 100 ps);
+    my_rand.add_val_time((160 ps,170 ps));
+    my_rand.excl_val_time(50 ps);
+    rand_time     := my_rand.randm(VOID);
+    rand_time_vec := my_rand.randm(rand_time_vec'length);
+
+    my_rand.clear_constraints(VOID);
+    my_rand.add_range(0, 50);
+    my_rand.add_val((60,70));
+    my_rand.excl_val(25);
+    rand_uns      := my_rand.randm(rand_uns'length);
+    rand_sign     := my_rand.randm(rand_sign'length);
+    rand_slv      := my_rand.randm(rand_slv'length); -- SLV is interpreted as unsigned
+
+The unsigned, signed and std_logic_vector functions can return vectors of any size, however the integer constraints are limited 
+to a 32-bit range. Additional overloads for adding range constraints using unsigned/signed types are provided as well.
+
+    * :ref:`unsigned <add_range_unsigned>`
+    * :ref:`signed <add_range_signed>`
+
+.. code-block::
+
+    my_rand.add_range_unsigned(x"0000000000000000", x"FFFF000000000000"); -- [0:18446462598732840960]
+    rand_uns  := my_rand.randm(rand_uns'length);
+    rand_slv  := my_rand.randm(rand_slv'length);  -- SLV is interpreted as unsigned
+
+    my_rand.add_range_signed(x"F000000000000000", x"0000000000000005");   -- [-1152921504606846976:5]
+    rand_sign := my_rand.randm(rand_sign'length);
 
 **********************************************************************************************************************************
 Seeds
@@ -367,8 +433,12 @@ This distribution does NOT use the ``set_rand_dist()`` procedure, but instead us
     * :ref:`rand_range_weight_mode`
 
 **Multi-method approach**
-    * add_val_weight()
-    * add_range_weight()
+    * :ref:`add_val_weight`
+    * :ref:`add_val_weight_real`
+    * :ref:`add_val_weight_time`
+    * :ref:`add_range_weight`
+    * :ref:`add_range_weight_real`
+    * :ref:`add_range_weight_time`
 
 .. important::
     The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights.
@@ -465,6 +535,11 @@ The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined i
     # UVVM:            STD_DEV CONFIGURED :                          false
     # UVVM:            STD_DEV            :                           0.00
     # UVVM:  =================================================================================================================
+
+**********************************************************************************************************************************
+Clearing configuration
+**********************************************************************************************************************************
+To clear the complete configuration in the random generator use the ``clear_config()`` procedure.
 
 **********************************************************************************************************************************
 Additional info

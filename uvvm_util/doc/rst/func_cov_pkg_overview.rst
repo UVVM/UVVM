@@ -840,6 +840,130 @@ A coverpoint's coverage counters can be reset with ``clear_coverage()``. This mi
 testcases in a single testbench and the coverage needs to be restarted after each testcase or when loading a coverpoint database 
 and only want to keep the model and configuration.
 
+File format
+==================================================================================================================================
+The database for a coverpoint is stored using the following file format:
+
+.. note::
+
+    The *for loops* and the leading spaces in the indented lines are only for better readability and not part of the data.
+
+.. code-block::
+
+    [coverpoint_name]
+    [scope]
+    [number_of_bins_crossed]
+    [randomization_seed_1] [randomization_seed_2]
+    [transition_bin_idx]
+    [transition_bin_value_idx_1] [transition_bin_value_idx_2] ... [transition_bin_value_idx_n]
+    [illegal_bin_alert_level]
+    [bin_overlap_alert_level]
+    [number_of_valid_bins]
+    [number_of_covered_bins]
+    [total_bin_min_hits]
+    [total_bin_hits]
+    [total_coverage_bin_hits]
+    [total_goal_bin_hits]
+    [covpt_coverage_weight]
+    [bins_coverage_goal]
+    [hits_coverage_goal]
+    [covpts_coverage_goal]
+    [bin_idx]
+    for i in 0 to bin_idx-1 loop
+      [bin(i).name]
+      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight]
+      for j in 0 to number_of_bins_crossed-1 loop
+        [bin(i).cross(j).bin_type] [bin(i).cross(j).num_values] [bin(i).cross(j).transition_idx] [bin(i).cross(j).values_1] [bin(i).cross(j).values_2] ... [bin(i).cross(j).values_n]
+      end loop;
+    end loop;
+    [invalid_bin_idx]
+    for i in 0 to invalid_bin_idx-1 loop
+      [invalid_bin(i).name]
+      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight]
+      for j in 0 to number_of_bins_crossed-1 loop
+        [invalid_bin(i).cross(j).bin_type] [invalid_bin(i).cross(j).num_values] [invalid_bin(i).cross(j).transition_idx] [invalid_bin(i).cross(j).values_1] [invalid_bin(i).cross(j).values_2] ... [invalid_bin(i).cross(j).values_n]
+      end loop;
+    end loop;
+
+Most of the values are integer numbers except for a few:
+
++-----------------------------+----------------+--------------+
+| Value                       | Original type  | Type in file |
++=============================+================+==============+
+| coverpoint_name             | string         | string       |
++-----------------------------+----------------+--------------+
+| scope                       | string         | string       |
++-----------------------------+----------------+--------------+
+| illegal_bin_alert_level     | t_alert_level  | integer      |
++-----------------------------+----------------+--------------+
+| bin_overlap_alert_level     | t_alert_level  | integer      |
++-----------------------------+----------------+--------------+
+| name                        | string         | string       |
++-----------------------------+----------------+--------------+
+| bin_type                    | t_cov_bin_type | integer      |
++-----------------------------+----------------+--------------+
+
+Example of the file output:
+
+.. code-block:: none
+
+    MY_CROSS            
+    NEW_SCOPE                     
+    2
+    1082914553 1166884309
+    4
+    3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    4
+    7
+    5
+    0
+    38
+    16
+    16
+    16
+    8
+    100
+    200
+    100
+    5
+    bin_0               
+    0 1 -1
+    0 1 0 10 
+    0 1 0 1010 
+    single              
+    2 8 20
+    0 1 0 20 
+    0 1 0 1020 
+    multiple            
+    3 9 30
+    0 3 0 30 35 39 
+    0 3 0 1030 1035 1039 
+    range               
+    10 15 40
+    3 2 0 40 49 
+    3 2 0 1040 1049 
+    transition          
+    1 5 50
+    6 6 3 50 51 52 53 54 55 
+    6 6 3 1050 1051 1052 1053 1054 1055 
+    3
+    ignore_single       
+    1 0 0
+    1 1 0 110 
+    1 1 0 1110 
+    illegal_range       
+    4 0 0
+    5 2 0 226 229 
+    5 2 0 1226 1229 
+    illegal_transition  
+    1 0 0
+    8 3 0 231 237 237 
+    8 3 0 1231 1237 1237 
+
+Script
+==================================================================================================================================
+TBD
+
 **********************************************************************************************************************************
 Clearing a coverpoint
 **********************************************************************************************************************************

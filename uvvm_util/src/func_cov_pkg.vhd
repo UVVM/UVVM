@@ -952,9 +952,7 @@ package body func_cov_pkg is
                 write(v_line, string'(return_bin_type("illegal_bin", "ILL", bin_verbosity)));
               end if;
               if bin_array(i).bin_vector(j).num_values = 1 then
-                write(v_line, '(');
-                write(v_line, to_string(bin_array(i).bin_vector(j).values(0)));
-                write(v_line, ')');
+                write(v_line, '(' & to_string(bin_array(i).bin_vector(j).values(0)) & ')');
               else
                 write(v_line, to_string(bin_array(i).bin_vector(j).values(0 to bin_array(i).bin_vector(j).num_values-1)));
               end if;
@@ -1593,19 +1591,14 @@ package body func_cov_pkg is
         for i in 0 to bin_idx-1 loop
           write(v_line, bin_vector(i).name);
           writeline(file_handler, v_line);
-          write(v_line, bin_vector(i).hits);
-          write(v_line, ' ');
-          write(v_line, bin_vector(i).min_hits);
-          write(v_line, ' ');
-          write(v_line, bin_vector(i).rand_weight);
+          write(v_line, to_string(bin_vector(i).hits) & ' ' &
+                        to_string(bin_vector(i).min_hits) & ' ' &
+                        to_string(bin_vector(i).rand_weight));
           writeline(file_handler, v_line);
           for j in 0 to priv_num_bins_crossed-1 loop
-            write(v_line, t_cov_bin_type'pos(bin_vector(i).cross_bins(j).contains));
-            write(v_line, ' ');
-            write(v_line, bin_vector(i).cross_bins(j).num_values);
-            write(v_line, ' ');
-            write(v_line, bin_vector(i).cross_bins(j).transition_idx);
-            write(v_line, ' ');
+            write(v_line, to_string(t_cov_bin_type'pos(bin_vector(i).cross_bins(j).contains)) & ' ' &
+                          to_string(bin_vector(i).cross_bins(j).num_values) & ' ' &
+                          to_string(bin_vector(i).cross_bins(j).transition_idx) & ' ');
             for k in 0 to bin_vector(i).cross_bins(j).num_values-1 loop
               write(v_line, bin_vector(i).cross_bins(j).values(k));
               write(v_line, ' ');

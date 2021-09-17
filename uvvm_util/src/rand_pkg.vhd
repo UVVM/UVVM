@@ -1494,18 +1494,12 @@ package body rand_pkg is
     begin
       for i in normalized_weighted_vector'range loop
         if normalized_weighted_vector(i).min_value = normalized_weighted_vector(i).max_value then
-          write(v_line, '(');
-          write(v_line, to_string(normalized_weighted_vector(i).min_value));
-          write(v_line, ',');
-          write(v_line, to_string(normalized_weighted_vector(i).weight));
-          write(v_line, ')');
+          write(v_line, '(' & to_string(normalized_weighted_vector(i).min_value) &
+                        ',' & to_string(normalized_weighted_vector(i).weight) & ')');
         else
-          write(v_line, string'("(["));
-          write(v_line, to_string(normalized_weighted_vector(i).min_value));
-          write(v_line, ':');
-          write(v_line, to_string(normalized_weighted_vector(i).max_value));
-          write(v_line, string'("],"));
-          write(v_line, to_string(normalized_weighted_vector(i).weight));
+          write(v_line, string'("([") & to_string(normalized_weighted_vector(i).min_value) &
+                        ':' & to_string(normalized_weighted_vector(i).max_value) &
+                        string'("],") & to_string(normalized_weighted_vector(i).weight));
           if normalized_weighted_vector(i).mode = INDIVIDUAL_WEIGHT then
             write(v_line, string'(",INDIVIDUAL"));
           elsif normalized_weighted_vector(i).mode = COMBINED_WEIGHT then
@@ -1543,18 +1537,12 @@ package body rand_pkg is
     begin
       for i in normalized_weighted_vector'range loop
         if normalized_weighted_vector(i).min_value = normalized_weighted_vector(i).max_value then
-          write(v_line, '(');
-          write(v_line, format_real(normalized_weighted_vector(i).min_value));
-          write(v_line, ',');
-          write(v_line, to_string(normalized_weighted_vector(i).weight));
-          write(v_line, ')');
+          write(v_line, '(' & format_real(normalized_weighted_vector(i).min_value) &
+                        ',' & to_string(normalized_weighted_vector(i).weight) & ')');
         else
-          write(v_line, string'("(["));
-          write(v_line, format_real(normalized_weighted_vector(i).min_value));
-          write(v_line, ':');
-          write(v_line, format_real(normalized_weighted_vector(i).max_value));
-          write(v_line, string'("],"));
-          write(v_line, to_string(normalized_weighted_vector(i).weight));
+          write(v_line, string'("([") & format_real(normalized_weighted_vector(i).min_value) &
+                        ':' & format_real(normalized_weighted_vector(i).max_value) &
+                        string'("],") & to_string(normalized_weighted_vector(i).weight));
           if normalized_weighted_vector(i).mode = INDIVIDUAL_WEIGHT then
             write(v_line, string'(",INDIVIDUAL"));
           elsif normalized_weighted_vector(i).mode = COMBINED_WEIGHT then
@@ -1592,18 +1580,12 @@ package body rand_pkg is
     begin
       for i in normalized_weighted_vector'range loop
         if normalized_weighted_vector(i).min_value = normalized_weighted_vector(i).max_value then
-          write(v_line, '(');
-          write(v_line, to_string(normalized_weighted_vector(i).min_value));
-          write(v_line, ',');
-          write(v_line, to_string(normalized_weighted_vector(i).weight));
-          write(v_line, ')');
+          write(v_line, '(' & to_string(normalized_weighted_vector(i).min_value) &
+                        ',' & to_string(normalized_weighted_vector(i).weight) & ')');
         else
-          write(v_line, string'("(["));
-          write(v_line, to_string(normalized_weighted_vector(i).min_value));
-          write(v_line, ':');
-          write(v_line, to_string(normalized_weighted_vector(i).max_value));
-          write(v_line, string'("],"));
-          write(v_line, to_string(normalized_weighted_vector(i).weight));
+          write(v_line, string'("([") & to_string(normalized_weighted_vector(i).min_value) &
+                        ':' & to_string(normalized_weighted_vector(i).max_value) &
+                        string'("],") & to_string(normalized_weighted_vector(i).weight));
           if normalized_weighted_vector(i).mode = INDIVIDUAL_WEIGHT then
             write(v_line, string'(",INDIVIDUAL"));
           elsif normalized_weighted_vector(i).mode = COMBINED_WEIGHT then
@@ -4930,8 +4912,7 @@ package body rand_pkg is
       end function;
     begin
       if length > 0 then
-        write(v_line, string'("LEN:"));
-        write(v_line, to_string(length));
+        write(v_line, string'("LEN:") & to_string(length));
         if priv_int_constraints.ran_incl'length > 0 or priv_int_constraints.val_incl'length > 0 then
           write(v_line, string'(", "));
         end if;
@@ -4940,11 +4921,8 @@ package body rand_pkg is
         if i = 0 then
           write(v_line, string'("RANGE:"));
         end if;
-        write(v_line, '[');
-        write(v_line, to_string(priv_int_constraints.ran_incl(i).min_value));
-        write(v_line, ':');
-        write(v_line, to_string(priv_int_constraints.ran_incl(i).max_value));
-        write(v_line, ']');
+        write(v_line, '[' & to_string(priv_int_constraints.ran_incl(i).min_value) &
+                      ':' & to_string(priv_int_constraints.ran_incl(i).max_value) & ']');
         if i < priv_int_constraints.ran_incl'length-1 then
           write(v_line, ',');
         end if;
@@ -4961,19 +4939,16 @@ package body rand_pkg is
         if v_line /= NULL then
           write(v_line, string'(", "));
         end if;
-        write(v_line, string'("EXCL:"));
-        write(v_line, to_string(priv_int_constraints.val_excl.all));
+        write(v_line, string'("EXCL:") & to_string(priv_int_constraints.val_excl.all));
       end if;
       if v_line = NULL then
         write(v_line, string'("UNCONSTRAINED"));
       end if;
       if priv_cyclic_mode = CYCLIC then
-        write(v_line, string'(", "));
-        write(v_line, to_upper(to_string(priv_cyclic_mode)));
+        write(v_line, string'(", ") & to_upper(to_string(priv_cyclic_mode)));
       end if;
       if is_vector and priv_uniqueness = UNIQUE then
-        write(v_line, string'(", "));
-        write(v_line, to_upper(to_string(priv_uniqueness)));
+        write(v_line, string'(", ") & to_upper(to_string(priv_uniqueness)));
       end if;
       return return_and_deallocate;
     end function;
@@ -5010,11 +4985,8 @@ package body rand_pkg is
         if i = 0 then
           write(v_line, string'("RANGE:"));
         end if;
-        write(v_line, '[');
-        write(v_line, format_real(priv_real_constraints.ran_incl(i).min_value));
-        write(v_line, ':');
-        write(v_line, format_real(priv_real_constraints.ran_incl(i).max_value));
-        write(v_line, ']');
+        write(v_line, '[' & format_real(priv_real_constraints.ran_incl(i).min_value) &
+                      ':' & format_real(priv_real_constraints.ran_incl(i).max_value) & ']');
         if i < priv_real_constraints.ran_incl'length-1 then
           write(v_line, ',');
         end if;
@@ -5028,15 +5000,13 @@ package body rand_pkg is
         write(v_line, format_real(priv_real_constraints.val_incl.all));
       end if;
       if priv_real_constraints.val_excl'length > 0 then
-        write(v_line, string'(", EXCL:"));
-        write(v_line, format_real(priv_real_constraints.val_excl.all));
+        write(v_line, string'(", EXCL:") & format_real(priv_real_constraints.val_excl.all));
       end if;
       if v_line = NULL then
         write(v_line, string'("UNCONSTRAINED"));
       end if;
       if is_vector and priv_uniqueness = UNIQUE then
-        write(v_line, string'(", "));
-        write(v_line, to_upper(to_string(priv_uniqueness)));
+        write(v_line, string'(", ") & to_upper(to_string(priv_uniqueness)));
       end if;
       return return_and_deallocate;
     end function;
@@ -5062,20 +5032,16 @@ package body rand_pkg is
         return ret;
       end function;
     begin
-      write(v_line, string'("LEN:"));
-      write(v_line, to_string(length));
-      write(v_line, string'(", "));
+      write(v_line, string'("LEN:") & to_string(length) & string'(", "));
       for i in 0 to priv_uns_constraints.ran_incl'length-1 loop
         if i = 0 then
           write(v_line, string'("RANGE:"));
         end if;
         write(v_line, '[');
         v_len := MAXIMUM(length, find_leftmost(priv_uns_constraints.ran_incl(i).min_value, '1') + 1);
-        write(v_line, to_string(priv_uns_constraints.ran_incl(i).min_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX));
-        write(v_line, ':');
+        write(v_line, to_string(priv_uns_constraints.ran_incl(i).min_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ':');
         v_len := MAXIMUM(length, find_leftmost(priv_uns_constraints.ran_incl(i).min_value, '1') + 1);
-        write(v_line, to_string(priv_uns_constraints.ran_incl(i).max_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX));
-        write(v_line, ']');
+        write(v_line, to_string(priv_uns_constraints.ran_incl(i).max_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ']');
         if i < priv_uns_constraints.ran_incl'length-1 then
           write(v_line, ',');
         end if;

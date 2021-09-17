@@ -1608,6 +1608,76 @@ package body rand_pkg is
       end if;
     end function;
 
+    -- Returns the integer range constraints for randomization
+    impure function get_int_range_constraints(
+      constant VOID : t_void)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      for i in 0 to priv_int_constraints.ran_incl'length-1 loop
+        write(v_line, '[' & to_string(priv_int_constraints.ran_incl(i).min_value) &
+                      ':' & to_string(priv_int_constraints.ran_incl(i).max_value) & ']');
+        if i < priv_int_constraints.ran_incl'length-1 then
+          write(v_line, ',');
+        end if;
+      end loop;
+      return return_and_deallocate;
+    end function;
+
+    -- Returns the real range constraints for randomization
+    impure function get_real_range_constraints(
+      constant VOID : t_void)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      for i in 0 to priv_real_constraints.ran_incl'length-1 loop
+        write(v_line, '[' & format_real(priv_real_constraints.ran_incl(i).min_value) &
+                      ':' & format_real(priv_real_constraints.ran_incl(i).max_value) & ']');
+        if i < priv_real_constraints.ran_incl'length-1 then
+          write(v_line, ',');
+        end if;
+      end loop;
+      return return_and_deallocate;
+    end function;
+
+    -- Returns the unsigned range constraints for randomization
+    impure function get_uns_range_constraints(
+      constant length : natural)
+    return string is
+      variable v_len  : natural;
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      for i in 0 to priv_uns_constraints.ran_incl'length-1 loop
+        write(v_line, '[');
+        v_len := MAXIMUM(length, find_leftmost(priv_uns_constraints.ran_incl(i).min_value, '1') + 1);
+        write(v_line, to_string(priv_uns_constraints.ran_incl(i).min_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ':');
+        v_len := MAXIMUM(length, find_leftmost(priv_uns_constraints.ran_incl(i).max_value, '1') + 1);
+        write(v_line, to_string(priv_uns_constraints.ran_incl(i).max_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ']');
+        if i < priv_uns_constraints.ran_incl'length-1 then
+          write(v_line, ',');
+        end if;
+      end loop;
+      return return_and_deallocate;
+    end function;
+
     -- Returns the string representation of the mode when it is enabled, otherwise returns an empty string
     function to_string_if_enabled(
       constant cyclic_mode : t_cyclic)
@@ -1962,10 +2032,11 @@ package body rand_pkg is
 
     procedure report_config(
       constant VOID : in t_void) is
-      constant C_PREFIX        : string := C_LOG_PREFIX & "     ";
-      constant C_COLUMN1_WIDTH : positive := 19;
-      constant C_COLUMN2_WIDTH : positive := C_LOG_SCOPE_WIDTH;
-      variable v_line          : line;
+      constant C_PREFIX                  : string := C_LOG_PREFIX & "     ";
+      constant C_COLUMN1_WIDTH           : positive := 19;
+      constant C_COLUMN2_WIDTH           : positive := C_LOG_SCOPE_WIDTH;
+      variable v_line                    : line;
+      variable v_multi_method_configured : boolean;
     begin
       -- Print report header
       write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
@@ -1983,6 +2054,48 @@ package body rand_pkg is
       write(v_line, "          " & justify("MEAN", left, C_COLUMN1_WIDTH)               & ": " & justify(to_string(priv_mean,2), right, C_COLUMN2_WIDTH) & LF);
       write(v_line, "          " & justify("STD_DEV CONFIGURED", left, C_COLUMN1_WIDTH) & ": " & justify(to_string(priv_std_dev_configured), right, C_COLUMN2_WIDTH) & LF);
       write(v_line, "          " & justify("STD_DEV", left, C_COLUMN1_WIDTH)            & ": " & justify(to_string(priv_std_dev,2), right, C_COLUMN2_WIDTH) & LF);
+
+      -- Print multi-method config
+      v_multi_method_configured := priv_int_constraints.ran_incl'length > 0 or priv_int_constraints.val_incl'length > 0 or
+                                   priv_int_constraints.val_excl'length > 0 or priv_int_constraints.weighted_config or
+                                   priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 or
+                                   priv_real_constraints.val_excl'length > 0 or priv_real_constraints.weighted_config or
+                                   priv_uns_constraints.ran_incl'length > 0;
+      if v_multi_method_configured then
+        write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+        write(v_line, "          MULTI-METHOD CONSTRAINTS" & LF);
+        write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+        write(v_line, "          CYCLIC MODE             : " & to_upper(to_string(priv_cyclic_mode)) & LF);
+        write(v_line, "          UNIQUENESS              : " & to_upper(to_string(priv_uniqueness)) & LF);
+      end if;
+      if priv_int_constraints.ran_incl'length > 0 and not (priv_int_constraints.weighted_config) then
+        write(v_line, "          RANGE INTEGER VALUES    : " & get_int_range_constraints(VOID) & LF);
+      end if;
+      if priv_int_constraints.val_incl'length > 0 and not (priv_int_constraints.weighted_config) then
+        write(v_line, "          INCLUDED INTEGER VALUES : " & to_string(priv_int_constraints.val_incl.all) & LF);
+      end if;
+      if priv_int_constraints.val_excl'length > 0 then
+        write(v_line, "          EXCLUDED INTEGER VALUES : " & to_string(priv_int_constraints.val_excl.all) & LF);
+      end if;
+      if priv_int_constraints.weighted_config then
+        write(v_line, "          WEIGHTED INTEGER VALUES : " & to_string(priv_int_constraints.weighted.all) & LF);
+      end if;
+      if priv_real_constraints.ran_incl'length > 0 and not (priv_real_constraints.weighted_config) then
+        write(v_line, "          RANGE REAL VALUES       : " & get_real_range_constraints(VOID) & LF);
+      end if;
+      if priv_real_constraints.val_incl'length > 0 and not (priv_real_constraints.weighted_config) then
+        write(v_line, "          INCLUDED REAL VALUES    : " & format_real(priv_real_constraints.val_incl.all) & LF);
+      end if;
+      if priv_real_constraints.val_excl'length > 0 then
+        write(v_line, "          EXCLUDED REAL VALUES    : " & format_real(priv_real_constraints.val_excl.all) & LF);
+      end if;
+      if priv_real_constraints.weighted_config then
+        write(v_line, "          WEIGHTED REAL VALUES    : " & to_string(priv_real_constraints.weighted.all) & LF);
+      end if;
+      -- TODO: time constraints
+      if priv_uns_constraints.ran_incl'length > 0 then
+        write(v_line, "          RANGE UNSIGNED VALUES   : " & get_uns_range_constraints(1) & LF);
+      end if;
 
       -- Print report bottom line
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
@@ -4917,16 +5030,9 @@ package body rand_pkg is
           write(v_line, string'(", "));
         end if;
       end if;
-      for i in 0 to priv_int_constraints.ran_incl'length-1 loop
-        if i = 0 then
-          write(v_line, string'("RANGE:"));
-        end if;
-        write(v_line, '[' & to_string(priv_int_constraints.ran_incl(i).min_value) &
-                      ':' & to_string(priv_int_constraints.ran_incl(i).max_value) & ']');
-        if i < priv_int_constraints.ran_incl'length-1 then
-          write(v_line, ',');
-        end if;
-      end loop;
+      if priv_int_constraints.ran_incl'length > 0 then
+        write(v_line, string'("RANGE:") & get_int_range_constraints(VOID));
+      end if;
       if priv_int_constraints.val_incl'length > 0 then
         if priv_int_constraints.ran_incl'length = 0 then
           write(v_line, string'("ONLY:"));
@@ -4981,16 +5087,9 @@ package body rand_pkg is
         return ret;
       end function;
     begin
-      for i in 0 to priv_real_constraints.ran_incl'length-1 loop
-        if i = 0 then
-          write(v_line, string'("RANGE:"));
-        end if;
-        write(v_line, '[' & format_real(priv_real_constraints.ran_incl(i).min_value) &
-                      ':' & format_real(priv_real_constraints.ran_incl(i).max_value) & ']');
-        if i < priv_real_constraints.ran_incl'length-1 then
-          write(v_line, ',');
-        end if;
-      end loop;
+      if priv_real_constraints.ran_incl'length > 0 then
+        write(v_line, string'("RANGE:") & get_real_range_constraints(VOID));
+      end if;
       if priv_real_constraints.val_incl'length > 0 then
         if priv_real_constraints.ran_incl'length = 0 then
           write(v_line, string'("ONLY:"));
@@ -5023,7 +5122,6 @@ package body rand_pkg is
     impure function get_uns_constraints(
       constant length : natural)
     return string is
-      variable v_len  : natural;
       variable v_line : line;
       impure function return_and_deallocate return string is
         constant ret : string := v_line.all;
@@ -5033,19 +5131,9 @@ package body rand_pkg is
       end function;
     begin
       write(v_line, string'("LEN:") & to_string(length) & string'(", "));
-      for i in 0 to priv_uns_constraints.ran_incl'length-1 loop
-        if i = 0 then
-          write(v_line, string'("RANGE:"));
-        end if;
-        write(v_line, '[');
-        v_len := MAXIMUM(length, find_leftmost(priv_uns_constraints.ran_incl(i).min_value, '1') + 1);
-        write(v_line, to_string(priv_uns_constraints.ran_incl(i).min_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ':');
-        v_len := MAXIMUM(length, find_leftmost(priv_uns_constraints.ran_incl(i).min_value, '1') + 1);
-        write(v_line, to_string(priv_uns_constraints.ran_incl(i).max_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ']');
-        if i < priv_uns_constraints.ran_incl'length-1 then
-          write(v_line, ',');
-        end if;
-      end loop;
+      if priv_uns_constraints.ran_incl'length > 0 then
+        write(v_line, string'("RANGE:") & get_uns_range_constraints(length));
+      end if;
       return return_and_deallocate;
     end function;
 

@@ -83,8 +83,6 @@ begin
     enable_log_msg(ID_RAND_GEN);
     enable_log_msg(ID_RAND_CONF);
 
-    v_rand.report_config(VOID);
-
     --===================================================================================
     if GC_TESTCASE = "rand_basic" then
     --===================================================================================
@@ -1945,6 +1943,76 @@ begin
 
 
     --===================================================================================
+    elsif GC_TESTCASE = "rand_report" then
+    --===================================================================================
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing config report with integer constraints");
+      ------------------------------------------------------------
+      v_rand.set_name("RAND_INT_1");
+      v_rand.add_range(10,20);
+      v_rand.add_range(30,40);
+      v_rand.add_range(50,60);
+      v_rand.add_val(100);
+      v_rand.excl_val((15,35,55));
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_int := v_rand.randm(VOID);
+      v_rand.report_config(VOID);
+
+      v_rand.set_name("RAND_INT_2");
+      v_rand.add_val_weight(200,8);
+      v_rand.report_config(VOID);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.set_name("RAND_INT_3");
+      v_rand.add_range(10,20);
+      v_rand.add_range_weight(30,40,5);
+      v_rand.add_range_weight(50,60,10,INDIVIDUAL_WEIGHT);
+      v_rand.add_val(100);
+      v_rand.add_val_weight(200,8);
+      v_int := v_rand.randm(VOID);
+      v_rand.report_config(VOID);
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing config report with real constraints");
+      ------------------------------------------------------------
+      v_rand.set_name("RAND_REAL_1");
+      v_rand.add_range_real(10.0,20.0);
+      v_rand.add_range_real(30.0,40.0);
+      v_rand.add_val_real((0.0,0.1,0.2,0.3));
+      v_rand.excl_val_real((15.0,35.0));
+      v_real := v_rand.randm(VOID);
+      v_rand.report_config(VOID);
+
+      v_rand.set_name("RAND_REAL_2");
+      v_rand.add_val_weight_real(1.0,8);
+      v_rand.report_config(VOID);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.set_name("RAND_REAL_3");
+      v_rand.add_range_real(10.0,20.0);
+      v_rand.add_range_weight_real(30.0,40.0,5);
+      v_rand.add_range_weight_real(50.0,60.0,10);
+      v_rand.add_val_real(0.0);
+      v_rand.add_val_weight_real(1.0,8);
+      v_real := v_rand.randm(VOID);
+      v_rand.report_config(VOID);
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing config report with unsigned constraints");
+      ------------------------------------------------------------
+      v_rand.set_name("RAND_UNS_1");
+      v_rand.add_range_unsigned(x"0",x"2");
+      v_rand.add_range_unsigned(x"6",x"8");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.report_config(VOID);
+
+    --===================================================================================
     elsif GC_TESTCASE = "rand_gaussian" then
     --===================================================================================
       ------------------------------------------------------------
@@ -2396,8 +2464,6 @@ begin
       --v_rand.clear_constraints(VOID);
 
     end if;
-
-    v_rand.report_config(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

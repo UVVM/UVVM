@@ -83,8 +83,6 @@ begin
     enable_log_msg(ID_RAND_GEN);
     enable_log_msg(ID_RAND_CONF);
 
-    v_rand.report_config(VOID);
-
     --===================================================================================
     if GC_TESTCASE = "rand_basic" then
     --===================================================================================
@@ -2469,6 +2467,20 @@ begin
       v_rand.clear_rand_cyclic(VOID);
 
     --===================================================================================
+    elsif GC_TESTCASE = "rand_report" then
+    --===================================================================================
+      v_rand.report_config(VOID);
+
+      v_rand.set_name("MY_RAND_GEN");
+      v_rand.set_scope("MY_SCOPE");
+      v_int := v_rand.rand(10,20);
+      v_rand.set_rand_dist(GAUSSIAN);
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      v_rand.set_rand_dist_mean(1.0);
+      v_rand.set_rand_dist_std_deviation(5.0);
+      v_rand.report_config(VOID);
+
+    --===================================================================================
     elsif GC_TESTCASE = "rand_gaussian" then
     --===================================================================================
       ------------------------------------------------------------
@@ -2954,8 +2966,6 @@ begin
       v_slv  := v_rand.rand_val_weight(v_slv'length, ((0,30),(1,20),(2,50)));
 
     end if;
-
-    v_rand.report_config(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

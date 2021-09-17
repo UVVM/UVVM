@@ -264,10 +264,14 @@ to a 32-bit range. Additional overloads for adding range constraints using unsig
 
     my_rand.add_range_unsigned(x"0000000000000000", x"FFFF000000000000"); -- [0:18446462598732840960]
     rand_uns  := my_rand.randm(rand_uns'length);
-    rand_slv  := my_rand.randm(rand_slv'length);  -- SLV is interpreted as unsigned
 
+    my_rand.clear_constraints(VOID);
     my_rand.add_range_signed(x"F000000000000000", x"0000000000000005");   -- [-1152921504606846976:5]
     rand_sign := my_rand.randm(rand_sign'length);
+
+    my_rand.clear_constraints(VOID);
+    my_rand.add_range_unsigned(x"000000000000", x"FF0000000000"); -- [0:280375465082880]
+    rand_slv  := my_rand.randm(rand_slv'length);  -- SLV is interpreted as unsigned
 
 **********************************************************************************************************************************
 Seeds
@@ -524,17 +528,68 @@ The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined i
     # UVVM:  =================================================================================================================
     # UVVM:  ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
     # UVVM:  =================================================================================================================
-    # UVVM:            NAME               :                    MY_RAND_GEN
-    # UVVM:            SCOPE              :                       MY SCOPE
-    # UVVM:            SEED 1             :                     1969513907
-    # UVVM:            SEED 2             :                     1510976018
-    # UVVM:            DISTRIBUTION       :                        UNIFORM
-    # UVVM:            WEIGHT MODE        :                COMBINED_WEIGHT
-    # UVVM:            MEAN CONFIGURED    :                          false
-    # UVVM:            MEAN               :                           0.00
-    # UVVM:            STD_DEV CONFIGURED :                          false
-    # UVVM:            STD_DEV            :                           0.00
+    # UVVM:           NAME               :                    MY_RAND_GEN
+    # UVVM:           SCOPE              :                       MY_SCOPE
+    # UVVM:           SEED 1             :                     1969513907
+    # UVVM:           SEED 2             :                     1510976018
+    # UVVM:           DISTRIBUTION       :                        UNIFORM
+    # UVVM:           WEIGHT MODE        :                COMBINED_WEIGHT
+    # UVVM:           MEAN CONFIGURED    :                          false
+    # UVVM:           MEAN               :                           0.00
+    # UVVM:           STD_DEV CONFIGURED :                          false
+    # UVVM:           STD_DEV            :                           0.00
     # UVVM:  =================================================================================================================
+
+In the case of the multi-method approach, the configured constraints will also be printed in the report:
+
+.. code-block:: none
+
+    # UVVM: ==================================================================================================================
+    # UVVM: ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+    # UVVM: ==================================================================================================================
+    # UVVM:           NAME               :                    MY_RAND_INT
+    # UVVM:           SCOPE              :                        TB seq.
+    # UVVM:           SEED 1             :                         400140
+    # UVVM:           SEED 2             :                        4069200
+    # UVVM:           DISTRIBUTION       :                        UNIFORM
+    # UVVM:           WEIGHT MODE        :                COMBINED_WEIGHT
+    # UVVM:           MEAN CONFIGURED    :                          false
+    # UVVM:           MEAN               :                           0.00
+    # UVVM:           STD_DEV CONFIGURED :                          false
+    # UVVM:           STD_DEV            :                           0.00
+    # UVVM: ------------------------------------------------------------------------------------------------------------------
+    # UVVM:           MULTI-METHOD CONSTRAINTS
+    # UVVM: ------------------------------------------------------------------------------------------------------------------
+    # UVVM:           CYCLIC MODE             : CYCLIC
+    # UVVM:           UNIQUENESS              : NON_UNIQUE
+    # UVVM:           RANGE INTEGER VALUES    : [10:20],[30:40],[50:60]
+    # UVVM:           INCLUDED INTEGER VALUES : (100)
+    # UVVM:           EXCLUDED INTEGER VALUES : (15, 35, 55)
+    # UVVM: ==================================================================================================================
+
+.. code-block:: none
+
+    # UVVM: ==================================================================================================================
+    # UVVM: ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+    # UVVM: ==================================================================================================================
+    # UVVM:           NAME               :                   MY_RAND_REAL
+    # UVVM:           SCOPE              :                        TB seq.
+    # UVVM:           SEED 1             :                      299323893
+    # UVVM:           SEED 2             :                     1995729824
+    # UVVM:           DISTRIBUTION       :                        UNIFORM
+    # UVVM:           WEIGHT MODE        :                COMBINED_WEIGHT
+    # UVVM:           MEAN CONFIGURED    :                          false
+    # UVVM:           MEAN               :                           0.00
+    # UVVM:           STD_DEV CONFIGURED :                          false
+    # UVVM:           STD_DEV            :                           0.00
+    # UVVM: ------------------------------------------------------------------------------------------------------------------
+    # UVVM:           MULTI-METHOD CONSTRAINTS
+    # UVVM: ------------------------------------------------------------------------------------------------------------------
+    # UVVM:           CYCLIC MODE             : NON_CYCLIC
+    # UVVM:           UNIQUENESS              : NON_UNIQUE
+    # UVVM:           WEIGHTED REAL VALUES    : ([10.00:20.00],1,COMBINED),([30.00:40.00],5,COMBINED),(0.00,1),(1.00,8)
+    # UVVM: ==================================================================================================================
+
 
 **********************************************************************************************************************************
 Clearing configuration

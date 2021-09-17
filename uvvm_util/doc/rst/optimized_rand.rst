@@ -91,7 +91,8 @@ randomization. It is not applicable for ignore or illegal bins since they are ne
 
 If a randomization weight is not specified, the bin will have a default weight equal to the minimum coverage. Moreover, this weight 
 will be reduced by 1 every time the bin is sampled, thus balancing the randomization of the bins in an "adaptive" way. When all the 
-bins have been covered, their respective randomization weights will be reset to their default value equal to the minimum coverage.
+bins have been covered, their respective randomization weights will be reset to their default value equal to the minimum coverage 
+and will not change.
 
 .. code-block::
 

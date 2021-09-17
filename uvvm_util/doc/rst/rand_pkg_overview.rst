@@ -169,10 +169,11 @@ reusing the same *my_rand* variable, the ``clear_constraints()`` procedure must 
     my_rand.add_val((0,5,10));
     addr := my_rand.randm(VOID); -- Generates a value which is either 0, 5 or 10
 
-    -- 4. Exclude values (e.g. using integer return type)
+    -- 4. Exclude values (only for integer, unsigned, signed and std_logic_vector return types)
     my_rand.clear_constraints(VOID);
-    my_rand.excl_val((0,100,500));
-    addr := my_rand.randm(VOID); -- Generates a value from the complete integer range except for 0, 100 and 500
+    my_rand.excl_val((0,10,15));
+    addr     := my_rand.randm(VOID); -- Generates a value from the complete integer range except for 0, 10 and 15
+    data_uns := my_rand.randm(4);    -- Generates a 4-bit unsigned random value except for 0, 10 and 15
 
     -- 5. Range and set of values
     my_rand.clear_constraints(VOID);
@@ -205,6 +206,23 @@ reusing the same *my_rand* variable, the ``clear_constraints()`` procedure must 
     my_rand.excl_val((25));
     my_rand.excl_val((20,30));
     addr := my_rand.randm(VOID); -- Generates a value in the ranges [0:50], [100:150] and either 60, 160, 170 or 180, except for 20, 25 and 30
+
+    -- 9. No constraints (only for integer, unsigned, signed and std_logic_vector return types)
+    my_rand.clear_constraints(VOID);
+    addr      := my_rand.randm(VOID); -- Generates a value in the complete integer range
+    data_sign := my_rand.randm(16);   -- Generates a 16-bit signed random value
+
+Similar procedures exist for real constraints: ``add_range_real()``, ``add_val_real()`` and ``excl_val_real()``, and for time 
+constraints: ``add_range_time()``, ``add_val_time()`` and ``excl_val_time()``.
+
+.. note::
+
+    There is no limit on the number of constraints that can be added.
+
+.. caution::
+
+    Constraints of different value types, e.g. integer/real/time, should not be mixed, otherwise a TB_ERROR alert will be 
+    generated. The procedure ``clear_constraints()`` can be used to removed any previously added constraints.
 
 For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`.
 
@@ -255,7 +273,8 @@ For *std_logic* and *boolean* types use the ``rand(VOID)`` function, since they 
     rand_slv      := my_rand.randm(rand_slv'length); -- SLV is interpreted as unsigned
 
 The unsigned, signed and std_logic_vector functions can return vectors of any size, however the integer constraints are limited 
-to a 32-bit range. Additional overloads for adding range constraints using unsigned/signed types are provided as well.
+to a 32-bit range. Additional overloads for adding range constraints using unsigned/signed types are provided as well. The 
+maximum size of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg.
 
     * :ref:`unsigned <add_range_unsigned>`
     * :ref:`signed <add_range_signed>`
@@ -272,6 +291,10 @@ to a 32-bit range. Additional overloads for adding range constraints using unsig
     my_rand.clear_constraints(VOID);
     my_rand.add_range_unsigned(x"000000000000", x"FF0000000000"); -- [0:280375465082880]
     rand_slv  := my_rand.randm(rand_slv'length);  -- SLV is interpreted as unsigned
+
+.. caution::
+
+    When a return type is not compatible with the value type of the configured constraints a TB_ERROR alert will be generated.
 
 **********************************************************************************************************************************
 Seeds
@@ -333,6 +356,10 @@ If the constraints are not enough to generate unique values for the whole vector
     my_rand.add_range(0, 50);
     unique_addresses := my_rand.randm(63);
 
+* The supported types are integer_vector, real_vector and time_vector.
+* Cannot be combined with unsigned/signed constraints.
+* Cannot be combined with the CYCLIC configuration.
+
 .. _rand_pkg_cyclic:
 
 **********************************************************************************************************************************
@@ -359,6 +386,7 @@ constraints have been generated. Once this happens, the process starts over.
 
 * The supported types are integer, integer_vector, unsigned, signed and std_logic_vector. Note that unsigned, signed and 
   std_logic_vector lengths bigger than 32 bits are not supported however.
+* Cannot be combined with unsigned/signed constraints.
 * Cannot be combined with the UNIQUE configuration.
 * The state of the cyclic generation (which values have been generated) will be reset every time a ``rand()/randm()`` function 
   with a different signature (constraints) is called. It can also be manually reset with the ``clear_rand_cyclic()`` procedure.
@@ -399,7 +427,7 @@ Gaussian (Normal)
 * The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned, 
   signed and std_logic_vector lengths bigger than 32 bits are not supported however.
 * The types *time* and *time_vector* are not supported, use instead *integer* and multiply by the time unit.
-* Only the range (min/max) constraints are supported, i.e. no set of values are supported.
+* Only single range (min/max) constraints are supported, i.e. no multiple ranges or set of values are supported.
 * Cannot be combined with CYCLIC or UNIQUE configurations.
 * Cannot be combined with weighted randomization methods.
 * To configure the mean and std_deviation use the ``set_rand_dist_mean()`` and ``set_rand_dist_std_deviation()`` procedures 
@@ -443,6 +471,15 @@ This distribution does NOT use the ``set_rand_dist()`` procedure, but instead us
     * :ref:`add_range_weight`
     * :ref:`add_range_weight_real`
     * :ref:`add_range_weight_time`
+
+.. note::
+
+    **For multi-method approach:**
+        * Any non-weighted value and range constraints will have a default weight of 1.
+        * Any exclude constraints will be ignored.
+        * Cannot be combined with CYCLIC or UNIQUE configurations.
+
+The supported types are integer, real, time, unsigned, signed and std_logic_vector.
 
 .. important::
     The sum of all weights could be any value since each individual probability is equal to individual_weight/sum_of_weights.
@@ -497,8 +534,6 @@ Alternatively, it is possible to explicitly define the mode when using ``rand_ra
     my_rand.add_val_weight(0,20);
     my_rand.add_range_weight(1,5,50,COMBINED_WEIGHT);
     addr := my_rand.randm(VOID);
-
-The supported types are integer, real, time, unsigned, signed and std_logic_vector.
 
 .. note::
     While it is possible to use different weight modes for each range in the same randomization call, it is recommended to use the 

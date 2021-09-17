@@ -1608,7 +1608,7 @@ package body rand_pkg is
       end if;
     end function;
 
-    -- Returns the integer range constraints for randomization
+    -- Returns the string representation of the integer range constraints for randomization
     impure function get_int_range_constraints(
       constant VOID : t_void)
     return string is
@@ -1630,7 +1630,7 @@ package body rand_pkg is
       return return_and_deallocate;
     end function;
 
-    -- Returns the real range constraints for randomization
+    -- Returns the string representation of the real range constraints for randomization
     impure function get_real_range_constraints(
       constant VOID : t_void)
     return string is
@@ -1652,7 +1652,7 @@ package body rand_pkg is
       return return_and_deallocate;
     end function;
 
-    -- Returns the unsigned range constraints for randomization
+    -- Returns the string representation of the unsigned range constraints for randomization
     impure function get_uns_range_constraints(
       constant length : natural)
     return string is
@@ -5011,7 +5011,7 @@ package body rand_pkg is
       DEALLOCATE(v_copy_ptr);
     end procedure;
 
-    -- Returns the integer constraints for randomization
+    -- Returns the string representation of the integer constraints for randomization
     impure function get_int_constraints(
       constant length    : natural;
       constant is_vector : boolean := false)
@@ -5075,7 +5075,7 @@ package body rand_pkg is
       return get_int_constraints(0);
     end function;
 
-    -- Returns the real constraints for randomization
+    -- Returns the string representation of the real constraints for randomization
     impure function get_real_constraints(
       constant is_vector : boolean)
     return string is
@@ -5118,7 +5118,7 @@ package body rand_pkg is
       return get_real_constraints(false);
     end function;
 
-    -- Returns the unsigned constraints for randomization
+    -- Returns the string representation of the unsigned constraints for randomization
     impure function get_uns_constraints(
       constant length : natural)
     return string is
@@ -6065,10 +6065,7 @@ package body rand_pkg is
         elsif priv_cyclic_mode = CYCLIC then
           alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
           priv_rand_dist := UNIFORM;
-        elsif (v_val_incl_configured = '1' or v_val_excl_configured = '1') then
-          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
-          priv_rand_dist := UNIFORM;
-        elsif v_num_ranges > 1 then
+        elsif (v_num_ranges > 1 or v_val_incl_configured = '1' or v_val_excl_configured = '1') then
           alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
           priv_rand_dist := UNIFORM;
         end if;

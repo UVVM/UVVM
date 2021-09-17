@@ -271,11 +271,6 @@ begin
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101));
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102));
       await_completion(SBI_VVCT, 1, 2*C_TIME_OF_ONE_UART_TX);
-
-    else
-      if GC_TESTCASE /= "ALL" then
-        alert(tb_error, "Unsupported test: " & GC_TESTCASE);
-      end if;
     end if;
 
 

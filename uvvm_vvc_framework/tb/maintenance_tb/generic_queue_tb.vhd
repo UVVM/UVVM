@@ -445,14 +445,16 @@ architecture func of generic_queue_tb is
       queue_under_test.print_queue(void) ;
       check_value(queue_under_test.get_count(VOID), v_num_entries, ERROR, "Pre test: Checking if queue initially has " & to_string(v_num_entries) & " entries", C_SCOPE);
 
-      v_value := random(0, v_num_entries-1);
-      log("deleting element v_value=" & to_string(v_value) );
-      queue_under_test.delete(v_value);
-      v_num_entries := v_num_entries-1;
-      queue_under_test.print_queue(void) ;
+      for i in 0 to v_num_entries-1 loop
+        v_value := i;
+        log("deleting element v_value=" & to_string(v_value) );
+        queue_under_test.delete(v_value);
+        v_num_entries := v_num_entries-1;
+        queue_under_test.print_queue(void) ;
 
-      check_value(not queue_under_test.exists(v_value), ERROR, "post delete test: Check that Element doens't exists ", C_SCOPE);
-      check_value(queue_under_test.get_count(VOID), v_num_entries, ERROR, "post delete test: Checking that queue now has only " & to_string(v_num_entries) & " entries", C_SCOPE);
+        check_value(not queue_under_test.exists(v_value), ERROR, "post delete test: Check that Element doens't exists ", C_SCOPE);
+        check_value(queue_under_test.get_count(VOID), v_num_entries, ERROR, "post delete test: Checking that queue now has only " & to_string(v_num_entries) & " entries", C_SCOPE);
+      end loop;
 
     end procedure;
 
@@ -939,10 +941,7 @@ architecture func of generic_queue_tb is
     test_of_insert(VOID);
     test_of_delete_by_position(VOID);
 
-    for i in 0 to 10 loop
-      log(ID_LOG_HDR, "Start of test_of_delete_by_element tests, i="&to_string(i), C_SCOPE);
-      test_of_delete_by_element(VOID);
-    end loop;
+    test_of_delete_by_element(VOID);
 
     for i in 0 to 10 loop
       log(ID_LOG_HDR, "Start of test_of_delete_by_position_random tests, i="&to_string(i), C_SCOPE);

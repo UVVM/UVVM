@@ -1056,9 +1056,6 @@ begin  -- architecture behav
 
       wait for 1000 ns;
       I2C_VVC_SB.report_counters(ALL_INSTANCES);
-
-    else
-      alert(tb_error, "Unsupported test " & GC_TESTCASE);
     end if;
 
     -- ****************** Simulation with multiple slave DUTs and a SLAVE VVC. *************

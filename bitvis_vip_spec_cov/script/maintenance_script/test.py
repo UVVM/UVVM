@@ -31,20 +31,23 @@ hdlunit = HDLUnit(simulator='modelsim')
 
 # Remove output files prior to sim
 hdlunit.run_command("rm *.txt")
-hdlunit.run_command("py ../script/maintenance_script/sim.py")
+# hdlunit.run_command("py ../script/maintenance_script/sim.py")
 
 # Add util, fw and VIP Scoreboard
-hdlunit.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")
-hdlunit.add_files("../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hdlunit.add_files("../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
-hdlunit.add_files("../../uvvm/bitvis_vip_spec_cov/src/*.vhd", "bitvis_vip_spec_cov")
+hdlunit.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
+hdlunit.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
+hdlunit.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hdlunit.add_files("../../src/*.vhd", "bitvis_vip_spec_cov")
 
 # Add TB/TH
-hdlunit.add_files("../tb/maintenance_tb/*.vhd", "bitvis_vip_spec_cov")
-hdlunit.add_files("../tb/*.vhd", "bitvis_vip_spec_cov")
+hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_spec_cov")
+hdlunit.add_files("../../tb/*.vhd", "bitvis_vip_spec_cov")
 
-hdlunit.add_generics("spec_cov_tb", ["GC_REQ_FILE", ("../tb/maintenance_tb/req_file.csv", "PATH"),
-                                     "GC_SUB_REQ_FILE", ("../tb/maintenance_tb/sub_req_file.csv", "PATH")])
+hdlunit.add_generics(entity="spec_cov_tb",
+                     generics=["GC_REQ_FILE", ("../../tb/maintenance_tb/req_file.csv", "PATH"),
+                               "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
+                               "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
+                               "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
 
 hdlunit.start(regression_mode=True, gui_mode=False)
 

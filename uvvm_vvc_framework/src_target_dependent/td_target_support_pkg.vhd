@@ -383,9 +383,10 @@ package body td_target_support_pkg is
 
     if (v_was_multicast = true) then
       release_semaphore(protected_multicast_semaphore);
+    end if;
 
     -- VVCs registered in the VVC activity register release semaphore now.
-    elsif v_vvc_idx_in_activity_register(0) /= C_VVC_INDEX_NOT_FOUND then
+    if v_num_vvc_instances > 0 then
       release_semaphore(protected_semaphore);
     end if;
 

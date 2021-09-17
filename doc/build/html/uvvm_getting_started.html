@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>UVVM Getting Started &mdash; UVVM  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UVVM Utility Library" href="utility_library.html" />
+    <link rel="prev" title="Indices and tables" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/uvvm_3.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UVVM Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#updating-uvvm">Updating UVVM</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#testbench">Testbench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation">Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation-order">Compilation Order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#further-reading">Further Reading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">UVVM Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">UVVM VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sbi_vip.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart_vip.html">Bitvis VIP UART</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>UVVM Getting Started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/uvvm_getting_started.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="uvvm-getting-started">
+<h1>UVVM Getting Started<a class="headerlink" href="#uvvm-getting-started" title="Permalink to this headline">¶</a></h1>
+<p>This is an introduction and step-by-step guide for beginning with UVVM, along with examples of common tasks that the
+designers will have to carry out.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>UVVM (Universal VHDL Verification Methodology) is a free and open source methodology for making very structured
+VHDL-based testbenches. UVVM has been released with two different complexity levels, a low complexity UVVM Light
+repository with the Utility library and BFMs (Bus Functional Models), without advanced features such as VVCs and
+command distribution system, and the complete UVVM repository with all features available.
+The UVVM Light repository is a lightweight version of UVVM that can be used with simple testbenches and as a low-level
+introduction to UVVM.
+<strong>Note</strong> that UVVM and UVVM Light requires VHDL 2008 to compile.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>UVVM can be downloaded as a zip file or cloned using git. We are continuously adding new features to UVVM and the
+easiest way to receive the updates is by cloning UVVM with git.</p>
+<ol class="arabic simple">
+<li><p>Navigate to the UVVM repository on GitHub: <a class="reference external" href="https://github.com/UVVM/UVVM">https://github.com/UVVM/UVVM</a></p></li>
+<li><p>Select “Clone or download” marked with a red circle:</p>
+<ul class="simple">
+<li><p>Clone by copying the repository address (green circle) and from the project folder running the
+command: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/UVVM/UVVM.git</span></code></p></li>
+<li><p>Or download everything as a zip (blue circle) and extract the downloaded file in the project folder.</p></li>
+</ul>
+</li>
+<li><p>After cloning or unzipping UVVM you have all that is needed to start using UVVM and all of its features with
+your testbench.</p></li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/clone_download_instructions.png"><img alt="UVVM on GitHub" src="_images/clone_download_instructions.png" style="width: 700px;" /></a>
+</div>
+<div class="section" id="updating-uvvm">
+<h3>Updating UVVM<a class="headerlink" href="#updating-uvvm" title="Permalink to this headline">¶</a></h3>
+<p>The method for updating UVVM depends on the chosen installation method:</p>
+<ul class="simple">
+<li><p><strong>cloned using git:</strong>
+run the following command in terminal inside the UVVM folder to receive the latest release changes: git pull</p></li>
+<li><p><strong>downloaded as a zip:</strong>
+repeat step 2b in section 2 and replace the old UVVM version with the new downloaded version.
+Note that this will overwrite any local changes to UVVM, e.g. local changes in the adaptations_pkg.vhd</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="testbench">
+<h2>Testbench<a class="headerlink" href="#testbench" title="Permalink to this headline">¶</a></h2>
+<p>Include <code class="docutils literal notranslate"><span class="pre">uvvm_util_context</span></code> and the VVCs or BFMs you will be using in your testbench to start using UVVM:</p>
+<div class="highlight-vhdl notranslate"><div class="highlight"><pre><span></span><span class="k">library</span> <span class="nn">uvvm_util</span><span class="p">;</span>
+<span class="n">context</span> <span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span>
+<span class="k">library</span> <span class="nn">uvvm_vvc_framework</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">uvvm_vvc_framework.ti_vvc_framework_support_pkg.</span><span class="k">all</span><span class="p">;</span>
+<span class="k">Library</span> <span class="nn">bitvis_vip_sbi</span><span class="p">;</span>
+<span class="n">context</span> <span class="n">bitvis_vip_sbi</span><span class="p">.</span><span class="n">vvc_context</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The context files will ensure that everything necessary are made available from within the testbench, e.g.</p>
+<a class="reference internal image-reference" href="_images/testbench_with_sbi_vvc.png" id="testbench-example"><img alt="_images/testbench_with_sbi_vvc.png" class="align-left" id="testbench-example" src="_images/testbench_with_sbi_vvc.png" style="width: 500px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this headline">¶</a></h2>
+<p>UVVM can be compiled by calling the <code class="docutils literal notranslate"><span class="pre">UVVM/script/compile_all.do</span></code> file using simulator GUI or from the command line.
+This will compile all of UVVM. Each of the modules/VIPs in UVVM also have their own compilation scripts in a <code class="docutils literal notranslate"><span class="pre">/script</span></code>
+folder, e.g. for the SBI VIP <code class="docutils literal notranslate"><span class="pre">bitvis_vip_sbi/script/compile_src.do</span></code>. The compile_src.do script can take two arguments,
+where the first argument is the module/VIP installation path and the second is the target path of the compilation,
+i.e. <code class="docutils literal notranslate"><span class="pre">compile_src.do</span> <span class="pre">&lt;source_path&gt;</span> <span class="pre">&lt;target_path&gt;</span></code>.</p>
+<p>The following example of compiling UVVM from the command line and with Modelsim GUI have the following directory structure:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">/UVVM</span>
+<span class="go">  ...</span>
+<span class="go">  /bitvis_vip_sbi</span>
+<span class="go">  /uvvm_util</span>
+<span class="go">  /uvvm_vvc_framework</span>
+
+<span class="go">/my_project</span>
+<span class="go">  /sim</span>
+<span class="go">  /my_src</span>
+<span class="go">  ...</span>
+</pre></div>
+</div>
+<p>and the vsim command / Modelsim GUI is run from the /my_project folder with the /sim folder as compilation target:</p>
+<ul>
+<li><p>Command line example for UVVM Utility Library compilation:</p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">vsim</span> <span class="pre">-c</span> <span class="pre">-do</span> <span class="pre">&quot;do</span> <span class="pre">../UVVM/uvvm_util/script/compile_src.do</span> <span class="pre">../UVVM</span> <span class="pre">./sim&quot;</span></code></p>
+</li>
+<li><p>Modelsim GUI example:</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/modelsim_gui_compilation.png" id="modelsim-gui"><img alt="_images/modelsim_gui_compilation.png" class="align-left" id="modelsim-gui" src="_images/modelsim_gui_compilation.png" style="width: 500px;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">../UVVM/uvvm_util/script/compile_src.do</span></code> is the relative path to the <code class="docutils literal notranslate"><span class="pre">compile_src.do</span></code> script for the UVVM
+Utility Library, <code class="docutils literal notranslate"><span class="pre">../UVVM</span> <span class="pre">is</span></code> the relative path to UVVM installation (source path), and <code class="docutils literal notranslate"><span class="pre">./sim</span></code> is the relative
+path to the compilation target (target path).</p>
+</div>
+</div>
+<div class="section" id="compilation-order">
+<h2>Compilation Order<a class="headerlink" href="#compilation-order" title="Permalink to this headline">¶</a></h2>
+<p>Most of the modules/VIPs have some dependencies, thus compilation has to be performed in a specific order. The
+compilation order of the source files for a module/VIP is listed in the <code class="docutils literal notranslate"><span class="pre">script/compile_order.txt</span></code> file and in
+the quick reference PDF in the /doc folder. The library dependencies, i.e. other modules/VIPs that needs to be
+compiled prior to compiling a particular module/VIP, is listed in the quick reference PDF of each module/VIP.</p>
+<p>As a rule of thumb, every module/VIP have the following dependencies:</p>
+<ol class="arabic simple">
+<li><p>UVVM Utility Library</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard (most of the VVCs have built in scoreboard functionality)</p></li>
+</ol>
+</div>
+<div class="section" id="further-reading">
+<h2>Further Reading<a class="headerlink" href="#further-reading" title="Permalink to this headline">¶</a></h2>
+<p>We recommend that everyone new to UVVM have a look at the Simple_TB_step_by_step.pps and
+<code class="docutils literal notranslate"><span class="pre">UVVM_Utility_Library_Concepts_and_Usage.pps</span></code> power point presentations located in the <code class="docutils literal notranslate"><span class="pre">UVVM/uvvm_util/doc</span></code> folder.
+There are several other documents to explore and we recommend that you start reading those located in the
+<code class="docutils literal notranslate"><span class="pre">UVVM/uvvm_vvc_framework/doc</span></code> folder when you feel ready to advance with the many features of UVVM.</p>
+<p>We encourage the UVVM community to participate in the UVVM user forum with questions and discussions at
+<a class="reference external" href="https://forum.uvvm.org">https://forum.uvvm.org</a>, and to visit the UVVM news site at <a class="reference external" href="https://uvvm.org">https://uvvm.org</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="utility_library.html" class="btn btn-neutral float-right" title="UVVM Utility Library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Indices and tables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, UVVM.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

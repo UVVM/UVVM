@@ -24,13 +24,13 @@ context uvvm_util.uvvm_util_context;
 use work.rand_tb_pkg.all;
 
 --HDLUnit:TB
-entity rand_multi_line_tb is
+entity rand_multi_method_tb is
   generic(
     GC_TESTCASE : string
   );
 end entity;
 
-architecture func of rand_multi_line_tb is
+architecture func of rand_multi_method_tb is
 
   constant C_NUM_RAND_REPETITIONS   : natural := 7;
   constant C_NUM_WEIGHT_REPETITIONS : natural := 1000; -- Changing this value affects check_weight_distribution() C_MARGIN.

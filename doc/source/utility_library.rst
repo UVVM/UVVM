@@ -68,7 +68,7 @@ Parameters
 If val is of type slv, unsigned or signed, there are additional optional arguments:
 
 **match_strictness**  - Specifies if match needs to be exact or std_match, e.g. ‘H’ = ‘1’.
-(MATCH_EXACT, MATCH_STD, MATCH_STD_INCL_Z)                               
+(MATCH_EXACT, MATCH_STD, MATCH_STD_INCL_Z, MATCH_STD_INCL_ZXUW)                               
     
 **radix** - For the vector representation in the log: BIN, HEX, DEC or HEX_BIN_IF_INVALID.
 (HEX_BIN_IF_INVALID means hexadecimal, unless there are the vector contains any U,     

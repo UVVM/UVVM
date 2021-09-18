@@ -69,6 +69,8 @@ def compare(modelsim=False, riviera=False):
       with open(test_file, 'r') as file:
           verify_lines = file.readlines()
 
+      test_file = test_file.replace('\\', '/')
+
       # Compare files
       if golden_lines != verify_lines:
         failing_verify_file.append(test_file)
@@ -81,7 +83,7 @@ def compare(modelsim=False, riviera=False):
           failing_verify_file.append(test_file)
 
     elif match is False:
-      missing_test_run_file.append(golden_file_name)
+      missing_test_run_file.append(golden_file_name.replace('\\', '/'))
 
 
   simulator = '[MODELSIM]' if modelsim else '[RIVIERA]'

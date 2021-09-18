@@ -53,6 +53,7 @@ UVVM:                ID_PACKET_HDR                : ENABLED
 UVVM:                ID_PACKET_DATA               : ENABLED
 UVVM:                ID_PACKET_CHECKSUM           : ENABLED
 UVVM:                ID_PACKET_GAP                : ENABLED
+UVVM:                ID_PACKET_PAYLOAD            : ENABLED
 UVVM:                ID_FRAME_INITIATE            : ENABLED
 UVVM:                ID_FRAME_COMPLETE            : ENABLED
 UVVM:                ID_FRAME_HDR                 : ENABLED
@@ -222,10 +223,6 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
 UVVM: 
 UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=0
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
@@ -259,284 +256,8 @@ UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=1
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=2
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=3
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=4
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=0
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=2
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=3
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=4
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=5
@@ -565,420 +286,441 @@ UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
 UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=5
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=6
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=7
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=1
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=3
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=4
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=5
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=6
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=7
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=8
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=9
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=30
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=8
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=9
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=4
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=5
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=6
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=7
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=8
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=9
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=3
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=5
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=6
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=7
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=8
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=9
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=4
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=6
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=7
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=8
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=9
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=30
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_element tests, i=10
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: 
-UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete by element
-UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=20
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=30, entry_num=30
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=7
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=8
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=9
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=6
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=8
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=9
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=7
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=9
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=8
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=9
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=10
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=11
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=12
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=13
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=14
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=15
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=16
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=17
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=19
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=18
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=30
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=1
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=2
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=3
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=4
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=5
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=6
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=7
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=8
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=9
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=10
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=11, entry_num=11
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=12, entry_num=12
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=13, entry_num=13
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=14, entry_num=14
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=15, entry_num=15
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=16, entry_num=16
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=17, entry_num=17
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=18, entry_num=18
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=19, entry_num=19
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=20, entry_num=21
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=21, entry_num=22
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=22, entry_num=23
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=23, entry_num=24
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=24, entry_num=25
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=25, entry_num=26
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=26, entry_num=27
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=27, entry_num=28
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=28, entry_num=29
-UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=29, entry_num=30
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=10, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=20
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=9, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=21
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=8, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=22
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=7, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=23
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=6, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=24
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=5, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=25
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=4, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=26
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=3, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=27
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=29
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=2, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=28
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  TB seq.(uvvm)                  Pos=1, entry_num=30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        deleting element v_value=29
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=0
@@ -988,7 +730,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 4v_position_max = 28
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 30v_position_max = 30
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=1
@@ -998,7 +740,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 4v_position_max = 12
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 20v_position_max = 23
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=2
@@ -1008,7 +750,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 8v_position_max = 24
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 2v_position_max = 6
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=3
@@ -1018,7 +760,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 29v_position_max = 29
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 20v_position_max = 20
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=4
@@ -1028,7 +770,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 28v_position_max = 30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 7v_position_max = 11
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=5
@@ -1038,7 +780,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 28v_position_max = 29
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 20v_position_max = 21
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=6
@@ -1048,7 +790,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 3v_position_max = 28
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 28v_position_max = 28
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=7
@@ -1058,7 +800,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 3v_position_max = 28
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 9v_position_max = 14
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=8
@@ -1068,7 +810,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 11v_position_max = 13
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 21v_position_max = 30
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=9
@@ -1078,7 +820,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 27v_position_max = 27
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 3v_position_max = 28
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_position_random tests, i=10
@@ -1088,7 +830,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete position_random
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 7v_position_max = 30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_position_min = 29v_position_max = 30
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
@@ -1104,7 +846,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 25v_entry_num_max = 25
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 14v_entry_num_max = 15
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=1
@@ -1114,7 +856,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 8v_entry_num_max = 25
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 28v_entry_num_max = 28
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=2
@@ -1124,7 +866,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 11v_entry_num_max = 20
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 28v_entry_num_max = 29
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=3
@@ -1134,7 +876,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 16v_entry_num_max = 18
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 5v_entry_num_max = 27
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=4
@@ -1144,7 +886,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 30v_entry_num_max = 30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 1v_entry_num_max = 7
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=5
@@ -1154,7 +896,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 13v_entry_num_max = 17
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 30v_entry_num_max = 30
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=6
@@ -1164,7 +906,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 17v_entry_num_max = 21
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 1v_entry_num_max = 8
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=7
@@ -1174,7 +916,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 7v_entry_num_max = 20
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 24v_entry_num_max = 26
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=8
@@ -1184,7 +926,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 24v_entry_num_max = 25
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 14v_entry_num_max = 22
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=9
@@ -1194,7 +936,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 11v_entry_num_max = 16
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 5v_entry_num_max = 30
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start of test_of_delete_by_entry_num_random tests, i=10
@@ -1204,7 +946,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of delete entry_num
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with integers from 0 to 29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 24v_entry_num_max = 28
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        v_entry_num_min = 1v_entry_num_max = 13
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of fetch

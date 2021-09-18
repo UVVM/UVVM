@@ -690,7 +690,14 @@ begin
       check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_STD, error, "My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
       check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_EXACT, error, "My msg dontcare-in-extended-width HEX, AS_IS, Fail", C_SCOPE, HEX, AS_IS);
 
+      -- MATCH_STD_INCL_Z
       check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z", C_SCOPE, HEX, AS_IS);
+      -- MATCH_STD_INCL_ZXUW
+      check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000X0X00X0"), "000X0X00X0", MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000U0U00U0"), "000U0U00U0", MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000W0W00W0"), "000W0W00W0", MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0Z0X0U00W0"), "0Z0X0U00W0", MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
 
       check_value(std_logic_vector'("0000010010"), "0000010010", error, "My msg HEX_BIN_IF_INVALID, OK", C_SCOPE, HEX_BIN_IF_INVALID);
       check_value(std_logic_vector'("0000011111"), "0000010010", error, "My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
@@ -759,7 +766,13 @@ begin
       check_value('L', '0', MATCH_STD, warning, "My msg SL, OK", C_SCOPE);
       check_value('1', 'H', MATCH_EXACT, warning, "My msg SL, Fail", C_SCOPE);
       check_value('-', '1', MATCH_EXACT, warning, "My msg SL, Fail", C_SCOPE);
+      -- MATCH_STD_INCL_Z
       check_value('Z', 'Z', MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z", C_SCOPE);
+      -- MATCH_STD_INCL_ZXUW
+      check_value('Z', 'Z', MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('X', 'X', MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('U', 'U', MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('W', 'W', MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE);
 
       -- time
       v_t := 15 ns;
@@ -1488,6 +1501,7 @@ begin
       slv8 <= transport "10110001" after 4 ns;
       await_value(slv8, "10--0001", MATCH_STD, 3 ns, 5 ns, error, "Change within time window 2, STD match, OK", C_SCOPE);
 
+      -- MATCH_STD_INCL_Z
       wait for 10 ns;
       slv8 <= transport "1011000Z" after 4 ns;
       await_value(slv8, "1011000Z", MATCH_STD_INCL_Z, 3 ns, 5 ns, error, "Change within time window 3, STD match including Z, OK", C_SCOPE);
@@ -1495,7 +1509,15 @@ begin
       slv8 <= transport "Z011000Z" after 4 ns;
       await_value(slv8, "1011000Z", MATCH_STD_INCL_Z, 3 ns, 5 ns, error, "Different values, STD match including Z, Fail", C_SCOPE);
 
-      increment_expected_alerts(error, 5);
+      -- MATCH_STD_INCL_ZXUW
+      wait for 10 ns;
+      slv8 <= transport "1W1U0X0Z" after 4 ns;
+      await_value(slv8, "1W1U0X0Z", MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Change within time window 3, STD match including ZXUW, OK", C_SCOPE);
+      wait for 10 ns;
+      slv8 <= transport "1W110X0Z" after 4 ns;
+      await_value(slv8, "1W1U1X0Z", MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Different values, STD match including ZXUW, Fail 1", C_SCOPE);
+
+      increment_expected_alerts(error, 6);
 
       -- await_value : unsigned
       u8 <= "00000000";
@@ -1579,6 +1601,7 @@ begin
       await_value(sl, '1', MATCH_EXACT, 3 ns, 5 ns, error, "Change within time window to weak, expecting forced, FAIL", C_SCOPE);
       wait for 10 ns;
 
+      -- MATCH_STD_INCL_Z
       sl <= '1';
       wait for 1 ns;
       sl <= transport 'Z' after 3 ns;
@@ -1587,7 +1610,44 @@ begin
       sl <= transport '1' after 3 ns;
       await_value(sl, 'Z', MATCH_STD_INCL_Z , 3 ns, 5 ns, error, "Different values, STD match including Z, Fail", C_SCOPE);
 
-      increment_expected_alerts(error, 6);
+      -- MATCH_STD_INCL_ZXUW
+      wait for 1 ns;
+      sl <= '1';
+      wait for 1 ns;
+      sl <= transport 'Z' after 3 ns;
+      await_value(sl, 'Z', MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Change within time window, STD match including ZXUW, OK", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '1' after 3 ns;
+      await_value(sl, 'Z', MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Different values, STD match including ZXUW, Fail 2", C_SCOPE);
+
+      wait for 1 ns;
+      sl <= '1';
+      wait for 1 ns;
+      sl <= transport 'X' after 3 ns;
+      await_value(sl, 'X', MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Change within time window, STD match including ZXUW, OK", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '1' after 3 ns;
+      await_value(sl, 'X', MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Different values, STD match including ZXUW, Fail 3", C_SCOPE);
+
+      wait for 1 ns;
+      sl <= '1';
+      wait for 1 ns;
+      sl <= transport 'U' after 3 ns;
+      await_value(sl, 'U', MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Change within time window, STD match including ZXUW, OK", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '1' after 3 ns;
+      await_value(sl, 'U', MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Different values, STD match including ZXUW, Fail 4", C_SCOPE);
+
+      wait for 1 ns;
+      sl <= '1';
+      wait for 1 ns;
+      sl <= transport 'W' after 3 ns;
+      await_value(sl, 'W', MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Change within time window, STD match including ZXUW, OK", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '1' after 3 ns;
+      await_value(sl, 'W', MATCH_STD_INCL_ZXUW, 3 ns, 5 ns, error, "Different values, STD match including ZXUW, Fail 5", C_SCOPE);
+
+      increment_expected_alerts(error, 10);
 
       -- await_value : integer
       i <= 0;
@@ -3655,7 +3715,15 @@ begin
       check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_STD,"My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
       check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_EXACT,"My msg dontcare-in-extended-width HEX, AS_IS, Fail", C_SCOPE, HEX, AS_IS);
 
+      -- MATCH_STD_INCL_Z
       check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_Z,"Check MATCH_STD_INCL_Z", C_SCOPE, HEX, AS_IS);
+
+      -- MATCH_STD_INCL_ZXUW
+      check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000X0X00X0"), "000X0X00X0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000U0U00U0"), "000U0U00U0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000W0W00W0"), "000W0W00W0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0Z0X0U00W0"), "0Z0X0U00W0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
 
       check_value(std_logic_vector'("0000010010"), "0000010010","My msg HEX_BIN_IF_INVALID, OK", C_SCOPE, HEX_BIN_IF_INVALID);
       check_value(std_logic_vector'("0000011111"), "0000010010","My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
@@ -3724,8 +3792,14 @@ begin
       check_value('L', '0', MATCH_STD,"My msg SL, OK", C_SCOPE);
       check_value('1', 'H', MATCH_EXACT,"My msg SL, Fail", C_SCOPE);
       check_value('-', '1', MATCH_EXACT,"My msg SL, Fail", C_SCOPE);
+      -- MATCH_STD_INCL_Z
       check_value('Z', 'Z', MATCH_STD_INCL_Z,"Check MATCH_STD_INCL_Z", C_SCOPE);
-
+      -- MATCH_STD_INCL_ZXUW
+      check_value('Z', 'Z', MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('X', 'X', MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('U', 'U', MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('W', 'W', MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      
       -- time
       v_t := 15 ns;
       v_b := check_value(15 ns, 74 ps,"My msg I, Fail", C_SCOPE);

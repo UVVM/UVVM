@@ -53,6 +53,7 @@ UVVM:                ID_PACKET_HDR                : ENABLED
 UVVM:                ID_PACKET_DATA               : ENABLED
 UVVM:                ID_PACKET_CHECKSUM           : ENABLED
 UVVM:                ID_PACKET_GAP                : ENABLED
+UVVM:                ID_PACKET_PAYLOAD            : ENABLED
 UVVM:                ID_FRAME_INITIATE            : ENABLED
 UVVM:                ID_FRAME_COMPLETE            : ENABLED
 UVVM:                ID_FRAME_HDR                 : ENABLED

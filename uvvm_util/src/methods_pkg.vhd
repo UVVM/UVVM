@@ -4173,16 +4173,16 @@ package body methods_pkg is
           end loop;
 
         when MATCH_STD_INCL_ZXUW =>
-        for i in v_min_length-1 downto 0 loop
-          if not(std_match(a_value1(i), a_value2(i)) or
-                 (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
-                 (a_value1(i) = 'X' and a_value2(i) = 'X') or
-                 (a_value1(i) = 'U' and a_value2(i) = 'U') or
-                 (a_value1(i) = 'W' and a_value2(i) = 'W')) then
-            v_match := false;
-            exit;
-          end if;
-        end loop;
+          for i in v_min_length-1 downto 0 loop
+            if not(std_match(a_value1(i), a_value2(i)) or
+                   (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
+                   (a_value1(i) = 'X' and a_value2(i) = 'X') or
+                   (a_value1(i) = 'U' and a_value2(i) = 'U') or
+                   (a_value1(i) = 'W' and a_value2(i) = 'W')) then
+              v_match := false;
+              exit;
+            end if;
+          end loop;
 
 
         when others =>

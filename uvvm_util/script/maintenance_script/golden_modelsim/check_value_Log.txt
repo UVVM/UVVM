@@ -205,6 +205,18 @@ UVVM: ==========================================================================
 UVVM: 
 UVVM: 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_Z'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"X"'. 'Check MATCH_STD_INCL_Z with don't care'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"X"'. 'Check MATCH_STD_INCL_Z with don't care'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #9  ***
+UVVM:             1 ns   TB seq
+UVVM:                    check_value() => Failed. slv  Was x"X". Expected x"X".
+UVVM:                    Check MATCH_STD_INCL_Z with don't care, FAIL
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_ZXUW'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_ZXUW'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_ZXUW'
@@ -213,7 +225,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq                         
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"'. 'My msg HEX_BIN_IF_INVALID, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #9  ***
+UVVM: ***  ERROR #10  ***
 UVVM:             1 ns   TB seq
 UVVM:                    check_value() => Failed. slv  Was x"01F". Expected x"012".
 UVVM:                    My msg HEX_BIN_IF_INVALID, Fail
@@ -222,7 +234,7 @@ UVVM:
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #10  ***
+UVVM: ***  ERROR #11  ***
 UVVM:             1 ns   TB seq
 UVVM:                    check_value() => Failed. slv  Was x"0XX" (b"00000U00U0"). Expected x"012".
 UVVM:                    My msg HEX_BIN_IF_INVALID, Fail
@@ -237,7 +249,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check_value should return true'
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #11  ***
+UVVM: ***  ERROR #12  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. Boolean was true. Expected false. 
 UVVM:                    Boolean check true vs false, Fail
@@ -247,7 +259,7 @@ UVVM:
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check_value should return false'
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #12  ***
+UVVM: ***  ERROR #13  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. Boolean was false. Expected true. 
 UVVM:                    Boolean check false vs true, Fail
@@ -261,7 +273,7 @@ UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Boolean check true vs true, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #13  ***
+UVVM: ***  ERROR #14  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. Boolean was true. Expected false. 
 UVVM:                    Boolean check true vs false, Fail
@@ -270,7 +282,7 @@ UVVM:
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #14  ***
+UVVM: ***  ERROR #15  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. Boolean was false. Expected true. 
 UVVM:                    Boolean check false vs true, Fail
@@ -282,7 +294,7 @@ UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for unsigned b"01100"'. 'My msg U, BIN, AS_IS, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #15  ***
+UVVM: ***  ERROR #16  ***
 UVVM:             1 ns   TB seq
 UVVM:                    check_value() => Failed. unsigned  Was b"01100". Expected b"11100".
 UVVM:                    My msg U, BIN, AS_IS, Fail
@@ -291,7 +303,7 @@ UVVM:
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #16  ***
+UVVM: ***  ERROR #17  ***
 UVVM:             1 ns   TB seq
 UVVM:                    check_value() => Failed. unsigned  Was b"001100". Expected b"101100".
 UVVM:                    My msg U, BIN, AS_IS, Fail
@@ -303,7 +315,7 @@ UVVM:                                                                           
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for signed b"10101100"'. 'My msg S, BIN, AS_IS, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #17  ***
+UVVM: ***  ERROR #18  ***
 UVVM:             1 ns   TB seq
 UVVM:                    check_value() => Failed. signed  Was b"10101100". Expected b"10101101".
 UVVM:                    My msg S, BIN, AS_IS, Fail
@@ -315,7 +327,7 @@ UVVM:                                                                           
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for int 5. 'My msg I, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
-UVVM: ***  ERROR #18  ***
+UVVM: ***  ERROR #19  ***
 UVVM:             1 ns   TB seq
 UVVM:                    check_value() => Failed. int  Was 5. Expected 12345
 UVVM:                    My msg I, Fail
@@ -507,7 +519,7 @@ UVVM:                TB_NOTE      :      0         0         0         ok
 UVVM:                WARNING      :      8         8         0         ok
 UVVM:                TB_WARNING   :      7         7         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
-UVVM:                ERROR        :     18        18         0         ok
+UVVM:                ERROR        :     19        19         0         ok
 UVVM:                TB_ERROR     :      1         1         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok
@@ -523,7 +535,7 @@ UVVM:                TB_NOTE      :      0         0         0         ok
 UVVM:                WARNING      :      8         8         0         ok
 UVVM:                TB_WARNING   :      7         7         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
-UVVM:                ERROR        :     18        18         0         ok
+UVVM:                ERROR        :     19        19         0         ok
 UVVM:                TB_ERROR     :      1         1         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok

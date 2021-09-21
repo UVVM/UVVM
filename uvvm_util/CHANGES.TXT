@@ -8,7 +8,10 @@ v2.18.0
 Released: 2021-XX-XX
 - Fixed generic_queue deleting wrong element when position is different from entry_num.
 - Fixed generic_queue print_queue() crashing when queue is empty.
-- Added MATCH_STD_INCL_ZXUW to match strictness for check_value(), await_value() and matching_values().
+- Added MATCH_STD_INCL_ZXUW to match strictness for check_value(), await_value()
+  and matching_values().
+- Fixed issue when using don't care in SLVs with check_value() and match strictness
+  set to MATCH_STD_INCL_Z.
 
 v2.17.0
 ----------

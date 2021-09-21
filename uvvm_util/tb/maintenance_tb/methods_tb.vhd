@@ -693,6 +693,9 @@ begin
       -- MATCH_STD_INCL_Z
       check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z", C_SCOPE, HEX, AS_IS);
       check_value(std_logic_vector'("01Z0"), "----", MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z with don't care", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("01Z0"), "01--", MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z with don't care", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("01Z0"), "01-1", MATCH_STD_INCL_Z, error, "Check MATCH_STD_INCL_Z with don't care, FAIL", C_SCOPE, HEX, AS_IS);
+      increment_expected_alerts(error, 1);
 
       -- MATCH_STD_INCL_ZXUW
       check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_ZXUW, error, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);

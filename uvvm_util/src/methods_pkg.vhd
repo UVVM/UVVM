@@ -4166,7 +4166,9 @@ package body methods_pkg is
 
         when MATCH_STD_INCL_Z =>
           for i in v_min_length-1 downto 0 loop
-            if not(std_match(a_value1(i), a_value2(i)) or (a_value1(i) = 'Z' and a_value2(i) = 'Z')) then
+            if not(std_match(a_value1(i), a_value2(i)) or
+                   (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
+                   (a_value1(i) = '-' or a_value2(i) = '-')) then
               v_match := false;
               exit;
             end if;
@@ -4178,7 +4180,8 @@ package body methods_pkg is
                    (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
                    (a_value1(i) = 'X' and a_value2(i) = 'X') or
                    (a_value1(i) = 'U' and a_value2(i) = 'U') or
-                   (a_value1(i) = 'W' and a_value2(i) = 'W')) then
+                   (a_value1(i) = 'W' and a_value2(i) = 'W') or 
+                   (a_value1(i) = '-' or a_value2(i) = '-')) then
               v_match := false;
               exit;
             end if;

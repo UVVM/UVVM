@@ -57,8 +57,11 @@ begin
     variable v_vector           : std_logic_vector(1 downto 0);
     variable v_rand             : t_rand;
     variable v_bin_val          : integer;
+    variable v_num_bins         : natural;
     variable v_min_hits         : natural;
+    variable v_total_min_hits   : real;
     variable v_prev_min_hits    : natural := 0;
+    variable v_goal             : natural;
     variable v_value            : integer;
     variable v_values_x2        : integer_vector(0 to 1);
     variable v_values_x3        : integer_vector(0 to 2);
@@ -284,12 +287,13 @@ begin
     -- Checks the bins coverage in the coverpoint
     procedure check_bins_coverage(
       variable coverpoint : inout t_coverpoint;
-      constant coverage   : in    real) is
-      constant C_PROC_NAME : string := "check_bins_coverage";
+      constant coverage   : in    real;
+      constant use_goal   : in    boolean := false) is
+      constant C_PROC_NAME : string := "check_bins_coverage" & return_string_if_true("(% of goal)", use_goal);
     begin
       -- Use string representation to round the real number
-      if to_string(coverpoint.get_coverage(BINS),2) /= to_string(coverage,2) then
-        alert(ERROR, C_PROC_NAME & " => Failed, for " & to_string(coverpoint.get_coverage(BINS),2) & "%, expected " & to_string(coverage,2) & "%");
+      if to_string(coverpoint.get_coverage(BINS, use_goal),2) /= to_string(coverage,2) then
+        alert(ERROR, C_PROC_NAME & " => Failed, for " & to_string(coverpoint.get_coverage(BINS, use_goal),2) & "%, expected " & to_string(coverage,2) & "%");
         return;
       end if;
       if coverpoint.coverage_completed(BINS) and coverage = 100.0 then
@@ -297,19 +301,20 @@ begin
       elsif not(coverpoint.coverage_completed(BINS)) and coverage < 100.0 then
         log(ID_POS_ACK, C_PROC_NAME & " => OK, for " & to_string(coverage,2) & "%");
       else
-        alert(ERROR, C_PROC_NAME & " => Failed, coverage_completed() returned wrong value: " & to_upper(to_string(coverpoint.coverage_completed(HITS))));
+        alert(ERROR, C_PROC_NAME & " => Failed, coverage_completed() returned wrong value: " & to_upper(to_string(coverpoint.coverage_completed(BINS))));
       end if;
     end procedure;
 
     -- Checks the hits coverage in the coverpoint
     procedure check_hits_coverage(
       variable coverpoint : inout t_coverpoint;
-      constant coverage   : in    real) is
-      constant C_PROC_NAME : string := "check_hits_coverage";
+      constant coverage   : in    real;
+      constant use_goal   : in    boolean := false) is
+      constant C_PROC_NAME : string := "check_hits_coverage" & return_string_if_true("(% of goal)", use_goal);
     begin
       -- Use string representation to round the real number
-      if to_string(coverpoint.get_coverage(HITS),2) /= to_string(coverage,2) then
-        alert(ERROR, C_PROC_NAME & " => Failed, for " & to_string(coverpoint.get_coverage(HITS),2) & "%, expected " & to_string(coverage,2) & "%");
+      if to_string(coverpoint.get_coverage(HITS, use_goal),2) /= to_string(coverage,2) then
+        alert(ERROR, C_PROC_NAME & " => Failed, for " & to_string(coverpoint.get_coverage(HITS, use_goal),2) & "%, expected " & to_string(coverage,2) & "%");
         return;
       end if;
       if coverpoint.coverage_completed(HITS) and coverage = 100.0 then
@@ -323,10 +328,11 @@ begin
 
     -- Checks that the bins and hits coverage is complete
     procedure check_coverage_completed(
-      variable coverpoint : inout t_coverpoint) is
+      variable coverpoint : inout t_coverpoint;
+      constant use_goal   : in    boolean := false) is
     begin
-      check_bins_coverage(coverpoint, 100.0);
-      check_hits_coverage(coverpoint, 100.0);
+      check_bins_coverage(coverpoint, 100.0, use_goal);
+      check_hits_coverage(coverpoint, 100.0, use_goal);
     end procedure;
 
     -- Checks that the number of hits from a bin in the coverpoint
@@ -2673,6 +2679,257 @@ begin
       fc_report_overall_coverage(VERBOSE);
       fc_report_overall_coverage(NON_VERBOSE);
       fc_report_overall_coverage(HOLES_ONLY);
+
+    --===================================================================================
+    elsif GC_TESTCASE = "fc_coverage" then
+    --===================================================================================
+      check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "Checking coverpoints overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 0.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 0.0, ERROR, "Checking hits overall coverage");
+      check_value(not fc_overall_coverage_completed(VOID), ERROR, "Checking overall coverage NOT completed");
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverage status with default goals (100)");
+      ------------------------------------------------------------
+      v_num_bins       := 15;
+      v_min_hits       := 10;
+      v_total_min_hits := real(v_num_bins*v_min_hits);
+      v_coverpoint.add_bins(bin_range(1,v_num_bins),v_min_hits);
+
+      for bin in 1 to v_num_bins loop
+        for hits in 1 to v_min_hits loop
+          check_bins_coverage(v_coverpoint, 100.0*real(bin-1)/real(v_num_bins));
+          check_hits_coverage(v_coverpoint, 100.0*real((bin-1)*v_min_hits+hits-1)/v_total_min_hits);
+          v_coverpoint.sample_coverage(bin);
+        end loop;
+      end loop;
+      check_coverage_completed(v_coverpoint);
+      check_value(v_coverpoint.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
+
+      log(ID_LOG_HDR, "Continue sampling bins and check coverage remains 100%");
+      for i in 1 to 50 loop
+        v_coverpoint.sample_coverage(i mod 20); -- Sample also values outside the bins
+      end loop;
+      check_coverage_completed(v_coverpoint);
+      check_value(v_coverpoint.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
+
+      v_coverpoint.report_coverage(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverage status with configured hits goal < 100");
+      ------------------------------------------------------------
+      v_num_bins       := 10;
+      v_min_hits       := 10;
+      v_total_min_hits := real(v_num_bins*v_min_hits);
+      v_coverpoint_b.add_bins(bin_range(1,v_num_bins),v_min_hits);
+      v_goal           := 50;
+      v_min_hits       := v_min_hits*v_goal/100;
+      v_total_min_hits := v_total_min_hits*real(v_goal)/100.0;
+      v_coverpoint_b.set_hits_coverage_goal(v_goal);
+      check_value(v_coverpoint_b.get_hits_coverage_goal(VOID), v_goal, ERROR, "Checking hits coverage goal");
+
+      for bin in 1 to v_num_bins loop
+        for hits in 1 to v_min_hits loop
+          check_bins_coverage(v_coverpoint_b, 0.0, use_goal => true);
+          check_hits_coverage(v_coverpoint_b, 100.0*real((bin-1)*v_min_hits+hits-1)/v_total_min_hits, use_goal => true);
+          v_coverpoint_b.sample_coverage(bin);
+        end loop;
+      end loop;
+      check_bins_coverage(v_coverpoint_b, 0.0, use_goal => true);
+      check_hits_coverage(v_coverpoint_b, 100.0, use_goal => true);
+
+      log(ID_LOG_HDR, "Continue sampling bins and check hits coverage remains 100%");
+      for bin in 1 to v_num_bins loop
+        for hits in 1 to v_min_hits loop
+          check_bins_coverage(v_coverpoint_b, 100.0*real(bin-1)/real(v_num_bins), use_goal => true);
+          check_hits_coverage(v_coverpoint_b, 100.0, use_goal => true);
+          v_coverpoint_b.sample_coverage(bin);
+        end loop;
+      end loop;
+      check_coverage_completed(v_coverpoint_b, use_goal => true);
+      check_value(v_coverpoint_b.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
+
+      v_coverpoint_b.report_coverage(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverage status with configured hits goal > 100");
+      ------------------------------------------------------------
+      v_num_bins       := 10;
+      v_min_hits       := 10;
+      v_total_min_hits := real(v_num_bins*v_min_hits);
+      v_coverpoint_c.add_bins(bin_range(1,v_num_bins),v_min_hits);
+      v_goal           := 200;
+      v_min_hits       := v_min_hits*v_goal/100;
+      v_total_min_hits := v_total_min_hits*real(v_goal)/100.0;
+      v_coverpoint_c.set_hits_coverage_goal(v_goal);
+      check_value(v_coverpoint_c.get_hits_coverage_goal(VOID), v_goal, ERROR, "Checking hits coverage goal");
+
+      for bin in 1 to v_num_bins loop
+        for hits in 1 to v_min_hits loop
+          if hits <= v_min_hits*100/v_goal then
+            check_bins_coverage(v_coverpoint_c, 100.0*real(bin-1)/real(v_num_bins), use_goal => true);
+          else
+            check_bins_coverage(v_coverpoint_c, 100.0*real(bin)/real(v_num_bins), use_goal => true);
+          end if;
+          check_hits_coverage(v_coverpoint_c, 100.0*real((bin-1)*v_min_hits+hits-1)/v_total_min_hits, use_goal => true);
+          v_coverpoint_c.sample_coverage(bin);
+        end loop;
+      end loop;
+      check_coverage_completed(v_coverpoint_c, use_goal => true);
+      check_value(v_coverpoint_c.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
+
+      v_coverpoint_c.report_coverage(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverage status with configured bins goal < 100");
+      ------------------------------------------------------------
+      v_num_bins       := 10;
+      v_min_hits       := 10;
+      v_total_min_hits := real(v_num_bins*v_min_hits);
+      v_coverpoint_d.add_bins(bin_range(1,v_num_bins),v_min_hits);
+      v_goal           := 70;
+      v_num_bins       := v_num_bins*v_goal/100;
+      v_coverpoint_d.set_bins_coverage_goal(v_goal);
+      check_value(v_coverpoint_d.get_bins_coverage_goal(VOID), v_goal, ERROR, "Checking bins coverage goal");
+
+      for bin in 1 to v_num_bins loop
+        for hits in 1 to v_min_hits loop
+          check_bins_coverage(v_coverpoint_d, 100.0*real(bin-1)/real(v_num_bins), use_goal => true);
+          check_hits_coverage(v_coverpoint_d, 100.0*real((bin-1)*v_min_hits+hits-1)/v_total_min_hits, use_goal => true);
+          v_coverpoint_d.sample_coverage(bin);
+        end loop;
+      end loop;
+      check_bins_coverage(v_coverpoint_d, 100.0, use_goal => true);
+      check_hits_coverage(v_coverpoint_d, 70.0, use_goal => true);
+
+      log(ID_LOG_HDR, "Continue sampling bins and check bins coverage remains 100%");
+      for bin in v_num_bins+1 to v_num_bins*100/v_goal loop
+        for hits in 1 to v_min_hits loop
+          check_bins_coverage(v_coverpoint_d, 100.0, use_goal => true);
+          check_hits_coverage(v_coverpoint_d, 100.0*real((bin-1)*v_min_hits+hits-1)/v_total_min_hits, use_goal => true);
+          v_coverpoint_d.sample_coverage(bin);
+        end loop;
+      end loop;
+      check_coverage_completed(v_coverpoint_d, use_goal => true);
+      check_value(v_coverpoint_d.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
+
+      v_coverpoint_d.report_coverage(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverage status with configured bins and hits goals");
+      ------------------------------------------------------------
+      v_coverpoint_d.clear_coverage(VOID);
+      v_coverpoint_d.set_bins_coverage_goal(50);
+      v_coverpoint_d.set_hits_coverage_goal(50);
+      check_value(v_coverpoint_d.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
+      check_value(v_coverpoint_d.get_hits_coverage_goal(VOID), 50, ERROR, "Checking hits coverage goal");
+
+      for bin in 1 to 5 loop
+        sample_bins(v_coverpoint_d, bin, 5);
+      end loop;
+      check_bins_coverage(v_coverpoint_d, 0.0, use_goal => true);
+      check_hits_coverage(v_coverpoint_d, 50.0, use_goal => true);
+      check_value(v_coverpoint_d.get_coverage(BINS, percentage_of_goal => false), 0.0, ERROR, "check_bins_coverage");
+      check_value(v_coverpoint_d.get_coverage(HITS, percentage_of_goal => false), 25.0, ERROR, "check_hits_coverage");
+
+      for bin in 1 to 5 loop
+        sample_bins(v_coverpoint_d, bin, 5);
+      end loop;
+      check_bins_coverage(v_coverpoint_d, 100.0, use_goal => true);
+      check_hits_coverage(v_coverpoint_d, 50.0, use_goal => true);
+      check_value(v_coverpoint_d.get_coverage(BINS, percentage_of_goal => false), 50.0, ERROR, "check_bins_coverage");
+      check_value(v_coverpoint_d.get_coverage(HITS, percentage_of_goal => false), 50.0, ERROR, "check_hits_coverage");
+
+      for bin in 6 to 10 loop
+        sample_bins(v_coverpoint_d, bin, 5);
+      end loop;
+      check_bins_coverage(v_coverpoint_d, 100.0, use_goal => true);
+      check_hits_coverage(v_coverpoint_d, 100.0, use_goal => true);
+      check_value(v_coverpoint_d.get_coverage(BINS, percentage_of_goal => false), 50.0, ERROR, "check_bins_coverage");
+      check_value(v_coverpoint_d.get_coverage(HITS, percentage_of_goal => false), 75.0, ERROR, "check_hits_coverage");
+
+      for bin in 6 to 10 loop
+        sample_bins(v_coverpoint_d, bin, 5);
+      end loop;
+      check_bins_coverage(v_coverpoint_d, 100.0, use_goal => true);
+      check_hits_coverage(v_coverpoint_d, 100.0, use_goal => true);
+      check_value(v_coverpoint_d.get_coverage(BINS, percentage_of_goal => false), 100.0, ERROR, "check_bins_coverage");
+      check_value(v_coverpoint_d.get_coverage(HITS, percentage_of_goal => false), 100.0, ERROR, "check_hits_coverage");
+
+      v_coverpoint_d.report_coverage(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing overall coverage status");
+      ------------------------------------------------------------
+      v_cross_x2.add_bins(bin(0) & bin(1), 10);
+      v_cross_x3.add_bins(bin(0), 10);
+      v_cross_x2_b.add_bins(bin(0), 10);
+      v_cross_x3_b.add_bins(bin(0), 10);
+      v_goal := 75;
+      fc_set_covpts_coverage_goal(v_goal);
+      check_value(fc_get_covpts_coverage_goal(VOID), v_goal, ERROR, "Checking coverpoints coverage goal");
+
+      check_value(fc_get_overall_coverage(COVPTS), 50.0, ERROR, "Checking coverpoints overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 90.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 90.0, ERROR, "Checking hits overall coverage");
+      check_value(not fc_overall_coverage_completed(VOID), ERROR, "Checking overall coverage NOT completed");
+
+      sample_bins(v_cross_x2, (0,1), 10);
+      sample_bins(v_cross_x3, 0, 10);
+
+      check_value(fc_get_overall_coverage(COVPTS), 75.0, ERROR, "Checking coverpoints overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 96.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 96.0, ERROR, "Checking hits overall coverage");
+      check_value(fc_overall_coverage_completed(VOID), ERROR, "Checking overall coverage completed");
+
+      sample_bins(v_cross_x2_b, 0, 10);
+      sample_bins(v_cross_x3_b, 0, 10);
+
+      check_value(fc_get_overall_coverage(COVPTS), 100.0, ERROR, "Checking coverpoints overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 100.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 100.0, ERROR, "Checking hits overall coverage");
+      check_value(fc_overall_coverage_completed(VOID), ERROR, "Checking overall coverage completed");
+
+      fc_report_overall_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing overall coverage weight");
+      ------------------------------------------------------------
+      v_cross_x2.clear_coverage(VOID);
+      v_cross_x3.clear_coverage(VOID);
+      v_cross_x2_b.clear_coverage(VOID);
+      v_cross_x3_b.clear_coverage(VOID);
+      v_cross_x2.set_overall_coverage_weight(3);
+      v_cross_x3.set_overall_coverage_weight(3);
+      v_cross_x2_b.set_overall_coverage_weight(3);
+      v_cross_x3_b.set_overall_coverage_weight(3);
+      check_value(v_cross_x2.get_overall_coverage_weight(VOID), 3, ERROR, "Checking overall coverage weight");
+      check_value(v_cross_x3.get_overall_coverage_weight(VOID), 3, ERROR, "Checking overall coverage weight");
+      check_value(v_cross_x2_b.get_overall_coverage_weight(VOID), 3, ERROR, "Checking overall coverage weight");
+      check_value(v_cross_x3_b.get_overall_coverage_weight(VOID), 3, ERROR, "Checking overall coverage weight");
+
+      check_value(fc_get_overall_coverage(COVPTS), 25.0, ERROR, "Checking coverpoints overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 75.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 75.0, ERROR, "Checking hits overall coverage");
+      check_value(not fc_overall_coverage_completed(VOID), ERROR, "Checking overall coverage NOT completed");
+
+      sample_bins(v_cross_x2, (0,1), 10);
+      sample_bins(v_cross_x3, 0, 10);
+
+      check_value(fc_get_overall_coverage(COVPTS), 62.5, ERROR, "Checking coverpoints overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 90.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 90.0, ERROR, "Checking hits overall coverage");
+      check_value(not fc_overall_coverage_completed(VOID), ERROR, "Checking overall coverage NOT completed");
+
+      sample_bins(v_cross_x2_b, 0, 10);
+      sample_bins(v_cross_x3_b, 0, 10);
+
+      check_value(fc_get_overall_coverage(COVPTS), 100.0, ERROR, "Checking coverpoints overall coverage");
+      check_value(fc_get_overall_coverage(BINS), 100.0, ERROR, "Checking bins overall coverage");
+      check_value(fc_get_overall_coverage(HITS), 100.0, ERROR, "Checking hits overall coverage");
+      check_value(fc_overall_coverage_completed(VOID), ERROR, "Checking overall coverage completed");
+
+      fc_report_overall_coverage(VERBOSE);
 
     end if;
 

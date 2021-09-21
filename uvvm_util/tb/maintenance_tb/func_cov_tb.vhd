@@ -995,7 +995,6 @@ begin
       v_coverpoint_b.set_scope("MY_SCOPE_2");
       check_value(v_coverpoint_b.get_scope(VOID), "MY_SCOPE_2", ERROR, "Checking scope");
 
-      v_coverpoint.report_config(VOID);
       v_coverpoint_b.report_config(VOID);
 
       ------------------------------------------------------------
@@ -1003,6 +1002,44 @@ begin
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_coverpoint_b.set_num_allocated_bins(10);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing C_FC_MAX_NUM_NEW_BINS limit");
+      ------------------------------------------------------------
+      disable_log_msg(ID_FUNC_COV_BINS_INFO);
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,C_FC_MAX_NUM_NEW_BINS));     -- OK
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,C_FC_MAX_NUM_NEW_BINS+1));   -- OK
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 6);
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS));   -- OK
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS+1)); -- ERROR
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS+2)); -- ERROR
+
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS));   -- OK
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+1)); -- ERROR
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+2)); -- ERROR
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+3)); -- ERROR
+
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS) & bin(0));                  -- ERROR
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing C_FC_MAX_PROC_CALL_LENGTH limit");
+      ------------------------------------------------------------
+      disable_log_msg(ID_FUNC_COV_BINS_INFO);
+      v_coverpoint_b.add_bins(bin(integer'left));
+      v_coverpoint_b.add_bins(ignore_bin(integer'left));
+      v_coverpoint_b.add_bins(illegal_bin(integer'left));
+      v_coverpoint_b.add_bins(bin_range(integer'left,integer'left+1,integer'right));
+      v_coverpoint_b.add_bins(bin_transition((0,1,2,3,4,5,6,7,8,9)));
+      v_coverpoint_b.add_bins(bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)));
+
+      v_coverpoint_b.add_bins(bin(integer'left) & bin(integer'left));
+      v_coverpoint_b.add_bins(ignore_bin(integer'left) & ignore_bin(integer'left));
+      v_coverpoint_b.add_bins(illegal_bin(integer'left) & illegal_bin(integer'left));
+      v_coverpoint_b.add_bins(bin_range(integer'left,integer'left+1,integer'right) & bin_range(integer'left,integer'left+1,integer'right));
+      v_coverpoint_b.add_bins(bin_transition((0,1,2,3,4,5,6,7,8,9)) & bin_transition((0,1,2,3,4,5,6,7,8,9)));
+      v_coverpoint_b.add_bins(bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)) &
+        bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)));
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_bin" then

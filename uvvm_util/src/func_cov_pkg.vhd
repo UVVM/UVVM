@@ -1185,12 +1185,14 @@ package body func_cov_pkg is
     -- functions used.
     procedure copy_bins_in_bin_array(
       constant bin_array : in  t_new_bin_array;
-      variable cov_bin   : out t_new_cov_bin) is
+      variable cov_bin   : out t_new_cov_bin;
+      constant proc_call : in  string) is
       variable v_num_bins : natural := 0;
     begin
       for i in bin_array'range loop
         if v_num_bins + bin_array(i).num_bins > C_FC_MAX_NUM_NEW_BINS then
-          alert(TB_ERROR, "Number of bins added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          alert(TB_ERROR, proc_call & "=> Number of bins added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n" &
+           "Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
           return;
         end if;
         cov_bin.bin_vector(v_num_bins to v_num_bins+bin_array(i).num_bins-1) := bin_array(i).bin_vector(0 to bin_array(i).num_bins-1);
@@ -1235,6 +1237,7 @@ package body func_cov_pkg is
 
     -- Creates a bin array from several bin arrays
     procedure create_bin_array(
+      constant proc_call : in  string;
       variable bin_array : out t_new_bin_array;
       constant bin1      : in  t_new_bin_array;
       constant bin2      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY;
@@ -1242,22 +1245,22 @@ package body func_cov_pkg is
       constant bin4      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY;
       constant bin5      : in  t_new_bin_array := C_EMPTY_NEW_BIN_ARRAY) is
     begin
-      copy_bins_in_bin_array(bin1, bin_array(0));
+      copy_bins_in_bin_array(bin1, bin_array(0), proc_call);
 
       if bin2 /= C_EMPTY_NEW_BIN_ARRAY then
-        copy_bins_in_bin_array(bin2, bin_array(1));
+        copy_bins_in_bin_array(bin2, bin_array(1), proc_call);
       end if;
 
       if bin3 /= C_EMPTY_NEW_BIN_ARRAY then
-        copy_bins_in_bin_array(bin3, bin_array(2));
+        copy_bins_in_bin_array(bin3, bin_array(2), proc_call);
       end if;
 
       if bin4 /= C_EMPTY_NEW_BIN_ARRAY then
-        copy_bins_in_bin_array(bin4, bin_array(3));
+        copy_bins_in_bin_array(bin4, bin_array(3), proc_call);
       end if;
 
       if bin5 /= C_EMPTY_NEW_BIN_ARRAY then
-        copy_bins_in_bin_array(bin5, bin_array(4));
+        copy_bins_in_bin_array(bin5, bin_array(4), proc_call);
       end if;
     end procedure;
 
@@ -2000,7 +2003,7 @@ package body func_cov_pkg is
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      create_bin_array(v_bin_array, bin);
+      create_bin_array(v_proc_call.all, v_bin_array, bin);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_hits, rand_weight, C_USE_RAND_WEIGHT, bin_name);
       DEALLOCATE(v_proc_call);
     end procedure;
@@ -2052,7 +2055,7 @@ package body func_cov_pkg is
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      create_bin_array(v_bin_array, bin1, bin2);
+      create_bin_array(v_proc_call.all, v_bin_array, bin1, bin2);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_hits, rand_weight, C_USE_RAND_WEIGHT, bin_name);
       DEALLOCATE(v_proc_call);
     end procedure;
@@ -2108,7 +2111,7 @@ package body func_cov_pkg is
         ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
-      create_bin_array(v_bin_array, bin1, bin2, bin3);
+      create_bin_array(v_proc_call.all, v_bin_array, bin1, bin2, bin3);
       add_bins_recursive(v_bin_array, 0, v_idx_reg, min_hits, rand_weight, C_USE_RAND_WEIGHT, bin_name);
       DEALLOCATE(v_proc_call);
     end procedure;

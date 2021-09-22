@@ -125,8 +125,8 @@ begin
       log(ID_SEQUENCER, "Set seeds with string value");
       v_rand.set_rand_seeds(v_rand'instance_name);
       v_seeds := v_rand.get_rand_seeds(VOID);
-      check_value(v_seeds(0) /= 800, ERROR, "Checking initial seed 1");
-      check_value(v_seeds(1) /= 8000, ERROR, "Checking initial seed 2");
+      check_value(v_seeds(0) /= 800, ERROR, "Checking seed 1");
+      check_value(v_seeds(1) /= 8000, ERROR, "Checking seed 2");
 
       ------------------------------------------------------------
       -- Integer

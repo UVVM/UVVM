@@ -529,8 +529,8 @@ Default value is 1.
 **********************************************************************************************************************************
 Coverpoint name
 **********************************************************************************************************************************
-A default name is automatically given to the coverpoint when it is configured or bins are added. The name can be modified by calling 
-the ``set_name()`` procedure.
+A default name is automatically given to the coverpoint when it is configured for the first time or the first bin is added. The 
+name can be modified by calling the ``set_name()`` procedure.
 
 The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.
 

@@ -478,6 +478,21 @@ package func_cov_pkg is
       constant ext_proc_call : string := "")
     return integer_vector;
 
+    procedure set_rand_seeds(
+      constant seed1 : in positive;
+      constant seed2 : in positive);
+
+    procedure set_rand_seeds(
+      constant seeds : in t_positive_vector(0 to 1));
+
+    procedure get_rand_seeds(
+      variable seed1 : out positive;
+      variable seed2 : out positive);
+
+    impure function get_rand_seeds(
+      constant VOID : t_void)
+    return t_positive_vector;
+
   end protected t_coverpoint;
 
 end package func_cov_pkg;
@@ -2784,6 +2799,35 @@ package body func_cov_pkg is
         log(ID_FUNC_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       end if;
       return v_ret;
+    end function;
+
+    procedure set_rand_seeds(
+      constant seed1 : in positive;
+      constant seed2 : in positive) is
+    begin
+      initialize_coverpoint("set_rand_seeds");
+      priv_rand_gen.set_rand_seeds(seed1, seed2);
+    end procedure;
+
+    procedure set_rand_seeds(
+      constant seeds : in t_positive_vector(0 to 1)) is
+    begin
+      initialize_coverpoint("set_rand_seeds");
+      priv_rand_gen.set_rand_seeds(seeds);
+    end procedure;
+
+    procedure get_rand_seeds(
+      variable seed1 : out positive;
+      variable seed2 : out positive) is
+    begin
+      priv_rand_gen.get_rand_seeds(seed1, seed2);
+    end procedure;
+
+    impure function get_rand_seeds(
+      constant VOID : t_void)
+    return t_positive_vector is
+    begin
+      return priv_rand_gen.get_rand_seeds(VOID);
     end function;
 
   end protected body t_coverpoint;

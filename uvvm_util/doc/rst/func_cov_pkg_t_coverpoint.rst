@@ -726,3 +726,52 @@ For a complete overview on Optimized Randomization click :ref:`here <optimized_r
     addr := my_coverpoint.rand(my_msg_id_panel);
     addr_vec := my_coverpoint.rand(VOID);
     addr_vec := my_coverpoint.rand(my_msg_id_panel);
+
+
+set_rand_seeds()
+----------------------------------------------------------------------------------------------------------------------------------
+Configures the randomization seeds. Default values are set using the coverpoint's name at the moment it is initialized (when 
+adding the first configuration or bin). ::
+
+    set_rand_seeds(seed1, seed2)
+    set_rand_seeds(seeds)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | seed1              | in     | positive                     | A positive number representing seed 1                 |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | seed2              | in     | positive                     | A positive number representing seed 2                 |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | seeds              | in     | t_positive_vector            | A 2-dimensional vector containing both seeds          |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    my_coverpoint.set_rand_seeds(10, 100);
+    my_coverpoint.set_rand_seeds(seed_vector);
+
+
+get_rand_seeds()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns the randomization seeds. ::
+
+    get_rand_seeds(seed1, seed2)
+    t_positive_vector(0 to 1) := get_rand_seeds(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| variable | seed1              | out    | positive                     | A positive number representing seed 1                 |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| variable | seed2              | out    | positive                     | A positive number representing seed 2                 |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    my_coverpoint.get_rand_seeds(seed1, seed2);
+    seed_vector := my_coverpoint.get_rand_seeds(VOID);

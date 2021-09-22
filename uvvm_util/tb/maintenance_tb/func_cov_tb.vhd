@@ -56,6 +56,7 @@ begin
     variable v_invalid_bin_idx  : natural := 0;
     variable v_vector           : std_logic_vector(1 downto 0);
     variable v_rand             : t_rand;
+    variable v_seeds            : t_positive_vector(0 to 1);
     variable v_bin_val          : integer;
     variable v_num_bins         : natural;
     variable v_min_hits         : natural;
@@ -1510,6 +1511,38 @@ begin
     elsif GC_TESTCASE = "fc_rand_bin" then
     --===================================================================================
       disable_log_msg(ID_FUNC_COV_SAMPLE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing seeds");
+      ------------------------------------------------------------
+      log(ID_SEQUENCER, "Check default seed values for uninitialized coverpoint");
+      v_seeds := v_coverpoint.get_rand_seeds(VOID);
+      check_value(v_seeds(0), C_RAND_INIT_SEED_1, ERROR, "Checking initial seed 1");
+      check_value(v_seeds(1), C_RAND_INIT_SEED_2, ERROR, "Checking initial seed 2");
+
+      log(ID_SEQUENCER, "Check default seed values using default name for initialized coverpoint");
+      v_coverpoint.set_bin_overlap_alert_level(NO_ALERT);   -- Initializes coverpoint
+      v_seeds := v_coverpoint.get_rand_seeds(VOID);
+      check_value(v_seeds(0), 85514, ERROR, "Checking initial seed 1");
+      check_value(v_seeds(1), 85614, ERROR, "Checking initial seed 2");
+
+      log(ID_SEQUENCER, "Set and get seeds with vector value");
+      v_seeds(0) := 500;
+      v_seeds(1) := 5000;
+      v_coverpoint_b.set_rand_seeds(v_seeds);
+      v_coverpoint_b.set_bin_overlap_alert_level(NO_ALERT); -- To check that coverpoint is already initialized and won't overwrite the seeds
+      v_seeds := v_coverpoint_b.get_rand_seeds(VOID);
+      check_value(v_seeds(0), 500, ERROR, "Checking seed 1");
+      check_value(v_seeds(1), 5000, ERROR, "Checking seed 2");
+
+      log(ID_SEQUENCER, "Set and get seeds with positive values");
+      v_seeds(0) := 800;
+      v_seeds(1) := 8000;
+      v_coverpoint_c.set_rand_seeds(v_seeds(0), v_seeds(1));
+      v_coverpoint_c.set_bin_overlap_alert_level(NO_ALERT); -- To check that coverpoint is already initialized and won't overwrite the seeds
+      v_coverpoint_c.get_rand_seeds(v_seeds(0), v_seeds(1));
+      check_value(v_seeds(0), 800, ERROR, "Checking seed 1");
+      check_value(v_seeds(1), 8000, ERROR, "Checking seed 2");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization doesn't select ignore or illegal bins");

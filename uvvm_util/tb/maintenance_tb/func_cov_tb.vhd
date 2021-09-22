@@ -42,6 +42,7 @@ architecture func of func_cov_tb is
   shared variable v_cross_x2_b   : t_coverpoint;
   shared variable v_cross_x3     : t_coverpoint;
   shared variable v_cross_x3_b   : t_coverpoint;
+  shared variable v_cross_x4     : t_coverpoint;
 
   constant C_ADAPTIVE_WEIGHT : integer := -1;
   constant C_NULL            : integer := integer'left;
@@ -2142,7 +2143,7 @@ begin
       v_cross_x3.report_coverage(VERBOSE); -- Bins: 25.00%, Hits: 25.00%
       v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
-      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_database_2" then
@@ -2325,7 +2326,7 @@ begin
       v_cross_x3.report_coverage(VERBOSE); -- Bins: 50.00%, Hits: 50.00%
       v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
 
-      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - coverpoint");
@@ -2433,7 +2434,7 @@ begin
       check_coverage_completed(v_cross_x3_b);
       v_cross_x3_b.report_coverage(VERBOSE);
 
-      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load DB to an already initialized coverpoint - overwrite");
@@ -2827,12 +2828,45 @@ begin
       fc_report_overall_coverage(VERBOSE);
 
     --===================================================================================
-    elsif GC_TESTCASE = "fc_reset_init" then
+    elsif GC_TESTCASE = "fc_init_delete" then
     --===================================================================================
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing deleting an empty coverpoint");
+      log(ID_LOG_HDR, "Testing methods with uninitialized coverpoint");
       ------------------------------------------------------------
+      check_value(fc_get_covpts_coverage_goal(VOID), 100, ERROR, "fc_get_covpts_coverage_goal(VOID)");
+      check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "fc_get_overall_coverage(COVPTS)");
+      check_value(fc_get_overall_coverage(BINS), 0.0, ERROR, "fc_get_overall_coverage(BINS)");
+      check_value(fc_get_overall_coverage(HITS), 0.0, ERROR, "fc_get_overall_coverage(HITS)");
+      check_value(fc_overall_coverage_completed(VOID), false, ERROR, "fc_overall_coverage_completed(VOID)");
+      fc_report_overall_coverage(VERBOSE);
+
+      check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "get_illegal_bin_alert_level(VOID)");
+      check_value(v_coverpoint.get_bin_overlap_alert_level(VOID) = NO_ALERT, ERROR, "get_bin_overlap_alert_level(VOID)");
+      check_value(v_coverpoint.get_overall_coverage_weight(VOID), 1, ERROR, "get_overall_coverage_weight(VOID)");
+      check_value(v_coverpoint.get_bins_coverage_goal(VOID), 100, ERROR, "get_bins_coverage_goal(VOID)");
+      check_value(v_coverpoint.get_hits_coverage_goal(VOID), 100, ERROR, "get_hits_coverage_goal(VOID)");
+      check_value(v_coverpoint.get_name(VOID), "", ERROR, "get_name(VOID)");
+      check_value(v_coverpoint.get_scope(VOID), C_TB_SCOPE_DEFAULT, ERROR, "get_scope(VOID)");
+      check_value(v_coverpoint.is_defined(VOID), false, ERROR, "is_defined(VOID)");
+      check_value(v_coverpoint.get_coverage(BINS), 0.0, ERROR, "Checking get_coverage(BINS)");
+      check_value(v_coverpoint.get_coverage(HITS), 0.0, ERROR, "Checking get_coverage(HITS)");
+      check_value(v_coverpoint.coverage_completed(BINS), false, ERROR, "coverage_completed(BINS)");
+      check_value(v_coverpoint.coverage_completed(HITS), false, ERROR, "coverage_completed(HITS)");
+      check_value(v_coverpoint.coverage_completed(BINS_AND_HITS), false, ERROR, "coverage_completed(BINS_AND_HITS)");
+      v_seeds := v_coverpoint.get_rand_seeds(VOID);
+      check_value(v_seeds(0), C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
+      check_value(v_seeds(1), C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
+      v_coverpoint.report_coverage(VOID);
+      v_coverpoint.report_config(VOID);
+      v_coverpoint.clear_coverage(VOID);
       v_coverpoint.delete_coverpoint(VOID);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,5);
+      v_value             := v_coverpoint.rand(VOID);
+      v_values_x2(0 to 0) := v_coverpoint.rand(VOID);
+      v_coverpoint.sample_coverage(5);
+      v_coverpoint.sample_coverage((5,6,7));
+      v_coverpoint.write_coverage_db(GC_FILE_PATH & "file.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing deleting a coverpoint");
@@ -2850,6 +2884,7 @@ begin
       for i in 1 to 50 loop
         v_coverpoint.sample_coverage(i);
       end loop;
+      v_coverpoint.set_rand_seeds(12345, 67890);
 
       log(ID_SEQUENCER, "Check the coverpoint has the right configuration");
       check_value(v_coverpoint.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
@@ -2868,11 +2903,14 @@ begin
       check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "Checking covpts overall coverage");
       check_value(fc_get_overall_coverage(BINS), 50.0, ERROR, "Checking bins overall coverage");
       check_value(fc_get_overall_coverage(HITS), 50.0, ERROR, "Checking hits overall coverage");
+      v_seeds := v_coverpoint.get_rand_seeds(VOID);
+      check_value(v_seeds(0), 12345, ERROR, "Checking seed 1");
+      check_value(v_seeds(1), 67890, ERROR, "Checking seed 2");
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
-      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
-      log(ID_SEQUENCER, "Clear and check the coverpoint has default values");
+      log(ID_SEQUENCER, "Delete and check the coverpoint has default values");
       v_coverpoint.delete_coverpoint(VOID);
       check_value(v_coverpoint.get_name(VOID), "", ERROR, "Checking name");
       check_value(v_coverpoint.get_scope(VOID), C_TB_SCOPE_DEFAULT, ERROR, "Checking scope");
@@ -2890,9 +2928,12 @@ begin
       check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "Checking covpts overall coverage");
       check_value(fc_get_overall_coverage(BINS), 0.0, ERROR, "Checking bins overall coverage");
       check_value(fc_get_overall_coverage(HITS), 0.0, ERROR, "Checking hits overall coverage");
+      v_seeds := v_coverpoint.get_rand_seeds(VOID);
+      check_value(v_seeds(0), C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
+      check_value(v_seeds(1), C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_config(VOID);
-      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing deleting several coverpoints");
@@ -2901,17 +2942,17 @@ begin
       v_coverpoint_b.add_bins(bin(2));
       v_coverpoint_c.add_bins(bin(3));
       v_coverpoint_d.add_bins(bin(4));
-      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
       v_coverpoint.delete_coverpoint(VOID);   -- 1st
       v_coverpoint_c.delete_coverpoint(VOID); -- 3rd
       v_coverpoint_d.delete_coverpoint(VOID); -- 4th
-      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
       v_coverpoint.add_cross(bin(1000), bin(2000));
       v_coverpoint_c.add_cross(bin(1001), bin(2001));
       v_coverpoint_d.add_cross(bin(1002), bin(2002));
-      fc_report_overall_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
       v_coverpoint.delete_coverpoint(VOID);
       v_coverpoint_b.delete_coverpoint(VOID);
@@ -2919,35 +2960,9 @@ begin
       v_coverpoint_d.delete_coverpoint(VOID);
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing default configuration values");
+      log(ID_LOG_HDR, "Testing initializing coverpoints with config procedures");
       ------------------------------------------------------------
-      check_value(fc_get_covpts_coverage_goal(VOID), 100, ERROR, "fc_get_covpts_coverage_goal(VOID)");
-      check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "fc_get_overall_coverage(COVPTS)");
-      check_value(fc_get_overall_coverage(BINS), 0.0, ERROR, "fc_get_overall_coverage(BINS)");
-      check_value(fc_get_overall_coverage(HITS), 0.0, ERROR, "fc_get_overall_coverage(HITS)");
-      check_value(fc_overall_coverage_completed(VOID), false, ERROR, "fc_overall_coverage_completed(VOID)");
-      fc_report_overall_coverage(VOID);
-
-      check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "get_illegal_bin_alert_level(VOID)");
-      check_value(v_coverpoint.get_bin_overlap_alert_level(VOID) = NO_ALERT, ERROR, "get_bin_overlap_alert_level(VOID)");
-      check_value(v_coverpoint.get_overall_coverage_weight(VOID), 1, ERROR, "get_overall_coverage_weight(VOID)");
-      check_value(v_coverpoint.get_bins_coverage_goal(VOID), 100, ERROR, "get_bins_coverage_goal(VOID)");
-      check_value(v_coverpoint.get_hits_coverage_goal(VOID), 100, ERROR, "get_hits_coverage_goal(VOID)");
-      check_value(v_coverpoint.get_name(VOID), "", ERROR, "get_name(VOID)");
-      check_value(v_coverpoint.get_scope(VOID), C_TB_SCOPE_DEFAULT, ERROR, "get_scope(VOID)");
-      check_value(v_coverpoint.is_defined(VOID), false, ERROR, "is_defined(VOID)");
-      check_value(v_coverpoint.get_coverage(BINS), 0.0, ERROR, "Checking get_coverage(BINS)");
-      check_value(v_coverpoint.get_coverage(HITS), 0.0, ERROR, "Checking get_coverage(HITS)");
-      check_value(v_coverpoint.coverage_completed(BINS), false, ERROR, "coverage_completed(BINS)");
-      check_value(v_coverpoint.coverage_completed(HITS), false, ERROR, "coverage_completed(HITS)");
-      check_value(v_coverpoint.coverage_completed(BINS_AND_HITS), false, ERROR, "coverage_completed(BINS_AND_HITS)");
-      v_coverpoint.report_coverage(VOID);
-      v_coverpoint.report_config(VOID);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing uninitialized coverpoints");
-      ------------------------------------------------------------
-      -- The following "set" procedures will initialize the coverpoint
+      -- The following "set" procedures will initialize each coverpoint (use different variables for each config)
       v_coverpoint.set_illegal_bin_alert_level(FAILURE);
       check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = FAILURE, ERROR, "get_illegal_bin_alert_level(VOID)");
       v_coverpoint_b.set_bin_overlap_alert_level(TB_WARNING);
@@ -2956,45 +2971,21 @@ begin
       check_value(v_coverpoint_c.get_overall_coverage_weight(VOID), 5, ERROR, "get_overall_coverage_weight(VOID)");
       v_coverpoint_d.set_bins_coverage_goal(75);
       check_value(v_coverpoint_d.get_bins_coverage_goal(VOID), 75, ERROR, "get_bins_coverage_goal(VOID)");
-      v_coverpoint_d.set_hits_coverage_goal(300);
-      check_value(v_coverpoint_d.get_hits_coverage_goal(VOID), 300, ERROR, "get_hits_coverage_goal(VOID)");
-      v_cross_x2.set_name("MY_COVERPOINT");
-      check_value(v_cross_x2.get_name(VOID), "MY_COVERPOINT", ERROR, "get_name(VOID)");
-      v_cross_x2_b.set_scope("MY_SCOPE");
-      check_value(v_cross_x2_b.get_scope(VOID), "MY_SCOPE", ERROR, "get_scope(VOID)");
-
-      increment_expected_alerts_and_stop_limit(TB_ERROR,5);
-      v_value             := v_cross_x3.rand(VOID);
-      v_values_x2(0 to 0) := v_cross_x3.rand(VOID);
-      v_cross_x3.sample_coverage(5);
-      v_cross_x3.sample_coverage((5,6,7));
-      v_cross_x3.write_coverage_db(GC_FILE_PATH & "file.txt");
+      v_cross_x2.set_hits_coverage_goal(300);
+      check_value(v_cross_x2.get_hits_coverage_goal(VOID), 300, ERROR, "get_hits_coverage_goal(VOID)");
+      v_cross_x2_b.set_name("MY_COVERPOINT");
+      check_value(v_cross_x2_b.get_name(VOID), "MY_COVERPOINT", ERROR, "get_name(VOID)");
+      v_cross_x3.set_scope("MY_SCOPE");
+      check_value(v_cross_x3.get_scope(VOID), "MY_SCOPE", ERROR, "get_scope(VOID)");
+      v_cross_x4.set_rand_seeds(12345, 67890);
+      v_seeds := v_cross_x4.get_rand_seeds(VOID);
+      check_value(v_seeds(0), 12345, ERROR, "Checking seed 1");
+      check_value(v_seeds(1), 67890, ERROR, "Checking seed 2");
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing initialized coverpoint without bins");
+      log(ID_LOG_HDR, "Testing methods with initialized coverpoint without bins");
       ------------------------------------------------------------
-      v_coverpoint.set_illegal_bin_alert_level(FAILURE);
-      check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = FAILURE, ERROR, "get_illegal_bin_alert_level(VOID)");
-      v_coverpoint.set_bin_overlap_alert_level(TB_ERROR);
-      check_value(v_coverpoint.get_bin_overlap_alert_level(VOID) = TB_ERROR, ERROR, "get_bin_overlap_alert_level(VOID)");
-      v_coverpoint.set_overall_coverage_weight(5);
-      check_value(v_coverpoint.get_overall_coverage_weight(VOID), 5, ERROR, "get_overall_coverage_weight(VOID)");
-      v_coverpoint.set_bins_coverage_goal(75);
-      check_value(v_coverpoint.get_bins_coverage_goal(VOID), 75, ERROR, "get_bins_coverage_goal(VOID)");
-      v_coverpoint.set_hits_coverage_goal(300);
-      check_value(v_coverpoint.get_hits_coverage_goal(VOID), 300, ERROR, "get_hits_coverage_goal(VOID)");
-      v_coverpoint.set_name("MY_COVERPOINT");
-      check_value(v_coverpoint.get_name(VOID), "MY_COVERPOINT", ERROR, "get_name(VOID)");
-      v_coverpoint.set_scope("MY_SCOPE");
-      check_value(v_coverpoint.get_scope(VOID), "MY_SCOPE", ERROR, "get_scope(VOID)");
       check_value(v_coverpoint.is_defined(VOID), false, ERROR, "is_defined(VOID)");
-      check_value(v_coverpoint.get_coverage(BINS), 0.0, ERROR, "Checking get_coverage(BINS)");
-      check_value(v_coverpoint.get_coverage(HITS), 0.0, ERROR, "Checking get_coverage(HITS)");
-      check_value(v_coverpoint.coverage_completed(BINS), false, ERROR, "coverage_completed(BINS)");
-      check_value(v_coverpoint.coverage_completed(HITS), false, ERROR, "coverage_completed(HITS)");
-      check_value(v_coverpoint.coverage_completed(BINS_AND_HITS), false, ERROR, "coverage_completed(BINS_AND_HITS)");
-      v_coverpoint.report_coverage(VOID);
-      v_coverpoint.report_config(VOID);
       v_coverpoint.write_coverage_db(GC_FILE_PATH & "file.txt");
 
       increment_expected_alerts_and_stop_limit(TB_ERROR,4);

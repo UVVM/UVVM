@@ -1818,21 +1818,20 @@ package body func_cov_pkg is
           priv_bins(i).cross_bins(j).transition_idx := 0;
         end loop;
       end loop;
-
       for i in 0 to priv_invalid_bins_idx-1 loop
         priv_invalid_bins(i).hits := 0;
         for j in 0 to C_MAX_NUM_CROSS_BINS-1 loop
           priv_invalid_bins(i).cross_bins(j).transition_idx := 0;
         end loop;
       end loop;
-
       priv_rand_transition_bin_idx       := C_UNINITIALIZED;
       priv_rand_transition_bin_value_idx := (others => 0);
-
-      protected_covergroup_status.set_num_covered_bins(priv_id, 0);
-      protected_covergroup_status.set_total_coverage_bin_hits(priv_id, 0);
-      protected_covergroup_status.set_total_goal_bin_hits(priv_id, 0);
-      protected_covergroup_status.set_total_bin_hits(priv_id, 0);
+      if priv_id /= C_DEALLOCATED_ID then
+        protected_covergroup_status.set_num_covered_bins(priv_id, 0);
+        protected_covergroup_status.set_total_coverage_bin_hits(priv_id, 0);
+        protected_covergroup_status.set_total_goal_bin_hits(priv_id, 0);
+        protected_covergroup_status.set_total_bin_hits(priv_id, 0);
+      end if;
     end procedure;
 
     procedure set_num_allocated_bins(
@@ -1879,6 +1878,7 @@ package body func_cov_pkg is
       priv_invalid_bins                  := new t_cov_bin_vector(0 to C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED-1);
       priv_invalid_bins_idx              := 0;
       priv_num_bins_crossed              := C_UNINITIALIZED;
+      priv_rand_gen.set_rand_seeds(C_RAND_INIT_SEED_1, C_RAND_INIT_SEED_2);
       priv_rand_transition_bin_idx       := C_UNINITIALIZED;
       priv_rand_transition_bin_value_idx := (others => 0);
       priv_illegal_bin_alert_level       := ERROR;

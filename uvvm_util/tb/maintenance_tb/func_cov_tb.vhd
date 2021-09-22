@@ -429,12 +429,18 @@ begin
       v_coverpoint.set_num_allocated_bins_increment(5);
 
       ------------------------------------------------------------
+      log(ID_LOG_HDR, "Wait 100 ns until the coverpoint is initialized");
+      ------------------------------------------------------------
+      wait for 100 ns;
+
+      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with single values");
       ------------------------------------------------------------
       v_coverpoint.add_bins(bin(-101));
       v_coverpoint.add_bins(bin(-100));
       v_coverpoint.add_bins(bin(100));
       v_coverpoint.add_bins(bin(101));
+      wait for 0 ns; -- Wait a delta cycle so that p_sampling can finish
 
       check_bin(v_coverpoint, v_bin_idx, VAL, -101);
       check_bin(v_coverpoint, v_bin_idx, VAL, -100);
@@ -2981,5 +2987,20 @@ begin
     wait;  -- to stop completely
 
   end process p_main;
+
+  p_sampling : process
+    constant C_SCOPE      : string := "p_sampling";
+    constant C_CLK_PERIOD : time := 10 ns;
+  begin
+    if GC_TESTCASE = "fc_bins" then
+      while not(v_coverpoint.is_defined(VOID)) loop
+        log(ID_SEQUENCER, "Waiting for coverpoint to be initialized", C_SCOPE);
+        wait for C_CLK_PERIOD;
+      end loop;
+      log(ID_SEQUENCER, "Coverpoint initialized, ready to sample", C_SCOPE);
+      v_coverpoint.sample_coverage(10000);
+    end if;
+    wait;
+  end process p_sampling;
 
 end architecture func;

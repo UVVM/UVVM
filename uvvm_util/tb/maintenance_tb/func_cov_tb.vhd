@@ -2179,7 +2179,9 @@ begin
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 1);
       check_num_bins(v_coverpoint, 6, 8);
       check_bins_coverage(v_coverpoint, 0.0);
+      check_bins_coverage(v_coverpoint, 0.0, use_goal => true);   -- goal=50
       check_hits_coverage(v_coverpoint, 30.19);
+      check_hits_coverage(v_coverpoint, 15.09, use_goal => true); -- goal=200
       check_value(v_coverpoint.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
 
       -- Check configuration
@@ -2191,6 +2193,9 @@ begin
       check_value(v_coverpoint.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
       check_value(v_coverpoint.get_hits_coverage_goal(VOID), 200, ERROR, "Checking hits coverage goal");
       check_value(fc_get_covpts_coverage_goal(VOID), 80, ERROR, "Checking coverpoints coverage goal");
+      v_seeds := v_coverpoint.get_rand_seeds(VOID);
+      check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
+      check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Check randomization state
       check_value(v_coverpoint.rand(VOID), 56, ERROR, "Checking rand transition");
@@ -2248,7 +2253,9 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (231,237,237), (1231,1237,1237), "illegal_transition", hits => 1);
       check_num_bins(v_cross_x2, 6, 8);
       check_bins_coverage(v_cross_x2, 0.0);
+      check_bins_coverage(v_cross_x2, 0.0, use_goal => true);   -- goal=50
       check_hits_coverage(v_cross_x2, 30.19);
+      check_hits_coverage(v_cross_x2, 40.25, use_goal => true); -- goal=75
       check_value(v_cross_x2.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
 
       -- Check configuration
@@ -2260,6 +2267,9 @@ begin
       check_value(v_cross_x2.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
       check_value(v_cross_x2.get_hits_coverage_goal(VOID), 75, ERROR, "Checking hits coverage goal");
       check_value(fc_get_covpts_coverage_goal(VOID), 90, ERROR, "Checking coverpoints coverage goal");
+      v_seeds := v_cross_x2.get_rand_seeds(VOID);
+      check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
+      check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Check randomization state
       v_values_x2 := v_cross_x2.rand(VOID);
@@ -2315,7 +2325,9 @@ begin
       end loop;
       check_num_bins(v_cross_x3, 100, 0);
       check_bins_coverage(v_cross_x3, 25.0);
+      check_bins_coverage(v_cross_x3, 25.0, use_goal => true); -- goal=100
       check_hits_coverage(v_cross_x3, 25.0);
+      check_hits_coverage(v_cross_x3, 25.0, use_goal => true); -- goal=100
       check_value(v_cross_x3.get_num_bins_crossed(VOID), 3, ERROR, "Checking num_bins_crossed");
 
       -- Sample coverage
@@ -2352,8 +2364,13 @@ begin
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 2);
       check_num_bins(v_coverpoint_b, 7, 10);
       check_bins_coverage(v_coverpoint_b, 0.0);
+      check_bins_coverage(v_coverpoint_b, 0.0, use_goal => true);   -- goal=50
       check_hits_coverage(v_coverpoint_b, 59.26);
+      check_hits_coverage(v_coverpoint_b, 29.63, use_goal => true); -- goal=200
       check_value(v_coverpoint_b.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
+      v_seeds := v_coverpoint_b.get_rand_seeds(VOID);
+      check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
+      check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Sample coverage
       sample_bins(v_coverpoint_b, (10), 2);
@@ -2365,6 +2382,7 @@ begin
       sample_bins(v_coverpoint_b, (1000), 2);
 
       check_coverage_completed(v_coverpoint_b);
+      check_coverage_completed(v_coverpoint_b, use_goal => true);
       v_coverpoint_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
@@ -2391,8 +2409,13 @@ begin
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (231,237,237), (1231,1237,1237), "illegal_transition", hits => 2);
       check_num_bins(v_cross_x2_b, 7, 10);
       check_bins_coverage(v_cross_x2_b, 0.0);
+      check_bins_coverage(v_cross_x2_b, 0.0, use_goal => true);   -- goal=50
       check_hits_coverage(v_cross_x2_b, 59.26);
+      check_hits_coverage(v_cross_x2_b, 79.01, use_goal => true); -- goal=75
       check_value(v_cross_x2_b.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
+      v_seeds := v_cross_x2_b.get_rand_seeds(VOID);
+      check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
+      check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Sample coverage
       sample_cross_bins(v_cross_x2_b, (0 => (10,1010)), 1);
@@ -2404,6 +2427,7 @@ begin
       sample_cross_bins(v_cross_x2_b, (0 => (1000,2000)), 1);
 
       check_coverage_completed(v_cross_x2_b);
+      check_coverage_completed(v_cross_x2_b, use_goal => true);
       v_cross_x2_b.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
@@ -2423,7 +2447,9 @@ begin
       end loop;
       check_num_bins(v_cross_x3_b, 100, 0);
       check_bins_coverage(v_cross_x3_b, 50.0);
+      check_bins_coverage(v_cross_x3_b, 50.0, use_goal => true); -- goal=100
       check_hits_coverage(v_cross_x3_b, 50.0);
+      check_hits_coverage(v_cross_x3_b, 50.0, use_goal => true); -- goal=100
       check_value(v_cross_x3_b.get_num_bins_crossed(VOID), 3, ERROR, "Checking num_bins_crossed");
 
       -- Sample coverage
@@ -2432,6 +2458,7 @@ begin
       end loop;
 
       check_coverage_completed(v_cross_x3_b);
+      check_coverage_completed(v_cross_x3_b, use_goal => true);
       v_cross_x3_b.report_coverage(VERBOSE);
 
       fc_report_overall_coverage(VERBOSE);
@@ -2471,7 +2498,9 @@ begin
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 0);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 0);
       check_bins_coverage(v_coverpoint_b, 0.0);
+      check_bins_coverage(v_coverpoint_b, 0.0, use_goal => true);
       check_hits_coverage(v_coverpoint_b, 0.0);
+      check_hits_coverage(v_coverpoint_b, 0.0, use_goal => true);
       v_coverpoint_b.report_coverage(VERBOSE);
 
     --===================================================================================

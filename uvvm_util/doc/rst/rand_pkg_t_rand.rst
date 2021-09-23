@@ -1,7 +1,7 @@
 **********************************************************************************************************************************
 t_rand (protected)
 **********************************************************************************************************************************
-Protected type containing the General Randomization functionality.
+Protected type containing the Enhanced Randomization functionality.
 
 .. _random_generator:
 

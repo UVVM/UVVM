@@ -1,10 +1,10 @@
 ##################################################################################################################################
-General Randomization
+Enhanced Randomization
 ##################################################################################################################################
 **********************************************************************************************************************************
 Getting started
 **********************************************************************************************************************************
-All the functionality for **General Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*. For more 
+All the functionality for **Enhanced Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*. For more 
 information on protected types see **link**.
 
 For more simple functionality, not using protected types, the **Basic Randomization** can be found in *uvvm_util/src/methods_pkg.vhd*.
@@ -12,7 +12,7 @@ For more simple functionality, not using protected types, the **Basic Randomizat
 For a more balanced randomization between small and large ranges/sets, the :ref:`optimized_randomization` under *uvvm_util/src/func_cov_pkg.vhd* 
 may be used.
 
-To generate a random value using General Randomization it is necessary to import the utility library, create a variable with the 
+To generate a random value using Enhanced Randomization it is necessary to import the utility library, create a variable with the 
 protected type *t_rand* and call either the ``rand()`` or the ``randm()`` function from the variable depending on which approach 
 is being used:
 
@@ -636,8 +636,8 @@ Additional info
 **********************************************************************************************************************************
 Log messages within the procedures and functions in the *rand_pkg* use the following message IDs (disabled by default):
 
-* ID_RAND_GEN: Used for logging "General Randomization" values returned by ``rand()/randm()``.
-* ID_RAND_CONF: Used for logging "General Randomization" configuration changes, except from name and scope.
+* ID_RAND_GEN: Used for logging "Enhanced Randomization" values returned by ``rand()/randm()``.
+* ID_RAND_CONF: Used for logging "Enhanced Randomization" configuration changes, except from name and scope.
 
 The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure ``set_scope()``. 
 The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.

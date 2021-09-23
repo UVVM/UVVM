@@ -6,7 +6,7 @@ Optimized Randomization
 **********************************************************************************************************************************
 Getting started
 **********************************************************************************************************************************
-Using General Randomization can be somewhat inefficient when trying to randomize several sets of values, especially with large 
+Using Enhanced Randomization can be somewhat inefficient when trying to randomize several sets of values, especially with large 
 and small ranges. Since the values in the large ranges will be generated more times than the ones in the small ranges in a Uniform 
 distribution, this will cause the simulation to run longer in order to cover all the valid bins.
 

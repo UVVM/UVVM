@@ -441,7 +441,7 @@ package rand_pkg is
     -- Random integer_vector
     ------------------------------------------------------------
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -450,7 +450,7 @@ package rand_pkg is
     return integer_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -459,7 +459,7 @@ package rand_pkg is
     return integer_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
       constant specifier     : t_value_specifier;
@@ -470,7 +470,7 @@ package rand_pkg is
     return integer_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
       constant specifier     : t_value_specifier;
@@ -481,7 +481,7 @@ package rand_pkg is
     return integer_vector;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : integer;
       constant max_value      : integer;
       constant specifier1     : t_value_specifier;
@@ -494,7 +494,7 @@ package rand_pkg is
     return integer_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
       constant specifier1    : t_value_specifier;
@@ -507,7 +507,7 @@ package rand_pkg is
     return integer_vector;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : integer;
       constant max_value      : integer;
       constant specifier1     : t_value_specifier;
@@ -523,7 +523,7 @@ package rand_pkg is
     -- Random real_vector
     ------------------------------------------------------------
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : real;
       constant max_value     : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -531,7 +531,7 @@ package rand_pkg is
     return real_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -539,7 +539,7 @@ package rand_pkg is
     return real_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : real;
       constant max_value     : real;
       constant specifier     : t_value_specifier;
@@ -549,7 +549,7 @@ package rand_pkg is
     return real_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : real;
       constant max_value     : real;
       constant specifier     : t_value_specifier;
@@ -559,7 +559,7 @@ package rand_pkg is
     return real_vector;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : real;
       constant max_value      : real;
       constant specifier1     : t_value_specifier;
@@ -571,7 +571,7 @@ package rand_pkg is
     return real_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : real;
       constant max_value     : real;
       constant specifier1    : t_value_specifier;
@@ -583,7 +583,7 @@ package rand_pkg is
     return real_vector;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : real;
       constant max_value      : real;
       constant specifier1     : t_value_specifier;
@@ -598,7 +598,7 @@ package rand_pkg is
     -- Random time_vector
     ------------------------------------------------------------
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -606,7 +606,7 @@ package rand_pkg is
     return time_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
@@ -614,7 +614,7 @@ package rand_pkg is
     return time_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
       constant specifier     : t_value_specifier;
@@ -624,7 +624,7 @@ package rand_pkg is
     return time_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
       constant specifier     : t_value_specifier;
@@ -634,7 +634,7 @@ package rand_pkg is
     return time_vector;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : time;
       constant max_value      : time;
       constant specifier1     : t_value_specifier;
@@ -646,7 +646,7 @@ package rand_pkg is
     return time_vector;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
       constant specifier1    : t_value_specifier;
@@ -658,7 +658,7 @@ package rand_pkg is
     return time_vector;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : time;
       constant max_value      : time;
       constant specifier1     : t_value_specifier;
@@ -1229,7 +1229,7 @@ package rand_pkg is
     return real;
 
     impure function randm(
-      constant size         : positive;
+      constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector;
 
@@ -2931,19 +2931,19 @@ package body rand_pkg is
     -- Random integer_vector
     ------------------------------------------------------------
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "]" &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "]" &
         to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
-      variable v_ret             : integer_vector(0 to size-1);
+      variable v_ret             : integer_vector(0 to length-1);
     begin
       if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
@@ -2960,16 +2960,16 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        if (max_value - min_value + 1) < size then
+        if (max_value - min_value + 1) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(min_value, max_value, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
@@ -2991,19 +2991,19 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
         to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
-      variable v_ret             : integer_vector(0 to size-1);
+      variable v_ret             : integer_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -3016,16 +3016,16 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        if (set_of_values'length) < size then
+        if (set_of_values'length) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
@@ -3047,7 +3047,7 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
       constant specifier     : t_value_specifier;
@@ -3058,11 +3058,11 @@ package body rand_pkg is
     return integer_vector is
       variable v_set_values : integer_vector(0 to 0) := (0 => value);
     begin
-      return rand(size, min_value, max_value, specifier, v_set_values, uniqueness, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier, v_set_values, uniqueness, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
       constant specifier     : t_value_specifier;
@@ -3071,13 +3071,13 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer     := 0;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
-      variable v_ret             : integer_vector(0 to size-1);
+      variable v_ret             : integer_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -3090,17 +3090,17 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_of_values'length) when specifier = EXCL else set_of_values'length;
-        if (max_value - min_value + 1 + v_set_values_len) < size then
+        if (max_value - min_value + 1 + v_set_values_len) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(min_value, max_value, specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
@@ -3122,7 +3122,7 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : integer;
       constant max_value     : integer;
       constant specifier1    : t_value_specifier;
@@ -3136,11 +3136,11 @@ package body rand_pkg is
       variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : integer_vector(0 to 0) := (0 => value2);
     begin
-      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : integer;
       constant max_value      : integer;
       constant specifier1     : t_value_specifier;
@@ -3153,11 +3153,11 @@ package body rand_pkg is
     return integer_vector is
       variable v_set_values1 : integer_vector(0 to 0) := (0 => value1);
     begin
-      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, cyclic_mode, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, cyclic_mode, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : integer;
       constant max_value      : integer;
       constant specifier1     : t_value_specifier;
@@ -3168,14 +3168,14 @@ package body rand_pkg is
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) &
         to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_set_values_len  : integer     := 0;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
-      variable v_ret             : integer_vector(0 to size-1);
+      variable v_ret             : integer_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -3188,18 +3188,18 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_of_values1'length) when specifier1 = EXCL else set_of_values1'length;
         v_set_values_len := (v_set_values_len-set_of_values2'length) when specifier2 = EXCL else v_set_values_len+set_of_values2'length;
-        if (max_value - min_value + 1 + v_set_values_len) < size then
+        if (max_value - min_value + 1 + v_set_values_len) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
@@ -3224,17 +3224,17 @@ package body rand_pkg is
     -- Random real_vector
     ------------------------------------------------------------
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : real;
       constant max_value     : real;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "]" &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "]" &
         to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
-      variable v_ret             : real_vector(0 to size-1);
+      variable v_ret             : real_vector(0 to length-1);
     begin
       if uniqueness = UNIQUE and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Using UNIFORM instead.", priv_scope);
@@ -3243,12 +3243,12 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_gen_new_random := true;
           while v_gen_new_random loop
             v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
@@ -3269,17 +3269,17 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant specifier     : t_value_specifier;
       constant set_of_values : real_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(specifier)) & ":" & format_real(set_of_values) &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(specifier)) & ":" & format_real(set_of_values) &
         to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
-      variable v_ret             : real_vector(0 to size-1);
+      variable v_ret             : real_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -3288,16 +3288,16 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        if (set_of_values'length) < size then
+        if (set_of_values'length) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
@@ -3319,7 +3319,7 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : real;
       constant max_value     : real;
       constant specifier     : t_value_specifier;
@@ -3329,11 +3329,11 @@ package body rand_pkg is
     return real_vector is
       variable v_set_values : real_vector(0 to 0) := (0 => value);
     begin
-      return rand(size, min_value, max_value, specifier, v_set_values, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, specifier, v_set_values, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : real;
       constant max_value     : real;
       constant specifier     : t_value_specifier;
@@ -3341,11 +3341,11 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
         to_upper(to_string(specifier)) & ":" & format_real(set_of_values) & to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
-      variable v_ret             : real_vector(0 to size-1);
+      variable v_ret             : real_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -3354,12 +3354,12 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_gen_new_random := true;
           while v_gen_new_random loop
             v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
@@ -3380,7 +3380,7 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : real;
       constant max_value     : real;
       constant specifier1    : t_value_specifier;
@@ -3393,11 +3393,11 @@ package body rand_pkg is
       variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : real_vector(0 to 0) := (0 => value2);
     begin
-      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : real;
       constant max_value      : real;
       constant specifier1     : t_value_specifier;
@@ -3409,11 +3409,11 @@ package body rand_pkg is
     return real_vector is
       variable v_set_values1 : real_vector(0 to 0) := (0 => value1);
     begin
-      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : real;
       constant max_value      : real;
       constant specifier1     : t_value_specifier;
@@ -3423,12 +3423,12 @@ package body rand_pkg is
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
         to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
         to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random  : boolean := true;
-      variable v_ret             : real_vector(0 to size-1);
+      variable v_ret             : real_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -3437,12 +3437,12 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_gen_new_random := true;
           while v_gen_new_random loop
             v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
@@ -3466,17 +3466,17 @@ package body rand_pkg is
     -- Random time_vector
     ------------------------------------------------------------
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "]" &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "]" &
         to_string_if_enabled(uniqueness) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_gen_new_random  : boolean := true;
-      variable v_ret             : time_vector(0 to size-1);
+      variable v_ret             : time_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
@@ -3485,16 +3485,16 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        if ((max_value - min_value)/C_TIME_UNIT + 1) < size then
+        if ((max_value - min_value)/C_TIME_UNIT + 1) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
@@ -3513,16 +3513,16 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant specifier     : t_value_specifier;
       constant set_of_values : time_vector;
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
         to_string_if_enabled(uniqueness) & ")";
       variable v_gen_new_random  : boolean := true;
-      variable v_ret             : time_vector(0 to size-1);
+      variable v_ret             : time_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
@@ -3531,16 +3531,16 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        if (set_of_values'length) < size then
+        if (set_of_values'length) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value within the set of values for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
@@ -3559,7 +3559,7 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
       constant specifier     : t_value_specifier;
@@ -3569,11 +3569,11 @@ package body rand_pkg is
     return time_vector is
       variable v_set_values : time_vector(0 to 0) := (0 => value);
     begin
-      return rand(size, min_value, max_value, specifier, v_set_values, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, specifier, v_set_values, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
       constant specifier     : t_value_specifier;
@@ -3581,12 +3581,12 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_set_values_len  : integer := 0;
       variable v_gen_new_random  : boolean := true;
-      variable v_ret             : time_vector(0 to size-1);
+      variable v_ret             : time_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
@@ -3595,17 +3595,17 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_of_values'length) when specifier = EXCL else set_of_values'length;
-        if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
+        if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
@@ -3624,7 +3624,7 @@ package body rand_pkg is
     end function;
 
     impure function rand(
-      constant size          : positive;
+      constant length        : positive;
       constant min_value     : time;
       constant max_value     : time;
       constant specifier1    : t_value_specifier;
@@ -3637,11 +3637,11 @@ package body rand_pkg is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
       variable v_set_values2 : time_vector(0 to 0) := (0 => value2);
     begin
-      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, v_set_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : time;
       constant max_value      : time;
       constant specifier1     : t_value_specifier;
@@ -3653,11 +3653,11 @@ package body rand_pkg is
     return time_vector is
       variable v_set_values1 : time_vector(0 to 0) := (0 => value1);
     begin
-      return rand(size, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
+      return rand(length, min_value, max_value, specifier1, v_set_values1, specifier2, set_of_values2, uniqueness, msg_id_panel);
     end function;
 
     impure function rand(
-      constant size           : positive;
+      constant length         : positive;
       constant min_value      : time;
       constant max_value      : time;
       constant specifier1     : t_value_specifier;
@@ -3667,13 +3667,13 @@ package body rand_pkg is
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL : string := "rand(SIZE:" & to_string(size) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+      constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
         to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
       constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_set_values_len  : integer := 0;
       variable v_gen_new_random  : boolean := true;
-      variable v_ret             : time_vector(0 to size-1);
+      variable v_ret             : time_vector(0 to length-1);
     begin
       if priv_rand_dist = GAUSSIAN then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
@@ -3682,18 +3682,18 @@ package body rand_pkg is
 
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
         v_set_values_len := (0-set_of_values1'length) when specifier1 = EXCL else set_of_values1'length;
         v_set_values_len := (v_set_values_len-set_of_values2'length) when specifier2 = EXCL else v_set_values_len+set_of_values2'length;
-        if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < size then
+        if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < length then
           alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
         else
           -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
@@ -6034,7 +6034,7 @@ package body rand_pkg is
     end function;
 
     impure function randm(
-      constant size         : positive;
+      constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
       constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(is_vector=>true) & ")";
@@ -6044,7 +6044,7 @@ package body rand_pkg is
       variable v_val_excl_configured : std_logic;
       variable v_num_ranges          : natural := priv_int_constraints.ran_incl'length;
       variable v_gen_new_random      : boolean := true;
-      variable v_ret                 : integer_vector(0 to size-1);
+      variable v_ret                 : integer_vector(0 to length-1);
     begin
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
@@ -6073,17 +6073,17 @@ package body rand_pkg is
 
       if priv_uniqueness = NON_UNIQUE then
         -- Generate a random value for each element of the vector
-        for i in 0 to size-1 loop
+        for i in 0 to length-1 loop
           v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
         end loop;
       else -- UNIQUE
         -- Check if it is possible to generate unique values for the complete vector
-        if get_int_constraints_count(VOID) < size then
+        if get_int_constraints_count(VOID) < length then
           alert(TB_ERROR, C_LOCAL_CALL_1 & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
           return v_ret;
         else
           -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
-          for i in 0 to size-1 loop
+          for i in 0 to length-1 loop
             v_gen_new_random := true;
             while v_gen_new_random loop
               v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);

@@ -126,7 +126,7 @@ The ``rand()`` function can return the following types:
     rand_sl       := my_rand.rand(VOID);
     rand_bool     := my_rand.rand(VOID);
 
-The unsigned, signed and std_logic_vector functions can return vectors of any size, however the min and max constraints are 
+The unsigned, signed and std_logic_vector functions can return vectors of any length, however the min and max constraints are 
 limited by the integer's 32-bit range. Additional overloads for these types using unsigned/signed/std_logic_vector corresponding 
 min and max constraints are provided as well.
 
@@ -272,9 +272,9 @@ For *std_logic* and *boolean* types use the ``rand(VOID)`` function, since they 
     rand_sign     := my_rand.randm(rand_sign'length);
     rand_slv      := my_rand.randm(rand_slv'length); -- SLV is interpreted as unsigned
 
-The unsigned, signed and std_logic_vector functions can return vectors of any size, however the integer constraints are limited 
+The unsigned, signed and std_logic_vector functions can return vectors of any length, however the integer constraints are limited 
 to a 32-bit range. Additional overloads for adding range constraints using unsigned/signed types are provided as well. The 
-maximum size of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg.
+maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg.
 
     * :ref:`unsigned <add_range_unsigned>`
     * :ref:`signed <add_range_signed>`

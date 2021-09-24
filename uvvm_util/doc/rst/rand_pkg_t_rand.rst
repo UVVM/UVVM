@@ -544,18 +544,18 @@ return integer_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random integer values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    integer_vector := rand(size, min_value, max_value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, specifier, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier, value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, specifier, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier, value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | min_value          | in     | integer                      | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -595,18 +595,18 @@ return real_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random real values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    real_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | min_value          | in     | real                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -643,18 +643,18 @@ return time_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    time_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | min_value          | in     | time                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -1757,12 +1757,12 @@ return integer_vector
 Returns a vector of random integer values using the configured constraints. For more information on the probability distribution 
 click :ref:`here <rand_pkg_distributions>`. ::
 
-    integer_vector := randm(size, [msg_id_panel])
+    integer_vector := randm(length, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
@@ -1784,12 +1784,12 @@ return real_vector
 Returns a vector of random real values using the configured constraints. For more information on the probability distribution 
 click :ref:`here <rand_pkg_distributions>`. ::
 
-    real_vector := randm(size, [msg_id_panel])
+    real_vector := randm(length, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
@@ -1811,12 +1811,12 @@ return time_vector
 Returns a vector of random time values using the configured constraints. For more information on the probability distribution 
 click :ref:`here <rand_pkg_distributions>`. ::
 
-    time_vector := randm(size, [msg_id_panel])
+    time_vector := randm(length, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |

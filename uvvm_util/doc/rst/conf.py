@@ -17,7 +17,7 @@ import os
 
 # -- Project information -----------------------------------------------------
 
-project = 'Advanced Randomization and Functional Coverage'
+project = 'Randomization and Functional Coverage'
 copyright = '2021, UVVM'
 author = 'UVVM'
 

@@ -194,9 +194,9 @@ Note that the order in which the bins are added, both valid and ignore, does not
     my_coverpoint.add_bins(bin_transition((5,3,10))); --> Ignored
     my_coverpoint.add_bins(bin_transition((5,3,20))); --> Ignored
     my_coverpoint.add_bins(bin_transition((5,3,30))); --> Ignored
-    my_coverpoint.add_bins(ignore_bin_transition((0,2,30)); -- Ignores all transitions which include 0,2,30
-    my_coverpoint.add_bins(ignore_bin_transition((1,10)));  -- Ignores all transitions which include 1,10
-    my_coverpoint.add_bins(ignore_bin(5));                  -- Ignores any bin which contains 5, including transitions
+    my_coverpoint.add_bins(ignore_bin_transition((0,2,30))); -- Ignores all transitions which include 0,2,30
+    my_coverpoint.add_bins(ignore_bin_transition((1,10)));   -- Ignores all transitions which include 1,10
+    my_coverpoint.add_bins(ignore_bin(5));                   -- Ignores any bin which contains 5, including transitions
 
 Illegal bins
 ==================================================================================================================================
@@ -856,6 +856,9 @@ The database for a coverpoint is stored using the following file format:
     [randomization_seed_1] [randomization_seed_2]
     [transition_bin_idx]
     [transition_bin_value_idx_1] [transition_bin_value_idx_2] ... [transition_bin_value_idx_n]
+    for i in 0 to number_of_bins_crossed-1 loop
+      [bin_sample_shift_reg_n(i)] ... [bin_sample_shift_reg_2(i)] [bin_sample_shift_reg_1(i)]
+    end loop;
     [illegal_bin_alert_level]
     [bin_overlap_alert_level]
     [number_of_valid_bins]
@@ -871,37 +874,39 @@ The database for a coverpoint is stored using the following file format:
     [bin_idx]
     for i in 0 to bin_idx-1 loop
       [bin(i).name]
-      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight]
+      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight] [bin(i).transition_mask]
       for j in 0 to number_of_bins_crossed-1 loop
-        [bin(i).cross(j).bin_type] [bin(i).cross(j).num_values] [bin(i).cross(j).transition_idx] [bin(i).cross(j).values_1] [bin(i).cross(j).values_2] ... [bin(i).cross(j).values_n]
+        [bin(i).cross(j).bin_type] [bin(i).cross(j).num_values] [bin(i).cross(j).values_1] [bin(i).cross(j).values_2] ... [bin(i).cross(j).values_n]
       end loop;
     end loop;
     [invalid_bin_idx]
     for i in 0 to invalid_bin_idx-1 loop
       [invalid_bin(i).name]
-      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight]
+      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight] [invalid_bin(i).transition_mask]
       for j in 0 to number_of_bins_crossed-1 loop
-        [invalid_bin(i).cross(j).bin_type] [invalid_bin(i).cross(j).num_values] [invalid_bin(i).cross(j).transition_idx] [invalid_bin(i).cross(j).values_1] [invalid_bin(i).cross(j).values_2] ... [invalid_bin(i).cross(j).values_n]
+        [invalid_bin(i).cross(j).bin_type] [invalid_bin(i).cross(j).num_values] [invalid_bin(i).cross(j).values_1] [invalid_bin(i).cross(j).values_2] ... [invalid_bin(i).cross(j).values_n]
       end loop;
     end loop;
 
 Most of the values are integer numbers except for a few:
 
-+-----------------------------+----------------+--------------+
-| Value                       | Original type  | Type in file |
-+=============================+================+==============+
-| coverpoint_name             | string         | string       |
-+-----------------------------+----------------+--------------+
-| scope                       | string         | string       |
-+-----------------------------+----------------+--------------+
-| illegal_bin_alert_level     | t_alert_level  | integer      |
-+-----------------------------+----------------+--------------+
-| bin_overlap_alert_level     | t_alert_level  | integer      |
-+-----------------------------+----------------+--------------+
-| name                        | string         | string       |
-+-----------------------------+----------------+--------------+
-| bin_type                    | t_cov_bin_type | integer      |
-+-----------------------------+----------------+--------------+
++-----------------------------+------------------+--------------+
+| Value                       | Original type    | Type in file |
++=============================+==================+==============+
+| coverpoint_name             | string           | string       |
++-----------------------------+------------------+--------------+
+| scope                       | string           | string       |
++-----------------------------+------------------+--------------+
+| illegal_bin_alert_level     | t_alert_level    | integer      |
++-----------------------------+------------------+--------------+
+| bin_overlap_alert_level     | t_alert_level    | integer      |
++-----------------------------+------------------+--------------+
+| name                        | string           | string       |
++-----------------------------+------------------+--------------+
+| transition_mask             | std_logic_vector | string       |
++-----------------------------+------------------+--------------+
+| bin_type                    | t_cov_bin_type   | integer      |
++-----------------------------+------------------+--------------+
 
 Example of the file output:
 
@@ -913,6 +918,8 @@ Example of the file output:
     1082914553 1166884309
     4
     3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    52 51 50 237 237 231 229 228 227 226
+    1052 1051 1050 1237 1237 1231 1229 1228 1227 1226
     4
     7
     5
@@ -927,38 +934,38 @@ Example of the file output:
     100
     5
     bin_0               
-    0 1 -1
-    0 1 0 10 
-    0 1 0 1010 
+    0 1 -1 0000000111
+    0 1 10 
+    0 1 1010 
     single              
-    2 8 20
-    0 1 0 20 
-    0 1 0 1020 
+    2 8 20 0000000111
+    0 1 20 
+    0 1 1020 
     multiple            
-    3 9 30
-    0 3 0 30 35 39 
-    0 3 0 1030 1035 1039 
+    3 9 30 0000000111
+    0 3 30 35 39 
+    0 3 1030 1035 1039 
     range               
-    10 15 40
-    3 2 0 40 49 
-    3 2 0 1040 1049 
+    10 15 40 0000000111
+    3 2 40 49 
+    3 2 1040 1049 
     transition          
-    1 5 50
-    6 6 3 50 51 52 53 54 55 
-    6 6 3 1050 1051 1052 1053 1054 1055 
+    1 5 50 0000000111
+    6 6 50 51 52 53 54 55 
+    6 6 1050 1051 1052 1053 1054 1055 
     3
     ignore_single       
-    1 0 0
-    1 1 0 110 
-    1 1 0 1110 
+    1 0 0 1111111111
+    1 1 110 
+    1 1 1110 
     illegal_range       
-    4 0 0
-    5 2 0 226 229 
-    5 2 0 1226 1229 
+    4 0 0 0000111111
+    5 2 226 229 
+    5 2 1226 1229 
     illegal_transition  
-    1 0 0
-    8 3 0 231 237 237 
-    8 3 0 1231 1237 1237 
+    1 0 0 0000000111
+    8 3 231 237 237 
+    8 3 1231 1237 1237 
 
 Script
 ==================================================================================================================================

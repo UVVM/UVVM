@@ -85,7 +85,6 @@ begin
       constant rand_weight    : in    integer;
       constant name           : in    string;
       constant hits           : in    natural;
-      constant transition_idx : in    natural;
       constant ign_or_ill     : in    boolean;
       constant proc_call      : in    string) is
       variable v_bin          : t_cov_bin;
@@ -113,7 +112,6 @@ begin
           end if;
         end loop;
         check_value(v_bin.cross_bins(i).num_values, v_num_values,       ERROR, "Checking bin number of values", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
-        check_value(v_bin.cross_bins(i).transition_idx, transition_idx, ERROR, "Checking bin transition index", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
       end loop;
       check_value(v_bin.min_hits, min_hits,                             ERROR, "Checking bin minimum hits", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
       check_value(v_bin.rand_weight, rand_weight,                       ERROR, "Checking bin randomization weight", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => proc_call);
@@ -137,12 +135,11 @@ begin
       constant min_hits       : in    natural := 1;
       constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
       constant name           : in    string  := "";
-      constant hits           : in    natural := 0;
-      constant transition_idx : in    natural := 0) is
+      constant hits           : in    natural := 0) is
       constant C_PROC_NAME : string := "check_bin";
       variable v_values    : t_integer_array(0 to 0)(values'range) := (0 => values);
     begin
-      check_bin(coverpoint, bin_idx, (0 => contains), v_values, min_hits, rand_weight, name, hits, transition_idx, false, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, (0 => contains), v_values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
     end procedure;
 
     -- Overload
@@ -169,14 +166,13 @@ begin
       constant min_hits       : in    natural := 1;
       constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
       constant name           : in    string  := "";
-      constant hits           : in    natural := 0;
-      constant transition_idx : in    natural := 0) is
+      constant hits           : in    natural := 0) is
       constant C_PROC_NAME : string := "check_cross_bin";
       variable v_values    : t_integer_array(0 to 1)(0 to MAXIMUM(values_1'length,values_2'length)-1) := (others => (others => C_NULL));
     begin
       v_values(0)(0 to values_1'length-1) := values_1;
       v_values(1)(0 to values_2'length-1) := values_2;
-      check_bin(coverpoint, bin_idx, contains, v_values, min_hits, rand_weight, name, hits, transition_idx, false, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, contains, v_values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
     end procedure;
 
     -- Overload for crossed bins
@@ -188,11 +184,10 @@ begin
       constant min_hits       : in    natural := 1;
       constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
       constant name           : in    string  := "";
-      constant hits           : in    natural := 0;
-      constant transition_idx : in    natural := 0) is
+      constant hits           : in    natural := 0) is
       constant C_PROC_NAME : string := "check_cross_bin";
     begin
-      check_bin(coverpoint, bin_idx, contains, values, min_hits, rand_weight, name, hits, transition_idx, false, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, contains, values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
     end procedure;
 
     -- Overload for ignore and illegal bins
@@ -202,12 +197,11 @@ begin
       constant contains       : in    t_cov_bin_type;
       constant values         : in    integer_vector;
       constant name           : in    string  := "";
-      constant hits           : in    natural := 0;
-      constant transition_idx : in    natural := 0) is
+      constant hits           : in    natural := 0) is
       constant C_PROC_NAME : string := "check_invalid_bin";
       variable v_values    : t_integer_array(0 to 0)(values'range) := (0 => values);
     begin
-      check_bin(coverpoint, bin_idx, (0 => contains), v_values, 0, 0, name, hits, transition_idx, true, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, (0 => contains), v_values, 0, 0, name, hits, true, C_PROC_NAME);
     end procedure;
 
     -- Overload for ignore and illegal bins
@@ -230,14 +224,13 @@ begin
       constant values_1       : in    integer_vector;
       constant values_2       : in    integer_vector;
       constant name           : in    string  := "";
-      constant hits           : in    natural := 0;
-      constant transition_idx : in    natural := 0) is
+      constant hits           : in    natural := 0) is
       constant C_PROC_NAME : string := "check_invalid_cross_bin";
       variable v_values    : t_integer_array(0 to 1)(0 to MAXIMUM(values_1'length,values_2'length)-1) := (others => (others => C_NULL));
     begin
       v_values(0)(0 to values_1'length-1) := values_1;
       v_values(1)(0 to values_2'length-1) := values_2;
-      check_bin(coverpoint, bin_idx, contains, v_values, 0, 0, name, hits, transition_idx, true, C_PROC_NAME);
+      check_bin(coverpoint, bin_idx, contains, v_values, 0, 0, name, hits, true, C_PROC_NAME);
     end procedure;
 
     -- Checks the number of bins in the coverpoint
@@ -576,28 +569,33 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with transitions of values");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(bin_transition((401,403,405,409)));
+      v_coverpoint.add_bins(bin_transition((401,403,401)));
+      v_coverpoint.add_bins(bin_transition((401,403,401,409)));
       v_coverpoint.add_bins(bin_transition((410,410,410,418,415,415,410)));
       v_coverpoint.add_bins(bin_transition((420,421,422,423,424,425,426,427,428,429)));
       increment_expected_alerts(TB_WARNING,1);
       v_coverpoint.add_bins(bin_transition((430,431,432,433,434,435,436,437,438,439,440))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
-      check_bin(v_coverpoint, v_bin_idx, TRN, (401,403,405,409));
+      check_bin(v_coverpoint, v_bin_idx, TRN, (401,403,401));
+      check_bin(v_coverpoint, v_bin_idx, TRN, (401,403,401,409));
       check_bin(v_coverpoint, v_bin_idx, TRN, (410,410,410,418,415,415,410));
       check_bin(v_coverpoint, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429));
       check_bin(v_coverpoint, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439));
 
-      sample_bins(v_coverpoint, (401,403,405,409), 3);
+      sample_bins(v_coverpoint, (401,403,401,409), 2);
+      sample_bins(v_coverpoint, (401,403,401,403,401,409), 2);
+      sample_bins(v_coverpoint, (401,403,401,403,401,403,401,409), 2);
+      sample_bins(v_coverpoint, (401,403,401,401,403,401,409), 2);
       sample_bins(v_coverpoint, (410,410,410,418,415,415,410), 3);
       sample_bins(v_coverpoint, (420,421,422,423,424,425,426,427,428,429), 3);
       sample_bins(v_coverpoint, (430,431,432,433,434,435,436,437,438,439), 3);
-      sample_bins(v_coverpoint, (401,403,405,408), 1);                         -- Sample values outside bins
       sample_bins(v_coverpoint, (410,410,410,418,415,414,410), 1);             -- Sample values outside bins
       sample_bins(v_coverpoint, (420,421,422,423,424,425,426,427,428,430), 1); -- Sample values outside bins
       sample_bins(v_coverpoint, (430,431,432,433,434,435,436,437,438,440), 1); -- Sample values outside bins
 
-      v_bin_idx := v_bin_idx-4;
-      check_bin(v_coverpoint, v_bin_idx, TRN, (401,403,405,409), hits => 3);
+      v_bin_idx := v_bin_idx-5;
+      check_bin(v_coverpoint, v_bin_idx, TRN, (401,403,401), hits => 12);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (401,403,401,409), hits => 8);
       check_bin(v_coverpoint, v_bin_idx, TRN, (410,410,410,418,415,415,410), hits => 3);
       check_bin(v_coverpoint, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429), hits => 3);
       check_bin(v_coverpoint, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439), hits => 3);
@@ -646,29 +644,35 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore bins with transitions of values");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(ignore_bin_transition((2201,2203,2205,2209)));
+      v_coverpoint.add_bins(ignore_bin_transition((2201,2203,2201)));
+      v_coverpoint.add_bins(ignore_bin_transition((2201,2203,2201,2209)));
       v_coverpoint.add_bins(ignore_bin_transition((2210,2210,2210,2218,2215,2215,2210)));
       increment_expected_alerts(TB_WARNING,1);
       v_coverpoint.add_bins(ignore_bin_transition((2220,2221,2222,2223,2224,2225,2226,2227,2228,2229,2230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2205,2209));
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201));
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201,2209));
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2210,2210,2210,2218,2215,2215,2210));
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229));
 
-      sample_bins(v_coverpoint, (2201,2203,2205,2209), 3);
+      sample_bins(v_coverpoint, (2201,2203,2201,2209), 2);
+      sample_bins(v_coverpoint, (2201,2203,2201,2203,2201,2209), 2);
+      sample_bins(v_coverpoint, (2201,2203,2201,2203,2201,2203,2201,2209), 2);
+      sample_bins(v_coverpoint, (2201,2203,2201,2201,2203,2201,2209), 2);
       sample_bins(v_coverpoint, (2210,2210,2210,2218,2215,2215,2210), 3);
       sample_bins(v_coverpoint, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229), 3);
-      sample_bins(v_coverpoint, (2201,2203,2205,2208), 1);                               -- Sample values outside bins
       sample_bins(v_coverpoint, (2210,2210,2210,2218,2215,2214,2210), 1);                -- Sample values outside bins
       sample_bins(v_coverpoint, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2230), 1); -- Sample values outside bins
 
-      v_invalid_bin_idx := v_invalid_bin_idx-3;
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2205,2209), hits => 3);
+      v_invalid_bin_idx := v_invalid_bin_idx-4;
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201), hits => 12);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201,2209), hits => 8);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2210,2210,2210,2218,2215,2215,2210), hits => 3);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229), hits => 3);
 
       v_coverpoint.set_illegal_bin_alert_level(WARNING);
       check_value(v_coverpoint.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with single values");
       ------------------------------------------------------------
@@ -715,25 +719,30 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with transitions of values");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(illegal_bin_transition((3201,3203,3205,3209)));
+      v_coverpoint.add_bins(illegal_bin_transition((3201,3203,3201)));
+      v_coverpoint.add_bins(illegal_bin_transition((3201,3203,3201,3209)));
       v_coverpoint.add_bins(illegal_bin_transition((3210,3210,3210,3218,3215,3215,3210)));
       increment_expected_alerts(TB_WARNING,1);
       v_coverpoint.add_bins(illegal_bin_transition((3220,3221,3222,3223,3224,3225,3226,3227,3228,3229,3230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3205,3209));
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201));
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201,3209));
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3210,3210,3210,3218,3215,3215,3210));
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229));
 
-      increment_expected_alerts(WARNING,9);
-      sample_bins(v_coverpoint, (3201,3203,3205,3209), 3);
+      increment_expected_alerts(WARNING,26);
+      sample_bins(v_coverpoint, (3201,3203,3201,3209), 2);
+      sample_bins(v_coverpoint, (3201,3203,3201,3203,3201,3209), 2);
+      sample_bins(v_coverpoint, (3201,3203,3201,3203,3201,3203,3201,3209), 2);
+      sample_bins(v_coverpoint, (3201,3203,3201,3201,3203,3201,3209), 2);
       sample_bins(v_coverpoint, (3210,3210,3210,3218,3215,3215,3210), 3);
       sample_bins(v_coverpoint, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), 3);
-      sample_bins(v_coverpoint, (3201,3203,3205,3208), 1);                               -- Sample values outside bins
       sample_bins(v_coverpoint, (3210,3210,3210,3218,3215,3214,3210), 1);                -- Sample values outside bins
       sample_bins(v_coverpoint, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3230), 1); -- Sample values outside bins
 
-      v_invalid_bin_idx := v_invalid_bin_idx-3;
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3205,3209), hits => 3);
+      v_invalid_bin_idx := v_invalid_bin_idx-4;
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201), hits => 12);
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201,3209), hits => 8);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3210,3210,3210,3218,3215,3215,3210), hits => 3);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), hits => 3);
 
@@ -777,105 +786,54 @@ begin
       v_coverpoint.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing transition bin index");
+      log(ID_LOG_HDR, "Testing bins and ignore bins with transitions of values");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(bin_transition((5001,5003,5005,5009)), "transition");
-      v_coverpoint.add_bins(bin(5100));
-      v_coverpoint.add_bins(ignore_bin(5200));
-      v_invalid_bin_idx := v_invalid_bin_idx+1;
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 0, transition_idx => 0);
+      v_coverpoint.add_bins(bin_transition((5000,5001,5010)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5001,5020)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5001,5030)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5002,5010)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5002,5020)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5002,5030)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5003,5010)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5003,5020)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5003,5030)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5004,5010)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5004,5020)), "transition");
+      v_coverpoint.add_bins(bin_transition((5000,5004,5030)), "transition");
+      v_coverpoint.add_bins(ignore_bin_transition((5000,5001,5010)), "ignore_transition");
+      v_coverpoint.add_bins(ignore_bin_transition((5000,5002)), "ignore_transition");
+      v_coverpoint.add_bins(ignore_bin_transition((5003,5010)), "ignore_transition");
+      v_coverpoint.add_bins(ignore_bin(5004), "ignore_value");
 
-      log(ID_SEQUENCER, "Sample the complete transition");
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5001,5003,5005,5009), 2);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 2, transition_idx => 0);
+      sample_bins(v_coverpoint, (5000,5001,5010), 1);
+      sample_bins(v_coverpoint, (5000,5001,5020), 1);
+      sample_bins(v_coverpoint, (5000,5001,5030), 1);
+      sample_bins(v_coverpoint, (5000,5002,5010), 1);
+      sample_bins(v_coverpoint, (5000,5002,5020), 1);
+      sample_bins(v_coverpoint, (5000,5002,5030), 1);
+      sample_bins(v_coverpoint, (5000,5003,5010), 1);
+      sample_bins(v_coverpoint, (5000,5003,5020), 1);
+      sample_bins(v_coverpoint, (5000,5003,5030), 1);
+      sample_bins(v_coverpoint, (5000,5004,5010), 1);
+      sample_bins(v_coverpoint, (5000,5004,5020), 1);
+      sample_bins(v_coverpoint, (5000,5004,5030), 1);
 
-      log(ID_SEQUENCER, "Sample the complete transition with an incorrect value");
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5001,5003,5005,5010), 2);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 2, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample a partial transition, then sample the complete transition from the start");
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5001,5003), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 2, transition_idx => 2);
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5001,5003,5005,5009), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample a transition value, then sample a bin value and check index is reset");
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5001), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 1);
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5100), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample a transition value, then sample an ignore bin value and check index is reset");
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5001,5003), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 2);
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5200), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample a transition value, then sample a random value and check index is reset");
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5001,5003,5005), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 3);
-      v_bin_idx := v_bin_idx-1;
-      sample_bins(v_coverpoint, (5300), 1);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (5001,5003,5005,5009), name => "transition", hits => 3, transition_idx => 0);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing ignore transition bin index");
-      ------------------------------------------------------------
-      v_coverpoint.add_bins(ignore_bin_transition((5501,5503,5505,5509)), "transition");
-      v_coverpoint.add_bins(bin(5600));
-      v_coverpoint.add_bins(ignore_bin(5700));
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 0, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample the complete transition");
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5501,5503,5505,5509), 2);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 2, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample the complete transition with an incorrect value");
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5501,5503,5505,5510), 2);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 2, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample a partial transition, then sample the complete transition from the start");
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5501,5503), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 2, transition_idx => 2);
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5501,5503,5505,5509), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample a transition value, then sample a bin value and check index is reset");
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5501), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 1);
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5600), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample a transition value, then sample an ignore bin value and check index is reset");
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5501,5503), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 2);
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5700), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 0);
-
-      log(ID_SEQUENCER, "Sample a transition value, then sample a random value and check index is reset");
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5501,5503,5505), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 3);
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      sample_bins(v_coverpoint, (5800), 1);
-      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5501,5503,5505,5509), name => "transition", hits => 3, transition_idx => 0);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5001,5010), hits => 0, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5001,5020), hits => 1, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5001,5030), hits => 1, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5002,5010), hits => 0, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5002,5020), hits => 0, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5002,5030), hits => 0, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5003,5010), hits => 0, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5003,5020), hits => 1, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5003,5030), hits => 1, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5004,5010), hits => 0, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5004,5020), hits => 0, name => "transition");
+      check_bin(v_coverpoint, v_bin_idx, TRN, (5000,5004,5030), hits => 0, name => "transition");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5000,5001,5010), hits => 1, name => "ignore_transition");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5000,5002), hits => 3, name => "ignore_transition");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5003,5010), hits => 1, name => "ignore_transition");
+      check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 5004, hits => 3, name => "ignore_value");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
@@ -1118,21 +1076,25 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with transitions of values");
       ------------------------------------------------------------
-      v_cross_x2.add_cross(bin_transition((401,403,405)), bin_transition((416,417,418)));
+      v_cross_x2.add_cross(bin_transition((401,403,401)), bin_transition((416,417,418)));
+      v_cross_x2.add_cross(bin_transition((401,403,401,405)), bin_transition((416,417,418,419)));
       v_cross_x2.add_cross(bin_transition((428,427,425,421)), bin_transition((431,434,434,439)));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_cross_x3.add_cross(bin_transition((428,427,425,421)), bin_transition((431,434,434,439,434)));
 
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,405), (416,417,418));
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,401), (416,417,418));
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,401,405), (416,417,418,419));
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (428,427,425,421), (431,434,434,439));
 
-      sample_cross_bins(v_cross_x2, ((401,416),(403,417),(405,418)), 3);
+      sample_cross_bins(v_cross_x2, ((401,416),(403,417),(401,418)), 2);
+      sample_cross_bins(v_cross_x2, ((401,416),(403,417),(401,416),(403,417),(401,418),(405,419)), 2);
+      sample_cross_bins(v_cross_x2, ((401,416),(403,417),(401,419),(401,416),(403,417),(401,418),(405,419)), 2);
       sample_cross_bins(v_cross_x2, ((428,431),(427,434),(425,434),(421,439)), 3);
-      sample_cross_bins(v_cross_x2, ((401,416),(403,417),(405,419)), 1);           -- Sample values outside bins
       sample_cross_bins(v_cross_x2, ((428,431),(427,434),(425,434),(420,439)), 1); -- Sample values outside bins
 
-      v_bin_idx := v_bin_idx-2;
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,405), (416,417,418), hits => 3);
+      v_bin_idx := v_bin_idx-3;
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,401), (416,417,418), hits => 6);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,401,405), (416,417,418,419), hits => 4);
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (428,427,425,421), (431,434,434,439), hits => 3);
 
       ------------------------------------------------------------
@@ -1170,20 +1132,30 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore cross with transitions of values");
       ------------------------------------------------------------
-      v_cross_x2.add_cross(ignore_bin_transition((2201,2203,2205,2207)), ignore_bin_transition((2212,2214,2216,2218)));
+      v_cross_x2.add_cross(ignore_bin_transition((2201,2203,2201)), ignore_bin_transition((2206,2207,2208)));
+      v_cross_x2.add_cross(ignore_bin_transition((2201,2203,2201,2205)), ignore_bin_transition((2206,2207,2208,2209)));
+      v_cross_x2.add_cross(ignore_bin_transition((2218,2217,2215,2211)), ignore_bin_transition((2212,2214,2216,2218)));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_cross_x3.add_cross(ignore_bin_transition((2228,2227,2225,2221)), ignore_bin_transition((2231,2234,2234,2239,2234)));
 
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2205,2207), (2212,2214,2216,2218));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2201), (2206,2207,2208));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2201,2205), (2206,2207,2208,2209));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2218,2217,2215,2211), (2212,2214,2216,2218));
 
-      sample_cross_bins(v_cross_x2, ((2201,2212),(2203,2214),(2205,2216),(2207,2218)), 3);
-      sample_cross_bins(v_cross_x2, ((2201,2212),(2203,2214),(2205,2216),(2207,2219)), 1); -- Sample values outside bins
+      sample_cross_bins(v_cross_x2, ((2201,2206),(2203,2207),(2201,2208)), 2);
+      sample_cross_bins(v_cross_x2, ((2201,2206),(2203,2207),(2201,2206),(2203,2207),(2201,2208),(2205,2209)), 2);
+      sample_cross_bins(v_cross_x2, ((2201,2206),(2203,2207),(2201,2209),(2201,2206),(2203,2207),(2201,2208),(2205,2209)), 2);
+      sample_cross_bins(v_cross_x2, ((2218,2212),(2217,2214),(2215,2216),(2211,2218)), 3);
+      sample_cross_bins(v_cross_x2, ((2218,2212),(2217,2214),(2215,2216),(2211,2219)), 1); -- Sample values outside bins
 
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2205,2207), (2212,2214,2216,2218), hits => 3);
+      v_invalid_bin_idx := v_invalid_bin_idx-3;
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2201), (2206,2207,2208), hits => 6);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2201,2205), (2206,2207,2208,2209), hits => 4);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2218,2217,2215,2211), (2212,2214,2216,2218), hits => 3);
 
       v_cross_x2.set_illegal_bin_alert_level(WARNING);
       check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal cross with single values");
       ------------------------------------------------------------
@@ -1221,18 +1193,26 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal cross with transitions of values");
       ------------------------------------------------------------
-      v_cross_x2.add_cross(illegal_bin_transition((3201,3203,3205,3207)), illegal_bin_transition((3212,3214,3216,3218)));
+      v_cross_x2.add_cross(illegal_bin_transition((3201,3203,3201)), illegal_bin_transition((3212,3214,3216)));
+      v_cross_x2.add_cross(illegal_bin_transition((3201,3203,3201,3205)), illegal_bin_transition((3212,3214,3216,3218)));
+      v_cross_x2.add_cross(illegal_bin_transition((3228,3227,3225,3221)), illegal_bin_transition((3231,3234,3234,3239)));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_cross_x3.add_cross(illegal_bin_transition((3228,3227,3225,3221)), illegal_bin_transition((3231,3234,3234,3239,3234)));
 
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3205,3207), (3212,3214,3216,3218));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3201), (3212,3214,3216));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3201,3205), (3212,3214,3216,3218));
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3228,3227,3225,3221), (3231,3234,3234,3239));
 
-      increment_expected_alerts(WARNING,3);
-      sample_cross_bins(v_cross_x2, ((3201,3212),(3203,3214),(3205,3216),(3207,3218)), 3);
-      sample_cross_bins(v_cross_x2, ((3201,3212),(3203,3214),(3205,3216),(3207,3219)), 1); -- Sample values outside bins
+      increment_expected_alerts(WARNING,9);
+      sample_cross_bins(v_cross_x2, ((3201,3212),(3203,3214),(3201,3216)), 2);
+      sample_cross_bins(v_cross_x2, ((3201,3212),(3203,3214),(3201,3212),(3203,3214),(3201,3216),(3205,3218)), 2);
+      sample_cross_bins(v_cross_x2, ((3228,3231),(3227,3234),(3225,3234),(3221,3239)), 3);
+      sample_cross_bins(v_cross_x2, ((3228,3231),(3227,3234),(3225,3234),(3220,3239)), 1); -- Sample values outside bins
 
-      v_invalid_bin_idx := v_invalid_bin_idx-1;
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3205,3207), (3212,3214,3216,3218), hits => 3);
+      v_invalid_bin_idx := v_invalid_bin_idx-3;
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3201), (3212,3214,3216), hits => 4);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3201,3205), (3212,3214,3216,3218), hits => 2);
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3228,3227,3225,3221), (3231,3234,3234,3239), hits => 3);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with different bins");
@@ -1336,6 +1316,60 @@ begin
       check_num_bins(v_cross_x2, v_bin_idx, v_invalid_bin_idx);
       check_coverage_completed(v_cross_x2);
       v_cross_x2.report_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross and ignore cross with transitions of values");
+      ------------------------------------------------------------
+      v_cross_x2.add_cross(bin_transition((7000,7001,7010)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7001,7020)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7001,7030)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7002,7010)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7002,7020)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7002,7030)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7003,7010)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7003,7020)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7003,7030)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7004,7010)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7004,7020)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(bin_transition((7000,7004,7030)), bin_transition((7100,7102,7104)), "transition");
+      v_cross_x2.add_cross(ignore_bin_transition((7000,7001,7010)),ignore_bin_transition((7100,7102,7104)), "ignore_transition"); -- ignores
+      v_cross_x2.add_cross(ignore_bin_transition((7000,7001,7020)),ignore_bin_transition((7100,7102,7105)), "ignore_transition"); -- doesn't ignore
+      v_cross_x2.add_cross(ignore_bin_transition((7000,7002)),ignore_bin_transition((7100,7102)), "ignore_transition");           -- ignores
+      v_cross_x2.add_cross(ignore_bin_transition((7003,7010)),ignore_bin_transition((7102,7104)), "ignore_transition");           -- ignores
+      v_cross_x2.add_cross(ignore_bin_transition((7000,7004,7010)),bin(7100), "ignore_transition");                               -- doesn't ignore
+      v_cross_x2.add_cross(ignore_bin_transition((7000,7004,7020)),bin(7104), "ignore_transition");                               -- ignores
+
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7001,7102),(7010,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7001,7102),(7020,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7001,7102),(7030,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7002,7102),(7010,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7002,7102),(7020,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7002,7102),(7030,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7003,7102),(7010,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7003,7102),(7020,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7003,7102),(7030,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7004,7102),(7010,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7004,7102),(7020,7104)), 1);
+      sample_cross_bins(v_cross_x2, ((7000,7100),(7004,7102),(7030,7104)), 1);
+
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7001,7010), (7100,7102,7104), hits => 0, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7001,7020), (7100,7102,7104), hits => 1, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7001,7030), (7100,7102,7104), hits => 1, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7002,7010), (7100,7102,7104), hits => 0, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7002,7020), (7100,7102,7104), hits => 0, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7002,7030), (7100,7102,7104), hits => 0, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7003,7010), (7100,7102,7104), hits => 0, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7003,7020), (7100,7102,7104), hits => 1, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7003,7030), (7100,7102,7104), hits => 1, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7004,7010), (7100,7102,7104), hits => 1, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7004,7020), (7100,7102,7104), hits => 0, name => "transition");
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (7000,7004,7030), (7100,7102,7104), hits => 1, name => "transition");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (7000,7001,7010), (7100,7102,7104), hits => 1, name => "ignore_transition");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (7000,7001,7020), (7100,7102,7105), hits => 0, name => "ignore_transition");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (7000,7002), (7100,7102), hits => 3, name => "ignore_transition");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (7003,7010), (7102,7104), hits => 1, name => "ignore_transition");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL), (7000,7004,7010), (0 => 7100), hits => 0, name => "ignore_transition");
+      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL), (7000,7004,7020), (0 => 7104), hits => 1, name => "ignore_transition");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
@@ -2062,7 +2096,7 @@ begin
       sample_bins(v_coverpoint, (210), 1);
       sample_bins(v_coverpoint, (226,227,228,229), 1);
       sample_bins(v_coverpoint, (231,237,237,238,235,231), 1);
-      sample_bins(v_coverpoint, (50,51,52), 1); -- To check transition_idx
+      sample_bins(v_coverpoint, (50,51,52), 1); -- To check transition is continued in next coverpoint
 
       -- Randomize until a transition bin is generated
       while v_value /= 50 loop
@@ -2116,7 +2150,7 @@ begin
       sample_cross_bins(v_cross_x2, (0 => (210,1210)), 1);
       sample_cross_bins(v_cross_x2, ((226,1226),(227,1227),(228,1228),(229,1229)), 1);
       sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
-      sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052)), 1); -- To check transition_idx
+      sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052)), 1); -- To check transition is continued in next coverpoint
 
       -- Randomize until a transition bin is generated
       while v_values_x2(0) /= 50 and v_values_x2(1) /= 1050 loop
@@ -2168,7 +2202,7 @@ begin
       check_bin(v_coverpoint, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 3);
       check_bin(v_coverpoint, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 5);
       check_bin(v_coverpoint, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 5);
-      check_bin(v_coverpoint, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 1, transition_idx => 3);
+      check_bin(v_coverpoint, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 1);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 1);
       check_invalid_bin(v_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 5);
@@ -2213,6 +2247,7 @@ begin
 
       -- Sample coverage
       increment_expected_alerts(TB_NOTE, 6);
+      sample_bins(v_coverpoint, (53,54,55,56,57,58,59), 1); -- To check transition started in previous coverpoint
       sample_bins(v_coverpoint, (20), 2);
       sample_bins(v_coverpoint, (30,35,39), 1);
       sample_bins(v_coverpoint, (40,41,42,43,44), 1);
@@ -2224,9 +2259,9 @@ begin
       sample_bins(v_coverpoint, (210), 1);
       sample_bins(v_coverpoint, (226,227,228,229), 1);
       sample_bins(v_coverpoint, (231,237,237,238,235,231), 1);
-      sample_bins(v_coverpoint, (50,51,52,53), 1); -- To check transition_idx
+      sample_bins(v_coverpoint, (50,51,52,53), 1); -- To check transition is continued in next coverpoint
 
-      v_coverpoint.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 59.26%
+      v_coverpoint.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 61.11%
       v_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
@@ -2242,7 +2277,7 @@ begin
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (30,35,39), (1030,1035,1039), 9, 30, "multiple", hits => 3);
       check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (40,44), (1040,1049), 15, 40, "range", hits => 5);
       check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (45,49), (1040,1049), 15, 40, "range", hits => 5);
-      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (50,51,52,53,54,55), (1050,1051,1052,1053,1054,1055), 5, 50, "transition", hits => 1, transition_idx => 3);
+      check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (50,51,52,53,54,55), (1050,1051,1052,1053,1054,1055), 5, 50, "transition", hits => 1);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => 100), (0 => 1100), "bin_6", hits => 0);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => 110), (0 => 1110), "ignore_single", hits => 1);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), (121,125), (1121,1125), "ignore_range", hits => 5);
@@ -2292,6 +2327,7 @@ begin
 
       -- Sample coverage
       increment_expected_alerts(TB_WARNING, 6);
+      sample_cross_bins(v_cross_x2, ((53,1053),(54,1054),(55,1055)), 1); -- To check transition started in previous coverpoint
       sample_cross_bins(v_cross_x2, (0 => (20,1020)), 2);
       sample_cross_bins(v_cross_x2, ((30,1030),(35,1035),(39,1039)), 1);
       sample_cross_bins(v_cross_x2, ((40,1040),(41,1041),(42,1042),(43,1043),(44,1044)), 1);
@@ -2303,9 +2339,9 @@ begin
       sample_cross_bins(v_cross_x2, (0 => (210,1210)), 1);
       sample_cross_bins(v_cross_x2, ((226,1226),(227,1227),(228,1228),(229,1229)), 1);
       sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
-      sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052),(53,1053)), 1); -- To check transition_idx
+      sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052),(53,1053)), 1); -- To check transition is continued in next coverpoint
 
-      v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 59.26%
+      v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 61.11%
       v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
@@ -2353,7 +2389,7 @@ begin
       check_bin(v_coverpoint_b, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 6);
       check_bin(v_coverpoint_b, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 10);
       check_bin(v_coverpoint_b, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 10);
-      check_bin(v_coverpoint_b, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 2, transition_idx => 4);
+      check_bin(v_coverpoint_b, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 3);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 2);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 10);
@@ -2365,20 +2401,21 @@ begin
       check_num_bins(v_coverpoint_b, 7, 10);
       check_bins_coverage(v_coverpoint_b, 0.0);
       check_bins_coverage(v_coverpoint_b, 0.0, use_goal => true);   -- goal=50
-      check_hits_coverage(v_coverpoint_b, 59.26);
-      check_hits_coverage(v_coverpoint_b, 29.63, use_goal => true); -- goal=200
+      check_hits_coverage(v_coverpoint_b, 61.11);
+      check_hits_coverage(v_coverpoint_b, 30.56, use_goal => true); -- goal=200
       check_value(v_coverpoint_b.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
       v_seeds := v_coverpoint_b.get_rand_seeds(VOID);
       check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Sample coverage
+      sample_bins(v_coverpoint_b, (54,55,56,57,58,59), 1); -- To check transition started in previous coverpoint
       sample_bins(v_coverpoint_b, (10), 2);
       sample_bins(v_coverpoint_b, (20), 12);
       sample_bins(v_coverpoint_b, (30,35,39), 4);
       sample_bins(v_coverpoint_b, (40,41,42,43,44), 4);
       sample_bins(v_coverpoint_b, (45,46,47,48,49), 4);
-      sample_bins(v_coverpoint_b, (50,51,52,53,54,55,56,57,58,59), 8);
+      sample_bins(v_coverpoint_b, (50,51,52,53,54,55,56,57,58,59), 6);
       sample_bins(v_coverpoint_b, (1000), 2);
 
       check_coverage_completed(v_coverpoint_b);
@@ -2398,7 +2435,7 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (30,35,39), (1030,1035,1039), 9, 30, "multiple", hits => 6);
       check_cross_bin(v_cross_x2_b, v_bin_idx, (RAN,RAN), (40,44), (1040,1049), 15, 40, "range", hits => 10);
       check_cross_bin(v_cross_x2_b, v_bin_idx, (RAN,RAN), (45,49), (1040,1049), 15, 40, "range", hits => 10);
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (TRN,TRN), (50,51,52,53,54,55), (1050,1051,1052,1053,1054,1055), 5, 50, "transition", hits => 2, transition_idx => 4);
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (TRN,TRN), (50,51,52,53,54,55), (1050,1051,1052,1053,1054,1055), 5, 50, "transition", hits => 3);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => 100), (0 => 1100), "bin_6", hits => 0);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => 110), (0 => 1110), "ignore_single", hits => 2);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), (121,125), (1121,1125), "ignore_range", hits => 10);
@@ -2410,20 +2447,21 @@ begin
       check_num_bins(v_cross_x2_b, 7, 10);
       check_bins_coverage(v_cross_x2_b, 0.0);
       check_bins_coverage(v_cross_x2_b, 0.0, use_goal => true);   -- goal=50
-      check_hits_coverage(v_cross_x2_b, 59.26);
-      check_hits_coverage(v_cross_x2_b, 79.01, use_goal => true); -- goal=75
+      check_hits_coverage(v_cross_x2_b, 61.11);
+      check_hits_coverage(v_cross_x2_b, 81.48, use_goal => true); -- goal=75
       check_value(v_cross_x2_b.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
       v_seeds := v_cross_x2_b.get_rand_seeds(VOID);
       check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Sample coverage
+      sample_cross_bins(v_cross_x2_b, ((54,1054),(55,1055)), 1); -- To check transition started in previous coverpoint
       sample_cross_bins(v_cross_x2_b, (0 => (10,1010)), 1);
       sample_cross_bins(v_cross_x2_b, (0 => (20,1020)), 4);
       sample_cross_bins(v_cross_x2_b, ((30,1030),(35,1035),(39,1039)), 1);
       sample_cross_bins(v_cross_x2_b, ((40,1040),(41,1041),(42,1042),(43,1043),(44,1044)), 1);
       sample_cross_bins(v_cross_x2_b, ((45,1045),(46,1046),(47,1047),(48,1048),(49,1049)), 1);
-      sample_cross_bins(v_cross_x2_b, ((50,1050),(51,1051),(52,1052),(53,1053),(54,1054),(55,1055)), 3);
+      sample_cross_bins(v_cross_x2_b, ((50,1050),(51,1051),(52,1052),(53,1053),(54,1054),(55,1055)), 1);
       sample_cross_bins(v_cross_x2_b, (0 => (1000,2000)), 1);
 
       check_coverage_completed(v_cross_x2_b);
@@ -2477,8 +2515,9 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing clearing a coverpoint's coverage");
       ------------------------------------------------------------
-      sample_bins(v_coverpoint_b, (50,51,52), 1); -- To test transition_idx
+      sample_bins(v_coverpoint_b, (50,51,52), 1);
       v_coverpoint_b.clear_coverage(VOID);
+      sample_bins(v_coverpoint_b, (53,54,55,56,57,58,59), 1); -- To test transition_mask is cleared
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2488,7 +2527,7 @@ begin
       check_bin(v_coverpoint_b, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 0);
       check_bin(v_coverpoint_b, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 0);
       check_bin(v_coverpoint_b, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 0);
-      check_bin(v_coverpoint_b, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 0, transition_idx => 0);
+      check_bin(v_coverpoint_b, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 0);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 0);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 0);

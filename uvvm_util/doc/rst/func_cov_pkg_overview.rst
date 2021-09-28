@@ -23,7 +23,7 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
     begin
       -- Add bins to the coverpoint
       my_coverpoint.add_bins(bin(0), "bin_zero");
-      my_coverpoint.add_bins(bin_range(1,254,1));
+      my_coverpoint.add_bins(bin_range(1,254));
       my_coverpoint.add_bins(bin(255), "bin_max");
 
       -- Sample the data
@@ -111,18 +111,22 @@ Bins can be created using the following :ref:`bin functions <bin_functions>`:
     -- 2. Create a single bin for multiple values (sample any of the values to increase the bin counter)
     bin((2,4,6,8))             -- Note the use of double parentheses due to the integer_vector parameter
 
-    -- 3. Create a single bin for each value in a given range
-    bin_range(0, 5)            -- creates 6 bins: 0,1,2,3,4,5
+    -- 3. Create a single bin for a range of values
+    bin_range(0, 5)
 
     -- 4. Create a number of bins from a range of values
-    bin_range(1, 10, 1)        -- creates 1 bin:  1 to 10
-    bin_range(1, 10, 2)        -- creates 2 bins: 1 to 5, 6 to 10
+    bin_range(1, 8, 2)         -- creates 2 bins: 1 to 4, 5 to 8
+    bin_range(1, 8, 3)         -- creates 3 bins: 1 to 2, 3 to 5, 6 to 8
+    bin_range(1, 8, 0)         -- creates 8 bins: 1,2,3,4,5,6,7,8
+    bin_range(1, 8, 8)         -- creates 8 bins: 1,2,3,4,5,6,7,8
+    bin_range(1, 8, 20)        -- creates 8 bins: 1,2,3,4,5,6,7,8
 
-    -- 5. Create a single bin for each value in a vector's range
-    bin_vector(addr)           -- creates 2^(addr'length) bins
+    -- 5. Create a single bin for a vector's range
+    bin_vector(addr)
 
     -- 6. Create a number of bins from a vector's range
-    bin_vector(addr, 16)       -- creates 16 bins
+    bin_vector(addr, 4)        -- creates 4 bins
+    bin_vector(addr, 0)        -- creates 2^(addr'length) bins
 
     -- 7. Create a single bin for a transition of values
     bin_transition((1,3,5,7))  -- Note the use of double parentheses due to the integer_vector parameter
@@ -137,17 +141,17 @@ With the functions above and the procedure ``add_bins()``, bins can be added to 
     -- 2. Add a single bin for multiple values (sample any of the values to increase the bin counter)
     my_coverpoint.add_bins(bin((2,4,6,8)));
 
-    -- 3. Add a single bin for each value in a given range
+    -- 3. Add a single bin for a range of values
     my_coverpoint.add_bins(bin_range(0, 5));
 
     -- 4. Add a number of bins from a range of values
-    my_coverpoint.add_bins(bin_range(1, 10, 2));
+    my_coverpoint.add_bins(bin_range(1, 8, 2));
 
-    -- 5. Add a single bin for each value in a vector's range
+    -- 5. Add a single bin for a vector's range
     my_coverpoint.add_bins(bin_vector(addr));
 
     -- 6. Add a number of bins from a vector's range
-    my_coverpoint.add_bins(bin_vector(addr, 16));
+    my_coverpoint.add_bins(bin_vector(addr, 4));
 
     -- 7. Add a single bin for a transition of values
     my_coverpoint.add_bins(bin_transition((1,3,5,7)));
@@ -176,12 +180,12 @@ Note that the order in which the bins are added, both valid and ignore, does not
 .. code-block::
 
     -- Example 1
-    my_coverpoint.add_bins(bin_range(0,99,1));
+    my_coverpoint.add_bins(bin_range(0,99));
     my_coverpoint.add_bins(ignore_bin(50));
     my_coverpoint.add_bins(ignore_bin_range(25,30) & ignore_bin_range(75,80));
 
     -- Example 2
-    my_coverpoint.add_bins(bin_vector(addr));
+    my_coverpoint.add_bins(bin_vector(addr,0));
     my_coverpoint.add_bins(ignore_bin(0));
 
     -- Example 3
@@ -239,7 +243,7 @@ it before the sequencer has added the bins, the testbench will generate a TB_ERR
 
     -- Process 1 (Sequencer)
     ...
-    my_coverpoint.add_bins(bin_range(0,255,1));
+    my_coverpoint.add_bins(bin_range(0,255));
     my_coverpoint.add_bins(illegal_bin(256));
     ...
 
@@ -304,9 +308,9 @@ overloads support up to 5 crossed elements.
 
     add_cross(bin1, bin2, [bin_name])
 
-    my_cross.add_cross(bin(10), bin_range(0,15,1));
-    my_cross.add_cross(bin(20), bin_range(16,31,1));
-    my_cross.add_cross(bin(30), bin_range(32,63,1));
+    my_cross.add_cross(bin(10), bin_range(0,15));
+    my_cross.add_cross(bin(20), bin_range(16,31));
+    my_cross.add_cross(bin(30), bin_range(32,63));
     my_cross.add_cross(bin((10,20,30)), illegal_bin_range(64,127), "illegal_bin");
 
 .. code-block:: none
@@ -325,7 +329,7 @@ The bin functions may also be concatenated to add several bins at once.
 
     add_cross(bin1, bin2, bin3, [bin_name])
 
-    my_cross.add_cross(bin(10) & bin(20) & bin(30), bin_range(0,7,1) & bin_range(8,15,1), bin(1000));
+    my_cross.add_cross(bin(10) & bin(20) & bin(30), bin_range(0,7) & bin_range(8,15), bin(1000));
 
 .. code-block:: none
 
@@ -346,8 +350,8 @@ This alternative is useful when the coverpoints are already created and we don't
 
 .. code-block::
 
-    my_coverpoint_addr.add_bins(bin_vector(addr));
-    my_coverpoint_size.add_bins(bin_range(0,127,1));
+    my_coverpoint_addr.add_bins(bin_vector(addr,0));
+    my_coverpoint_size.add_bins(bin_range(0,127));
     my_cross.add_cross(my_coverpoint_addr, my_coverpoint_size);
 
 .. code-block:: none
@@ -364,8 +368,8 @@ Another benefit of this alternative is that we can cross already crossed coverpo
 
 .. code-block::
 
-    my_coverpoint_addr.add_bins(bin_vector(addr));
-    my_coverpoint_size.add_bins(bin_range(0,127,1));
+    my_coverpoint_addr.add_bins(bin_vector(addr,0));
+    my_coverpoint_size.add_bins(bin_range(0,127));
     my_cross_addr_size.add_cross(my_coverpoint_addr, my_coverpoint_size);
 
     my_coverpoint_mode.add_bins(bin(1000) & bin(2000) & bin(3000));
@@ -417,8 +421,8 @@ the procedure ``set_bin_overlap_alert_level()``, to select the severity of the a
 .. code-block::
 
     my_coverpoint.set_bin_overlap_alert_level(TB_WARNING);
-    my_coverpoint.add_bins(bin_range(1, 16, 1), "valid_sizes");
-    my_coverpoint.add_bins(bin_range(15, 20, 1), "big_sizes");
+    my_coverpoint.add_bins(bin_range(1,16), "valid_sizes");
+    my_coverpoint.add_bins(bin_range(15,20), "big_sizes");
     my_coverpoint.sample_coverage(15);
 
 However, if a sampled value is contained in both ignore or illegal and valid bins, the ignore/illegal bin will take precedence and 

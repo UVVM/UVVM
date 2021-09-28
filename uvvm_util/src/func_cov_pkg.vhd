@@ -88,17 +88,19 @@ package func_cov_pkg is
     constant set_of_values : integer_vector)
   return t_new_bin_array;
 
-  -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
+  -- Creates a bin for a range of values. Several bins can be created by dividing the range into num_bins.
+  -- If num_bins is 0 then a bin is created for each value.
   impure function bin_range(
     constant min_value     : integer;
     constant max_value     : integer;
-    constant num_bins      : natural := 0)
+    constant num_bins      : natural := 1)
   return t_new_bin_array;
 
-  -- Divides a vector's range into a number bins. If num_bins is 0 then a bin is created for each value.
+  -- Creates a bin for a vector's range. Several bins can be created by dividing the range into num_bins.
+  -- If num_bins is 0 then a bin is created for each value.
   impure function bin_vector(
     constant vector        : std_logic_vector;
-    constant num_bins      : natural := 0)
+    constant num_bins      : natural := 1)
   return t_new_bin_array;
 
   -- Creates a bin for a transition of values
@@ -649,25 +651,27 @@ package body func_cov_pkg is
     return create_bin_multiple(VAL, set_of_values, C_LOCAL_CALL);
   end function;
 
-  -- Divides a range of values into a number bins. If num_bins is 0 then a bin is created for each value.
+  -- Creates a bin for a range of values. Several bins can be created by dividing the range into num_bins.
+  -- If num_bins is 0 then a bin is created for each value.
   impure function bin_range(
     constant min_value     : integer;
     constant max_value     : integer;
-    constant num_bins      : natural := 0)
+    constant num_bins      : natural := 1)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "bin_range(" & to_string(min_value) & ", " & to_string(max_value) &
-      return_string_if_true(", num_bins:" & to_string(num_bins), num_bins > 0) & ")";
+      return_string_if_true(", num_bins:" & to_string(num_bins), num_bins /= 1) & ")";
   begin
     return create_bin_range(RAN, min_value, max_value, num_bins, C_LOCAL_CALL);
   end function;
 
-  -- Divides a vector's range into a number bins. If num_bins is 0 then a bin is created for each value.
+  -- Creates a bin for a vector's range. Several bins can be created by dividing the range into num_bins.
+  -- If num_bins is 0 then a bin is created for each value.
   impure function bin_vector(
     constant vector        : std_logic_vector;
-    constant num_bins      : natural := 0)
+    constant num_bins      : natural := 1)
   return t_new_bin_array is
     constant C_LOCAL_CALL : string := "bin_vector(LEN:" & to_string(vector'length) & return_string_if_true(", num_bins:" &
-      to_string(num_bins), num_bins > 0) & ")";
+      to_string(num_bins), num_bins /= 1) & ")";
   begin
     return create_bin_range(RAN, 0, 2**vector'length-1, num_bins, C_LOCAL_CALL);
   end function;

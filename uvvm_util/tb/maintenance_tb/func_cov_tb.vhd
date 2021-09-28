@@ -472,11 +472,11 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with ranges of values");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(bin_range(300,309,1));
+      v_coverpoint.add_bins(bin_range(300,309));
       v_coverpoint.add_bins(bin_range(311,315,2));
       v_coverpoint.add_bins(bin_range(320,328,3));
       v_coverpoint.add_bins(bin_range(330,334,20));
-      v_coverpoint.add_bins(bin_range(341,343));
+      v_coverpoint.add_bins(bin_range(341,343,0));
       v_coverpoint.add_bins(bin_range(355,355));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_coverpoint.add_bins(bin_range(363,361));
@@ -525,11 +525,11 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins created from a vector");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(bin_vector(v_vector,1));
+      v_coverpoint.add_bins(bin_vector(v_vector));
       v_coverpoint.add_bins(bin_vector(v_vector,2));
       v_coverpoint.add_bins(bin_vector(v_vector,3));
       v_coverpoint.add_bins(bin_vector(v_vector,20));
-      v_coverpoint.add_bins(bin_vector(v_vector));
+      v_coverpoint.add_bins(bin_vector(v_vector,0));
 
       check_bin(v_coverpoint, v_bin_idx, RAN, (0,3));
       check_bin(v_coverpoint, v_bin_idx, RAN, (0,1));
@@ -749,7 +749,7 @@ begin
       log(ID_LOG_HDR, "Testing concatenation of bins");
       ------------------------------------------------------------
       v_coverpoint.add_bins(bin(4000) & bin((4100,4110,4120)) & bin_range(4200,4209,2) & bin_transition((4300,4302,4304,4305)), "concatenated");
-      v_coverpoint.add_bins(bin_range(4400,4450,1) & ignore_bin(4401) & ignore_bin_range(4410,4420) & ignore_bin_transition((4400,4425,4450)), "concatenated");
+      v_coverpoint.add_bins(bin_range(4400,4450) & ignore_bin(4401) & ignore_bin_range(4410,4420) & ignore_bin_transition((4400,4425,4450)), "concatenated");
 
       check_bin(v_coverpoint, v_bin_idx, VAL, 4000,                  name => "concatenated");
       check_bin(v_coverpoint, v_bin_idx, VAL, (4100,4110,4120),      name => "concatenated");
@@ -887,8 +887,8 @@ begin
       v_coverpoint_b.add_bins(bin(2000));
       v_coverpoint_b.add_bins(bin((2100,2101,2102,2113,2114)));
       v_coverpoint_b.add_bins(bin((2114,2115,2116,2117)));
-      v_coverpoint_b.add_bins(bin_range(2200,2250,1));
-      v_coverpoint_b.add_bins(bin_range(2249,2299,1));
+      v_coverpoint_b.add_bins(bin_range(2200,2250));
+      v_coverpoint_b.add_bins(bin_range(2249,2299));
 
       sample_bins(v_coverpoint_b, (2000,2001), 1);
       sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
@@ -912,7 +912,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - valid and ignore bins");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(bin_range(3000,3020,1), "overlap");
+      v_coverpoint_b.add_bins(bin_range(3000,3020), "overlap");
       v_coverpoint_b.add_bins(ignore_bin_range(3005,3015));
 
       sample_bins(v_coverpoint_b, (3000,3004,3005,3006,3014,3015,3016,3020), 1);
@@ -923,7 +923,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - valid and illegal bins");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(bin_range(3100,3120,1), "overlap");
+      v_coverpoint_b.add_bins(bin_range(3100,3120), "overlap");
       v_coverpoint_b.add_bins(illegal_bin_range(3105,3115));
 
       v_coverpoint_b.set_illegal_bin_alert_level(WARNING);
@@ -980,7 +980,7 @@ begin
       v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+2)); -- ERROR
       v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+3)); -- ERROR
 
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS) & bin(0));                  -- ERROR
+      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,0) & bin(0));                -- ERROR
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing C_FC_MAX_PROC_CALL_LENGTH limit");
@@ -1043,7 +1043,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with ranges of values");
       ------------------------------------------------------------
-      v_cross_x2.add_cross(bin_range(300,307,1), bin_range(311,315,1));
+      v_cross_x2.add_cross(bin_range(300,307), bin_range(311,315));
       v_cross_x2.add_cross(bin_range(321,329,3), bin_range(331,335,2));
 
       check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (300,307), (311,315));
@@ -1217,7 +1217,7 @@ begin
       log(ID_LOG_HDR, "Testing cross with different bins");
       ------------------------------------------------------------
       v_cross_x2.add_cross(bin(4000), bin((4010,4015,4019)), "cross_0");
-      v_cross_x2.add_cross(bin_range(4100,4107,1), bin_transition((4111,4112,4115)), "cross_1");
+      v_cross_x2.add_cross(bin_range(4100,4107), bin_transition((4111,4112,4115)), "cross_1");
       v_cross_x2.add_cross(ignore_bin(4201), ignore_bin_range(4212,4215), "cross_2");
       v_cross_x2.add_cross(ignore_bin_transition((4302,4304,4306)), ignore_bin(4315), "cross_3");
       v_cross_x2.add_cross(illegal_bin(4402), illegal_bin_range(4415,4417), "cross_4");
@@ -1278,7 +1278,7 @@ begin
       log(ID_LOG_HDR, "Testing cross using concatenation of bins");
       ------------------------------------------------------------
       v_cross_x2.add_cross(bin(6000) & bin(6005) & bin(6010), bin_range(6100,6150,2), "concatenated");
-      v_cross_x2.add_cross(bin_range(6200,6250,1) & ignore_bin_range(6220,6240), bin_range(6350,6399,1) & illegal_bin(6375), "concatenated");
+      v_cross_x2.add_cross(bin_range(6200,6250) & ignore_bin_range(6220,6240), bin_range(6350,6399) & illegal_bin(6375), "concatenated");
 
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6000), (6100,6124), name => "concatenated");
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,RAN), (0 => 6000), (6125,6150), name => "concatenated");
@@ -1420,7 +1420,7 @@ begin
       log(ID_LOG_HDR, "Testing cross of coverpoints with different bins");
       ------------------------------------------------------------
       v_coverpoint.add_bins(bin(100));
-      v_coverpoint.add_bins(bin_range(200,207,1));
+      v_coverpoint.add_bins(bin_range(200,207));
       v_coverpoint.add_bins(ignore_bin(300));
       v_coverpoint.add_bins(ignore_bin_range(400,407));
       v_coverpoint.add_bins(illegal_bin_transition((501,503,505)));
@@ -1592,7 +1592,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with single values");
       ------------------------------------------------------------
       v_min_hits := 1;
-      v_coverpoint.add_bins(bin_range(1,50));
+      v_coverpoint.add_bins(bin_range(1,50,0));
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 50*v_min_hits loop
@@ -1631,11 +1631,11 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with a range of values");
       ------------------------------------------------------------
       v_min_hits := 3;
-      v_coverpoint.add_bins(bin_range(300,309,1), v_min_hits);
-      v_coverpoint.add_bins(bin_range(310,319,1), v_min_hits);
-      v_coverpoint.add_bins(bin_range(320,329,1), v_min_hits);
-      v_coverpoint.add_bins(bin_range(330,339,1), v_min_hits);
-      v_coverpoint.add_bins(bin_range(340,349,1), v_min_hits);
+      v_coverpoint.add_bins(bin_range(300,309), v_min_hits);
+      v_coverpoint.add_bins(bin_range(310,319), v_min_hits);
+      v_coverpoint.add_bins(bin_range(320,329), v_min_hits);
+      v_coverpoint.add_bins(bin_range(330,339), v_min_hits);
+      v_coverpoint.add_bins(bin_range(340,349), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*v_min_hits loop
@@ -1677,7 +1677,7 @@ begin
       v_min_hits := 5;
       v_coverpoint.add_bins(bin(60), v_min_hits);
       v_coverpoint.add_bins(bin((250,251,252,253,254)), v_min_hits);
-      v_coverpoint.add_bins(bin_range(350,359,1), v_min_hits);
+      v_coverpoint.add_bins(bin_range(350,359), v_min_hits);
       v_coverpoint.add_bins(bin_transition((450,452,452,458,455)), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
@@ -1821,7 +1821,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with single values");
       ------------------------------------------------------------
       v_min_hits := 1;
-      v_cross_x2.add_cross(bin_range(1,50), bin(100));
+      v_cross_x2.add_cross(bin_range(1,50,0), bin(100));
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 50*v_min_hits loop
@@ -1860,11 +1860,11 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with a range of values");
       ------------------------------------------------------------
       v_min_hits := 3;
-      v_cross_x2.add_cross(bin_range(300,304,1), bin_range(305,309,1), v_min_hits);
-      v_cross_x2.add_cross(bin_range(310,314,1), bin_range(315,319,1), v_min_hits);
-      v_cross_x2.add_cross(bin_range(320,324,1), bin_range(325,329,1), v_min_hits);
-      v_cross_x2.add_cross(bin_range(330,334,1), bin_range(335,339,1), v_min_hits);
-      v_cross_x2.add_cross(bin_range(340,344,1), bin_range(345,349,1), v_min_hits);
+      v_cross_x2.add_cross(bin_range(300,304), bin_range(305,309), v_min_hits);
+      v_cross_x2.add_cross(bin_range(310,314), bin_range(315,319), v_min_hits);
+      v_cross_x2.add_cross(bin_range(320,324), bin_range(325,329), v_min_hits);
+      v_cross_x2.add_cross(bin_range(330,334), bin_range(335,339), v_min_hits);
+      v_cross_x2.add_cross(bin_range(340,344), bin_range(345,349), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*v_min_hits loop
@@ -1905,9 +1905,9 @@ begin
       ------------------------------------------------------------
       v_min_hits := 5;
       v_cross_x2.add_cross(bin(60), bin((250,251,252,253,254)), v_min_hits);
-      v_cross_x2.add_cross(bin(70), bin_range(352,355,1), v_min_hits);
+      v_cross_x2.add_cross(bin(70), bin_range(352,355), v_min_hits);
       v_cross_x2.add_cross(bin_transition((450,452,454,456,458)), bin(80), v_min_hits);
-      v_cross_x2.add_cross(bin_range(360,369,1), bin_transition((466,463,463,464,461)), v_min_hits);
+      v_cross_x2.add_cross(bin_range(360,369), bin_transition((466,463,463,464,461)), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to (2+5*2)*v_min_hits loop
@@ -2105,7 +2105,7 @@ begin
       v_cross_x2.add_cross(bin(10), bin(1010));
       v_cross_x2.add_cross(bin(20), bin(1020), 8, 20, "single");
       v_cross_x2.add_cross(bin((30,35,39)), bin((1030,1035,1039)), 9, 30, "multiple");
-      v_cross_x2.add_cross(bin_range(40,49,2), bin_range(1040,1049,1), 15, 40, "range");
+      v_cross_x2.add_cross(bin_range(40,49,2), bin_range(1040,1049), 15, 40, "range");
       v_cross_x2.add_cross(bin_transition((50,51,52,53,54,55)), bin_transition((1050,1051,1052,1053,1054,1055)), 5, 50, "transition");
       v_cross_x2.add_cross(ignore_bin(100), ignore_bin(1100));
       v_cross_x2.add_cross(ignore_bin(110), ignore_bin(1110), 1000, 500, "ignore_single");
@@ -2156,7 +2156,7 @@ begin
       log(ID_LOG_HDR, "Testing write database to a file - max data");
       ------------------------------------------------------------
       -- Add bins
-      v_cross_x3.add_cross(bin_range(1,100), bin(200), bin(300)); -- TODO: use 16-cross
+      v_cross_x3.add_cross(bin_range(1,100,0), bin(200), bin(300)); -- TODO: use 16-cross
 
       -- Sample coverage
       for i in 1 to 25 loop
@@ -2547,9 +2547,9 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint reports");
       ------------------------------------------------------------
-      v_coverpoint.add_bins(bin_range(0,125,1), 8, "mem_addr_low");
+      v_coverpoint.add_bins(bin_range(0,125), 8, "mem_addr_low");
       v_coverpoint.add_bins(bin((126,127,128)), "mem_addr_mid");
-      v_coverpoint.add_bins(bin_range(129,255,1), 4, "mem_addr_high");
+      v_coverpoint.add_bins(bin_range(129,255), 4, "mem_addr_high");
       v_coverpoint.add_bins(bin_transition((0,1,2,3)), 2, 10, "transition_1");
       v_coverpoint.add_bins(bin_transition((0,15,127,248,249,250,251,252,253,254)), 2, 10, "transition_2");
       v_coverpoint.add_bins(ignore_bin(100), 10, 10, "ignore_addr");             -- min_hits and rand_weight are discarded
@@ -2582,17 +2582,17 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross reports");
       ------------------------------------------------------------
-      v_cross_x2.add_cross(bin(10), bin_range(0,15,1));
-      v_cross_x2.add_cross(bin(20), bin_range(16,31,1));
-      v_cross_x2.add_cross(bin(30), bin_range(32,63,1));
+      v_cross_x2.add_cross(bin(10), bin_range(0,15));
+      v_cross_x2.add_cross(bin(20), bin_range(16,31));
+      v_cross_x2.add_cross(bin(30), bin_range(32,63));
       v_cross_x2.add_cross(bin((10,20,30)), illegal_bin_range(64,127), "illegal_bin");
       v_cross_x2.report_coverage(VERBOSE);
 
-      v_cross_x3.add_cross(bin(10) & bin(20) & bin(30), bin_range(0,7,1) & bin_range(8,15,1), bin(1000));
+      v_cross_x3.add_cross(bin(10) & bin(20) & bin(30), bin_range(0,7) & bin_range(8,15), bin(1000));
       v_cross_x3.report_coverage(VERBOSE);
 
-      v_coverpoint_b.add_bins(bin_vector(v_vector));
-      v_coverpoint_c.add_bins(bin_range(0,127,1));
+      v_coverpoint_b.add_bins(bin_vector(v_vector,0));
+      v_coverpoint_c.add_bins(bin_range(0,127));
       v_cross_x2_b.add_cross(v_coverpoint_b, v_coverpoint_c);
       v_cross_x2_b.report_coverage(VERBOSE);
 
@@ -2643,7 +2643,7 @@ begin
       v_num_bins       := 15;
       v_min_hits       := 10;
       v_total_min_hits := real(v_num_bins*v_min_hits);
-      v_coverpoint.add_bins(bin_range(1,v_num_bins),v_min_hits);
+      v_coverpoint.add_bins(bin_range(1,v_num_bins,0),v_min_hits);
 
       for bin in 1 to v_num_bins loop
         for hits in 1 to v_min_hits loop
@@ -2670,7 +2670,7 @@ begin
       v_num_bins       := 10;
       v_min_hits       := 10;
       v_total_min_hits := real(v_num_bins*v_min_hits);
-      v_coverpoint_b.add_bins(bin_range(1,v_num_bins),v_min_hits);
+      v_coverpoint_b.add_bins(bin_range(1,v_num_bins,0),v_min_hits);
       v_goal           := 50;
       v_min_hits       := v_min_hits*v_goal/100;
       v_total_min_hits := v_total_min_hits*real(v_goal)/100.0;
@@ -2706,7 +2706,7 @@ begin
       v_num_bins       := 10;
       v_min_hits       := 10;
       v_total_min_hits := real(v_num_bins*v_min_hits);
-      v_coverpoint_c.add_bins(bin_range(1,v_num_bins),v_min_hits);
+      v_coverpoint_c.add_bins(bin_range(1,v_num_bins,0),v_min_hits);
       v_goal           := 200;
       v_min_hits       := v_min_hits*v_goal/100;
       v_total_min_hits := v_total_min_hits*real(v_goal)/100.0;
@@ -2735,7 +2735,7 @@ begin
       v_num_bins       := 10;
       v_min_hits       := 10;
       v_total_min_hits := real(v_num_bins*v_min_hits);
-      v_coverpoint_d.add_bins(bin_range(1,v_num_bins),v_min_hits);
+      v_coverpoint_d.add_bins(bin_range(1,v_num_bins,0),v_min_hits);
       v_goal           := 70;
       v_num_bins       := v_num_bins*v_goal/100;
       v_coverpoint_d.set_bins_coverage_goal(v_goal);
@@ -2932,7 +2932,7 @@ begin
       v_coverpoint.set_overall_coverage_weight(5);
       v_coverpoint.set_bins_coverage_goal(50);
       v_coverpoint.set_hits_coverage_goal(200);
-      v_coverpoint.add_bins(bin_range(1,100));
+      v_coverpoint.add_bins(bin_range(1,100,0));
       v_coverpoint.add_bins(ignore_bin_range(101,200));
       for i in 1 to 50 loop
         v_coverpoint.sample_coverage(i);

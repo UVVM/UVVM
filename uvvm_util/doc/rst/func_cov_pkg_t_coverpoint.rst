@@ -482,10 +482,10 @@ which return a t_new_bin_array. Bin functions may be concatenated to add several
 .. code-block::
 
     -- Examples:
-    my_cross.add_cross(ignore_bin(0), bin_range(0,63,1), "ignore_values");
-    my_cross.add_cross(bin(10), bin_range(0,15,1), 5, 3, "low_values");
-    my_cross.add_cross(bin(20), bin_range(16,31,1), 5, "middle_values");
-    my_cross.add_cross(bin(30), bin_range(32,63,1), "high_values");
+    my_cross.add_cross(ignore_bin(0), bin_range(0,63), "ignore_values");
+    my_cross.add_cross(bin(10), bin_range(0,15), 5, 3, "low_values");
+    my_cross.add_cross(bin(20), bin_range(16,31), 5, "middle_values");
+    my_cross.add_cross(bin(30), bin_range(32,63), "high_values");
     my_cross.add_cross(bin((10,20,30)), illegal_bin_range(64,95) & illegal_bin_range(96,127), "illegal_values");
 
 This procedure has overloads which support crossing up to 5 t_new_bin_array elements. ::
@@ -536,8 +536,8 @@ Adds a cross between two coverpoints to the coverpoint. Note that the coverpoint
 .. code-block::
 
     -- Examples:
-    my_coverpoint_addr.add_bins(bin_vector(addr));
-    my_coverpoint_size.add_bins(bin_range(0,127,1));
+    my_coverpoint_addr.add_bins(bin_vector(addr,0));
+    my_coverpoint_size.add_bins(bin_range(0,127));
     my_cross.add_cross(my_coverpoint_addr, my_coverpoint_size, 5, 3, "cross_addr_size");
 
 This procedure has overloads which support crossing up to 16 coverpoints. ::

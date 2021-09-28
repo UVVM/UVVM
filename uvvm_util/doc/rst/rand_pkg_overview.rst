@@ -148,6 +148,9 @@ min and max constraints are provided as well.
 **********************************************************************************************************************************
 Multi-method approach
 **********************************************************************************************************************************
+Using the single-method approach does not have any effect on the multi-method approach or vice-versa. However, for readability it 
+is not recommended to mix them.
+
 Constraints
 ==================================================================================================================================
 By using the following procedures, different combinations of constraints can be added for the ``randm()`` function. Note that when 
@@ -219,7 +222,9 @@ constraints: ``add_range_time()``, ``add_val_time()`` and ``excl_val_time()``.
 
 .. note::
 
-    There is no limit on the number of constraints that can be added.
+    * There is no limit on the number of constraints which can be added.
+    * The order in which the constraints are added does not matter.
+    * If a value is repeated in different "add" constraints, the probability of that value being selected will increase.
 
 .. caution::
 

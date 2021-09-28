@@ -740,11 +740,10 @@ Returns a random unsigned value. For more information on the probability distrib
 return unsigned (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random unsigned value. The unsigned constraints can be used for min and max values bigger than the integer's 32-bit range. 
-The overload without the length parameter uses the max_value length for the return value. For more information on the probability 
-distribution click :ref:`here <rand_pkg_distributions>`. ::
+If the length parameter is not used, the return value's length will be equal to the largest length of either min_value or max_value. 
+For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    unsigned := rand(min_value, max_value, [msg_id_panel])
-    unsigned := rand(length, min_value, max_value, [msg_id_panel])
+    unsigned := rand([length], min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -762,8 +761,8 @@ distribution click :ref:`here <rand_pkg_distributions>`. ::
 .. code-block::
 
     -- Examples:
-    rand_uns := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_uns := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
+    rand_uns := my_rand.rand(rand_uns'length, C_MIN_VALUE, v_max_value);
+    rand_uns := my_rand.rand(C_MIN_VALUE, v_max_value);
 
 
 .. _rand_sig:
@@ -821,11 +820,10 @@ Returns a random signed value. For more information on the probability distribut
 return signed (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random signed value. The signed constraints can be used for min and max values bigger than the integer's 32-bit range. 
-The overload without the length parameter uses the max_value length for the return value. For more information on the probability 
-distribution click :ref:`here <rand_pkg_distributions>`. ::
+If the length parameter is not used, the return value's length will be equal to the largest length of either min_value or max_value. 
+For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    signed := rand(min_value, max_value, [msg_id_panel])
-    signed := rand(length, min_value, max_value, [msg_id_panel])
+    signed := rand([length], min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -843,8 +841,8 @@ distribution click :ref:`here <rand_pkg_distributions>`. ::
 .. code-block::
 
     -- Examples:
-    rand_sign := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_sign := my_rand.rand(rand_sign'length, C_MIN_RANGE, v_max_range);
+    rand_sign := my_rand.rand(rand_sign'length, C_MIN_VALUE, v_max_value);
+    rand_sign := my_rand.rand(C_MIN_VALUE, v_max_value);
 
 
 .. _rand_slv:
@@ -903,11 +901,11 @@ Returns a random std_logic_vector value (interpreted as unsigned). For more info
 return std_logic_vector (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic_vector value (interpreted as unsigned). The std_logic_vector constraints can be used for min and max 
-values bigger than the integer's 32-bit range. The overload without the length parameter uses the max_value length for the return 
-value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
+values bigger than the integer's 32-bit range. If the length parameter is not used, the return value's length will be equal to the 
+largest length of either min_value or max_value. For more information on the probability distribution click 
+:ref:`here <rand_pkg_distributions>`. ::
 
-    std_logic_vector := rand(min_value, max_value, [msg_id_panel])
-    std_logic_vector := rand(length, min_value, max_value, [msg_id_panel])
+    std_logic_vector := rand([length], min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -925,8 +923,8 @@ value. For more information on the probability distribution click :ref:`here <ra
 .. code-block::
 
     -- Examples:
-    rand_slv := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_slv := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);
+    rand_slv := my_rand.rand(rand_slv'length, C_MIN_VALUE, v_max_value);
+    rand_slv := my_rand.rand(C_MIN_VALUE, v_max_value);
 
 
 .. _rand_sl:

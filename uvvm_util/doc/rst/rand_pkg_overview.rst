@@ -136,12 +136,14 @@ min and max constraints are provided as well.
 
 .. code-block::
 
-    rand_uns  := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_uns  := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
-    rand_sign := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_sign := my_rand.rand(rand_sign'length, C_MIN_RANGE, v_max_range);
-    rand_slv  := my_rand.rand(C_MIN_RANGE, v_max_range);                   -- SLV is interpreted as unsigned
-    rand_slv  := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);  -- SLV is interpreted as unsigned
+    rand_uns  := my_rand.rand(rand_uns'length, C_MIN_VALUE, v_max_value);
+    rand_sign := my_rand.rand(rand_sign'length, C_MIN_VALUE, v_max_value);
+    rand_slv  := my_rand.rand(rand_slv'length, C_MIN_VALUE, v_max_value);  -- SLV is interpreted as unsigned
+
+    -- In the following overloads, the length of the return value is equal to the largest length of the 2 parameters
+    rand_uns  := my_rand.rand(C_MIN_VALUE, v_max_value);
+    rand_sign := my_rand.rand(C_MIN_VALUE, v_max_value);
+    rand_slv  := my_rand.rand(C_MIN_VALUE, v_max_value); -- SLV is interpreted as unsigned
 
 **********************************************************************************************************************************
 Multi-method approach

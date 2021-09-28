@@ -703,17 +703,17 @@ rand()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value (or values for crossed bins) generated from the uncovered bins. Once all the bins have been covered, 
 it will return a random value among all the valid bins. Note that ignore and illegal bins will never be selected for randomization. 
-For a complete overview on Optimized Randomization click :ref:`here <optimized_randomization>`.::
+Additionally, the random value can be used to automatically sample coverage. For a complete overview on Optimized Randomization 
+click :ref:`here <optimized_randomization>`.::
 
-    integer        := rand(VOID)
-    integer        := rand(msg_id_panel)
-    integer_vector := rand(VOID)
-    integer_vector := rand(msg_id_panel)
+    integer        := rand(sampling, [msg_id_panel])
+    integer_vector := rand(sampling, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | sampling           | in     | :ref:`t_rand_sample_cov`     | Whether or not to sample coverage with the generated  |
+|          |                    |        |                              | random value.                                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -722,10 +722,8 @@ For a complete overview on Optimized Randomization click :ref:`here <optimized_r
 .. code-block::
 
     -- Examples:
-    addr := my_coverpoint.rand(VOID);
-    addr := my_coverpoint.rand(my_msg_id_panel);
-    addr_vec := my_coverpoint.rand(VOID);
-    addr_vec := my_coverpoint.rand(my_msg_id_panel);
+    addr     := my_coverpoint.rand(NO_SAMPLE_COV);
+    addr_vec := my_coverpoint.rand(SAMPLE_COV);
 
 
 set_rand_seeds()

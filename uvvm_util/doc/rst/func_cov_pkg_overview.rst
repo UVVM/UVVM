@@ -28,9 +28,9 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
 
       -- Sample the data
       while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
-        bus_addr <= my_coverpoint.rand(VOID);
+        bus_addr <= my_coverpoint.rand(SAMPLE_COV);
+        configure_addr(bus_addr);
         wait for C_CLK_PERIOD;
-        my_coverpoint.sample_coverage(bus_addr);
       end loop;
       
       -- Print the coverage report
@@ -84,14 +84,14 @@ combinations of values for *src_addr* and *dst_addr*.
     my_coverpoint.add_bins(bin(t_state'pos(IDLE)));
     my_coverpoint.add_bins(bin(t_state'pos(RUNNING)));
     my_coverpoint.sample_coverage(t_state'pos(fsm_state));
-    rand_state_int := my_coverpoint.rand(VOID);
+    rand_state_int := my_coverpoint.rand(NO_SAMPLE_COV);
     rand_state     <= t_state'val(rand_state_int);
 
     -- Example 2
     my_coverpoint.add_bins(bin(to_integer(unsigned'(x"00"))));
     my_coverpoint.add_bins(bin(to_integer(unsigned'(x"FF"))));
     my_coverpoint.sample_coverage(to_integer(address));
-    rand_addr_int := my_coverpoint.rand(VOID);
+    rand_addr_int := my_coverpoint.rand(NO_SAMPLE_COV);
     rand_addr     <= to_unsigned(rand_addr_int,rand_addr'length);
 
 **********************************************************************************************************************************

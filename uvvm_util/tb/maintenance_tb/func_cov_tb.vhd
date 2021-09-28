@@ -382,8 +382,7 @@ begin
 
       v_margin := integer(real(v_total_iterations)*0.15);
       for i in 1 to v_total_iterations loop
-        v_rand_val := coverpoint.rand(VOID);
-        coverpoint.sample_coverage(v_rand_val);
+        v_rand_val := coverpoint.rand(SAMPLE_COV);
 
         for j in v_test_bins'range loop
           if v_rand_val(0) = v_test_bins(j).value then
@@ -1597,7 +1596,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 50*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
+        v_value := v_coverpoint.rand(NO_SAMPLE_COV);
         v_coverpoint.sample_coverage(v_value);
       end loop;
 
@@ -1618,8 +1617,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
+        v_value := v_coverpoint.rand(SAMPLE_COV);
       end loop;
 
       check_bin(v_coverpoint, v_bin_idx, VAL, (200,201,202,203,204), v_min_hits, hits => v_min_hits);
@@ -1641,8 +1639,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
+        v_value := v_coverpoint.rand(SAMPLE_COV);
       end loop;
 
       check_bin(v_coverpoint, v_bin_idx, RAN, (300,309), v_min_hits, hits => v_min_hits);
@@ -1664,8 +1661,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*5*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
+        v_value := v_coverpoint.rand(SAMPLE_COV);
       end loop;
 
       check_bin(v_coverpoint, v_bin_idx, TRN, (400,402,404,406,408), v_min_hits, hits => v_min_hits);
@@ -1686,8 +1682,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to (3+5)*v_min_hits loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
+        v_value := v_coverpoint.rand(SAMPLE_COV);
       end loop;
 
       check_bin(v_coverpoint, v_bin_idx, VAL, 60,                    v_min_hits, hits => v_min_hits);
@@ -1703,8 +1698,7 @@ begin
 
       log(ID_SEQUENCER, "Calling rand() 1000 times");
       for i in 1 to 1000 loop
-        v_value := v_coverpoint.rand(VOID);
-        v_coverpoint.sample_coverage(v_value);
+        v_value := v_coverpoint.rand(SAMPLE_COV);
       end loop;
 
       -- By checking that the number of hits in the bins is greater than their minimum coverage,
@@ -1831,7 +1825,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 50*v_min_hits loop
-        v_values_x2 := v_cross_x2.rand(VOID);
+        v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
         v_cross_x2.sample_coverage(v_values_x2);
       end loop;
 
@@ -1852,8 +1846,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*v_min_hits loop
-        v_values_x2 := v_cross_x2.rand(VOID);
-        v_cross_x2.sample_coverage(v_values_x2);
+        v_values_x2 := v_cross_x2.rand(SAMPLE_COV);
       end loop;
 
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (200,201,202), (205,206,207), v_min_hits, hits => v_min_hits);
@@ -1875,8 +1868,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*v_min_hits loop
-        v_values_x2 := v_cross_x2.rand(VOID);
-        v_cross_x2.sample_coverage(v_values_x2);
+        v_values_x2 := v_cross_x2.rand(SAMPLE_COV);
       end loop;
 
       check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (300,304), (305,309), v_min_hits, hits => v_min_hits);
@@ -1898,8 +1890,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 3*5*v_min_hits loop
-        v_values_x2 := v_cross_x2.rand(VOID);
-        v_cross_x2.sample_coverage(v_values_x2);
+        v_values_x2 := v_cross_x2.rand(SAMPLE_COV);
       end loop;
 
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (400,402,404), (405,407,409), v_min_hits, hits => v_min_hits);
@@ -1920,8 +1911,7 @@ begin
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to (2+5*2)*v_min_hits loop
-        v_values_x2 := v_cross_x2.rand(VOID);
-        v_cross_x2.sample_coverage(v_values_x2);
+        v_values_x2 := v_cross_x2.rand(SAMPLE_COV);
       end loop;
 
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 60), (250,251,252,253,254), v_min_hits, hits => v_min_hits);
@@ -1937,8 +1927,7 @@ begin
 
       log(ID_SEQUENCER, "Calling rand() 1000 times");
       for i in 1 to 1000 loop
-        v_values_x2 := v_cross_x2.rand(VOID);
-        v_cross_x2.sample_coverage(v_values_x2);
+        v_values_x2 := v_cross_x2.rand(SAMPLE_COV);
       end loop;
 
       -- By checking that the number of hits in the bins is greater than their minimum coverage,
@@ -2100,10 +2089,10 @@ begin
 
       -- Randomize until a transition bin is generated
       while v_value /= 50 loop
-        v_value := v_coverpoint.rand(VOID);
+        v_value := v_coverpoint.rand(NO_SAMPLE_COV);
       end loop;
       for i in 1 to 5 loop
-        v_value := v_coverpoint.rand(VOID);
+        v_value := v_coverpoint.rand(NO_SAMPLE_COV);
       end loop;
 
       v_coverpoint.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 30.19%
@@ -2154,10 +2143,10 @@ begin
 
       -- Randomize until a transition bin is generated
       while v_values_x2(0) /= 50 and v_values_x2(1) /= 1050 loop
-        v_values_x2 := v_cross_x2.rand(VOID);
+        v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
       end loop;
       for i in 1 to 2 loop
-        v_values_x2 := v_cross_x2.rand(VOID);
+        v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
       end loop;
 
       v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 30.19%
@@ -2232,10 +2221,10 @@ begin
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Check randomization state
-      check_value(v_coverpoint.rand(VOID), 56, ERROR, "Checking rand transition");
-      check_value(v_coverpoint.rand(VOID), 57, ERROR, "Checking rand transition");
-      check_value(v_coverpoint.rand(VOID), 58, ERROR, "Checking rand transition");
-      check_value(v_coverpoint.rand(VOID), 59, ERROR, "Checking rand transition");
+      check_value(v_coverpoint.rand(NO_SAMPLE_COV), 56, ERROR, "Checking rand transition");
+      check_value(v_coverpoint.rand(NO_SAMPLE_COV), 57, ERROR, "Checking rand transition");
+      check_value(v_coverpoint.rand(NO_SAMPLE_COV), 58, ERROR, "Checking rand transition");
+      check_value(v_coverpoint.rand(NO_SAMPLE_COV), 59, ERROR, "Checking rand transition");
 
       -- Add extra bins to check the bin indexes are stored correctly
       v_coverpoint.add_bins(bin(1000));
@@ -2307,13 +2296,13 @@ begin
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Check randomization state
-      v_values_x2 := v_cross_x2.rand(VOID);
+      v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
       check_value(v_values_x2(0), 53, ERROR, "Checking rand transition");
       check_value(v_values_x2(1), 1053, ERROR, "Checking rand transition");
-      v_values_x2 := v_cross_x2.rand(VOID);
+      v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
       check_value(v_values_x2(0), 54, ERROR, "Checking rand transition");
       check_value(v_values_x2(1), 1054, ERROR, "Checking rand transition");
-      v_values_x2 := v_cross_x2.rand(VOID);
+      v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
       check_value(v_values_x2(0), 55, ERROR, "Checking rand transition");
       check_value(v_values_x2(1), 1055, ERROR, "Checking rand transition");
 
@@ -2618,20 +2607,16 @@ begin
       log(ID_LOG_HDR, "Testing overall reports");
       ------------------------------------------------------------
       while not(v_cross_x2.coverage_completed(BINS_AND_HITS)) loop
-        v_values_x2 := v_cross_x2.rand(VOID);
-        v_cross_x2.sample_coverage(v_values_x2);
+        v_values_x2 := v_cross_x2.rand(SAMPLE_COV);
       end loop;
       while not(v_cross_x3.coverage_completed(BINS_AND_HITS)) loop
-        v_values_x3 := v_cross_x3.rand(VOID);
-        v_cross_x3.sample_coverage(v_values_x3);
+        v_values_x3 := v_cross_x3.rand(SAMPLE_COV);
       end loop;
       while not(v_cross_x2_b.coverage_completed(BINS_AND_HITS)) loop
-        v_values_x2 := v_cross_x2_b.rand(VOID);
-        v_cross_x2_b.sample_coverage(v_values_x2);
+        v_values_x2 := v_cross_x2_b.rand(SAMPLE_COV);
       end loop;
       while not(v_cross_x3_b.coverage_completed(BINS_AND_HITS)) loop
-        v_values_x3 := v_cross_x3_b.rand(VOID);
-        v_cross_x3_b.sample_coverage(v_values_x3);
+        v_values_x3 := v_cross_x3_b.rand(SAMPLE_COV);
       end loop;
 
       fc_report_overall_coverage(VERBOSE);
@@ -2930,8 +2915,8 @@ begin
       v_coverpoint.delete_coverpoint(VOID);
 
       increment_expected_alerts_and_stop_limit(TB_ERROR,5);
-      v_value             := v_coverpoint.rand(VOID);
-      v_values_x2(0 to 0) := v_coverpoint.rand(VOID);
+      v_value             := v_coverpoint.rand(NO_SAMPLE_COV);
+      v_values_x2(0 to 0) := v_coverpoint.rand(NO_SAMPLE_COV);
       v_coverpoint.sample_coverage(5);
       v_coverpoint.sample_coverage((5,6,7));
       v_coverpoint.write_coverage_db(GC_FILE_PATH & "file.txt");
@@ -3057,8 +3042,8 @@ begin
       v_coverpoint.write_coverage_db(GC_FILE_PATH & "file.txt");
 
       increment_expected_alerts_and_stop_limit(TB_ERROR,4);
-      v_value             := v_coverpoint.rand(VOID);
-      v_values_x2(0 to 0) := v_coverpoint.rand(VOID);
+      v_value             := v_coverpoint.rand(NO_SAMPLE_COV);
+      v_values_x2(0 to 0) := v_coverpoint.rand(NO_SAMPLE_COV);
       v_coverpoint.sample_coverage(5);
       v_coverpoint.sample_coverage((5,6,7));
 

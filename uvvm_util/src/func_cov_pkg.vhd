@@ -37,6 +37,7 @@ package func_cov_pkg is
   type t_rand_weight_visibility is (SHOW_RAND_WEIGHT, HIDE_RAND_WEIGHT);
   type t_coverage_type is (BINS, HITS, BINS_AND_HITS);
   type t_overall_coverage_type is (COVPTS, BINS, HITS);
+  type t_rand_sample_cov is (SAMPLE_COV, NO_SAMPLE_COV);
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
 
   type t_new_bin is record
@@ -462,19 +463,13 @@ package func_cov_pkg is
     -- Optimized Randomization
     ------------------------------------------------------------
     impure function rand(
-      constant VOID : t_void)
+      constant sampling      : t_rand_sample_cov;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer;
 
     impure function rand(
-      constant msg_id_panel : t_msg_id_panel)
-    return integer;
-
-    impure function rand(
-      constant VOID : t_void)
-    return integer_vector;
-
-    impure function rand(
-      constant msg_id_panel  : t_msg_id_panel;
+      constant sampling      : t_rand_sample_cov;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string := "")
     return integer_vector;
 
@@ -2296,6 +2291,7 @@ package body func_cov_pkg is
       constant C_LOCAL_CALL  : string := "sample_coverage(" & to_string(value) & ")";
       variable v_values      : integer_vector(0 to 0) := (0 => value);
     begin
+      log(ID_FUNC_COV_SAMPLE, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       sample_coverage(v_values, msg_id_panel, C_LOCAL_CALL);
     end procedure;
 
@@ -2316,7 +2312,9 @@ package body func_cov_pkg is
         DEALLOCATE(v_proc_call);
         return;
       end if;
-      log(ID_FUNC_COV_SAMPLE, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      if ext_proc_call = "" then -- Do not print log message when being called from another method
+        log(ID_FUNC_COV_SAMPLE, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      end if;
 
       if priv_num_bins_crossed /= values'length then
         alert(TB_FAILURE, v_proc_call.all & "=> Number of values does not match the number of crossed bins", priv_scope);
@@ -2680,21 +2678,13 @@ package body func_cov_pkg is
     -- Optimized Randomization
     ------------------------------------------------------------
     impure function rand(
-      constant VOID : t_void)
+      constant sampling      : t_rand_sample_cov;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer is
-      variable v_ret : integer;
-    begin
-      v_ret := rand(shared_msg_id_panel);
-      return v_ret;
-    end function;
-
-    impure function rand(
-      constant msg_id_panel  : t_msg_id_panel)
-    return integer is
-      constant C_LOCAL_CALL  : string := "rand()";
+      constant C_LOCAL_CALL  : string := "rand(" & to_upper(to_string(sampling)) & ")";
       variable v_ret         : integer_vector(0 to 0);
     begin
-      v_ret := rand(msg_id_panel, C_LOCAL_CALL);
+      v_ret := rand(sampling, msg_id_panel, C_LOCAL_CALL);
       if priv_num_bins_crossed /= C_UNINITIALIZED then
         log(ID_FUNC_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret(0)), priv_scope, msg_id_panel);
       end if;
@@ -2702,19 +2692,11 @@ package body func_cov_pkg is
     end function;
 
     impure function rand(
-      constant VOID : t_void)
-    return integer_vector is
-      variable v_ret : integer_vector(0 to MAXIMUM(priv_num_bins_crossed,1)-1);
-    begin
-      v_ret := rand(shared_msg_id_panel);
-      return v_ret;
-    end function;
-
-    impure function rand(
-      constant msg_id_panel  : t_msg_id_panel;
+      constant sampling      : t_rand_sample_cov;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : string := "")
     return integer_vector is
-      constant C_LOCAL_CALL      : string := "rand()";
+      constant C_LOCAL_CALL      : string := "rand(" & to_upper(to_string(sampling)) & ")";
       variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bins_idx-1);
       variable v_acc_weight      : integer := 0;
       variable v_values_vec      : integer_vector(0 to C_FC_MAX_NUM_BIN_VALUES-1);
@@ -2793,8 +2775,11 @@ package body func_cov_pkg is
         end if;
       end loop;
 
-      -- Do not print log message when being called from another function
-      if ext_proc_call = "" then
+      if sampling = SAMPLE_COV then
+        sample_coverage(v_ret, msg_id_panel, C_LOCAL_CALL);
+      end if;
+
+      if ext_proc_call = "" then -- Do not print log message when being called from another method
         log(ID_FUNC_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       end if;
       return v_ret;

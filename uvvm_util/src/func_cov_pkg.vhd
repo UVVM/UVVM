@@ -2702,10 +2702,12 @@ package body func_cov_pkg is
     return integer_vector is
       constant C_LOCAL_CALL      : string := "rand(" & to_upper(to_string(sampling)) & ")";
       variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bins_idx-1);
-      variable v_acc_weight      : integer := 0;
+      variable v_acc_weight      : natural := 0;
       variable v_values_vec      : integer_vector(0 to C_FC_MAX_NUM_BIN_VALUES-1);
-      variable v_bin_idx         : integer;
+      variable v_bin_idx         : natural;
       variable v_ret             : integer_vector(0 to MAXIMUM(priv_num_bins_crossed,1)-1);
+      variable v_hits            : natural := 0;
+      variable v_iteration       : natural := 0;
     begin
       if priv_num_bins_crossed = C_UNINITIALIZED then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Coverpoint does not contain any bins", priv_scope);
@@ -2717,23 +2719,23 @@ package body func_cov_pkg is
         v_bin_idx := priv_rand_transition_bin_idx;
       else
         -- Assign each bin a randomization weight
-        for i in 0 to priv_bins_idx-1 loop
-          v_bin_weight_list(i).value := i;
-          if priv_bins(i).hits < get_total_min_hits(priv_bins(i).min_hits) then
-            v_bin_weight_list(i).weight := get_total_min_hits(priv_bins(i).min_hits) - priv_bins(i).hits when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else
-                                           priv_bins(i).rand_weight;
-          else
-            v_bin_weight_list(i).weight := 0;
-          end if;
-          v_acc_weight := v_acc_weight + v_bin_weight_list(i).weight;
-        end loop;
-        -- When all bins have reached their min_hits re-enable valid bins for selection
-        if v_acc_weight = 0 then
+        while v_acc_weight = 0 loop
           for i in 0 to priv_bins_idx-1 loop
-            v_bin_weight_list(i).weight := get_total_min_hits(priv_bins(i).min_hits) when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else
-                                           priv_bins(i).rand_weight;
+            v_bin_weight_list(i).value := i;
+            v_hits := priv_bins(i).hits - (v_iteration * get_total_min_hits(priv_bins(i).min_hits));
+            if v_hits < get_total_min_hits(priv_bins(i).min_hits) then
+              v_bin_weight_list(i).weight := get_total_min_hits(priv_bins(i).min_hits) - v_hits when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else
+                                             priv_bins(i).rand_weight;
+            else
+              v_bin_weight_list(i).weight := 0;
+            end if;
+            v_acc_weight := v_acc_weight + v_bin_weight_list(i).weight;
           end loop;
-        end if;
+          -- When all the bins have reached their min_hits, the accumulated weight will be 0 and
+          -- a new iteration will be done where all the bins are uncovered again by simulating
+          -- the number of hits are cleared
+          v_iteration := v_iteration + 1;
+        end loop;
 
         -- Choose a random bin index
         v_bin_idx := priv_rand_gen.rand_val_weight(v_bin_weight_list, msg_id_panel);

@@ -33,6 +33,7 @@ architecture func of func_cov_tb is
 
   type t_integer_array is array (natural range <>) of integer_vector;
   type t_cov_bin_type_array is array (natural range <>) of t_cov_bin_type;
+  type t_weight_type is (ADAPTIVE, EXPLICIT);
 
   shared variable v_coverpoint   : t_coverpoint;
   shared variable v_coverpoint_b : t_coverpoint;
@@ -344,11 +345,12 @@ begin
         C_TB_SCOPE_DEFAULT, caller_name => C_PROC_NAME);
     end procedure;
 
-    -- Generates random numbers from the uncovered bins and samples the coverpoint.
-    -- Checks that the randomization follows the weighted distribution by checking
-    -- at which iteration number the bin was covered.
+    -- Generates and samples enough random numbers to cover the min_hits for all the valid bins.
+    -- Checks that the randomization follows the weighted distribution by checking at which
+    -- iteration number each bin was covered.
     procedure randomize_and_check_distribution(
       variable coverpoint            : inout t_coverpoint;
+      constant weight_type           : in    t_weight_type;
       constant bin_covered_iteration : in    integer_vector) is
       type t_test_bin is record
         value     : natural;
@@ -359,28 +361,28 @@ begin
       type t_test_bin_array is array (natural range <>) of t_test_bin;
       constant C_PROC_NAME        : string := "randomize_and_check_distribution";
       variable v_bin_vector       : t_cov_bin_vector(0 to coverpoint.get_num_valid_bins(VOID)-1);
+      variable v_hits_goal        : natural := coverpoint.get_hits_coverage_goal(VOID);
       variable v_test_bins        : t_test_bin_array(0 to bin_covered_iteration'length-1) := (others => (others => 0));
       variable v_idx              : natural := 0;
       variable v_total_iterations : natural := 0;
       variable v_margin           : natural;
       variable v_rand_val         : integer_vector(0 to coverpoint.get_num_bins_crossed(VOID)-1);
     begin
-      v_bin_vector := coverpoint.get_valid_bins(VOID);
-
       -- Copy the necessary information to the test vector
+      v_bin_vector := coverpoint.get_valid_bins(VOID);
       for i in 0 to v_bin_vector'length-1 loop
-        -- We assume that only the new bins meant for the current test will have 0 hits
-        if v_bin_vector(i).hits = 0 then
-          check_value(v_idx < bin_covered_iteration'length, TB_ERROR, "bin_covered_iteration length must be the same size as the number of bins to randomize", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
-          v_test_bins(v_idx).value     := v_bin_vector(i).cross_bins(0).values(0); -- Only use the first value to simplify the check (we assume all bins first values are different)
-          v_test_bins(v_idx).min_hits  := v_bin_vector(i).min_hits;
-          v_test_bins(v_idx).iteration := bin_covered_iteration(v_idx);
-          v_total_iterations := v_total_iterations + v_bin_vector(i).min_hits;
-          v_idx := v_idx + 1;
-        end if;
+        check_value(v_idx < bin_covered_iteration'length, TB_ERROR, "bin_covered_iteration length must be the same size as the number of bins to randomize", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
+        v_test_bins(v_idx).value     := v_bin_vector(i).cross_bins(0).values(0); -- Only use the first value to simplify the check (we assume all bins first values are different)
+        v_test_bins(v_idx).min_hits  := (v_bin_vector(i).min_hits * v_hits_goal) / 100;
+        v_test_bins(v_idx).iteration := (bin_covered_iteration(v_idx) * v_hits_goal) / 100;
+        v_total_iterations           := v_total_iterations + v_test_bins(v_idx).min_hits;
+        v_idx := v_idx + 1;
       end loop;
+      check_value(v_idx, bin_covered_iteration'length, TB_ERROR, "bin_covered_iteration length must be the same size as the number of bins to randomize", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
 
-      v_margin := integer(real(v_total_iterations)*0.15);
+      log("Generating " & to_string(v_total_iterations) & " random values");
+      v_margin := integer(real(v_total_iterations)*0.10) when weight_type = ADAPTIVE else
+                  integer(real(v_total_iterations)*0.15); -- EXPLICIT
       for i in 1 to v_total_iterations loop
         v_rand_val := coverpoint.rand(SAMPLE_COV);
 
@@ -394,6 +396,11 @@ begin
             v_test_bins(j).counter := 0;
           end if;
         end loop;
+      end loop;
+
+      -- Check all bins were covered with the exact number of hits
+      for i in v_test_bins'range loop
+        check_value(v_test_bins(i).counter, 0, ERROR, "Bin value was generated more times than expected", C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => C_PROC_NAME);
       end loop;
     end procedure;
 
@@ -1738,22 +1745,52 @@ begin
 
       -- The adaptive randomization weight will ensure that all bins are covered
       -- almost at the same time, i.e. around the same number of iterations.
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(1), 100);
       v_coverpoint_b.add_bins(bin(2), 100);
       v_coverpoint_b.add_bins(bin(3), 100);
       v_coverpoint_b.add_bins(bin(4), 100);
-      randomize_and_check_distribution(v_coverpoint_b, (400,400,400,400));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (400,400,400,400));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (400,400,400,400));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (400,400,400,400));
 
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(5), 100);
       v_coverpoint_b.add_bins(bin(6), 200);
       v_coverpoint_b.add_bins(bin(7), 300);
       v_coverpoint_b.add_bins(bin(8), 400);
-      randomize_and_check_distribution(v_coverpoint_b, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (1000,1000,1000,1000));
 
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(9), 500);
       v_coverpoint_b.add_bins(bin(10), 50);
       v_coverpoint_b.add_bins(bin(11), 50);
-      randomize_and_check_distribution(v_coverpoint_b, (600,600,600));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (600,600,600));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (600,600,600));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (600,600,600));
+
+      log(ID_LOG_HDR, "Testing randomization weight - Adaptive (using hits goal)");
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_b.set_hits_coverage_goal(200);
+      v_coverpoint_b.add_bins(bin(1), 100);
+      v_coverpoint_b.add_bins(bin(2), 100);
+      v_coverpoint_b.add_bins(bin(3), 100);
+      v_coverpoint_b.add_bins(bin(4), 100);
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (400,400,400,400));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (400,400,400,400));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (400,400,400,400));
+
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_b.set_hits_coverage_goal(50);
+      v_coverpoint_b.add_bins(bin(5), 100);
+      v_coverpoint_b.add_bins(bin(6), 200);
+      v_coverpoint_b.add_bins(bin(7), 300);
+      v_coverpoint_b.add_bins(bin(8), 400);
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_coverpoint_b, ADAPTIVE, (1000,1000,1000,1000));
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Explicit");
@@ -1765,40 +1802,79 @@ begin
       -- Note that when a bin has been covered it will no longer be selected
       -- for randomization, so the probability for the other bins will change,
       -- which needs to be taken into account in the formula.
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(12), 100, 1);
       v_coverpoint_b.add_bins(bin(13), 100, 1);
       v_coverpoint_b.add_bins(bin(14), 100, 1);
       v_coverpoint_b.add_bins(bin(15), 100, 1);
-      randomize_and_check_distribution(v_coverpoint_b, (400,400,400,400));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,400,400,400));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,400,400,400));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,400,400,400));
 
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(16), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
       v_coverpoint_b.add_bins(bin(17), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
       v_coverpoint_b.add_bins(bin(18), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
       v_coverpoint_b.add_bins(bin(19), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
-      randomize_and_check_distribution(v_coverpoint_b, (400,350,300,250));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,350,300,250));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,350,300,250));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,350,300,250));
 
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(20), 100, 100); -- prob=0.50               iteration = 100/0.5 = 200
       v_coverpoint_b.add_bins(bin(21), 100, 50);  -- prob=0.25               iteration = 300
       v_coverpoint_b.add_bins(bin(22), 100, 50);  -- prob=0.25               iteration = 300
-      randomize_and_check_distribution(v_coverpoint_b, (200,300,300));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (200,300,300));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (200,300,300));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (200,300,300));
 
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(23), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
       v_coverpoint_b.add_bins(bin(24), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
       v_coverpoint_b.add_bins(bin(25), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
       v_coverpoint_b.add_bins(bin(26), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
-      randomize_and_check_distribution(v_coverpoint_b, (400,700,900,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,700,900,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,700,900,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,700,900,1000));
 
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(27), 100, 1);
       v_coverpoint_b.add_bins(bin(28), 200, 2);
       v_coverpoint_b.add_bins(bin(29), 300, 3);
       v_coverpoint_b.add_bins(bin(30), 400, 4);
-      randomize_and_check_distribution(v_coverpoint_b, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (1000,1000,1000,1000));
 
+      v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_b.add_bins(bin(27), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
       v_coverpoint_b.add_bins(bin(28), 200, 3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
       v_coverpoint_b.add_bins(bin(29), 300, 2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
       v_coverpoint_b.add_bins(bin(30), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
-      randomize_and_check_distribution(v_coverpoint_b, (250,500,750,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (250,500,750,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (250,500,750,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (250,500,750,1000));
+
+      log(ID_LOG_HDR, "Testing randomization weight - Explicit (using hits goal)");
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_b.set_hits_coverage_goal(200);
+      v_coverpoint_b.add_bins(bin(16), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
+      v_coverpoint_b.add_bins(bin(17), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
+      v_coverpoint_b.add_bins(bin(18), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
+      v_coverpoint_b.add_bins(bin(19), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,350,300,250));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,350,300,250));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,350,300,250));
+
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_b.set_hits_coverage_goal(50);
+      v_coverpoint_b.add_bins(bin(23), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
+      v_coverpoint_b.add_bins(bin(24), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
+      v_coverpoint_b.add_bins(bin(25), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
+      v_coverpoint_b.add_bins(bin(26), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,700,900,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,700,900,1000));
+      randomize_and_check_distribution(v_coverpoint_b, EXPLICIT, (400,700,900,1000));
 
       v_coverpoint_b.report_coverage(VERBOSE);
 
@@ -1967,22 +2043,52 @@ begin
 
       -- The adaptive randomization weight will ensure that all bins are covered
       -- almost at the same time, i.e. around the same number of iterations.
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(1), bin(100), 100);
       v_cross_x2_b.add_cross(bin(2), bin(100), 100);
       v_cross_x2_b.add_cross(bin(3), bin(100), 100);
       v_cross_x2_b.add_cross(bin(4), bin(100), 100);
-      randomize_and_check_distribution(v_cross_x2_b, (400,400,400,400));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (400,400,400,400));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (400,400,400,400));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (400,400,400,400));
 
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(5), bin(200), 100);
       v_cross_x2_b.add_cross(bin(6), bin(200), 200);
       v_cross_x2_b.add_cross(bin(7), bin(200), 300);
       v_cross_x2_b.add_cross(bin(8), bin(200), 400);
-      randomize_and_check_distribution(v_cross_x2_b, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (1000,1000,1000,1000));
 
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(9), bin(300), 500);
       v_cross_x2_b.add_cross(bin(10), bin(300), 50);
       v_cross_x2_b.add_cross(bin(11), bin(300), 50);
-      randomize_and_check_distribution(v_cross_x2_b, (600,600,600));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (600,600,600));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (600,600,600));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (600,600,600));
+
+      log(ID_LOG_HDR, "Testing randomization weight - Adaptive (using hits goal)");
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x2_b.set_hits_coverage_goal(200);
+      v_cross_x2_b.add_cross(bin(1), bin(100), 100);
+      v_cross_x2_b.add_cross(bin(2), bin(100), 100);
+      v_cross_x2_b.add_cross(bin(3), bin(100), 100);
+      v_cross_x2_b.add_cross(bin(4), bin(100), 100);
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (400,400,400,400));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (400,400,400,400));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (400,400,400,400));
+
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x2_b.set_hits_coverage_goal(50);
+      v_cross_x2_b.add_cross(bin(5), bin(200), 100);
+      v_cross_x2_b.add_cross(bin(6), bin(200), 200);
+      v_cross_x2_b.add_cross(bin(7), bin(200), 300);
+      v_cross_x2_b.add_cross(bin(8), bin(200), 400);
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_cross_x2_b, ADAPTIVE, (1000,1000,1000,1000));
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Explicit");
@@ -1994,40 +2100,79 @@ begin
       -- Note that when a bin has been covered it will no longer be selected
       -- for randomization, so the probability for the other bins will change,
       -- which needs to be taken into account in the formula.
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(12), bin(400), 100, 1);
       v_cross_x2_b.add_cross(bin(13), bin(400), 100, 1);
       v_cross_x2_b.add_cross(bin(14), bin(400), 100, 1);
       v_cross_x2_b.add_cross(bin(15), bin(400), 100, 1);
-      randomize_and_check_distribution(v_cross_x2_b, (400,400,400,400));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,400,400,400));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,400,400,400));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,400,400,400));
 
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(16), bin(500), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
       v_cross_x2_b.add_cross(bin(17), bin(500), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
       v_cross_x2_b.add_cross(bin(18), bin(500), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
       v_cross_x2_b.add_cross(bin(19), bin(500), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
-      randomize_and_check_distribution(v_cross_x2_b, (400,350,300,250));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,350,300,250));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,350,300,250));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,350,300,250));
 
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(20), bin(600), 100, 100); -- prob=0.50               iteration = 100/0.5 = 200
       v_cross_x2_b.add_cross(bin(21), bin(600), 100, 50);  -- prob=0.25               iteration = 300
       v_cross_x2_b.add_cross(bin(22), bin(600), 100, 50);  -- prob=0.25               iteration = 300
-      randomize_and_check_distribution(v_cross_x2_b, (200,300,300));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (200,300,300));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (200,300,300));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (200,300,300));
 
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(23), bin(700), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
       v_cross_x2_b.add_cross(bin(24), bin(700), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
       v_cross_x2_b.add_cross(bin(25), bin(700), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
       v_cross_x2_b.add_cross(bin(26), bin(700), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
-      randomize_and_check_distribution(v_cross_x2_b, (400,700,900,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,700,900,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,700,900,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,700,900,1000));
 
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(27), bin(800), 100, 1);
       v_cross_x2_b.add_cross(bin(28), bin(800), 200, 2);
       v_cross_x2_b.add_cross(bin(29), bin(800), 300, 3);
       v_cross_x2_b.add_cross(bin(30), bin(800), 400, 4);
-      randomize_and_check_distribution(v_cross_x2_b, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (1000,1000,1000,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (1000,1000,1000,1000));
 
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_cross_x2_b.add_cross(bin(27), bin(900), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
       v_cross_x2_b.add_cross(bin(28), bin(900), 200, 3);   -- prob=0.30->0.50         iteration = 250 + (200 - 250*0.3)/0.5 = 500
       v_cross_x2_b.add_cross(bin(29), bin(900), 300, 2);   -- prob=0.20->0.33->0.66   iteration = 500 + (300 - 250*0.2-(500-250)*0.33)/0.66 = 750
       v_cross_x2_b.add_cross(bin(30), bin(900), 400, 1);   -- prob=0.10->0.16->0.33   iteration = 1000
-      randomize_and_check_distribution(v_cross_x2_b, (250,500,750,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (250,500,750,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (250,500,750,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (250,500,750,1000));
+
+      log(ID_LOG_HDR, "Testing randomization weight - Explicit (using hits goal)");
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x2_b.set_hits_coverage_goal(200);
+      v_cross_x2_b.add_cross(bin(16), bin(500), 100, 1);   -- prob=0.10->0.16->0.33   iteration = 400
+      v_cross_x2_b.add_cross(bin(17), bin(500), 100, 2);   -- prob=0.20->0.33->0.66   iteration = 300 + (100 - 250*0.2-(300-250)*0.33)/0.66 = 350
+      v_cross_x2_b.add_cross(bin(18), bin(500), 100, 3);   -- prob=0.30->0.50         iteration = 250 + (100 - 250*0.3)/0.5 = 300
+      v_cross_x2_b.add_cross(bin(19), bin(500), 100, 4);   -- prob=0.40               iteration = 100/0.4 = 250
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,350,300,250));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,350,300,250));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,350,300,250));
+
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x2_b.set_hits_coverage_goal(50);
+      v_cross_x2_b.add_cross(bin(23), bin(700), 100, 1);   -- prob=0.25               iteration = 100/0.25 = 400
+      v_cross_x2_b.add_cross(bin(24), bin(700), 200, 1);   -- prob=0.25->0.33         iteration = 400 + (200 - 400*0.25)/0.33 = 700
+      v_cross_x2_b.add_cross(bin(25), bin(700), 300, 1);   -- prob=0.25->0.33->0.50   iteration = 700 + (300 - 400*0.25-(700-400)*0.33)/0.5 = 900
+      v_cross_x2_b.add_cross(bin(26), bin(700), 400, 1);   -- prob=0.25->0.33->0.50   iteration = 1000
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,700,900,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,700,900,1000));
+      randomize_and_check_distribution(v_cross_x2_b, EXPLICIT, (400,700,900,1000));
 
       v_cross_x2_b.report_coverage(VERBOSE);
 

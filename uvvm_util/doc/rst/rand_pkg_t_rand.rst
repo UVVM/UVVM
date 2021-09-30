@@ -1215,7 +1215,7 @@ values bigger than the integer’s 32-bit range. ::
 add_range_signed()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range which will be included in the randomized values. This procedure can be used for min and max 
-values bigger than the integer’s 32-bit range. ::
+values bigger than the integer’s 32-bit range. **Not included in Beta release.** ::
 
     add_range_signed(min_value, max_value, [msg_id_panel])
 
@@ -1725,7 +1725,7 @@ Returns a random real value using the configured constraints. For more informati
 return time
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random time value using the configured constraints. For more information on the probability distribution click 
-:ref:`here <rand_pkg_distributions>`. ::
+:ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
 
     time := randm(VOID)
     time := randm(msg_id_panel)
@@ -1780,7 +1780,7 @@ click :ref:`here <rand_pkg_distributions>`. ::
 return real_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random real values using the configured constraints. For more information on the probability distribution 
-click :ref:`here <rand_pkg_distributions>`. ::
+click :ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
 
     real_vector := randm(length, [msg_id_panel])
 
@@ -1807,7 +1807,7 @@ click :ref:`here <rand_pkg_distributions>`. ::
 return time_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values using the configured constraints. For more information on the probability distribution 
-click :ref:`here <rand_pkg_distributions>`. ::
+click :ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
 
     time_vector := randm(length, [msg_id_panel])
 
@@ -1865,7 +1865,7 @@ Returns a random unsigned value using the configured constraints. For more infor
 return signed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random signed value using the configured constraints. For more information on the probability distribution click 
-:ref:`here <rand_pkg_distributions>`. ::
+:ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
 
     signed := randm(length, [msg_id_panel])
 
@@ -1896,7 +1896,7 @@ Returns a random signed value using the configured constraints. For more informa
 return std_logic_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic_vector value (interpreted as unsigned) using the configured constraints. For more information on the 
-probability distribution click :ref:`here <rand_pkg_distributions>`. ::
+probability distribution click :ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
 
     std_logic_vector := randm(length, [msg_id_panel])
 

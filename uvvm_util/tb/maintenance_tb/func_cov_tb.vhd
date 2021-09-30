@@ -44,6 +44,7 @@ architecture func of func_cov_tb is
   shared variable v_cross_x3     : t_coverpoint;
   shared variable v_cross_x3_b   : t_coverpoint;
   shared variable v_cross_x4     : t_coverpoint;
+  shared variable v_cross_x5     : t_coverpoint;
 
   constant C_ADAPTIVE_WEIGHT : integer := -1;
   constant C_NULL            : integer := integer'left;
@@ -162,6 +163,21 @@ begin
       variable coverpoint     : inout t_coverpoint;
       variable bin_idx        : inout natural;
       constant contains       : in    t_cov_bin_type_array;
+      constant values         : in    t_integer_array;
+      constant min_hits       : in    natural := 1;
+      constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
+      constant name           : in    string  := "";
+      constant hits           : in    natural := 0) is
+      constant C_PROC_NAME : string := "check_cross_bin";
+    begin
+      check_bin(coverpoint, bin_idx, contains, values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
+    end procedure;
+
+    -- Overload for crossed bins
+    procedure check_cross_bin(
+      variable coverpoint     : inout t_coverpoint;
+      variable bin_idx        : inout natural;
+      constant contains       : in    t_cov_bin_type_array;
       constant values_1       : in    integer_vector;
       constant values_2       : in    integer_vector;
       constant min_hits       : in    natural := 1;
@@ -169,7 +185,7 @@ begin
       constant name           : in    string  := "";
       constant hits           : in    natural := 0) is
       constant C_PROC_NAME : string := "check_cross_bin";
-      variable v_values    : t_integer_array(0 to 1)(0 to MAXIMUM(values_1'length,values_2'length)-1) := (others => (others => C_NULL));
+      variable v_values    : t_integer_array(0 to 1)(0 to C_FC_MAX_NUM_BIN_VALUES-1) := (others => (others => C_NULL));
     begin
       v_values(0)(0 to values_1'length-1) := values_1;
       v_values(1)(0 to values_2'length-1) := values_2;
@@ -181,14 +197,68 @@ begin
       variable coverpoint     : inout t_coverpoint;
       variable bin_idx        : inout natural;
       constant contains       : in    t_cov_bin_type_array;
-      constant values         : in    t_integer_array;
+      constant values_1       : in    integer_vector;
+      constant values_2       : in    integer_vector;
+      constant values_3       : in    integer_vector;
       constant min_hits       : in    natural := 1;
       constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
       constant name           : in    string  := "";
       constant hits           : in    natural := 0) is
       constant C_PROC_NAME : string := "check_cross_bin";
+      variable v_values    : t_integer_array(0 to 2)(0 to C_FC_MAX_NUM_BIN_VALUES-1) := (others => (others => C_NULL));
     begin
-      check_bin(coverpoint, bin_idx, contains, values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
+      v_values(0)(0 to values_1'length-1) := values_1;
+      v_values(1)(0 to values_2'length-1) := values_2;
+      v_values(2)(0 to values_3'length-1) := values_3;
+      check_bin(coverpoint, bin_idx, contains, v_values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
+    end procedure;
+
+    -- Overload for crossed bins
+    procedure check_cross_bin(
+      variable coverpoint     : inout t_coverpoint;
+      variable bin_idx        : inout natural;
+      constant contains       : in    t_cov_bin_type_array;
+      constant values_1       : in    integer_vector;
+      constant values_2       : in    integer_vector;
+      constant values_3       : in    integer_vector;
+      constant values_4       : in    integer_vector;
+      constant min_hits       : in    natural := 1;
+      constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
+      constant name           : in    string  := "";
+      constant hits           : in    natural := 0) is
+      constant C_PROC_NAME : string := "check_cross_bin";
+      variable v_values    : t_integer_array(0 to 3)(0 to C_FC_MAX_NUM_BIN_VALUES-1) := (others => (others => C_NULL));
+    begin
+      v_values(0)(0 to values_1'length-1) := values_1;
+      v_values(1)(0 to values_2'length-1) := values_2;
+      v_values(2)(0 to values_3'length-1) := values_3;
+      v_values(3)(0 to values_4'length-1) := values_4;
+      check_bin(coverpoint, bin_idx, contains, v_values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
+    end procedure;
+
+    -- Overload for crossed bins
+    procedure check_cross_bin(
+      variable coverpoint     : inout t_coverpoint;
+      variable bin_idx        : inout natural;
+      constant contains       : in    t_cov_bin_type_array;
+      constant values_1       : in    integer_vector;
+      constant values_2       : in    integer_vector;
+      constant values_3       : in    integer_vector;
+      constant values_4       : in    integer_vector;
+      constant values_5       : in    integer_vector;
+      constant min_hits       : in    natural := 1;
+      constant rand_weight    : in    integer := C_ADAPTIVE_WEIGHT;
+      constant name           : in    string  := "";
+      constant hits           : in    natural := 0) is
+      constant C_PROC_NAME : string := "check_cross_bin";
+      variable v_values    : t_integer_array(0 to 4)(0 to C_FC_MAX_NUM_BIN_VALUES-1) := (others => (others => C_NULL));
+    begin
+      v_values(0)(0 to values_1'length-1) := values_1;
+      v_values(1)(0 to values_2'length-1) := values_2;
+      v_values(2)(0 to values_3'length-1) := values_3;
+      v_values(3)(0 to values_4'length-1) := values_4;
+      v_values(4)(0 to values_5'length-1) := values_5;
+      check_bin(coverpoint, bin_idx, contains, v_values, min_hits, rand_weight, name, hits, false, C_PROC_NAME);
     end procedure;
 
     -- Overload for ignore and illegal bins
@@ -1086,7 +1156,7 @@ begin
       v_cross_x2.add_cross(bin_transition((401,403,401,405)), bin_transition((416,417,418,419)));
       v_cross_x2.add_cross(bin_transition((428,427,425,421)), bin_transition((431,434,434,439)));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
-      v_cross_x3.add_cross(bin_transition((428,427,425,421)), bin_transition((431,434,434,439,434)));
+      v_cross_x2_b.add_cross(bin_transition((428,427,425,421)), bin_transition((431,434,434,439,434)));
 
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,401), (416,417,418));
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,401,405), (416,417,418,419));
@@ -1142,7 +1212,7 @@ begin
       v_cross_x2.add_cross(ignore_bin_transition((2201,2203,2201,2205)), ignore_bin_transition((2206,2207,2208,2209)));
       v_cross_x2.add_cross(ignore_bin_transition((2218,2217,2215,2211)), ignore_bin_transition((2212,2214,2216,2218)));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
-      v_cross_x3.add_cross(ignore_bin_transition((2228,2227,2225,2221)), ignore_bin_transition((2231,2234,2234,2239,2234)));
+      v_cross_x2_b.add_cross(ignore_bin_transition((2228,2227,2225,2221)), ignore_bin_transition((2231,2234,2234,2239,2234)));
 
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2201), (2206,2207,2208));
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2201,2205), (2206,2207,2208,2209));
@@ -1203,7 +1273,7 @@ begin
       v_cross_x2.add_cross(illegal_bin_transition((3201,3203,3201,3205)), illegal_bin_transition((3212,3214,3216,3218)));
       v_cross_x2.add_cross(illegal_bin_transition((3228,3227,3225,3221)), illegal_bin_transition((3231,3234,3234,3239)));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
-      v_cross_x3.add_cross(illegal_bin_transition((3228,3227,3225,3221)), illegal_bin_transition((3231,3234,3234,3239,3234)));
+      v_cross_x2_b.add_cross(illegal_bin_transition((3228,3227,3225,3221)), illegal_bin_transition((3231,3234,3234,3239,3234)));
 
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3201), (3212,3214,3216));
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3201,3205), (3212,3214,3216,3218));
@@ -1380,6 +1450,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
       ------------------------------------------------------------
+      v_cross_x2_b.delete_coverpoint(VOID);
       v_bin_idx         := 0;
       v_invalid_bin_idx := 0;
 
@@ -1419,6 +1490,78 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1003), (0 => 2003), 5, 1, name => "my_bin_3");
 
       v_cross_x2_b.report_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross of 3 elements");
+      ------------------------------------------------------------
+      v_cross_x3.add_cross(bin(100), bin(200), bin(300));
+      v_cross_x3.add_cross(bin(101), bin(201), bin(301));
+      v_cross_x3.add_cross(bin(102), bin(202), bin(302));
+
+      v_bin_idx := 0;
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300));
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 301));
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 102), (0 => 202), (0 => 302));
+
+      v_cross_x3.sample_coverage((100,200,300));
+      v_cross_x3.sample_coverage((101,201,301));
+      v_cross_x3.sample_coverage((102,202,302));
+      v_cross_x3.sample_coverage((100,200,301)); -- Sample values outside bins
+
+      v_bin_idx := v_bin_idx-3;
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), hits => 1);
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 301), hits => 1);
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 102), (0 => 202), (0 => 302), hits => 1);
+
+      v_cross_x3.report_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross of 4 elements");
+      ------------------------------------------------------------
+      v_cross_x4.add_cross(bin(100), bin(200), bin(300), bin(400));
+      v_cross_x4.add_cross(bin(101), bin(201), bin(301), bin(401));
+      v_cross_x4.add_cross(bin(102), bin(202), bin(302), bin(402));
+
+      v_bin_idx := 0;
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400));
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 301), (0 => 401));
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 102), (0 => 202), (0 => 302), (0 => 402));
+
+      v_cross_x4.sample_coverage((100,200,300,400));
+      v_cross_x4.sample_coverage((101,201,301,401));
+      v_cross_x4.sample_coverage((102,202,302,402));
+      v_cross_x4.sample_coverage((100,200,300,401)); -- Sample values outside bins
+
+      v_bin_idx := v_bin_idx-3;
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400), hits => 1);
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 301), (0 => 401), hits => 1);
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 102), (0 => 202), (0 => 302), (0 => 402), hits => 1);
+
+      v_cross_x4.report_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross of 5 elements");
+      ------------------------------------------------------------
+      v_cross_x5.add_cross(bin(100), bin(200), bin(300), bin(400), bin(500));
+      v_cross_x5.add_cross(bin(101), bin(201), bin(301), bin(401), bin(501));
+      v_cross_x5.add_cross(bin(102), bin(202), bin(302), bin(402), bin(502));
+
+      v_bin_idx := 0;
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400), (0 => 500));
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 301), (0 => 401), (0 => 501));
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 102), (0 => 202), (0 => 302), (0 => 402), (0 => 502));
+
+      v_cross_x5.sample_coverage((100,200,300,400,500));
+      v_cross_x5.sample_coverage((101,201,301,401,501));
+      v_cross_x5.sample_coverage((102,202,302,402,502));
+      v_cross_x5.sample_coverage((100,200,300,400,501)); -- Sample values outside bins
+
+      v_bin_idx := v_bin_idx-3;
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400), (0 => 500), hits => 1);
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 301), (0 => 401), (0 => 501), hits => 1);
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 102), (0 => 202), (0 => 302), (0 => 402), (0 => 502), hits => 1);
+
+      v_cross_x5.report_coverage(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_covpt" then

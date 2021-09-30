@@ -318,7 +318,6 @@ package func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
-    -- TODO: max 5 dimensions
     ------------------------------------------------------------
     -- Add cross (2 bins)
     ------------------------------------------------------------
@@ -369,6 +368,71 @@ package func_cov_pkg is
       constant bin1          : in t_new_bin_array;
       constant bin2          : in t_new_bin_array;
       constant bin3          : in t_new_bin_array;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    ------------------------------------------------------------
+    -- Add cross (4 bins)
+    ------------------------------------------------------------
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant min_hits      : in positive;
+      constant rand_weight   : in natural;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "");
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant min_hits      : in positive;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    ------------------------------------------------------------
+    -- Add cross (5 bins)
+    ------------------------------------------------------------
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant bin5          : in t_new_bin_array;
+      constant min_hits      : in positive;
+      constant rand_weight   : in natural;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "");
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant bin5          : in t_new_bin_array;
+      constant min_hits      : in positive;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant bin5          : in t_new_bin_array;
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
@@ -2161,6 +2225,133 @@ package body func_cov_pkg is
         ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Add cross (4 bins)
+    ------------------------------------------------------------
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant min_hits      : in positive;
+      constant rand_weight   : in natural;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "") is
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_NUM_CROSS_BINS  : natural := 4;
+      constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
+      variable v_proc_call       : line;
+      variable v_bin_array       : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
+      variable v_idx_reg         : integer_vector(0 to C_NUM_CROSS_BINS-1);
+    begin
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) & " x "  &  get_bin_array_values(bin3) &
+        " x "  &  get_bin_array_values(bin4) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
+
+      -- Copy the bins into an array and use a recursive procedure to add them to the list
+      create_bin_array(v_proc_call.all, v_bin_array, bin1, bin2, bin3, bin4);
+      add_bins_recursive(v_bin_array, 0, v_idx_reg, min_hits, rand_weight, C_USE_RAND_WEIGHT, bin_name);
+      DEALLOCATE(v_proc_call);
+    end procedure;
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant min_hits      : in positive;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+    begin
+      add_cross(bin1, bin2, bin3, bin4, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
+    end procedure;
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", """ & bin_name & """)";
+    begin
+      add_cross(bin1, bin2, bin3, bin4, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Add cross (5 bins)
+    ------------------------------------------------------------
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant bin5          : in t_new_bin_array;
+      constant min_hits      : in positive;
+      constant rand_weight   : in natural;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : in string         := "") is
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_NUM_CROSS_BINS  : natural := 5;
+      constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
+      variable v_proc_call       : line;
+      variable v_bin_array       : t_new_bin_array(0 to C_NUM_CROSS_BINS-1);
+      variable v_idx_reg         : integer_vector(0 to C_NUM_CROSS_BINS-1);
+    begin
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
+      log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " &  get_bin_array_values(bin1) & " x "  &  get_bin_array_values(bin2) & " x "  &  get_bin_array_values(bin3) &
+        " x "  &  get_bin_array_values(bin4) & " x "  &  get_bin_array_values(bin5) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
+
+      -- Copy the bins into an array and use a recursive procedure to add them to the list
+      create_bin_array(v_proc_call.all, v_bin_array, bin1, bin2, bin3, bin4, bin5);
+      add_bins_recursive(v_bin_array, 0, v_idx_reg, min_hits, rand_weight, C_USE_RAND_WEIGHT, bin_name);
+      DEALLOCATE(v_proc_call);
+    end procedure;
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant bin5          : in t_new_bin_array;
+      constant min_hits      : in positive;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+    begin
+      add_cross(bin1, bin2, bin3, bin4, bin5, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
+    end procedure;
+
+    procedure add_cross(
+      constant bin1          : in t_new_bin_array;
+      constant bin2          : in t_new_bin_array;
+      constant bin3          : in t_new_bin_array;
+      constant bin4          : in t_new_bin_array;
+      constant bin5          : in t_new_bin_array;
+      constant bin_name      : in string         := "";
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", """ & bin_name & """)";
+    begin
+      add_cross(bin1, bin2, bin3, bin4, bin5, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
 
     ------------------------------------------------------------

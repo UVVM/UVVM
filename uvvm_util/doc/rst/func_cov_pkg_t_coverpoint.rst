@@ -540,7 +540,7 @@ Adds a cross between two coverpoints to the coverpoint. Note that the coverpoint
     my_coverpoint_size.add_bins(bin_range(0,127));
     my_cross.add_cross(my_coverpoint_addr, my_coverpoint_size, 5, 3, "cross_addr_size");
 
-This procedure has overloads which support crossing up to 16 coverpoints. ::
+This procedure has overloads which support crossing up to 16 coverpoints. **Beta release only supports up to 5 crossed elements.** ::
 
     add_cross(coverpoint1, coverpoint2, coverpoint3, min_hits, rand_weight, [bin_name, [msg_id_panel]])
     add_cross(coverpoint1, coverpoint2, coverpoint3, min_hits, [bin_name, [msg_id_panel]])

@@ -299,6 +299,16 @@ It can be used to track combinations of values from two or more objects (variabl
 For example, when certain combinations of source address and destination address of the Ethernet protocol need to be verified.
 This can be done in two different ways using the ``add_cross()`` procedure and :ref:`bin functions <bin_functions>`.
 
+* Every type of bin (single value, multiple values, range, transition, ignore & illegal) can be crossed with each other.
+* When crossing several transition bins, they must have the same number of transitions, e.g. ::
+
+    my_cross.add_cross(bin_transition(0,7,15), bin_transition(64,128,256));
+    my_cross.add_cross(bin_transition(0,7,15,32), bin_transition(64,128,256,512), bin(16384));
+
+.. important::
+    Once the number of crossed bins has been set in a coverpoint, by calling the first ``add_cross()``, it cannot be 
+    changed anymore.
+
 Using bins
 ==================================================================================================================================
 This is a "faster" way of creating the crosses and useful when we need specific combinations of values. The ``add_cross()`` 
@@ -346,7 +356,7 @@ The bin functions may also be concatenated to add several bins at once.
 Using coverpoints
 ==================================================================================================================================
 This alternative is useful when the coverpoints are already created and we don't want to repeat the declaration of the bins. The 
-``add_cross()`` overloads support up to 16 crossed elements.
+``add_cross()`` overloads support up to 16 crossed elements. **Beta release only supports up to 5 crossed elements.**
 
 .. code-block::
 
@@ -392,16 +402,6 @@ Another benefit of this alternative is that we can cross already crossed coverpo
     # UVVM:       (3)x(0 to 127)x(2000)       0           1           0.00%         bin_10            -       
     # UVVM:       (3)x(0 to 127)x(3000)       0           1           0.00%         bin_11            -       
     # UVVM:  ========================================================================================================
-
-* Every type of bin (single value, multiple values, range, transition, ignore & illegal) can be crossed with each other.
-* When crossing several transition bins, they must have the same number of transitions, e.g. ::
-
-    my_cross.add_cross(bin_transition(0,7,15), bin_transition(64,128,256));
-    my_cross.add_cross(bin_transition(0,7,15,32), bin_transition(64,128,256,512), bin(16384));
-
-.. important::
-    Once the number of crossed bins has been set in a coverpoint, by calling the first ``add_cross()``, it cannot be 
-    changed anymore.
 
 **********************************************************************************************************************************
 Sampling coverage

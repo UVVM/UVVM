@@ -39,6 +39,7 @@ architecture func of func_cov_tb is
   shared variable v_coverpoint_b : t_coverpoint;
   shared variable v_coverpoint_c : t_coverpoint;
   shared variable v_coverpoint_d : t_coverpoint;
+  shared variable v_coverpoint_e : t_coverpoint;
   shared variable v_cross_x2     : t_coverpoint;
   shared variable v_cross_x2_b   : t_coverpoint;
   shared variable v_cross_x3     : t_coverpoint;
@@ -1690,6 +1691,91 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, 1, name => "my_bin_3");
 
       v_cross_x2_b.report_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross of 3 elements");
+      ------------------------------------------------------------
+      v_coverpoint.delete_coverpoint(VOID);
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_c.delete_coverpoint(VOID);
+      v_coverpoint_d.delete_coverpoint(VOID);
+
+      v_coverpoint.add_bins(bin(100) & bin(101));
+      v_coverpoint_b.add_bins(bin(200) & bin(201));
+      v_coverpoint_c.add_bins(bin(300));
+      v_cross_x3.add_cross(v_coverpoint, v_coverpoint_b, v_coverpoint_c);
+
+      v_bin_idx := 0;
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300));
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 100), (0 => 201), (0 => 300));
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 101), (0 => 200), (0 => 300));
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 300));
+
+      v_cross_x3.sample_coverage((100,200,300));
+      v_cross_x3.sample_coverage((100,201,300));
+      v_cross_x3.sample_coverage((101,200,300));
+      v_cross_x3.sample_coverage((101,201,300));
+      v_cross_x3.sample_coverage((100,200,301)); -- Sample values outside bins
+
+      v_bin_idx := v_bin_idx-4;
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), hits => 1);
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 100), (0 => 201), (0 => 300), hits => 1);
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 101), (0 => 200), (0 => 300), hits => 1);
+      check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 300), hits => 1);
+
+      v_cross_x3.report_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross of 4 elements");
+      ------------------------------------------------------------
+      v_coverpoint_d.add_bins(bin(400));
+      v_cross_x4.add_cross(v_coverpoint, v_coverpoint_b, v_coverpoint_c, v_coverpoint_d);
+
+      v_bin_idx := 0;
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400));
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 100), (0 => 201), (0 => 300), (0 => 400));
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 101), (0 => 200), (0 => 300), (0 => 400));
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 300), (0 => 400));
+
+      v_cross_x4.sample_coverage((100,200,300,400));
+      v_cross_x4.sample_coverage((100,201,300,400));
+      v_cross_x4.sample_coverage((101,200,300,400));
+      v_cross_x4.sample_coverage((101,201,300,400));
+      v_cross_x4.sample_coverage((100,200,300,401)); -- Sample values outside bins
+
+      v_bin_idx := v_bin_idx-4;
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400), hits => 1);
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 100), (0 => 201), (0 => 300), (0 => 400), hits => 1);
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 101), (0 => 200), (0 => 300), (0 => 400), hits => 1);
+      check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 300), (0 => 400), hits => 1);
+
+      v_cross_x4.report_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross of 5 elements");
+      ------------------------------------------------------------
+      v_coverpoint_e.add_bins(bin(500));
+      v_cross_x5.add_cross(v_coverpoint, v_coverpoint_b, v_coverpoint_c, v_coverpoint_d, v_coverpoint_e);
+
+      v_bin_idx := 0;
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400), (0 => 500));
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 100), (0 => 201), (0 => 300), (0 => 400), (0 => 500));
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 101), (0 => 200), (0 => 300), (0 => 400), (0 => 500));
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 300), (0 => 400), (0 => 500));
+
+      v_cross_x5.sample_coverage((100,200,300,400,500));
+      v_cross_x5.sample_coverage((100,201,300,400,500));
+      v_cross_x5.sample_coverage((101,200,300,400,500));
+      v_cross_x5.sample_coverage((101,201,300,400,500));
+      v_cross_x5.sample_coverage((100,200,300,400,501)); -- Sample values outside bins
+
+      v_bin_idx := v_bin_idx-4;
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400), (0 => 500), hits => 1);
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 100), (0 => 201), (0 => 300), (0 => 400), (0 => 500), hits => 1);
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 101), (0 => 200), (0 => 300), (0 => 400), (0 => 500), hits => 1);
+      check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 101), (0 => 201), (0 => 300), (0 => 400), (0 => 500), hits => 1);
+
+      v_cross_x5.report_coverage(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_rand_bin" then

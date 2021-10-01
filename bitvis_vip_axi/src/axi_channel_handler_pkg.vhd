@@ -321,7 +321,7 @@ package body axi_channel_handler_pkg is
     variable v_time_of_falling_edge   : time := -1 ns;  -- time stamp for clk period checking
   begin
     if wuser'length > 0 then
-      v_normalized_wuser := normalize_and_check(wuser_value(0), wuser, ALLOW_NARROWER, "WSTRB", "wstrb", msg);
+      v_normalized_wuser := normalize_and_check(wuser_value(0), wuser, ALLOW_NARROWER, "WUSER", "wuser", msg);
     end if;
     for write_transfer_num in 0 to to_integer(unsigned(awlen_value)) loop
       for cycle in 0 to config.max_wait_cycles loop

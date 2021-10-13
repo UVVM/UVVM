@@ -18,6 +18,8 @@ Released: 2021-XX-XX
   and matching_values().
 - Fixed issue when using don't care in SLVs with check_value() and match strictness
   set to MATCH_STD_INCL_Z.
+- Fixed issue where GHDL reported that the operator "&" is overloaded in the
+  ti_protected_types_pkg.
 
 
 v2 2021.05.26

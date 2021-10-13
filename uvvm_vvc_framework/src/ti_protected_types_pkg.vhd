@@ -577,7 +577,7 @@ package body ti_protected_types_pkg is
         alert(TB_ERROR, "priv_get_vvc_info_list() => vvc_info_list is empty!");
         return " ";
       elsif idx < priv_last_added_vvc_idx then
-        return "(" & priv_get_vvc_info(idx) & ")" & priv_get_vvc_info_list(idx+1);
+        return "(" & priv_get_vvc_info(idx) & ")" & string'(priv_get_vvc_info_list(idx+1));
       else
         return "(" & priv_get_vvc_info(idx) & ")";
       end if;

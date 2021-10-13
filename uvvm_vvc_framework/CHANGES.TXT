@@ -7,6 +7,8 @@ v2.12.2
 Released: 2021-XX-XX
 - Fixed generic_queue deleting wrong element when position is different from entry_num.
 - Fixed generic_queue print_queue() crashing when queue is empty.
+- Fixed issue where GHDL reported that the operator "&" is overloaded in the
+  ti_protected_types_pkg.
 
 v2.12.1
 ----------

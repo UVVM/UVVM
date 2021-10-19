@@ -67,16 +67,6 @@ num_passing_tests = hdlunit.get_num_pass_tests()
 (ret_txt, ret_code) = hdlunit.run_command("py ../script/maintenance_script/verify_with_golden.py -modelsim")
 print(ret_txt)
 
-## Need to run selected testcase with 
-#hu = HDLUnit(simulator='modelsim')
-#hu.add_files("../../src/*.vhd", "uvvm_util")
-#hu.add_files("../../tb/maintenance_tb/*.vhd", "uvvm_util")
-#hu.add_testcase('func_cov_tb.func.fc_database_2')
-#hu.add_generics(entity='func_cov_tb',
-#                architecture='func',
-#                generics=['GC_FILE_PATH', ('../../sim/hdlunit/test/func_cov_tb/2483685920/', 'PATH')])
-#hu.start()
-
 # Golden compare ok?
 if ret_code > 0:
     sys.exit(1)

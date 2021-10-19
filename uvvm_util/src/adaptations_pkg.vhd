@@ -92,6 +92,13 @@ package adaptations_pkg is
     ID_GEN_PULSE,             -- Used for logging when a gen_pulse procedure starts pulsing a signal
     ID_BLOCKING,              -- Used for logging when using synchronisation flags
     ID_WATCHDOG,              -- Used for logging the activity of the watchdog
+    ID_RAND_GEN,              -- Used for logging "Enhanced Randomization" values returned by rand()\randm()
+    ID_RAND_CONF,             -- Used for logging "Enhanced Randomization" configuration changes, except from name and scope
+    ID_FUNC_COV_BINS,         -- Used for logging functional coverage add_bins() and add_cross() methods
+    ID_FUNC_COV_BINS_INFO,    -- Used for logging functional coverage add_bins() and add_cross() methods detailed information
+    ID_FUNC_COV_RAND,         -- Used for logging functional coverage "Optimized Randomization" values returned by rand()
+    ID_FUNC_COV_SAMPLE,       -- Used for logging functional coverage sampling
+    ID_FUNC_COV_CONFIG,       -- Used for logging functional coverage configuration changes
     -- General
     ID_POS_ACK,               -- To write a positive acknowledge on a check
     -- Directly inside test sequencers
@@ -180,13 +187,20 @@ package adaptations_pkg is
   -- Default message Id panel to be used for all message Id panels, except:
   --  - VVC message Id panels, see constant C_VVC_MSG_ID_PANEL_DEFAULT
   constant C_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
-    ID_NEVER            => DISABLED,
-    ID_UTIL_BURIED      => DISABLED,
-    ID_BITVIS_DEBUG     => DISABLED,
-    ID_COVERAGE_MAKEBIN => DISABLED,
-    ID_COVERAGE_ADDBIN  => DISABLED,
-    ID_COVERAGE_ICOVER  => DISABLED,
-    others              => ENABLED
+    ID_NEVER              => DISABLED,
+    ID_UTIL_BURIED        => DISABLED,
+    ID_BITVIS_DEBUG       => DISABLED,
+    ID_COVERAGE_MAKEBIN   => DISABLED,
+    ID_COVERAGE_ADDBIN    => DISABLED,
+    ID_COVERAGE_ICOVER    => DISABLED,
+    ID_RAND_GEN           => DISABLED,
+    ID_RAND_CONF          => DISABLED,
+    ID_FUNC_COV_BINS      => DISABLED,
+    ID_FUNC_COV_BINS_INFO => DISABLED,
+    ID_FUNC_COV_RAND      => DISABLED,
+    ID_FUNC_COV_SAMPLE    => DISABLED,
+    ID_FUNC_COV_CONFIG    => DISABLED,
+    others                => ENABLED
   );
 
   type  t_msg_id_indent is array (t_msg_id'left to t_msg_id'right) of string(1 to 4);
@@ -201,6 +215,7 @@ package adaptations_pkg is
     ID_NEW_HVVC_CMD_SEQ      => "  "   & NUL & NUL,
     ID_AWAIT_COMPLETION_WAIT => ".."   & NUL & NUL,
     ID_AWAIT_COMPLETION_END  => "  "   & NUL & NUL,
+    ID_FUNC_COV_BINS_INFO    => "  "   & NUL & NUL,
     others                   => ""     & NUL & NUL & NUL & NUL
   );
 
@@ -232,6 +247,35 @@ package adaptations_pkg is
   -- Synchronisation
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_NUM_SYNC_FLAGS : positive := 100; -- Maximum number of sync flags
+
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- Randomization adaptations
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_RAND_MAX_NAME_LENGTH                : positive := 20;  -- Maximum length used for random generator names
+  constant C_RAND_INIT_SEED_1                    : positive := 10;  -- Initial randomizaton seed 1
+  constant C_RAND_INIT_SEED_2                    : positive := 100; -- Initial randomizaton seed 2
+  constant C_RAND_REAL_NUM_DECIMAL_DIGITS        : positive := 2;   -- Number of decimal digits displayed in randomization logs
+  -- Maximum number of possible values to be stored in the cyclic list. This limit is due to memory restrictions since some
+  -- simulators cannot handle more than 2**30 values. When a higher number of values is used, a generic queue is used instead
+  -- which only stores the generated values. The queue will use less memory, but will be slower than the list.
+  constant C_RAND_CYCLIC_LIST_MAX_NUM_VALUES     : natural  := 2**30;
+  -- When using the generic queue and the number of (different) generated cyclic values reaches this limit, an alert is generated
+  -- to indicate that simulation might slow down due to the large queue that needs to be parsed.
+  constant C_RAND_CYCLIC_QUEUE_MAX_ALERT         : natural  := 10000; 
+  constant C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE : boolean  := false; -- Set to true to disable the alert above
+
+  constant C_RAND_MM_MAX_LONG_VECTOR_LENGTH      : natural  := 128; -- Maximum length for unsigned/signed constraints in multi-method approach
+
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- Functional Coverage adaptations
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_FC_MAX_NUM_NEW_BINS                     : positive := 1000; -- Maximum number of bins which can be added using a single add_bins() call
+  constant C_FC_MAX_PROC_CALL_LENGTH                 : positive := 100;  -- Maximum string length used for logging a single bin function
+  constant C_FC_MAX_NAME_LENGTH                      : positive := 20;   -- Maximum string length used for coverpoint and bin names
+  constant C_FC_MAX_NUM_BIN_VALUES                   : positive := 10;   -- Maximum number of values that can be given in bin() and bin_transition()
+  constant C_FC_MAX_NUM_COVERPOINTS                  : positive := 20;   -- Maximum number of coverpoints
+  constant C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED   : positive := 1;    -- Default value used for the number of bins allocated when a coverpoint is created
+  constant C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT : positive := 10;   -- Default value used to increment the number of bins allocated in a coverpoint when the max is reached
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- UVVM VVC Framework adaptations
@@ -320,7 +364,7 @@ package adaptations_pkg is
   );
 
   --------------------------------------------------------------------------------------------------------------------------------
-  -- VVC Adaptions
+  -- VVC Adaptations
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_SPI_VVC_DATA_ARRAY_WIDTH : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
 

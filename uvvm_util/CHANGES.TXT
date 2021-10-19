@@ -38,13 +38,10 @@ Released: 2021-04-08
 
 v2.15.1
 ----------
-Released: 2020-12-08
+Released: 2020-XX-XX
 - Fixed to_string(integer) function using a negative value.
 - Fixed random time function by using the simulator base time unit instead of ns.
 - Fixed random function overflowing with maximum values in min/max range.
-- Removed unused constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS from adaptations_pkg.
-- Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
-- Added C_SPI_VVC_DATA_ARRAY_WIDTH to adaptation_pkg.
 
 v2.15.0
 ----------

@@ -15,14 +15,10 @@
 ------------------------------------------------------------------------------------------
 
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use std.textio.all;
-
 
 use work.types_pkg.all;
 use work.adaptations_pkg.all;
@@ -33,17 +29,17 @@ package protected_types_pkg is
 
   type t_protected_alert_attention_counters is protected
     procedure increment(
-      alert_level   : t_alert_level;
-      attention    : t_attention := REGARD;  -- count, expect, ignore
-      number     : natural := 1
-      );
+      alert_level : t_alert_level;
+      attention   : t_attention := REGARD;  -- count, expect, ignore
+      number      : natural := 1
+    );
     impure function get(
-      alert_level: t_alert_level;
-      attention    : t_attention := REGARD
-      ) return natural;
+      alert_level : t_alert_level;
+      attention   : t_attention := REGARD
+    ) return natural;
     procedure to_string(
       order  : t_order
-      );
+    );
   end protected t_protected_alert_attention_counters;
 
 
@@ -57,7 +53,7 @@ package protected_types_pkg is
     impure function set_index(index : integer) return boolean;
     impure function get_index return integer;
     procedure release_index;
-  end protected  t_protected_acknowledge_cmd_idx;
+  end protected t_protected_acknowledge_cmd_idx;
 
 
   type t_protected_check_counters is protected
@@ -77,6 +73,47 @@ package protected_types_pkg is
     );
   end protected t_protected_check_counters;
 
+
+  type t_protected_covergroup_status is protected
+    impure function add_coverpoint(VOID : t_void) return integer;
+    procedure remove_coverpoint(coverpoint_idx : in integer);
+    procedure set_name(coverpoint_idx : in integer; name : in string);
+    procedure set_num_valid_bins(coverpoint_idx : in integer; num_bins : in natural);
+    procedure set_num_covered_bins(coverpoint_idx : in integer; num_bins : in natural);
+    procedure set_total_bin_min_hits(coverpoint_idx : in integer; min_hits : in natural);
+    procedure set_total_bin_hits(coverpoint_idx : in integer; hits : in natural);
+    procedure set_total_coverage_bin_hits(coverpoint_idx : in integer; hits : in natural);
+    procedure set_total_goal_bin_hits(coverpoint_idx : in integer; hits : in natural);
+    procedure set_coverage_weight(coverpoint_idx : in integer; weight : in natural);
+    procedure set_bins_coverage_goal(coverpoint_idx : in integer; percentage : in positive range 1 to 100);
+    procedure set_hits_coverage_goal(coverpoint_idx : in integer; percentage : in positive);
+    procedure set_covpts_coverage_goal(percentage : in positive range 1 to 100);
+    procedure increment_valid_bin_count(coverpoint_idx : in integer);
+    procedure increment_covered_bin_count(coverpoint_idx : in integer);
+    procedure increment_min_hits_count(coverpoint_idx : in integer; min_hits : in natural);
+    procedure increment_hits_count(coverpoint_idx : in integer);
+    procedure increment_coverage_hits_count(coverpoint_idx : in integer);
+    procedure increment_goal_hits_count(coverpoint_idx : in integer);
+    impure function is_initialized(coverpoint_idx : integer) return boolean;
+    impure function get_name(coverpoint_idx : integer) return string;
+    impure function get_num_valid_bins(coverpoint_idx : integer) return natural;
+    impure function get_num_covered_bins(coverpoint_idx : integer) return natural;
+    impure function get_total_bin_min_hits(coverpoint_idx : integer) return natural;
+    impure function get_total_bin_hits(coverpoint_idx : integer) return natural;
+    impure function get_total_coverage_bin_hits(coverpoint_idx : integer) return natural;
+    impure function get_total_goal_bin_hits(coverpoint_idx : integer) return natural;
+    impure function get_coverage_weight(coverpoint_idx : integer) return natural;
+    impure function get_bins_coverage_goal(coverpoint_idx : integer) return positive;
+    impure function get_hits_coverage_goal(coverpoint_idx : integer) return positive;
+    impure function get_covpts_coverage_goal(VOID : t_void) return positive;
+    impure function get_bins_coverage(coverpoint_idx : integer; cov_representation : t_coverage_representation) return real;
+    impure function get_hits_coverage(coverpoint_idx : integer; cov_representation : t_coverage_representation) return real;
+    impure function get_total_bins_coverage(VOID : t_void) return real;
+    impure function get_total_hits_coverage(VOID : t_void) return real;
+    impure function get_total_covpts_coverage(cov_representation : t_coverage_representation) return real;
+  end protected t_protected_covergroup_status;
+
+
 end package protected_types_pkg;
 
 --=============================================================================
@@ -85,39 +122,38 @@ end package protected_types_pkg;
 package body protected_types_pkg is
 
 
---------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------
   type t_protected_alert_attention_counters is protected body
     variable priv_alert_attention_counters : t_alert_attention_counters;
 
     procedure increment(
-      alert_level: t_alert_level;
-      attention    : t_attention := REGARD;
-      number     : natural := 1
-      ) is
+      alert_level : t_alert_level;
+      attention   : t_attention := REGARD;
+      number      : natural := 1
+    ) is
     begin
       priv_alert_attention_counters(alert_level)(attention) := priv_alert_attention_counters(alert_level)(attention) + number;
     end;
 
-
     impure function get(
-      alert_level: t_alert_level;
-      attention    : t_attention := REGARD
-      ) return natural is
+      alert_level : t_alert_level;
+      attention   : t_attention := REGARD
+    ) return natural is
     begin
       return priv_alert_attention_counters(alert_level)(attention);
     end;
 
     procedure to_string(
       order  : t_order
-      ) is
+    ) is
     begin
       to_string(priv_alert_attention_counters, order);
     end;
 
   end protected body t_protected_alert_attention_counters;
-
+  --------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------
   type t_protected_semaphore is protected body
-
     variable v_priv_semaphore_taken : boolean := false;
 
     impure function get_semaphore return boolean is
@@ -137,15 +173,14 @@ package body protected_types_pkg is
       v_priv_semaphore_taken := false;
     end procedure;
   end protected body t_protected_semaphore;
-
-
+  --------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------
   type t_protected_acknowledge_cmd_idx is protected body
-
     variable v_priv_idx : integer := -1;
 
     impure function set_index(index : integer) return boolean is
     begin
-    -- for broadcast
+      -- for broadcast
       if v_priv_idx = -1 or v_priv_idx = index then
         -- index was now set
         v_priv_idx := index;
@@ -166,8 +201,7 @@ package body protected_types_pkg is
       v_priv_idx := -1;
     end procedure;
   end protected body t_protected_acknowledge_cmd_idx;
-
-
+  --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   type t_protected_check_counters is protected body
      variable priv_check_counters : t_check_counters_array;
@@ -224,12 +258,382 @@ package body protected_types_pkg is
 
     procedure to_string(
       order  : t_order
-      ) is
+    ) is
     begin
       to_string(priv_check_counters, order);
     end procedure to_string;
 
   end protected body t_protected_check_counters;
+  --------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------
+  type t_protected_covergroup_status is protected body
+    type t_coverpoint_status is record
+      initialized             : boolean;
+      name                    : string(1 to C_FC_MAX_NAME_LENGTH);
+      num_valid_bins          : natural;
+      num_covered_bins        : natural;
+      total_bin_min_hits      : natural;
+      total_bin_hits          : natural;
+      total_coverage_bin_hits : natural;
+      total_goal_bin_hits     : natural;
+      coverage_weight         : natural;
+      bins_coverage_goal      : positive;
+      hits_coverage_goal      : positive;
+    end record;
+    constant C_COVERPOINT_STATUS_DEFAULT : t_coverpoint_status := (
+      initialized             => false,
+      name                    => (others => NUL),
+      num_valid_bins          => 0,
+      num_covered_bins        => 0,
+      total_bin_min_hits      => 0,
+      total_bin_hits          => 0,
+      total_coverage_bin_hits => 0,
+      total_goal_bin_hits     => 0,
+      coverage_weight         => 1,
+      bins_coverage_goal      => 100,
+      hits_coverage_goal      => 100
+    );
+    type t_coverpoint_status_array is array (natural range <>) of t_coverpoint_status;
 
+    variable priv_coverpoint_status_list : t_coverpoint_status_array(0 to C_FC_MAX_NUM_COVERPOINTS-1) := (others => C_COVERPOINT_STATUS_DEFAULT);
+    variable priv_coverpoint_name_idx    : natural  := 1;
+    variable priv_covpts_coverage_goal   : positive := 100;
+
+    impure function add_coverpoint(
+      constant VOID : t_void)
+    return integer is
+      constant C_COVERPOINT_NUM      : string  := to_string(priv_coverpoint_name_idx);
+      variable v_next_coverpoint_idx : natural := 0;
+    begin
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if not(priv_coverpoint_status_list(v_next_coverpoint_idx).initialized) then
+          exit;
+        end if;
+        v_next_coverpoint_idx := v_next_coverpoint_idx + 1;
+      end loop;
+
+      if v_next_coverpoint_idx < C_FC_MAX_NUM_COVERPOINTS then
+        priv_coverpoint_status_list(v_next_coverpoint_idx).name := "Covpt_" & C_COVERPOINT_NUM & fill_string(NUL, C_FC_MAX_NAME_LENGTH-6-C_COVERPOINT_NUM'length);
+        priv_coverpoint_status_list(v_next_coverpoint_idx).initialized := true;
+        priv_coverpoint_name_idx := priv_coverpoint_name_idx + 1;
+        return v_next_coverpoint_idx;
+      else
+        return -1; -- Error: no more space in the list
+      end if;
+    end function;
+
+    procedure remove_coverpoint(
+      constant coverpoint_idx : in integer) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx) := C_COVERPOINT_STATUS_DEFAULT;
+    end procedure;
+
+    procedure set_name(
+      constant coverpoint_idx : in integer;
+      constant name           : in string) is
+    begin
+      if name'length > C_FC_MAX_NAME_LENGTH then
+        priv_coverpoint_status_list(coverpoint_idx).name := name(1 to C_FC_MAX_NAME_LENGTH);
+      else
+        priv_coverpoint_status_list(coverpoint_idx).name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-name'length);
+      end if;
+    end procedure;
+
+    procedure set_num_valid_bins(
+      constant coverpoint_idx : in integer;
+      constant num_bins       : in natural) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).num_valid_bins := num_bins;
+    end procedure;
+
+    procedure set_num_covered_bins(
+      constant coverpoint_idx : in integer;
+      constant num_bins       : in natural) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).num_covered_bins := num_bins;
+    end procedure;
+
+    procedure set_total_bin_min_hits(
+      constant coverpoint_idx : in integer;
+      constant min_hits       : in natural) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits := min_hits;
+    end procedure;
+
+    procedure set_total_bin_hits(
+      constant coverpoint_idx : in integer;
+      constant hits           : in natural) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).total_bin_hits := hits;
+    end procedure;
+
+    procedure set_total_coverage_bin_hits(
+      constant coverpoint_idx : in integer;
+      constant hits           : in natural) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).total_coverage_bin_hits := hits;
+    end procedure;
+
+    procedure set_total_goal_bin_hits(
+      constant coverpoint_idx : in integer;
+      constant hits           : in natural) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).total_goal_bin_hits := hits;
+    end procedure;
+
+    procedure set_coverage_weight(
+      constant coverpoint_idx : in integer;
+      constant weight         : in natural) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).coverage_weight := weight;
+    end procedure;
+
+    procedure set_bins_coverage_goal(
+      constant coverpoint_idx : in integer;
+      constant percentage     : in positive range 1 to 100) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal := percentage;
+    end procedure;
+
+    procedure set_hits_coverage_goal(
+      constant coverpoint_idx : in integer;
+      constant percentage     : in positive) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal := percentage;
+    end procedure;
+
+    procedure set_covpts_coverage_goal(
+      constant percentage : in positive range 1 to 100) is
+    begin
+      priv_covpts_coverage_goal := percentage;
+    end procedure;
+
+    procedure increment_valid_bin_count(
+      constant coverpoint_idx : in integer) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).num_valid_bins := priv_coverpoint_status_list(coverpoint_idx).num_valid_bins + 1;
+    end procedure;
+
+    procedure increment_covered_bin_count(
+      constant coverpoint_idx : in integer) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).num_covered_bins := priv_coverpoint_status_list(coverpoint_idx).num_covered_bins + 1;
+    end procedure;
+
+    procedure increment_min_hits_count(
+      constant coverpoint_idx : in integer;
+      constant min_hits       : in natural) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits := priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits + min_hits;
+    end procedure;
+
+    procedure increment_hits_count(
+      constant coverpoint_idx : in integer) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).total_bin_hits := priv_coverpoint_status_list(coverpoint_idx).total_bin_hits + 1;
+    end procedure;
+
+    procedure increment_coverage_hits_count(
+      constant coverpoint_idx : in integer) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).total_coverage_bin_hits := priv_coverpoint_status_list(coverpoint_idx).total_coverage_bin_hits + 1;
+    end procedure;
+
+    procedure increment_goal_hits_count(
+      constant coverpoint_idx : in integer) is
+    begin
+      priv_coverpoint_status_list(coverpoint_idx).total_goal_bin_hits := priv_coverpoint_status_list(coverpoint_idx).total_goal_bin_hits + 1;
+    end procedure;
+
+    impure function is_initialized(
+      constant coverpoint_idx : integer)
+    return boolean is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).initialized;
+    end function;
+
+    impure function get_name(
+      constant coverpoint_idx : integer)
+    return string is
+    begin
+      return to_string(priv_coverpoint_status_list(coverpoint_idx).name);
+    end function;
+
+    impure function get_num_valid_bins(
+      constant coverpoint_idx : integer)
+    return natural is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).num_valid_bins;
+    end function;
+
+    impure function get_num_covered_bins(
+      constant coverpoint_idx : integer)
+    return natural is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).num_covered_bins;
+    end function;
+
+    impure function get_total_bin_min_hits(
+      constant coverpoint_idx : integer)
+    return natural is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits;
+    end function;
+
+    impure function get_total_bin_hits(
+      constant coverpoint_idx : integer)
+    return natural is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).total_bin_hits;
+    end function;
+
+    impure function get_total_coverage_bin_hits(
+      constant coverpoint_idx : integer)
+    return natural is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).total_coverage_bin_hits;
+    end function;
+
+    impure function get_total_goal_bin_hits(
+      constant coverpoint_idx : integer)
+    return natural is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).total_goal_bin_hits;
+    end function;
+
+    impure function get_coverage_weight(
+      constant coverpoint_idx : integer)
+    return natural is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).coverage_weight;
+    end function;
+
+    impure function get_bins_coverage_goal(
+      constant coverpoint_idx : integer)
+    return positive is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal;
+    end function;
+
+    impure function get_hits_coverage_goal(
+      constant coverpoint_idx : integer)
+    return positive is
+    begin
+      return priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal;
+    end function;
+
+    impure function get_covpts_coverage_goal(
+      constant VOID : t_void)
+    return positive is
+    begin
+      return priv_covpts_coverage_goal;
+    end function;
+
+    -- Returns the percentage of covered_bins/valid_bins in the coverpoint
+    impure function get_bins_coverage(
+      constant coverpoint_idx     : integer;
+      constant cov_representation : t_coverage_representation)
+    return real is
+      variable v_num_covered_bins : natural := priv_coverpoint_status_list(coverpoint_idx).num_covered_bins;
+      variable v_num_valid_bins   : natural := priv_coverpoint_status_list(coverpoint_idx).num_valid_bins;
+      variable v_coverage         : real;
+    begin
+      v_coverage := real(v_num_covered_bins)*100.0/real(v_num_valid_bins) when v_num_valid_bins > 0 else 0.0;
+      if cov_representation = GOAL_CAPPED or cov_representation = GOAL_UNCAPPED then
+        v_coverage := v_coverage*100.0/real(priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal);
+      end if;
+      if cov_representation = GOAL_CAPPED and v_coverage > 100.0 then
+        v_coverage := 100.0;
+      end if;
+      return v_coverage;
+    end function;
+
+    -- Returns the percentage of total_hits/total_min_hits in the coverpoint
+    impure function get_hits_coverage(
+      constant coverpoint_idx     : integer;
+      constant cov_representation : t_coverage_representation)
+    return real is
+      variable v_tot_coverage_bin_hits : natural := priv_coverpoint_status_list(coverpoint_idx).total_coverage_bin_hits;
+      variable v_tot_goal_bin_hits     : natural := priv_coverpoint_status_list(coverpoint_idx).total_goal_bin_hits;
+      variable v_tot_bin_hits          : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_hits;
+      variable v_tot_bin_min_hits      : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits;
+      variable v_tot_goal_bin_min_hits : real    := real(priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits*
+                                                    priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal)/100.0;
+      variable v_coverage              : real;
+    begin
+      if cov_representation = GOAL_CAPPED then
+        v_coverage := real(v_tot_goal_bin_hits)*100.0/v_tot_goal_bin_min_hits when v_tot_goal_bin_min_hits > 0.0 else 0.0;
+        v_coverage := 100.0 when v_coverage > 100.0;
+      elsif cov_representation = GOAL_UNCAPPED then
+        v_coverage := real(v_tot_bin_hits)*100.0/v_tot_goal_bin_min_hits when v_tot_goal_bin_min_hits > 0.0 else 0.0;
+      else -- NO_GOAL
+        v_coverage := real(v_tot_coverage_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
+      end if;
+      return v_coverage;
+    end function;
+
+    -- Returns the percentage of covered_bins/valid_bins for all the coverpoints
+    impure function get_total_bins_coverage(
+      constant VOID : t_void)
+    return real is
+      variable v_tot_covered_bins : natural := 0;
+      variable v_tot_valid_bins   : natural := 0;
+      variable v_coverage         : real;
+    begin
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if priv_coverpoint_status_list(i).initialized then
+          v_tot_covered_bins := v_tot_covered_bins + priv_coverpoint_status_list(i).num_covered_bins * priv_coverpoint_status_list(i).coverage_weight;
+          v_tot_valid_bins   := v_tot_valid_bins + priv_coverpoint_status_list(i).num_valid_bins * priv_coverpoint_status_list(i).coverage_weight;
+        end if;
+      end loop;
+      v_coverage := real(v_tot_covered_bins)*100.0/real(v_tot_valid_bins) when v_tot_valid_bins > 0 else 0.0;
+      return v_coverage;
+    end function;
+
+    -- Returns the percentage of total_hits/total_min_hits for all the coverpoints
+    impure function get_total_hits_coverage(
+      constant VOID : t_void)
+    return real is
+      variable v_tot_bin_hits     : natural := 0;
+      variable v_tot_bin_min_hits : natural := 0;
+      variable v_coverage         : real;
+    begin
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if priv_coverpoint_status_list(i).initialized then
+          v_tot_bin_hits     := v_tot_bin_hits + priv_coverpoint_status_list(i).total_coverage_bin_hits * priv_coverpoint_status_list(i).coverage_weight;
+          v_tot_bin_min_hits := v_tot_bin_min_hits + priv_coverpoint_status_list(i).total_bin_min_hits * priv_coverpoint_status_list(i).coverage_weight;
+        end if;
+      end loop;
+      v_coverage := real(v_tot_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
+      return v_coverage;
+    end function;
+
+    -- Returns the percentage of covered_coverpoints/total_coverpoints
+    impure function get_total_covpts_coverage(
+      constant cov_representation : t_coverage_representation)
+    return real is
+      variable v_tot_covered_covpts : natural := 0;
+      variable v_tot_covpts         : natural := 0;
+      variable v_coverage           : real;
+    begin
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+        if priv_coverpoint_status_list(i).initialized then
+          v_tot_covered_covpts := v_tot_covered_covpts + priv_coverpoint_status_list(i).coverage_weight when
+                                  priv_coverpoint_status_list(i).total_coverage_bin_hits >= priv_coverpoint_status_list(i).total_bin_min_hits;
+          v_tot_covpts         := v_tot_covpts + priv_coverpoint_status_list(i).coverage_weight;
+        end if;
+      end loop;
+      v_coverage := real(v_tot_covered_covpts)*100.0/real(v_tot_covpts) when v_tot_covpts > 0 else 0.0;
+      if cov_representation = GOAL_CAPPED or cov_representation = GOAL_UNCAPPED then
+        v_coverage := v_coverage*100.0/real(priv_covpts_coverage_goal);
+      end if;
+      if cov_representation = GOAL_CAPPED and v_coverage > 100.0 then
+        v_coverage := 100.0;
+      end if;
+      return v_coverage;
+    end function;
+
+  end protected body t_protected_covergroup_status;
+  --------------------------------------------------------------------------------
 
 end package body protected_types_pkg;

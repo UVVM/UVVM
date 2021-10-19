@@ -96,6 +96,8 @@ package types_pkg is
 
   type t_pulse_continuation is (ALLOW_PULSE_CONTINUATION, NO_PULSE_CONTINUATION_ALLOWED);
 
+  type t_coverage_representation is (NO_GOAL, GOAL_CAPPED, GOAL_UNCAPPED);
+
   type t_global_ctrl is record
     attention  : t_alert_attention;
     stop_limit : t_alert_counters;

@@ -76,6 +76,10 @@ begin
     variable v_std_deviation : real;
 
   begin
+    -- To avoid that log files from different test cases (run in separate
+    -- simulations) overwrite each other.
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -------------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Randomization package - " & GC_TESTCASE);

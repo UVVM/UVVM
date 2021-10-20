@@ -41,7 +41,8 @@ hdlunit = HDLUnit(simulator='modelsim')
 hdlunit.add_files("../../src/*.vhd", "uvvm_util")
 
 # Add Util TB
-hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "uvvm_util")
+#hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "uvvm_util")
+hdlunit.add_files("../../tb/maintenance_tb/func_cov_tb.vhd", "uvvm_util")
 
 # Define testcase names with generics for GC_TESTCASE
 hdlunit.add_generics(entity="generic_queue_array_tb",

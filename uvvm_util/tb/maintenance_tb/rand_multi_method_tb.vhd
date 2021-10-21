@@ -1408,9 +1408,7 @@ begin
 
       v_rand.clear_constraints(VOID);
 
-      log(ID_LOG_HDR, "Testing weighted real (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
-      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      log(ID_LOG_HDR, "Testing weighted real (ranges w/default mode=COMBINED_WEIGHT) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.add_range_weight_real(-5.0,-3.0,30);
       v_rand.add_val_weight_real(0.0,20);
       v_rand.add_range_weight_real(9.3,10.1,50);
@@ -1428,18 +1426,9 @@ begin
 
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       v_rand.add_range_weight_real(-5.0,-3.0,30);
       v_rand.add_val_weight_real(0.0,20);
       v_rand.add_range_weight_real(9.3,10.1,50);
-      v_real := v_rand.randm(VOID);
-
-      v_rand.clear_constraints(VOID);
-
-      log(ID_LOG_HDR, "Testing weighted real (ranges w/explicit mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      v_rand.add_range_weight_real(-5.0,-3.0,30,COMBINED_WEIGHT);
-      v_rand.add_val_weight_real(0.0,20);
-      v_rand.add_range_weight_real(9.3,10.1,50,COMBINED_WEIGHT);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_real := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_real);
@@ -1454,9 +1443,9 @@ begin
 
       log(ID_LOG_HDR, "Testing weighted real (mixed with non-weighted constraint) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.add_val_real((20.0,30.0));
-      v_rand.add_range_weight_real(-5.0,-3.0,4,COMBINED_WEIGHT);
+      v_rand.add_range_weight_real(-5.0,-3.0,4);
       v_rand.add_val_weight_real(0.0,2);
-      v_rand.add_range_weight_real(9.0,10.0,4,COMBINED_WEIGHT);
+      v_rand.add_range_weight_real(9.0,10.0,4);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_real := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_real);
@@ -1545,9 +1534,7 @@ begin
 
       v_rand.clear_constraints(VOID);
 
-      log(ID_LOG_HDR, "Testing weighted time (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
-      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      log(ID_LOG_HDR, "Testing weighted time (ranges w/default mode=COMBINED_WEIGHT) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.add_range_weight_time(-5 ps,-3 ps,30);
       v_rand.add_val_weight_time(0 ps,20);
       v_rand.add_range_weight_time(9 ps,10 ps,50);
@@ -1568,15 +1555,6 @@ begin
       v_rand.add_range_weight_time(-5 ps,-3 ps,30);
       v_rand.add_val_weight_time(0 ps,20);
       v_rand.add_range_weight_time(9 ps,10 ps,50);
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_time := v_rand.randm(VOID);
-
-      v_rand.clear_constraints(VOID);
-
-      log(ID_LOG_HDR, "Testing weighted time (ranges w/explicit mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      v_rand.add_range_weight_time(-5 ps,-3 ps,30,COMBINED_WEIGHT);
-      v_rand.add_val_weight_time(0 ps,20);
-      v_rand.add_range_weight_time(9 ps,10 ps,50,COMBINED_WEIGHT);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_time);
@@ -1591,9 +1569,9 @@ begin
 
       log(ID_LOG_HDR, "Testing weighted time (mixed with non-weighted constraint) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
       v_rand.add_val_time((20 ps,30 ps));
-      v_rand.add_range_weight_time(-5 ps,-3 ps,4,COMBINED_WEIGHT);
+      v_rand.add_range_weight_time(-5 ps,-3 ps,4);
       v_rand.add_val_weight_time(0 ps,2);
-      v_rand.add_range_weight_time(9 ps,10 ps,4,COMBINED_WEIGHT);
+      v_rand.add_range_weight_time(9 ps,10 ps,4);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_time);

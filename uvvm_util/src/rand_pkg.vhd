@@ -1172,7 +1172,6 @@ package rand_pkg is
       constant min_value    : in real;
       constant max_value    : in real;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
@@ -1208,7 +1207,6 @@ package rand_pkg is
       constant min_value    : in time;
       constant max_value    : in time;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
@@ -5871,11 +5869,9 @@ package body rand_pkg is
       constant min_value    : in real;
       constant max_value    : in real;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_weight_real([" & format_real(min_value) & ":" & format_real(max_value) & "]," &
-        to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
-      variable v_weight_mode : t_weight_mode;
+        to_string(weight) & ")";
     begin
       -- Check only real constraints have been configured
       if not(check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
@@ -5885,10 +5881,9 @@ package body rand_pkg is
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
       end if;
-      v_weight_mode := mode when mode /= NA else priv_weight_mode;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_real_constraints.weighted, 1);
-      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (min_value, max_value, weight, v_weight_mode);
+      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (min_value, max_value, weight, COMBINED_WEIGHT);
       priv_real_constraints.weighted_config := true;
     end procedure;
 
@@ -5983,11 +5978,9 @@ package body rand_pkg is
       constant min_value    : in time;
       constant max_value    : in time;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_weight_time([" & to_string(min_value) & ":" & to_string(max_value) & "]," &
-        to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
-      variable v_weight_mode : t_weight_mode;
+        to_string(weight) & ")";
     begin
       -- Check only time constraints have been configured
       if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
@@ -5997,10 +5990,9 @@ package body rand_pkg is
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
       end if;
-      v_weight_mode := mode when mode /= NA else priv_weight_mode;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_time_constraints.weighted, 1);
-      priv_time_constraints.weighted(priv_time_constraints.weighted'length-1) := (min_value, max_value, weight, v_weight_mode);
+      priv_time_constraints.weighted(priv_time_constraints.weighted'length-1) := (min_value, max_value, weight, COMBINED_WEIGHT);
       priv_time_constraints.weighted_config := true;
     end procedure;
 

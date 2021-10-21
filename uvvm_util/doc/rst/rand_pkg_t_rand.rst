@@ -1492,8 +1492,11 @@ Adds a constraint specifying a range with a weight which will be included in the
 .. code-block::
 
     -- Example 1:
-    my_rand.add_range_weight(10,19, 1);
-    my_rand.add_range_weight(20,29, 3);
+    my_rand.add_range_weight(10,19, 1); -- Will use default mode COMBINED_WEIGHT
+    my_rand.add_range_weight(20,29, 3); -- Will use default mode COMBINED_WEIGHT
+    my_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+    my_rand.add_range_weight(30,39, 2); -- Will use new default mode INDIVIDUAL_WEIGHT
+    my_rand.add_range_weight(40,49, 1); -- Will use new default mode INDIVIDUAL_WEIGHT
 
     -- Example 2:
     my_rand.add_range_weight(10,19, 1, INDIVIDUAL_WEIGHT);
@@ -1504,9 +1507,10 @@ Adds a constraint specifying a range with a weight which will be included in the
 
 add_range_weight_real()
 ----------------------------------------------------------------------------------------------------------------------------------
-Adds a constraint specifying a range with a weight which will be included in the randomized values. ::
+Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is 
+used by default due to the very large number of values within a real range. ::
 
-    add_range_weight_real(min_value, max_value, weight, [mode, [msg_id_panel]])
+    add_range_weight_real(min_value, max_value, weight, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -1517,32 +1521,25 @@ Adds a constraint specifying a range with a weight which will be included in the
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | mode               | in     | :ref:`t_weight_mode`         | Determines how to divide the weight among the range of values.|
-|          |                    |        |                              | Default value is COMBINED_WEIGHT and can be updated via       |
-|          |                    |        |                              | ``set_range_weight_default_mode()``.                          |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
-    -- Example 1:
+    -- Example:
     my_rand.add_range_weight_real(10.0,19.0, 1);
     my_rand.add_range_weight_real(20.0,29.0, 3);
-
-    -- Example 2:
-    my_rand.add_range_weight_real(10.0,19.0, 1, INDIVIDUAL_WEIGHT);
-    my_rand.add_range_weight_real(20.0,29.0, 3, INDIVIDUAL_WEIGHT);
 
 
 .. _add_range_weight_time:
 
 add_range_weight_time()
 ----------------------------------------------------------------------------------------------------------------------------------
-Adds a constraint specifying a range with a weight which will be included in the randomized values. ::
+Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is 
+used by default due to the very large number of values within a time range. ::
 
-    add_range_weight_time(min_value, max_value, weight, [mode, [msg_id_panel]])
+    add_range_weight_time(min_value, max_value, weight, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -1553,23 +1550,15 @@ Adds a constraint specifying a range with a weight which will be included in the
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | mode               | in     | :ref:`t_weight_mode`         | Determines how to divide the weight among the range of values.|
-|          |                    |        |                              | Default value is COMBINED_WEIGHT and can be updated via       |
-|          |                    |        |                              | ``set_range_weight_default_mode()``.                          |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
-    -- Example 1:
+    -- Example:
     my_rand.add_range_weight_time(10 us,19 us, 1);
     my_rand.add_range_weight_time(20 us,29 us, 3);
-
-    -- Example 2:
-    my_rand.add_range_weight_time(10 us,19 us, 1, INDIVIDUAL_WEIGHT);
-    my_rand.add_range_weight_time(20 us,29 us, 3, INDIVIDUAL_WEIGHT);
 
 
 set_cyclic_mode()

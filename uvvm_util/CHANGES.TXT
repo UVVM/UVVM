@@ -5,7 +5,7 @@ UVVM Utility Library - Overview on Versions and Changes
 
 v2.18.0
 ----------
-Released: 2021-XX-XX
+Released: 2021-10-22
 - Fixed generic_queue deleting wrong element when position is different from entry_num.
 - Fixed generic_queue print_queue() crashing when queue is empty.
 - Added MATCH_STD_INCL_ZXUW to match strictness for check_value(), await_value()

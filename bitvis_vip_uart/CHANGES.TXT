@@ -14,7 +14,7 @@ Released: 2021-05-26
 
 v2.8.2
 ----------
-Released: 2020-04-08
+Released: 2021-04-08
 - Minor update in uart_receive example in VVC QuickRef.
 
 v2.8.1

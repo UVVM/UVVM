@@ -1,8 +1,8 @@
 #!/bin/zsh
 
-#==============================================
-# This script has been tested with GHDL v.0.37
-#==============================================
+#==================================================================
+# This script has been tested with GHDL version 0.37 and 2.0.0-dev
+#==================================================================
 echo "\nThis script has been tested with GHDL version 0.37 and 2.0.0-dev\n"
 
 # Compiling UVVM Util

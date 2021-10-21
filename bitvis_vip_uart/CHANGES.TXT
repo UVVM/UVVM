@@ -1,6 +1,12 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.8.4
+----------
+Released: 2021-10-22
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util 
+  packages.
+
 v2.8.3
 ----------
 Released: 2021-05-26

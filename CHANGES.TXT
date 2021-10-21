@@ -9,9 +9,9 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2 2021.XX.XX
+v2 2021.10.22
 --------------------
-Released: 2021-XX-XX
+Released: 2021-10-22
 - Fixed generic_queue deleting wrong element when position is different from entry_num.
 - Fixed generic_queue print_queue() crashing when queue is empty.
 - Added MATCH_STD_INCL_ZXUW to match strictness for check_value(), await_value()
@@ -25,6 +25,7 @@ Released: 2021-XX-XX
 - Added new documentation type (.rst and .html) for rand_pkg and func_cov_pkg.
   See uvvm_util/doc/rand_and_func_cov.html and uvvm_util/doc/rst/index.rst for
   documentation.
+- Updated ghdl_compile_all_and_simulate.sh scripts with new uvvm_util packages.
 
 
 v2 2021.05.26

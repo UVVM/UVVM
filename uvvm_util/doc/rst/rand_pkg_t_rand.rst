@@ -1725,7 +1725,7 @@ Returns a random real value using the configured constraints. For more informati
 return time
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random time value using the configured constraints. For more information on the probability distribution click 
-:ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
+:ref:`here <rand_pkg_distributions>`. ::
 
     time := randm(VOID)
     time := randm(msg_id_panel)

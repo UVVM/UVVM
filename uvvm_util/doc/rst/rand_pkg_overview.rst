@@ -218,7 +218,7 @@ reusing the same *my_rand* variable, the ``clear_constraints()`` procedure must 
     data_sign := my_rand.randm(16);   -- Generates a 16-bit signed random value
 
 Similar procedures exist for real constraints: ``add_range_real()``, ``add_val_real()`` and ``excl_val_real()``, and for time 
-constraints: ``add_range_time()``, ``add_val_time()`` and ``excl_val_time()``. **Beta release does not contain time constraints.**
+constraints: ``add_range_time()``, ``add_val_time()`` and ``excl_val_time()``.
 
 .. note::
 
@@ -235,7 +235,7 @@ For more information on the probability distribution click :ref:`here <rand_pkg_
 
 Return types
 ==================================================================================================================================
-The ``randm()`` function can return the following types: **Beta release does not contain real_vector, time, time_vector, signed &
+The ``randm()`` function can return the following types: **Beta release does not contain real_vector, time_vector, signed &
 std_logic_vector return types.**
 
     * :ref:`integer <randm_int>`

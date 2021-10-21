@@ -568,11 +568,6 @@ begin
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
-        v_time := v_rand.rand(ONLY,(-2 us,1 ns,2 ps));
-        check_rand_value(v_time, ONLY,(-2 us,1 ns,2 ps));
-      end loop;
-
       log(ID_LOG_HDR, "Testing time (range + set of values)");
       v_num_values := 4;
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop

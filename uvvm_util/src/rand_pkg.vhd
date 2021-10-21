@@ -1176,6 +1176,42 @@ package rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
+    -- Time constraints
+    ------------------------------------------------------------
+    procedure add_range_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_time(
+      constant value        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_time(
+      constant set_of_values : in time_vector;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure excl_val_time(
+      constant value        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure excl_val_time(
+      constant set_of_values : in time_vector;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_weight_time(
+      constant value        : in time;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_range_weight_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant weight       : in natural;
+      constant mode         : in t_weight_mode  := NA;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    ------------------------------------------------------------
     -- Unsigned constraints
     ------------------------------------------------------------
     procedure add_range_unsigned(
@@ -1227,6 +1263,15 @@ package rand_pkg is
       constant msg_id_panel  : t_msg_id_panel;
       constant ext_proc_call : string := "")
     return real;
+
+    impure function randm(
+      constant VOID : t_void)
+    return time;
+
+    impure function randm(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return time;
 
     impure function randm(
       constant length       : positive;
@@ -1311,6 +1356,14 @@ package body rand_pkg is
     val_incl        : t_real_vector_ptr;
     val_excl        : t_real_vector_ptr;
     weighted        : t_range_weight_mode_real_vec_ptr;
+    weighted_config : boolean;
+  end record;
+
+  type t_time_constraints is record
+    ran_incl        : t_range_time_vec_ptr;
+    val_incl        : t_time_vector_ptr;
+    val_excl        : t_time_vector_ptr;
+    weighted        : t_range_weight_mode_time_vec_ptr;
     weighted_config : boolean;
   end record;
 
@@ -1425,6 +1478,11 @@ package body rand_pkg is
                                                                                     val_incl        => new real_vector(1 to 0),
                                                                                     val_excl        => new real_vector(1 to 0),
                                                                                     weighted        => new t_range_weight_mode_real_vec(1 to 0),
+                                                                                    weighted_config => false);
+    variable priv_time_constraints        : t_time_constraints                  := (ran_incl        => new t_range_time_vec(1 to 0),
+                                                                                    val_incl        => new time_vector(1 to 0),
+                                                                                    val_excl        => new time_vector(1 to 0),
+                                                                                    weighted        => new t_range_weight_mode_time_vec(1 to 0),
                                                                                     weighted_config => false);
     variable priv_uns_constraints         : t_uns_constraints                   := (ran_incl        => new t_range_uns_vec(1 to 0));
 
@@ -1646,6 +1704,28 @@ package body rand_pkg is
         write(v_line, '[' & format_real(priv_real_constraints.ran_incl(i).min_value) &
                       ':' & format_real(priv_real_constraints.ran_incl(i).max_value) & ']');
         if i < priv_real_constraints.ran_incl'length-1 then
+          write(v_line, ',');
+        end if;
+      end loop;
+      return return_and_deallocate;
+    end function;
+
+    -- Returns the string representation of the time range constraints for randomization
+    impure function get_time_range_constraints(
+      constant VOID : t_void)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      for i in 0 to priv_time_constraints.ran_incl'length-1 loop
+        write(v_line, '[' & to_string(priv_time_constraints.ran_incl(i).min_value) &
+                      ':' & to_string(priv_time_constraints.ran_incl(i).max_value) & ']');
+        if i < priv_time_constraints.ran_incl'length-1 then
           write(v_line, ',');
         end if;
       end loop;
@@ -2060,6 +2140,8 @@ package body rand_pkg is
                                    priv_int_constraints.val_excl'length > 0 or priv_int_constraints.weighted_config or
                                    priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 or
                                    priv_real_constraints.val_excl'length > 0 or priv_real_constraints.weighted_config or
+                                   priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or
+                                   priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted_config or
                                    priv_uns_constraints.ran_incl'length > 0;
       if v_multi_method_configured then
         write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
@@ -2092,10 +2174,22 @@ package body rand_pkg is
       if priv_real_constraints.weighted_config then
         write(v_line, "          WEIGHTED REAL VALUES    : " & to_string(priv_real_constraints.weighted.all) & LF);
       end if;
-      -- TODO: time constraints
+      if priv_time_constraints.ran_incl'length > 0 and not (priv_time_constraints.weighted_config) then
+        write(v_line, "          RANGE TIME VALUES       : " & get_time_range_constraints(VOID) & LF);
+      end if;
+      if priv_time_constraints.val_incl'length > 0 and not (priv_time_constraints.weighted_config) then
+        write(v_line, "          INCLUDED TIME VALUES    : " & to_string(priv_time_constraints.val_incl.all) & LF);
+      end if;
+      if priv_time_constraints.val_excl'length > 0 then
+        write(v_line, "          EXCLUDED TIME VALUES    : " & to_string(priv_time_constraints.val_excl.all) & LF);
+      end if;
+      if priv_time_constraints.weighted_config then
+        write(v_line, "          WEIGHTED TIME VALUES    : " & to_string(priv_time_constraints.weighted.all) & LF);
+      end if;
       if priv_uns_constraints.ran_incl'length > 0 then
         write(v_line, "          RANGE UNSIGNED VALUES   : " & get_uns_range_constraints(1) & LF);
       end if;
+      -- TODO: signed constraints
 
       -- Print report bottom line
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
@@ -5001,6 +5095,42 @@ package body rand_pkg is
 
     -- Overload
     procedure increment_vec_size(
+      variable ran_vector : inout t_range_time_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_time_vec_ptr;
+    begin
+      v_copy_ptr := ran_vector;
+      ran_vector := new t_range_time_vec(0 to v_copy_ptr'length-1 + increment);
+      ran_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_time_vector_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_time_vector_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new time_vector(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_range_weight_mode_time_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_weight_mode_time_vec_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new t_range_weight_mode_time_vec(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
       variable val_vector : inout t_range_uns_vec_ptr;
       constant increment  : in    natural) is
       variable v_copy_ptr : t_range_uns_vec_ptr;
@@ -5118,6 +5248,49 @@ package body rand_pkg is
       return get_real_constraints(false);
     end function;
 
+    -- Returns the string representation of the time constraints for randomization
+    impure function get_time_constraints(
+      constant is_vector : boolean)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      if priv_time_constraints.ran_incl'length > 0 then
+        write(v_line, string'("RANGE:") & get_time_range_constraints(VOID));
+      end if;
+      if priv_time_constraints.val_incl'length > 0 then
+        if priv_time_constraints.ran_incl'length = 0 then
+          write(v_line, string'("ONLY:"));
+        else
+          write(v_line, string'(", ADD:"));
+        end if;
+        write(v_line, to_string(priv_time_constraints.val_incl.all));
+      end if;
+      if priv_time_constraints.val_excl'length > 0 then
+        write(v_line, string'(", EXCL:") & to_string(priv_time_constraints.val_excl.all));
+      end if;
+      if v_line = NULL then
+        write(v_line, string'("UNCONSTRAINED"));
+      end if;
+      if is_vector and priv_uniqueness = UNIQUE then
+        write(v_line, string'(", ") & to_upper(to_string(priv_uniqueness)));
+      end if;
+      return return_and_deallocate;
+    end function;
+
+    -- Overload
+    impure function get_time_constraints(
+      constant VOID : t_void)
+    return string is
+    begin
+      return get_time_constraints(false);
+    end function;
+
     -- Returns the string representation of the unsigned constraints for randomization
     impure function get_uns_constraints(
       constant length : natural)
@@ -5165,8 +5338,8 @@ package body rand_pkg is
         priv_int_constraints.val_excl'length > 0 or priv_int_constraints.weighted'length > 0;
       variable v_real_configured : boolean := priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 or
         priv_real_constraints.val_excl'length > 0 or priv_real_constraints.weighted'length > 0;
-      --variable v_time_configured : boolean := priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or
-      --  priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted'length > 0;
+      variable v_time_configured : boolean := priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or
+        priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted'length > 0;
       variable v_uns_configured  : boolean := priv_uns_constraints.ran_incl'length > 0;
       --variable v_sig_configured  : boolean := priv_sig_constraints.ran_incl'length > 0 or priv_sig_constraints.val_incl'length > 0 or priv_sig_constraints.val_excl'length > 0;
     begin
@@ -5192,14 +5365,14 @@ package body rand_pkg is
         return false;
       end if;
 
-      --if v_time_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "UNSIGNED" or value_type = "SIGNED") then
-      --  if is_config then
-      --    alert(TB_ERROR, proc_call & "=> Time " & C_MSG_CONFIG, priv_scope);
-      --  else
-      --    alert(TB_ERROR, proc_call & "=> Time " & C_MSG_RETURN, priv_scope);
-      --  end if;
-      --  return false;
-      --end if;
+      if v_time_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+        if is_config then
+          alert(TB_ERROR, proc_call & "=> Time " & C_MSG_CONFIG, priv_scope);
+        else
+          alert(TB_ERROR, proc_call & "=> Time " & C_MSG_RETURN, priv_scope);
+        end if;
+        return false;
+      end if;
 
       if v_uns_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "SIGNED") then
         if is_config then
@@ -5335,6 +5508,55 @@ package body rand_pkg is
       return v_ret;
     end function;
 
+    -- Returns a time random value supporting multiple range constraints
+    impure function randm_ranges(
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
+    return time is
+      constant C_TIME_UNIT      : time := std.env.resolution_limit;
+      variable v_max_range      : time;
+      variable v_max_value      : time;
+      variable v_acc_range_len  : time;
+      variable v_gen_new_random : boolean := true;
+      variable v_ret            : time;
+    begin
+      -- Invalid distributions checked in randm() procedure
+
+      while v_gen_new_random loop
+        -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
+        v_max_range := 0 ns;
+        for i in 0 to priv_time_constraints.ran_incl'length-1 loop
+          v_max_range := v_max_range + priv_time_constraints.ran_incl(i).range_len;
+        end loop;
+        v_max_range := v_max_range - C_TIME_UNIT;
+        -- It is impossible to give the same weight to an included value than to a single value in the time range,
+        -- therefore we split the probability to 50% ranges and 50% included values.
+        v_max_value := v_max_range*2 when priv_time_constraints.val_incl'length > 0 else v_max_range;
+
+        v_ret := rand(0 ns, v_max_value, msg_id_panel, proc_call);
+
+        -- Convert the random value to the correct range
+        if v_ret <= v_max_range then
+          v_acc_range_len := 0 ns;
+          for i in 0 to priv_time_constraints.ran_incl'length-1 loop
+            v_acc_range_len := v_acc_range_len + priv_time_constraints.ran_incl(i).range_len;
+            if v_ret < v_acc_range_len then
+              v_ret := v_ret + priv_time_constraints.ran_incl(i).min_value - (v_acc_range_len - priv_time_constraints.ran_incl(i).range_len);
+              exit;
+            end if;
+          end loop;
+        -- If random value isn't a range, randomize within the added values
+        else
+          v_ret := rand(ONLY, priv_time_constraints.val_incl.all, msg_id_panel, proc_call);
+        end if;
+
+        -- Check if the random value is in the exclusion list
+        v_gen_new_random := check_value_in_vector(v_ret, priv_time_constraints.val_excl.all);
+      end loop;
+
+      return v_ret;
+    end function;
+
     -- Returns an unsigned random value supporting multiple range constraints
     impure function randm_ranges(
       constant length       : natural;
@@ -5424,6 +5646,24 @@ package body rand_pkg is
 
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
+
+      return v_ret;
+    end function;
+
+    -- Returns a time random value with ADD and EXCL constraints
+    impure function randm_add_excl(
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
+    return time is
+      variable v_gen_new_random : boolean := true;
+      variable v_ret            : time;
+    begin
+      -- Invalid distributions checked in randm() procedure
+
+      while v_gen_new_random loop
+        v_ret := rand(ONLY, priv_time_constraints.val_incl.all, msg_id_panel, proc_call);
+        v_gen_new_random := check_value_in_vector(v_ret, priv_time_constraints.val_excl.all);
+      end loop;
 
       return v_ret;
     end function;
@@ -5653,6 +5893,118 @@ package body rand_pkg is
     end procedure;
 
     ------------------------------------------------------------
+    -- Time constraints
+    ------------------------------------------------------------
+    procedure add_range_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_time([" & to_string(min_value) & ":" & to_string(max_value) & "])";
+      constant C_TIME_UNIT  : time := std.env.resolution_limit;
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.ran_incl, 1);
+      increment_vec_size(priv_time_constraints.weighted, 1);
+      priv_time_constraints.ran_incl(priv_time_constraints.ran_incl'length-1) := (min_value, max_value, max_value-min_value+C_TIME_UNIT);
+      priv_time_constraints.weighted(priv_time_constraints.weighted'length-1) := (min_value, max_value, 1, COMBINED_WEIGHT);
+    end procedure;
+
+    procedure add_val_time(
+      constant value        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      add_val_time((0 => value), msg_id_panel);
+    end procedure;
+
+    procedure add_val_time(
+      constant set_of_values : in time_vector;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val_time" & to_string(set_of_values);
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.val_incl, set_of_values'length);
+      increment_vec_size(priv_time_constraints.weighted, set_of_values'length);
+      priv_time_constraints.val_incl(priv_time_constraints.val_incl'length-1-(set_of_values'length-1) to priv_time_constraints.val_incl'length-1) := set_of_values;
+      for i in 0 to set_of_values'length-1 loop
+        priv_time_constraints.weighted(priv_time_constraints.weighted'length-1-(set_of_values'length-1)+i) := (set_of_values(i), set_of_values(i), 1, NA);
+      end loop;
+    end procedure;
+
+    procedure excl_val_time(
+      constant value        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      excl_val_time((0 => value), msg_id_panel);
+    end procedure;
+
+    procedure excl_val_time(
+      constant set_of_values : in time_vector;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "excl_val_time" & to_string(set_of_values);
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.val_excl, set_of_values'length);
+      priv_time_constraints.val_excl(priv_time_constraints.val_excl'length-1-(set_of_values'length-1) to priv_time_constraints.val_excl'length-1) := set_of_values;
+    end procedure;
+
+    procedure add_val_weight_time(
+      constant value        : in time;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val_weight_time(" & to_string(value) & "," & to_string(weight) & ")";
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.weighted, 1);
+      priv_time_constraints.weighted(priv_time_constraints.weighted'length-1) := (value, value, weight, NA);
+      priv_time_constraints.weighted_config := true;
+    end procedure;
+
+    procedure add_range_weight_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant weight       : in natural;
+      constant mode         : in t_weight_mode  := NA;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_weight_time([" & to_string(min_value) & ":" & to_string(max_value) & "]," &
+        to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
+      variable v_weight_mode : t_weight_mode;
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      v_weight_mode := mode when mode /= NA else priv_weight_mode;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.weighted, 1);
+      priv_time_constraints.weighted(priv_time_constraints.weighted'length-1) := (min_value, max_value, weight, v_weight_mode);
+      priv_time_constraints.weighted_config := true;
+    end procedure;
+
+    ------------------------------------------------------------
     -- Unsigned constraints
     ------------------------------------------------------------
     procedure add_range_unsigned(
@@ -5753,6 +6105,16 @@ package body rand_pkg is
       priv_real_constraints.val_excl := new real_vector(1 to 0);
       priv_real_constraints.weighted := new t_range_weight_mode_real_vec(1 to 0);
       priv_real_constraints.weighted_config := false;
+
+      DEALLOCATE(priv_time_constraints.ran_incl);
+      DEALLOCATE(priv_time_constraints.val_incl);
+      DEALLOCATE(priv_time_constraints.val_excl);
+      DEALLOCATE(priv_time_constraints.weighted);
+      priv_time_constraints.ran_incl := new t_range_time_vec(1 to 0);
+      priv_time_constraints.val_incl := new time_vector(1 to 0);
+      priv_time_constraints.val_excl := new time_vector(1 to 0);
+      priv_time_constraints.weighted := new t_range_weight_mode_time_vec(1 to 0);
+      priv_time_constraints.weighted_config := false;
 
       DEALLOCATE(priv_uns_constraints.ran_incl);
       priv_uns_constraints.ran_incl := new t_range_uns_vec(1 to 0);
@@ -6026,6 +6388,135 @@ package body rand_pkg is
           alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
             v_val_excl_configured)), priv_scope);
           return 0.0;
+      end case;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    impure function randm(
+      constant VOID : t_void)
+    return time is
+    begin
+      return randm(shared_msg_id_panel);
+    end function;
+
+    impure function randm(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return time is
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_time_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_time_constraints.weighted.all) & ")";
+      variable v_proc_call           : line;
+      variable v_ran_incl_configured : std_logic;
+      variable v_val_incl_configured : std_logic;
+      variable v_val_excl_configured : std_logic;
+      variable v_num_ranges          : natural := priv_time_constraints.ran_incl'length;
+      variable v_ret                 : time;
+    begin
+      create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
+      v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
+      v_val_incl_configured := '1' when priv_time_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_time_constraints.val_excl'length > 0 else '0';
+
+      -- Check only time constraints are configured
+      if not(check_configured_constraints("TIME", v_proc_call.all, is_config => false)) then
+        return 0 ns;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for time type.", priv_scope);
+        return 0 ns;
+      end if;
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for time type. Ignoring cyclic configuration.", priv_scope);
+      end if;
+
+      ----------------------------------------
+      -- WEIGHTED
+      ----------------------------------------
+      if priv_time_constraints.weighted_config then
+        check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
+        check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
+        v_ret := rand_range_weight_mode(priv_time_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
+        log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        return v_ret;
+      end if;
+
+      -- Assuming function is being called directly from sequencer when ext_proc_call is empty
+      if ext_proc_call = "" and priv_uniqueness = UNIQUE then
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness not supported for time type. Ignoring uniqueness configuration.", priv_scope);
+      end if;
+
+      case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
+        ----------------------------------------
+        -- RANGE
+        ----------------------------------------
+        when "100" =>
+          if v_num_ranges = 1 then
+            v_ret := rand(priv_time_constraints.ran_incl(0).min_value, priv_time_constraints.ran_incl(0).max_value, msg_id_panel, v_proc_call.all);
+          else
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
+          end if;
+        ----------------------------------------
+        -- SET OF VALUES
+        ----------------------------------------
+        when "010" =>
+          v_ret := rand(ONLY, priv_time_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
+        ----------------------------------------
+        -- EXCLUDE
+        ----------------------------------------
+        when "001" =>
+          alert(TB_ERROR, v_proc_call.all & "=> Time random generator needs ""include"" constraints", priv_scope);
+          return 0 ns;
+        ----------------------------------------
+        -- RANGE + SET OF VALUES
+        ----------------------------------------
+        when "110" =>
+          if v_num_ranges = 1 then
+            v_ret := rand(priv_time_constraints.ran_incl(0).min_value, priv_time_constraints.ran_incl(0).max_value, ADD,
+              priv_time_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
+          else
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
+          end if;
+        ----------------------------------------
+        -- RANGE + EXCLUDE
+        ----------------------------------------
+        when "101" =>
+          if v_num_ranges = 1 then
+            v_ret := rand(priv_time_constraints.ran_incl(0).min_value, priv_time_constraints.ran_incl(0).max_value, EXCL,
+              priv_time_constraints.val_excl.all, msg_id_panel, v_proc_call.all);
+          else
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
+          end if;
+        ----------------------------------------
+        -- SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "011" =>
+          v_ret := randm_add_excl(msg_id_panel, v_proc_call.all);
+        ----------------------------------------
+        -- RANGE + SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "111" =>
+          if v_num_ranges = 1 then
+            v_ret := rand(priv_time_constraints.ran_incl(0).min_value, priv_time_constraints.ran_incl(0).max_value, ADD,
+              priv_time_constraints.val_incl.all, EXCL, priv_time_constraints.val_excl.all, msg_id_panel, v_proc_call.all);
+          else
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
+          end if;
+        ----------------------------------------
+        -- NO CONSTRAINTS
+        ----------------------------------------
+        when "000" =>
+          alert(TB_ERROR, v_proc_call.all & "=> Time random generator must be constrained", priv_scope);
+          return 0 ns;
+
+        when others =>
+          alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+            v_val_excl_configured)), priv_scope);
+          return 0 ns;
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);

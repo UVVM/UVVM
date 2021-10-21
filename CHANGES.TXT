@@ -20,6 +20,11 @@ Released: 2021-XX-XX
   set to MATCH_STD_INCL_Z.
 - Fixed issue where GHDL reported that the operator "&" is overloaded in the
   ti_protected_types_pkg.
+- Added rand_pkg (advanced randomization).
+- Added func_cov_pkg (functional coverage).
+- Added new documentation type (.rst and .html) for rand_pkg and func_cov_pkg.
+  See uvvm_util/doc/rand_and_func_cov.html and uvvm_util/doc/rst/index.rst for
+  documentation.
 
 
 v2 2021.05.26

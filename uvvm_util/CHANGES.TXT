@@ -12,6 +12,11 @@ Released: 2021-XX-XX
   and matching_values().
 - Fixed issue when using don't care in SLVs with check_value() and match strictness
   set to MATCH_STD_INCL_Z.
+- Added rand_pkg (advanced randomization).
+- Added func_cov_pkg (functional coverage).
+- Added new documentation type (.rst and .html) for rand_pkg and func_cov_pkg.
+  See uvvm_util/doc/rand_and_func_cov.html and uvvm_util/doc/rst/index.rst for
+  documentation.
 
 v2.17.0
 ----------

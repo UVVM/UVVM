@@ -1,0 +1,6 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(RANGE:[1:2147483647], CYCLIC)=> Simulation might slow down due to the cyclic queue and the large number of cyclic iterations.
+UVVM:                    To disable this alert set C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE to true in adaptations_pkg.
+UVVM: 

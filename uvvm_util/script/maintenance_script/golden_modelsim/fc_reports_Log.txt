@@ -57,11 +57,11 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing coverpoint reports
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_range(0, 125, num_bins:1), min_hits:8, "mem_addr_low")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_range(0, 125), min_hits:8, "mem_addr_low")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (0 to 125), min_hits:8, rand_weight:8, "mem_addr_low"
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin((126, 127, 128)), "mem_addr_mid")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (126, 127, 128), min_hits:1, rand_weight:1, "mem_addr_mid"
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_range(129, 255, num_bins:1), min_hits:4, "mem_addr_high")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_range(129, 255), min_hits:4, "mem_addr_high")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (129 to 255), min_hits:4, rand_weight:4, "mem_addr_high"
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_transition((0, 1, 2, 3)), min_hits:2, rand_weight:10, "transition_1")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (0->1->2->3), min_hits:2, rand_weight:10, "transition_1"
@@ -311,11 +311,11 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross reports
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(10), bin_range(0, 15, num_bins:1), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(10), bin_range(0, 15), "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (10) x (0 to 15), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(20), bin_range(16, 31, num_bins:1), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(20), bin_range(16, 31), "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (20) x (16 to 31), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(30), bin_range(32, 63, num_bins:1), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(30), bin_range(32, 63), "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (30) x (32 to 63), min_hits:1, rand_weight:1, ""
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin((10, 20, 30)), illegal_bin_range(64,127), "illegal_bin")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (10, 20, 30) x ILL(64 to 127), min_hits:1, rand_weight:1,
@@ -336,8 +336,7 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin(10),bin(20),bin(30), bin_range(0, 7, num_bins:1),bin_range(8, 15,
-UVVM:                                                                           num_bins:1), bin(1000), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin(10),bin(20),bin(30), bin_range(0, 7),bin_range(8, 15), bin(1000), "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_3] Adding cross: (10),(20),(30) x (0 to 7),(8 to 15) x (1000), min_hits:1,
 UVVM:                                                                             rand_weight:1, ""
 UVVM:      
@@ -358,9 +357,9 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_bins(bin_vector(LEN:2), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_bins(bin_vector(LEN:2, num_bins:0), "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_4] Adding bins: (0),(1),(2),(3), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_bins(bin_range(0, 127, num_bins:1), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_bins(bin_range(0, 127), "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_5] Adding bins: (0 to 127), min_hits:1, rand_weight:1, ""
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(Covpt_4, Covpt_5, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_6] Adding cross: (0),(1),(2),(3) x (0 to 127), min_hits:1, rand_weight:1, ""

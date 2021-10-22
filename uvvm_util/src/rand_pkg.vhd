@@ -1279,6 +1279,16 @@ package rand_pkg is
     impure function randm(
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return real_vector;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return unsigned;
 
   end protected t_rand;
@@ -5189,22 +5199,15 @@ package body rand_pkg is
 
     -- Overload
     impure function get_int_constraints(
-      constant is_vector : boolean := false)
-    return string is
-    begin
-      return get_int_constraints(0, is_vector);
-    end function;
-
-    -- Overload
-    impure function get_int_constraints(
       constant VOID : t_void)
     return string is
     begin
-      return get_int_constraints(0);
+      return get_int_constraints(0, false);
     end function;
 
     -- Returns the string representation of the real constraints for randomization
     impure function get_real_constraints(
+      constant length    : natural;
       constant is_vector : boolean)
     return string is
       variable v_line : line;
@@ -5215,6 +5218,12 @@ package body rand_pkg is
         return ret;
       end function;
     begin
+      if length > 0 then
+        write(v_line, string'("LEN:") & to_string(length));
+        if priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 then
+          write(v_line, string'(", "));
+        end if;
+      end if;
       if priv_real_constraints.ran_incl'length > 0 then
         write(v_line, string'("RANGE:") & get_real_range_constraints(VOID));
       end if;
@@ -5243,11 +5252,12 @@ package body rand_pkg is
       constant VOID : t_void)
     return string is
     begin
-      return get_real_constraints(false);
+      return get_real_constraints(0, false);
     end function;
 
     -- Returns the string representation of the time constraints for randomization
     impure function get_time_constraints(
+      constant length    : natural;
       constant is_vector : boolean)
     return string is
       variable v_line : line;
@@ -5258,6 +5268,12 @@ package body rand_pkg is
         return ret;
       end function;
     begin
+      if length > 0 then
+        write(v_line, string'("LEN:") & to_string(length));
+        if priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 then
+          write(v_line, string'(", "));
+        end if;
+      end if;
       if priv_time_constraints.ran_incl'length > 0 then
         write(v_line, string'("RANGE:") & get_time_range_constraints(VOID));
       end if;
@@ -5286,7 +5302,7 @@ package body rand_pkg is
       constant VOID : t_void)
     return string is
     begin
-      return get_time_constraints(false);
+      return get_time_constraints(0, false);
     end function;
 
     -- Returns the string representation of the unsigned constraints for randomization
@@ -5320,6 +5336,36 @@ package body rand_pkg is
       v_cnt := v_cnt + priv_int_constraints.val_incl'length;
       v_cnt := integer'right when v_cnt = 0; -- When there are no INCL constaints, the whole integer range is used
       v_cnt := v_cnt - priv_int_constraints.val_excl'length;
+      return v_cnt;
+    end function;
+
+    -- Returns the number of values in the real constraints
+    impure function get_real_constraints_count(
+      constant VOID : t_void)
+    return natural is
+      variable v_cnt : natural := 0;
+    begin
+      if priv_real_constraints.ran_incl'length > 0 then
+        v_cnt := integer'right; -- A real range will have a large amount of possible values
+        return v_cnt;
+      end if;
+      v_cnt := v_cnt + priv_real_constraints.val_incl'length;
+      v_cnt := v_cnt - priv_real_constraints.val_excl'length;
+      return v_cnt;
+    end function;
+
+    -- Returns the number of values in the time constraints
+    impure function get_time_constraints_count(
+      constant VOID : t_void)
+    return natural is
+      variable v_cnt : natural := 0;
+    begin
+      if priv_time_constraints.ran_incl'length > 0 then
+        v_cnt := integer'right; -- A time range will have a large amount of possible values
+        return v_cnt;
+      end if;
+      v_cnt := v_cnt + priv_time_constraints.val_incl'length;
+      v_cnt := v_cnt - priv_time_constraints.val_excl'length;
       return v_cnt;
     end function;
 
@@ -6520,7 +6566,7 @@ package body rand_pkg is
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(is_vector=>true) & ")";
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(length, is_vector=>true) & ")";
       constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_val_incl_configured : std_logic;
@@ -6582,6 +6628,158 @@ package body rand_pkg is
 
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
+
+      log(ID_RAND_GEN, C_LOCAL_CALL_1 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return real_vector is
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_real_constraints(length, is_vector=>true) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_real_constraints.weighted.all) & ")";
+      constant C_PREVIOUS_DIST        : t_rand_dist := priv_rand_dist;
+      constant C_PREVIOUS_CYCLIC_MODE : t_cyclic := priv_cyclic_mode;
+      variable v_val_incl_configured  : std_logic;
+      variable v_val_excl_configured  : std_logic;
+      variable v_num_ranges           : natural := priv_real_constraints.ran_incl'length;
+      variable v_gen_new_random       : boolean := true;
+      variable v_ret                  : real_vector(0 to length-1);
+    begin
+      v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
+
+      -- Check only real constraints are configured
+      if not(check_configured_constraints("REAL", C_LOCAL_CALL_1, is_config => false)) then
+        return v_ret;
+      end if;
+
+      if priv_real_constraints.weighted_config then
+        alert(TB_ERROR, C_LOCAL_CALL_2 & "=> Weighted randomization not supported for real_vector type.", priv_scope);
+        return v_ret;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        if priv_uniqueness = UNIQUE then
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        elsif priv_cyclic_mode = CYCLIC then
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        elsif (v_num_ranges > 1 or v_val_incl_configured = '1' or v_val_excl_configured = '1') then
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        end if;
+      end if;
+      if get_real_constraints_count(VOID) = 0 then
+        alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Real random generator must be constrained", priv_scope);
+        return v_ret;
+      end if;
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Cyclic mode not supported for real_vector type. Ignoring cyclic configuration.", priv_scope);
+        priv_cyclic_mode := NON_CYCLIC;
+      end if;
+
+      if priv_uniqueness = NON_UNIQUE then
+        -- Generate a random value for each element of the vector
+        for i in 0 to length-1 loop
+          v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+        end loop;
+      else -- UNIQUE
+        -- Check if it is possible to generate unique values for the complete vector
+        if get_real_constraints_count(VOID) < length then
+          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          return v_ret;
+        else
+          -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
+          for i in 0 to length-1 loop
+            v_gen_new_random := true;
+            while v_gen_new_random loop
+              v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+              if i > 0 then
+                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+              else
+                v_gen_new_random := false;
+              end if;
+            end loop;
+          end loop;
+        end if;
+      end if;
+
+      -- Restore previous config
+      priv_rand_dist   := C_PREVIOUS_DIST;
+      priv_cyclic_mode := C_PREVIOUS_CYCLIC_MODE;
+
+      log(ID_RAND_GEN, C_LOCAL_CALL_1 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector is
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_time_constraints(length, is_vector=>true) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_time_constraints.weighted.all) & ")";
+      constant C_PREVIOUS_CYCLIC_MODE : t_cyclic := priv_cyclic_mode;
+      variable v_val_incl_configured  : std_logic;
+      variable v_val_excl_configured  : std_logic;
+      variable v_num_ranges           : natural := priv_time_constraints.ran_incl'length;
+      variable v_gen_new_random       : boolean := true;
+      variable v_ret                  : time_vector(0 to length-1);
+    begin
+      v_val_incl_configured := '1' when priv_time_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_time_constraints.val_excl'length > 0 else '0';
+
+      -- Check only time constraints are configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL_1, is_config => false)) then
+        return v_ret;
+      end if;
+
+      if priv_time_constraints.weighted_config then
+        alert(TB_ERROR, C_LOCAL_CALL_2 & "=> Weighted randomization not supported for time_vector type.", priv_scope);
+        return v_ret;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for time_vector type.", priv_scope);
+        return v_ret;
+      end if;
+      if get_time_constraints_count(VOID) = 0 then
+        alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Time random generator must be constrained", priv_scope);
+        return v_ret;
+      end if;
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Cyclic mode not supported for time_vector type. Ignoring cyclic configuration.", priv_scope);
+        priv_cyclic_mode := NON_CYCLIC;
+      end if;
+
+      if priv_uniqueness = NON_UNIQUE then
+        -- Generate a random value for each element of the vector
+        for i in 0 to length-1 loop
+          v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+        end loop;
+      else -- UNIQUE
+        -- Check if it is possible to generate unique values for the complete vector
+        if get_time_constraints_count(VOID) < length then
+          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+          return v_ret;
+        else
+          -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
+          for i in 0 to length-1 loop
+            v_gen_new_random := true;
+            while v_gen_new_random loop
+              v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+              if i > 0 then
+                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+              else
+                v_gen_new_random := false;
+              end if;
+            end loop;
+          end loop;
+        end if;
+      end if;
+
+      -- Restore previous config
+      priv_cyclic_mode := C_PREVIOUS_CYCLIC_MODE;
 
       log(ID_RAND_GEN, C_LOCAL_CALL_1 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
       return v_ret;

@@ -1534,7 +1534,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "REAL_VEC" then
         if multi_method then
-          --v_real_vec := rand_gen.randm(v_real_vec'length);
+          v_real_vec := rand_gen.randm(v_real_vec'length);
         else
           v_real_vec := rand_gen.rand(v_real_vec'length, real(min_value), real(max_value));
         end if;

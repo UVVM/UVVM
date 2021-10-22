@@ -380,7 +380,7 @@ package td_vvc_framework_common_methods_pkg is
   procedure terminate_current_command(
     signal   vvc_target                : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
-    constant vvc_channel               : in    t_channel      := NA;
+    constant vvc_channel               : in    t_channel;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
@@ -404,7 +404,7 @@ package td_vvc_framework_common_methods_pkg is
   procedure terminate_all_commands(
     signal   vvc_target                : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
-    constant vvc_channel               : in    t_channel      := NA;
+    constant vvc_channel               : in    t_channel;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
@@ -1007,7 +1007,7 @@ package body td_vvc_framework_common_methods_pkg is
   procedure terminate_current_command(
     signal   vvc_target                : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
-    constant vvc_channel               : in    t_channel      := NA;
+    constant vvc_channel               : in    t_channel;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
@@ -1048,7 +1048,7 @@ package body td_vvc_framework_common_methods_pkg is
   procedure terminate_all_commands(
     signal   vvc_target                : inout t_vvc_target_record;
     constant vvc_instance_idx          : in    integer;
-    constant vvc_channel               : in    t_channel      := NA;
+    constant vvc_channel               : in    t_channel;
     constant msg                       : in    string         := "";
     constant scope                     : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel       : in    t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0

@@ -74,7 +74,7 @@ package types_pkg is
 
   type t_log_destination is (CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY);
 
-  type t_match_strictness is (MATCH_STD, MATCH_STD_INCL_Z, MATCH_EXACT);
+  type t_match_strictness is (MATCH_STD, MATCH_STD_INCL_Z, MATCH_EXACT, MATCH_STD_INCL_ZXUW);
 
   type t_alert_counters  is array (NOTE to t_alert_level'right) of natural;
   type t_alert_attention is array (NOTE to t_alert_level'right) of t_attention;
@@ -95,6 +95,8 @@ package types_pkg is
   alias t_word_endianness is t_byte_endianness;
 
   type t_pulse_continuation is (ALLOW_PULSE_CONTINUATION, NO_PULSE_CONTINUATION_ALLOWED);
+
+  type t_coverage_representation is (NO_GOAL, GOAL_CAPPED, GOAL_UNCAPPED);
 
   type t_global_ctrl is record
     attention  : t_alert_attention;

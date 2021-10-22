@@ -2,6 +2,12 @@ Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
 
+v2.3.1
+----------
+Released: 2021-10-22
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util 
+  packages.
+
 v2.3.0
 ----------
 Released: 2021-05-26

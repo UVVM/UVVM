@@ -1,0 +1,537 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.                        Start Simulation of Functional Coverage package - fc_database
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_BINS). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_BINS_INFO). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_RAND). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_SAMPLE). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_CONFIG). 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing load database from a non-existing file
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(Y://bitvis//uvvm//uvvm_util//simdummy.txt)
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(Y://bitvis//uvvm//uvvm_util//simdummy.txt)=> Cannot open file: Y://bitvis//uvvm//uvvm_util//simdummy.txt
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing write database to a file - coverpoint
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin(20), min_hits:8, rand_weight:20, "single")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (20), min_hits:8, rand_weight:20, "single"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin((30, 35, 39)), min_hits:9, rand_weight:30, "multiple")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (30, 35, 39), min_hits:9, rand_weight:30, "multiple"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_range(40, 49, num_bins:2), min_hits:15, rand_weight:40, "range")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (40 to 44),(45 to 49), min_hits:15, rand_weight:40, "range"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_transition((50, 51, 52, 53, 54, 55, 56, 57, 58, 59)), min_hits:5,
+UVVM:                                                                           rand_weight:50, "transition")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: (50->51->52->53->54->55->56->57->58->59), min_hits:5, rand_weight:50,
+UVVM:                                                                             "transition"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(ignore_bin(100), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: IGN(100), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(ignore_bin(110), min_hits:1000, rand_weight:500, "ignore_single")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: IGN(110), min_hits:1000, rand_weight:500, "ignore_single"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(ignore_bin_range(121,125), min_hits:1000, rand_weight:500, "ignore_range")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: IGN(121 to 125), min_hits:1000, rand_weight:500, "ignore_range"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(ignore_bin_transition((132, 134, 136, 138)), min_hits:1000, rand_weight:500,
+UVVM:                                                                           "ignore_transition")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: IGN(132->134->136->138), min_hits:1000, rand_weight:500,
+UVVM:                                                                             "ignore_transition"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(illegal_bin(200), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: ILL(200), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(illegal_bin(210), min_hits:1000, rand_weight:500, "illegal_single")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: ILL(210), min_hits:1000, rand_weight:500, "illegal_single"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(illegal_bin_range(226,229), min_hits:1000, rand_weight:500, "illegal_range")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: ILL(226 to 229), min_hits:1000, rand_weight:500, "illegal_range"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(illegal_bin_transition((231, 237, 237, 238, 235, 231)), min_hits:1000,
+UVVM:                                                                           rand_weight:500, "illegal_transition")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding bins: ILL(231->237->237->238->235->231), min_hits:1000, rand_weight:500,
+UVVM:                                                                             "illegal_transition"
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_illegal_bin_alert_level(TB_NOTE)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_bin_overlap_alert_level(TB_WARNING)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_overall_coverage_weight(5)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_bins_coverage_goal(50)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_hits_coverage_goal(200)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        fc_set_covpts_coverage_goal(80)
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_NOTEs by 6. 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(20)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(20)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(30)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(35)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(39)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(40)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(41)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(42)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(43)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(44)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(45)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(46)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(47)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(48)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(49)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(50)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(51)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(52)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(53)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(54)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(55)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(56)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(57)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(58)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(59)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(110)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(121)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(122)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(123)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(124)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(125)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(132)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(134)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(136)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(138)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(132)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(134)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(136)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(138)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(210)
+UVVM: 
+UVVM: ***  TB_NOTE #1  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(210)=> Sampled illegal_bin(210)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(226)
+UVVM: 
+UVVM: ***  TB_NOTE #2  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(226)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(227)
+UVVM: 
+UVVM: ***  TB_NOTE #3  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(227)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(228)
+UVVM: 
+UVVM: ***  TB_NOTE #4  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(228)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(229)
+UVVM: 
+UVVM: ***  TB_NOTE #5  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(229)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(231)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(237)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(237)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(238)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(235)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(231)
+UVVM: 
+UVVM: ***  TB_NOTE #6  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(231)=> Sampled illegal_bin_transition(231->237->237->238->235->231)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(50)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(51)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(52)
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 50
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 51
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 52
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 53
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 54
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 55
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): MY_SCOPE ***                                                                                                            
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (200)                           0                N/A               N/A                bin_10              ILLEGAL                              
+UVVM:                           (210)                           1                N/A               N/A            illegal_single          ILLEGAL                              
+UVVM:                       (226 to 229)                        4                N/A               N/A             illegal_range          ILLEGAL                              
+UVVM:              (231->237->237->238->235->231)               1                N/A               N/A          illegal_transition        ILLEGAL                              
+UVVM:                           (100)                           0                N/A               N/A                 bin_6               IGNORE                              
+UVVM:                           (110)                           1                N/A               N/A             ignore_single           IGNORE                              
+UVVM:                       (121 to 125)                        5                N/A               N/A             ignore_range            IGNORE                              
+UVVM:                   (132->134->136->138)                    2                N/A               N/A           ignore_transition         IGNORE                              
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] write_coverage_db(Y://bitvis//uvvm//uvvm_util//simcoverpoint.txt)
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing write database to a file - cross
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(10), bin(1010), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (10) x (1010), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(20), bin(1020), min_hits:8, rand_weight:20, "single")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (20) x (1020), min_hits:8, rand_weight:20, "single"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin((30, 35, 39)), bin((1030, 1035, 1039)), min_hits:9, rand_weight:30,
+UVVM:                                                                           "multiple")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (30, 35, 39) x (1030, 1035, 1039), min_hits:9, rand_weight:30,
+UVVM:                                                                             "multiple"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin_range(40, 49, num_bins:2), bin_range(1040, 1049), min_hits:15,
+UVVM:                                                                           rand_weight:40, "range")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (40 to 44),(45 to 49) x (1040 to 1049), min_hits:15, rand_weight:40,
+UVVM:                                                                             "range"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin_transition((50, 51, 52, 53, 54, 55)), bin_transition((1050, 1051, 1052,
+UVVM:                                                                           1053, 1054, 1055)), min_hits:5, rand_weight:50, "transition")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: (50->51->52->53->54->55) x (1050->1051->1052->1053->1054->1055),
+UVVM:                                                                             min_hits:5, rand_weight:50, "transition"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(ignore_bin(100), ignore_bin(1100), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: IGN(100) x IGN(1100), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(ignore_bin(110), ignore_bin(1110), min_hits:1000, rand_weight:500,
+UVVM:                                                                           "ignore_single")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: IGN(110) x IGN(1110), min_hits:1000, rand_weight:500, "ignore_single"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(ignore_bin_range(121,125), ignore_bin_range(1121,1125), min_hits:1000,
+UVVM:                                                                           rand_weight:500, "ignore_range")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: IGN(121 to 125) x IGN(1121 to 1125), min_hits:1000, rand_weight:500,
+UVVM:                                                                             "ignore_range"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(ignore_bin_transition((132, 134, 136, 138)), ignore_bin_transition((1132,
+UVVM:                                                                           1134, 1136, 1138)), min_hits:1000, rand_weight:500, "ignore_transition")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: IGN(132->134->136->138) x IGN(1132->1134->1136->1138), min_hits:1000,
+UVVM:                                                                             rand_weight:500, "ignore_transition"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(illegal_bin(200), illegal_bin(1200), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: ILL(200) x ILL(1200), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(illegal_bin(210), illegal_bin(1210), min_hits:1000, rand_weight:500,
+UVVM:                                                                           "illegal_single")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: ILL(210) x ILL(1210), min_hits:1000, rand_weight:500,
+UVVM:                                                                             "illegal_single"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(illegal_bin_range(226,229), illegal_bin_range(1226,1229), min_hits:1000,
+UVVM:                                                                           rand_weight:500, "illegal_range")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: ILL(226 to 229) x ILL(1226 to 1229), min_hits:1000, rand_weight:500,
+UVVM:                                                                             "illegal_range"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(illegal_bin_transition((231, 237, 237)), illegal_bin_transition((1231,
+UVVM:                                                                           1237, 1237)), min_hits:1000, rand_weight:500, "illegal_transition")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_2] Adding cross: ILL(231->237->237) x ILL(1231->1237->1237), min_hits:1000,
+UVVM:                                                                             rand_weight:500, "illegal_transition"
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] set_illegal_bin_alert_level(TB_WARNING)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] set_bin_overlap_alert_level(TB_ERROR)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] set_overall_coverage_weight(8)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] set_bins_coverage_goal(50)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] set_hits_coverage_goal(75)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        fc_set_covpts_coverage_goal(90)
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 6. 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((20, 1020))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((20, 1020))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((30, 1030))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((35, 1035))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((39, 1039))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((40, 1040))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((41, 1041))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((42, 1042))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((43, 1043))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((44, 1044))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((45, 1045))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((46, 1046))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((47, 1047))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((48, 1048))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((49, 1049))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((50, 1050))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((51, 1051))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((52, 1052))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((53, 1053))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((54, 1054))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((55, 1055))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((110, 1110))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((121, 1121))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((122, 1122))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((123, 1123))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((124, 1124))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((125, 1125))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((132, 1132))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((134, 1134))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((136, 1136))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((138, 1138))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((132, 1132))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((134, 1134))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((136, 1136))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((138, 1138))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((210, 1210))
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((210, 1210))=> Sampled illegal_bin(1210)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((226, 1226))
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((226, 1226))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((227, 1227))
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((227, 1227))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((228, 1228))
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((228, 1228))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((229, 1229))
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((229, 1229))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((231, 1231))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((237, 1237))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((237, 1237))
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    [MY_CROSS] sample_coverage((237, 1237))=> Sampled illegal_bin_transition(1231->1237->1237)
+UVVM: 
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((50, 1050))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((51, 1051))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((52, 1052))
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  NEW_SCOPE                      [MY_CROSS] rand(NO_SAMPLE_COV)=> (50, 1050)
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  NEW_SCOPE                      [MY_CROSS] rand(NO_SAMPLE_COV)=> (51, 1051)
+UVVM: ID_FUNC_COV_RAND                   0.0 ns  NEW_SCOPE                      [MY_CROSS] rand(NO_SAMPLE_COV)=> (52, 1052)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): NEW_SCOPE ***                                                                                                           
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_CROSS
+UVVM:      Goal:                    Bins: 50%,      Hits: 75%     
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 40.25%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 40.25%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                       (200)x(1200)                        0                N/A               N/A                bin_10              ILLEGAL                              
+UVVM:                       (210)x(1210)                        1                N/A               N/A            illegal_single          ILLEGAL                              
+UVVM:                (226 to 229)x(1226 to 1229)                4                N/A               N/A             illegal_range          ILLEGAL                              
+UVVM:            (231->237->237)x(1231->1237->1237)             1                N/A               N/A          illegal_transition        ILLEGAL                              
+UVVM:                       (100)x(1100)                        0                N/A               N/A                 bin_6               IGNORE                              
+UVVM:                       (110)x(1110)                        1                N/A               N/A             ignore_single           IGNORE                              
+UVVM:                (121 to 125)x(1121 to 1125)                5                N/A               N/A             ignore_range            IGNORE                              
+UVVM:                     ignore_transition                     2                N/A               N/A           ignore_transition         IGNORE                              
+UVVM:                        (10)x(1010)                        0                 1               0.00%                bin_0                 -                                 
+UVVM:                        (20)x(1020)                        2                 8               25.00%              single                 -                                 
+UVVM:              (30, 35, 39)x(1030, 1035, 1039)              3                 9               33.33%             multiple                -                                 
+UVVM:                 (40 to 44)x(1040 to 1049)                 5                 15              33.33%               range                 -                                 
+UVVM:                 (45 to 49)x(1040 to 1049)                 5                 15              33.33%               range                 -                                 
+UVVM:                        transition                         1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ignore_transition: (132->134->136->138)x(1132->1134->1136->1138)
+UVVM:      transition: (50->51->52->53->54->55)x(1050->1051->1052->1053->1054->1055)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] write_coverage_db(Y://bitvis//uvvm//uvvm_util//simcross.txt)
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing write database to a file - max data
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin_range(1, 100, num_bins:0), bin(200), bin(300), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_3] Adding cross:
+UVVM:                                                                             (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(2
+UVVM:                                                                             1),(22),(23),(24),(25),(26),(27),(28),(29),(30),(31),(32),(33),(34),(35),(36),(37),(38),(39),
+UVVM:                                                                             (40),(41),(42),(43),(44),(45),(46),(47),(48),(49),(50),(51),(52),(53),(54),(55),(56),(57),(58
+UVVM:                                                                             ),(59),(60),(61),(62),(63),(64),(65),(66),(67),(68),(69),(70),(71),(72),(73),(74),(75),(76),(
+UVVM:                                                                             77),(78),(79),(80),(81),(82),(83),(84),(85),(86),(87),(88),(89),(90),(91),(92),(93),(94),(95)
+UVVM:                                                                             ,(96),(97),(98),(99),(100) x (200) x (300), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((1, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((2, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((3, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((4, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((5, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((6, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((7, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((8, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((9, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((10, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((11, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((12, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((13, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((14, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((15, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((16, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((17, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((18, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((19, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((20, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((21, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((22, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((23, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((24, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_3] sample_coverage((25, 200, 300))
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_3
+UVVM:      Coverage (for goal 100): Bins: 25.00%,   Hits: 25.00%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                      (1)x(200)x(300)                      1                 1              100.00%               bin_0                 -                                 
+UVVM:                      (2)x(200)x(300)                      1                 1              100.00%               bin_1                 -                                 
+UVVM:                      (3)x(200)x(300)                      1                 1              100.00%               bin_2                 -                                 
+UVVM:                      (4)x(200)x(300)                      1                 1              100.00%               bin_3                 -                                 
+UVVM:                      (5)x(200)x(300)                      1                 1              100.00%               bin_4                 -                                 
+UVVM:                      (6)x(200)x(300)                      1                 1              100.00%               bin_5                 -                                 
+UVVM:                      (7)x(200)x(300)                      1                 1              100.00%               bin_6                 -                                 
+UVVM:                      (8)x(200)x(300)                      1                 1              100.00%               bin_7                 -                                 
+UVVM:                      (9)x(200)x(300)                      1                 1              100.00%               bin_8                 -                                 
+UVVM:                     (10)x(200)x(300)                      1                 1              100.00%               bin_9                 -                                 
+UVVM:                     (11)x(200)x(300)                      1                 1              100.00%              bin_10                 -                                 
+UVVM:                     (12)x(200)x(300)                      1                 1              100.00%              bin_11                 -                                 
+UVVM:                     (13)x(200)x(300)                      1                 1              100.00%              bin_12                 -                                 
+UVVM:                     (14)x(200)x(300)                      1                 1              100.00%              bin_13                 -                                 
+UVVM:                     (15)x(200)x(300)                      1                 1              100.00%              bin_14                 -                                 
+UVVM:                     (16)x(200)x(300)                      1                 1              100.00%              bin_15                 -                                 
+UVVM:                     (17)x(200)x(300)                      1                 1              100.00%              bin_16                 -                                 
+UVVM:                     (18)x(200)x(300)                      1                 1              100.00%              bin_17                 -                                 
+UVVM:                     (19)x(200)x(300)                      1                 1              100.00%              bin_18                 -                                 
+UVVM:                     (20)x(200)x(300)                      1                 1              100.00%              bin_19                 -                                 
+UVVM:                     (21)x(200)x(300)                      1                 1              100.00%              bin_20                 -                                 
+UVVM:                     (22)x(200)x(300)                      1                 1              100.00%              bin_21                 -                                 
+UVVM:                     (23)x(200)x(300)                      1                 1              100.00%              bin_22                 -                                 
+UVVM:                     (24)x(200)x(300)                      1                 1              100.00%              bin_23                 -                                 
+UVVM:                     (25)x(200)x(300)                      1                 1              100.00%              bin_24                 -                                 
+UVVM:                     (26)x(200)x(300)                      0                 1               0.00%               bin_25                 -                                 
+UVVM:                     (27)x(200)x(300)                      0                 1               0.00%               bin_26                 -                                 
+UVVM:                     (28)x(200)x(300)                      0                 1               0.00%               bin_27                 -                                 
+UVVM:                     (29)x(200)x(300)                      0                 1               0.00%               bin_28                 -                                 
+UVVM:                     (30)x(200)x(300)                      0                 1               0.00%               bin_29                 -                                 
+UVVM:                     (31)x(200)x(300)                      0                 1               0.00%               bin_30                 -                                 
+UVVM:                     (32)x(200)x(300)                      0                 1               0.00%               bin_31                 -                                 
+UVVM:                     (33)x(200)x(300)                      0                 1               0.00%               bin_32                 -                                 
+UVVM:                     (34)x(200)x(300)                      0                 1               0.00%               bin_33                 -                                 
+UVVM:                     (35)x(200)x(300)                      0                 1               0.00%               bin_34                 -                                 
+UVVM:                     (36)x(200)x(300)                      0                 1               0.00%               bin_35                 -                                 
+UVVM:                     (37)x(200)x(300)                      0                 1               0.00%               bin_36                 -                                 
+UVVM:                     (38)x(200)x(300)                      0                 1               0.00%               bin_37                 -                                 
+UVVM:                     (39)x(200)x(300)                      0                 1               0.00%               bin_38                 -                                 
+UVVM:                     (40)x(200)x(300)                      0                 1               0.00%               bin_39                 -                                 
+UVVM:                     (41)x(200)x(300)                      0                 1               0.00%               bin_40                 -                                 
+UVVM:                     (42)x(200)x(300)                      0                 1               0.00%               bin_41                 -                                 
+UVVM:                     (43)x(200)x(300)                      0                 1               0.00%               bin_42                 -                                 
+UVVM:                     (44)x(200)x(300)                      0                 1               0.00%               bin_43                 -                                 
+UVVM:                     (45)x(200)x(300)                      0                 1               0.00%               bin_44                 -                                 
+UVVM:                     (46)x(200)x(300)                      0                 1               0.00%               bin_45                 -                                 
+UVVM:                     (47)x(200)x(300)                      0                 1               0.00%               bin_46                 -                                 
+UVVM:                     (48)x(200)x(300)                      0                 1               0.00%               bin_47                 -                                 
+UVVM:                     (49)x(200)x(300)                      0                 1               0.00%               bin_48                 -                                 
+UVVM:                     (50)x(200)x(300)                      0                 1               0.00%               bin_49                 -                                 
+UVVM:                     (51)x(200)x(300)                      0                 1               0.00%               bin_50                 -                                 
+UVVM:                     (52)x(200)x(300)                      0                 1               0.00%               bin_51                 -                                 
+UVVM:                     (53)x(200)x(300)                      0                 1               0.00%               bin_52                 -                                 
+UVVM:                     (54)x(200)x(300)                      0                 1               0.00%               bin_53                 -                                 
+UVVM:                     (55)x(200)x(300)                      0                 1               0.00%               bin_54                 -                                 
+UVVM:                     (56)x(200)x(300)                      0                 1               0.00%               bin_55                 -                                 
+UVVM:                     (57)x(200)x(300)                      0                 1               0.00%               bin_56                 -                                 
+UVVM:                     (58)x(200)x(300)                      0                 1               0.00%               bin_57                 -                                 
+UVVM:                     (59)x(200)x(300)                      0                 1               0.00%               bin_58                 -                                 
+UVVM:                     (60)x(200)x(300)                      0                 1               0.00%               bin_59                 -                                 
+UVVM:                     (61)x(200)x(300)                      0                 1               0.00%               bin_60                 -                                 
+UVVM:                     (62)x(200)x(300)                      0                 1               0.00%               bin_61                 -                                 
+UVVM:                     (63)x(200)x(300)                      0                 1               0.00%               bin_62                 -                                 
+UVVM:                     (64)x(200)x(300)                      0                 1               0.00%               bin_63                 -                                 
+UVVM:                     (65)x(200)x(300)                      0                 1               0.00%               bin_64                 -                                 
+UVVM:                     (66)x(200)x(300)                      0                 1               0.00%               bin_65                 -                                 
+UVVM:                     (67)x(200)x(300)                      0                 1               0.00%               bin_66                 -                                 
+UVVM:                     (68)x(200)x(300)                      0                 1               0.00%               bin_67                 -                                 
+UVVM:                     (69)x(200)x(300)                      0                 1               0.00%               bin_68                 -                                 
+UVVM:                     (70)x(200)x(300)                      0                 1               0.00%               bin_69                 -                                 
+UVVM:                     (71)x(200)x(300)                      0                 1               0.00%               bin_70                 -                                 
+UVVM:                     (72)x(200)x(300)                      0                 1               0.00%               bin_71                 -                                 
+UVVM:                     (73)x(200)x(300)                      0                 1               0.00%               bin_72                 -                                 
+UVVM:                     (74)x(200)x(300)                      0                 1               0.00%               bin_73                 -                                 
+UVVM:                     (75)x(200)x(300)                      0                 1               0.00%               bin_74                 -                                 
+UVVM:                     (76)x(200)x(300)                      0                 1               0.00%               bin_75                 -                                 
+UVVM:                     (77)x(200)x(300)                      0                 1               0.00%               bin_76                 -                                 
+UVVM:                     (78)x(200)x(300)                      0                 1               0.00%               bin_77                 -                                 
+UVVM:                     (79)x(200)x(300)                      0                 1               0.00%               bin_78                 -                                 
+UVVM:                     (80)x(200)x(300)                      0                 1               0.00%               bin_79                 -                                 
+UVVM:                     (81)x(200)x(300)                      0                 1               0.00%               bin_80                 -                                 
+UVVM:                     (82)x(200)x(300)                      0                 1               0.00%               bin_81                 -                                 
+UVVM:                     (83)x(200)x(300)                      0                 1               0.00%               bin_82                 -                                 
+UVVM:                     (84)x(200)x(300)                      0                 1               0.00%               bin_83                 -                                 
+UVVM:                     (85)x(200)x(300)                      0                 1               0.00%               bin_84                 -                                 
+UVVM:                     (86)x(200)x(300)                      0                 1               0.00%               bin_85                 -                                 
+UVVM:                     (87)x(200)x(300)                      0                 1               0.00%               bin_86                 -                                 
+UVVM:                     (88)x(200)x(300)                      0                 1               0.00%               bin_87                 -                                 
+UVVM:                     (89)x(200)x(300)                      0                 1               0.00%               bin_88                 -                                 
+UVVM:                     (90)x(200)x(300)                      0                 1               0.00%               bin_89                 -                                 
+UVVM:                     (91)x(200)x(300)                      0                 1               0.00%               bin_90                 -                                 
+UVVM:                     (92)x(200)x(300)                      0                 1               0.00%               bin_91                 -                                 
+UVVM:                     (93)x(200)x(300)                      0                 1               0.00%               bin_92                 -                                 
+UVVM:                     (94)x(200)x(300)                      0                 1               0.00%               bin_93                 -                                 
+UVVM:                     (95)x(200)x(300)                      0                 1               0.00%               bin_94                 -                                 
+UVVM:                     (96)x(200)x(300)                      0                 1               0.00%               bin_95                 -                                 
+UVVM:                     (97)x(200)x(300)                      0                 1               0.00%               bin_96                 -                                 
+UVVM:                     (98)x(200)x(300)                      0                 1               0.00%               bin_97                 -                                 
+UVVM:                     (99)x(200)x(300)                      0                 1               0.00%               bin_98                 -                                 
+UVVM:                     (100)x(200)x(300)                     0                 1               0.00%               bin_99                 -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_3] write_coverage_db(Y://bitvis//uvvm//uvvm_util//simcross_max.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Goal:                    Covpts: 90%
+UVVM:      % of Goal:               Covpts: 0.00%
+UVVM:      % of Goal (uncapped):    Covpts: 0.00%
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 14.04%,   Hits: 29.53%  
+UVVM:      ====================================================================================================================================================================
+UVVM:                 COVERPOINT              COVERAGE WEIGHT            COVERED BINS           COVERAGE(BINS|HITS)         GOAL(BINS|HITS)        % OF GOAL(BINS|HITS)        
+UVVM:                MY_COVERPOINT                   5                       0 / 6                0.00% | 30.19%              50% | 200%              0.00% | 15.09%           
+UVVM:                  MY_CROSS                      8                       0 / 6                0.00% | 30.19%               50% | 75%              0.00% | 40.25%           
+UVVM:                   Covpt_3                      1                     25 / 100               25.00% | 25.00%             100% | 100%             25.00% | 25.00%          
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      6         6         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      7         7         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.                        SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -19,9 +19,6 @@ def execute(command):
 
     return rc
 
-
-regression_path = os.getcwd()
-
 root_folder = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '../..'))
 
 for subdir, dirs, files in os.walk(root_folder):
@@ -36,9 +33,9 @@ for subdir, dirs, files in os.walk(root_folder):
                     os.mkdir(sim_path)
 
                 os.chdir(sim_path)
-                print('\nTesting in: %s' % (sim_path))
+                print('\n%s\nTesting in: %s\n%s' % ("-"*50, sim_path, "-"*50))
 
-                rc = execute([sys.executable, '../script/maintenance_script/test.py'])
+                rc = execute([sys.executable, '../script/maintenance_script/test.py', '-t'])
                 os.chdir(root_folder)
 
                 if rc != 0:

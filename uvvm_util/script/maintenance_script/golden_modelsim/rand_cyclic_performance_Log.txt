@@ -1,0 +1,93 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.                        Start Simulation of Randomization package - rand_cyclic_performance
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_GEN). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_CONF). 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing random cyclic large ranges
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 535953641
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 187788090
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 172830814
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 468816073
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 3336040
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 3131295
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 112769411
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 443031410
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 225703619
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:536870912], CYCLIC)=> 354505167
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 713363461
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 689063330
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 1025869036
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 470976321
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 232060954
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 524964350
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 965050929
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 999968871
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 243172638
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:1073741824], CYCLIC)=> 25344555
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 639123269
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 2132977364
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 1720874352
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 998932382
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 934296070
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 617637264
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 1924308068
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 24585223
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 481194389
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[0:2147483647], CYCLIC)=> 1032016361
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> -666096906
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> 471970153
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> -1981506502
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> 1767025684
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> -531564480
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> -1356323145
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> -1774521486
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> 1496442265
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> 965487688
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand(RANGE:[-2147483648:2147483647], CYCLIC)=> 1719606677
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing random cyclic list and queue performance
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_RAND_GEN). 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing cyclic list with 100 values
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing cyclic list with 1000 values
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing cyclic list with 11000 values
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing cyclic queue with 11000 values
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    rand(RANGE:[1:2147483647], CYCLIC)=> Simulation might slow down due to the cyclic queue and the large number of cyclic iterations.
+UVVM:                    To disable this alert set C_RAND_CYCLIC_QUEUE_MAX_ALERT_DISABLE to true in adaptations_pkg.
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing cyclic list with 100000 values
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_GEN). 
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_rand_cyclic()=> Deallocating cyclic list/queue
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.                        SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

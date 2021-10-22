@@ -181,9 +181,6 @@ begin
       check_value(v_result_from_fetch(7 downto 0), x"00" , ERROR, "Reading to fast should return 00");
 
       shared_sbi_vvc_config(1).bfm_config.fixed_wait_cycles_read := 2; -- setting fixed_wait_cycles_read to one leading to wrong data
-
-    else
-      log(ID_LOG_HDR, "Unknown test", C_SCOPE);
     end if;
 
 

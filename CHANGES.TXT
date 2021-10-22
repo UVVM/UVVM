@@ -9,6 +9,30 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2021.10.22
+--------------------
+Released: 2021-10-22
+- Fixed generic_queue deleting wrong element when position is different from entry_num.
+- Fixed generic_queue print_queue() crashing when queue is empty.
+- Added MATCH_STD_INCL_ZXUW to match strictness for check_value(), await_value()
+  and matching_values().
+- Fixed issue when using don't care in SLVs with check_value() and match strictness
+  set to MATCH_STD_INCL_Z.
+- Fixed issue where GHDL reported that the operator "&" is overloaded in the
+  ti_protected_types_pkg.
+- Added rand_pkg (advanced randomization).
+- Added func_cov_pkg (functional coverage).
+- Added new documentation type (.rst and .html) for rand_pkg and func_cov_pkg.
+  See uvvm_util/doc/rand_and_func_cov.html and uvvm_util/doc/rst/index.rst for
+  documentation.
+- Updated ghdl_compile_all_and_simulate.sh scripts with new uvvm_util packages.
+- Added support to force the VVC to execute only one transaction at a time in AXI and AXI-Lite VIPs.
+- Fixed bug where await_completion in certain cases didn't detect that the AXI and AXI-Lite 
+  VIPs VVC was finished.
+- Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential problems 
+  with fetch_result in the AXI and AXI-Lite VIPs.
+- Added missing change history to CHANGES.TXT.
+
 
 v2 2021.05.26
 --------------------
@@ -58,8 +82,8 @@ Released: 2021-04-08
 
 
 v2 2020.12.21
---------------------
-Released: 2020-12-21
+ --------------------
+ Released: 2020-12-21
 - Added option for omitting a requirement in the post-processing Specification Coverage Python script.
 - Fixed sub-requirements could be listed as not-run requirements in CSV files by Specification Coverage Python script.
 

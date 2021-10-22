@@ -96,21 +96,14 @@ begin
   ------------------------------------------------
   p_main: process
     constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
-
-    -- BFM config
-    --variable axilite_bfm_config   : t_axilite_bfm_config := C_AXILITE_BFM_CONFIG_DEFAULT;
-
     variable v_irq_mask           : std_logic_vector(7 downto 0);
     variable v_irq_mask_inv       : std_logic_vector(7 downto 0);
     variable i                    : integer;
     variable v_timestamp          : time;
-    variable v_command_duration   : time;
-
+    variable v_measured_time      : time;
     variable v_cmd_idx            : natural;
     variable v_is_ok              : boolean;
     variable v_data               : work.vvc_cmd_pkg.t_vvc_result;
-
-
   begin
 
     -- To avoid that log files from different test cases (run in separate
@@ -118,18 +111,7 @@ begin
     set_log_file_name(GC_TESTCASE & "_Log.txt");
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
-
     await_uvvm_initialization(VOID);
-
-    ---- override default config with settings for this testbench
-    --axilite_bfm_config.clock_period             := C_CLK_PERIOD;
-    --axilite_bfm_config.max_wait_cycles          := 10;
-    --axilite_bfm_config.max_wait_cycles_severity := ERROR;
-    --axilite_bfm_config.num_aw_pipe_stages       := 2;
-    --axilite_bfm_config.num_w_pipe_stages        := 1;
-    --axilite_bfm_config.num_ar_pipe_stages       := 2;
-    --axilite_bfm_config.num_r_pipe_stages        := 1;
-    --axilite_bfm_config.num_b_pipe_stages        := 2;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -411,10 +393,29 @@ begin
     axilite_check(AXILITE_VVCT,2, x"0000040", x"00000000", "Check", WARNING);
     await_completion(AXILITE_VVCT, 2, 1000 ns);
 
+    --------------------------------------------------------------------------------------------------------------------
+    -- Testing to force single pending transactions
+    --------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing to force single pending transactions");
+    -- First we measure the time it takes to perform a read and write simultaneously
+    v_timestamp := now;
+    axilite_write(AXILITE_VVCT, 2, x"0000", x"5555", "Test of axilite write");
+    axilite_read(AXILITE_VVCT, 2, x"0040", "Test of axilite read");
+    await_completion(AXILITE_VVCT, 2, 100 us, "Waiting for commands to finish");
+    v_measured_time := now - v_timestamp;
+    -- Then, we turn on the force_single_penging_transaction setting, and see that it takes about twice as long
+    shared_axilite_vvc_config(2).force_single_pending_transaction := true;
+    v_timestamp := now;
+    axilite_write(AXILITE_VVCT, 2, x"0000", x"5555", "Test of axilite write");
+    axilite_read(AXILITE_VVCT, 2, x"0040", "Test of axilite read");
+    await_completion(AXILITE_VVCT, 2, 100 us, "Waiting for commands to finish");
+    -- Checking that it takes twice as long (+- 20 %)
+    check_value_in_range(now - v_timestamp, v_measured_time*1.8, v_measured_time*2.2, ERROR, "Checking that it takes longer time to force a single pending transaction");
+
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;             -- to allow some time for completion
+    wait for 100 ns;             -- to allow some time for completion
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 

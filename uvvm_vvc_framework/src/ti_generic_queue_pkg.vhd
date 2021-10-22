@@ -956,7 +956,7 @@ package body ti_generic_queue_pkg is
   ) is
     variable v_entry_num : integer:= find_entry_num(element);
   begin
-    delete(instance, POSITION, v_entry_num, v_entry_num);
+    delete(instance, ENTRY_NUM, v_entry_num, v_entry_num);
   end procedure;
 
   procedure delete(
@@ -1305,6 +1305,9 @@ package body ti_generic_queue_pkg is
   begin
     -- Search from front to back element. Initalise pointers/counters to the first entry:
     v_element_ptr := vr_first_element(instance);
+    if v_element_ptr = NULL then
+      return; -- Return if queue is empty
+    end if;
 
     loop
       log(ID_UVVM_DATA_QUEUE, "Pos=" & to_string(v_position_ctr) & ", entry_num=" & to_string(v_element_ptr.entry_num) , scope);

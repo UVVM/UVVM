@@ -13,5 +13,7 @@
 ../src/data_queue_pkg.vhd
 ../src/data_fifo_pkg.vhd
 ../src/data_stack_pkg.vhd
+../src/rand_pkg.vhd
+../src/func_cov_pkg.vhd
 ../src/uvvm_util_context.vhd
 

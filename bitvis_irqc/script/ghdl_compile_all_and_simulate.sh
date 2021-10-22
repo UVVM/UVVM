@@ -1,9 +1,9 @@
 #!/bin/zsh
 
-#==============================================
-# This script has been tested with GHDL v.0.37
-#==============================================
-echo "\nThis script has been tested with GHDL v.0.37\n"
+#==================================================================
+# This script has been tested with GHDL version 0.37 and 2.0.0-dev
+#==================================================================
+echo "\nThis script has been tested with GHDL version 0.37 and 2.0.0-dev\n"
 
 # Compiling UVVM Util
 echo "Compiling UVVM Utility Library..."
@@ -21,6 +21,8 @@ ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=uvvm_util ../../uv
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/data_queue_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/data_fifo_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/data_stack_pkg.vhd
+ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/rand_pkg.vhd
+ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/func_cov_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=uvvm_util ../../uvvm_util/src/uvvm_util_context.vhd
 
 # Compiling Bitvis VIP SBI BFM

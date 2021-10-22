@@ -1,6 +1,13 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+
+v1.0.12
+----------
+Released: 2021-10-22
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util 
+  packages.
+
 v1.0.11
 ----------
 Released: 2020-08-18

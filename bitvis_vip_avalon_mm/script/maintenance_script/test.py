@@ -42,6 +42,14 @@ hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bit
 hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_mm")
 hdlunit.start(regression_mode=True, gui_mode=False)
 
+hdlunit.add_generics(entity="avalon_mm_vvc_pipeline_tb",
+                     architecture=None,
+                     generics=["GC_DELTA_DELAYED_VVC_CLK", True])
+
+hdlunit.add_generics(entity="avalon_mm_vvc_pipeline_tb",
+                     architecture=None,
+                     generics=["GC_DELTA_DELAYED_VVC_CLK", False])
+
 num_failing_tests = hdlunit.get_num_fail_tests()
 num_passing_tests = hdlunit.get_num_pass_tests()
 

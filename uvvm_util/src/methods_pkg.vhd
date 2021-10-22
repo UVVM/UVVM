@@ -33,7 +33,7 @@ use std.env.all;
 package methods_pkg is
 
 
-  constant C_UVVM_VERSION : string := "v2 2021.05.26";
+  constant C_UVVM_VERSION : string := "v2 2021.10.22";
 
 
 -- -- ============================================================================
@@ -4166,11 +4166,27 @@ package body methods_pkg is
 
         when MATCH_STD_INCL_Z =>
           for i in v_min_length-1 downto 0 loop
-            if not(std_match(a_value1(i), a_value2(i)) or (a_value1(i) = 'Z' and a_value2(i) = 'Z')) then
+            if not(std_match(a_value1(i), a_value2(i)) or
+                   (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
+                   (a_value1(i) = '-' or a_value2(i) = '-')) then
               v_match := false;
               exit;
             end if;
           end loop;
+
+        when MATCH_STD_INCL_ZXUW =>
+          for i in v_min_length-1 downto 0 loop
+            if not(std_match(a_value1(i), a_value2(i)) or
+                   (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
+                   (a_value1(i) = 'X' and a_value2(i) = 'X') or
+                   (a_value1(i) = 'U' and a_value2(i) = 'U') or
+                   (a_value1(i) = 'W' and a_value2(i) = 'W') or 
+                   (a_value1(i) = '-' or a_value2(i) = '-')) then
+              v_match := false;
+              exit;
+            end if;
+          end loop;
+
 
         when others =>
           if a_value1(v_min_length-1 downto 0) /= a_value2(v_min_length-1 downto 0) then
@@ -4276,6 +4292,14 @@ package body methods_pkg is
 
       when MATCH_STD_INCL_Z =>
         if (value = 'Z' and exp = 'Z') or std_match(value, exp) then
+          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
+        else
+          v_failed := true;
+        end if;
+
+      when MATCH_STD_INCL_ZXUW =>
+        if (value = 'Z' and exp = 'Z') or (value = 'X' and exp = 'X') or
+           (value = 'U' and exp = 'U') or (value = 'W' and exp = 'W') or std_match(value, exp)then
           log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
@@ -7320,6 +7344,19 @@ package body methods_pkg is
         success := true;
       end if;
 
+    elsif match_strictness = MATCH_STD_INCL_ZXUW then
+      if not(std_match(target, exp) or (target = 'Z' and exp = 'Z') or 
+            (target = 'X' and exp = 'X') or (target = 'U' and exp = 'U') or
+            (target = 'W' and exp = 'W')) then
+        wait until (std_match(target, exp) or (target = 'Z' and exp = 'Z') or
+                    (target = 'X' and exp = 'X') or (target = 'U' and exp = 'U') or
+                    (target = 'W' and exp = 'W')) for max_time;
+      end if;
+      if std_match(target, exp) or (target = 'Z' and exp = 'Z') or (target = 'X' and exp = 'X') or
+         (target = 'U' and exp = 'U') or (target = 'W' and exp = 'W') then
+        success := true;
+      end if;
+  
     else
       if ((exp = '1' or exp = 'H') and (target /= '1') and (target /= 'H')) then
         wait until (target = '1' or target = 'H') for max_time;
@@ -7401,6 +7438,12 @@ package body methods_pkg is
           wait until matching_values(target, exp, MATCH_STD_INCL_Z) for max_time;
         end if;
         check_time_window(matching_values(target, exp, MATCH_STD_INCL_Z), now-start_time, min_time, max_time, alert_level, v_proc_call.all, success, msg, scope, msg_id, msg_id_panel);
+      elsif match_strictness = MATCH_STD_INCL_ZXUW then
+        if not matching_values(target, exp, MATCH_STD_INCL_ZXUW) then
+          wait until matching_values(target, exp, MATCH_STD_INCL_ZXUW) for max_time;
+        end if;
+        check_time_window(matching_values(target, exp, MATCH_STD_INCL_ZXUW), now-start_time, min_time, max_time, alert_level, v_proc_call.all, success, msg, scope, msg_id, msg_id_panel);
+  
       else
         if (target /= exp) then
           wait until (target = exp) for max_time;

@@ -246,8 +246,6 @@ begin
     elsif GC_TESTCASE = "Testing_2_Sequencer_Parallel_using_same_instance_of_a_VVC_type_at_the_same_time" then
       unblock_flag(C_FLAG_J, "Unblocking Flag_J -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_j, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
-    else
-      alert(tb_error, "Unsupported test");
     end if;
 
     -----------------------------------------------------------------------------

@@ -93,6 +93,7 @@ begin
     variable v_ruser_wide : t_slv_array(0 to 1)(15 downto 0) := (x"0000", x"0000");
     variable v_wstrb_single_byte : t_slv_array(0 to 3)(3 downto 0) := (x"1", x"1", x"1", x"1");
     variable v_timestamp  : time;
+    variable v_measured_time : time;
   begin
 
     -- To avoid that log files from different test cases (run in separate
@@ -542,6 +543,59 @@ begin
       msg               => "Testing AXI write"
     );
     await_completion(AXI_VVCT, 1, 100 us, "Waiting for commands to finish");
+    shared_axi_vvc_config(1).inter_bfm_delay.delay_type := NO_DELAY;
+    shared_axi_vvc_config(1).inter_bfm_delay.delay_in_time := 0 ns;
+
+    --------------------------------------------------------------------------------------------------------------------
+    -- Testing to force single pending transactions
+    --------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing to force single pending transactions");
+    -- First we measure the time it takes to perform a read and write simultaneously
+    v_timestamp := now;
+    axi_write(
+      VVCT              => AXI_VVCT, 
+      vvc_instance_idx  => 1,
+      awaddr            => x"00000000",
+      awlen             => x"03",
+      awsize            => 4,
+      wdata             => v_write_data,
+      msg               => "Testing AXI write"
+    );
+    axi_read(
+      VVCT              => AXI_VVCT, 
+      vvc_instance_idx  => 1,
+      araddr            => x"00000004",
+      arlen             => x"03",
+      arsize            => 4,
+      data_routing      => TO_BUFFER,
+      msg               => "Testing AXI read"
+    );
+    await_completion(AXI_VVCT, 1, 100 us, "Waiting for commands to finish");
+    v_measured_time := now - v_timestamp;
+    -- Then, we turn on the force_single_penging_transaction setting, and see that it takes about twice as long
+    shared_axi_vvc_config(1).force_single_pending_transaction := true;
+    v_timestamp := now;
+    axi_write(
+      VVCT              => AXI_VVCT, 
+      vvc_instance_idx  => 1,
+      awaddr            => x"00000000",
+      awlen             => x"03",
+      awsize            => 4,
+      wdata             => v_write_data,
+      msg               => "Testing AXI write"
+    );
+    axi_read(
+      VVCT              => AXI_VVCT, 
+      vvc_instance_idx  => 1,
+      araddr            => x"00000004",
+      arlen             => x"03",
+      arsize            => 4,
+      data_routing      => TO_BUFFER,
+      msg               => "Testing AXI read"
+    );
+    await_completion(AXI_VVCT, 1, 100 us, "Waiting for commands to finish");
+    -- Checking that it takes twice as long (+- 20 %)
+    check_value_in_range(now - v_timestamp, v_measured_time*1.8, v_measured_time*2.2, ERROR, "Checking that it takes longer time to force a single pending transaction");
 
     report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);

@@ -390,6 +390,11 @@ package body td_target_support_pkg is
       release_semaphore(protected_semaphore);
     end if;
 
+    -- VVCs registered in the VVC activity register release semaphore now.
+    if v_num_vvc_instances > 0 then
+      release_semaphore(protected_semaphore);
+    end if;
+
     log(ID_UVVM_CMD_ACK, "ACK received.  " & format_command_idx(v_local_cmd_idx), scope, msg_id_panel);
 
     -- clean up and prepare for next

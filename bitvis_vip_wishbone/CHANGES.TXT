@@ -1,0 +1,29 @@
+Bitvis VIP Wishbone - Overview of Versions and Changes
+==============================================================
+
+----------------------------------------------------------------------
+v0.1.0 BETA
+----------
+Released: 2021-05-26
+- BFM config defaults setup_time, hold_time and clock_period are now 
+  default -1 ns.
+- VVC command insert_delay() will raise a TB_ERROR when called if the 
+  bfm_config.clock_period has not been set.  
+- Replaced use_provided_msg_id_panel and msg_id_panel for parent_msg_id_panel in
+  vvc_cmd_pkg. Added parent_msg_id_panel optional parameter to all VVC procedures
+  for future HVVC support.
+- Added data_routing parameter to VVC read procedure for sending data to scoreboard.
+- Added script/compile_bfm.do script.
+- Changed VVC activity methods parameters and default scope.
+
+v0.0.1 BETA
+----------
+Released: 2017-01-10
+- Changed order of BFM-check methods. "alert_level" moved to first optional parameter.
+- Changed ID_BFM to ID_INSERTED_DELAY in INSERT_DELAY method
+- Added AWAIT_ANY_COMPLETION. 
+- Due to updates in store_result and fetch_result() in uvvm_vvc_framework:
+-  - added definition of t_vvc_result, t_vvc_result_queue_element, t_vvc_response, shared_vvc_response
+-  - updated call to store_result()
+- Removed the use of INSERT_DELAY_IN_TIME. Merged with INSERT_DELAY.
+

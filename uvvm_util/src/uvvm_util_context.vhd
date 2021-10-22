@@ -26,4 +26,6 @@ context uvvm_util_context is
   use uvvm_util.alert_hierarchy_pkg.all;
   use uvvm_util.license_pkg.all;
   use uvvm_util.protected_types_pkg.all;
+  use uvvm_util.rand_pkg.all;
+  use uvvm_util.func_cov_pkg.all;
 end context;

@@ -7,14 +7,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Functional Coverage &mdash; General Randomization and Functional Coverage 0.0.1 documentation</title>
+  <title>Functional Coverage &mdash; Randomization and Functional Coverage 0.0.1 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -31,7 +29,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -90,9 +87,9 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">General Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functional Coverage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#concepts">Concepts</a></li>
@@ -153,6 +150,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">UVVM</a></li>
 </ul>
 
             
@@ -168,7 +166,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">General Randomization and Functional Coverage</a>
+          <a href="index.html">Randomization and Functional Coverage</a>
         
       </nav>
 
@@ -237,14 +235,14 @@ type <em>t_coverpoint</em> and call the <code class="docutils literal notranslat
 <span class="k">begin</span>
   <span class="c1">-- Add bins to the coverpoint</span>
   <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s">&quot;bin_zero&quot;</span><span class="p">);</span>
-  <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">254</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+  <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">254</span><span class="p">));</span>
   <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="s">&quot;bin_max&quot;</span><span class="p">);</span>
 
   <span class="c1">-- Sample the data</span>
   <span class="k">while</span> <span class="k">not</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">coverage_completed</span><span class="p">(</span><span class="n">BINS_AND_HITS</span><span class="p">))</span> <span class="k">loop</span>
-    <span class="n">bus_addr</span> <span class="o">&lt;=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+    <span class="n">bus_addr</span> <span class="o">&lt;=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">SAMPLE_COV</span><span class="p">);</span>
+    <span class="n">configure_addr</span><span class="p">(</span><span class="n">bus_addr</span><span class="p">);</span>
     <span class="k">wait</span> <span class="k">for</span> <span class="n">C_CLK_PERIOD</span><span class="p">;</span>
-    <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">sample_coverage</span><span class="p">(</span><span class="n">bus_addr</span><span class="p">);</span>
   <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
 
   <span class="c1">-- Print the coverage report</span>
@@ -290,14 +288,14 @@ unsigned, enumerated, etc., they must be converted to integer values first.</p>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="n">t_state</span><span class="na">&#39;pos</span><span class="p">(</span><span class="n">IDLE</span><span class="p">)));</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="n">t_state</span><span class="na">&#39;pos</span><span class="p">(</span><span class="n">RUNNING</span><span class="p">)));</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">sample_coverage</span><span class="p">(</span><span class="n">t_state</span><span class="na">&#39;pos</span><span class="p">(</span><span class="n">fsm_state</span><span class="p">));</span>
-<span class="n">rand_state_int</span> <span class="o">:=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">rand_state_int</span> <span class="o">:=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">NO_SAMPLE_COV</span><span class="p">);</span>
 <span class="n">rand_state</span>     <span class="o">&lt;=</span> <span class="n">t_state</span><span class="na">&#39;val</span><span class="p">(</span><span class="n">rand_state_int</span><span class="p">);</span>
 
 <span class="c1">-- Example 2</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="n">to_integer</span><span class="p">(</span><span class="kt">unsigned</span><span class="p">&#39;(</span><span class="mh">x&quot;00&quot;</span><span class="p">))));</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="n">to_integer</span><span class="p">(</span><span class="kt">unsigned</span><span class="p">&#39;(</span><span class="mh">x&quot;FF&quot;</span><span class="p">))));</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">sample_coverage</span><span class="p">(</span><span class="n">to_integer</span><span class="p">(</span><span class="n">address</span><span class="p">));</span>
-<span class="n">rand_addr_int</span> <span class="o">:=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">rand_addr_int</span> <span class="o">:=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">NO_SAMPLE_COV</span><span class="p">);</span>
 <span class="n">rand_addr</span>     <span class="o">&lt;=</span> <span class="n">to_unsigned</span><span class="p">(</span><span class="n">rand_addr_int</span><span class="p">,</span><span class="n">rand_addr</span><span class="na">&#39;length</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -314,18 +312,22 @@ multiple types of bins in a single line.</p>
 <span class="c1">-- 2. Create a single bin for multiple values (sample any of the values to increase the bin counter)</span>
 <span class="n">bin</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>             <span class="c1">-- Note the use of double parentheses due to the integer_vector parameter</span>
 
-<span class="c1">-- 3. Create a single bin for each value in a given range</span>
-<span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>            <span class="c1">-- creates 6 bins: 0,1,2,3,4,5</span>
+<span class="c1">-- 3. Create a single bin for a range of values</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 
 <span class="c1">-- 4. Create a number of bins from a range of values</span>
-<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>        <span class="c1">-- creates 1 bin:  1 to 10</span>
-<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>        <span class="c1">-- creates 2 bins: 1 to 5, 6 to 10</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>         <span class="c1">-- creates 2 bins: 1 to 4, 5 to 8</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>         <span class="c1">-- creates 3 bins: 1 to 2, 3 to 5, 6 to 8</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>         <span class="c1">-- creates 8 bins: 1,2,3,4,5,6,7,8</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>         <span class="c1">-- creates 8 bins: 1,2,3,4,5,6,7,8</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>        <span class="c1">-- creates 8 bins: 1,2,3,4,5,6,7,8</span>
 
-<span class="c1">-- 5. Create a single bin for each value in a vector&#39;s range</span>
-<span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>           <span class="c1">-- creates 2^(addr&#39;length) bins</span>
+<span class="c1">-- 5. Create a single bin for a vector&#39;s range</span>
+<span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
 
 <span class="c1">-- 6. Create a number of bins from a vector&#39;s range</span>
-<span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>       <span class="c1">-- creates 16 bins</span>
+<span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>        <span class="c1">-- creates 4 bins</span>
+<span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>        <span class="c1">-- creates 2^(addr&#39;length) bins</span>
 
 <span class="c1">-- 7. Create a single bin for a transition of values</span>
 <span class="n">bin_transition</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>  <span class="c1">-- Note the use of double parentheses due to the integer_vector parameter</span>
@@ -338,17 +340,17 @@ multiple types of bins in a single line.</p>
 <span class="c1">-- 2. Add a single bin for multiple values (sample any of the values to increase the bin counter)</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">)));</span>
 
-<span class="c1">-- 3. Add a single bin for each value in a given range</span>
+<span class="c1">-- 3. Add a single bin for a range of values</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">));</span>
 
 <span class="c1">-- 4. Add a number of bins from a range of values</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
 
-<span class="c1">-- 5. Add a single bin for each value in a vector&#39;s range</span>
+<span class="c1">-- 5. Add a single bin for a vector&#39;s range</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
 
 <span class="c1">-- 6. Add a number of bins from a vector&#39;s range</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">16</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">4</span><span class="p">));</span>
 
 <span class="c1">-- 7. Add a single bin for a transition of values</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">)));</span>
@@ -373,12 +375,12 @@ defined in adaptations_pkg.</p>
 </ul>
 <p>Note that the order in which the bins are added, both valid and ignore, does not matter.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">99</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">99</span><span class="p">));</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">50</span><span class="p">));</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_range</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">ignore_bin_range</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span><span class="mi">80</span><span class="p">));</span>
 
 <span class="c1">-- Example 2</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
 
 <span class="c1">-- Example 3</span>
@@ -391,9 +393,9 @@ defined in adaptations_pkg.</p>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">10</span><span class="p">)));</span> <span class="c1">--&gt; Ignored</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">20</span><span class="p">)));</span> <span class="c1">--&gt; Ignored</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">)));</span> <span class="c1">--&gt; Ignored</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span> <span class="c1">-- Ignores all transitions which include 0,2,30</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_transition</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">)));</span>  <span class="c1">-- Ignores all transitions which include 1,10</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>                  <span class="c1">-- Ignores any bin which contains 5, including transitions</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">30</span><span class="p">)));</span> <span class="c1">-- Ignores all transitions which include 0,2,30</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_transition</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">)));</span>   <span class="c1">-- Ignores all transitions which include 1,10</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>                   <span class="c1">-- Ignores any bin which contains 5, including transitions</span>
 </pre></div>
 </div>
 </div>
@@ -433,7 +435,7 @@ it before the sequencer has added the bins, the testbench will generate a TB_ERR
 <code class="docutils literal notranslate"><span class="pre">is_defined()</span></code> to check if the coverpoint has any bins before sampling the data.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Process 1 (Sequencer)</span>
 <span class="p">...</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">));</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">256</span><span class="p">));</span>
 <span class="p">...</span>
 
@@ -484,15 +486,29 @@ default name will be automatically given. Having a bin name is useful when readi
 <p>It can be used to track combinations of values from two or more objects (variable/signal/coverpoint).
 For example, when certain combinations of source address and destination address of the Ethernet protocol need to be verified.
 This can be done in two different ways using the <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedure and <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>.</p>
+<ul>
+<li><p>Every type of bin (single value, multiple values, range, transition, ignore &amp; illegal) can be crossed with each other.</p></li>
+<li><p>When crossing several transition bins, they must have the same number of transitions, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span> <span class="n">bin_transition</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">32</span><span class="p">),</span> <span class="n">bin_transition</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="mi">512</span><span class="p">),</span> <span class="n">bin</span><span class="p">(</span><span class="mi">16384</span><span class="p">));</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Once the number of crossed bins has been set in a coverpoint, by calling the first <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code>, it cannot be
+changed anymore.</p>
+</div>
 <div class="section" id="using-bins">
 <h3>Using bins<a class="headerlink" href="#using-bins" title="Permalink to this headline">¶</a></h3>
 <p>This is a “faster” way of creating the crosses and useful when we need specific combinations of values. The <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code>
 overloads support up to 5 crossed elements.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin1</span><span class="p">,</span> <span class="n">bin2</span><span class="p">,</span> <span class="p">[</span><span class="n">bin_name</span><span class="p">])</span>
 
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">63</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">15</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">31</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">63</span><span class="p">));</span>
 <span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">)),</span> <span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">127</span><span class="p">),</span> <span class="s">&quot;illegal_bin&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -508,7 +524,7 @@ overloads support up to 5 crossed elements.</p>
 <p>The bin functions may also be concatenated to add several bins at once.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin1</span><span class="p">,</span> <span class="n">bin2</span><span class="p">,</span> <span class="n">bin3</span><span class="p">,</span> <span class="p">[</span><span class="n">bin_name</span><span class="p">])</span>
 
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">bin</span><span class="p">(</span><span class="mi">1000</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span> <span class="n">bin</span><span class="p">(</span><span class="mi">1000</span><span class="p">));</span>
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  --------------------------------------------------------------------------------------------------------
@@ -526,9 +542,9 @@ overloads support up to 5 crossed elements.</p>
 <div class="section" id="using-coverpoints">
 <h3>Using coverpoints<a class="headerlink" href="#using-coverpoints" title="Permalink to this headline">¶</a></h3>
 <p>This alternative is useful when the coverpoints are already created and we don’t want to repeat the declaration of the bins. The
-<code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> overloads support up to 16 crossed elements.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint_addr</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
-<span class="n">my_coverpoint_size</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+<code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> overloads support up to 16 crossed elements. <strong>Beta release only supports up to 5 crossed elements.</strong></p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint_addr</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">my_coverpoint_size</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">127</span><span class="p">));</span>
 <span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">my_coverpoint_addr</span><span class="p">,</span> <span class="n">my_coverpoint_size</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -542,8 +558,8 @@ overloads support up to 5 crossed elements.</p>
 </pre></div>
 </div>
 <p>Another benefit of this alternative is that we can cross already crossed coverpoints.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint_addr</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
-<span class="n">my_coverpoint_size</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">127</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint_addr</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">my_coverpoint_size</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">127</span><span class="p">));</span>
 <span class="n">my_cross_addr_size</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">my_coverpoint_addr</span><span class="p">,</span> <span class="n">my_coverpoint_size</span><span class="p">);</span>
 
 <span class="n">my_coverpoint_mode</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">3000</span><span class="p">));</span>
@@ -567,20 +583,6 @@ overloads support up to 5 crossed elements.</p>
 # UVVM:  ========================================================================================================
 </pre></div>
 </div>
-<ul>
-<li><p>Every type of bin (single value, multiple values, range, transition, ignore &amp; illegal) can be crossed with each other.</p></li>
-<li><p>When crossing several transition bins, they must have the same number of transitions, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span> <span class="n">bin_transition</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">));</span>
-<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">32</span><span class="p">),</span> <span class="n">bin_transition</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="mi">512</span><span class="p">),</span> <span class="n">bin</span><span class="p">(</span><span class="mi">16384</span><span class="p">));</span>
-</pre></div>
-</div>
-</li>
-</ul>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Once the number of crossed bins has been set in a coverpoint, by calling the first <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code>, it cannot be
-changed anymore.</p>
-</div>
 </div>
 </div>
 <div class="section" id="sampling-coverage">
@@ -595,8 +597,8 @@ i.e. increment the number of hits.</p>
 <p>In case this is unintended behaviour in the testbench, an alert can be generated when overlapping valid bins are sampled, by using
 the procedure <code class="docutils literal notranslate"><span class="pre">set_bin_overlap_alert_level()</span></code>, to select the severity of the alert.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_bin_overlap_alert_level</span><span class="p">(</span><span class="n">TB_WARNING</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s">&quot;valid_sizes&quot;</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s">&quot;big_sizes&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">16</span><span class="p">),</span> <span class="s">&quot;valid_sizes&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="s">&quot;big_sizes&quot;</span><span class="p">);</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">sample_coverage</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -696,8 +698,8 @@ Default value is 1.</p>
 </div>
 <div class="section" id="coverpoint-name">
 <h2>Coverpoint name<a class="headerlink" href="#coverpoint-name" title="Permalink to this headline">¶</a></h2>
-<p>A default name is automatically given to the coverpoint when it is configured or bins are added. The name can be modified by calling
-the <code class="docutils literal notranslate"><span class="pre">set_name()</span></code> procedure.</p>
+<p>A default name is automatically given to the coverpoint when it is configured for the first time or the first bin is added. The
+name can be modified by calling the <code class="docutils literal notranslate"><span class="pre">set_name()</span></code> procedure.</p>
 <p>The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.</p>
 </div>
 <div class="section" id="coverage-report">
@@ -995,6 +997,9 @@ and only want to keep the model and configuration.</p>
 <span class="p">[</span><span class="n">randomization_seed_1</span><span class="p">]</span> <span class="p">[</span><span class="n">randomization_seed_2</span><span class="p">]</span>
 <span class="p">[</span><span class="n">transition_bin_idx</span><span class="p">]</span>
 <span class="p">[</span><span class="n">transition_bin_value_idx_1</span><span class="p">]</span> <span class="p">[</span><span class="n">transition_bin_value_idx_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">transition_bin_value_idx_n</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
+  <span class="p">[</span><span class="n">bin_sample_shift_reg_n</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="p">...</span> <span class="p">[</span><span class="n">bin_sample_shift_reg_2</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="p">[</span><span class="n">bin_sample_shift_reg_1</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+<span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
 <span class="p">[</span><span class="n">illegal_bin_alert_level</span><span class="p">]</span>
 <span class="p">[</span><span class="n">bin_overlap_alert_level</span><span class="p">]</span>
 <span class="p">[</span><span class="n">number_of_valid_bins</span><span class="p">]</span>
@@ -1010,17 +1015,17 @@ and only want to keep the model and configuration.</p>
 <span class="p">[</span><span class="n">bin_idx</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">bin_idx</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
   <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">name</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">transition_mask</span><span class="p">]</span>
   <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
-    <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">bin_type</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">num_values</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">transition_idx</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_1</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">bin_type</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">num_values</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_1</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span><span class="p">]</span>
   <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
 <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
 <span class="p">[</span><span class="n">invalid_bin_idx</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">invalid_bin_idx</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
   <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">name</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">transition_mask</span><span class="p">]</span>
   <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
-    <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">bin_type</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">num_values</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">transition_idx</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_1</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">bin_type</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">num_values</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_1</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span><span class="p">]</span>
   <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
 <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
 </pre></div>
@@ -1028,9 +1033,9 @@ and only want to keep the model and configuration.</p>
 <p>Most of the values are integer numbers except for a few:</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 49%" />
-<col style="width: 27%" />
-<col style="width: 24%" />
+<col style="width: 48%" />
+<col style="width: 30%" />
+<col style="width: 23%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Value</p></th>
@@ -1059,7 +1064,11 @@ and only want to keep the model and configuration.</p>
 <td><p>string</p></td>
 <td><p>string</p></td>
 </tr>
-<tr class="row-odd"><td><p>bin_type</p></td>
+<tr class="row-odd"><td><p>transition_mask</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>string</p></td>
+</tr>
+<tr class="row-even"><td><p>bin_type</p></td>
 <td><p>t_cov_bin_type</p></td>
 <td><p>integer</p></td>
 </tr>
@@ -1072,6 +1081,8 @@ NEW_SCOPE
 1082914553 1166884309
 4
 3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+52 51 50 237 237 231 229 228 227 226
+1052 1051 1050 1237 1237 1231 1229 1228 1227 1226
 4
 7
 5
@@ -1086,38 +1097,38 @@ NEW_SCOPE
 100
 5
 bin_0
-0 1 -1
-0 1 0 10
-0 1 0 1010
+0 1 -1 0000000111
+0 1 10
+0 1 1010
 single
-2 8 20
-0 1 0 20
-0 1 0 1020
+2 8 20 0000000111
+0 1 20
+0 1 1020
 multiple
-3 9 30
-0 3 0 30 35 39
-0 3 0 1030 1035 1039
+3 9 30 0000000111
+0 3 30 35 39
+0 3 1030 1035 1039
 range
-10 15 40
-3 2 0 40 49
-3 2 0 1040 1049
+10 15 40 0000000111
+3 2 40 49
+3 2 1040 1049
 transition
-1 5 50
-6 6 3 50 51 52 53 54 55
-6 6 3 1050 1051 1052 1053 1054 1055
+1 5 50 0000000111
+6 6 50 51 52 53 54 55
+6 6 1050 1051 1052 1053 1054 1055
 3
 ignore_single
-1 0 0
-1 1 0 110
-1 1 0 1110
+1 0 0 1111111111
+1 1 110
+1 1 1110
 illegal_range
-4 0 0
-5 2 0 226 229
-5 2 0 1226 1229
+4 0 0 0000111111
+5 2 226 229
+5 2 1226 1229
 illegal_transition
-1 0 0
-8 3 0 231 237 237
-8 3 0 1231 1237 1237
+1 0 0 0000000111
+8 3 231 237 237
+8 3 1231 1237 1237
 </pre></div>
 </div>
 </div>

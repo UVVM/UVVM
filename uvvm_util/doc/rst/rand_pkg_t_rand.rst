@@ -1885,7 +1885,7 @@ Returns a random signed value using the configured constraints. For more informa
 return std_logic_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic_vector value (interpreted as unsigned) using the configured constraints. For more information on the 
-probability distribution click :ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
+probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
     std_logic_vector := randm(length, [msg_id_panel])
 

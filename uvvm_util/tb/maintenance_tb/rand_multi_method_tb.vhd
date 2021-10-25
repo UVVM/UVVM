@@ -56,8 +56,8 @@ begin
     variable v_uns_long      : unsigned(127 downto 0);
     variable v_sig           : signed(3 downto 0);
     variable v_sig_long      : signed(127 downto 0);
-    --variable v_slv           : std_logic_vector(3 downto 0);
-    --variable v_slv_long      : std_logic_vector(127 downto 0);
+    variable v_slv           : std_logic_vector(3 downto 0);
+    variable v_slv_long      : std_logic_vector(127 downto 0);
     variable v_value_cnt     : t_integer_cnt(-32 to 31) := (others => 0);
     variable v_num_values    : natural;
     variable v_mean          : real;
@@ -1843,6 +1843,219 @@ begin
 
       v_rand.clear_config(VOID);
 
+      ------------------------------------------------------------
+      -- Std_logic_vector
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing std_logic_vector (length)");
+      v_num_values := 2**v_slv'length;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,2**v_slv'length-1)));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (range)");
+      v_num_values := 4;
+      v_rand.add_range(0, 3);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,3)));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 8;
+      v_rand.add_range(8, 9);
+      v_rand.add_range(14, 15);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ((0,3),(8,9),(14,15)));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (set of values)");
+      v_num_values := 6;
+      v_rand.add_val((0,1,2));
+      v_rand.add_val(5);
+      v_rand.add_val((7,9));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ONLY,(0,1,2,5,7,9));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (exclude)");
+      v_num_values := 2**v_slv'length-10;
+      v_rand.excl_val((0,1,2,3,4));
+      v_rand.excl_val((5,6,7,8,9));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,2**v_slv'length-1)), EXCL,(0,1,2,3,4,5,6,7,8,9));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + set of values)");
+      v_num_values := 4;
+      v_rand.add_range(0, 2);
+      v_rand.add_val(10);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,2)), ADD,(0 => 10));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 8;
+      v_rand.add_range(8, 9);
+      v_rand.add_val((12,15));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ((0,2),(8,9)), ADD,(10,12,15));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + exclude values)");
+      v_num_values := 2;
+      v_rand.add_range(0, 3);
+      v_rand.excl_val((1,2));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,3)), EXCL,(1,2));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 4;
+      v_rand.add_range(8, 10);
+      v_rand.excl_val(10);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ((0,3),(8,10)), EXCL,(1,2,10));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (set of values + exclude values)");
+      v_num_values := 4;
+      v_rand.add_val((0,2,4,6,8,10,12));
+      v_rand.excl_val((2,6,10));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ONLY,(0,4,8,12));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + set of values + exclude values)");
+      v_num_values := 3;
+      v_rand.add_range(0, 2);
+      v_rand.add_val((7,8));
+      v_rand.excl_val((1,8));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,2)), ADD,(7,8), EXCL,(1,8));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 7;
+      v_rand.add_range(4, 6);
+      v_rand.add_val((10,12,15));
+      v_rand.excl_val((5,15));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ((0,2),(4,6)), ADD,(7,8,10,12,15), EXCL,(1,8,5,15));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
+      increment_expected_alerts(TB_WARNING, 1);
+      v_rand.add_range(0, 2**16);
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val((2**17, 2**18));
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(-4, -2);
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0, 2);
+      v_rand.set_uniqueness(UNIQUE);
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      -- Std_logic_vector (unsigned) constraints
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing std_logic_vector (unsigned) constraints (range)");
+      v_num_values := 4;
+      v_rand.add_range_unsigned(x"00", x"03");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value_long(v_slv, (0 => (x"0",x"3")));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 9;
+      v_rand.add_range_unsigned(x"007", x"00B");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value_long(v_slv, ((x"0",x"3"),(x"7",x"B")));
+        count_rand_value(v_value_cnt, v_slv);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (unsigned) constraints (range long vectors)");
+      v_num_values := 4;
+      v_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.randm(v_slv_long'length);
+        check_rand_value_long(v_slv_long, (0 => (x"0F000000000000000000000000000000",x"0F000000000000000000000000000003")));
+        count_rand_value(v_value_cnt, unsigned(v_slv_long)-x"0F000000000000000000000000000000");
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 9;
+      v_rand.add_range_unsigned(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000B");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_slv_long := v_rand.randm(v_slv_long'length);
+        check_rand_value_long(v_slv_long, ((x"0F000000000000000000000000000000",x"0F000000000000000000000000000003"),
+          (x"0F000000000000000000000000000007",x"0F00000000000000000000000000000B")));
+        count_rand_value(v_value_cnt, unsigned(v_slv_long)-x"0F000000000000000000000000000000");
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_config(VOID);
+
     --===================================================================================
     elsif GC_TESTCASE = "rand_weighted" then
     --===================================================================================
@@ -2564,6 +2777,153 @@ begin
 
       v_rand.clear_config(VOID);
 
+      ------------------------------------------------------------
+      -- Weighted std_logic_vector
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted std_logic_vector (single values) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val_weight(5,1);
+      v_rand.add_val_weight(10,3);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        count_rand_value(v_value_cnt, v_slv);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((5,1),(10,3)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight(5,1);
+      v_rand.add_val_weight(10,0);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        count_rand_value(v_value_cnt, v_slv);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((5,1),(10,0)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight(0,10);
+      v_rand.add_val_weight(5,30);
+      v_rand.add_val_weight(10,60);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        count_rand_value(v_value_cnt, v_slv);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,10),(5,30),(10,60)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted std_logic_vector (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight(0,2,30);
+      v_rand.add_val_weight(5,20);
+      v_rand.add_range_weight(9,10,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        count_rand_value(v_value_cnt, v_slv);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,10),(1,10),(2,10),(5,20),(9,25),(10,25)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight(0,2,30);
+      v_rand.add_val_weight(5,20);
+      v_rand.add_range_weight(9,10,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        count_rand_value(v_value_cnt, v_slv);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,30),(1,30),(2,30),(5,20),(9,50),(10,50)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted std_logic_vector (ranges w/explicit mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_range_weight(0,2,30,INDIVIDUAL_WEIGHT);
+      v_rand.add_val_weight(5,20);
+      v_rand.add_range_weight(9,10,50,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        count_rand_value(v_value_cnt, v_slv);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,30),(1,30),(2,30),(5,20),(9,25),(10,25)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted std_logic_vector (mixed with non-weighted constraint) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val((14,15));
+      v_rand.add_range_weight(0,2,4,INDIVIDUAL_WEIGHT);
+      v_rand.add_val_weight(5,2);
+      v_rand.add_range_weight(9,10,4,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        count_rand_value(v_value_cnt, v_slv);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((0,4),(1,4),(2,4),(5,2),(9,2),(10,2),(14,1),(15,1)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted std_logic_vector (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
+      increment_expected_alerts(TB_WARNING, 3);
+      v_rand.add_range_weight(0,2**16,30);
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight(2**17,30);
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(-4,-2,30);
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(0,3,30);
+      v_rand.excl_val((4));
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(0,3,30);
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.set_cyclic_mode(NON_CYCLIC);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(0,3,30);
+      v_rand.set_uniqueness(UNIQUE);
+      v_slv := v_rand.randm(v_slv'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
+      v_rand.clear_config(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_cyclic" then
@@ -3245,6 +3605,190 @@ begin
 
       v_rand.clear_config(VOID);
 
+      ------------------------------------------------------------
+      -- Random cyclic std_logic_vector
+      ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (length)");
+      v_num_values := 2**v_slv'length;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,2**v_slv'length-1)));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (range)");
+      v_num_values := 4;
+      v_rand.add_range(0, 3);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,3)));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 8;
+      v_rand.add_range(8, 9);
+      v_rand.add_range(14, 15);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ((0,3),(8,9),(14,15)));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (set of values)");
+      v_num_values := 6;
+      v_rand.add_val((0,1,2));
+      v_rand.add_val(5);
+      v_rand.add_val((7,9));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ONLY,(0,1,2,5,7,9));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (exclude)");
+      v_num_values := 2**v_slv'length-10;
+      v_rand.excl_val((0,1,2,3,4));
+      v_rand.excl_val((5,6,7,8,9));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,2**v_slv'length-1)), EXCL,(0,1,2,3,4,5,6,7,8,9));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + set of values)");
+      v_num_values := 4;
+      v_rand.add_range(0, 2);
+      v_rand.add_val(10);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,2)), ADD,(0 => 10));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 8;
+      v_rand.add_range(8, 9);
+      v_rand.add_val((12,15));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ((0,2),(8,9)), ADD,(10,12,15));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + exclude values)");
+      v_num_values := 2;
+      v_rand.add_range(0, 3);
+      v_rand.excl_val((1,2));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,3)), EXCL,(1,2));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 4;
+      v_rand.add_range(8, 10);
+      v_rand.excl_val(10);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ((0,3),(8,10)), EXCL,(1,2,10));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (set of values + exclude values)");
+      v_num_values := 4;
+      v_rand.add_val((0,2,4,6,8,10,12));
+      v_rand.excl_val((2,6,10));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ONLY,(0,4,8,12));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (range + set of values + exclude values)");
+      v_num_values := 3;
+      v_rand.add_range(0, 2);
+      v_rand.add_val((7,8));
+      v_rand.excl_val((1,8));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, (0 => (0,2)), ADD,(7,8), EXCL,(1,8));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 7;
+      v_rand.add_range(4, 6);
+      v_rand.add_val((10,12,15));
+      v_rand.excl_val((5,15));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_slv := v_rand.randm(v_slv'length);
+        check_rand_value(v_slv, ((0,2),(4,6)), ADD,(7,8,10,12,15), EXCL,(1,8,5,15));
+        count_rand_value(v_value_cnt, v_slv);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      -- Random cyclic std_logic_vector (unsigned) constraints
+      ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
+      log(ID_LOG_HDR, "Testing std_logic_vector (unsigned) constraints (not supported)");
+      increment_expected_alerts(TB_WARNING, 1);
+      v_rand.add_range_unsigned(x"00", x"03");
+      v_slv := v_rand.randm(v_slv'length);
+
+      v_rand.clear_config(VOID);
+
+      v_rand.clear_rand_cyclic(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_report" then
@@ -3664,6 +4208,73 @@ begin
       v_rand.clear_rand_dist_std_deviation(VOID);
 
       ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing Gaussian distribution (std_logic_vector)");
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, 20, multi_method => true);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 10, 20, multi_method => true);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, 10, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV", v_num_values, 0, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_VEC", v_num_values, 0, 31, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SLV_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing invalid parameters");
       ------------------------------------------------------------
       v_rand.clear_constraints(VOID);
@@ -4006,6 +4617,76 @@ begin
       v_sig := v_rand.randm(v_sig'length); -- TB_ERROR
       v_rand.clear_constraints(VOID);
 
+      ------------------------------------------------------------
+      -- Std_logic_vector
+      ------------------------------------------------------------
+      increment_expected_alerts(TB_WARNING, 13);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+
+      v_slv := v_rand.randm(v_slv'length); -- OK
+
+      v_slv_long := v_rand.randm(v_slv_long'length); -- TB_WARNING
+
+      v_rand.add_range(0,2);
+      v_slv := v_rand.randm(v_slv'length); -- OK
+      v_rand.add_range(10,15);
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_unsigned(x"0",x"2");
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val((0,1,2));
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.excl_val((0,1));
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0,2);
+      v_rand.add_val(5);
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.add_range(10,15);
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0,2);
+      v_rand.excl_val((0,1));
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.add_range(10,15);
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val((0,1,2,3));
+      v_rand.excl_val((0,1));
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0,2);
+      v_rand.add_val(5);
+      v_rand.excl_val(0);
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.add_range(10,15);
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0,2);
+      v_rand.set_rand_dist(UNIFORM);
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_rand.set_rand_dist(GAUSSIAN);
+      v_slv := v_rand.randm(v_slv'length); -- TB_WARNING
+      v_rand.set_cyclic_mode(NON_CYCLIC);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(10,15);
+      v_slv := v_rand.randm(v_slv'length); -- TB_ERROR
+      v_rand.clear_constraints(VOID);
+
+      ------------------------------------------------------------
+      -- Weighted
+      ------------------------------------------------------------
       increment_expected_alerts(TB_WARNING, 3); -- TODO: finish when implemented
       v_rand.add_val_weight(1,20);
       v_int := v_rand.randm(VOID);         -- TB_WARNING

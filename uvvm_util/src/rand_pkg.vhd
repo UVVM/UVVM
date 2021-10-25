@@ -1305,6 +1305,11 @@ package rand_pkg is
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return signed;
 
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return std_logic_vector;
+
   end protected t_rand;
 
 end package rand_pkg;
@@ -7208,6 +7213,16 @@ package body rand_pkg is
       end if;
 
       return v_ret;
+    end function;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return std_logic_vector is
+      variable v_ret : unsigned(length-1 downto 0);
+    begin
+      v_ret := randm(length, msg_id_panel);
+      return std_logic_vector(v_ret);
     end function;
 
   end protected body t_rand;

@@ -235,7 +235,7 @@ For more information on the probability distribution click :ref:`here <rand_pkg_
 
 Return types
 ==================================================================================================================================
-The ``randm()`` function can return the following types: **Beta release does not contain std_logic_vector return types.**
+The ``randm()`` function can return the following types:
 
     * :ref:`integer <randm_int>`
     * :ref:`integer_vector <randm_int_vec>`

@@ -1215,7 +1215,7 @@ values bigger than the integer’s 32-bit range. ::
 add_range_signed()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range which will be included in the randomized values. This procedure can be used for min and max 
-values bigger than the integer’s 32-bit range. **Not included in Beta release.** ::
+values bigger than the integer’s 32-bit range. ::
 
     add_range_signed(min_value, max_value, [msg_id_panel])
 
@@ -1769,7 +1769,7 @@ click :ref:`here <rand_pkg_distributions>`. ::
 return real_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random real values using the configured constraints. For more information on the probability distribution 
-click :ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
+click :ref:`here <rand_pkg_distributions>`. ::
 
     real_vector := randm(length, [msg_id_panel])
 
@@ -1796,7 +1796,7 @@ click :ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
 return time_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values using the configured constraints. For more information on the probability distribution 
-click :ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
+click :ref:`here <rand_pkg_distributions>`. ::
 
     time_vector := randm(length, [msg_id_panel])
 
@@ -1854,7 +1854,7 @@ Returns a random unsigned value using the configured constraints. For more infor
 return signed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random signed value using the configured constraints. For more information on the probability distribution click 
-:ref:`here <rand_pkg_distributions>`. **Not included in Beta release.** ::
+:ref:`here <rand_pkg_distributions>`. ::
 
     signed := randm(length, [msg_id_panel])
 

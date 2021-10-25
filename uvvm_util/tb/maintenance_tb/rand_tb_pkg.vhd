@@ -1564,7 +1564,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SIG" then
         if multi_method then
-          --v_sig := rand_gen.randm(v_sig'length);
+          v_sig := rand_gen.randm(v_sig'length);
         else
           v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
         end if;
@@ -1574,7 +1574,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SIG_VEC" then
         if multi_method then
-          --v_sig := rand_gen.randm(v_sig'length);
+          v_sig := rand_gen.randm(v_sig'length);
         else
           v_sig := rand_gen.rand(v_sig'length);
         end if;

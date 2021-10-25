@@ -54,24 +54,12 @@ begin
     variable v_time_vec      : time_vector(0 to 4);
     variable v_uns           : unsigned(3 downto 0);
     variable v_uns_long      : unsigned(127 downto 0);
-    --variable v_uns_long_min  : unsigned(127 downto 0);
-    --variable v_uns_long_max  : unsigned(127 downto 0);
-    --variable v_prev_uns_long : unsigned(127 downto 0) := (others => '0');
-    --variable v_sig           : signed(3 downto 0);
-    --variable v_sig_long      : signed(127 downto 0);
-    --variable v_sig_long_min  : signed(127 downto 0);
-    --variable v_sig_long_max  : signed(127 downto 0);
-    --variable v_prev_sig_long : signed(127 downto 0) := (others => '0');
+    variable v_sig           : signed(3 downto 0);
+    variable v_sig_long      : signed(127 downto 0);
     --variable v_slv           : std_logic_vector(3 downto 0);
     --variable v_slv_long      : std_logic_vector(127 downto 0);
-    --variable v_slv_long_min  : std_logic_vector(127 downto 0);
-    --variable v_slv_long_max  : std_logic_vector(127 downto 0);
-    --variable v_prev_slv_long : std_logic_vector(127 downto 0) := (others => '0');
-    --variable v_std           : std_logic;
-    --variable v_bln           : boolean;
     variable v_value_cnt     : t_integer_cnt(-32 to 31) := (others => 0);
     variable v_num_values    : natural;
-    --variable v_bit_check     : std_logic_vector(1 downto 0);
     variable v_mean          : real;
     variable v_std_deviation : real;
 
@@ -1468,7 +1456,7 @@ begin
       ------------------------------------------------------------
       -- Unsigned constraints
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing unsigned (range)");
+      log(ID_LOG_HDR, "Testing unsigned constraints (range)");
       v_num_values := 4;
       v_rand.add_range_unsigned(x"00", x"03");
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
@@ -1489,7 +1477,7 @@ begin
 
       v_rand.clear_constraints(VOID);
 
-      log(ID_LOG_HDR, "Testing unsigned (range long vectors)");
+      log(ID_LOG_HDR, "Testing unsigned constraints (range long vectors)");
       v_num_values := 4;
       v_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
       for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
@@ -1511,8 +1499,8 @@ begin
 
       v_rand.clear_constraints(VOID);
 
-      log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 15);
+      log(ID_LOG_HDR, "Testing unsigned constraints (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 19);
       increment_expected_alerts(TB_WARNING, 1);
       v_rand.add_range_unsigned(x"0", x"0");
       v_rand.add_range_unsigned(x"2", x"0");
@@ -1520,12 +1508,25 @@ begin
       v_rand.add_range_unsigned(x"00000F000000000000000000000000000000", x"0F000000000000000000000000000003");
       v_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"00000F000000000000000000000000000003");
 
+      v_rand.add_range_unsigned(x"0",x"10");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+      v_rand.add_range_unsigned(x"10",x"11");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+      v_rand.add_range_unsigned(x"0", x"0F000000000000000000000000000003");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+      v_rand.add_range_unsigned(x"0F000000000000000000000000000003", x"0F000000000000000000000000000004");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+
       -- TODO: uncomment when implemented
       v_rand.add_range_unsigned(x"0", x"F");
       v_rand.add_range(0, 2);
       v_rand.add_range_real(0.0, 2.0);
       v_rand.add_range_time(0 ps, 2 ps);
-      --v_rand.add_range_signed(x"0", x"F");
+      v_rand.add_range_signed(x"0", x"7");
       v_rand.clear_constraints(VOID);
 
       v_rand.add_range_unsigned(x"0", x"2");
@@ -1536,14 +1537,8 @@ begin
       v_real_vec := v_rand.randm(v_real_vec'length);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_uns      := v_rand.randm(v_uns'length);
-      --v_sig      := v_rand.randm(v_sig'length);
+      v_sig      := v_rand.randm(v_sig'length);
       --v_slv      := v_rand.randm(v_slv'length);
-      v_rand.clear_constraints(VOID);
-
-      v_rand.add_range_unsigned(x"0F000000000000000000000000000000", x"0F000000000000000000000000000003");
-      v_uns := v_rand.randm(v_uns'length);
-      v_rand.add_range_unsigned(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000B");
-      v_uns := v_rand.randm(v_uns'length);
       v_rand.clear_constraints(VOID);
 
       v_rand.add_range_unsigned(x"0", x"2");
@@ -1553,6 +1548,300 @@ begin
 
       v_rand.clear_config(VOID);
 
+      ------------------------------------------------------------
+      -- Signed
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing signed (length)");
+      v_num_values := 2**v_sig'length;
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2**(v_sig'length-1),2**(v_sig'length-1)-1)));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      log(ID_LOG_HDR, "Testing signed (range)");
+      v_num_values := 5;
+      v_rand.add_range(-2, 2);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2,2)));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 9;
+      v_rand.add_range(-5, -4);
+      v_rand.add_range(6, 7);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ((-5,-4),(-2,2),(6,7)));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (set of values)");
+      v_num_values := 6;
+      v_rand.add_val((-2,0,2));
+      v_rand.add_val(-5);
+      v_rand.add_val((3,6));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ONLY,(-5,-2,0,2,3,6));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (exclude)");
+      v_num_values := 2**v_sig'length-10;
+      v_rand.excl_val((-5,-4,-3,-2,-1));
+      v_rand.excl_val((0,1,2,3,4));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2**(v_sig'length-1),2**(v_sig'length-1)-1)), EXCL,(-5,-4,-3,-2,-1,0,1,2,3,4));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (range + set of values)");
+      v_num_values := 4;
+      v_rand.add_range(-1, 1);
+      v_rand.add_val(-8);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-1,1)), ADD,(0 => -8));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 9;
+      v_rand.add_range(3, 5);
+      v_rand.add_val((-7,7));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ((-1,1),(3,5)), ADD,(-8,-7,7));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (range + exclude values)");
+      v_num_values := 2;
+      v_rand.add_range(-2, 2);
+      v_rand.excl_val((-1,0,1));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2,2)), EXCL,(-1,0,1));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 4;
+      v_rand.add_range(3, 5);
+      v_rand.excl_val(4);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ((-2,2),(3,5)), EXCL,(-1,0,1,4));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (set of values + exclude values)");
+      v_num_values := 4;
+      v_rand.add_val((-6,-4,-2,0,2,4,6));
+      v_rand.excl_val((-2,0,2));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ONLY,(-6,-4,4,6));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (range + set of values + exclude values)");
+      v_num_values := 5;
+      v_rand.add_range(-2, 2);
+      v_rand.add_val((-8,6));
+      v_rand.excl_val((1,6));
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2,2)), ADD,(-8,6), EXCL,(1,6));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 7;
+      v_rand.add_range(4, 5);
+      v_rand.add_val(7);
+      v_rand.excl_val(4);
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ((-2,2),(4,5)), ADD,(-8,6,7), EXCL,(1,4,6));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      increment_expected_alerts(TB_WARNING, 1);
+      v_rand.add_range(0, 2**16);
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val((2**17, 2**18));
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0, 2);
+      v_rand.set_uniqueness(UNIQUE);
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      -- Signed constraints
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing signed constraints (range)");
+      v_num_values := 3;
+      v_rand.add_range_signed(x"F", x"1"); -- [-1:1]
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value_long(v_sig, (0 => (x"F",x"1")));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 8;
+      v_rand.add_range_signed(x"C", x"E"); -- [-4:-2]
+      v_rand.add_range_signed(x"3", x"4"); -- [ 3: 4]
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value_long(v_sig, ((x"C",x"E"),(x"F",x"1"),(x"3",x"4")));
+        count_rand_value(v_value_cnt, v_sig);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed constraints (range long vectors)");
+      -- Positive values
+      v_num_values := 3;
+      v_rand.add_range_signed(x"0F000000000000000000000000000000", x"0F000000000000000000000000000002");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.randm(v_sig_long'length);
+        check_rand_value_long(v_sig_long, (0 => (x"0F000000000000000000000000000000",x"0F000000000000000000000000000002")));
+        count_rand_value(v_value_cnt, v_sig_long-x"0F000000000000000000000000000000");
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 7;
+      v_rand.add_range_signed(x"0F000000000000000000000000000007", x"0F00000000000000000000000000000A");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.randm(v_sig_long'length);
+        check_rand_value_long(v_sig_long, ((x"0F000000000000000000000000000000",x"0F000000000000000000000000000002"),
+          (x"0F000000000000000000000000000007",x"0F00000000000000000000000000000A")));
+        count_rand_value(v_value_cnt, v_sig_long-x"0F000000000000000000000000000000");
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      -- Negative values
+      v_num_values := 3;
+      v_rand.add_range_signed(x"8F000000000000000000000000000000", x"8F000000000000000000000000000002");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.randm(v_sig_long'length);
+        check_rand_value_long(v_sig_long, (0 => (x"8F000000000000000000000000000000",x"8F000000000000000000000000000002")));
+        count_rand_value(v_value_cnt, v_sig_long-x"8F000000000000000000000000000000");
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_num_values := 7;
+      v_rand.add_range_signed(x"8F000000000000000000000000000007", x"8F00000000000000000000000000000A");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.randm(v_sig_long'length);
+        check_rand_value_long(v_sig_long, ((x"8F000000000000000000000000000000",x"8F000000000000000000000000000002"),
+          (x"8F000000000000000000000000000007",x"8F00000000000000000000000000000A")));
+        count_rand_value(v_value_cnt, v_sig_long-x"8F000000000000000000000000000000");
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      -- Negative and positive values
+      v_num_values := 5;
+      v_rand.add_range_signed(x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE", x"00000000000000000000000000000002");
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+        v_sig_long := v_rand.randm(v_sig_long'length);
+        check_rand_value_long(v_sig_long, (0 => (x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE",x"00000000000000000000000000000002")));
+        count_rand_value(v_value_cnt, v_sig_long);
+      end loop;
+      check_uniform_distribution(v_value_cnt, v_num_values);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed constraints (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 20);
+      increment_expected_alerts(TB_WARNING, 1);
+      v_rand.add_range_signed(x"0", x"0");
+      v_rand.add_range_signed(x"2", x"0");
+      v_rand.add_range_signed(x"7", x"9"); -- [7:-7]
+
+      v_rand.add_range_signed(x"00000F000000000000000000000000000000", x"0F000000000000000000000000000003");
+      v_rand.add_range_signed(x"0F000000000000000000000000000000", x"00000F000000000000000000000000000003");
+
+      v_rand.add_range_signed(x"0", x"1F");
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+      v_rand.add_range_signed(5x"10", x"0");
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+      v_rand.add_range_signed(x"0", x"0F000000000000000000000000000003");
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+      v_rand.add_range_signed(x"8F000000000000000000000000000003", x"0");
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+
+      -- TODO: uncomment when implemented
+      v_rand.add_range_signed(x"0", x"7");
+      v_rand.add_range(0, 2);
+      v_rand.add_range_real(0.0, 2.0);
+      v_rand.add_range_time(0 ps, 2 ps);
+      v_rand.add_range_unsigned(x"0", x"F");
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_signed(x"0", x"2");
+      v_int      := v_rand.randm(VOID);
+      v_real     := v_rand.randm(VOID);
+      v_time     := v_rand.randm(VOID);
+      v_int_vec  := v_rand.randm(v_int_vec'length);
+      v_real_vec := v_rand.randm(v_real_vec'length);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_uns      := v_rand.randm(v_uns'length);
+      v_sig      := v_rand.randm(v_sig'length);
+      --v_slv      := v_rand.randm(v_slv'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_signed(x"0", x"2");
+      v_rand.set_uniqueness(UNIQUE);
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
+      v_rand.clear_config(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_weighted" then
@@ -2131,6 +2420,150 @@ begin
 
       v_rand.clear_config(VOID);
 
+      ------------------------------------------------------------
+      -- Weighted signed
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing weighted signed (single values) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val_weight(-5,1);
+      v_rand.add_val_weight(7,3);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        count_rand_value(v_value_cnt, v_sig);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,1),(7,3)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight(-5,1);
+      v_rand.add_val_weight(7,0);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        count_rand_value(v_value_cnt, v_sig);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,1),(7,0)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight(-5,10);
+      v_rand.add_val_weight(0,30);
+      v_rand.add_val_weight(7,60);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        count_rand_value(v_value_cnt, v_sig);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,10),(0,30),(7,60)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted signed (ranges w/default mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.set_range_weight_default_mode(COMBINED_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = COMBINED_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight(-5,-3,30);
+      v_rand.add_val_weight(0,20);
+      v_rand.add_range_weight(6,7,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        count_rand_value(v_value_cnt, v_sig);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,10),(-4,10),(-3,10),(0,20),(6,25),(7,25)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+      check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
+      v_rand.add_range_weight(-5,-3,30);
+      v_rand.add_val_weight(0,20);
+      v_rand.add_range_weight(6,7,50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        count_rand_value(v_value_cnt, v_sig);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(6,50),(7,50)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted signed (ranges w/explicit mode) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_range_weight(-5,-3,30,INDIVIDUAL_WEIGHT);
+      v_rand.add_val_weight(0,20);
+      v_rand.add_range_weight(6,7,50,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        count_rand_value(v_value_cnt, v_sig);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,30),(-4,30),(-3,30),(0,20),(6,25),(7,25)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted signed (mixed with non-weighted constraint) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.add_val((-1,1));
+      v_rand.add_range_weight(-5,-3,4,INDIVIDUAL_WEIGHT);
+      v_rand.add_val_weight(3,2);
+      v_rand.add_range_weight(6,7,4,COMBINED_WEIGHT);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        count_rand_value(v_value_cnt, v_sig);
+        if i = 1 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5,4),(-4,4),(-3,4),(3,2),(6,2),(7,2),(-1,1),(1,1)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted signed (invalid parameters)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      increment_expected_alerts(TB_WARNING, 3);
+      v_rand.add_range_weight(0,2**16,30);
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_weight(2**17,30);
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(0,3,30);
+      v_rand.excl_val((4));
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(0,3,30);
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.set_cyclic_mode(NON_CYCLIC);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_weight(0,3,30);
+      v_rand.set_uniqueness(UNIQUE);
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.set_uniqueness(NON_UNIQUE);
+
+      v_rand.clear_config(VOID);
+
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_cyclic" then
@@ -2622,10 +3055,193 @@ begin
       ------------------------------------------------------------
       v_rand.set_cyclic_mode(CYCLIC);
 
-      log(ID_LOG_HDR, "Testing unsigned (not supported)");
+      log(ID_LOG_HDR, "Testing unsigned constraints (not supported)");
       increment_expected_alerts(TB_WARNING, 1);
       v_rand.add_range_unsigned(x"00", x"03");
       v_uns := v_rand.randm(v_uns'length);
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      -- Random cyclic signed
+      ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
+      log(ID_LOG_HDR, "Testing signed (length)");
+      v_num_values := 2**v_sig'length;
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2**(v_sig'length-1),2**(v_sig'length-1)-1)));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      log(ID_LOG_HDR, "Testing signed (range)");
+      v_num_values := 5;
+      v_rand.add_range(-2, 2);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2,2)));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 9;
+      v_rand.add_range(-5, -4);
+      v_rand.add_range(6, 7);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ((-5,-4),(-2,2),(6,7)));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (set of values)");
+      v_num_values := 6;
+      v_rand.add_val((-2,0,2));
+      v_rand.add_val(-5);
+      v_rand.add_val((3,6));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ONLY,(-5,-2,0,2,3,6));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (exclude)");
+      v_num_values := 2**v_sig'length-10;
+      v_rand.excl_val((-5,-4,-3,-2,-1));
+      v_rand.excl_val((0,1,2,3,4));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2**(v_sig'length-1),2**(v_sig'length-1)-1)), EXCL,(-5,-4,-3,-2,-1,0,1,2,3,4));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (range + set of values)");
+      v_num_values := 4;
+      v_rand.add_range(-1, 1);
+      v_rand.add_val(-8);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-1,1)), ADD,(0 => -8));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 9;
+      v_rand.add_range(3, 5);
+      v_rand.add_val((-7,7));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ((-1,1),(3,5)), ADD,(-8,-7,7));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (range + exclude values)");
+      v_num_values := 2;
+      v_rand.add_range(-2, 2);
+      v_rand.excl_val((-1,0,1));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2,2)), EXCL,(-1,0,1));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 4;
+      v_rand.add_range(3, 5);
+      v_rand.excl_val(4);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ((-2,2),(3,5)), EXCL,(-1,0,1,4));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (set of values + exclude values)");
+      v_num_values := 4;
+      v_rand.add_val((-6,-4,-2,0,2,4,6));
+      v_rand.excl_val((-2,0,2));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ONLY,(-6,-4,4,6));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing signed (range + set of values + exclude values)");
+      v_num_values := 5;
+      v_rand.add_range(-2, 2);
+      v_rand.add_val((-8,6));
+      v_rand.excl_val((1,6));
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, (0 => (-2,2)), ADD,(-8,6), EXCL,(1,6));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_num_values := 7;
+      v_rand.add_range(4, 5);
+      v_rand.add_val(7);
+      v_rand.excl_val(4);
+      for i in 1 to v_num_values*C_NUM_CYCLIC_REPETITIONS loop
+        v_sig := v_rand.randm(v_sig'length);
+        check_rand_value(v_sig, ((-2,2),(4,5)), ADD,(-8,6,7), EXCL,(1,4,6));
+        count_rand_value(v_value_cnt, v_sig);
+        if i mod v_num_values = 0 then
+          check_cyclic_distribution(v_value_cnt, v_num_values);
+        end if;
+      end loop;
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      -- Random cyclic signed constraints
+      ------------------------------------------------------------
+      v_rand.set_cyclic_mode(CYCLIC);
+
+      log(ID_LOG_HDR, "Testing signed constraints (not supported)");
+      increment_expected_alerts(TB_WARNING, 1);
+      v_rand.add_range_signed(x"00", x"03");
+      v_sig := v_rand.randm(v_sig'length);
 
       v_rand.clear_config(VOID);
 
@@ -2725,7 +3341,21 @@ begin
       v_rand.set_name("RAND_UNS_1");
       v_rand.add_range_unsigned(x"0",x"2");
       v_rand.add_range_unsigned(x"6",x"8");
-      v_uns := v_rand.randm(v_uns'length);
+      v_rand.add_range_unsigned(x"AAA",x"FFF");
+      v_uns_long(15 downto 0) := v_rand.randm(16);
+      v_rand.report_config(VOID);
+
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing config report with signed constraints");
+      ------------------------------------------------------------
+      v_rand.set_name("RAND_SIG_1");
+      v_rand.add_range_signed(x"C",x"E");
+      v_rand.add_range_signed(x"F",x"1");
+      v_rand.add_range_signed(x"4",x"7");
+      v_rand.add_range_signed(x"7AA",x"7FF");
+      v_sig_long(15 downto 0) := v_rand.randm(16);
       v_rand.report_config(VOID);
 
     --===================================================================================
@@ -2961,6 +3591,73 @@ begin
       v_mean          := 0.0;
       v_std_deviation := 6.0;
       generate_gaussian_distribution(v_rand, v_value_cnt, "UNS_VEC", v_num_values, 0, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing Gaussian distribution (signed)");
+      ------------------------------------------------------------
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, -10, 10, multi_method => true);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, 0, 10, multi_method => true);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, -10, 0, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG", v_num_values, v_value_cnt'low, v_value_cnt'high, false, v_mean, v_std_deviation, multi_method => true);
+
+      wait for 200 ns;
+      v_rand.clear_rand_dist_mean(VOID);
+      v_rand.clear_rand_dist_std_deviation(VOID);
+
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_VEC", v_num_values, -32, 31, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.1;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_VEC", v_num_values, -32, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 0.5;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_VEC", v_num_values, -32, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_VEC", v_num_values, -32, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 5.0;
+      v_std_deviation := 1.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_VEC", v_num_values, -32, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 3.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_VEC", v_num_values, -32, 31, false, v_mean, v_std_deviation, multi_method => true);
+
+      v_mean          := 0.0;
+      v_std_deviation := 6.0;
+      generate_gaussian_distribution(v_rand, v_value_cnt, "SIG_VEC", v_num_values, -32, 31, false, v_mean, v_std_deviation, multi_method => true);
 
       wait for 200 ns;
       v_rand.clear_rand_dist_mean(VOID);
@@ -3238,8 +3935,75 @@ begin
       v_rand.set_cyclic_mode(NON_CYCLIC);
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range(10, 15);
+      v_rand.add_range(10,15);
       v_uns := v_rand.randm(v_uns'length); -- TB_ERROR
+      v_rand.clear_constraints(VOID);
+
+      ------------------------------------------------------------
+      -- Signed
+      ------------------------------------------------------------
+      increment_expected_alerts(TB_WARNING, 13);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+
+      v_sig := v_rand.randm(v_sig'length); -- OK
+
+      v_sig_long := v_rand.randm(v_sig_long'length); -- TB_WARNING
+
+      v_rand.add_range(0,2);
+      v_sig := v_rand.randm(v_sig'length); -- OK
+      v_rand.add_range(5,7);
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_signed(x"0",x"2");
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val((0,1,2));
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.excl_val((0,1));
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0,2);
+      v_rand.add_val(4);
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.add_range(5,7);
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0,2);
+      v_rand.excl_val((0,1));
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.add_range(5,7);
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val((0,1,2,3));
+      v_rand.excl_val((0,1));
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0,2);
+      v_rand.add_val(4);
+      v_rand.excl_val(0);
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.add_range(5,7);
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(0,2);
+      v_rand.set_rand_dist(UNIFORM);
+      v_rand.set_cyclic_mode(CYCLIC);
+      v_rand.set_rand_dist(GAUSSIAN);
+      v_sig := v_rand.randm(v_sig'length); -- TB_WARNING
+      v_rand.set_cyclic_mode(NON_CYCLIC);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range(5,7);
+      v_sig := v_rand.randm(v_sig'length); -- TB_ERROR
       v_rand.clear_constraints(VOID);
 
       increment_expected_alerts(TB_WARNING, 3); -- TODO: finish when implemented

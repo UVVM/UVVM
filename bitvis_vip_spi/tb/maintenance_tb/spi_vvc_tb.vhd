@@ -381,6 +381,8 @@ begin  -- architecture behav
     variable v_alert_num_mismatch       : boolean := false;
     variable tx_word                    : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
     variable rx_word                    : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
+    variable tx_word_2                  : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
+    variable rx_word_2                  : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
     variable data_word                  : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
     variable data_exp_word              : std_logic_vector(GC_DATA_WIDTH-1 downto 0);
     variable master_word_array          : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0);
@@ -777,6 +779,23 @@ begin  -- architecture behav
        -- transfer received word
        spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);  -- next transfer, slave will receive this
      end loop;
+
+--      --
+--      -- Master and slave transmit and receive
+--      --
+--      for idx in 1 to 5 loop
+--        tx_word := random(GC_DATA_WIDTH);
+--        tx_word_2 := random(GC_DATA_WIDTH);
+--
+--        SPI_VVC_SB.add_expected(C_SPI_VVC_0, pad_spi_sb(tx_word_2));
+--        SPI_VVC_SB.add_expected(C_SPI_VVC_1, pad_spi_sb(tx_word));
+--
+--        spi_master_transmit_and_receive(SPI_VVCT, C_VVC_IDX_MASTER_1, TO_SB, "SPI Master Tx and Rx. Rx data will be sent to the SPI scoreboard for checking.", RELEASE_LINE_AFTER_TRANSFER, HOLD_LINE_BETWEEN_WORDS, C_SCOPE);
+--        spi_slave_transmit_and_receive(SPI_VVCT, C_VVC_IDX_SLAVE_1, TO_SB, "SPI Slave Tx and Rx. Rx data will be sent to the SPI scoreboard for checking", RELEASE_LINE_AFTER_TRANSFER, HOLD_LINE_BETWEEN_WORDS, C_SCOPE);
+--
+--        await_master_rx_completion(50 ms);
+--        await_slave_rx_completion(50 ms);
+--      end loop;
 
       await_master_tx_completion(50 ms);
       await_slave_rx_completion(50 ms);

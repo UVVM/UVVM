@@ -1,10 +1,10 @@
 ##################################################################################################################################
-General Randomization
+Enhanced Randomization
 ##################################################################################################################################
 **********************************************************************************************************************************
 Getting started
 **********************************************************************************************************************************
-All the functionality for **General Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*. For more 
+All the functionality for **Enhanced Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*. For more 
 information on protected types see **link**.
 
 For more simple functionality, not using protected types, the **Basic Randomization** can be found in *uvvm_util/src/methods_pkg.vhd*.
@@ -12,7 +12,7 @@ For more simple functionality, not using protected types, the **Basic Randomizat
 For a more balanced randomization between small and large ranges/sets, the :ref:`optimized_randomization` under *uvvm_util/src/func_cov_pkg.vhd* 
 may be used.
 
-To generate a random value using General Randomization it is necessary to import the utility library, create a variable with the 
+To generate a random value using Enhanced Randomization it is necessary to import the utility library, create a variable with the 
 protected type *t_rand* and call either the ``rand()`` or the ``randm()`` function from the variable depending on which approach 
 is being used:
 
@@ -126,7 +126,7 @@ The ``rand()`` function can return the following types:
     rand_sl       := my_rand.rand(VOID);
     rand_bool     := my_rand.rand(VOID);
 
-The unsigned, signed and std_logic_vector functions can return vectors of any size, however the min and max constraints are 
+The unsigned, signed and std_logic_vector functions can return vectors of any length, however the min and max constraints are 
 limited by the integer's 32-bit range. Additional overloads for these types using unsigned/signed/std_logic_vector corresponding 
 min and max constraints are provided as well.
 
@@ -136,16 +136,21 @@ min and max constraints are provided as well.
 
 .. code-block::
 
-    rand_uns  := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_uns  := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
-    rand_sign := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_sign := my_rand.rand(rand_sign'length, C_MIN_RANGE, v_max_range);
-    rand_slv  := my_rand.rand(C_MIN_RANGE, v_max_range);                   -- SLV is interpreted as unsigned
-    rand_slv  := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);  -- SLV is interpreted as unsigned
+    rand_uns  := my_rand.rand(rand_uns'length, C_MIN_VALUE, v_max_value);
+    rand_sign := my_rand.rand(rand_sign'length, C_MIN_VALUE, v_max_value);
+    rand_slv  := my_rand.rand(rand_slv'length, C_MIN_VALUE, v_max_value);  -- SLV is interpreted as unsigned
+
+    -- In the following overloads, the length of the return value is equal to the largest length of the 2 parameters
+    rand_uns  := my_rand.rand(C_MIN_VALUE, v_max_value);
+    rand_sign := my_rand.rand(C_MIN_VALUE, v_max_value);
+    rand_slv  := my_rand.rand(C_MIN_VALUE, v_max_value); -- SLV is interpreted as unsigned
 
 **********************************************************************************************************************************
 Multi-method approach
 **********************************************************************************************************************************
+Using the single-method approach does not have any effect on the multi-method approach or vice-versa. However, for readability it 
+is not recommended to mix them.
+
 Constraints
 ==================================================================================================================================
 By using the following procedures, different combinations of constraints can be added for the ``randm()`` function. Note that when 
@@ -213,11 +218,13 @@ reusing the same *my_rand* variable, the ``clear_constraints()`` procedure must 
     data_sign := my_rand.randm(16);   -- Generates a 16-bit signed random value
 
 Similar procedures exist for real constraints: ``add_range_real()``, ``add_val_real()`` and ``excl_val_real()``, and for time 
-constraints: ``add_range_time()``, ``add_val_time()`` and ``excl_val_time()``.
+constraints: ``add_range_time()``, ``add_val_time()`` and ``excl_val_time()``. **Beta release does not contain time constraints.**
 
 .. note::
 
-    There is no limit on the number of constraints that can be added.
+    * There is no limit on the number of constraints which can be added.
+    * The order in which the constraints are added does not matter.
+    * If a value is repeated in different "add" constraints, the probability of that value being selected will increase.
 
 .. caution::
 
@@ -228,7 +235,8 @@ For more information on the probability distribution click :ref:`here <rand_pkg_
 
 Return types
 ==================================================================================================================================
-The ``randm()`` function can return the following types:
+The ``randm()`` function can return the following types: **Beta release does not contain real_vector, time, time_vector, signed &
+std_logic_vector return types.**
 
     * :ref:`integer <randm_int>`
     * :ref:`integer_vector <randm_int_vec>`
@@ -272,9 +280,10 @@ For *std_logic* and *boolean* types use the ``rand(VOID)`` function, since they 
     rand_sign     := my_rand.randm(rand_sign'length);
     rand_slv      := my_rand.randm(rand_slv'length); -- SLV is interpreted as unsigned
 
-The unsigned, signed and std_logic_vector functions can return vectors of any size, however the integer constraints are limited 
+The unsigned, signed and std_logic_vector functions can return vectors of any length, however the integer constraints are limited 
 to a 32-bit range. Additional overloads for adding range constraints using unsigned/signed types are provided as well. The 
-maximum size of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg.
+maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg. **Beta release does not 
+contain signed overloads.**
 
     * :ref:`unsigned <add_range_unsigned>`
     * :ref:`signed <add_range_signed>`
@@ -636,8 +645,8 @@ Additional info
 **********************************************************************************************************************************
 Log messages within the procedures and functions in the *rand_pkg* use the following message IDs (disabled by default):
 
-* ID_RAND_GEN: Used for logging "General Randomization" values returned by ``rand()/randm()``.
-* ID_RAND_CONF: Used for logging "General Randomization" configuration changes, except from name and scope.
+* ID_RAND_GEN: Used for logging "Enhanced Randomization" values returned by ``rand()/randm()``.
+* ID_RAND_CONF: Used for logging "Enhanced Randomization" configuration changes, except from name and scope.
 
 The default scope for log messages in the *rand_pkg* is C_TB_SCOPE_DEFAULT and it can be updated using the procedure ``set_scope()``. 
 The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.

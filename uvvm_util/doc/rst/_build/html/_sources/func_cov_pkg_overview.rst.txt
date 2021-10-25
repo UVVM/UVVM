@@ -23,14 +23,14 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
     begin
       -- Add bins to the coverpoint
       my_coverpoint.add_bins(bin(0), "bin_zero");
-      my_coverpoint.add_bins(bin_range(1,254,1));
+      my_coverpoint.add_bins(bin_range(1,254));
       my_coverpoint.add_bins(bin(255), "bin_max");
 
       -- Sample the data
       while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
-        bus_addr <= my_coverpoint.rand(VOID);
+        bus_addr <= my_coverpoint.rand(SAMPLE_COV);
+        configure_addr(bus_addr);
         wait for C_CLK_PERIOD;
-        my_coverpoint.sample_coverage(bus_addr);
       end loop;
       
       -- Print the coverage report
@@ -84,14 +84,14 @@ combinations of values for *src_addr* and *dst_addr*.
     my_coverpoint.add_bins(bin(t_state'pos(IDLE)));
     my_coverpoint.add_bins(bin(t_state'pos(RUNNING)));
     my_coverpoint.sample_coverage(t_state'pos(fsm_state));
-    rand_state_int := my_coverpoint.rand(VOID);
+    rand_state_int := my_coverpoint.rand(NO_SAMPLE_COV);
     rand_state     <= t_state'val(rand_state_int);
 
     -- Example 2
     my_coverpoint.add_bins(bin(to_integer(unsigned'(x"00"))));
     my_coverpoint.add_bins(bin(to_integer(unsigned'(x"FF"))));
     my_coverpoint.sample_coverage(to_integer(address));
-    rand_addr_int := my_coverpoint.rand(VOID);
+    rand_addr_int := my_coverpoint.rand(NO_SAMPLE_COV);
     rand_addr     <= to_unsigned(rand_addr_int,rand_addr'length);
 
 **********************************************************************************************************************************
@@ -111,18 +111,22 @@ Bins can be created using the following :ref:`bin functions <bin_functions>`:
     -- 2. Create a single bin for multiple values (sample any of the values to increase the bin counter)
     bin((2,4,6,8))             -- Note the use of double parentheses due to the integer_vector parameter
 
-    -- 3. Create a single bin for each value in a given range
-    bin_range(0, 5)            -- creates 6 bins: 0,1,2,3,4,5
+    -- 3. Create a single bin for a range of values
+    bin_range(0, 5)
 
     -- 4. Create a number of bins from a range of values
-    bin_range(1, 10, 1)        -- creates 1 bin:  1 to 10
-    bin_range(1, 10, 2)        -- creates 2 bins: 1 to 5, 6 to 10
+    bin_range(1, 8, 2)         -- creates 2 bins: 1 to 4, 5 to 8
+    bin_range(1, 8, 3)         -- creates 3 bins: 1 to 2, 3 to 5, 6 to 8
+    bin_range(1, 8, 0)         -- creates 8 bins: 1,2,3,4,5,6,7,8
+    bin_range(1, 8, 8)         -- creates 8 bins: 1,2,3,4,5,6,7,8
+    bin_range(1, 8, 20)        -- creates 8 bins: 1,2,3,4,5,6,7,8
 
-    -- 5. Create a single bin for each value in a vector's range
-    bin_vector(addr)           -- creates 2^(addr'length) bins
+    -- 5. Create a single bin for a vector's range
+    bin_vector(addr)
 
     -- 6. Create a number of bins from a vector's range
-    bin_vector(addr, 16)       -- creates 16 bins
+    bin_vector(addr, 4)        -- creates 4 bins
+    bin_vector(addr, 0)        -- creates 2^(addr'length) bins
 
     -- 7. Create a single bin for a transition of values
     bin_transition((1,3,5,7))  -- Note the use of double parentheses due to the integer_vector parameter
@@ -137,17 +141,17 @@ With the functions above and the procedure ``add_bins()``, bins can be added to 
     -- 2. Add a single bin for multiple values (sample any of the values to increase the bin counter)
     my_coverpoint.add_bins(bin((2,4,6,8)));
 
-    -- 3. Add a single bin for each value in a given range
+    -- 3. Add a single bin for a range of values
     my_coverpoint.add_bins(bin_range(0, 5));
 
     -- 4. Add a number of bins from a range of values
-    my_coverpoint.add_bins(bin_range(1, 10, 2));
+    my_coverpoint.add_bins(bin_range(1, 8, 2));
 
-    -- 5. Add a single bin for each value in a vector's range
+    -- 5. Add a single bin for a vector's range
     my_coverpoint.add_bins(bin_vector(addr));
 
     -- 6. Add a number of bins from a vector's range
-    my_coverpoint.add_bins(bin_vector(addr, 16));
+    my_coverpoint.add_bins(bin_vector(addr, 4));
 
     -- 7. Add a single bin for a transition of values
     my_coverpoint.add_bins(bin_transition((1,3,5,7)));
@@ -176,12 +180,12 @@ Note that the order in which the bins are added, both valid and ignore, does not
 .. code-block::
 
     -- Example 1
-    my_coverpoint.add_bins(bin_range(0,99,1));
+    my_coverpoint.add_bins(bin_range(0,99));
     my_coverpoint.add_bins(ignore_bin(50));
     my_coverpoint.add_bins(ignore_bin_range(25,30) & ignore_bin_range(75,80));
 
     -- Example 2
-    my_coverpoint.add_bins(bin_vector(addr));
+    my_coverpoint.add_bins(bin_vector(addr,0));
     my_coverpoint.add_bins(ignore_bin(0));
 
     -- Example 3
@@ -194,9 +198,9 @@ Note that the order in which the bins are added, both valid and ignore, does not
     my_coverpoint.add_bins(bin_transition((5,3,10))); --> Ignored
     my_coverpoint.add_bins(bin_transition((5,3,20))); --> Ignored
     my_coverpoint.add_bins(bin_transition((5,3,30))); --> Ignored
-    my_coverpoint.add_bins(ignore_bin_transition((0,2,30)); -- Ignores all transitions which include 0,2,30
-    my_coverpoint.add_bins(ignore_bin_transition((1,10)));  -- Ignores all transitions which include 1,10
-    my_coverpoint.add_bins(ignore_bin(5));                  -- Ignores any bin which contains 5, including transitions
+    my_coverpoint.add_bins(ignore_bin_transition((0,2,30))); -- Ignores all transitions which include 0,2,30
+    my_coverpoint.add_bins(ignore_bin_transition((1,10)));   -- Ignores all transitions which include 1,10
+    my_coverpoint.add_bins(ignore_bin(5));                   -- Ignores any bin which contains 5, including transitions
 
 Illegal bins
 ==================================================================================================================================
@@ -239,7 +243,7 @@ it before the sequencer has added the bins, the testbench will generate a TB_ERR
 
     -- Process 1 (Sequencer)
     ...
-    my_coverpoint.add_bins(bin_range(0,255,1));
+    my_coverpoint.add_bins(bin_range(0,255));
     my_coverpoint.add_bins(illegal_bin(256));
     ...
 
@@ -295,6 +299,16 @@ It can be used to track combinations of values from two or more objects (variabl
 For example, when certain combinations of source address and destination address of the Ethernet protocol need to be verified.
 This can be done in two different ways using the ``add_cross()`` procedure and :ref:`bin functions <bin_functions>`.
 
+* Every type of bin (single value, multiple values, range, transition, ignore & illegal) can be crossed with each other.
+* When crossing several transition bins, they must have the same number of transitions, e.g. ::
+
+    my_cross.add_cross(bin_transition(0,7,15), bin_transition(64,128,256));
+    my_cross.add_cross(bin_transition(0,7,15,32), bin_transition(64,128,256,512), bin(16384));
+
+.. important::
+    Once the number of crossed bins has been set in a coverpoint, by calling the first ``add_cross()``, it cannot be 
+    changed anymore.
+
 Using bins
 ==================================================================================================================================
 This is a "faster" way of creating the crosses and useful when we need specific combinations of values. The ``add_cross()`` 
@@ -304,9 +318,9 @@ overloads support up to 5 crossed elements.
 
     add_cross(bin1, bin2, [bin_name])
 
-    my_cross.add_cross(bin(10), bin_range(0,15,1));
-    my_cross.add_cross(bin(20), bin_range(16,31,1));
-    my_cross.add_cross(bin(30), bin_range(32,63,1));
+    my_cross.add_cross(bin(10), bin_range(0,15));
+    my_cross.add_cross(bin(20), bin_range(16,31));
+    my_cross.add_cross(bin(30), bin_range(32,63));
     my_cross.add_cross(bin((10,20,30)), illegal_bin_range(64,127), "illegal_bin");
 
 .. code-block:: none
@@ -325,7 +339,7 @@ The bin functions may also be concatenated to add several bins at once.
 
     add_cross(bin1, bin2, bin3, [bin_name])
 
-    my_cross.add_cross(bin(10) & bin(20) & bin(30), bin_range(0,7,1) & bin_range(8,15,1), bin(1000));
+    my_cross.add_cross(bin(10) & bin(20) & bin(30), bin_range(0,7) & bin_range(8,15), bin(1000));
 
 .. code-block:: none
 
@@ -342,12 +356,12 @@ The bin functions may also be concatenated to add several bins at once.
 Using coverpoints
 ==================================================================================================================================
 This alternative is useful when the coverpoints are already created and we don't want to repeat the declaration of the bins. The 
-``add_cross()`` overloads support up to 16 crossed elements.
+``add_cross()`` overloads support up to 16 crossed elements. **Beta release only supports up to 5 crossed elements.**
 
 .. code-block::
 
-    my_coverpoint_addr.add_bins(bin_vector(addr));
-    my_coverpoint_size.add_bins(bin_range(0,127,1));
+    my_coverpoint_addr.add_bins(bin_vector(addr,0));
+    my_coverpoint_size.add_bins(bin_range(0,127));
     my_cross.add_cross(my_coverpoint_addr, my_coverpoint_size);
 
 .. code-block:: none
@@ -364,8 +378,8 @@ Another benefit of this alternative is that we can cross already crossed coverpo
 
 .. code-block::
 
-    my_coverpoint_addr.add_bins(bin_vector(addr));
-    my_coverpoint_size.add_bins(bin_range(0,127,1));
+    my_coverpoint_addr.add_bins(bin_vector(addr,0));
+    my_coverpoint_size.add_bins(bin_range(0,127));
     my_cross_addr_size.add_cross(my_coverpoint_addr, my_coverpoint_size);
 
     my_coverpoint_mode.add_bins(bin(1000) & bin(2000) & bin(3000));
@@ -389,16 +403,6 @@ Another benefit of this alternative is that we can cross already crossed coverpo
     # UVVM:       (3)x(0 to 127)x(3000)       0           1           0.00%         bin_11            -       
     # UVVM:  ========================================================================================================
 
-* Every type of bin (single value, multiple values, range, transition, ignore & illegal) can be crossed with each other.
-* When crossing several transition bins, they must have the same number of transitions, e.g. ::
-
-    my_cross.add_cross(bin_transition(0,7,15), bin_transition(64,128,256));
-    my_cross.add_cross(bin_transition(0,7,15,32), bin_transition(64,128,256,512), bin(16384));
-
-.. important::
-    Once the number of crossed bins has been set in a coverpoint, by calling the first ``add_cross()``, it cannot be 
-    changed anymore.
-
 **********************************************************************************************************************************
 Sampling coverage
 **********************************************************************************************************************************
@@ -417,8 +421,8 @@ the procedure ``set_bin_overlap_alert_level()``, to select the severity of the a
 .. code-block::
 
     my_coverpoint.set_bin_overlap_alert_level(TB_WARNING);
-    my_coverpoint.add_bins(bin_range(1, 16, 1), "valid_sizes");
-    my_coverpoint.add_bins(bin_range(15, 20, 1), "big_sizes");
+    my_coverpoint.add_bins(bin_range(1,16), "valid_sizes");
+    my_coverpoint.add_bins(bin_range(15,20), "big_sizes");
     my_coverpoint.sample_coverage(15);
 
 However, if a sampled value is contained in both ignore or illegal and valid bins, the ignore/illegal bin will take precedence and 
@@ -529,8 +533,8 @@ Default value is 1.
 **********************************************************************************************************************************
 Coverpoint name
 **********************************************************************************************************************************
-A default name is automatically given to the coverpoint when it is configured or bins are added. The name can be modified by calling 
-the ``set_name()`` procedure.
+A default name is automatically given to the coverpoint when it is configured for the first time or the first bin is added. The 
+name can be modified by calling the ``set_name()`` procedure.
 
 The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.
 
@@ -856,6 +860,9 @@ The database for a coverpoint is stored using the following file format:
     [randomization_seed_1] [randomization_seed_2]
     [transition_bin_idx]
     [transition_bin_value_idx_1] [transition_bin_value_idx_2] ... [transition_bin_value_idx_n]
+    for i in 0 to number_of_bins_crossed-1 loop
+      [bin_sample_shift_reg_n(i)] ... [bin_sample_shift_reg_2(i)] [bin_sample_shift_reg_1(i)]
+    end loop;
     [illegal_bin_alert_level]
     [bin_overlap_alert_level]
     [number_of_valid_bins]
@@ -871,37 +878,39 @@ The database for a coverpoint is stored using the following file format:
     [bin_idx]
     for i in 0 to bin_idx-1 loop
       [bin(i).name]
-      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight]
+      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight] [bin(i).transition_mask]
       for j in 0 to number_of_bins_crossed-1 loop
-        [bin(i).cross(j).bin_type] [bin(i).cross(j).num_values] [bin(i).cross(j).transition_idx] [bin(i).cross(j).values_1] [bin(i).cross(j).values_2] ... [bin(i).cross(j).values_n]
+        [bin(i).cross(j).bin_type] [bin(i).cross(j).num_values] [bin(i).cross(j).values_1] [bin(i).cross(j).values_2] ... [bin(i).cross(j).values_n]
       end loop;
     end loop;
     [invalid_bin_idx]
     for i in 0 to invalid_bin_idx-1 loop
       [invalid_bin(i).name]
-      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight]
+      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight] [invalid_bin(i).transition_mask]
       for j in 0 to number_of_bins_crossed-1 loop
-        [invalid_bin(i).cross(j).bin_type] [invalid_bin(i).cross(j).num_values] [invalid_bin(i).cross(j).transition_idx] [invalid_bin(i).cross(j).values_1] [invalid_bin(i).cross(j).values_2] ... [invalid_bin(i).cross(j).values_n]
+        [invalid_bin(i).cross(j).bin_type] [invalid_bin(i).cross(j).num_values] [invalid_bin(i).cross(j).values_1] [invalid_bin(i).cross(j).values_2] ... [invalid_bin(i).cross(j).values_n]
       end loop;
     end loop;
 
 Most of the values are integer numbers except for a few:
 
-+-----------------------------+----------------+--------------+
-| Value                       | Original type  | Type in file |
-+=============================+================+==============+
-| coverpoint_name             | string         | string       |
-+-----------------------------+----------------+--------------+
-| scope                       | string         | string       |
-+-----------------------------+----------------+--------------+
-| illegal_bin_alert_level     | t_alert_level  | integer      |
-+-----------------------------+----------------+--------------+
-| bin_overlap_alert_level     | t_alert_level  | integer      |
-+-----------------------------+----------------+--------------+
-| name                        | string         | string       |
-+-----------------------------+----------------+--------------+
-| bin_type                    | t_cov_bin_type | integer      |
-+-----------------------------+----------------+--------------+
++-----------------------------+------------------+--------------+
+| Value                       | Original type    | Type in file |
++=============================+==================+==============+
+| coverpoint_name             | string           | string       |
++-----------------------------+------------------+--------------+
+| scope                       | string           | string       |
++-----------------------------+------------------+--------------+
+| illegal_bin_alert_level     | t_alert_level    | integer      |
++-----------------------------+------------------+--------------+
+| bin_overlap_alert_level     | t_alert_level    | integer      |
++-----------------------------+------------------+--------------+
+| name                        | string           | string       |
++-----------------------------+------------------+--------------+
+| transition_mask             | std_logic_vector | string       |
++-----------------------------+------------------+--------------+
+| bin_type                    | t_cov_bin_type   | integer      |
++-----------------------------+------------------+--------------+
 
 Example of the file output:
 
@@ -913,6 +922,8 @@ Example of the file output:
     1082914553 1166884309
     4
     3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    52 51 50 237 237 231 229 228 227 226
+    1052 1051 1050 1237 1237 1231 1229 1228 1227 1226
     4
     7
     5
@@ -927,38 +938,38 @@ Example of the file output:
     100
     5
     bin_0               
-    0 1 -1
-    0 1 0 10 
-    0 1 0 1010 
+    0 1 -1 0000000111
+    0 1 10 
+    0 1 1010 
     single              
-    2 8 20
-    0 1 0 20 
-    0 1 0 1020 
+    2 8 20 0000000111
+    0 1 20 
+    0 1 1020 
     multiple            
-    3 9 30
-    0 3 0 30 35 39 
-    0 3 0 1030 1035 1039 
+    3 9 30 0000000111
+    0 3 30 35 39 
+    0 3 1030 1035 1039 
     range               
-    10 15 40
-    3 2 0 40 49 
-    3 2 0 1040 1049 
+    10 15 40 0000000111
+    3 2 40 49 
+    3 2 1040 1049 
     transition          
-    1 5 50
-    6 6 3 50 51 52 53 54 55 
-    6 6 3 1050 1051 1052 1053 1054 1055 
+    1 5 50 0000000111
+    6 6 50 51 52 53 54 55 
+    6 6 1050 1051 1052 1053 1054 1055 
     3
     ignore_single       
-    1 0 0
-    1 1 0 110 
-    1 1 0 1110 
+    1 0 0 1111111111
+    1 1 110 
+    1 1 1110 
     illegal_range       
-    4 0 0
-    5 2 0 226 229 
-    5 2 0 1226 1229 
+    4 0 0 0000111111
+    5 2 226 229 
+    5 2 1226 1229 
     illegal_transition  
-    1 0 0
-    8 3 0 231 237 237 
-    8 3 0 1231 1237 1237 
+    1 0 0 0000000111
+    8 3 231 237 237 
+    8 3 1231 1237 1237 
 
 Script
 ==================================================================================================================================

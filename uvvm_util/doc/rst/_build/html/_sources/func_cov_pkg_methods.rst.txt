@@ -31,8 +31,9 @@ defined in adaptations_pkg. ::
 
 bin_range()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns a t_new_bin_array containing a range of values divided into a number of bins. If the number of bins is 0 then a bin is 
-created for each value. If the division has a residue, it is spread equally starting from the last bins. ::
+Returns a t_new_bin_array containing a bin with a range of values. When num_bins is different than 1, several bins are created 
+instead by dividing the range into num_bins. If the division has a residue, it is spread equally starting from the last bins. If 
+num_bins is 0 or greater than the number of values in the range, then a single bin is created for each value.
 
     t_new_bin_array := bin_range(min_value, max_value, [num_bins])
 
@@ -43,21 +44,24 @@ created for each value. If the division has a residue, it is spread equally star
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | max_value          | in     | integer                      | Maximum value in the range to create the bins         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | num_bins           | in     | natural                      | Number of bins to divide the range into. Default is 0 |
+| constant | num_bins           | in     | natural                      | Number of bins to divide the range into. Default is 1 |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
-    my_coverpoint.add_bins(bin_range(10,20));   -- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20
-    my_coverpoint.add_bins(bin_range(10,20,1)); -- creates 1 bin:   10 to 20
-    my_coverpoint.add_bins(bin_range(10,20,4)); -- creates 4 bins:  10 to 11, 12 to 14, 15 to 17, 18 to 20
+    my_coverpoint.add_bins(bin_range(10,20));    -- creates 1 bin:   10 to 20
+    my_coverpoint.add_bins(bin_range(10,20,4));  -- creates 4 bins:  10 to 11, 12 to 14, 15 to 17, 18 to 20
+    my_coverpoint.add_bins(bin_range(10,20,0));  -- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20
+    my_coverpoint.add_bins(bin_range(10,20,11)); -- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20
+    my_coverpoint.add_bins(bin_range(10,20,20)); -- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20
 
 
 bin_vector()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns a t_new_bin_array containing a vector's range divided into a number of bins. If the number of bins is 0 then a bin is 
-created for each value. If the division has a residue, it is spread equally starting from the last bins. ::
+Returns a t_new_bin_array containing a bin with a vector's range. When num_bins is different than 1, several bins are created 
+instead by dividing the range into num_bins. If the division has a residue, it is spread equally starting from the last bins. If 
+num_bins is 0 or greater than the number of values in the vector's range, then a single bin is created for each value.
 
     t_new_bin_array := bin_vector(vector, [num_bins])
 
@@ -66,15 +70,15 @@ created for each value. If the division has a residue, it is spread equally star
 +==========+====================+========+==============================+=======================================================+
 | constant | vector             | in     | std_logic_vector             | Vector used to create the bins                        |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | num_bins           | in     | natural                      | Number of bins to divide the range into. Default is 0 |
+| constant | num_bins           | in     | natural                      | Number of bins to divide the range into. Default is 1 |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     -- Examples:
-    my_coverpoint.add_bins(bin_vector(address));   -- creates 2**(address'length) bins: address[0], address[1], ...
-    my_coverpoint.add_bins(bin_vector(address,1)); -- creates 1 bin
+    my_coverpoint.add_bins(bin_vector(address));   -- creates 1 bin
     my_coverpoint.add_bins(bin_vector(address,4)); -- creates 4 bins
+    my_coverpoint.add_bins(bin_vector(address,0)); -- creates 2^(address'length) bins: address[0], address[1], ...
 
 
 bin_transition()

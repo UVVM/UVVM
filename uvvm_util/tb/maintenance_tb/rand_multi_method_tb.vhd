@@ -3992,6 +3992,285 @@ begin
       v_sig_long(15 downto 0) := v_rand.randm(16);
       v_rand.report_config(VOID);
 
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing log messages");
+      ------------------------------------------------------------
+      disable_log_msg(ID_RAND_CONF);
+
+      log(ID_LOG_HDR, "Integer");
+      for i in 0 to 1 loop
+        if i = 1 then
+          v_rand.set_cyclic_mode(CYCLIC);
+        end if;
+
+        v_int := v_rand.randm(VOID);
+
+        v_rand.add_range(-2, 2);
+        v_int := v_rand.randm(VOID);
+        v_rand.add_range(8, 9);
+        v_int := v_rand.randm(VOID);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_val((-5,-3,4));
+        v_int := v_rand.randm(VOID);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.excl_val((-1,0,1));
+        v_int := v_rand.randm(VOID);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(-1, 1);
+        v_rand.add_val(10);
+        v_int := v_rand.randm(VOID);
+        v_rand.add_range(8, 9);
+        v_rand.add_val((-5,-3,4));
+        v_int := v_rand.randm(VOID);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(-2, 2);
+        v_rand.excl_val((-1,0,1));
+        v_int := v_rand.randm(VOID);
+        v_rand.add_range(8, 10);
+        v_rand.excl_val(10);
+        v_int := v_rand.randm(VOID);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_val((-6,-4,-2,0,2,4,6));
+        v_rand.excl_val((-2,0,2));
+        v_int := v_rand.randm(VOID);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(-2, 2);
+        v_rand.add_val((-5,-3,4));
+        v_rand.excl_val((-5,-1,1));
+        v_int := v_rand.randm(VOID);
+        v_rand.add_range(8, 10);
+        v_rand.add_val((20,30,40));
+        v_rand.excl_val((9,30,40));
+        v_int := v_rand.randm(VOID);
+        v_rand.clear_config(VOID);
+      end loop;
+
+      log(ID_LOG_HDR, "Real");
+      v_rand.add_range_real(-2.0, 2.0);
+      v_real := v_rand.randm(VOID);
+      v_rand.add_range_real(8.0, 9.0);
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_real((-5.0,-3.0,4.0));
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_real(-1.0, 1.0);
+      v_rand.add_val_real(10.0);
+      v_real := v_rand.randm(VOID);
+      v_rand.add_range_real(8.0, 9.0);
+      v_rand.add_val_real((-5.0,-3.0,4.0));
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_real(-2.0, 2.0);
+      v_rand.excl_val_real((-1.0,0.0,1.0));
+      v_real := v_rand.randm(VOID);
+      v_rand.add_range_real(8.0, 10.0);
+      v_rand.excl_val_real(10.0);
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_real((-6.0,-4.0,-2.0,0.0,2.0,4.0,6.0));
+      v_rand.excl_val_real((-2.0,0.0,2.0));
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_real(-2.0, 2.0);
+      v_rand.add_val_real((-5.0,-3.0,4.0));
+      v_rand.excl_val_real((-5.0,-1.0,1.0));
+      v_real := v_rand.randm(VOID);
+      v_rand.add_range_real(8.0, 10.0);
+      v_rand.add_val_real((20.0,30.0,40.0));
+      v_rand.excl_val_real((9.0,30.0,40.0));
+      v_real := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Time");
+      v_rand.add_range_time(-2 ps, 2 ps);
+      v_time := v_rand.randm(VOID);
+      v_rand.add_range_time(8 ps, 9 ps);
+      v_time := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_time((-5 ps,3 ps,4 ps));
+      v_time := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_time(-1 ps, 1 ps);
+      v_rand.add_val_time(10 ps);
+      v_time := v_rand.randm(VOID);
+      v_rand.add_range_time(8 ps, 9 ps);
+      v_rand.add_val_time((-5 ps,3 ps,4 ps));
+      v_time := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_time(-2 ps, 2 ps);
+      v_rand.excl_val_time((-1 ps,0 ps,1 ps));
+      v_time := v_rand.randm(VOID);
+      v_rand.add_range_time(8 ps, 10 ps);
+      v_rand.excl_val_time(10 ps);
+      v_time := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_time((-6 ps,-4 ps,-2 ps,0 ps,2 ps,4 ps,6 ps));
+      v_rand.excl_val_time((-2 ps,0 ps,2 ps));
+      v_time := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_time(-2 ps, 2 ps);
+      v_rand.add_val_time((-5 ps,3 ps,4 ps));
+      v_rand.excl_val_time((-5 ps,-1 ps,1 ps));
+      v_time := v_rand.randm(VOID);
+      v_rand.add_range_time(8 ps, 10 ps);
+      v_rand.add_val_time((20 ps,30 ps,40 ps));
+      v_rand.excl_val_time((9 ps,30 ps,40 ps));
+      v_time := v_rand.randm(VOID);
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Unsigned");
+      for i in 0 to 1 loop
+        if i = 1 then
+          v_rand.set_cyclic_mode(CYCLIC);
+        end if;
+
+        v_uns := v_rand.randm(v_uns'length);
+
+        v_rand.add_range(0, 2);
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.add_range(8, 9);
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_val((5,3,4));
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.excl_val((11,0,1));
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(0, 1);
+        v_rand.add_val(10);
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.add_range(8, 9);
+        v_rand.add_val((5,3,4));
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(0, 2);
+        v_rand.excl_val((0,1));
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.add_range(8, 10);
+        v_rand.excl_val(10);
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_val((0,2,4,6));
+        v_rand.excl_val((0,2));
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(0, 2);
+        v_rand.add_val((5,3,4));
+        v_rand.excl_val((5,1));
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.add_range(8, 10);
+        v_rand.add_val((7,8,9));
+        v_rand.excl_val((9,8,9));
+        v_uns := v_rand.randm(v_uns'length);
+        v_rand.clear_config(VOID);
+      end loop;
+
+      log(ID_LOG_HDR, "Unsigned constraints");
+      v_rand.add_range_unsigned(x"00", x"03");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.add_range_unsigned(x"007", x"00B");
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_unsigned(x"00", x"03");
+      v_uns_long := v_rand.randm(v_uns_long'length);
+      v_rand.add_range_unsigned(x"007", x"00B");
+      v_uns_long := v_rand.randm(v_uns_long'length);
+      v_rand.clear_config(VOID);
+
+      log(ID_LOG_HDR, "Signed");
+      for i in 0 to 1 loop
+        if i = 1 then
+          v_rand.set_cyclic_mode(CYCLIC);
+        end if;
+
+        v_sig := v_rand.randm(v_sig'length);
+
+        v_rand.add_range(-2, 2);
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.add_range(6, 7);
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_val((-5,-3,4));
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.excl_val((-1,0,1));
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(-1, 1);
+        v_rand.add_val(3);
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.add_range(6, 7);
+        v_rand.add_val((-5,-3,4));
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(-2, 2);
+        v_rand.excl_val((-1,0,1));
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.add_range(5, 7);
+        v_rand.excl_val(7);
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_val((-6,-4,-2,0,2,4,6));
+        v_rand.excl_val((-2,0,2));
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.clear_constraints(VOID);
+
+        v_rand.add_range(-2, 2);
+        v_rand.add_val((-5,-3));
+        v_rand.excl_val((-5,-1,1));
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.add_range(5, 7);
+        v_rand.add_val(4);
+        v_rand.excl_val(6);
+        v_sig := v_rand.randm(v_sig'length);
+        v_rand.clear_config(VOID);
+      end loop;
+
+      log(ID_LOG_HDR, "Signed constraints");
+      v_rand.add_range_signed(x"F", x"3");
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.add_range_signed(x"05", x"07");
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_signed(x"F", x"3");
+      v_sig_long := v_rand.randm(v_sig_long'length);
+      v_rand.add_range_signed(x"005", x"007");
+      v_sig_long := v_rand.randm(v_sig_long'length);
+      v_rand.clear_config(VOID);
+
     --===================================================================================
     elsif GC_TESTCASE = "rand_gaussian" then
     --===================================================================================

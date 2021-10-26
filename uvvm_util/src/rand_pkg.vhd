@@ -1296,8 +1296,9 @@ package rand_pkg is
     return time_vector;
 
     impure function randm(
-      constant length       : positive;
-      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+      constant length        : positive;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_type : string         := "unsigned")
     return unsigned;
 
     impure function randm(
@@ -1815,7 +1816,7 @@ package body rand_pkg is
         if priv_sig_constraints.ran_incl(i).min_value(priv_sig_constraints.ran_incl(i).min_value'high) /= '1' then
           v_len := MAXIMUM(length, find_leftmost(priv_sig_constraints.ran_incl(i).min_value, '1') + 1);
         elsif length > 1 then
-          v_len := length;
+          v_len := MAXIMUM(length, find_leftmost(priv_sig_constraints.ran_incl(i).min_value, '0') + 2);
         else
           v_len := C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
         end if;
@@ -1823,7 +1824,7 @@ package body rand_pkg is
         if priv_sig_constraints.ran_incl(i).max_value(priv_sig_constraints.ran_incl(i).max_value'high) /= '1' then
           v_len := MAXIMUM(length, find_leftmost(priv_sig_constraints.ran_incl(i).max_value, '1') + 1);
         elsif length > 1 then
-          v_len := length;
+          v_len := MAXIMUM(length, find_leftmost(priv_sig_constraints.ran_incl(i).max_value, '0') + 2);
         else
           v_len := C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
         end if;
@@ -5513,11 +5514,11 @@ package body rand_pkg is
       variable v_uns_configured  : boolean := priv_uns_constraints.ran_incl'length > 0;
       variable v_sig_configured  : boolean := priv_sig_constraints.ran_incl'length > 0;
     begin
-      if not(value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+      if not(value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SLV" or value_type = "SIGNED") then
         alert(TB_FAILURE, proc_call & "=> Undefined value type: " & value_type, priv_scope);
       end if;
 
-      if v_int_configured and (value_type = "REAL" or value_type = "TIME" or (is_config and value_type = "UNSIGNED")) then
+      if v_int_configured and (value_type = "REAL" or value_type = "TIME" or (is_config and value_type = "UNSIGNED") or (is_config and value_type = "SIGNED")) then
         if is_config then
           alert(TB_ERROR, proc_call & "=> Integer " & C_MSG_CONFIG, priv_scope);
         else
@@ -5526,7 +5527,7 @@ package body rand_pkg is
         return false;
       end if;
 
-      if v_real_configured and (value_type = "INTEGER" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+      if v_real_configured and (value_type = "INTEGER" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SLV" or value_type = "SIGNED") then
         if is_config then
           alert(TB_ERROR, proc_call & "=> Real " & C_MSG_CONFIG, priv_scope);
         else
@@ -5535,7 +5536,7 @@ package body rand_pkg is
         return false;
       end if;
 
-      if v_time_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+      if v_time_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "UNSIGNED" or value_type = "SLV" or value_type = "SIGNED") then
         if is_config then
           alert(TB_ERROR, proc_call & "=> Time " & C_MSG_CONFIG, priv_scope);
         else
@@ -5553,7 +5554,7 @@ package body rand_pkg is
         return false;
       end if;
 
-      if v_sig_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED") then
+      if v_sig_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SLV") then
         if is_config then
           alert(TB_ERROR, proc_call & "=> Signed " & C_MSG_CONFIG, priv_scope);
         else
@@ -6986,8 +6987,9 @@ package body rand_pkg is
     end function;
 
     impure function randm(
-      constant length       : positive;
-      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+      constant length        : positive;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_type : string         := "unsigned")
     return unsigned is
       constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(length) & ")";
       constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
@@ -7006,7 +7008,7 @@ package body rand_pkg is
       v_uns_ran_incl_configured := '1' when priv_uns_constraints.ran_incl'length > 0 else '0';
 
       -- Check only unsigned constraints are configured
-      if not(check_configured_constraints("UNSIGNED", C_LOCAL_CALL_1, is_config => false)) then
+      if not(check_configured_constraints(to_upper(ext_proc_type), C_LOCAL_CALL_1, is_config => false)) then
         return v_ret;
       end if;
 
@@ -7047,10 +7049,10 @@ package body rand_pkg is
           return v_ret;
         end if;
         if priv_cyclic_mode = CYCLIC then
-          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Cyclic mode not supported for unsigned constraints. Ignoring cyclic configuration.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Cyclic mode not supported for " & ext_proc_type & " constraints. Ignoring cyclic configuration.", priv_scope);
         end if;
         if priv_uniqueness = UNIQUE then
-          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Uniqueness not supported for unsigned type. Ignoring uniqueness configuration.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Uniqueness not supported for " & ext_proc_type & " type. Ignoring uniqueness configuration.", priv_scope);
         end if;
         v_ret := randm_ranges(length, msg_id_panel, C_LOCAL_CALL_3);
         log(ID_RAND_GEN, C_LOCAL_CALL_3 & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
@@ -7068,7 +7070,7 @@ package body rand_pkg is
           return v_ret;
         end if;
         if priv_uniqueness = UNIQUE then
-          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Uniqueness not supported for unsigned type. Ignoring uniqueness configuration.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Uniqueness not supported for " & ext_proc_type & " type. Ignoring uniqueness configuration.", priv_scope);
         end if;
 
         case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
@@ -7221,7 +7223,7 @@ package body rand_pkg is
     return std_logic_vector is
       variable v_ret : unsigned(length-1 downto 0);
     begin
-      v_ret := randm(length, msg_id_panel);
+      v_ret := randm(length, msg_id_panel, "slv");
       return std_logic_vector(v_ret);
     end function;
 

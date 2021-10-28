@@ -154,9 +154,9 @@ package uart_bfm_pkg is
   ------------------------------------------
   -- odd_parity
   ------------------------------------------
-  -- - This function checks if the data parity is odd or even
-  -- - If the number of '1' in the 'data' input is odd, '1' will be returned
-  -- - If the number of '1' in the 'data' input is even, '0' will be returned
+  -- - This function generates an odd parity bit for the input data
+  -- - If the number of '1' in the 'data' input is even, '1' will be returned
+  -- - If the number of '1' in the 'data' input is odd, '0' will be returned
   function odd_parity (
     constant data : std_logic_vector(7 downto 0))
     return std_logic;

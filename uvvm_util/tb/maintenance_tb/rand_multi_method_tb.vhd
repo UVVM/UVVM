@@ -810,16 +810,15 @@ begin
 
       v_rand.clear_constraints(VOID);
 
-      -- TODO: uncomment
-      --log(ID_LOG_HDR, "Testing real_vector (exclude values)");
-      --increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
-      --v_rand.excl_val_real((-1.0,0.0,1.0));
-      --v_rand.set_uniqueness(NON_UNIQUE);
-      --v_real_vec := v_rand.randm(v_real_vec'length);
-      --v_rand.set_uniqueness(UNIQUE);
-      --v_real_vec := v_rand.randm(v_real_vec'length);
+      log(ID_LOG_HDR, "Testing real_vector (exclude values)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      v_rand.excl_val_real((-1.0,0.0,1.0));
+      v_rand.set_uniqueness(NON_UNIQUE);
+      v_real_vec := v_rand.randm(v_real_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_real_vec := v_rand.randm(v_real_vec'length);
 
-      --v_rand.clear_constraints(VOID);
+      v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing real_vector (range + set of values)");
       v_num_values := 8;
@@ -828,7 +827,7 @@ begin
       v_rand.add_range_real(8.0, 9.0);
       v_rand.add_val_real((4.0,10.0));
       v_rand.set_uniqueness(NON_UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ((-1.0,1.0),(8.0,9.0)), ADD,(-5.0,4.0,10.0));
         count_rand_value(v_value_cnt, v_real_vec);
@@ -836,7 +835,7 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_rand.set_uniqueness(UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ((-1.0,1.0),(8.0,9.0)), ADD,(-5.0,4.0,10.0));
         check_uniqueness(v_real_vec);
@@ -853,7 +852,7 @@ begin
       v_rand.add_range_real(8.0, 9.0);
       v_rand.excl_val_real(8.0);
       v_rand.set_uniqueness(NON_UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ((-1.0, 1.0),(8.0, 9.0)), EXCL,(-1.0,0.0,1.0,8.0));
         count_rand_value(v_value_cnt, v_real_vec);
@@ -1183,16 +1182,15 @@ begin
 
       v_rand.clear_constraints(VOID);
 
-      -- TODO: uncomment
-      --log(ID_LOG_HDR, "Testing time_vector (exclude values)");
-      --increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
-      --v_rand.excl_val_time((-1.0,0.0,1.0));
-      --v_rand.set_uniqueness(NON_UNIQUE);
-      --v_time_vec := v_rand.randm(v_time_vec'length);
-      --v_rand.set_uniqueness(UNIQUE);
-      --v_time_vec := v_rand.randm(v_time_vec'length);
+      log(ID_LOG_HDR, "Testing time_vector (exclude values)");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
+      v_rand.excl_val_time((0 ps,2 ps,4 ps));
+      v_rand.set_uniqueness(NON_UNIQUE);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_time_vec := v_rand.randm(v_time_vec'length);
 
-      --v_rand.clear_constraints(VOID);
+      v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing time_vector (range + set of values)");
       v_num_values := 9;
@@ -1201,7 +1199,7 @@ begin
       v_rand.add_range_time(8 ps, 10 ps);
       v_rand.add_val_time((4 ps,11 ps));
       v_rand.set_uniqueness(NON_UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_time_vec := v_rand.randm(v_time_vec'length);
         check_rand_value(v_time_vec, ((-1 ps,1 ps),(8 ps,10 ps)), ADD,(-5 ps,4 ps,11 ps));
         count_rand_value(v_value_cnt, v_time_vec);
@@ -2100,6 +2098,116 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing zero constraints");
+      ------------------------------------------------------------
+      -- Integer
+      increment_expected_alerts_and_stop_limit(TB_ERROR,9);
+      v_rand.excl_val((1,2));
+      v_rand.add_range(1,2);
+      v_int     := v_rand.randm(VOID);
+      v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.clear_config(VOID);
+
+      v_rand.excl_val((1,2,3,4));
+      v_rand.add_val((1,2,3,4));
+      v_int     := v_rand.randm(VOID);
+      v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.clear_config(VOID);
+
+      v_rand.excl_val((1,2,5));
+      v_rand.add_range(1,2);
+      v_rand.add_val(5);
+      v_rand.excl_val((3,4,6));
+      v_rand.add_range(3,4);
+      v_rand.add_val(6);
+      v_int     := v_rand.randm(VOID);
+      v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.clear_config(VOID);
+
+      -- Real
+      -- Not possible to test with range because min = max is not allowed
+      increment_expected_alerts_and_stop_limit(TB_ERROR,3);
+      v_rand.excl_val_real((1.0,2.0,3.0,4.0));
+      v_rand.add_val_real((1.0,2.0,3.0,4.0));
+      v_real     := v_rand.randm(VOID);
+      v_real_vec := v_rand.randm(v_real_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_real_vec := v_rand.randm(v_real_vec'length);
+      v_rand.clear_config(VOID);
+
+      -- Time
+      increment_expected_alerts_and_stop_limit(TB_ERROR,9);
+      v_rand.excl_val_time((1 ps,2 ps));
+      v_rand.add_range_time(1 ps,2 ps);
+      v_time     := v_rand.randm(VOID);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_rand.clear_config(VOID);
+
+      v_rand.excl_val_time((1 ps,2 ps,3 ps,4 ps));
+      v_rand.add_val_time((1 ps,2 ps,3 ps,4 ps));
+      v_time     := v_rand.randm(VOID);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_rand.clear_config(VOID);
+
+      v_rand.excl_val_time((1 ps,2 ps,5 ps));
+      v_rand.add_range_time(1 ps,2 ps);
+      v_rand.add_val_time(5 ps);
+      v_rand.excl_val_time((3 ps,4 ps,6 ps));
+      v_rand.add_range_time(3 ps,4 ps);
+      v_rand.add_val_time(6 ps);
+      v_time     := v_rand.randm(VOID);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_rand.set_uniqueness(UNIQUE);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_rand.clear_config(VOID);
+
+      -- Unsigned
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_rand.excl_val((0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15));
+      v_uns := v_rand.randm(v_uns'length);
+      v_rand.clear_config(VOID);
+
+      -- Signed
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_rand.excl_val((-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7));
+      v_sig := v_rand.randm(v_sig'length);
+      v_rand.clear_config(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing not enough unique constraints");
+      ------------------------------------------------------------
+      v_rand.set_uniqueness(UNIQUE);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_rand.excl_val((1,2));
+      v_rand.add_range(1,6);
+      v_rand.add_range(1,6);
+      v_int_vec := v_rand.randm(v_int_vec'length);
+      v_rand.clear_constraints(VOID);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_rand.add_val_real((1.0,2.0,3.0,4.0,4.0));
+      v_real_vec := v_rand.randm(v_real_vec'length);
+      v_rand.clear_constraints(VOID);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_rand.excl_val_time((1 ps,2 ps));
+      v_rand.add_range_time(1 ps,6 ps);
+      v_rand.add_range_time(1 ps,6 ps);
+      v_time_vec := v_rand.randm(v_time_vec'length);
+      v_rand.clear_constraints(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_weighted" then

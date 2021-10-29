@@ -49,6 +49,7 @@ begin
     variable v_real          : real;
     variable v_time          : time;
     variable v_int_vec       : integer_vector(0 to 4);
+    variable v_int_vec_long  : integer_vector(0 to 127);
     variable v_real_vec      : real_vector(0 to 4);
     variable v_time_vec      : time_vector(0 to 4);
     variable v_uns           : unsigned(3 downto 0);
@@ -74,6 +75,7 @@ begin
     variable v_mean          : real;
     variable v_std_deviation : real;
     variable v_found         : boolean := false;
+    variable v_incr_list     : integer_vector(1 to 256);
 
   begin
 
@@ -1411,6 +1413,115 @@ begin
       end loop;
       check_value(v_bit_check, "11", ERROR, "Check true and false are generated");
       v_bit_check := "00";
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing zero constraints");
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(TB_ERROR,3);
+      v_int := v_rand.rand(1,2, EXCL,(1,2));
+      v_int := v_rand.rand(1,2, ADD,(5), EXCL,(1,2,5));
+      v_int := v_rand.rand(1,2, EXCL,(1,2,5,6), ADD, (5,6));
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,3);
+      v_real := v_rand.rand(1.0,1.0, EXCL,(1.0));
+      v_real := v_rand.rand(1.0,1.0, ADD,(5.0), EXCL,(1.0,5.0));
+      v_real := v_rand.rand(1.0,1.0, EXCL,(1.0,5.0,6.0), ADD,(5.0,6.0));
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,3);
+      v_time := v_rand.rand(1 ps,2 ps, EXCL,(1 ps,2 ps));
+      v_time := v_rand.rand(1 ps,2 ps, ADD,(5 ps), EXCL,(1 ps,2 ps,5 ps));
+      v_time := v_rand.rand(1 ps,2 ps, EXCL,(1 ps,2 ps,5 ps,6 ps), ADD, (5 ps,6 ps));
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_uns := v_rand.rand(v_uns'length, EXCL,(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15));
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_sig := v_rand.rand(v_sig'length, EXCL,(-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7));
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,6);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,2, EXCL,(1,2));
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,2, EXCL,(1,2), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,2, ADD,(5), EXCL,(1,2,5));
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,2, ADD,(5), EXCL,(1,2,5), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,2, EXCL,(1,2,5,6), ADD,(5,6));
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,2, EXCL,(1,2,5,6), ADD,(5,6), UNIQUE);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,6);
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, EXCL,(1.0));
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, EXCL,(1.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, ADD,(5.0), EXCL,(1.0,5.0));
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, ADD,(5.0), EXCL,(1.0,5.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, EXCL,(1.0,5.0,6.0), ADD,(5.0,6.0));
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, EXCL,(1.0,5.0,6.0), ADD,(5.0,6.0), UNIQUE);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,6);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,2 ps, EXCL,(1 ps,2 ps));
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,2 ps, EXCL,(1 ps,2 ps), UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,2 ps, ADD,(5 ps), EXCL,(1 ps,2 ps,5 ps));
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,2 ps, ADD,(5 ps), EXCL,(1 ps,2 ps,5 ps), UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,2 ps, EXCL,(1 ps,2 ps,5 ps,6 ps), ADD,(5 ps,6 ps));
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,2 ps, EXCL,(1 ps,2 ps,5 ps,6 ps), ADD,(5 ps,6 ps), UNIQUE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing not enough unique constraints");
+      ------------------------------------------------------------
+      increment_expected_alerts_and_stop_limit(TB_ERROR,8);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,1, UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,4, UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(1,2,3,4), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(1,2,3,4,4), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,6, EXCL,(1,2), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,6, ADD,(7), EXCL,(1,2,3), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,6, ADD,(6,7,7), EXCL,(1,2,3), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,6, EXCL,(1,2,3), ADD,(6,7,7), UNIQUE);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,6);
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(1.0,2.0,3.0,4.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(1.0,2.0,3.0,4.0,4.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, ADD,(2.0,3.0,4.0,5.0,6.0,7.0), EXCL,(1.0,2.0,3.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, ADD,(1.0,2.0,3.0,4.0,5.0,6.0,7.0,7.0), EXCL,(1.0,2.0,3.0), UNIQUE);
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, EXCL,(1.0,2.0,3.0), ADD,(1.0,2.0,3.0,4.0,5.0,6.0,7.0,7.0), UNIQUE);
+
+      increment_expected_alerts_and_stop_limit(TB_ERROR,8);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,1 ps, UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,4 ps, UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(1 ps,2 ps,3 ps,4 ps), UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(1 ps,2 ps,3 ps,4 ps,4 ps), UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,6 ps, EXCL,(1 ps,2 ps), UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,6 ps, ADD,(7 ps), EXCL,(1 ps,2 ps,3 ps), UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,6 ps, ADD,(6 ps,7 ps,7 ps), EXCL,(1 ps,2 ps,3 ps), UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,6 ps, EXCL,(1 ps,2 ps,3 ps), ADD,(6 ps,7 ps,7 ps), UNIQUE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing exact unique constraints (with repeated values)");
+      ------------------------------------------------------------
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,7, EXCL,(1,2,2,2,2,100,100,100), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,7, ADD,(8), EXCL,(1,2,2,2,3,3,3,100,100,100), UNIQUE);
+
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,1.0, ADD,(2.0,3.0,4.0,5.0,6.0,7.0), EXCL,(1.0,2.0,2.0,100.0,100.0), UNIQUE);
+
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,7 ps, EXCL,(1 ps,2 ps,2 ps,2 ps,2 ps,100 ps,100 ps,100 ps), UNIQUE);
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,7 ps, ADD,(8 ps), EXCL,(1 ps,2 ps,2 ps,2 ps,3 ps,3 ps,3 ps,100 ps,100 ps,100 ps), UNIQUE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing small and big unique ranges");
+      ------------------------------------------------------------
+      for i in v_incr_list'range loop
+        v_incr_list(i) := i;
+      end loop;
+      log(ID_SEQUENCER, "Generate 5 unique values");
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,5, UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(1,2,3,4,5), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,6, EXCL,(1), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,10, EXCL,(1,2,3,4,5), UNIQUE);
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,40, EXCL,(v_incr_list(1 to 35)), UNIQUE);
+      log(ID_SEQUENCER, "Generate 128 unique values");
+      v_int_vec_long := v_rand.rand(v_int_vec_long'length, 1,128, UNIQUE);
+      v_int_vec_long := v_rand.rand(v_int_vec_long'length, ONLY,(v_incr_list(1 to 128)), UNIQUE);
+      v_int_vec_long := v_rand.rand(v_int_vec_long'length, 1,129, EXCL,(1), UNIQUE);
+      v_int_vec_long := v_rand.rand(v_int_vec_long'length, 1,256, EXCL,(v_incr_list(1 to 128)), UNIQUE);
+      v_int_vec_long := v_rand.rand(v_int_vec_long'length, 1,378, EXCL,(v_incr_list(1 to 250)), UNIQUE);
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_weighted" then

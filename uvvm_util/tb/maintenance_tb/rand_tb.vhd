@@ -235,11 +235,15 @@ begin
       check_value(v_found, TB_ERROR, "Checking ADD value is generated");
 
       log(ID_LOG_HDR, "Testing integer (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 4);
-      v_int := v_rand.rand(10, 0);
-      v_int := v_rand.rand(integer'left, integer'right, ADD,(0));
-      v_int := v_rand.rand(integer'left, integer'right, ADD,(0), EXCL,(1));
-      v_int := v_rand.rand(integer'left, integer'right, EXCL,(-1), ADD,(0));
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
+      v_int := v_rand.rand(10, 0);                                           -- TB_ERROR: min_value > max_value
+      v_int := v_rand.rand(ADD,(1,2));                                       -- TB_ERROR: wrong specifier
+      v_int := v_rand.rand(1,10, ONLY,(1,2,3));                              -- TB_ERROR: wrong specifier
+      v_int := v_rand.rand(1,10, ONLY,(1,2,3), EXCL,(1,2,3));                -- TB_ERROR: wrong specifier
+      v_int := v_rand.rand(1,10, EXCL,(1,2,3), ONLY,(1,2,3));                -- TB_ERROR: wrong specifier
+      v_int := v_rand.rand(integer'left, integer'right, ADD,(0));            -- TB_ERROR: constraints too big
+      v_int := v_rand.rand(integer'left, integer'right, ADD,(0), EXCL,(1));  -- TB_ERROR: constraints too big
+      v_int := v_rand.rand(integer'left, integer'right, EXCL,(-1), ADD,(0)); -- TB_ERROR: constraints too big
 
       ------------------------------------------------------------
       -- Integer Vector
@@ -353,8 +357,14 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing integer_vector (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(0,1), UNIQUE);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 7);
+      v_int_vec := v_rand.rand(v_int_vec'length, 10,1);                                    -- TB_ERROR: min_value > max_value
+      v_int_vec := v_rand.rand(v_int_vec'length, ADD,(1,2));                               -- TB_ERROR: wrong specifier
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,10, ONLY,(1,2,3));                      -- TB_ERROR: wrong specifier
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,10, ONLY,(1,2,3), EXCL,(1,2,3));        -- TB_ERROR: wrong specifier
+      v_int_vec := v_rand.rand(v_int_vec'length, 1,10, EXCL,(1,2,3), ONLY,(1,2,3));        -- TB_ERROR: wrong specifier
+      v_int_vec := v_rand.rand(v_int_vec'length, integer'left,integer'right, ADD,(1,2,3)); -- TB_ERROR: constraints too big
+      v_int_vec := v_rand.rand(v_int_vec'length, ONLY,(0,1), UNIQUE);                      -- TB_ERROR: not enough constraints
 
       ------------------------------------------------------------
       -- Real
@@ -431,8 +441,12 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing real (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_real := v_rand.rand(10.0, 0.0);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 5);
+      v_real := v_rand.rand(10.0, 0.0);                                        -- TB_ERROR: min_value > max_value
+      v_real := v_rand.rand(ADD,(1.0,2.0));                                    -- TB_ERROR: wrong specifier
+      v_real := v_rand.rand(1.0,10.0, ONLY,(1.0,2.0,3.0));                     -- TB_ERROR: wrong specifier
+      v_real := v_rand.rand(1.0,10.0, ONLY,(1.0,2.0,3.0), EXCL,(1.0,2.0,3.0)); -- TB_ERROR: wrong specifier
+      v_real := v_rand.rand(1.0,10.0, EXCL,(1.0,2.0,3.0), ONLY,(1.0,2.0,3.0)); -- TB_ERROR: wrong specifier
 
       ------------------------------------------------------------
       -- Real Vector
@@ -546,8 +560,13 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing real_vector (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(0.0,1.0), UNIQUE);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 6);
+      v_real_vec := v_rand.rand(v_real_vec'length, 10.0,1.0);                                         -- TB_ERROR: min_value > max_value
+      v_real_vec := v_rand.rand(v_real_vec'length, ADD,(1.0,2.0));                                    -- TB_ERROR: wrong specifier
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,10.0, ONLY,(1.0,2.0,3.0));                     -- TB_ERROR: wrong specifier
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,10.0, ONLY,(1.0,2.0,3.0), EXCL,(1.0,2.0,3.0)); -- TB_ERROR: wrong specifier
+      v_real_vec := v_rand.rand(v_real_vec'length, 1.0,10.0, EXCL,(1.0,2.0,3.0), ONLY,(1.0,2.0,3.0)); -- TB_ERROR: wrong specifier
+      v_real_vec := v_rand.rand(v_real_vec'length, ONLY,(0.0,1.0), UNIQUE);                           -- TB_ERROR: not enough constraints
 
       ------------------------------------------------------------
       -- Time
@@ -621,8 +640,12 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing time (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_time := v_rand.rand(10 ns, 0 ns);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 5);
+      v_time := v_rand.rand(10 ns, 0 ns);                                              -- TB_ERROR: min_value > max_value
+      v_time := v_rand.rand(ADD,(1 ps,2 ps));                                          -- TB_ERROR: wrong specifier
+      v_time := v_rand.rand(1 ps,10 ps, ONLY,(1 ps,2 ps,3 ps));                        -- TB_ERROR: wrong specifier
+      v_time := v_rand.rand(1 ps,10 ps, ONLY,(1 ps,2 ps,3 ps), EXCL,(1 ps,2 ps,3 ps)); -- TB_ERROR: wrong specifier
+      v_time := v_rand.rand(1 ps,10 ps, EXCL,(1 ps,2 ps,3 ps), ONLY,(1 ps,2 ps,3 ps)); -- TB_ERROR: wrong specifier
 
       ------------------------------------------------------------
       -- Time Vector
@@ -736,8 +759,13 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       log(ID_LOG_HDR, "Testing time_vector (invalid parameters)");
-      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(0 ps,1 ps), UNIQUE);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 6);
+      v_time_vec := v_rand.rand(v_time_vec'length, 10 ps,1 ps);                                               -- TB_ERROR: min_value > max_value
+      v_time_vec := v_rand.rand(v_time_vec'length, ADD,(1 ps,2 ps));                                          -- TB_ERROR: wrong specifier
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,10 ps, ONLY,(1 ps,2 ps,3 ps));                        -- TB_ERROR: wrong specifier
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,10 ps, ONLY,(1 ps,2 ps,3 ps), EXCL,(1 ps,2 ps,3 ps)); -- TB_ERROR: wrong specifier
+      v_time_vec := v_rand.rand(v_time_vec'length, 1 ps,10 ps, EXCL,(1 ps,2 ps,3 ps), ONLY,(1 ps,2 ps,3 ps)); -- TB_ERROR: wrong specifier
+      v_time_vec := v_rand.rand(v_time_vec'length, ONLY,(0 ps,1 ps), UNIQUE);                                 -- TB_ERROR: not enough constraints
 
       ------------------------------------------------------------
       -- Unsigned
@@ -829,14 +857,14 @@ begin
 
       log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
-      v_uns := v_rand.rand(v_uns'length, 5, 0);
-      v_uns := v_rand.rand(v_uns'length, 0, 2**16);
-      v_uns := v_rand.rand(v_uns'length, ONLY,(2**17, 2**18));
-      v_uns := v_rand.rand(v_uns'length, 0, 2**16, ADD,(0, 2));
-      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(2**17, 2**18));
-      v_uns := v_rand.rand(v_uns'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));
-      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1));
-      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18));
+      v_uns := v_rand.rand(v_uns'length, 5, 0);                                  -- TB_ERROR: min_value < max_value
+      v_uns := v_rand.rand(v_uns'length, 0, 2**16);                              -- TB_ERROR: constraints too big
+      v_uns := v_rand.rand(v_uns'length, ONLY,(2**17, 2**18));                   -- TB_ERROR: constraints too big
+      v_uns := v_rand.rand(v_uns'length, 0, 2**16, ADD,(0, 2));                  -- TB_ERROR: constraints too big
+      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(2**17, 2**18));              -- TB_ERROR: constraints too big
+      v_uns := v_rand.rand(v_uns'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));     -- TB_ERROR: constraints too big
+      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1)); -- TB_ERROR: constraints too big
+      v_uns := v_rand.rand(v_uns'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18)); -- TB_ERROR: constraints too big
 
       ------------------------------------------------------------
       -- Unsigned long
@@ -955,8 +983,8 @@ begin
 
       log(ID_LOG_HDR, "Testing unsigned (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
-      v_uns_long := v_rand.rand(v_uns_long'length, v_uns_long_max, v_uns_long_min);
-      v_uns_long := v_rand.rand(v_uns_long_max, v_uns_long_min);
+      v_uns_long := v_rand.rand(v_uns_long'length, v_uns_long_max, v_uns_long_min); -- TB_ERROR: min_value < max_value
+      v_uns_long := v_rand.rand(v_uns_long_max, v_uns_long_min);                    -- TB_ERROR: min_value < max_value
 
       ------------------------------------------------------------
       -- Signed
@@ -1048,14 +1076,14 @@ begin
 
       log(ID_LOG_HDR, "Testing signed (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
-      v_sig := v_rand.rand(v_sig'length, 5, 0);
-      v_sig := v_rand.rand(v_sig'length, 0, 2**16);
-      v_sig := v_rand.rand(v_sig'length, ONLY,(2**17, 2**18));
-      v_sig := v_rand.rand(v_sig'length, 0, 2**16, ADD,(0, 2));
-      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(2**17, 2**18));
-      v_sig := v_rand.rand(v_sig'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));
-      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1));
-      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18));
+      v_sig := v_rand.rand(v_sig'length, 5, 0);                                   -- TB_ERROR: min_value < max_value
+      v_sig := v_rand.rand(v_sig'length, 0, 2**16);                               -- TB_ERROR: constraints too big
+      v_sig := v_rand.rand(v_sig'length, ONLY,(2**17, 2**18));                    -- TB_ERROR: constraints too big
+      v_sig := v_rand.rand(v_sig'length, 0, 2**16, ADD,(0, 2));                   -- TB_ERROR: constraints too big
+      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(2**17, 2**18));               -- TB_ERROR: constraints too big
+      v_sig := v_rand.rand(v_sig'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));      -- TB_ERROR: constraints too big
+      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1));  -- TB_ERROR: constraints too big
+      v_sig := v_rand.rand(v_sig'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18));  -- TB_ERROR: constraints too big
 
       ------------------------------------------------------------
       -- Signed long
@@ -1174,8 +1202,8 @@ begin
 
       log(ID_LOG_HDR, "Testing signed (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
-      v_sig_long := v_rand.rand(v_sig_long'length, v_sig_long_max, v_sig_long_min);
-      v_sig_long := v_rand.rand(v_sig_long_max, v_sig_long_min);
+      v_sig_long := v_rand.rand(v_sig_long'length, v_sig_long_max, v_sig_long_min); -- TB_ERROR: min_value < max_value
+      v_sig_long := v_rand.rand(v_sig_long_max, v_sig_long_min);                    -- TB_ERROR: min_value < max_value
 
       ------------------------------------------------------------
       -- Std_logic_vector
@@ -1267,14 +1295,14 @@ begin
 
       log(ID_LOG_HDR, "Testing std_logic_vector (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 8);
-      v_slv := v_rand.rand(v_slv'length, 5, 0);
-      v_slv := v_rand.rand(v_slv'length, 0, 2**16);
-      v_slv := v_rand.rand(v_slv'length, ONLY,(2**17, 2**18));
-      v_slv := v_rand.rand(v_slv'length, 0, 2**16, ADD,(0, 2));
-      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(2**17, 2**18));
-      v_slv := v_rand.rand(v_slv'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));
-      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1));
-      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18));
+      v_slv := v_rand.rand(v_slv'length, 5, 0);                                   -- TB_ERROR: min_value < max_value
+      v_slv := v_rand.rand(v_slv'length, 0, 2**16);                               -- TB_ERROR: constraints too big
+      v_slv := v_rand.rand(v_slv'length, ONLY,(2**17, 2**18));                    -- TB_ERROR: constraints too big
+      v_slv := v_rand.rand(v_slv'length, 0, 2**16, ADD,(0, 2));                   -- TB_ERROR: constraints too big
+      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(2**17, 2**18));               -- TB_ERROR: constraints too big
+      v_slv := v_rand.rand(v_slv'length, 0, 2**16, ADD,(0, 2), EXCL,(0, 1));      -- TB_ERROR: constraints too big
+      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(2**17, 2**18), EXCL,(0, 1));  -- TB_ERROR: constraints too big
+      v_slv := v_rand.rand(v_slv'length, 0, 2, ADD,(0, 2), EXCL,(2**17, 2**18));  -- TB_ERROR: constraints too big
 
       ------------------------------------------------------------
       -- Std_logic_vector long
@@ -1393,8 +1421,8 @@ begin
 
       log(ID_LOG_HDR, "Testing std_logic_vector (invalid parameters)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
-      v_slv_long := v_rand.rand(v_slv_long'length, v_slv_long_max, v_slv_long_min);
-      v_slv_long := v_rand.rand(v_slv_long_max, v_slv_long_min);
+      v_slv_long := v_rand.rand(v_slv_long'length, v_slv_long_max, v_slv_long_min); -- TB_ERROR: min_value < max_value
+      v_slv_long := v_rand.rand(v_slv_long_max, v_slv_long_min);                    -- TB_ERROR: min_value < max_value
 
       ------------------------------------------------------------
       -- Std_logic & boolean
@@ -1950,9 +1978,9 @@ begin
 
       log(ID_LOG_HDR, "Testing invalid parameters");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
-      v_rand.set_range_weight_default_mode(NA);
-      v_int := v_rand.rand_val_weight(((1,0),(2,0),(3,0)));
-      v_int := v_rand.rand_range_weight(((10,5,50),(1,1,50)));
+      v_rand.set_range_weight_default_mode(NA);                -- TB_ERROR: mode not supported
+      v_int := v_rand.rand_val_weight(((1,0),(2,0),(3,0)));    -- TB_ERROR: total weight is zero
+      v_int := v_rand.rand_range_weight(((10,5,50),(1,1,50))); -- TB_ERROR: min_value > max_value
 
     --===================================================================================
     elsif GC_TESTCASE = "rand_cyclic" then

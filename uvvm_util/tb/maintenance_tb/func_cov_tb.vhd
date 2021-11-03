@@ -46,6 +46,16 @@ architecture func of func_cov_tb is
   shared variable v_cross_x3_b   : t_coverpoint;
   shared variable v_cross_x4     : t_coverpoint;
   shared variable v_cross_x5     : t_coverpoint;
+  shared variable v_cross_x6     : t_coverpoint;
+  shared variable v_cross_x7     : t_coverpoint;
+  shared variable v_cross_x8     : t_coverpoint;
+  shared variable v_cross_x9     : t_coverpoint;
+  shared variable v_cross_x10    : t_coverpoint;
+  shared variable v_cross_x11    : t_coverpoint;
+  shared variable v_cross_x12    : t_coverpoint;
+  shared variable v_cross_x13    : t_coverpoint;
+  shared variable v_cross_x14    : t_coverpoint;
+  shared variable v_cross_x15    : t_coverpoint;
 
   constant C_ADAPTIVE_WEIGHT : integer := -1;
   constant C_NULL            : integer := integer'left;
@@ -1078,6 +1088,32 @@ begin
       v_coverpoint_b.add_bins(bin_transition((0,1,2,3,4,5,6,7,8,9)) & bin_transition((0,1,2,3,4,5,6,7,8,9)));
       v_coverpoint_b.add_bins(bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)) &
         bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)));
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing C_FC_MAX_NUM_COVERPOINTS limit");
+      ------------------------------------------------------------
+      v_coverpoint.add_bins(bin(0));
+      v_coverpoint_b.add_bins(bin(0));
+      v_coverpoint_c.add_bins(bin(0));
+      v_coverpoint_d.add_bins(bin(0));
+      v_coverpoint_e.add_bins(bin(0));
+      v_cross_x2.add_bins(bin(0));
+      v_cross_x2_b.add_bins(bin(0));
+      v_cross_x3.add_bins(bin(0));
+      v_cross_x3_b.add_bins(bin(0));
+      v_cross_x4.add_bins(bin(0));
+      v_cross_x5.add_bins(bin(0));
+      v_cross_x6.add_bins(bin(0));
+      v_cross_x7.add_bins(bin(0));
+      v_cross_x8.add_bins(bin(0));
+      v_cross_x9.add_bins(bin(0));
+      v_cross_x10.add_bins(bin(0));
+      v_cross_x11.add_bins(bin(0));
+      v_cross_x12.add_bins(bin(0));
+      v_cross_x13.add_bins(bin(0));
+      v_cross_x14.add_bins(bin(0));
+      increment_expected_alerts_and_stop_limit(TB_FAILURE,1); -- C_FC_MAX_NUM_COVERPOINTS = 20
+      v_cross_x15.set_scope("scope"); -- Avoid several error alerts by using this procedure which does not access the covergroup status register
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_bin" then

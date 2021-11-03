@@ -1269,8 +1269,10 @@ package body func_cov_pkg is
     begin
       if priv_id = C_DEALLOCATED_ID then
         priv_id := protected_covergroup_status.add_coverpoint(VOID);
-        check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
-          priv_scope, ID_NEVER, caller_name => local_call);
+        if priv_id = C_DEALLOCATED_ID then
+          alert(TB_FAILURE, local_call & "=> Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.", priv_scope);
+          return;
+        end if;
         -- Only set the default name if it hasn't been given
         if priv_name = fill_string(NUL, priv_name'length) then
           set_name(protected_covergroup_status.get_name(priv_id));

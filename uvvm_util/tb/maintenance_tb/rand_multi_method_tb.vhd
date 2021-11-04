@@ -140,7 +140,7 @@ begin
       v_rand.add_range(8, 9);
       v_rand.add_range(15, 16);
       v_rand.add_range(-7, -5);
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_int := v_rand.randm(VOID);
         check_rand_value(v_int, ((-2,2),(8,9),(15,16),(-7,-5)));
         count_rand_value(v_value_cnt, v_int);
@@ -372,23 +372,23 @@ begin
       end loop;
 
       log(ID_LOG_HDR, "Testing integer_vector (range)");
-      v_num_values := 12;
-      v_rand.add_range(-2, 2);
+      v_num_values := 10;
+      v_rand.add_range(-1, 1);
       v_rand.add_range(8, 9);
       v_rand.add_range(15, 16);
       v_rand.add_range(-7, -5);
       v_rand.set_uniqueness(NON_UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.randm(v_int_vec'length);
-        check_rand_value(v_int_vec, ((-2,2),(8,9),(15,16),(-7,-5)));
+        check_rand_value(v_int_vec, ((-1,1),(8,9),(15,16),(-7,-5)));
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_rand.set_uniqueness(UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_int_vec := v_rand.randm(v_int_vec'length);
-        check_rand_value(v_int_vec, ((-2,2),(8,9),(15,16),(-7,-5)));
+        check_rand_value(v_int_vec, ((-1,1),(8,9),(15,16),(-7,-5)));
         check_uniqueness(v_int_vec);
         count_rand_value(v_value_cnt, v_int_vec);
       end loop;
@@ -569,7 +569,7 @@ begin
       log(ID_LOG_HDR, "Testing real (range)");
       v_num_values := 3;
       v_rand.add_range_real(-1.0, 1.0);
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.randm(VOID);
         check_rand_value(v_real, (0 => (-1.0,1.0)));
         count_rand_value(v_value_cnt, v_real);
@@ -579,7 +579,7 @@ begin
       v_num_values := 7;
       v_rand.add_range_real(-5.7, -5.2);
       v_rand.add_range_real(8.0, 9.0);
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.randm(VOID);
         check_rand_value(v_real, ((-5.7,-5.2),(-1.0,1.0),(8.0,9.0)));
         count_rand_value(v_value_cnt, v_real);
@@ -593,7 +593,7 @@ begin
       v_rand.add_val_real(-10.0);
       v_rand.add_val_real((-2.4,2.7));
       v_rand.add_val_real(6.64);
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.randm(VOID);
         check_rand_value(v_real, ONLY,(-10.0,-2.4,2.7,6.64));
         count_rand_value(v_value_cnt, v_real);
@@ -636,7 +636,7 @@ begin
       v_num_values := 3;
       v_rand.add_range_real(-1.0, 1.0);
       v_rand.excl_val_real((-1.0,0.0,1.0));
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.randm(VOID);
         check_rand_value(v_real, (0 => (-1.0,1.0)), EXCL,(-1.0,0.0,1.0));
         count_rand_value(v_value_cnt, v_real);
@@ -646,7 +646,7 @@ begin
       v_num_values := 5;
       v_rand.add_range_real(-5.7, -5.2);
       v_rand.excl_val_real((-5.7,-5.5,-5.2));
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.randm(VOID);
         check_rand_value(v_real, ((-1.0,1.0),(-5.7,-5.2)), EXCL,(-1.0,0.0,1.0,-5.7,-5.5,-5.2));
         count_rand_value(v_value_cnt, v_real);
@@ -659,7 +659,7 @@ begin
       v_num_values := 3;
       v_rand.add_val_real((-10.0,-2.4,0.0,2.7,6.64));
       v_rand.excl_val_real((-2.4,0.0));
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.randm(VOID);
         check_rand_value(v_real, ONLY,(-10.0,2.7,6.64));
         count_rand_value(v_value_cnt, v_real);
@@ -673,7 +673,7 @@ begin
       v_rand.add_range_real(-1.0, 1.0);
       v_rand.add_val_real((-10.0,-2.4));
       v_rand.excl_val_real((-1.0,0.0,1.0));
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.randm(VOID);
         check_rand_value(v_real, (0 => (-1.0,1.0)), ADD,(-10.0,-2.4), EXCL,(-1.0,0.0,1.0));
         count_rand_value(v_value_cnt, v_real);
@@ -777,7 +777,7 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_rand.set_uniqueness(UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ((-2.0,2.0),(8.0,9.0)));
         check_uniqueness(v_real_vec);
@@ -792,7 +792,7 @@ begin
       v_rand.add_val_real((-1.1,0.25,1.1));
       v_rand.add_val_real((-2.0,2.0));
       v_rand.set_uniqueness(NON_UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ONLY,(-2.0,-1.1,0.25,1.1,2.0));
         count_rand_value(v_value_cnt, v_real_vec);
@@ -800,7 +800,7 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_rand.set_uniqueness(UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ONLY,(-2.0,-1.1,0.25,1.1,2.0));
         check_uniqueness(v_real_vec);
@@ -875,7 +875,7 @@ begin
       v_rand.add_val_real((-8.0,-6.0,-4.0,-2.0,0.0,2.0,4.0,6.0,8.0));
       v_rand.excl_val_real((-2.0,0.0,2.0));
       v_rand.set_uniqueness(NON_UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ONLY,(-8.0,-6.0,-4.0,4.0,6.0,8.0));
         count_rand_value(v_value_cnt, v_real_vec);
@@ -883,7 +883,7 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_rand.set_uniqueness(UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ONLY,(-8.0,-6.0,-4.0,4.0,6.0,8.0));
         check_uniqueness(v_real_vec);
@@ -902,7 +902,7 @@ begin
       v_rand.add_val_real((4.0,10.0));
       v_rand.excl_val_real(4.0);
       v_rand.set_uniqueness(NON_UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ((-1.0, 1.0),(8.0, 9.0)), ADD,(-5.0,4.0,10.0), EXCL,(-1.0,1.0,4.0));
         count_rand_value(v_value_cnt, v_real_vec);
@@ -910,7 +910,7 @@ begin
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_rand.set_uniqueness(UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS loop
+      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
         v_real_vec := v_rand.randm(v_real_vec'length);
         check_rand_value(v_real_vec, ((-1.0, 1.0),(8.0, 9.0)), ADD,(-5.0,4.0,10.0), EXCL,(-1.0,1.0,4.0));
         check_uniqueness(v_real_vec);
@@ -995,7 +995,7 @@ begin
       v_num_values := 9;
       v_rand.add_range_time(4 ps, 6 ps);
       v_rand.add_val_time((11 ps, 13 ps));
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         check_rand_value(v_time, ((-1 ps,1 ps),(4 ps,6 ps)), ADD,(10 ps,11 ps,13 ps));
         count_rand_value(v_value_cnt, v_time);
@@ -1056,7 +1056,7 @@ begin
       v_rand.add_range_time(4 ps, 6 ps);
       v_rand.add_val_time((11 ps,13 ps));
       v_rand.excl_val_time(5 ps);
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         check_rand_value(v_time, ((-2 ps,2 ps),(4 ps,6 ps)), ADD,(10 ps,11 ps,13 ps), EXCL,(-1 ps,0 ps,1 ps,5 ps));
         count_rand_value(v_value_cnt, v_time);
@@ -1137,13 +1137,13 @@ begin
       v_time_vec := v_rand.randm(v_time_vec'length);
 
       log(ID_LOG_HDR, "Testing time_vector (range)");
-      v_num_values := 8;
-      v_rand.add_range_time(-2 ps, 2 ps);
+      v_num_values := 6;
+      v_rand.add_range_time(-1 ps, 1 ps);
       v_rand.add_range_time(8 ps, 10 ps);
       v_rand.set_uniqueness(NON_UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-2 ps,2 ps),(8 ps,10 ps)));
+        check_rand_value(v_time_vec, ((-1 ps,1 ps),(8 ps,10 ps)));
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1151,7 +1151,7 @@ begin
       v_rand.set_uniqueness(UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-2 ps,2 ps),(8 ps,10 ps)));
+        check_rand_value(v_time_vec, ((-1 ps,1 ps),(8 ps,10 ps)));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -1199,7 +1199,7 @@ begin
       v_rand.add_range_time(8 ps, 10 ps);
       v_rand.add_val_time((4 ps,11 ps));
       v_rand.set_uniqueness(NON_UNIQUE);
-      for i in 1 to C_NUM_RAND_REPETITIONS*2 loop
+      for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
         check_rand_value(v_time_vec, ((-1 ps,1 ps),(8 ps,10 ps)), ADD,(-5 ps,4 ps,11 ps));
         count_rand_value(v_value_cnt, v_time_vec);

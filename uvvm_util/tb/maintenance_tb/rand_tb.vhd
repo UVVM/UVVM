@@ -409,7 +409,7 @@ begin
 
       log(ID_LOG_HDR, "Testing real (range + 2 sets of values)");
       v_num_values := 4;
-      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*3 loop
+      for i in 1 to v_num_values*C_NUM_RAND_REPETITIONS*2 loop
         v_real := v_rand.rand(-1.0, 1.0, ADD,(15.5,16.6), EXCL,(-1.0,16.6));
         check_rand_value(v_real, (0 => (-1.0,1.0)), ADD,(15.5,16.6), EXCL,(-1.0,16.6));
         count_rand_value(v_value_cnt, v_real);

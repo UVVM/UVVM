@@ -3,11 +3,20 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
-v2.17.1
+v2.18.0
 ----------
-Released: 2021-XX-XX
+Released: 2021-10-22
 - Fixed generic_queue deleting wrong element when position is different from entry_num.
 - Fixed generic_queue print_queue() crashing when queue is empty.
+- Added MATCH_STD_INCL_ZXUW to match strictness for check_value(), await_value()
+  and matching_values().
+- Fixed issue when using don't care in SLVs with check_value() and match strictness
+  set to MATCH_STD_INCL_Z.
+- Added rand_pkg (advanced randomization).
+- Added func_cov_pkg (functional coverage).
+- Added new documentation type (.rst and .html) for rand_pkg and func_cov_pkg.
+  See uvvm_util/doc/rand_and_func_cov.html and uvvm_util/doc/rst/index.rst for
+  documentation.
 
 v2.17.0
 ----------

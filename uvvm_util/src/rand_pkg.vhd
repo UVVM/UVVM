@@ -6984,7 +6984,7 @@ package body rand_pkg is
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_type : string         := "unsigned")
     return unsigned is
-      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(length) & ")";
+      constant C_LOCAL_CALL_1 : string := "randm(" & string'(get_int_constraints(length)) & ")";
       constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
       constant C_LOCAL_CALL_3 : string := "randm(" & get_uns_constraints(length) & ")";
       variable v_ran_incl_configured     : std_logic;

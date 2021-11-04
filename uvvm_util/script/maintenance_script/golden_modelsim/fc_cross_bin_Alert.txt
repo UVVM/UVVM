@@ -1,0 +1,197 @@
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    check_value() => Failed. int  Was 5. Expected 4
+UVVM:                    Number of transition values must be the same in all cross elements
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    check_value() => Failed. int  Was 5. Expected 4
+UVVM:                    Number of transition values must be the same in all cross elements
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((-3001, 3001))=> Sampled illegal_bin(3001)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((-3002, 3002))=> Sampled illegal_bin(3002)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((-3003, 3003))=> Sampled illegal_bin(3003)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3100, 3115))=> Sampled illegal_bin_range(3115 to 3119)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3101, 3116))=> Sampled illegal_bin_range(3115 to 3119)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3102, 3117))=> Sampled illegal_bin_range(3115 to 3119)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3103, 3118))=> Sampled illegal_bin_range(3115 to 3119)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3104, 3119))=> Sampled illegal_bin_range(3115 to 3119)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #9  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3105, 3118))=> Sampled illegal_bin_range(3115 to 3119)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #10  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3106, 3117))=> Sampled illegal_bin_range(3115 to 3119)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3107, 3116))=> Sampled illegal_bin_range(3115 to 3119)
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    check_value() => Failed. int  Was 5. Expected 4
+UVVM:                    Number of transition values must be the same in all cross elements
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #12  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3201, 3216))=> Sampled illegal_bin_transition(3212->3214->3216)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #13  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3201, 3216))=> Sampled illegal_bin_transition(3212->3214->3216)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #14  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3201, 3216))=> Sampled illegal_bin_transition(3212->3214->3216)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #15  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3205, 3218))=> Sampled illegal_bin_transition(3212->3214->3216->3218)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #16  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3201, 3216))=> Sampled illegal_bin_transition(3212->3214->3216)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #17  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3205, 3218))=> Sampled illegal_bin_transition(3212->3214->3216->3218)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #18  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3221, 3239))=> Sampled illegal_bin_transition(3231->3234->3234->3239)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #19  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3221, 3239))=> Sampled illegal_bin_transition(3231->3234->3234->3239)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #20  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((3221, 3239))=> Sampled illegal_bin_transition(3231->3234->3234->3239)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #21  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((4402, 4415))=> Sampled illegal_bin_range(4415 to 4417)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #22  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((4402, 4416))=> Sampled illegal_bin_range(4415 to 4417)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #23  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((4402, 4417))=> Sampled illegal_bin_range(4415 to 4417)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #24  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((4506, 4516))=> Sampled illegal_bin(4516)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #25  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((4803, 4817))=> Sampled illegal_bin_range(4817 to 4819)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #26  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((4803, 4818))=> Sampled illegal_bin_range(4817 to 4819)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #27  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((4803, 4819))=> Sampled illegal_bin_range(4817 to 4819)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #28  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((4903, 4917))=> Sampled illegal_bin_transition(4901->4902->4903)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #29  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((5000, 5010))=> Sampled illegal_bin_range(5010 to 5050)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #30  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((5000, 5025))=> Sampled illegal_bin_range(5010 to 5050)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #31  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((5000, 5050))=> Sampled illegal_bin_range(5010 to 5050)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #32  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((5115, 5150))=> Sampled illegal_bin_transition(5105->5110->5115)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #33  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((6200, 6375))=> Sampled illegal_bin(6375)
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #34  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage((6250, 6375))=> Sampled illegal_bin(6375)
+UVVM: 

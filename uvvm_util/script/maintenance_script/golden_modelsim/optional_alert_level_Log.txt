@@ -34,6 +34,13 @@ UVVM:                ID_CLOCK_GEN                 : ENABLED
 UVVM:                ID_GEN_PULSE                 : ENABLED
 UVVM:                ID_BLOCKING                  : ENABLED
 UVVM:                ID_WATCHDOG                  : ENABLED
+UVVM:                ID_RAND_GEN                  : DISABLED
+UVVM:                ID_RAND_CONF                 : DISABLED
+UVVM:                ID_FUNC_COV_BINS             : DISABLED
+UVVM:                ID_FUNC_COV_BINS_INFO        : DISABLED
+UVVM:                ID_FUNC_COV_RAND             : DISABLED
+UVVM:                ID_FUNC_COV_SAMPLE           : DISABLED
+UVVM:                ID_FUNC_COV_CONFIG           : DISABLED
 UVVM:                ID_POS_ACK                   : ENABLED
 UVVM:                ID_LOG_HDR                   : ENABLED
 UVVM:                ID_LOG_HDR_LARGE             : ENABLED
@@ -57,6 +64,7 @@ UVVM:                ID_PACKET_HDR                : ENABLED
 UVVM:                ID_PACKET_DATA               : ENABLED
 UVVM:                ID_PACKET_CHECKSUM           : ENABLED
 UVVM:                ID_PACKET_GAP                : ENABLED
+UVVM:                ID_PACKET_PAYLOAD            : ENABLED
 UVVM:                ID_FRAME_INITIATE            : ENABLED
 UVVM:                ID_FRAME_COMPLETE            : ENABLED
 UVVM:                ID_FRAME_HDR                 : ENABLED
@@ -204,6 +212,11 @@ UVVM: ==========================================================================
 UVVM: 
 UVVM: 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_Z'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_ZXUW'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_ZXUW'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_ZXUW'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"0XX"'. 'Check MATCH_STD_INCL_ZXUW'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"XXX"'. 'Check MATCH_STD_INCL_ZXUW'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"012"'. 'My msg HEX_BIN_IF_INVALID, OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
@@ -376,6 +389,10 @@ UVVM: ==========================================================================
 UVVM: 
 UVVM: 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic 'Z' (exp: 'Z'). 'Check MATCH_STD_INCL_Z'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic 'Z' (exp: 'Z'). 'Check MATCH_STD_INCL_ZXUW'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic 'X' (exp: 'X'). 'Check MATCH_STD_INCL_ZXUW'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic 'U' (exp: 'U'). 'Check MATCH_STD_INCL_ZXUW'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for std_logic 'W' (exp: 'W'). 'Check MATCH_STD_INCL_ZXUW'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #24  ***

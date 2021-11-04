@@ -9,11 +9,29 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2 2021.XX.XX
+v2 2021.10.22
 --------------------
-Released: 2021-XX-XX
+Released: 2021-10-22
 - Fixed generic_queue deleting wrong element when position is different from entry_num.
 - Fixed generic_queue print_queue() crashing when queue is empty.
+- Added MATCH_STD_INCL_ZXUW to match strictness for check_value(), await_value()
+  and matching_values().
+- Fixed issue when using don't care in SLVs with check_value() and match strictness
+  set to MATCH_STD_INCL_Z.
+- Fixed issue where GHDL reported that the operator "&" is overloaded in the
+  ti_protected_types_pkg.
+- Added rand_pkg (advanced randomization).
+- Added func_cov_pkg (functional coverage).
+- Added new documentation type (.rst and .html) for rand_pkg and func_cov_pkg.
+  See uvvm_util/doc/rand_and_func_cov.html and uvvm_util/doc/rst/index.rst for
+  documentation.
+- Updated ghdl_compile_all_and_simulate.sh scripts with new uvvm_util packages.
+- Added support to force the VVC to execute only one transaction at a time in AXI and AXI-Lite VIPs.
+- Fixed bug where await_completion in certain cases didn't detect that the AXI and AXI-Lite 
+  VIPs VVC was finished.
+- Changed last_cmd_idx_executed to have a constant value of natural'high to avoid potential problems 
+  with fetch_result in the AXI and AXI-Lite VIPs.
+- Added missing change history to CHANGES.TXT.
 
 
 v2 2021.05.26
@@ -63,12 +81,33 @@ Released: 2021-04-08
 - Fixed compilation error for the AXI and AXI-Lite VIPs in Riviera Pro.
 
 
-v2 2020.XX.XX
+v2 2020.12.21
+ --------------------
+ Released: 2020-12-21
+- Added option for omitting a requirement in the post-processing Specification Coverage Python script.
+- Fixed sub-requirements could be listed as not-run requirements in CSV files by Specification Coverage Python script.
+
+
+v2 2020.12.08
 --------------------
-Released: 2020-XX-XX
+Released: 2020-12-08
+- Improved to_string functions for slv, signed and unsigned when printing long decimal values.
+- Added how to start demo testbench from within Modelsim to testbench_guide PDF in Bitvis UART VIP.
+- Added max_receptions default value to uart_bfm_quickref.pdf.
+- Added C_SPI_VVC_DATA_ARRAY_WIDTH to adaptation_pkg.
+- Removed "addr" parameter from axistream_receive VVC method call in quick reference.
+- Removed unused constant C_USE_LOCAL_OSVVM_MSG_ID_PANELS from adaptations_pkg.
+- Removed xConstrRandFuncCov folder and content.
+- Moved C_HIERARCHY_NODE_NAME_LENGTH from types_pkg to adaptations_pkg.
+- Added Bitvis VIP Spec Cov to component_list.txt for compile_all.do script.
 - Fixed to_string(integer) function using a negative value.
 - Fixed random time function by using the simulator base time unit instead of ns.
 - Fixed random function overflowing with maximum values in min/max range.
+- Fixed Axistream C_MULTIPLE_RANDOM for valid & ready low not working.
+- Added Axistream BFM configurations to control the probability of multiple random tvalid/tready low cycles
+  and the maximum random duration of tvalid/tready low deassertion.
+- Fixed bug in to_string functions for t_slv_array, t_unsigned_array and t_signed_array that
+  caused a failure when using wide words.
 
 
 v2 2020.10.06

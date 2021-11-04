@@ -128,6 +128,7 @@ package adaptations_pkg is
     ID_PACKET_DATA,           -- Notify that a packet data has been transmitted or received. It also writes packet data
     ID_PACKET_CHECKSUM,       -- Notify that a packet checksum has been transmitted or received
     ID_PACKET_GAP,            -- Notify that an interpacket gap is in process
+    ID_PACKET_PAYLOAD,        -- Notify that a packet payload has been transmitted or received
     -- Frame Ids, roughest granularity of packet data
     ID_FRAME_INITIATE,        -- Notify that a frame is about to be transmitted or received
     ID_FRAME_COMPLETE,        -- Notify that a frame has been transmitted or received

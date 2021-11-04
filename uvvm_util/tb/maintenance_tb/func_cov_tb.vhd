@@ -24,8 +24,8 @@ context uvvm_util.uvvm_util_context;
 --HDLUnit:TB
 entity func_cov_tb is
   generic(
-    GC_TESTCASE  : string;
-    GC_FILE_PATH : string := ""
+    GC_TESTCASE           : string;
+    GC_FILE_PATH          : string := ""
   );
 end entity;
 
@@ -486,6 +486,10 @@ begin
     end procedure;
 
   begin
+    -- To avoid that log files from different test cases (run in separate
+    -- simulations) overwrite each other.
+    set_log_file_name(GC_TESTCASE & "_Log.txt");
+    set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     -------------------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Functional Coverage package - " & GC_TESTCASE);

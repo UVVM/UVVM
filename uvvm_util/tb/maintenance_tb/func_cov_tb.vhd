@@ -24,8 +24,8 @@ context uvvm_util.uvvm_util_context;
 --HDLUnit:TB
 entity func_cov_tb is
   generic(
-    GC_TESTCASE           : string;
-    GC_FILE_PATH          : string := ""
+    GC_TESTCASE  : string;
+    GC_FILE_PATH : string := ""
   );
 end entity;
 
@@ -2982,9 +2982,9 @@ begin
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_coverage(HOLES_ONLY);
 
-      v_coverpoint.report_coverage(VERBOSE, SHOW_RAND_WEIGHT);
-      v_coverpoint.report_coverage(NON_VERBOSE, SHOW_RAND_WEIGHT);
-      v_coverpoint.report_coverage(HOLES_ONLY, SHOW_RAND_WEIGHT);
+      v_coverpoint.report_coverage(VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
+      v_coverpoint.report_coverage(NON_VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
+      v_coverpoint.report_coverage(HOLES_ONLY, rand_weight_col => SHOW_RAND_WEIGHT);
 
       v_coverpoint.set_bins_coverage_goal(50);
       v_coverpoint.report_coverage(VERBOSE);
@@ -3042,6 +3042,20 @@ begin
       fc_report_overall_coverage(VERBOSE);
       fc_report_overall_coverage(NON_VERBOSE);
       fc_report_overall_coverage(HOLES_ONLY);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing reports written to a file");
+      ------------------------------------------------------------
+      v_coverpoint.report_config(GC_TESTCASE & "_Report_config.txt", write_mode);
+      v_cross_x2.report_config(GC_TESTCASE & "_Report_config.txt");
+      v_cross_x3.report_config(GC_TESTCASE & "_Report_config.txt");
+
+      v_coverpoint.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt", write_mode);
+      v_cross_x2.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
+      v_cross_x3.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
+      fc_report_overall_coverage(NON_VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
+
+      fc_report_overall_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage_overall.txt", write_mode);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_coverage" then

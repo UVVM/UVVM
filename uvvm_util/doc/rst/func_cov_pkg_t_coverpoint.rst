@@ -280,14 +280,14 @@ Returns the alert level when overlapping bins are sampled. ::
 
 write_coverage_db()
 ----------------------------------------------------------------------------------------------------------------------------------
-Writes the coverpoint model to a file. ::
+Writes the coverpoint model, configuration and accumulated counters to a file. ::
 
     write_coverage_db(file_name, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | file_name          | in     | string                       | Name of the file where to store the coverpoint model  |
+| constant | file_name          | in     | string                       | Name of the file where to store the coverpoint data   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -301,14 +301,17 @@ Writes the coverpoint model to a file. ::
 
 load_coverage_db()
 ----------------------------------------------------------------------------------------------------------------------------------
-Loads the coverpoint model from a file. ::
+Loads the coverpoint model, configuration and accumulated counters from a file. ::
 
-    load_coverage_db(file_name, [msg_id_panel])
+    load_coverage_db(file_name, [report_verbosity, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | file_name          | in     | string                       | Name of the file where the coverpoint model is stored |
+| constant | file_name          | in     | string                       | Name of the file where the coverpoint data is stored  |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | report_verbosity   | in     | :ref:`t_report_verbosity`    | Verbosity of the coverage report printed when the     |
+|          |                    |        |                              | coverpoint is loaded. Default value is HOLES_ONLY.    |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -318,6 +321,7 @@ Loads the coverpoint model from a file. ::
 
     -- Example:
     my_coverpoint.load_coverage_db("my_coverpoint_db.txt");
+    my_coverpoint.load_coverage_db("my_coverpoint_db.txt", VERBOSE);
 
 
 clear_coverage()

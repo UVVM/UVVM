@@ -2595,7 +2595,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint.load_coverage_db(GC_FILE_PATH & "coverpoint.txt");
+      v_coverpoint.load_coverage_db(GC_FILE_PATH & "coverpoint.txt", NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2670,7 +2670,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2.load_coverage_db(GC_FILE_PATH & "cross.txt");
+      v_cross_x2.load_coverage_db(GC_FILE_PATH & "cross.txt", NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;

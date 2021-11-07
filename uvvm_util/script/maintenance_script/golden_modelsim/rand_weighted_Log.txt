@@ -105,7 +105,7 @@ UVVM: ==========================================================================
 UVVM: 
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5.00:-3.00],30,INDIVIDUAL),(0.00,20),([9.30:10.10],50,INDIVIDUAL))=>
-UVVM:                                                                           0.000000e+00
+UVVM:                                                                           -1.000000e+308
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing weighted real (ranges w/explicit mode) - Generate 1000 random values for each test
@@ -162,7 +162,8 @@ UVVM:                    rand_range_weight(([-5 ps:-3 ps],30,INDIVIDUAL),(0 ps,2
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5 ps:-3 ps],30,INDIVIDUAL),(0 ps,20),([9 ps:10 ps],50,INDIVIDUAL))=> 1 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5 ps:-3 ps],30,INDIVIDUAL),(0 ps,20),([9 ps:10 ps],50,INDIVIDUAL))=>
+UVVM:                                                                           -9223372036854775807 ps
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing weighted time (ranges w/explicit mode) - Generate 1000 random values for each test
@@ -353,7 +354,7 @@ UVVM:                    rand_val_weight((1,0),(2,0),(3,0))=> The total weight o
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_val_weight((1,0),(2,0),(3,0))=> 0
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_val_weight((1,0),(2,0),(3,0))=> -2147483648
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
@@ -362,7 +363,7 @@ UVVM:                    rand_range_weight(([10:5],50,INDIVIDUAL),(1,50))=> The 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([10:5],50,INDIVIDUAL),(1,50))=> 0
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([10:5],50,INDIVIDUAL),(1,50))=> -2147483648
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***

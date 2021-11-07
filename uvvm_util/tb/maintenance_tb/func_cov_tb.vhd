@@ -3494,6 +3494,11 @@ begin
     constant C_CLK_PERIOD : time := 10 ns;
   begin
     if GC_TESTCASE = "fc_bins" then
+      -- To avoid that log files from different test cases (run in separate
+      -- simulations) overwrite each other.
+      set_log_file_name(GC_TESTCASE & "_Log.txt");
+      set_alert_file_name(GC_TESTCASE & "_Alert.txt");
+
       while not(v_coverpoint.is_defined(VOID)) loop
         log(ID_SEQUENCER, "Waiting for coverpoint to be initialized", C_SCOPE);
         wait for C_CLK_PERIOD;

@@ -1030,6 +1030,13 @@ and only want to keep the model and configuration.</p>
 <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
 </pre></div>
 </div>
+<p>The following values are constrained as:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">transition_bin_value_idx_n</span>       <span class="c1">--&gt; n = C_MAX_NUM_CROSS_BINS = 16</span>
+<span class="n">bin_sample_shift_reg_n</span>           <span class="c1">--&gt; n = C_MAX_NUM_CROSS_BINS = 16</span>
+<span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span>         <span class="c1">--&gt; n = bin(i).cross(j).num_values</span>
+<span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span> <span class="c1">--&gt; n = invalid_bin(i).cross(j).num_values</span>
+</pre></div>
+</div>
 <p>Most of the values are integer numbers except for a few:</p>
 <table class="docutils align-default">
 <colgroup>

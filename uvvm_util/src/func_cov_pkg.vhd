@@ -1789,12 +1789,12 @@ package body func_cov_pkg is
         writeline(file_handler, v_line);
       end procedure;
 
-      procedure write_value(
-        constant value : in boolean) is
-      begin
-        write(v_line, value);
-        writeline(file_handler, v_line);
-      end procedure;
+      --procedure write_value(
+      --  constant value : in boolean) is
+      --begin
+      --  write(v_line, value);
+      --  writeline(file_handler, v_line);
+      --end procedure;
 
       procedure write_bins(
         constant bin_idx    : in natural;
@@ -1896,12 +1896,12 @@ package body func_cov_pkg is
         read(v_line, value);
       end procedure;
 
-      procedure read_value(
-        variable value : out boolean) is
-      begin
-        readline(file_handler, v_line);
-        read(v_line, value);
-      end procedure;
+      --procedure read_value(
+      --  variable value : out boolean) is
+      --begin
+      --  readline(file_handler, v_line);
+      --  read(v_line, value);
+      --end procedure;
 
       procedure read_bins(
         constant bin_idx    : in    natural;

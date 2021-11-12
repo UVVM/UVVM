@@ -2111,6 +2111,40 @@ UVVM:                                                                           
 UVVM: ID_FUNC_COV_BINS                 100.0 ns  MY_SCOPE_2                     [MY_COVERPOINT_2_abcd] add_bins(bin_transition((100000000, 100000001, 100000002, 100000003,
 UVVM:                                                                           100000004, 100000005, 100000006, 1000...,bin_transition((100000000, 100000001, 100000002,
 UVVM:                                                                           100000003, 100000004, 100000005, 100000006, 1000..., "")
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                       100.0 ns  TB seq.                        Testing C_FC_MAX_NUM_COVERPOINTS limit
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  MY_SCOPE                       [MY_COVERPOINT] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  MY_SCOPE_2                     [MY_COVERPOINT_2_abcd] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_3] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_4] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_5] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_6] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_7] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_8] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_9] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_10] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_11] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_12] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_13] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_14] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_15] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_16] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_17] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_18] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_19] add_bins(bin(0), "")
+UVVM: ID_FUNC_COV_BINS                 100.0 ns  TB seq.                        [Covpt_20] add_bins(bin(0), "")
+UVVM: ID_UTIL_SETUP                    100.0 ns  TB seq.                        incremented expected TB_FAILUREs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #1  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    set_scope(scope)=> Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.
+UVVM:                     Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
@@ -2124,7 +2158,7 @@ UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :      0         0         0         ok
 UVVM:                TB_ERROR     :     10        10         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
-UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:                TB_FAILURE   :      1         1         0         ok
 UVVM:      ====================================================================================================================================================================
 UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
 UVVM:      ====================================================================================================================================================================

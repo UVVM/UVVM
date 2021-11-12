@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -87,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#getting-started">Getting started</a></li>
@@ -191,7 +194,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="info.html">UVVM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Info</a></li>
 </ul>
 
             
@@ -2510,7 +2513,7 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="add-range-signed">
 <span id="id5"></span><h3>add_range_signed()<a class="headerlink" href="#add-range-signed" title="Permalink to this headline">¶</a></h3>
 <p>Adds a constraint specifying a range which will be included in the randomized values. This procedure can be used for min and max
-values bigger than the integer’s 32-bit range. <strong>Not included in Beta release.</strong></p>
+values bigger than the integer’s 32-bit range.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_signed</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -3072,8 +3075,11 @@ shared_msg_id_panel.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">-- Will use default mode COMBINED_WEIGHT</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">-- Will use default mode COMBINED_WEIGHT</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_range_weight_default_mode</span><span class="p">(</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="mi">39</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">-- Will use new default mode INDIVIDUAL_WEIGHT</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">-- Will use new default mode INDIVIDUAL_WEIGHT</span>
 
 <span class="c1">-- Example 2:</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
@@ -3083,8 +3089,9 @@ shared_msg_id_panel.</p></td>
 </div>
 <div class="section" id="add-range-weight-real">
 <span id="id10"></span><h3>add_range_weight_real()<a class="headerlink" href="#add-range-weight-real" title="Permalink to this headline">¶</a></h3>
-<p>Adds a constraint specifying a range with a weight which will be included in the randomized values.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="n">mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<p>Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is
+used by default due to the very large number of values within a real range.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -3123,14 +3130,6 @@ shared_msg_id_panel.</p></td>
 <td><p>Determines how often the range is chosen during randomization</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
-<td><p>mode</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="rand_pkg_types.html#t-weight-mode"><span class="std std-ref">t_weight_mode</span></a></p></td>
-<td><p>Determines how to divide the weight among the range of values.
-Default value is COMBINED_WEIGHT and can be updated via
-<code class="docutils literal notranslate"><span class="pre">set_range_weight_default_mode()</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
@@ -3139,20 +3138,17 @@ shared_msg_id_panel.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">19</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="mi">20</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">29</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
-
-<span class="c1">-- Example 2:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">19</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="mi">20</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">29</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="add-range-weight-time">
 <span id="id11"></span><h3>add_range_weight_time()<a class="headerlink" href="#add-range-weight-time" title="Permalink to this headline">¶</a></h3>
-<p>Adds a constraint specifying a range with a weight which will be included in the randomized values.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="n">mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<p>Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is
+used by default due to the very large number of values within a time range.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -3191,14 +3187,6 @@ shared_msg_id_panel.</p></td>
 <td><p>Determines how often the range is chosen during randomization</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
-<td><p>mode</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="rand_pkg_types.html#t-weight-mode"><span class="std std-ref">t_weight_mode</span></a></p></td>
-<td><p>Determines how to divide the weight among the range of values.
-Default value is COMBINED_WEIGHT and can be updated via
-<code class="docutils literal notranslate"><span class="pre">set_range_weight_default_mode()</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
@@ -3207,13 +3195,9 @@ shared_msg_id_panel.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">10</span> <span class="n">us</span><span class="p">,</span><span class="mi">19</span> <span class="n">us</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">20</span> <span class="n">us</span><span class="p">,</span><span class="mi">29</span> <span class="n">us</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
-
-<span class="c1">-- Example 2:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">10</span> <span class="n">us</span><span class="p">,</span><span class="mi">19</span> <span class="n">us</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">20</span> <span class="n">us</span><span class="p">,</span><span class="mi">29</span> <span class="n">us</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -3495,7 +3479,7 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="randm-time">
 <span id="id14"></span><h4>return time<a class="headerlink" href="#randm-time" title="Permalink to this headline">¶</a></h4>
 <p>Returns a random time value using the configured constraints. For more information on the probability distribution click
-<a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>. <strong>Not included in Beta release.</strong></p>
+<a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">time</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 <span class="kt">time</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">msg_id_panel</span><span class="p">)</span>
 </pre></div>
@@ -3590,7 +3574,7 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="randm-real-vec">
 <span id="id16"></span><h4>return real_vector<a class="headerlink" href="#randm-real-vec" title="Permalink to this headline">¶</a></h4>
 <p>Returns a vector of random real values using the configured constraints. For more information on the probability distribution
-click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>. <strong>Not included in Beta release.</strong></p>
+click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -3637,7 +3621,7 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="randm-time-vec">
 <span id="id17"></span><h4>return time_vector<a class="headerlink" href="#randm-time-vec" title="Permalink to this headline">¶</a></h4>
 <p>Returns a vector of random time values using the configured constraints. For more information on the probability distribution
-click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>. <strong>Not included in Beta release.</strong></p>
+click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">time_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -3735,7 +3719,7 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="randm-sig">
 <span id="id19"></span><h4>return signed<a class="headerlink" href="#randm-sig" title="Permalink to this headline">¶</a></h4>
 <p>Returns a random signed value using the configured constraints. For more information on the probability distribution click
-<a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>. <strong>Not included in Beta release.</strong></p>
+<a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">signed</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -3786,7 +3770,7 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="randm-slv">
 <span id="id20"></span><h4>return std_logic_vector<a class="headerlink" href="#randm-slv" title="Permalink to this headline">¶</a></h4>
 <p>Returns a random std_logic_vector value (interpreted as unsigned) using the configured constraints. For more information on the
-probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>. <strong>Not included in Beta release.</strong></p>
+probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>

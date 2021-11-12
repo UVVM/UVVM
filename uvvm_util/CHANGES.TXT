@@ -3,6 +3,15 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.18.1
+----------
+Released: 2021-11-12
+- Added support for multi-method time, real_vector, time_vector, signed and std_logic_vector randomization constraints.
+- Fixed a bug where using exclude constraints to remove all valid constraints would cause a deadlock in randomization.
+- Fixed duplicated alert messages in randomization vector types.
+- Added parameters to F.C. report procedures to write to a separate file.
+- Print the F.C. coverage report when loading a coverpoint's database.
+
 v2.18.0
 ----------
 Released: 2021-10-22

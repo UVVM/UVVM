@@ -15,5 +15,5 @@ In no event shall the authors or copyright holders be liable for any claim, dama
 of contract, tort or otherwise, arising from, out of or in connection with this IP.
 
 
-General Randomization, Functional Coverage and Optimized Randomization were inspired by similar functionality in
+Enhanced Randomization, Functional Coverage and Optimized Randomization were inspired by similar functionality in
 SystemVerilog and OSVVM.

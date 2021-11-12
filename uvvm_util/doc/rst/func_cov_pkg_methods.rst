@@ -301,11 +301,11 @@ Returns true if the coverpoints coverage has reached the goal. Default goal is 1
 fc_report_overall_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
 Prints the overall coverage summary for all the coverpoints in the testbench. The printing destination can be log and/or console 
-and is defined by shared_default_log_destination in adaptations_pkg. To see an example of the generated report click 
-:ref:`here <func_cov_pkg_coverage_report>`. ::
+and is defined by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using 
+the file_name parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_coverage_report>`. ::
 
     fc_report_overall_coverage(VOID)
-    fc_report_overall_coverage(verbosity, [scope])
+    fc_report_overall_coverage(verbosity, [file_name, [open_mode, [scope]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
@@ -314,6 +314,13 @@ and is defined by shared_default_log_destination in adaptations_pkg. To see an e
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | verbosity          | in     | :ref:`t_report_verbosity`    | Controls if the coverpoints are shown in the report.    |
 |          |                    |        |                              | Default value is NON_VERBOSE.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | file_name          | in     | string                       | Name of the file where the report will be written.      |
+|          |                    |        |                              | Default value is an empty string, which means do not    |
+|          |                    |        |                              | write to file.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | open_mode          | in     | file_open_kind               | Describes the access to the file. Default value is      |
+|          |                    |        |                              | append_mode.                                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates |
 |          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
@@ -324,4 +331,4 @@ and is defined by shared_default_log_destination in adaptations_pkg. To see an e
     -- Examples:
     fc_report_overall_coverage(VOID);
     fc_report_overall_coverage(VERBOSE);
-    fc_report_overall_coverage(HOLES_ONLY);
+    fc_report_overall_coverage(HOLES_ONLY, "coverage_report.txt");

@@ -8,6 +8,7 @@
 -- See the License for the specific language governing permissions and limitations under the License.
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+-- Inspired by similar functionality in SystemVerilog and OSVVM.
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
@@ -165,7 +166,9 @@ package func_cov_pkg is
 
   procedure fc_report_overall_coverage(
     constant verbosity : in t_report_verbosity;
-    constant scope     : in string := C_TB_SCOPE_DEFAULT);
+    constant file_name : in string         := "";
+    constant open_mode : in file_open_kind := append_mode;
+    constant scope     : in string         := C_TB_SCOPE_DEFAULT);
 
   ------------------------------------------------------------
   -- Protected type
@@ -234,8 +237,9 @@ package func_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure load_coverage_db(
-      constant file_name    : in string;
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+      constant file_name        : in string;
+      constant report_verbosity : in t_report_verbosity := HOLES_ONLY;
+      constant msg_id_panel     : in t_msg_id_panel     := shared_msg_id_panel);
 
     procedure clear_coverage(
       constant VOID : in t_void);
@@ -585,10 +589,16 @@ package func_cov_pkg is
 
     procedure report_coverage(
       constant verbosity       : in t_report_verbosity;
+      constant file_name       : in string                   := "";
+      constant open_mode       : in file_open_kind           := append_mode;
       constant rand_weight_col : in t_rand_weight_visibility := HIDE_RAND_WEIGHT);
 
     procedure report_config(
       constant VOID : in t_void);
+
+    procedure report_config(
+      constant file_name : in string;
+      constant open_mode : in file_open_kind := append_mode);
 
     ------------------------------------------------------------
     -- Optimized Randomization
@@ -918,7 +928,10 @@ package body func_cov_pkg is
 
   procedure fc_report_overall_coverage(
     constant verbosity : in t_report_verbosity;
-    constant scope     : in string := C_TB_SCOPE_DEFAULT) is
+    constant file_name : in string         := "";
+    constant open_mode : in file_open_kind := append_mode;
+    constant scope     : in string         := C_TB_SCOPE_DEFAULT) is
+    file file_handler          : text;
     constant C_PREFIX          : string := C_LOG_PREFIX & "     ";
     constant C_HEADER_1        : string := "*** OVERALL COVERAGE REPORT (VERBOSE): " & to_string(scope) & " ***";
     constant C_HEADER_2        : string := "*** OVERALL COVERAGE REPORT (NON VERBOSE): " & to_string(scope) & " ***";
@@ -997,6 +1010,11 @@ package body func_cov_pkg is
     -- Write the info string to transcript
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
+    if file_name /= "" then
+      file_open(file_handler, file_name, open_mode);
+      tee(file_handler, v_line); -- write to file, while keeping the line contents
+      file_close(file_handler);
+    end if;
     write_line_to_log_destination(v_line);
     deallocate(v_line);
   end procedure;
@@ -1269,8 +1287,10 @@ package body func_cov_pkg is
     begin
       if priv_id = C_DEALLOCATED_ID then
         priv_id := protected_covergroup_status.add_coverpoint(VOID);
-        check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
-          priv_scope, ID_NEVER, caller_name => local_call);
+        if priv_id = C_DEALLOCATED_ID then
+          alert(TB_FAILURE, local_call & "=> Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.", priv_scope);
+          return;
+        end if;
         -- Only set the default name if it hasn't been given
         if priv_name = fill_string(NUL, priv_name'length) then
           set_name(protected_covergroup_status.get_name(priv_id));
@@ -1769,12 +1789,12 @@ package body func_cov_pkg is
         writeline(file_handler, v_line);
       end procedure;
 
-      procedure write_value(
-        constant value : in boolean) is
-      begin
-        write(v_line, value);
-        writeline(file_handler, v_line);
-      end procedure;
+      --procedure write_value(
+      --  constant value : in boolean) is
+      --begin
+      --  write(v_line, value);
+      --  writeline(file_handler, v_line);
+      --end procedure;
 
       procedure write_bins(
         constant bin_idx    : in natural;
@@ -1839,8 +1859,9 @@ package body func_cov_pkg is
     end procedure;
 
     procedure load_coverage_db(
-      constant file_name    : in string;
-      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant file_name        : in string;
+      constant report_verbosity : in t_report_verbosity := HOLES_ONLY;
+      constant msg_id_panel     : in t_msg_id_panel     := shared_msg_id_panel) is
       constant C_LOCAL_CALL  : string := "load_coverage_db(" & file_name & ")";
       file file_handler      : text;
       variable v_open_status : file_open_status;
@@ -1875,12 +1896,12 @@ package body func_cov_pkg is
         read(v_line, value);
       end procedure;
 
-      procedure read_value(
-        variable value : out boolean) is
-      begin
-        readline(file_handler, v_line);
-        read(v_line, value);
-      end procedure;
+      --procedure read_value(
+      --  variable value : out boolean) is
+      --begin
+      --  readline(file_handler, v_line);
+      --  read(v_line, value);
+      --end procedure;
 
       procedure read_bins(
         constant bin_idx    : in    natural;
@@ -1982,6 +2003,8 @@ package body func_cov_pkg is
 
       file_close(file_handler);
       DEALLOCATE(v_line);
+
+      report_coverage(report_verbosity);
     end procedure;
 
     procedure clear_coverage(
@@ -2914,7 +2937,10 @@ package body func_cov_pkg is
 
     procedure report_coverage(
       constant verbosity       : in t_report_verbosity;
+      constant file_name       : in string                   := "";
+      constant open_mode       : in file_open_kind           := append_mode;
       constant rand_weight_col : in t_rand_weight_visibility := HIDE_RAND_WEIGHT) is
+      file file_handler           : text;
       constant C_PREFIX           : string := C_LOG_PREFIX & "     ";
       constant C_HEADER_1         : string := "*** COVERAGE SUMMARY REPORT (VERBOSE): " & to_string(priv_scope) & " ***";
       constant C_HEADER_2         : string := "*** COVERAGE SUMMARY REPORT (NON VERBOSE): " & to_string(priv_scope) & " ***";
@@ -3066,12 +3092,25 @@ package body func_cov_pkg is
       -- Write the info string to transcript
       wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
       prefix_lines(v_line, C_PREFIX);
+      if file_name /= "" then
+        file_open(file_handler, file_name, open_mode);
+        tee(file_handler, v_line); -- write to file, while keeping the line contents
+        file_close(file_handler);
+      end if;
       write_line_to_log_destination(v_line);
       DEALLOCATE(v_line);
     end procedure;
 
     procedure report_config(
       constant VOID : in t_void) is
+    begin
+      report_config("");
+    end procedure;
+
+    procedure report_config(
+      constant file_name : in string;
+      constant open_mode : in file_open_kind := append_mode) is
+      file file_handler        : text;
       constant C_PREFIX        : string := C_LOG_PREFIX & "     ";
       constant C_COLUMN1_WIDTH : positive := 24;
       constant C_COLUMN2_WIDTH : positive := MAXIMUM(C_FC_MAX_NAME_LENGTH, C_LOG_SCOPE_WIDTH);
@@ -3110,6 +3149,11 @@ package body func_cov_pkg is
       -- Write the info string to transcript
       wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
       prefix_lines(v_line, C_PREFIX);
+      if file_name /= "" then
+        file_open(file_handler, file_name, open_mode);
+        tee(file_handler, v_line); -- write to file, while keeping the line contents
+        file_close(file_handler);
+      end if;
       write_line_to_log_destination(v_line);
       DEALLOCATE(v_line);
     end procedure;

@@ -24,8 +24,8 @@ context uvvm_util.uvvm_util_context;
 --HDLUnit:TB
 entity func_cov_tb is
   generic(
-    GC_TESTCASE           : string;
-    GC_FILE_PATH          : string := ""
+    GC_TESTCASE  : string;
+    GC_FILE_PATH : string := ""
   );
 end entity;
 
@@ -46,6 +46,16 @@ architecture func of func_cov_tb is
   shared variable v_cross_x3_b   : t_coverpoint;
   shared variable v_cross_x4     : t_coverpoint;
   shared variable v_cross_x5     : t_coverpoint;
+  shared variable v_cross_x6     : t_coverpoint;
+  shared variable v_cross_x7     : t_coverpoint;
+  shared variable v_cross_x8     : t_coverpoint;
+  shared variable v_cross_x9     : t_coverpoint;
+  shared variable v_cross_x10    : t_coverpoint;
+  shared variable v_cross_x11    : t_coverpoint;
+  shared variable v_cross_x12    : t_coverpoint;
+  shared variable v_cross_x13    : t_coverpoint;
+  shared variable v_cross_x14    : t_coverpoint;
+  shared variable v_cross_x15    : t_coverpoint;
 
   constant C_ADAPTIVE_WEIGHT : integer := -1;
   constant C_NULL            : integer := integer'left;
@@ -1082,6 +1092,32 @@ begin
       v_coverpoint_b.add_bins(bin_transition((0,1,2,3,4,5,6,7,8,9)) & bin_transition((0,1,2,3,4,5,6,7,8,9)));
       v_coverpoint_b.add_bins(bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)) &
         bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)));
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing C_FC_MAX_NUM_COVERPOINTS limit");
+      ------------------------------------------------------------
+      v_coverpoint.add_bins(bin(0));
+      v_coverpoint_b.add_bins(bin(0));
+      v_coverpoint_c.add_bins(bin(0));
+      v_coverpoint_d.add_bins(bin(0));
+      v_coverpoint_e.add_bins(bin(0));
+      v_cross_x2.add_bins(bin(0));
+      v_cross_x2_b.add_bins(bin(0));
+      v_cross_x3.add_bins(bin(0));
+      v_cross_x3_b.add_bins(bin(0));
+      v_cross_x4.add_bins(bin(0));
+      v_cross_x5.add_bins(bin(0));
+      v_cross_x6.add_bins(bin(0));
+      v_cross_x7.add_bins(bin(0));
+      v_cross_x8.add_bins(bin(0));
+      v_cross_x9.add_bins(bin(0));
+      v_cross_x10.add_bins(bin(0));
+      v_cross_x11.add_bins(bin(0));
+      v_cross_x12.add_bins(bin(0));
+      v_cross_x13.add_bins(bin(0));
+      v_cross_x14.add_bins(bin(0));
+      increment_expected_alerts_and_stop_limit(TB_FAILURE,1); -- C_FC_MAX_NUM_COVERPOINTS = 20
+      v_cross_x15.set_scope("scope"); -- Avoid several error alerts by using this procedure which does not access the covergroup status register
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_cross_bin" then
@@ -2559,7 +2595,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint.load_coverage_db(GC_FILE_PATH & "coverpoint.txt");
+      v_coverpoint.load_coverage_db(GC_FILE_PATH & "coverpoint.txt", NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2634,7 +2670,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2.load_coverage_db(GC_FILE_PATH & "cross.txt");
+      v_cross_x2.load_coverage_db(GC_FILE_PATH & "cross.txt", NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2946,9 +2982,9 @@ begin
       v_coverpoint.report_coverage(VOID);
       v_coverpoint.report_coverage(HOLES_ONLY);
 
-      v_coverpoint.report_coverage(VERBOSE, SHOW_RAND_WEIGHT);
-      v_coverpoint.report_coverage(NON_VERBOSE, SHOW_RAND_WEIGHT);
-      v_coverpoint.report_coverage(HOLES_ONLY, SHOW_RAND_WEIGHT);
+      v_coverpoint.report_coverage(VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
+      v_coverpoint.report_coverage(NON_VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
+      v_coverpoint.report_coverage(HOLES_ONLY, rand_weight_col => SHOW_RAND_WEIGHT);
 
       v_coverpoint.set_bins_coverage_goal(50);
       v_coverpoint.report_coverage(VERBOSE);
@@ -3006,6 +3042,20 @@ begin
       fc_report_overall_coverage(VERBOSE);
       fc_report_overall_coverage(NON_VERBOSE);
       fc_report_overall_coverage(HOLES_ONLY);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing reports written to a file");
+      ------------------------------------------------------------
+      v_coverpoint.report_config(GC_TESTCASE & "_Report_config.txt", write_mode);
+      v_cross_x2.report_config(GC_TESTCASE & "_Report_config.txt");
+      v_cross_x3.report_config(GC_TESTCASE & "_Report_config.txt");
+
+      v_coverpoint.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt", write_mode);
+      v_cross_x2.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
+      v_cross_x3.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
+      fc_report_overall_coverage(NON_VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
+
+      fc_report_overall_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage_overall.txt", write_mode);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_coverage" then
@@ -3444,6 +3494,11 @@ begin
     constant C_CLK_PERIOD : time := 10 ns;
   begin
     if GC_TESTCASE = "fc_bins" then
+      -- To avoid that log files from different test cases (run in separate
+      -- simulations) overwrite each other.
+      set_log_file_name(GC_TESTCASE & "_Log.txt");
+      set_alert_file_name(GC_TESTCASE & "_Alert.txt");
+
       while not(v_coverpoint.is_defined(VOID)) loop
         log(ID_SEQUENCER, "Waiting for coverpoint to be initialized", C_SCOPE);
         wait for C_CLK_PERIOD;

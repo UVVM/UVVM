@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -87,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a><ul class="current">
@@ -150,7 +153,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="info.html">UVVM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Info</a></li>
 </ul>
 
             
@@ -772,7 +775,7 @@ value is shared_msg_id_panel.</p></td>
 </div>
 <div class="section" id="write-coverage-db">
 <h2>write_coverage_db()<a class="headerlink" href="#write-coverage-db" title="Permalink to this headline">¶</a></h2>
-<p>Writes the coverpoint model to a file.</p>
+<p>Writes the coverpoint model, configuration and accumulated counters to a file.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">write_coverage_db</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -797,7 +800,7 @@ value is shared_msg_id_panel.</p></td>
 <td><p>file_name</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Name of the file where to store the coverpoint model</p></td>
+<td><p>Name of the file where to store the coverpoint data</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
@@ -815,8 +818,8 @@ value is shared_msg_id_panel.</p></td>
 </div>
 <div class="section" id="load-coverage-db">
 <h2>load_coverage_db()<a class="headerlink" href="#load-coverage-db" title="Permalink to this headline">¶</a></h2>
-<p>Loads the coverpoint model from a file.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">load_coverage_db</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<p>Loads the coverpoint model, configuration and accumulated counters from a file.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">load_coverage_db</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="p">[</span><span class="n">report_verbosity</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -840,9 +843,16 @@ value is shared_msg_id_panel.</p></td>
 <td><p>file_name</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
-<td><p>Name of the file where the coverpoint model is stored</p></td>
+<td><p>Name of the file where the coverpoint data is stored</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
+<td><p>report_verbosity</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="func_cov_pkg_types.html#t-report-verbosity"><span class="std std-ref">t_report_verbosity</span></a></p></td>
+<td><p>Verbosity of the coverage report printed when the
+coverpoint is loaded. Default value is HOLES_ONLY.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
@@ -853,6 +863,7 @@ value is shared_msg_id_panel.</p></td>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">load_coverage_db</span><span class="p">(</span><span class="s">&quot;my_coverpoint_db.txt&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">load_coverage_db</span><span class="p">(</span><span class="s">&quot;my_coverpoint_db.txt&quot;</span><span class="p">,</span> <span class="n">VERBOSE</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -1460,10 +1471,10 @@ HITS or BINS_AND_HITS</p></td>
 <div class="section" id="report-coverage">
 <h2>report_coverage()<a class="headerlink" href="#report-coverage" title="Permalink to this headline">¶</a></h2>
 <p>Prints the coverpoint coverage summary containing all the bins. The printing destination can be log and/or console and is defined
-by shared_default_log_destination in adaptations_pkg. To see an example of the generated report click
-<a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
+by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using the file_name
+parameter. To see an example of the generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
-<span class="n">report_coverage</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span> <span class="p">[</span><span class="n">rand_weight_col</span><span class="p">])</span>
+<span class="n">report_coverage</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span> <span class="p">[</span><span class="n">file_name</span><span class="p">,</span> <span class="p">[</span><span class="n">open_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">rand_weight_col</span><span class="p">]]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1497,6 +1508,21 @@ by shared_default_log_destination in adaptations_pkg. To see an example of the g
 value is NON_VERBOSE.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
+<td><p>file_name</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Name of the file where the report will be written.
+Default value is an empty string, which means do not
+write to file.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>open_mode</p></td>
+<td><p>in</p></td>
+<td><p>file_open_kind</p></td>
+<td><p>Describes the access to the file. Default value is
+append_mode.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>rand_weight_col</p></td>
 <td><p>in</p></td>
 <td><p><a class="reference internal" href="func_cov_pkg_types.html#t-rand-weight-visibility"><span class="std std-ref">t_rand_weight_visibility</span></a></p></td>
@@ -1508,24 +1534,26 @@ Default value is HIDE_RAND_WEIGHT.</p></td>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">);</span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">,</span> <span class="n">SHOW_RAND_WEIGHT</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">,</span> <span class="s">&quot;coverage_report.txt&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">,</span> <span class="n">rand_weight_col</span> <span class="o">=&gt;</span> <span class="n">SHOW_RAND_WEIGHT</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="report-config">
 <h2>report_config()<a class="headerlink" href="#report-config" title="Permalink to this headline">¶</a></h2>
-<p>Prints a report containing the coverpoints’s configuration parameters. To see an example of the generated report click
-<a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-config-report"><span class="std std-ref">here</span></a>.</p>
+<p>Prints a report containing the coverpoints’s configuration parameters. The report can also be printed to a separate file by using
+the file_name parameter. To see an example of the generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-config-report"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_config</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">report_config</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="p">[</span><span class="n">open_mode</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 8%" />
 <col style="width: 16%" />
-<col style="width: 7%" />
+<col style="width: 6%" />
 <col style="width: 24%" />
-<col style="width: 45%" />
+<col style="width: 46%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
@@ -1542,10 +1570,26 @@ Default value is HIDE_RAND_WEIGHT.</p></td>
 <td><p>t_void</p></td>
 <td><p>A dummy parameter for easier reading syntax</p></td>
 </tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>file_name</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Name of the file where the report will be written.
+Default value is an empty string, which means do not
+write to file.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>open_mode</p></td>
+<td><p>in</p></td>
+<td><p>file_open_kind</p></td>
+<td><p>Describes the access to the file. Default value is
+append_mode.</p></td>
+</tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_config</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_config</span><span class="p">(</span><span class="s">&quot;config_report.txt&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>

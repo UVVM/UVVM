@@ -111,6 +111,11 @@ package rand_tb_pkg is
     constant value       : in signed;
     constant range_vec   : in t_range_sig_vec);
 
+  -- Overload (std_logic_vector)
+  procedure check_rand_value_long(
+    constant value       : in std_logic_vector;
+    constant range_vec   : in t_range_uns_vec);
+
   ------------------------------------------------------------
   -- Check value within set of values
   ------------------------------------------------------------
@@ -667,11 +672,7 @@ package body rand_tb_pkg is
     constant value     : in std_logic_vector;
     constant range_vec : in t_range_int_vec) is
   begin
-    if check_rand_value(to_integer(unsigned(value)), range_vec) then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
-    else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
-    end if;
+    check_rand_value(unsigned(value), range_vec);
   end procedure;
 
   -- Overload (unsigned)
@@ -696,6 +697,14 @@ package body rand_tb_pkg is
     else
       alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
     end if;
+  end procedure;
+
+  -- Overload (std_logic_vector)
+  procedure check_rand_value_long(
+    constant value     : in std_logic_vector;
+    constant range_vec : in t_range_uns_vec) is
+  begin
+    check_rand_value_long(unsigned(value), range_vec);
   end procedure;
 
   ------------------------------------------------------------
@@ -873,12 +882,7 @@ package body rand_tb_pkg is
     constant specifier      : in t_value_specifier;
     constant set_of_values  : in t_natural_vector) is
   begin
-    check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
-    if check_rand_value(to_integer(unsigned(value)), integer_vector(set_of_values)) then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
-    else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
-    end if;
+    check_rand_value(unsigned(value), specifier, set_of_values);
   end procedure;
 
   ------------------------------------------------------------
@@ -1081,11 +1085,7 @@ package body rand_tb_pkg is
     constant specifier     : in t_value_specifier;
     constant set_of_values : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(unsigned(value)), range_vec, specifier, integer_vector(set_of_values)) then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
-    else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
-    end if;
+    check_rand_value(unsigned(value), range_vec, specifier, set_of_values);
   end procedure;
 
   ------------------------------------------------------------
@@ -1312,11 +1312,7 @@ package body rand_tb_pkg is
     constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in t_natural_vector) is
   begin
-    if check_rand_value(to_integer(unsigned(value)), range_vec, specifier1, integer_vector(set_of_values1), specifier2, integer_vector(set_of_values2)) then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
-    else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, HEX, KEEP_LEADING_0, INCL_RADIX) & ".");
-    end if;
+    check_rand_value(unsigned(value), range_vec, specifier1, set_of_values1, specifier2, set_of_values2);
   end procedure;
 
   ------------------------------------------------------------
@@ -1534,7 +1530,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "REAL_VEC" then
         if multi_method then
-          --v_real_vec := rand_gen.randm(v_real_vec'length);
+          v_real_vec := rand_gen.randm(v_real_vec'length);
         else
           v_real_vec := rand_gen.rand(v_real_vec'length, real(min_value), real(max_value));
         end if;
@@ -1564,7 +1560,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SIG" then
         if multi_method then
-          --v_sig := rand_gen.randm(v_sig'length);
+          v_sig := rand_gen.randm(v_sig'length);
         else
           v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
         end if;
@@ -1574,7 +1570,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SIG_VEC" then
         if multi_method then
-          --v_sig := rand_gen.randm(v_sig'length);
+          v_sig := rand_gen.randm(v_sig'length);
         else
           v_sig := rand_gen.rand(v_sig'length);
         end if;
@@ -1584,7 +1580,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SLV" then
         if multi_method then
-          --v_slv := rand_gen.randm(v_slv'length);
+          v_slv := rand_gen.randm(v_slv'length);
         else
           v_slv := rand_gen.rand(v_slv'length, min_value, max_value);
         end if;
@@ -1594,7 +1590,7 @@ package body rand_tb_pkg is
 
       elsif value_type = "SLV_VEC" then
         if multi_method then
-          --v_slv := rand_gen.randm(v_slv'length);
+          v_slv := rand_gen.randm(v_slv'length);
         else
           v_slv := rand_gen.rand(v_slv'length);
         end if;

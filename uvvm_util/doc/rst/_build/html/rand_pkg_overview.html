@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -87,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Enhanced Randomization</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
@@ -122,7 +125,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="info.html">UVVM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Info</a></li>
 </ul>
 
             
@@ -398,7 +401,7 @@ reusing the same <em>my_rand</em> variable, the <code class="docutils literal no
 </pre></div>
 </div>
 <p>Similar procedures exist for real constraints: <code class="docutils literal notranslate"><span class="pre">add_range_real()</span></code>, <code class="docutils literal notranslate"><span class="pre">add_val_real()</span></code> and <code class="docutils literal notranslate"><span class="pre">excl_val_real()</span></code>, and for time
-constraints: <code class="docutils literal notranslate"><span class="pre">add_range_time()</span></code>, <code class="docutils literal notranslate"><span class="pre">add_val_time()</span></code> and <code class="docutils literal notranslate"><span class="pre">excl_val_time()</span></code>. <strong>Beta release does not contain time constraints.</strong></p>
+constraints: <code class="docutils literal notranslate"><span class="pre">add_range_time()</span></code>, <code class="docutils literal notranslate"><span class="pre">add_val_time()</span></code> and <code class="docutils literal notranslate"><span class="pre">excl_val_time()</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
@@ -416,8 +419,7 @@ generated. The procedure <code class="docutils literal notranslate"><span class=
 </div>
 <div class="section" id="id2">
 <h3>Return types<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function can return the following types: <strong>Beta release does not contain real_vector, time, time_vector, signed &amp;
-std_logic_vector return types.</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function can return the following types:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="rand_pkg_t_rand.html#randm-int"><span class="std std-ref">integer</span></a></p></li>
@@ -463,8 +465,7 @@ std_logic_vector return types.</strong></p>
 </div>
 <p>The unsigned, signed and std_logic_vector functions can return vectors of any length, however the integer constraints are limited
 to a 32-bit range. Additional overloads for adding range constraints using unsigned/signed types are provided as well. The
-maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg. <strong>Beta release does not
-contain signed overloads.</strong></p>
+maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg.</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="rand_pkg_t_rand.html#add-range-unsigned"><span class="std std-ref">unsigned</span></a></p></li>

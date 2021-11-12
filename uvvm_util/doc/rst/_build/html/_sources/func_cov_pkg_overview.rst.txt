@@ -892,6 +892,13 @@ The database for a coverpoint is stored using the following file format:
       end loop;
     end loop;
 
+The following values are constrained as: ::
+
+    transition_bin_value_idx_n       --> n = C_MAX_NUM_CROSS_BINS = 16
+    bin_sample_shift_reg_n           --> n = C_MAX_NUM_CROSS_BINS = 16
+    bin(i).cross(j).values_n         --> n = bin(i).cross(j).num_values
+    invalid_bin(i).cross(j).values_n --> n = invalid_bin(i).cross(j).num_values
+
 Most of the values are integer numbers except for a few:
 
 +-----------------------------+------------------+--------------+

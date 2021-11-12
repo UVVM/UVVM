@@ -280,14 +280,14 @@ Returns the alert level when overlapping bins are sampled. ::
 
 write_coverage_db()
 ----------------------------------------------------------------------------------------------------------------------------------
-Writes the coverpoint model to a file. ::
+Writes the coverpoint model, configuration and accumulated counters to a file. ::
 
     write_coverage_db(file_name, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | file_name          | in     | string                       | Name of the file where to store the coverpoint model  |
+| constant | file_name          | in     | string                       | Name of the file where to store the coverpoint data   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -301,14 +301,17 @@ Writes the coverpoint model to a file. ::
 
 load_coverage_db()
 ----------------------------------------------------------------------------------------------------------------------------------
-Loads the coverpoint model from a file. ::
+Loads the coverpoint model, configuration and accumulated counters from a file. ::
 
-    load_coverage_db(file_name, [msg_id_panel])
+    load_coverage_db(file_name, [report_verbosity, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | file_name          | in     | string                       | Name of the file where the coverpoint model is stored |
+| constant | file_name          | in     | string                       | Name of the file where the coverpoint data is stored  |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | report_verbosity   | in     | :ref:`t_report_verbosity`    | Verbosity of the coverage report printed when the     |
+|          |                    |        |                              | coverpoint is loaded. Default value is HOLES_ONLY.    |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -318,6 +321,7 @@ Loads the coverpoint model from a file. ::
 
     -- Example:
     my_coverpoint.load_coverage_db("my_coverpoint_db.txt");
+    my_coverpoint.load_coverage_db("my_coverpoint_db.txt", VERBOSE);
 
 
 clear_coverage()
@@ -654,11 +658,11 @@ click :ref:`here <func_cov_pkg_coverage_status>`. ::
 report_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
 Prints the coverpoint coverage summary containing all the bins. The printing destination can be log and/or console and is defined 
-by shared_default_log_destination in adaptations_pkg. To see an example of the generated report click 
-:ref:`here <func_cov_pkg_coverage_report>`. ::
+by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using the file_name 
+parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_coverage_report>`. ::
 
     report_coverage(VOID)
-    report_coverage(verbosity, [rand_weight_col])
+    report_coverage(verbosity, [file_name, [open_mode, [rand_weight_col]]])
 
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                            | Description                                           |
@@ -667,6 +671,13 @@ by shared_default_log_destination in adaptations_pkg. To see an example of the g
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | constant | verbosity          | in     | :ref:`t_report_verbosity`       | Controls which bins are shown in the report. Default  |
 |          |                    |        |                                 | value is NON_VERBOSE.                                 |
++----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
+| constant | file_name          | in     | string                          | Name of the file where the report will be written.    |
+|          |                    |        |                                 | Default value is an empty string, which means do not  |
+|          |                    |        |                                 | write to file.                                        |
++----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
+| constant | open_mode          | in     | file_open_kind                  | Describes the access to the file. Default value is    |
+|          |                    |        |                                 | append_mode.                                          |
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | constant | rand_weight_col    | in     | :ref:`t_rand_weight_visibility` | Shows or hides the rand_weight column of the report.  |
 |          |                    |        |                                 | Default value is HIDE_RAND_WEIGHT.                    |
@@ -677,26 +688,36 @@ by shared_default_log_destination in adaptations_pkg. To see an example of the g
     -- Examples:
     my_coverpoint.report_coverage(VOID);
     my_coverpoint.report_coverage(HOLES_ONLY);
-    my_coverpoint.report_coverage(VERBOSE, SHOW_RAND_WEIGHT);
+    my_coverpoint.report_coverage(VERBOSE, "coverage_report.txt");
+    my_coverpoint.report_coverage(VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
 
 
 report_config()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints a report containing the coverpoints's configuration parameters. To see an example of the generated report click 
-:ref:`here <func_cov_pkg_config_report>`. ::
+Prints a report containing the coverpoints's configuration parameters. The report can also be printed to a separate file by using 
+the file_name parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_config_report>`. ::
 
     report_config(VOID)
+    report_config(file_name, [open_mode])
 
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                           |
-+==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | file_name          | in     | string                       | Name of the file where the report will be written.      |
+|          |                    |        |                              | Default value is an empty string, which means do not    |
+|          |                    |        |                              | write to file.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | open_mode          | in     | file_open_kind               | Describes the access to the file. Default value is      |
+|          |                    |        |                              | append_mode.                                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
 
     -- Example:
     my_coverpoint.report_config(VOID);
+    my_coverpoint.report_config("config_report.txt");
 
 
 rand()

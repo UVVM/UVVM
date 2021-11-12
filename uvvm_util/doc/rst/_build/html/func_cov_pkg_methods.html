@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -87,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a><ul class="current">
@@ -133,7 +136,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="info.html">UVVM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Info</a></li>
 </ul>
 
             
@@ -786,10 +789,10 @@ the types of coverage click <a class="reference internal" href="func_cov_pkg_ove
 <div class="section" id="fc-report-overall-coverage">
 <h2>fc_report_overall_coverage()<a class="headerlink" href="#fc-report-overall-coverage" title="Permalink to this headline">¶</a></h2>
 <p>Prints the overall coverage summary for all the coverpoints in the testbench. The printing destination can be log and/or console
-and is defined by shared_default_log_destination in adaptations_pkg. To see an example of the generated report click
-<a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
+and is defined by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using
+the file_name parameter. To see an example of the generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
-<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span> <span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span> <span class="p">[</span><span class="n">file_name</span><span class="p">,</span> <span class="p">[</span><span class="n">open_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">scope</span><span class="p">]]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -823,6 +826,21 @@ and is defined by shared_default_log_destination in adaptations_pkg. To see an e
 Default value is NON_VERBOSE.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
+<td><p>file_name</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Name of the file where the report will be written.
+Default value is an empty string, which means do not
+write to file.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>open_mode</p></td>
+<td><p>in</p></td>
+<td><p>file_open_kind</p></td>
+<td><p>Describes the access to the file. Default value is
+append_mode.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
 <td><p>scope</p></td>
 <td><p>in</p></td>
 <td><p>string</p></td>
@@ -834,7 +852,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 <span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">);</span>
-<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">);</span>
+<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">,</span> <span class="s">&quot;coverage_report.txt&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>

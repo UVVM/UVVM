@@ -218,7 +218,7 @@ reusing the same *my_rand* variable, the ``clear_constraints()`` procedure must 
     data_sign := my_rand.randm(16);   -- Generates a 16-bit signed random value
 
 Similar procedures exist for real constraints: ``add_range_real()``, ``add_val_real()`` and ``excl_val_real()``, and for time 
-constraints: ``add_range_time()``, ``add_val_time()`` and ``excl_val_time()``. **Beta release does not contain time constraints.**
+constraints: ``add_range_time()``, ``add_val_time()`` and ``excl_val_time()``.
 
 .. note::
 
@@ -235,8 +235,7 @@ For more information on the probability distribution click :ref:`here <rand_pkg_
 
 Return types
 ==================================================================================================================================
-The ``randm()`` function can return the following types: **Beta release does not contain real_vector, time, time_vector, signed &
-std_logic_vector return types.**
+The ``randm()`` function can return the following types:
 
     * :ref:`integer <randm_int>`
     * :ref:`integer_vector <randm_int_vec>`
@@ -282,8 +281,7 @@ For *std_logic* and *boolean* types use the ``rand(VOID)`` function, since they 
 
 The unsigned, signed and std_logic_vector functions can return vectors of any length, however the integer constraints are limited 
 to a 32-bit range. Additional overloads for adding range constraints using unsigned/signed types are provided as well. The 
-maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg. **Beta release does not 
-contain signed overloads.**
+maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg.
 
     * :ref:`unsigned <add_range_unsigned>`
     * :ref:`signed <add_range_signed>`

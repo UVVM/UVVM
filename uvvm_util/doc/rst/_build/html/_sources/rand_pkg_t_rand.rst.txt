@@ -1,7 +1,7 @@
 **********************************************************************************************************************************
 t_rand (protected)
 **********************************************************************************************************************************
-Protected type containing the General Randomization functionality.
+Protected type containing the Enhanced Randomization functionality.
 
 .. _random_generator:
 
@@ -544,18 +544,18 @@ return integer_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random integer values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    integer_vector := rand(size, min_value, max_value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, specifier, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier, value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
-    integer_vector := rand(size, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, specifier, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier, value, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier, set_of_values, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
+    integer_vector := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [cyclic_mode, [msg_id_panel]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | min_value          | in     | integer                      | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -595,18 +595,18 @@ return real_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random real values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    real_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
-    real_vector := rand(size, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    real_vector := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | min_value          | in     | real                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -643,18 +643,18 @@ return time_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    time_vector := rand(size, min_value, max_value, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(size, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | min_value          | in     | time                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -740,11 +740,10 @@ Returns a random unsigned value. For more information on the probability distrib
 return unsigned (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random unsigned value. The unsigned constraints can be used for min and max values bigger than the integer's 32-bit range. 
-The overload without the length parameter uses the max_value length for the return value. For more information on the probability 
-distribution click :ref:`here <rand_pkg_distributions>`. ::
+If the length parameter is not used, the return value's length will be equal to the largest length of either min_value or max_value. 
+For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    unsigned := rand(min_value, max_value, [msg_id_panel])
-    unsigned := rand(length, min_value, max_value, [msg_id_panel])
+    unsigned := rand([length], min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -762,8 +761,8 @@ distribution click :ref:`here <rand_pkg_distributions>`. ::
 .. code-block::
 
     -- Examples:
-    rand_uns := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_uns := my_rand.rand(rand_uns'length, C_MIN_RANGE, v_max_range);
+    rand_uns := my_rand.rand(rand_uns'length, C_MIN_VALUE, v_max_value);
+    rand_uns := my_rand.rand(C_MIN_VALUE, v_max_value);
 
 
 .. _rand_sig:
@@ -821,11 +820,10 @@ Returns a random signed value. For more information on the probability distribut
 return signed (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random signed value. The signed constraints can be used for min and max values bigger than the integer's 32-bit range. 
-The overload without the length parameter uses the max_value length for the return value. For more information on the probability 
-distribution click :ref:`here <rand_pkg_distributions>`. ::
+If the length parameter is not used, the return value's length will be equal to the largest length of either min_value or max_value. 
+For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    signed := rand(min_value, max_value, [msg_id_panel])
-    signed := rand(length, min_value, max_value, [msg_id_panel])
+    signed := rand([length], min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -843,8 +841,8 @@ distribution click :ref:`here <rand_pkg_distributions>`. ::
 .. code-block::
 
     -- Examples:
-    rand_sign := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_sign := my_rand.rand(rand_sign'length, C_MIN_RANGE, v_max_range);
+    rand_sign := my_rand.rand(rand_sign'length, C_MIN_VALUE, v_max_value);
+    rand_sign := my_rand.rand(C_MIN_VALUE, v_max_value);
 
 
 .. _rand_slv:
@@ -903,11 +901,11 @@ Returns a random std_logic_vector value (interpreted as unsigned). For more info
 return std_logic_vector (long range)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random std_logic_vector value (interpreted as unsigned). The std_logic_vector constraints can be used for min and max 
-values bigger than the integer's 32-bit range. The overload without the length parameter uses the max_value length for the return 
-value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
+values bigger than the integer's 32-bit range. If the length parameter is not used, the return value's length will be equal to the 
+largest length of either min_value or max_value. For more information on the probability distribution click 
+:ref:`here <rand_pkg_distributions>`. ::
 
-    std_logic_vector := rand(min_value, max_value, [msg_id_panel])
-    std_logic_vector := rand(length, min_value, max_value, [msg_id_panel])
+    std_logic_vector := rand([length], min_value, max_value, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -925,8 +923,8 @@ value. For more information on the probability distribution click :ref:`here <ra
 .. code-block::
 
     -- Examples:
-    rand_slv := my_rand.rand(C_MIN_RANGE, v_max_range);
-    rand_slv := my_rand.rand(rand_slv'length, C_MIN_RANGE, v_max_range);
+    rand_slv := my_rand.rand(rand_slv'length, C_MIN_VALUE, v_max_value);
+    rand_slv := my_rand.rand(C_MIN_VALUE, v_max_value);
 
 
 .. _rand_sl:
@@ -1494,8 +1492,11 @@ Adds a constraint specifying a range with a weight which will be included in the
 .. code-block::
 
     -- Example 1:
-    my_rand.add_range_weight(10,19, 1);
-    my_rand.add_range_weight(20,29, 3);
+    my_rand.add_range_weight(10,19, 1); -- Will use default mode COMBINED_WEIGHT
+    my_rand.add_range_weight(20,29, 3); -- Will use default mode COMBINED_WEIGHT
+    my_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
+    my_rand.add_range_weight(30,39, 2); -- Will use new default mode INDIVIDUAL_WEIGHT
+    my_rand.add_range_weight(40,49, 1); -- Will use new default mode INDIVIDUAL_WEIGHT
 
     -- Example 2:
     my_rand.add_range_weight(10,19, 1, INDIVIDUAL_WEIGHT);
@@ -1506,9 +1507,10 @@ Adds a constraint specifying a range with a weight which will be included in the
 
 add_range_weight_real()
 ----------------------------------------------------------------------------------------------------------------------------------
-Adds a constraint specifying a range with a weight which will be included in the randomized values. ::
+Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is 
+used by default due to the very large number of values within a real range. ::
 
-    add_range_weight_real(min_value, max_value, weight, [mode, [msg_id_panel]])
+    add_range_weight_real(min_value, max_value, weight, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -1519,32 +1521,25 @@ Adds a constraint specifying a range with a weight which will be included in the
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | mode               | in     | :ref:`t_weight_mode`         | Determines how to divide the weight among the range of values.|
-|          |                    |        |                              | Default value is COMBINED_WEIGHT and can be updated via       |
-|          |                    |        |                              | ``set_range_weight_default_mode()``.                          |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
-    -- Example 1:
+    -- Example:
     my_rand.add_range_weight_real(10.0,19.0, 1);
     my_rand.add_range_weight_real(20.0,29.0, 3);
-
-    -- Example 2:
-    my_rand.add_range_weight_real(10.0,19.0, 1, INDIVIDUAL_WEIGHT);
-    my_rand.add_range_weight_real(20.0,29.0, 3, INDIVIDUAL_WEIGHT);
 
 
 .. _add_range_weight_time:
 
 add_range_weight_time()
 ----------------------------------------------------------------------------------------------------------------------------------
-Adds a constraint specifying a range with a weight which will be included in the randomized values. ::
+Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is 
+used by default due to the very large number of values within a time range. ::
 
-    add_range_weight_time(min_value, max_value, weight, [mode, [msg_id_panel]])
+    add_range_weight_time(min_value, max_value, weight, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -1555,23 +1550,15 @@ Adds a constraint specifying a range with a weight which will be included in the
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | weight             | in     | natural                      | Determines how often the range is chosen during randomization |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
-| constant | mode               | in     | :ref:`t_weight_mode`         | Determines how to divide the weight among the range of values.|
-|          |                    |        |                              | Default value is COMBINED_WEIGHT and can be updated via       |
-|          |                    |        |                              | ``set_range_weight_default_mode()``.                          |
-+----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 
 .. code-block::
 
-    -- Example 1:
+    -- Example:
     my_rand.add_range_weight_time(10 us,19 us, 1);
     my_rand.add_range_weight_time(20 us,29 us, 3);
-
-    -- Example 2:
-    my_rand.add_range_weight_time(10 us,19 us, 1, INDIVIDUAL_WEIGHT);
-    my_rand.add_range_weight_time(20 us,29 us, 3, INDIVIDUAL_WEIGHT);
 
 
 set_cyclic_mode()
@@ -1757,12 +1744,12 @@ return integer_vector
 Returns a vector of random integer values using the configured constraints. For more information on the probability distribution 
 click :ref:`here <rand_pkg_distributions>`. ::
 
-    integer_vector := randm(size, [msg_id_panel])
+    integer_vector := randm(length, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
@@ -1784,12 +1771,12 @@ return real_vector
 Returns a vector of random real values using the configured constraints. For more information on the probability distribution 
 click :ref:`here <rand_pkg_distributions>`. ::
 
-    real_vector := randm(size, [msg_id_panel])
+    real_vector := randm(length, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
@@ -1811,12 +1798,12 @@ return time_vector
 Returns a vector of random time values using the configured constraints. For more information on the probability distribution 
 click :ref:`here <rand_pkg_distributions>`. ::
 
-    time_vector := randm(size, [msg_id_panel])
+    time_vector := randm(length, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
 +==========+====================+========+==============================+===============================================================+
-| constant | size               | in     | positive                     | The size of the vector to be returned                         |
+| constant | length             | in     | positive                     | The length of the value to be returned                        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |

@@ -280,14 +280,14 @@ Returns the alert level when overlapping bins are sampled. ::
 
 write_coverage_db()
 ----------------------------------------------------------------------------------------------------------------------------------
-Writes the coverpoint model to a file. ::
+Writes the coverpoint model, configuration and accumulated counters to a file. ::
 
     write_coverage_db(file_name, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | file_name          | in     | string                       | Name of the file where to store the coverpoint model  |
+| constant | file_name          | in     | string                       | Name of the file where to store the coverpoint data   |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -301,14 +301,17 @@ Writes the coverpoint model to a file. ::
 
 load_coverage_db()
 ----------------------------------------------------------------------------------------------------------------------------------
-Loads the coverpoint model from a file. ::
+Loads the coverpoint model, configuration and accumulated counters from a file. ::
 
-    load_coverage_db(file_name, [msg_id_panel])
+    load_coverage_db(file_name, [report_verbosity, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | file_name          | in     | string                       | Name of the file where the coverpoint model is stored |
+| constant | file_name          | in     | string                       | Name of the file where the coverpoint data is stored  |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | report_verbosity   | in     | :ref:`t_report_verbosity`    | Verbosity of the coverage report printed when the     |
+|          |                    |        |                              | coverpoint is loaded. Default value is HOLES_ONLY.    |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -318,6 +321,7 @@ Loads the coverpoint model from a file. ::
 
     -- Example:
     my_coverpoint.load_coverage_db("my_coverpoint_db.txt");
+    my_coverpoint.load_coverage_db("my_coverpoint_db.txt", VERBOSE);
 
 
 clear_coverage()
@@ -482,10 +486,10 @@ which return a t_new_bin_array. Bin functions may be concatenated to add several
 .. code-block::
 
     -- Examples:
-    my_cross.add_cross(ignore_bin(0), bin_range(0,63,1), "ignore_values");
-    my_cross.add_cross(bin(10), bin_range(0,15,1), 5, 3, "low_values");
-    my_cross.add_cross(bin(20), bin_range(16,31,1), 5, "middle_values");
-    my_cross.add_cross(bin(30), bin_range(32,63,1), "high_values");
+    my_cross.add_cross(ignore_bin(0), bin_range(0,63), "ignore_values");
+    my_cross.add_cross(bin(10), bin_range(0,15), 5, 3, "low_values");
+    my_cross.add_cross(bin(20), bin_range(16,31), 5, "middle_values");
+    my_cross.add_cross(bin(30), bin_range(32,63), "high_values");
     my_cross.add_cross(bin((10,20,30)), illegal_bin_range(64,95) & illegal_bin_range(96,127), "illegal_values");
 
 This procedure has overloads which support crossing up to 5 t_new_bin_array elements. ::
@@ -536,11 +540,11 @@ Adds a cross between two coverpoints to the coverpoint. Note that the coverpoint
 .. code-block::
 
     -- Examples:
-    my_coverpoint_addr.add_bins(bin_vector(addr));
-    my_coverpoint_size.add_bins(bin_range(0,127,1));
+    my_coverpoint_addr.add_bins(bin_vector(addr,0));
+    my_coverpoint_size.add_bins(bin_range(0,127));
     my_cross.add_cross(my_coverpoint_addr, my_coverpoint_size, 5, 3, "cross_addr_size");
 
-This procedure has overloads which support crossing up to 16 coverpoints. ::
+This procedure has overloads which support crossing up to 16 coverpoints. **Beta release only supports up to 5 crossed elements.** ::
 
     add_cross(coverpoint1, coverpoint2, coverpoint3, min_hits, rand_weight, [bin_name, [msg_id_panel]])
     add_cross(coverpoint1, coverpoint2, coverpoint3, min_hits, [bin_name, [msg_id_panel]])
@@ -654,11 +658,11 @@ click :ref:`here <func_cov_pkg_coverage_status>`. ::
 report_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------
 Prints the coverpoint coverage summary containing all the bins. The printing destination can be log and/or console and is defined 
-by shared_default_log_destination in adaptations_pkg. To see an example of the generated report click 
-:ref:`here <func_cov_pkg_coverage_report>`. ::
+by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using the file_name 
+parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_coverage_report>`. ::
 
     report_coverage(VOID)
-    report_coverage(verbosity, [rand_weight_col])
+    report_coverage(verbosity, [file_name, [open_mode, [rand_weight_col]]])
 
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                            | Description                                           |
@@ -667,6 +671,13 @@ by shared_default_log_destination in adaptations_pkg. To see an example of the g
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | constant | verbosity          | in     | :ref:`t_report_verbosity`       | Controls which bins are shown in the report. Default  |
 |          |                    |        |                                 | value is NON_VERBOSE.                                 |
++----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
+| constant | file_name          | in     | string                          | Name of the file where the report will be written.    |
+|          |                    |        |                                 | Default value is an empty string, which means do not  |
+|          |                    |        |                                 | write to file.                                        |
++----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
+| constant | open_mode          | in     | file_open_kind                  | Describes the access to the file. Default value is    |
+|          |                    |        |                                 | append_mode.                                          |
 +----------+--------------------+--------+---------------------------------+-------------------------------------------------------+
 | constant | rand_weight_col    | in     | :ref:`t_rand_weight_visibility` | Shows or hides the rand_weight column of the report.  |
 |          |                    |        |                                 | Default value is HIDE_RAND_WEIGHT.                    |
@@ -677,43 +688,53 @@ by shared_default_log_destination in adaptations_pkg. To see an example of the g
     -- Examples:
     my_coverpoint.report_coverage(VOID);
     my_coverpoint.report_coverage(HOLES_ONLY);
-    my_coverpoint.report_coverage(VERBOSE, SHOW_RAND_WEIGHT);
+    my_coverpoint.report_coverage(VERBOSE, "coverage_report.txt");
+    my_coverpoint.report_coverage(VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
 
 
 report_config()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints a report containing the coverpoints's configuration parameters. To see an example of the generated report click 
-:ref:`here <func_cov_pkg_config_report>`. ::
+Prints a report containing the coverpoints's configuration parameters. The report can also be printed to a separate file by using 
+the file_name parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_config_report>`. ::
 
     report_config(VOID)
+    report_config(file_name, [open_mode])
 
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                           |
-+==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | file_name          | in     | string                       | Name of the file where the report will be written.      |
+|          |                    |        |                              | Default value is an empty string, which means do not    |
+|          |                    |        |                              | write to file.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | open_mode          | in     | file_open_kind               | Describes the access to the file. Default value is      |
+|          |                    |        |                              | append_mode.                                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
 
     -- Example:
     my_coverpoint.report_config(VOID);
+    my_coverpoint.report_config("config_report.txt");
 
 
 rand()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns a random value (or values for crossed bins) generated from the uncovered bins. Once all the bins have been covered, 
 it will return a random value among all the valid bins. Note that ignore and illegal bins will never be selected for randomization. 
-For a complete overview on Optimized Randomization click :ref:`here <optimized_randomization>`.::
+Additionally, the random value can be used to automatically sample coverage. For a complete overview on Optimized Randomization 
+click :ref:`here <optimized_randomization>`.::
 
-    integer        := rand(VOID)
-    integer        := rand(msg_id_panel)
-    integer_vector := rand(VOID)
-    integer_vector := rand(msg_id_panel)
+    integer        := rand(sampling, [msg_id_panel])
+    integer_vector := rand(sampling, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
+| constant | sampling           | in     | :ref:`t_rand_sample_cov`     | Whether or not to sample coverage with the generated  |
+|          |                    |        |                              | random value.                                         |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -722,7 +743,54 @@ For a complete overview on Optimized Randomization click :ref:`here <optimized_r
 .. code-block::
 
     -- Examples:
-    addr := my_coverpoint.rand(VOID);
-    addr := my_coverpoint.rand(my_msg_id_panel);
-    addr_vec := my_coverpoint.rand(VOID);
-    addr_vec := my_coverpoint.rand(my_msg_id_panel);
+    addr     := my_coverpoint.rand(NO_SAMPLE_COV);
+    addr_vec := my_coverpoint.rand(SAMPLE_COV);
+
+
+set_rand_seeds()
+----------------------------------------------------------------------------------------------------------------------------------
+Configures the randomization seeds. Default values are set using the coverpoint's name at the moment it is initialized (when 
+adding the first configuration or bin). ::
+
+    set_rand_seeds(seed1, seed2)
+    set_rand_seeds(seeds)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| constant | seed1              | in     | positive                     | A positive number representing seed 1                 |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | seed2              | in     | positive                     | A positive number representing seed 2                 |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | seeds              | in     | t_positive_vector            | A 2-dimensional vector containing both seeds          |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    my_coverpoint.set_rand_seeds(10, 100);
+    my_coverpoint.set_rand_seeds(seed_vector);
+
+
+get_rand_seeds()
+----------------------------------------------------------------------------------------------------------------------------------
+Returns the randomization seeds. ::
+
+    get_rand_seeds(seed1, seed2)
+    t_positive_vector(0 to 1) := get_rand_seeds(VOID)
+
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                           |
++==========+====================+========+==============================+=======================================================+
+| variable | seed1              | out    | positive                     | A positive number representing seed 1                 |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| variable | seed2              | out    | positive                     | A positive number representing seed 2                 |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax           |
++----------+--------------------+--------+------------------------------+-------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    my_coverpoint.get_rand_seeds(seed1, seed2);
+    seed_vector := my_coverpoint.get_rand_seeds(VOID);

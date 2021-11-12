@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>t_rand (protected) &mdash; General Randomization and Functional Coverage 0.0.1 documentation</title>
+  <title>t_rand (protected) &mdash; Randomization and Functional Coverage 0.0.1 documentation</title>
   
 
   
@@ -42,7 +42,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Types" href="rand_pkg_types.html" />
-    <link rel="prev" title="General Randomization" href="rand_pkg_overview.html" /> 
+    <link rel="prev" title="Enhanced Randomization" href="rand_pkg_overview.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,7 +92,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="rand_pkg_overview.html">General Randomization</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#getting-started">Getting started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#single-method-approach">Single-method approach</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rand_pkg_overview.html#multi-method-approach">Multi-method approach</a></li>
@@ -194,6 +194,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Info</a></li>
 </ul>
 
             
@@ -209,7 +210,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">General Randomization and Functional Coverage</a>
+          <a href="index.html">Randomization and Functional Coverage</a>
         
       </nav>
 
@@ -242,7 +243,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="rand_pkg_overview.html">General Randomization</a> &raquo;</li>
+          <li><a href="rand_pkg_overview.html">Enhanced Randomization</a> &raquo;</li>
         
       <li>t_rand (protected)</li>
     
@@ -265,7 +266,7 @@
             
   <div class="section" id="t-rand-protected">
 <h1>t_rand (protected)<a class="headerlink" href="#t-rand-protected" title="Permalink to this headline">¶</a></h1>
-<p>Protected type containing the General Randomization functionality.</p>
+<p>Protected type containing the Enhanced Randomization functionality.</p>
 <p id="random-generator">The expression ‘random generator’ refers to the specific variable instance of <em>t_rand</em>.</p>
 <div class="section" id="common-configuration">
 <h2>Common configuration<a class="headerlink" href="#common-configuration" title="Permalink to this headline">¶</a></h2>
@@ -1284,13 +1285,13 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="return-integer-vector">
 <span id="rand-int-vec"></span><h4>return integer_vector<a class="headerlink" href="#return-integer-vector" title="Permalink to this headline">¶</a></h4>
 <p>Returns a vector of random integer values. For more information on the probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
-<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
-<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
-<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
-<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
-<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
-<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">set_of_values1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">set_of_values1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">cyclic_mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1311,10 +1312,10 @@ shared_msg_id_panel.</p></td>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>constant</p></td>
-<td><p>size</p></td>
+<td><p>length</p></td>
 <td><p>in</p></td>
 <td><p>positive</p></td>
-<td><p>The size of the vector to be returned</p></td>
+<td><p>The length of the value to be returned</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>min_value</p></td>
@@ -1383,13 +1384,13 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="return-real-vector">
 <span id="rand-real-vec"></span><h4>return real_vector<a class="headerlink" href="#return-real-vector" title="Permalink to this headline">¶</a></h4>
 <p>Returns a vector of random real values. For more information on the probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">set_of_values1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">real_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">set_of_values1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1410,10 +1411,10 @@ shared_msg_id_panel.</p></td>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>constant</p></td>
-<td><p>size</p></td>
+<td><p>length</p></td>
 <td><p>in</p></td>
 <td><p>positive</p></td>
-<td><p>The size of the vector to be returned</p></td>
+<td><p>The length of the value to be returned</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>min_value</p></td>
@@ -1475,13 +1476,13 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="return-time-vector">
 <span id="rand-time-vec"></span><h4>return time_vector<a class="headerlink" href="#return-time-vector" title="Permalink to this headline">¶</a></h4>
 <p>Returns a vector of random time values. For more information on the probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
-<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">set_of_values1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">set_of_values</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<span class="n">time_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">specifier1</span><span class="p">,</span> <span class="n">set_of_values1</span><span class="p">,</span> <span class="n">specifier2</span><span class="p">,</span> <span class="n">set_of_values2</span><span class="p">,</span> <span class="p">[</span><span class="n">uniqueness</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1502,10 +1503,10 @@ shared_msg_id_panel.</p></td>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>constant</p></td>
-<td><p>size</p></td>
+<td><p>length</p></td>
 <td><p>in</p></td>
 <td><p>positive</p></td>
-<td><p>The size of the vector to be returned</p></td>
+<td><p>The length of the value to be returned</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>min_value</p></td>
@@ -1661,10 +1662,9 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="return-unsigned-long-range">
 <span id="rand-uns-long"></span><h4>return unsigned (long range)<a class="headerlink" href="#return-unsigned-long-range" title="Permalink to this headline">¶</a></h4>
 <p>Returns a random unsigned value. The unsigned constraints can be used for min and max values bigger than the integer’s 32-bit range.
-The overload without the length parameter uses the max_value length for the return value. For more information on the probability
-distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">unsigned</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+If the length parameter is not used, the return value’s length will be equal to the largest length of either min_value or max_value.
+For more information on the probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">([</span><span class="n">length</span><span class="p">],</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1712,8 +1712,8 @@ shared_msg_id_panel.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">rand_uns</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
-<span class="n">rand_uns</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
+<span class="n">rand_uns</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_uns</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -1814,10 +1814,9 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="return-signed-long-range">
 <span id="rand-sig-long"></span><h4>return signed (long range)<a class="headerlink" href="#return-signed-long-range" title="Permalink to this headline">¶</a></h4>
 <p>Returns a random signed value. The signed constraints can be used for min and max values bigger than the integer’s 32-bit range.
-The overload without the length parameter uses the max_value length for the return value. For more information on the probability
-distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">signed</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">signed</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+If the length parameter is not used, the return value’s length will be equal to the largest length of either min_value or max_value.
+For more information on the probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">signed</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">([</span><span class="n">length</span><span class="p">],</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -1865,8 +1864,8 @@ shared_msg_id_panel.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">rand_sign</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
-<span class="n">rand_sign</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
+<span class="n">rand_sign</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_sign</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -1968,10 +1967,10 @@ shared_msg_id_panel.</p></td>
 <div class="section" id="return-std-logic-vector-long-range">
 <span id="rand-slv-long"></span><h4>return std_logic_vector (long range)<a class="headerlink" href="#return-std-logic-vector-long-range" title="Permalink to this headline">¶</a></h4>
 <p>Returns a random std_logic_vector value (interpreted as unsigned). The std_logic_vector constraints can be used for min and max
-values bigger than the integer’s 32-bit range. The overload without the length parameter uses the max_value length for the return
-value. For more information on the probability distribution click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
-<span class="kt">std_logic_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+values bigger than the integer’s 32-bit range. If the length parameter is not used, the return value’s length will be equal to the
+largest length of either min_value or max_value. For more information on the probability distribution click
+<a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span> <span class="o">:=</span> <span class="n">rand</span><span class="p">([</span><span class="n">length</span><span class="p">],</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -2019,8 +2018,8 @@ shared_msg_id_panel.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
-<span class="n">rand_slv</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
-<span class="n">rand_slv</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
+<span class="n">rand_slv</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_slv</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -3076,8 +3075,11 @@ shared_msg_id_panel.</p></td>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">-- Will use default mode COMBINED_WEIGHT</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">-- Will use default mode COMBINED_WEIGHT</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_range_weight_default_mode</span><span class="p">(</span><span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="mi">39</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">-- Will use new default mode INDIVIDUAL_WEIGHT</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">-- Will use new default mode INDIVIDUAL_WEIGHT</span>
 
 <span class="c1">-- Example 2:</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
@@ -3087,8 +3089,9 @@ shared_msg_id_panel.</p></td>
 </div>
 <div class="section" id="add-range-weight-real">
 <span id="id10"></span><h3>add_range_weight_real()<a class="headerlink" href="#add-range-weight-real" title="Permalink to this headline">¶</a></h3>
-<p>Adds a constraint specifying a range with a weight which will be included in the randomized values.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="n">mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<p>Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is
+used by default due to the very large number of values within a real range.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -3127,14 +3130,6 @@ shared_msg_id_panel.</p></td>
 <td><p>Determines how often the range is chosen during randomization</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
-<td><p>mode</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="rand_pkg_types.html#t-weight-mode"><span class="std std-ref">t_weight_mode</span></a></p></td>
-<td><p>Determines how to divide the weight among the range of values.
-Default value is COMBINED_WEIGHT and can be updated via
-<code class="docutils literal notranslate"><span class="pre">set_range_weight_default_mode()</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
@@ -3143,20 +3138,17 @@ shared_msg_id_panel.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">19</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="mi">20</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">29</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
-
-<span class="c1">-- Example 2:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">19</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_real</span><span class="p">(</span><span class="mi">20</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">29</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="add-range-weight-time">
 <span id="id11"></span><h3>add_range_weight_time()<a class="headerlink" href="#add-range-weight-time" title="Permalink to this headline">¶</a></h3>
-<p>Adds a constraint specifying a range with a weight which will be included in the randomized values.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="n">mode</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
+<p>Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is
+used by default due to the very large number of values within a time range.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -3195,14 +3187,6 @@ shared_msg_id_panel.</p></td>
 <td><p>Determines how often the range is chosen during randomization</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
-<td><p>mode</p></td>
-<td><p>in</p></td>
-<td><p><a class="reference internal" href="rand_pkg_types.html#t-weight-mode"><span class="std std-ref">t_weight_mode</span></a></p></td>
-<td><p>Determines how to divide the weight among the range of values.
-Default value is COMBINED_WEIGHT and can be updated via
-<code class="docutils literal notranslate"><span class="pre">set_range_weight_default_mode()</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
 <td><p>in</p></td>
 <td><p>t_msg_id_panel</p></td>
@@ -3211,13 +3195,9 @@ shared_msg_id_panel.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1:</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">10</span> <span class="n">us</span><span class="p">,</span><span class="mi">19</span> <span class="n">us</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 <span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">20</span> <span class="n">us</span><span class="p">,</span><span class="mi">29</span> <span class="n">us</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
-
-<span class="c1">-- Example 2:</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">10</span> <span class="n">us</span><span class="p">,</span><span class="mi">19</span> <span class="n">us</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight_time</span><span class="p">(</span><span class="mi">20</span> <span class="n">us</span><span class="p">,</span><span class="mi">29</span> <span class="n">us</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">INDIVIDUAL_WEIGHT</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -3548,7 +3528,7 @@ shared_msg_id_panel.</p></td>
 <span id="id15"></span><h4>return integer_vector<a class="headerlink" href="#randm-int-vec" title="Permalink to this headline">¶</a></h4>
 <p>Returns a vector of random integer values using the configured constraints. For more information on the probability distribution
 click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">integer_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -3569,10 +3549,10 @@ click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distri
 </thead>
 <tbody>
 <tr class="row-even"><td><p>constant</p></td>
-<td><p>size</p></td>
+<td><p>length</p></td>
 <td><p>in</p></td>
 <td><p>positive</p></td>
-<td><p>The size of the vector to be returned</p></td>
+<td><p>The length of the value to be returned</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
@@ -3595,7 +3575,7 @@ shared_msg_id_panel.</p></td>
 <span id="id16"></span><h4>return real_vector<a class="headerlink" href="#randm-real-vec" title="Permalink to this headline">¶</a></h4>
 <p>Returns a vector of random real values using the configured constraints. For more information on the probability distribution
 click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -3616,10 +3596,10 @@ click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distri
 </thead>
 <tbody>
 <tr class="row-even"><td><p>constant</p></td>
-<td><p>size</p></td>
+<td><p>length</p></td>
 <td><p>in</p></td>
 <td><p>positive</p></td>
-<td><p>The size of the vector to be returned</p></td>
+<td><p>The length of the value to be returned</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
@@ -3642,7 +3622,7 @@ shared_msg_id_panel.</p></td>
 <span id="id17"></span><h4>return time_vector<a class="headerlink" href="#randm-time-vec" title="Permalink to this headline">¶</a></h4>
 <p>Returns a vector of random time values using the configured constraints. For more information on the probability distribution
 click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">time_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">time_vector</span> <span class="o">:=</span> <span class="n">randm</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -3663,10 +3643,10 @@ click <a class="reference internal" href="rand_pkg_overview.html#rand-pkg-distri
 </thead>
 <tbody>
 <tr class="row-even"><td><p>constant</p></td>
-<td><p>size</p></td>
+<td><p>length</p></td>
 <td><p>in</p></td>
 <td><p>positive</p></td>
-<td><p>The size of the vector to be returned</p></td>
+<td><p>The length of the value to be returned</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>msg_id_panel</p></td>
@@ -3849,7 +3829,7 @@ shared_msg_id_panel.</p></td>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="rand_pkg_types.html" class="btn btn-neutral float-right" title="Types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="rand_pkg_overview.html" class="btn btn-neutral float-left" title="General Randomization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rand_pkg_overview.html" class="btn btn-neutral float-left" title="Enhanced Randomization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

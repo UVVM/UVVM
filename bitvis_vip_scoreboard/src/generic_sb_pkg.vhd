@@ -8,6 +8,7 @@
 -- See the License for the specific language governing permissions and limitations under the License.
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+-- Inspired by similar functionality in SystemVerilog/UVM and OSVVM.
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------

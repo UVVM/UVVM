@@ -8,6 +8,7 @@
 -- See the License for the specific language governing permissions and limitations under the License.
 --================================================================================================================================
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+-- Inspired by similar functionality in SystemVerilog and OSVVM.
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
@@ -803,7 +804,8 @@ package rand_pkg is
       constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
     return signed;
 
     impure function rand(
@@ -1172,7 +1174,41 @@ package rand_pkg is
       constant min_value    : in real;
       constant max_value    : in real;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode  := NA;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    ------------------------------------------------------------
+    -- Time constraints
+    ------------------------------------------------------------
+    procedure add_range_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_time(
+      constant value        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_time(
+      constant set_of_values : in time_vector;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure excl_val_time(
+      constant value        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure excl_val_time(
+      constant set_of_values : in time_vector;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_val_weight_time(
+      constant value        : in time;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    procedure add_range_weight_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
@@ -1181,6 +1217,14 @@ package rand_pkg is
     procedure add_range_unsigned(
       constant min_value    : in unsigned;
       constant max_value    : in unsigned;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+    ------------------------------------------------------------
+    -- Signed constraints
+    ------------------------------------------------------------
+    procedure add_range_signed(
+      constant min_value    : in signed;
+      constant max_value    : in signed;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
@@ -1229,6 +1273,15 @@ package rand_pkg is
     return real;
 
     impure function randm(
+      constant VOID : t_void)
+    return time;
+
+    impure function randm(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return time;
+
+    impure function randm(
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector;
@@ -1236,7 +1289,28 @@ package rand_pkg is
     impure function randm(
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return real_vector;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector;
+
+    impure function randm(
+      constant length        : positive;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_type : string         := "unsigned")
     return unsigned;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return signed;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return std_logic_vector;
 
   end protected t_rand;
 
@@ -1279,16 +1353,23 @@ package body rand_pkg is
     max_value : unsigned(C_RAND_MM_MAX_LONG_VECTOR_LENGTH-1 downto 0);
     range_len : unsigned(C_RAND_MM_MAX_LONG_VECTOR_LENGTH downto 0);
   end record;
+  type t_range_sig is record
+    min_value : signed(C_RAND_MM_MAX_LONG_VECTOR_LENGTH-1 downto 0);
+    max_value : signed(C_RAND_MM_MAX_LONG_VECTOR_LENGTH-1 downto 0);
+    range_len : signed(C_RAND_MM_MAX_LONG_VECTOR_LENGTH downto 0);
+  end record;
 
   type t_range_int_vec  is array (natural range <>) of t_range_int;
   type t_range_real_vec is array (natural range <>) of t_range_real;
   type t_range_time_vec is array (natural range <>) of t_range_time;
   type t_range_uns_vec  is array (natural range <>) of t_range_uns;
+  type t_range_sig_vec  is array (natural range <>) of t_range_sig;
 
   type t_range_int_vec_ptr  is access t_range_int_vec;
   type t_range_real_vec_ptr is access t_range_real_vec;
   type t_range_time_vec_ptr is access t_range_time_vec;
   type t_range_uns_vec_ptr  is access t_range_uns_vec;
+  type t_range_sig_vec_ptr  is access t_range_sig_vec;
 
   type t_integer_vector_ptr is access integer_vector;
   type t_real_vector_ptr    is access real_vector;
@@ -1314,8 +1395,20 @@ package body rand_pkg is
     weighted_config : boolean;
   end record;
 
+  type t_time_constraints is record
+    ran_incl        : t_range_time_vec_ptr;
+    val_incl        : t_time_vector_ptr;
+    val_excl        : t_time_vector_ptr;
+    weighted        : t_range_weight_mode_time_vec_ptr;
+    weighted_config : boolean;
+  end record;
+
   type t_uns_constraints is record
     ran_incl        : t_range_uns_vec_ptr;
+  end record;
+
+  type t_sig_constraints is record
+    ran_incl        : t_range_sig_vec_ptr;
   end record;
 
   ------------------------------------------------------------
@@ -1404,6 +1497,7 @@ package body rand_pkg is
     variable priv_weight_mode             : t_weight_mode                       := COMBINED_WEIGHT;
     variable priv_warned_same_specifier   : boolean                             := false;
     variable priv_warned_simulation_slow  : boolean                             := false;
+    variable priv_ret_valid               : boolean                             := true;
     variable priv_cyclic_current_function : line                                := new string'("");
     variable priv_cyclic_list             : t_cyclic_list_ptr                   := NULL;
     variable priv_cyclic_list_num_items   : natural                             := 0;
@@ -1426,7 +1520,16 @@ package body rand_pkg is
                                                                                     val_excl        => new real_vector(1 to 0),
                                                                                     weighted        => new t_range_weight_mode_real_vec(1 to 0),
                                                                                     weighted_config => false);
+    variable priv_time_constraints        : t_time_constraints                  := (ran_incl        => new t_range_time_vec(1 to 0),
+                                                                                    val_incl        => new time_vector(1 to 0),
+                                                                                    val_excl        => new time_vector(1 to 0),
+                                                                                    weighted        => new t_range_weight_mode_time_vec(1 to 0),
+                                                                                    weighted_config => false);
     variable priv_uns_constraints         : t_uns_constraints                   := (ran_incl        => new t_range_uns_vec(1 to 0));
+    variable priv_sig_constraints         : t_sig_constraints                   := (ran_incl        => new t_range_sig_vec(1 to 0));
+
+    -- The number of attempts for a random value to be generated with exclude constraints is multiplied by this constant
+    constant C_NUM_INVALID_TRIES : natural := 10;
 
     ------------------------------------------------------------
     -- Internal functions and procedures
@@ -1652,6 +1755,28 @@ package body rand_pkg is
       return return_and_deallocate;
     end function;
 
+    -- Returns the string representation of the time range constraints for randomization
+    impure function get_time_range_constraints(
+      constant VOID : t_void)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      for i in 0 to priv_time_constraints.ran_incl'length-1 loop
+        write(v_line, '[' & to_string(priv_time_constraints.ran_incl(i).min_value) &
+                      ':' & to_string(priv_time_constraints.ran_incl(i).max_value) & ']');
+        if i < priv_time_constraints.ran_incl'length-1 then
+          write(v_line, ',');
+        end if;
+      end loop;
+      return return_and_deallocate;
+    end function;
+
     -- Returns the string representation of the unsigned range constraints for randomization
     impure function get_uns_range_constraints(
       constant length : natural)
@@ -1672,7 +1797,45 @@ package body rand_pkg is
         v_len := MAXIMUM(length, find_leftmost(priv_uns_constraints.ran_incl(i).max_value, '1') + 1);
         write(v_line, to_string(priv_uns_constraints.ran_incl(i).max_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ']');
         if i < priv_uns_constraints.ran_incl'length-1 then
-          write(v_line, ',');
+          write(v_line, string'(", "));
+        end if;
+      end loop;
+      return return_and_deallocate;
+    end function;
+
+    -- Returns the string representation of the signed range constraints for randomization
+    impure function get_sig_range_constraints(
+      constant length : natural)
+    return string is
+      variable v_len  : natural;
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      for i in 0 to priv_sig_constraints.ran_incl'length-1 loop
+        write(v_line, '[');
+        if priv_sig_constraints.ran_incl(i).min_value(priv_sig_constraints.ran_incl(i).min_value'high) /= '1' then
+          v_len := MAXIMUM(length, find_leftmost(priv_sig_constraints.ran_incl(i).min_value, '1') + 1);
+        elsif length > 1 then
+          v_len := MAXIMUM(length, find_leftmost(priv_sig_constraints.ran_incl(i).min_value, '0') + 2);
+        else
+          v_len := C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
+        end if;
+        write(v_line, to_string(priv_sig_constraints.ran_incl(i).min_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ':');
+        if priv_sig_constraints.ran_incl(i).max_value(priv_sig_constraints.ran_incl(i).max_value'high) /= '1' then
+          v_len := MAXIMUM(length, find_leftmost(priv_sig_constraints.ran_incl(i).max_value, '1') + 1);
+        elsif length > 1 then
+          v_len := MAXIMUM(length, find_leftmost(priv_sig_constraints.ran_incl(i).max_value, '0') + 2);
+        else
+          v_len := C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
+        end if;
+        write(v_line, to_string(priv_sig_constraints.ran_incl(i).max_value(v_len-1 downto 0), HEX, KEEP_LEADING_0, INCL_RADIX) & ']');
+        if i < priv_sig_constraints.ran_incl'length-1 then
+          write(v_line, string'(", "));
         end if;
       end loop;
       return return_and_deallocate;
@@ -1794,7 +1957,7 @@ package body rand_pkg is
                32; -- Length is limited by integer size
       if signed_values then
         if min_value < -2**(v_len-1) or min_value > 2**(v_len-1)-1 or max_value < -2**(v_len-1) or max_value > 2**(v_len-1)-1 then
-          alert(TB_ERROR, proc_call & "=> constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
+          alert(TB_ERROR, proc_call & "=> signed constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
           return false;
         end if;
       else
@@ -1802,7 +1965,7 @@ package body rand_pkg is
           alert(TB_ERROR, proc_call & "=> constraints cannot be negative values when returning unsigned values", priv_scope);
           return false;
         elsif min_value > 2**v_len-1 or max_value > 2**v_len-1 then
-          alert(TB_ERROR, proc_call & "=> constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
+          alert(TB_ERROR, proc_call & "=> unsigned constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
           return false;
         end if;
       end if;
@@ -1824,7 +1987,7 @@ package body rand_pkg is
       for i in set_of_values'range loop
         if signed_values then
           if set_of_values(i) < -2**(v_len-1) or set_of_values(i) > 2**(v_len-1)-1 then
-            alert(TB_ERROR, proc_call & "=> constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
+            alert(TB_ERROR, proc_call & "=> signed constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
             return false;
           end if;
         else
@@ -1832,7 +1995,7 @@ package body rand_pkg is
             alert(TB_ERROR, proc_call & "=> constraints cannot be negative values when returning unsigned values", priv_scope);
             return false;
           elsif set_of_values(i) > 2**v_len-1 then
-            alert(TB_ERROR, proc_call & "=> constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
+            alert(TB_ERROR, proc_call & "=> unsigned constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
             return false;
           end if;
         end if;
@@ -1848,8 +2011,27 @@ package body rand_pkg is
       constant proc_call  : string)
     return boolean is
     begin
-      if find_leftmost(min_value, '1') > length or find_leftmost(max_value, '1') > length then
-        alert(TB_ERROR, proc_call & "=> min_value and max_value lengths must be less or equal than length", priv_scope);
+      if find_leftmost(min_value, '1') >= length or find_leftmost(max_value, '1') >= length then
+        alert(TB_ERROR, proc_call & "=> unsigned min_value and max_value lengths must be less or equal than length", priv_scope);
+        return false;
+      end if;
+      return true;
+    end function;
+
+    -- Overload
+    impure function check_parameters_within_range(
+      constant length     : natural;
+      constant min_value  : signed;
+      constant max_value  : signed;
+      constant proc_call  : string)
+    return boolean is
+    begin
+      if (min_value(min_value'high) /= '1' and find_leftmost(min_value, '1') >= length-1) or
+        (min_value(min_value'high) = '1' and find_leftmost(min_value, '0') >= length-1) or
+        (max_value(max_value'high) /= '1' and find_leftmost(max_value, '1') >= length-1) or
+        (max_value(max_value'high) = '1' and find_leftmost(max_value, '0') >= length-1)
+      then
+        alert(TB_ERROR, proc_call & "=> signed min_value and max_value lengths must be less or equal than length", priv_scope);
         return false;
       end if;
       return true;
@@ -2060,7 +2242,10 @@ package body rand_pkg is
                                    priv_int_constraints.val_excl'length > 0 or priv_int_constraints.weighted_config or
                                    priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 or
                                    priv_real_constraints.val_excl'length > 0 or priv_real_constraints.weighted_config or
-                                   priv_uns_constraints.ran_incl'length > 0;
+                                   priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or
+                                   priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted_config or
+                                   priv_uns_constraints.ran_incl'length > 0 or
+                                   priv_sig_constraints.ran_incl'length > 0;
       if v_multi_method_configured then
         write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
         write(v_line, "          MULTI-METHOD CONSTRAINTS" & LF);
@@ -2092,9 +2277,23 @@ package body rand_pkg is
       if priv_real_constraints.weighted_config then
         write(v_line, "          WEIGHTED REAL VALUES    : " & to_string(priv_real_constraints.weighted.all) & LF);
       end if;
-      -- TODO: time constraints
+      if priv_time_constraints.ran_incl'length > 0 and not (priv_time_constraints.weighted_config) then
+        write(v_line, "          RANGE TIME VALUES       : " & get_time_range_constraints(VOID) & LF);
+      end if;
+      if priv_time_constraints.val_incl'length > 0 and not (priv_time_constraints.weighted_config) then
+        write(v_line, "          INCLUDED TIME VALUES    : " & to_string(priv_time_constraints.val_incl.all) & LF);
+      end if;
+      if priv_time_constraints.val_excl'length > 0 then
+        write(v_line, "          EXCLUDED TIME VALUES    : " & to_string(priv_time_constraints.val_excl.all) & LF);
+      end if;
+      if priv_time_constraints.weighted_config then
+        write(v_line, "          WEIGHTED TIME VALUES    : " & to_string(priv_time_constraints.weighted.all) & LF);
+      end if;
       if priv_uns_constraints.ran_incl'length > 0 then
         write(v_line, "          RANGE UNSIGNED VALUES   : " & get_uns_range_constraints(1) & LF);
+      end if;
+      if priv_sig_constraints.ran_incl'length > 0 then
+        write(v_line, "          RANGE SIGNED VALUES     : " & get_sig_range_constraints(1) & LF);
       end if;
 
       -- Print report bottom line
@@ -2185,10 +2384,12 @@ package body rand_pkg is
       variable v_ret           : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      priv_ret_valid := true;
 
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
-        return 0;
+        priv_ret_valid := false;
+        return v_ret;
       end if;
       if cyclic_mode = CYCLIC and priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
@@ -2263,7 +2464,8 @@ package body rand_pkg is
 
         when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          return 0;
+          priv_ret_valid := false;
+          return v_ret;
       end case;
 
       -- Restore previous distribution
@@ -2291,6 +2493,8 @@ package body rand_pkg is
 
       if specifier /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
+        priv_ret_valid := false;
+        return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -2360,15 +2564,22 @@ package body rand_pkg is
           end if;
         else
           alert(TB_ERROR, v_proc_call.all & "=> Constraints are greater than integer's range", priv_scope);
+          priv_ret_valid := false;
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif specifier = EXCL then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, cyclic_mode, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values);
+          exit when not v_gen_new_random;
+          if i = (set_of_values'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
+        priv_ret_valid := false;
       end if;
 
       -- Restore previous distribution
@@ -2458,15 +2669,25 @@ package body rand_pkg is
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, cyclic_mode, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
       elsif specifier1 = ADD and specifier2 = EXCL then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values2'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, ADD, set_of_values1, cyclic_mode, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values2);
+          exit when not v_gen_new_random;
+          if i = (set_of_values2'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
       elsif specifier1 = EXCL and specifier2 = ADD then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values1'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, ADD, set_of_values2, cyclic_mode, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values1);
+          exit when not v_gen_new_random;
+          if i = (set_of_values1'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       else
         if not(specifier1 = ADD or specifier1 = EXCL) then
@@ -2474,6 +2695,7 @@ package body rand_pkg is
         else
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier2)), priv_scope);
         end if;
+        priv_ret_valid := false;
       end if;
 
       -- Restore previous distribution
@@ -2500,10 +2722,12 @@ package body rand_pkg is
       variable v_ret       : real;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      priv_ret_valid := true;
 
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
-        return 0.0;
+        priv_ret_valid := false;
+        return v_ret;
       end if;
 
       -- Generate a random value in the range [min_value:max_value]
@@ -2517,7 +2741,8 @@ package body rand_pkg is
           random_gaussian(min_value, max_value, v_mean, v_std_dev, priv_seed1, priv_seed2, v_ret);
         when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          return 0.0;
+          priv_ret_valid := false;
+          return v_ret;
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2541,6 +2766,8 @@ package body rand_pkg is
 
       if specifier /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
+        priv_ret_valid := false;
+        return real'left;
       end if;
       if priv_rand_dist = GAUSSIAN then
         alert(TB_WARNING, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for range(min/max) constraints. Using UNIFORM instead.", priv_scope);
@@ -2583,6 +2810,7 @@ package body rand_pkg is
       constant C_PREVIOUS_DIST    : t_rand_dist := priv_rand_dist;
       variable v_proc_call        : line;
       variable v_gen_new_random   : boolean := true;
+      variable v_offset           : real;
       variable v_ret              : real;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
@@ -2596,18 +2824,25 @@ package body rand_pkg is
       -- It is impossible to give the same weight to an added value than to a single value in the real range,
       -- therefore we split the probability to 50% range and 50% added values.
       if specifier = ADD then
-        v_ret := rand(min_value, max_value + (max_value-min_value), msg_id_panel, v_proc_call.all);
+        v_offset := (max_value-min_value) when (max_value-min_value) > 0.0 else 1.0;
+        v_ret := rand(min_value, max_value + v_offset, msg_id_panel, v_proc_call.all);
         if v_ret > max_value then
           v_ret := rand(ONLY, set_of_values, msg_id_panel, v_proc_call.all);
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif specifier = EXCL then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values);
+          exit when not v_gen_new_random;
+          if i = (set_of_values'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
+        priv_ret_valid := false;
       end if;
 
       -- Restore previous distribution
@@ -2694,15 +2929,25 @@ package body rand_pkg is
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
       elsif specifier1 = ADD and specifier2 = EXCL then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values2'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, ADD, set_of_values1, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values2);
+          exit when not v_gen_new_random;
+          if i = (set_of_values2'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
       elsif specifier1 = EXCL and specifier2 = ADD then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values1'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, ADD, set_of_values2, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values1);
+          exit when not v_gen_new_random;
+          if i = (set_of_values1'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       else
         if not(specifier1 = ADD or specifier1 = EXCL) then
@@ -2710,6 +2955,7 @@ package body rand_pkg is
         else
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier2)), priv_scope);
         end if;
+        priv_ret_valid := false;
       end if;
 
       -- Restore previous distribution
@@ -2734,10 +2980,12 @@ package body rand_pkg is
       variable v_ret       : time;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+      priv_ret_valid := true;
 
       if min_value > max_value then
         alert(TB_ERROR, v_proc_call.all & "=> min_value must be less than max_value", priv_scope);
-        return 0 ns;
+        priv_ret_valid := false;
+        return v_ret;
       end if;
 
       -- Generate a random value in the range [min_value:max_value]
@@ -2746,10 +2994,12 @@ package body rand_pkg is
           random_uniform(min_value, max_value, priv_seed1, priv_seed2, v_ret);
         when GAUSSIAN =>
           alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          return 0 ns;
+          priv_ret_valid := false;
+          return v_ret;
         when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-          return 0 ns;
+          priv_ret_valid := false;
+          return v_ret;
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2772,6 +3022,8 @@ package body rand_pkg is
 
       if specifier /= ONLY then
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
+        priv_ret_valid := false;
+        return time'left;
       end if;
 
       -- Generate a random value within the set of values
@@ -2820,12 +3072,18 @@ package body rand_pkg is
         end if;
       -- Generate a random value in the range [min_value:max_value] minus the set of values
       elsif specifier = EXCL then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values);
+          exit when not v_gen_new_random;
+          if i = (set_of_values'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       else
         alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
+        priv_ret_valid := false;
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2875,7 +3133,6 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
         to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & ")";
-      constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_proc_call           : line;
       variable v_combined_set_values : time_vector(0 to set_of_values1'length+set_of_values2'length-1);
       variable v_gen_new_random      : boolean := true;
@@ -2904,15 +3161,25 @@ package body rand_pkg is
         v_ret := rand(min_value, max_value, EXCL, v_combined_set_values, msg_id_panel, v_proc_call.all);
       -- Generate a random value in the range [min_value:max_value] plus the set of values 1 minus the set of values 2
       elsif specifier1 = ADD and specifier2 = EXCL then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values2'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, ADD, set_of_values1, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values2);
+          exit when not v_gen_new_random;
+          if i = (set_of_values2'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       -- Generate a random value in the range [min_value:max_value] plus the set of values 2 minus the set of values 1
       elsif specifier1 = EXCL and specifier2 = ADD then
-        while v_gen_new_random loop
+        for i in 0 to (set_of_values1'length)*C_NUM_INVALID_TRIES loop
           v_ret := rand(min_value, max_value, ADD, set_of_values2, msg_id_panel, v_proc_call.all);
           v_gen_new_random := check_value_in_vector(v_ret, set_of_values1);
+          exit when not v_gen_new_random;
+          if i = (set_of_values1'length)*C_NUM_INVALID_TRIES then
+            alert(TB_ERROR, v_proc_call.all & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+            priv_ret_valid := false;
+          end if;
         end loop;
       else
         if not(specifier1 = ADD or specifier1 = EXCL) then
@@ -2920,6 +3187,7 @@ package body rand_pkg is
         else
           alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier2)), priv_scope);
         end if;
+        priv_ret_valid := false;
       end if;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -2962,25 +3230,22 @@ package body rand_pkg is
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        if (max_value - min_value + 1) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(min_value, max_value, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       -- Restore previous distribution
@@ -3018,25 +3283,22 @@ package body rand_pkg is
         -- Generate a random value within the set of values for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        if (set_of_values'length) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value within the set of values for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value within the set of values for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       -- Restore previous distribution
@@ -3074,7 +3336,6 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
-      variable v_set_values_len  : integer     := 0;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to length-1);
@@ -3092,26 +3353,22 @@ package body rand_pkg is
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        v_set_values_len := (0-set_of_values'length) when specifier = EXCL else set_of_values'length;
-        if (max_value - min_value + 1 + v_set_values_len) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(min_value, max_value, specifier, set_of_values, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       -- Restore previous distribution
@@ -3172,7 +3429,6 @@ package body rand_pkg is
         to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) &
         to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST   : t_rand_dist := priv_rand_dist;
-      variable v_set_values_len  : integer     := 0;
       variable v_gen_new_random  : boolean     := true;
       variable v_cyclic_mode     : t_cyclic    := cyclic_mode;
       variable v_ret             : integer_vector(0 to length-1);
@@ -3190,27 +3446,22 @@ package body rand_pkg is
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        v_set_values_len := (0-set_of_values1'length) when specifier1 = EXCL else set_of_values1'length;
-        v_set_values_len := (v_set_values_len-set_of_values2'length) when specifier2 = EXCL else v_set_values_len+set_of_values2'length;
-        if (max_value - min_value + 1 + v_set_values_len) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, v_cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       -- Restore previous distribution
@@ -3245,17 +3496,19 @@ package body rand_pkg is
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
-        for i in 0 to length-1 loop
-          v_gen_new_random := true;
-          while v_gen_new_random loop
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
             v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
-            if i > 0 then
-              v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-            else
-              v_gen_new_random := false;
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
             end if;
           end loop;
         end loop;
@@ -3290,25 +3543,22 @@ package body rand_pkg is
         -- Generate a random value within the set of values for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        if (set_of_values'length) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value within the set of values for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value within the set of values for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       -- Restore previous distribution
@@ -3356,17 +3606,19 @@ package body rand_pkg is
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-        for i in 0 to length-1 loop
-          v_gen_new_random := true;
-          while v_gen_new_random loop
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
             v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
-            if i > 0 then
-              v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-            else
-              v_gen_new_random := false;
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
             end if;
           end loop;
         end loop;
@@ -3439,17 +3691,19 @@ package body rand_pkg is
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
         -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-        for i in 0 to length-1 loop
-          v_gen_new_random := true;
-          while v_gen_new_random loop
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
             v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
-            if i > 0 then
-              v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-            else
-              v_gen_new_random := false;
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
             end if;
           end loop;
         end loop;
@@ -3474,38 +3728,29 @@ package body rand_pkg is
     return time_vector is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "]" &
         to_string_if_enabled(uniqueness) & ")";
-      constant C_TIME_UNIT  : time := std.env.resolution_limit;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to length-1);
     begin
-      if priv_rand_dist = GAUSSIAN then
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-        return v_ret;
-      end if;
-
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value] for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        if ((max_value - min_value)/C_TIME_UNIT + 1) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(min_value, max_value, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
@@ -3524,34 +3769,26 @@ package body rand_pkg is
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to length-1);
     begin
-      if priv_rand_dist = GAUSSIAN then
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-        return v_ret;
-      end if;
-
       if uniqueness = NON_UNIQUE then
         -- Generate a random value within the set of values for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        if (set_of_values'length) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value within the set of values for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value within the set of values for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
@@ -3583,40 +3820,29 @@ package body rand_pkg is
     return time_vector is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & ")";
-      constant C_TIME_UNIT  : time := std.env.resolution_limit;
-      variable v_set_values_len  : integer := 0;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to length-1);
     begin
-      if priv_rand_dist = GAUSSIAN then
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-        return v_ret;
-      end if;
-
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        v_set_values_len := (0-set_of_values'length) when specifier = EXCL else set_of_values'length;
-        if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value in the range [min_value:max_value], plus or minus the set of values, for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(min_value, max_value, specifier, set_of_values, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
@@ -3670,41 +3896,29 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
         to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
         to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
-      constant C_TIME_UNIT  : time := std.env.resolution_limit;
-      variable v_set_values_len  : integer := 0;
       variable v_gen_new_random  : boolean := true;
       variable v_ret             : time_vector(0 to length-1);
     begin
-      if priv_rand_dist = GAUSSIAN then
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Randomization distribution not supported: " & to_upper(to_string(priv_rand_dist)), priv_scope);
-        return v_ret;
-      end if;
-
       if uniqueness = NON_UNIQUE then
         -- Generate a random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        v_set_values_len := (0-set_of_values1'length) when specifier1 = EXCL else set_of_values1'length;
-        v_set_values_len := (v_set_values_len-set_of_values2'length) when specifier2 = EXCL else v_set_values_len+set_of_values2'length;
-        if ((max_value - min_value)/C_TIME_UNIT + 1 + v_set_values_len) < length then
-          alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-        else
-          -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value in the range [min_value:max_value], plus or minus the sets of values, for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, msg_id_panel, C_LOCAL_CALL);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
@@ -3795,7 +4009,7 @@ package body rand_pkg is
         return v_ret;
       end if;
       if min_value'length > length or max_value'length > length then
-        alert(TB_ERROR, v_proc_call.all & "=> min_value and max_value lengths must be less or equal than length", priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> unsigned min_value and max_value lengths must be less or equal than length", priv_scope);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
@@ -3875,7 +4089,7 @@ package body rand_pkg is
           if cyclic_mode = CYCLIC then
             alert(TB_WARNING, v_proc_call.all & "=> Range is too big for cyclic mode (min: 0, max: 2**" & to_string(length) & "-1)", priv_scope);
           end if;
-          while v_gen_new_random loop
+          while v_gen_new_random loop -- It is safe to assume the loop won't be infinite since the number of possible values is > 2**31
             v_unsigned := rand(length, NON_CYCLIC, msg_id_panel, v_proc_call.all);
             -- If the random value is outside the integer range it cannot be in the exclude list
             if v_unsigned > integer'right then
@@ -4074,7 +4288,7 @@ package body rand_pkg is
         return v_ret;
       end if;
       if min_value'length > length or max_value'length > length then
-        alert(TB_ERROR, v_proc_call.all & "=> min_value and max_value lengths must be less or equal than length", priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> signed min_value and max_value lengths must be less or equal than length", priv_scope);
         return v_ret;
       end if;
       if priv_rand_dist = GAUSSIAN then
@@ -4123,34 +4337,38 @@ package body rand_pkg is
       constant specifier     : t_value_specifier;
       constant set_of_values : integer_vector;
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
-      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_call : string         := "")
     return signed is
       constant C_LOCAL_CALL : string := "rand(LEN:" & to_string(length) & ", " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) &
         to_string_if_enabled(cyclic_mode) & ")";
+      variable v_proc_call       : line;
       variable v_gen_new_random  : boolean := true;
       variable v_signed          : signed(length-1 downto 0);
       variable v_ret_int         : integer;
       variable v_ret             : signed(length-1 downto 0);
     begin
-      if not check_parameters_within_range(length, set_of_values, C_LOCAL_CALL, signed_values => true) then
+      create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
+
+      if not check_parameters_within_range(length, set_of_values, v_proc_call.all, signed_values => true) then
         return v_ret;
       end if;
       -- Generate a random value within the set of values
       if specifier = ONLY then
-        v_ret_int := rand(ONLY, integer_vector(set_of_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+        v_ret_int := rand(ONLY, integer_vector(set_of_values), cyclic_mode, msg_id_panel, v_proc_call.all);
         v_ret     := to_signed(v_ret_int,length);
       -- Generate a random value in the vector's range minus the set of values
       elsif specifier = EXCL then
         -- Check whether the vector's range can handle cyclic mode
         if length < 33 then
-          v_ret_int := rand(-2**(length-1), 2**(length-1)-1, EXCL, integer_vector(set_of_values), cyclic_mode, msg_id_panel, C_LOCAL_CALL);
+          v_ret_int := rand(-2**(length-1), 2**(length-1)-1, EXCL, integer_vector(set_of_values), cyclic_mode, msg_id_panel, v_proc_call.all);
           v_ret     := to_signed(v_ret_int,length);
         else
           if cyclic_mode = CYCLIC then
-            alert(TB_WARNING, C_LOCAL_CALL & "=> Range is too big for cyclic mode (min: -2**" & to_string(length-1) & ", max: 2**" & to_string(length-1) & "-1)", priv_scope);
+            alert(TB_WARNING, v_proc_call.all & "=> Range is too big for cyclic mode (min: -2**" & to_string(length-1) & ", max: 2**" & to_string(length-1) & "-1)", priv_scope);
           end if;
-          while v_gen_new_random loop
-            v_signed := rand(length, NON_CYCLIC, msg_id_panel, C_LOCAL_CALL);
+          while v_gen_new_random loop -- It is safe to assume the loop won't be infinite since the number of possible values is > 2**32
+            v_signed := rand(length, NON_CYCLIC, msg_id_panel, v_proc_call.all);
             -- If the random value is outside the integer range it cannot be in the exclude list
             if v_signed > integer'right or v_signed < integer'left then
               v_gen_new_random := false;
@@ -4161,10 +4379,11 @@ package body rand_pkg is
           v_ret := v_signed;
         end if;
       else
-        alert(TB_ERROR, C_LOCAL_CALL & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
+        alert(TB_ERROR, v_proc_call.all & "=> Invalid parameter: " & to_upper(to_string(specifier)), priv_scope);
       end if;
 
-      log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
       return v_ret;
     end function;
 
@@ -4547,7 +4766,7 @@ package body rand_pkg is
       for i in weighted_vector'range loop
         if weighted_vector(i).min_value > weighted_vector(i).max_value then
           alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
-          return 0;
+          return v_ret;
         end if;
         v_mode := weighted_vector(i).mode when weighted_vector(i).mode /= NA else COMBINED_WEIGHT;
         -- Divide the weight between the number of values in the range
@@ -4562,7 +4781,7 @@ package body rand_pkg is
       end loop;
       if v_acc_weight = 0 then
         alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
-        return 0;
+        return v_ret;
       end if;
 
       if priv_rand_dist = GAUSSIAN then
@@ -4659,7 +4878,7 @@ package body rand_pkg is
       for i in weighted_vector'range loop
         if weighted_vector(i).min_value > weighted_vector(i).max_value then
           alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
-          return 0.0;
+          return v_ret;
         end if;
         v_mode := weighted_vector(i).mode when weighted_vector(i).mode /= NA else COMBINED_WEIGHT;
         -- Divide the weight between the number of values in the range
@@ -4668,13 +4887,13 @@ package body rand_pkg is
         -- Use the same weight for each value in the range -> Not possible to know every value within the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
           alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for real type", priv_scope);
-          return 0.0;
+          return v_ret;
         end if;
         v_acc_weighted_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
         alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
-        return 0.0;
+        return v_ret;
       end if;
 
       if priv_rand_dist = GAUSSIAN then
@@ -4771,7 +4990,7 @@ package body rand_pkg is
       for i in weighted_vector'range loop
         if weighted_vector(i).min_value > weighted_vector(i).max_value then
           alert(TB_ERROR, v_proc_call.all & "=> The min_value parameter must be less or equal than max_value", priv_scope);
-          return std.env.resolution_limit;
+          return v_ret;
         end if;
         v_mode := weighted_vector(i).mode when weighted_vector(i).mode /= NA else COMBINED_WEIGHT;
         -- Divide the weight between the number of values in the range
@@ -4780,13 +4999,13 @@ package body rand_pkg is
         -- Use the same weight for each value in the range -> Not possible to know every value within the range
         elsif v_mode = INDIVIDUAL_WEIGHT then
           alert(TB_ERROR, v_proc_call.all & "=> INDIVIDUAL_WEIGHT not supported for time type", priv_scope);
-          return std.env.resolution_limit;
+          return v_ret;
         end if;
         v_acc_weighted_vector(i) := v_acc_weight;
       end loop;
       if v_acc_weight = 0 then
         alert(TB_ERROR, v_proc_call.all & "=> The total weight of the values must be greater than 0", priv_scope);
-        return std.env.resolution_limit;
+        return v_ret;
       end if;
 
       if priv_rand_dist = GAUSSIAN then
@@ -5001,12 +5220,60 @@ package body rand_pkg is
 
     -- Overload
     procedure increment_vec_size(
+      variable ran_vector : inout t_range_time_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_time_vec_ptr;
+    begin
+      v_copy_ptr := ran_vector;
+      ran_vector := new t_range_time_vec(0 to v_copy_ptr'length-1 + increment);
+      ran_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_time_vector_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_time_vector_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new time_vector(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_range_weight_mode_time_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_weight_mode_time_vec_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new t_range_weight_mode_time_vec(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
       variable val_vector : inout t_range_uns_vec_ptr;
       constant increment  : in    natural) is
       variable v_copy_ptr : t_range_uns_vec_ptr;
     begin
       v_copy_ptr := val_vector;
       val_vector := new t_range_uns_vec(0 to v_copy_ptr'length-1 + increment);
+      val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
+      DEALLOCATE(v_copy_ptr);
+    end procedure;
+
+    -- Overload
+    procedure increment_vec_size(
+      variable val_vector : inout t_range_sig_vec_ptr;
+      constant increment  : in    natural) is
+      variable v_copy_ptr : t_range_sig_vec_ptr;
+    begin
+      v_copy_ptr := val_vector;
+      val_vector := new t_range_sig_vec(0 to v_copy_ptr'length-1 + increment);
       val_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
       DEALLOCATE(v_copy_ptr);
     end procedure;
@@ -5061,22 +5328,15 @@ package body rand_pkg is
 
     -- Overload
     impure function get_int_constraints(
-      constant is_vector : boolean := false)
-    return string is
-    begin
-      return get_int_constraints(0, is_vector);
-    end function;
-
-    -- Overload
-    impure function get_int_constraints(
       constant VOID : t_void)
     return string is
     begin
-      return get_int_constraints(0);
+      return get_int_constraints(0, false);
     end function;
 
     -- Returns the string representation of the real constraints for randomization
     impure function get_real_constraints(
+      constant length    : natural;
       constant is_vector : boolean)
     return string is
       variable v_line : line;
@@ -5087,6 +5347,12 @@ package body rand_pkg is
         return ret;
       end function;
     begin
+      if length > 0 then
+        write(v_line, string'("LEN:") & to_string(length));
+        if priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 then
+          write(v_line, string'(", "));
+        end if;
+      end if;
       if priv_real_constraints.ran_incl'length > 0 then
         write(v_line, string'("RANGE:") & get_real_range_constraints(VOID));
       end if;
@@ -5115,7 +5381,57 @@ package body rand_pkg is
       constant VOID : t_void)
     return string is
     begin
-      return get_real_constraints(false);
+      return get_real_constraints(0, false);
+    end function;
+
+    -- Returns the string representation of the time constraints for randomization
+    impure function get_time_constraints(
+      constant length    : natural;
+      constant is_vector : boolean)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
+    begin
+      if length > 0 then
+        write(v_line, string'("LEN:") & to_string(length));
+        if priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 then
+          write(v_line, string'(", "));
+        end if;
+      end if;
+      if priv_time_constraints.ran_incl'length > 0 then
+        write(v_line, string'("RANGE:") & get_time_range_constraints(VOID));
+      end if;
+      if priv_time_constraints.val_incl'length > 0 then
+        if priv_time_constraints.ran_incl'length = 0 then
+          write(v_line, string'("ONLY:"));
+        else
+          write(v_line, string'(", ADD:"));
+        end if;
+        write(v_line, to_string(priv_time_constraints.val_incl.all));
+      end if;
+      if priv_time_constraints.val_excl'length > 0 then
+        write(v_line, string'(", EXCL:") & to_string(priv_time_constraints.val_excl.all));
+      end if;
+      if v_line = NULL then
+        write(v_line, string'("UNCONSTRAINED"));
+      end if;
+      if is_vector and priv_uniqueness = UNIQUE then
+        write(v_line, string'(", ") & to_upper(to_string(priv_uniqueness)));
+      end if;
+      return return_and_deallocate;
+    end function;
+
+    -- Overload
+    impure function get_time_constraints(
+      constant VOID : t_void)
+    return string is
+    begin
+      return get_time_constraints(0, false);
     end function;
 
     -- Returns the string representation of the unsigned constraints for randomization
@@ -5137,23 +5453,26 @@ package body rand_pkg is
       return return_and_deallocate;
     end function;
 
-    -- Returns the number of values in the integer constraints
-    impure function get_int_constraints_count(
-      constant VOID : t_void)
-    return natural is
-      variable v_cnt : natural := 0;
+    -- Returns the string representation of the signed constraints for randomization
+    impure function get_sig_constraints(
+      constant length : natural)
+    return string is
+      variable v_line : line;
+      impure function return_and_deallocate return string is
+        constant ret : string := v_line.all;
+      begin
+        DEALLOCATE(v_line);
+        return ret;
+      end function;
     begin
-      for i in 0 to priv_int_constraints.ran_incl'length-1 loop
-        v_cnt := v_cnt + (priv_int_constraints.ran_incl(i).max_value - priv_int_constraints.ran_incl(i).min_value + 1);
-      end loop;
-      v_cnt := v_cnt + priv_int_constraints.val_incl'length;
-      v_cnt := integer'right when v_cnt = 0; -- When there are no INCL constaints, the whole integer range is used
-      v_cnt := v_cnt - priv_int_constraints.val_excl'length;
-      return v_cnt;
+      write(v_line, string'("LEN:") & to_string(length) & string'(", "));
+      if priv_sig_constraints.ran_incl'length > 0 then
+        write(v_line, string'("RANGE:") & get_sig_range_constraints(length));
+      end if;
+      return return_and_deallocate;
     end function;
 
     -- Returns true if only the correct type of constraints are configured
-    -- TODO: uncomment when implemented
     impure function check_configured_constraints(
       constant value_type : string;
       constant proc_call  : string;
@@ -5165,16 +5484,16 @@ package body rand_pkg is
         priv_int_constraints.val_excl'length > 0 or priv_int_constraints.weighted'length > 0;
       variable v_real_configured : boolean := priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 or
         priv_real_constraints.val_excl'length > 0 or priv_real_constraints.weighted'length > 0;
-      --variable v_time_configured : boolean := priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or
-      --  priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted'length > 0;
+      variable v_time_configured : boolean := priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or
+        priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted'length > 0;
       variable v_uns_configured  : boolean := priv_uns_constraints.ran_incl'length > 0;
-      --variable v_sig_configured  : boolean := priv_sig_constraints.ran_incl'length > 0 or priv_sig_constraints.val_incl'length > 0 or priv_sig_constraints.val_excl'length > 0;
+      variable v_sig_configured  : boolean := priv_sig_constraints.ran_incl'length > 0;
     begin
-      if not(value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+      if not(value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SLV" or value_type = "SIGNED") then
         alert(TB_FAILURE, proc_call & "=> Undefined value type: " & value_type, priv_scope);
       end if;
 
-      if v_int_configured and (value_type = "REAL" or value_type = "TIME" or (is_config and value_type = "UNSIGNED")) then
+      if v_int_configured and (value_type = "REAL" or value_type = "TIME" or (is_config and value_type = "UNSIGNED") or (is_config and value_type = "SIGNED")) then
         if is_config then
           alert(TB_ERROR, proc_call & "=> Integer " & C_MSG_CONFIG, priv_scope);
         else
@@ -5183,7 +5502,7 @@ package body rand_pkg is
         return false;
       end if;
 
-      if v_real_configured and (value_type = "INTEGER" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SIGNED") then
+      if v_real_configured and (value_type = "INTEGER" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SLV" or value_type = "SIGNED") then
         if is_config then
           alert(TB_ERROR, proc_call & "=> Real " & C_MSG_CONFIG, priv_scope);
         else
@@ -5192,14 +5511,14 @@ package body rand_pkg is
         return false;
       end if;
 
-      --if v_time_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "UNSIGNED" or value_type = "SIGNED") then
-      --  if is_config then
-      --    alert(TB_ERROR, proc_call & "=> Time " & C_MSG_CONFIG, priv_scope);
-      --  else
-      --    alert(TB_ERROR, proc_call & "=> Time " & C_MSG_RETURN, priv_scope);
-      --  end if;
-      --  return false;
-      --end if;
+      if v_time_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "UNSIGNED" or value_type = "SLV" or value_type = "SIGNED") then
+        if is_config then
+          alert(TB_ERROR, proc_call & "=> Time " & C_MSG_CONFIG, priv_scope);
+        else
+          alert(TB_ERROR, proc_call & "=> Time " & C_MSG_RETURN, priv_scope);
+        end if;
+        return false;
+      end if;
 
       if v_uns_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "SIGNED") then
         if is_config then
@@ -5210,14 +5529,14 @@ package body rand_pkg is
         return false;
       end if;
 
-      --if v_sig_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED") then
-      --  if is_config then
-      --    alert(TB_ERROR, proc_call & "=> Signed " & C_MSG_CONFIG, priv_scope);
-      --  else
-      --    alert(TB_ERROR, proc_call & "=> Signed " & C_MSG_RETURN, priv_scope);
-      --  end if;
-      --  return false;
-      --end if;
+      if v_sig_configured and (value_type = "INTEGER" or value_type = "REAL" or value_type = "TIME" or value_type = "UNSIGNED" or value_type = "SLV") then
+        if is_config then
+          alert(TB_ERROR, proc_call & "=> Signed " & C_MSG_CONFIG, priv_scope);
+        else
+          alert(TB_ERROR, proc_call & "=> Signed " & C_MSG_RETURN, priv_scope);
+        end if;
+        return false;
+      end if;
 
       return true;
     end function;
@@ -5240,17 +5559,19 @@ package body rand_pkg is
         priv_rand_dist := UNIFORM;
       end if;
 
-      while v_gen_new_random loop
+      for i in 0 to (priv_int_constraints.val_excl'length)*C_NUM_INVALID_TRIES loop
         -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
         v_max_range := to_signed(C_MIN_RANGE,33);
-        for i in 0 to priv_int_constraints.ran_incl'length-1 loop
-          v_max_range := v_max_range + priv_int_constraints.ran_incl(i).range_len;
+        for j in 0 to priv_int_constraints.ran_incl'length-1 loop
+          v_max_range := v_max_range + priv_int_constraints.ran_incl(j).range_len;
         end loop;
         v_max_range := v_max_range - 1;
         v_max_value := v_max_range + priv_int_constraints.val_incl'length;
         if v_max_value > to_signed(integer'right,33) then
           alert(TB_ERROR, proc_call & "=> Constraints are greater than integer's range", priv_scope);
-          return 0;
+          priv_ret_valid := false;
+          priv_rand_dist := C_PREVIOUS_DIST; -- Restore previous distribution
+          return v_ret;
         end if;
 
         v_ret := rand(C_MIN_RANGE, to_integer(v_max_value), priv_cyclic_mode, msg_id_panel, proc_call);
@@ -5259,10 +5580,10 @@ package body rand_pkg is
         if v_ret <= v_max_range then
           v_ret := v_ret - C_MIN_RANGE; -- Remove offset
           v_acc_range_len := (others => '0');
-          for i in 0 to priv_int_constraints.ran_incl'length-1 loop
-            v_acc_range_len := v_acc_range_len + priv_int_constraints.ran_incl(i).range_len;
+          for j in 0 to priv_int_constraints.ran_incl'length-1 loop
+            v_acc_range_len := v_acc_range_len + priv_int_constraints.ran_incl(j).range_len;
             if v_ret < v_acc_range_len then
-              v_ret := v_ret + priv_int_constraints.ran_incl(i).min_value - to_integer(v_acc_range_len - priv_int_constraints.ran_incl(i).range_len);
+              v_ret := v_ret + priv_int_constraints.ran_incl(j).min_value - to_integer(v_acc_range_len - priv_int_constraints.ran_incl(j).range_len);
               exit;
             end if;
           end loop;
@@ -5273,6 +5594,11 @@ package body rand_pkg is
 
         -- Check if the random value is in the exclusion list
         v_gen_new_random := check_value_in_vector(v_ret, priv_int_constraints.val_excl.all);
+        exit when not v_gen_new_random;
+        if i = (priv_int_constraints.val_excl'length)*C_NUM_INVALID_TRIES then
+          alert(TB_ERROR, proc_call & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+          priv_ret_valid := false;
+        end if;
       end loop;
 
       -- Restore previous distribution
@@ -5298,11 +5624,11 @@ package body rand_pkg is
         priv_rand_dist := UNIFORM;
       end if;
 
-      while v_gen_new_random loop
+      for i in 0 to (priv_real_constraints.val_excl'length)*C_NUM_INVALID_TRIES loop
         -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
         v_max_range := 0.0;
-        for i in 0 to priv_real_constraints.ran_incl'length-1 loop
-          v_max_range := v_max_range + priv_real_constraints.ran_incl(i).range_len;
+        for j in 0 to priv_real_constraints.ran_incl'length-1 loop
+          v_max_range := v_max_range + priv_real_constraints.ran_incl(j).range_len;
         end loop;
         -- It is impossible to give the same weight to an included value than to a single value in the real range,
         -- therefore we split the probability to 50% ranges and 50% included values.
@@ -5313,10 +5639,10 @@ package body rand_pkg is
         -- Convert the random value to the correct range
         if v_ret <= v_max_range then
           v_acc_range_len := 0.0;
-          for i in 0 to priv_real_constraints.ran_incl'length-1 loop
-            v_acc_range_len := v_acc_range_len + priv_real_constraints.ran_incl(i).range_len;
+          for j in 0 to priv_real_constraints.ran_incl'length-1 loop
+            v_acc_range_len := v_acc_range_len + priv_real_constraints.ran_incl(j).range_len;
             if v_ret <= v_acc_range_len then
-              v_ret := v_ret + priv_real_constraints.ran_incl(i).min_value - (v_acc_range_len - priv_real_constraints.ran_incl(i).range_len);
+              v_ret := v_ret + priv_real_constraints.ran_incl(j).min_value - (v_acc_range_len - priv_real_constraints.ran_incl(j).range_len);
               exit;
             end if;
           end loop;
@@ -5327,10 +5653,69 @@ package body rand_pkg is
 
         -- Check if the random value is in the exclusion list
         v_gen_new_random := check_value_in_vector(v_ret, priv_real_constraints.val_excl.all);
+        exit when not v_gen_new_random;
+        if i = (priv_real_constraints.val_excl'length)*C_NUM_INVALID_TRIES then
+          alert(TB_ERROR, proc_call & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+          priv_ret_valid := false;
+        end if;
       end loop;
 
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
+
+      return v_ret;
+    end function;
+
+    -- Returns a time random value supporting multiple range constraints
+    impure function randm_ranges(
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
+    return time is
+      constant C_TIME_UNIT      : time := std.env.resolution_limit;
+      variable v_max_range      : time;
+      variable v_max_value      : time;
+      variable v_acc_range_len  : time;
+      variable v_gen_new_random : boolean := true;
+      variable v_ret            : time;
+    begin
+      -- Invalid distributions checked in randm() procedure
+
+      for i in 0 to (priv_time_constraints.val_excl'length)*C_NUM_INVALID_TRIES loop
+        -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
+        v_max_range := 0 ns;
+        for j in 0 to priv_time_constraints.ran_incl'length-1 loop
+          v_max_range := v_max_range + priv_time_constraints.ran_incl(j).range_len;
+        end loop;
+        v_max_range := v_max_range - C_TIME_UNIT;
+        -- It is impossible to give the same weight to an included value than to a single value in the time range,
+        -- therefore we split the probability to 50% ranges and 50% included values.
+        v_max_value := v_max_range*2 when priv_time_constraints.val_incl'length > 0 else v_max_range;
+
+        v_ret := rand(0 ns, v_max_value, msg_id_panel, proc_call);
+
+        -- Convert the random value to the correct range
+        if v_ret <= v_max_range then
+          v_acc_range_len := 0 ns;
+          for j in 0 to priv_time_constraints.ran_incl'length-1 loop
+            v_acc_range_len := v_acc_range_len + priv_time_constraints.ran_incl(j).range_len;
+            if v_ret < v_acc_range_len then
+              v_ret := v_ret + priv_time_constraints.ran_incl(j).min_value - (v_acc_range_len - priv_time_constraints.ran_incl(j).range_len);
+              exit;
+            end if;
+          end loop;
+        -- If random value isn't a range, randomize within the added values
+        else
+          v_ret := rand(ONLY, priv_time_constraints.val_incl.all, msg_id_panel, proc_call);
+        end if;
+
+        -- Check if the random value is in the exclusion list
+        v_gen_new_random := check_value_in_vector(v_ret, priv_time_constraints.val_excl.all);
+        exit when not v_gen_new_random;
+        if i = (priv_time_constraints.val_excl'length)*C_NUM_INVALID_TRIES then
+          alert(TB_ERROR, proc_call & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+          priv_ret_valid := false;
+        end if;
+      end loop;
 
       return v_ret;
     end function;
@@ -5378,6 +5763,50 @@ package body rand_pkg is
       return v_ret(length-1 downto 0);
     end function;
 
+    -- Returns a signed random value supporting multiple range constraints
+    impure function randm_ranges(
+      constant length       : natural;
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
+    return signed is
+      alias C_MAX_LENGTH is C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
+      constant C_MIN_RANGE      : signed(C_MAX_LENGTH downto 0) := (C_MAX_LENGTH => '1', others => '0');
+      constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
+      variable v_max_range      : signed(C_MAX_LENGTH downto 0);
+      variable v_acc_range_len  : signed(C_MAX_LENGTH downto 0);
+      variable v_ret            : signed(C_MAX_LENGTH downto 0);
+    begin
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_WARNING, proc_call & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for signed constraints. Using UNIFORM instead.", priv_scope);
+        priv_rand_dist := UNIFORM;
+      end if;
+
+      -- Concatenate all ranges first and then the added values into a single continuous range to call rand(min,max)
+      v_max_range := C_MIN_RANGE;
+      for i in 0 to priv_sig_constraints.ran_incl'length-1 loop
+        v_max_range := v_max_range + priv_sig_constraints.ran_incl(i).range_len;
+      end loop;
+      v_max_range := v_max_range - 1;
+
+      v_ret := rand(v_ret'length, C_MIN_RANGE, v_max_range, msg_id_panel, proc_call);
+
+      -- Convert the random value to the correct range
+      v_ret := v_ret - C_MIN_RANGE; -- Remove offset
+      v_acc_range_len := (others => '0');
+      for i in 0 to priv_sig_constraints.ran_incl'length-1 loop
+        v_acc_range_len := v_acc_range_len + priv_sig_constraints.ran_incl(i).range_len;
+        if v_ret < v_acc_range_len then
+          v_ret := v_ret + priv_sig_constraints.ran_incl(i).min_value - (v_acc_range_len - priv_sig_constraints.ran_incl(i).range_len);
+          exit;
+        end if;
+      end loop;
+
+      -- Restore previous distribution
+      priv_rand_dist := C_PREVIOUS_DIST;
+
+      return v_ret(length-1 downto 0);
+    end function;
+
     -- Returns an integer random value with ADD and EXCL constraints
     impure function randm_add_excl(
       constant msg_id_panel : t_msg_id_panel;
@@ -5392,9 +5821,14 @@ package body rand_pkg is
         priv_rand_dist := UNIFORM;
       end if;
 
-      while v_gen_new_random loop
+      for i in 0 to (priv_int_constraints.val_excl'length)*C_NUM_INVALID_TRIES loop
         v_ret := rand(ONLY, priv_int_constraints.val_incl.all, priv_cyclic_mode, msg_id_panel, proc_call);
         v_gen_new_random := check_value_in_vector(v_ret, priv_int_constraints.val_excl.all);
+        exit when not v_gen_new_random;
+        if i = (priv_int_constraints.val_excl'length)*C_NUM_INVALID_TRIES then
+          alert(TB_ERROR, proc_call & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+          priv_ret_valid := false;
+        end if;
       end loop;
 
       -- Restore previous distribution
@@ -5417,13 +5851,41 @@ package body rand_pkg is
         priv_rand_dist := UNIFORM;
       end if;
 
-      while v_gen_new_random loop
+      for i in 0 to (priv_real_constraints.val_excl'length)*C_NUM_INVALID_TRIES loop
         v_ret := rand(ONLY, priv_real_constraints.val_incl.all, msg_id_panel, proc_call);
         v_gen_new_random := check_value_in_vector(v_ret, priv_real_constraints.val_excl.all);
+        exit when not v_gen_new_random;
+        if i = (priv_real_constraints.val_excl'length)*C_NUM_INVALID_TRIES then
+          alert(TB_ERROR, proc_call & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+          priv_ret_valid := false;
+        end if;
       end loop;
 
       -- Restore previous distribution
       priv_rand_dist := C_PREVIOUS_DIST;
+
+      return v_ret;
+    end function;
+
+    -- Returns a time random value with ADD and EXCL constraints
+    impure function randm_add_excl(
+      constant msg_id_panel : t_msg_id_panel;
+      constant proc_call    : string)
+    return time is
+      variable v_gen_new_random : boolean := true;
+      variable v_ret            : time;
+    begin
+      -- Invalid distributions checked in randm() procedure
+
+      for i in 0 to (priv_time_constraints.val_excl'length)*C_NUM_INVALID_TRIES loop
+        v_ret := rand(ONLY, priv_time_constraints.val_incl.all, msg_id_panel, proc_call);
+        v_gen_new_random := check_value_in_vector(v_ret, priv_time_constraints.val_excl.all);
+        exit when not v_gen_new_random;
+        if i = (priv_time_constraints.val_excl'length)*C_NUM_INVALID_TRIES then
+          alert(TB_ERROR, proc_call & "=> Random generator cannot find a legal value within the given constraints", priv_scope);
+          priv_ret_valid := false;
+        end if;
+      end loop;
 
       return v_ret;
     end function;
@@ -5631,11 +6093,9 @@ package body rand_pkg is
       constant min_value    : in real;
       constant max_value    : in real;
       constant weight       : in natural;
-      constant mode         : in t_weight_mode  := NA;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_weight_real([" & format_real(min_value) & ":" & format_real(max_value) & "]," &
-        to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
-      variable v_weight_mode : t_weight_mode;
+        to_string(weight) & ")";
     begin
       -- Check only real constraints have been configured
       if not(check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
@@ -5645,11 +6105,119 @@ package body rand_pkg is
         alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
         return;
       end if;
-      v_weight_mode := mode when mode /= NA else priv_weight_mode;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_real_constraints.weighted, 1);
-      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (min_value, max_value, weight, v_weight_mode);
+      priv_real_constraints.weighted(priv_real_constraints.weighted'length-1) := (min_value, max_value, weight, COMBINED_WEIGHT);
       priv_real_constraints.weighted_config := true;
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Time constraints
+    ------------------------------------------------------------
+    procedure add_range_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_time([" & to_string(min_value) & ":" & to_string(max_value) & "])";
+      constant C_TIME_UNIT  : time := std.env.resolution_limit;
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.ran_incl, 1);
+      increment_vec_size(priv_time_constraints.weighted, 1);
+      priv_time_constraints.ran_incl(priv_time_constraints.ran_incl'length-1) := (min_value, max_value, max_value-min_value+C_TIME_UNIT);
+      priv_time_constraints.weighted(priv_time_constraints.weighted'length-1) := (min_value, max_value, 1, COMBINED_WEIGHT);
+    end procedure;
+
+    procedure add_val_time(
+      constant value        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      add_val_time((0 => value), msg_id_panel);
+    end procedure;
+
+    procedure add_val_time(
+      constant set_of_values : in time_vector;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val_time" & to_string(set_of_values);
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.val_incl, set_of_values'length);
+      increment_vec_size(priv_time_constraints.weighted, set_of_values'length);
+      priv_time_constraints.val_incl(priv_time_constraints.val_incl'length-1-(set_of_values'length-1) to priv_time_constraints.val_incl'length-1) := set_of_values;
+      for i in 0 to set_of_values'length-1 loop
+        priv_time_constraints.weighted(priv_time_constraints.weighted'length-1-(set_of_values'length-1)+i) := (set_of_values(i), set_of_values(i), 1, NA);
+      end loop;
+    end procedure;
+
+    procedure excl_val_time(
+      constant value        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+      excl_val_time((0 => value), msg_id_panel);
+    end procedure;
+
+    procedure excl_val_time(
+      constant set_of_values : in time_vector;
+      constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "excl_val_time" & to_string(set_of_values);
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.val_excl, set_of_values'length);
+      priv_time_constraints.val_excl(priv_time_constraints.val_excl'length-1-(set_of_values'length-1) to priv_time_constraints.val_excl'length-1) := set_of_values;
+    end procedure;
+
+    procedure add_val_weight_time(
+      constant value        : in time;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_val_weight_time(" & to_string(value) & "," & to_string(weight) & ")";
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.weighted, 1);
+      priv_time_constraints.weighted(priv_time_constraints.weighted'length-1) := (value, value, weight, NA);
+      priv_time_constraints.weighted_config := true;
+    end procedure;
+
+    procedure add_range_weight_time(
+      constant min_value    : in time;
+      constant max_value    : in time;
+      constant weight       : in natural;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_weight_time([" & to_string(min_value) & ":" & to_string(max_value) & "]," &
+        to_string(weight) & ")";
+    begin
+      -- Check only time constraints have been configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_time_constraints.weighted, 1);
+      priv_time_constraints.weighted(priv_time_constraints.weighted'length-1) := (min_value, max_value, weight, COMBINED_WEIGHT);
+      priv_time_constraints.weighted_config := true;
     end procedure;
 
     ------------------------------------------------------------
@@ -5659,16 +6227,16 @@ package body rand_pkg is
       constant min_value    : in unsigned;
       constant max_value    : in unsigned;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_range([" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ":" &
+      constant C_LOCAL_CALL : string := "add_range_unsigned([" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ":" &
         to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
-      constant C_MAX_LENGTH : natural := C_RAND_MM_MAX_LONG_VECTOR_LENGTH + 1;
+      alias C_MAX_LENGTH is C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
     begin
       -- Check only unsigned constraints have been configured
       if not(check_configured_constraints("UNSIGNED", C_LOCAL_CALL, is_config => true)) then
         return;
       end if;
       if min_value'length > C_RAND_MM_MAX_LONG_VECTOR_LENGTH or max_value'length > C_RAND_MM_MAX_LONG_VECTOR_LENGTH then
-        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value and max_value lengths must be less or equal than C_RAND_MM_MAX_LONG_VECTOR_LENGTH." &
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value and max_value lengths must be less or equal than C_RAND_MM_MAX_LONG_VECTOR_LENGTH. " &
           "Increase C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations package.", priv_scope);
         return;
       end if;
@@ -5678,11 +6246,40 @@ package body rand_pkg is
       end if;
       log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
       increment_vec_size(priv_uns_constraints.ran_incl, 1);
-      priv_uns_constraints.ran_incl(priv_uns_constraints.ran_incl'length-1).min_value := (others => '0');
-      priv_uns_constraints.ran_incl(priv_uns_constraints.ran_incl'length-1).min_value(min_value'length-1 downto 0) := min_value;
-      priv_uns_constraints.ran_incl(priv_uns_constraints.ran_incl'length-1).max_value := (others => '0');
-      priv_uns_constraints.ran_incl(priv_uns_constraints.ran_incl'length-1).max_value(max_value'length-1 downto 0) := max_value;
-      priv_uns_constraints.ran_incl(priv_uns_constraints.ran_incl'length-1).range_len := resize(max_value, C_MAX_LENGTH) - resize(min_value, C_MAX_LENGTH) + 1;
+      priv_uns_constraints.ran_incl(priv_uns_constraints.ran_incl'length-1).min_value := resize(min_value,C_MAX_LENGTH);
+      priv_uns_constraints.ran_incl(priv_uns_constraints.ran_incl'length-1).max_value := resize(max_value,C_MAX_LENGTH);
+      priv_uns_constraints.ran_incl(priv_uns_constraints.ran_incl'length-1).range_len := resize(max_value, C_MAX_LENGTH+1) - resize(min_value, C_MAX_LENGTH+1) + 1;
+    end procedure;
+
+    ------------------------------------------------------------
+    -- Signed constraints
+    ------------------------------------------------------------
+    procedure add_range_signed(
+      constant min_value    : in signed;
+      constant max_value    : in signed;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+      constant C_LOCAL_CALL : string := "add_range_signed([" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ":" &
+        to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
+      alias C_MAX_LENGTH is C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
+    begin
+      -- Check only signed constraints have been configured
+      if not(check_configured_constraints("SIGNED", C_LOCAL_CALL, is_config => true)) then
+        return;
+      end if;
+      if min_value'length > C_RAND_MM_MAX_LONG_VECTOR_LENGTH or max_value'length > C_RAND_MM_MAX_LONG_VECTOR_LENGTH then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value and max_value lengths must be less or equal than C_RAND_MM_MAX_LONG_VECTOR_LENGTH. " &
+          "Increase C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations package.", priv_scope);
+        return;
+      end if;
+      if min_value >= max_value then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> min_value must be less than max_value", priv_scope);
+        return;
+      end if;
+      log(ID_RAND_CONF, C_LOCAL_CALL, priv_scope, msg_id_panel);
+      increment_vec_size(priv_sig_constraints.ran_incl, 1);
+      priv_sig_constraints.ran_incl(priv_sig_constraints.ran_incl'length-1).min_value := resize(min_value,C_MAX_LENGTH);
+      priv_sig_constraints.ran_incl(priv_sig_constraints.ran_incl'length-1).max_value := resize(max_value,C_MAX_LENGTH);
+      priv_sig_constraints.ran_incl(priv_sig_constraints.ran_incl'length-1).range_len := resize(max_value, C_MAX_LENGTH+1) - resize(min_value, C_MAX_LENGTH+1) + 1;
     end procedure;
 
     ------------------------------------------------------------
@@ -5754,9 +6351,20 @@ package body rand_pkg is
       priv_real_constraints.weighted := new t_range_weight_mode_real_vec(1 to 0);
       priv_real_constraints.weighted_config := false;
 
+      DEALLOCATE(priv_time_constraints.ran_incl);
+      DEALLOCATE(priv_time_constraints.val_incl);
+      DEALLOCATE(priv_time_constraints.val_excl);
+      DEALLOCATE(priv_time_constraints.weighted);
+      priv_time_constraints.ran_incl := new t_range_time_vec(1 to 0);
+      priv_time_constraints.val_incl := new time_vector(1 to 0);
+      priv_time_constraints.val_excl := new time_vector(1 to 0);
+      priv_time_constraints.weighted := new t_range_weight_mode_time_vec(1 to 0);
+      priv_time_constraints.weighted_config := false;
+
       DEALLOCATE(priv_uns_constraints.ran_incl);
       priv_uns_constraints.ran_incl := new t_range_uns_vec(1 to 0);
-      -- TODO: add rest of constraints
+      DEALLOCATE(priv_sig_constraints.ran_incl);
+      priv_sig_constraints.ran_incl := new t_range_sig_vec(1 to 0);
     end procedure;
 
     procedure clear_config(
@@ -5813,7 +6421,7 @@ package body rand_pkg is
 
       -- Check only integer constraints are configured
       if not(check_configured_constraints("INTEGER", v_proc_call.all, is_config => false)) then
-        return 0;
+        return v_ret;
       end if;
 
       ----------------------------------------
@@ -5900,7 +6508,8 @@ package body rand_pkg is
         when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
             v_val_excl_configured)), priv_scope);
-          return 0;
+          priv_ret_valid := false;
+          return v_ret;
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -5935,7 +6544,7 @@ package body rand_pkg is
 
       -- Check only real constraints are configured
       if not(check_configured_constraints("REAL", v_proc_call.all, is_config => false)) then
-        return 0.0;
+        return v_ret;
       end if;
       if priv_cyclic_mode = CYCLIC then
         alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for real type. Ignoring cyclic configuration.", priv_scope);
@@ -5979,7 +6588,8 @@ package body rand_pkg is
         ----------------------------------------
         when "001" =>
           alert(TB_ERROR, v_proc_call.all & "=> Real random generator needs ""include"" constraints", priv_scope);
-          return 0.0;
+          priv_ret_valid := false;
+          return v_ret;
         ----------------------------------------
         -- RANGE + SET OF VALUES
         ----------------------------------------
@@ -6020,12 +6630,146 @@ package body rand_pkg is
         ----------------------------------------
         when "000" =>
           alert(TB_ERROR, v_proc_call.all & "=> Real random generator must be constrained", priv_scope);
-          return 0.0;
+          priv_ret_valid := false;
+          return v_ret;
 
         when others =>
           alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
             v_val_excl_configured)), priv_scope);
-          return 0.0;
+          priv_ret_valid := false;
+          return v_ret;
+      end case;
+
+      log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
+      DEALLOCATE(v_proc_call);
+      return v_ret;
+    end function;
+
+    impure function randm(
+      constant VOID : t_void)
+    return time is
+    begin
+      return randm(shared_msg_id_panel);
+    end function;
+
+    impure function randm(
+      constant msg_id_panel  : t_msg_id_panel;
+      constant ext_proc_call : string := "")
+    return time is
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_time_constraints(VOID) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_time_constraints.weighted.all) & ")";
+      variable v_proc_call           : line;
+      variable v_ran_incl_configured : std_logic;
+      variable v_val_incl_configured : std_logic;
+      variable v_val_excl_configured : std_logic;
+      variable v_num_ranges          : natural := priv_time_constraints.ran_incl'length;
+      variable v_ret                 : time;
+    begin
+      create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
+      v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
+      v_val_incl_configured := '1' when priv_time_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_time_constraints.val_excl'length > 0 else '0';
+
+      -- Check only time constraints are configured
+      if not(check_configured_constraints("TIME", v_proc_call.all, is_config => false)) then
+        return v_ret;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, v_proc_call.all & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for time type.", priv_scope);
+        return v_ret;
+      end if;
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, v_proc_call.all & "=> Cyclic mode not supported for time type. Ignoring cyclic configuration.", priv_scope);
+      end if;
+
+      ----------------------------------------
+      -- WEIGHTED
+      ----------------------------------------
+      if priv_time_constraints.weighted_config then
+        check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
+        check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
+        v_ret := rand_range_weight_mode(priv_time_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
+        log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+        return v_ret;
+      end if;
+
+      -- Assuming function is being called directly from sequencer when ext_proc_call is empty
+      if ext_proc_call = "" and priv_uniqueness = UNIQUE then
+        alert(TB_WARNING, v_proc_call.all & "=> Uniqueness not supported for time type. Ignoring uniqueness configuration.", priv_scope);
+      end if;
+
+      case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
+        ----------------------------------------
+        -- RANGE
+        ----------------------------------------
+        when "100" =>
+          if v_num_ranges = 1 then
+            v_ret := rand(priv_time_constraints.ran_incl(0).min_value, priv_time_constraints.ran_incl(0).max_value, msg_id_panel, v_proc_call.all);
+          else
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
+          end if;
+        ----------------------------------------
+        -- SET OF VALUES
+        ----------------------------------------
+        when "010" =>
+          v_ret := rand(ONLY, priv_time_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
+        ----------------------------------------
+        -- EXCLUDE
+        ----------------------------------------
+        when "001" =>
+          alert(TB_ERROR, v_proc_call.all & "=> Time random generator needs ""include"" constraints", priv_scope);
+          priv_ret_valid := false;
+          return v_ret;
+        ----------------------------------------
+        -- RANGE + SET OF VALUES
+        ----------------------------------------
+        when "110" =>
+          if v_num_ranges = 1 then
+            v_ret := rand(priv_time_constraints.ran_incl(0).min_value, priv_time_constraints.ran_incl(0).max_value, ADD,
+              priv_time_constraints.val_incl.all, msg_id_panel, v_proc_call.all);
+          else
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
+          end if;
+        ----------------------------------------
+        -- RANGE + EXCLUDE
+        ----------------------------------------
+        when "101" =>
+          if v_num_ranges = 1 then
+            v_ret := rand(priv_time_constraints.ran_incl(0).min_value, priv_time_constraints.ran_incl(0).max_value, EXCL,
+              priv_time_constraints.val_excl.all, msg_id_panel, v_proc_call.all);
+          else
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
+          end if;
+        ----------------------------------------
+        -- SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "011" =>
+          v_ret := randm_add_excl(msg_id_panel, v_proc_call.all);
+        ----------------------------------------
+        -- RANGE + SET OF VALUES + EXCLUDE
+        ----------------------------------------
+        when "111" =>
+          if v_num_ranges = 1 then
+            v_ret := rand(priv_time_constraints.ran_incl(0).min_value, priv_time_constraints.ran_incl(0).max_value, ADD,
+              priv_time_constraints.val_incl.all, EXCL, priv_time_constraints.val_excl.all, msg_id_panel, v_proc_call.all);
+          else
+            v_ret := randm_ranges(msg_id_panel, v_proc_call.all);
+          end if;
+        ----------------------------------------
+        -- NO CONSTRAINTS
+        ----------------------------------------
+        when "000" =>
+          alert(TB_ERROR, v_proc_call.all & "=> Time random generator must be constrained", priv_scope);
+          priv_ret_valid := false;
+          return v_ret;
+
+        when others =>
+          alert(TB_ERROR, v_proc_call.all & "=> Unexpected constraints: " & to_string(unsigned'(v_ran_incl_configured & v_val_incl_configured &
+            v_val_excl_configured)), priv_scope);
+          priv_ret_valid := false;
+          return v_ret;
       end case;
 
       log_proc_call(ID_RAND_GEN, v_proc_call.all & "=> " & to_string(v_ret), ext_proc_call, v_proc_call, msg_id_panel);
@@ -6037,7 +6781,7 @@ package body rand_pkg is
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(is_vector=>true) & ")";
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(length, is_vector=>true) & ")";
       constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_val_incl_configured : std_logic;
@@ -6075,26 +6819,22 @@ package body rand_pkg is
         -- Generate a random value for each element of the vector
         for i in 0 to length-1 loop
           v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+          exit when not priv_ret_valid;
         end loop;
       else -- UNIQUE
-        -- Check if it is possible to generate unique values for the complete vector
-        if get_int_constraints_count(VOID) < length then
-          alert(TB_ERROR, C_LOCAL_CALL_1 & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
-          return v_ret;
-        else
-          -- Generate an unique random value in the range [min_value:max_value] for each element of the vector
-          for i in 0 to length-1 loop
-            v_gen_new_random := true;
-            while v_gen_new_random loop
-              v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
-              if i > 0 then
-                v_gen_new_random := check_value_in_vector(v_ret(i), v_ret(0 to i-1));
-              else
-                v_gen_new_random := false;
-              end if;
-            end loop;
+        -- Generate an unique random value for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL_1 & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
           end loop;
-        end if;
+        end loop;
       end if;
 
       -- Restore previous distribution
@@ -6107,6 +6847,143 @@ package body rand_pkg is
     impure function randm(
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return real_vector is
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_real_constraints(length, is_vector=>true) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_real_constraints.weighted.all) & ")";
+      constant C_PREVIOUS_DIST        : t_rand_dist := priv_rand_dist;
+      constant C_PREVIOUS_CYCLIC_MODE : t_cyclic := priv_cyclic_mode;
+      variable v_val_incl_configured  : std_logic;
+      variable v_val_excl_configured  : std_logic;
+      variable v_num_ranges           : natural := priv_real_constraints.ran_incl'length;
+      variable v_gen_new_random       : boolean := true;
+      variable v_ret                  : real_vector(0 to length-1);
+    begin
+      v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
+
+      -- Check only real constraints are configured
+      if not(check_configured_constraints("REAL", C_LOCAL_CALL_1, is_config => false)) then
+        return v_ret;
+      end if;
+
+      if priv_real_constraints.weighted_config then
+        alert(TB_ERROR, C_LOCAL_CALL_2 & "=> Weighted randomization not supported for real_vector type.", priv_scope);
+        return v_ret;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        if priv_uniqueness = UNIQUE then
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and uniqueness cannot be combined. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        elsif priv_cyclic_mode = CYCLIC then
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution and cyclic mode cannot be combined. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        elsif (v_num_ranges > 1 or v_val_incl_configured = '1' or v_val_excl_configured = '1') then
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution only supported for a single range(min/max) constraint. Using UNIFORM instead.", priv_scope);
+          priv_rand_dist := UNIFORM;
+        end if;
+      end if;
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Cyclic mode not supported for real_vector type. Ignoring cyclic configuration.", priv_scope);
+        priv_cyclic_mode := NON_CYCLIC;
+      end if;
+
+      if priv_uniqueness = NON_UNIQUE then
+        -- Generate a random value for each element of the vector
+        for i in 0 to length-1 loop
+          v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+          exit when not priv_ret_valid;
+        end loop;
+      else -- UNIQUE
+        -- Generate an unique random value for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL_1 & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
+          end loop;
+        end loop;
+      end if;
+
+      -- Restore previous config
+      priv_rand_dist   := C_PREVIOUS_DIST;
+      priv_cyclic_mode := C_PREVIOUS_CYCLIC_MODE;
+
+      log(ID_RAND_GEN, C_LOCAL_CALL_1 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return time_vector is
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_time_constraints(length, is_vector=>true) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_time_constraints.weighted.all) & ")";
+      constant C_PREVIOUS_CYCLIC_MODE : t_cyclic := priv_cyclic_mode;
+      variable v_val_incl_configured  : std_logic;
+      variable v_val_excl_configured  : std_logic;
+      variable v_num_ranges           : natural := priv_time_constraints.ran_incl'length;
+      variable v_gen_new_random       : boolean := true;
+      variable v_ret                  : time_vector(0 to length-1);
+    begin
+      v_val_incl_configured := '1' when priv_time_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured := '1' when priv_time_constraints.val_excl'length > 0 else '0';
+
+      -- Check only time constraints are configured
+      if not(check_configured_constraints("TIME", C_LOCAL_CALL_1, is_config => false)) then
+        return v_ret;
+      end if;
+
+      if priv_time_constraints.weighted_config then
+        alert(TB_ERROR, C_LOCAL_CALL_2 & "=> Weighted randomization not supported for time_vector type.", priv_scope);
+        return v_ret;
+      end if;
+      if priv_rand_dist = GAUSSIAN then
+        alert(TB_ERROR, C_LOCAL_CALL_1 & "=> " & to_upper(to_string(priv_rand_dist)) & " distribution not supported for time_vector type.", priv_scope);
+        return v_ret;
+      end if;
+      if priv_cyclic_mode = CYCLIC then
+        alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Cyclic mode not supported for time_vector type. Ignoring cyclic configuration.", priv_scope);
+        priv_cyclic_mode := NON_CYCLIC;
+      end if;
+
+      if priv_uniqueness = NON_UNIQUE then
+        -- Generate a random value for each element of the vector
+        for i in 0 to length-1 loop
+          v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+          exit when not priv_ret_valid;
+        end loop;
+      else -- UNIQUE
+        -- Generate an unique random value for each element of the vector
+        l_vector : for i in 0 to length-1 loop
+          l_unique : for j in 0 to length*C_NUM_INVALID_TRIES loop
+            v_ret(i) := randm(msg_id_panel, C_LOCAL_CALL_1);
+            exit l_vector when not priv_ret_valid;
+            v_gen_new_random := false when i = 0 else check_value_in_vector(v_ret(i), v_ret(0 to i-1));
+            exit l_unique when not v_gen_new_random;
+            if j = length*C_NUM_INVALID_TRIES then
+              alert(TB_ERROR, C_LOCAL_CALL_1 & "=> The given constraints are not enough to generate unique values for the whole vector", priv_scope);
+              exit l_vector;
+            end if;
+          end loop;
+        end loop;
+      end if;
+
+      -- Restore previous config
+      priv_cyclic_mode := C_PREVIOUS_CYCLIC_MODE;
+
+      log(ID_RAND_GEN, C_LOCAL_CALL_1 & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      return v_ret;
+    end function;
+
+    impure function randm(
+      constant length        : positive;
+      constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel;
+      constant ext_proc_type : string         := "unsigned")
     return unsigned is
       constant C_LOCAL_CALL_1 : string := "randm(" & string'(get_int_constraints(length)) & ")";
       constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
@@ -6125,7 +7002,7 @@ package body rand_pkg is
       v_uns_ran_incl_configured := '1' when priv_uns_constraints.ran_incl'length > 0 else '0';
 
       -- Check only unsigned constraints are configured
-      if not(check_configured_constraints("UNSIGNED", C_LOCAL_CALL_1, is_config => false)) then
+      if not(check_configured_constraints(to_upper(ext_proc_type), C_LOCAL_CALL_1, is_config => false)) then
         return v_ret;
       end if;
 
@@ -6166,10 +7043,10 @@ package body rand_pkg is
           return v_ret;
         end if;
         if priv_cyclic_mode = CYCLIC then
-          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Cyclic mode not supported for unsigned constraints. Ignoring cyclic configuration.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Cyclic mode not supported for " & ext_proc_type & " constraints. Ignoring cyclic configuration.", priv_scope);
         end if;
         if priv_uniqueness = UNIQUE then
-          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Uniqueness not supported for unsigned type. Ignoring uniqueness configuration.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Uniqueness not supported for " & ext_proc_type & " type. Ignoring uniqueness configuration.", priv_scope);
         end if;
         v_ret := randm_ranges(length, msg_id_panel, C_LOCAL_CALL_3);
         log(ID_RAND_GEN, C_LOCAL_CALL_3 & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
@@ -6187,7 +7064,7 @@ package body rand_pkg is
           return v_ret;
         end if;
         if priv_uniqueness = UNIQUE then
-          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Uniqueness not supported for unsigned type. Ignoring uniqueness configuration.", priv_scope);
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Uniqueness not supported for " & ext_proc_type & " type. Ignoring uniqueness configuration.", priv_scope);
         end if;
 
         case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
@@ -6217,6 +7094,131 @@ package body rand_pkg is
       end if;
 
       return v_ret;
+    end function;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return signed is
+      constant C_LOCAL_CALL_1 : string := "randm(" & get_int_constraints(length) & ")";
+      constant C_LOCAL_CALL_2 : string := "randm(" & to_string(priv_int_constraints.weighted.all) & ")";
+      constant C_LOCAL_CALL_3 : string := "randm(" & get_sig_constraints(length) & ")";
+      variable v_ran_incl_configured     : std_logic;
+      variable v_val_incl_configured     : std_logic;
+      variable v_val_excl_configured     : std_logic;
+      variable v_sig_ran_incl_configured : std_logic;
+      variable v_ret_int                 : integer;
+      variable v_ret                     : signed(length-1 downto 0);
+      variable v_check_ok                : boolean := true;
+    begin
+      v_ran_incl_configured     := '1' when priv_int_constraints.ran_incl'length > 0 else '0';
+      v_val_incl_configured     := '1' when priv_int_constraints.val_incl'length > 0 else '0';
+      v_val_excl_configured     := '1' when priv_int_constraints.val_excl'length > 0 else '0';
+      v_sig_ran_incl_configured := '1' when priv_sig_constraints.ran_incl'length > 0 else '0';
+
+      -- Check only signed constraints are configured
+      if not(check_configured_constraints("SIGNED", C_LOCAL_CALL_1, is_config => false)) then
+        return v_ret;
+      end if;
+
+      ----------------------------------------
+      -- WEIGHTED
+      ----------------------------------------
+      if priv_int_constraints.weighted_config then
+        for i in 0 to priv_int_constraints.weighted'length-1 loop
+          if priv_int_constraints.weighted(i).min_value = priv_int_constraints.weighted(i).max_value then
+            v_check_ok := v_check_ok and check_parameters_within_range(length, (0 => priv_int_constraints.weighted(i).min_value), C_LOCAL_CALL_2, signed_values => true);
+          else
+            v_check_ok := v_check_ok and check_parameters_within_range(length, priv_int_constraints.weighted(i).min_value, priv_int_constraints.weighted(i).max_value, C_LOCAL_CALL_2, signed_values => true);
+          end if;
+        end loop;
+        if not v_check_ok then
+          return v_ret;
+        end if;
+        check_value(v_val_excl_configured = '0', TB_WARNING, "Exclude constraint and weighted randomization cannot be combined. Ignoring exclude constraint.",
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
+        check_value(priv_cyclic_mode /= CYCLIC, TB_WARNING, "Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.",
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
+        check_value(priv_uniqueness /= UNIQUE, TB_WARNING, "Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness configuration.",
+          priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL_2);
+        v_ret_int := rand_range_weight_mode(priv_int_constraints.weighted.all, msg_id_panel, C_LOCAL_CALL_2);
+        v_ret     := to_signed(v_ret_int,length);
+        log(ID_RAND_GEN, C_LOCAL_CALL_2 & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+        return v_ret;
+      end if;
+
+      ----------------------------------------
+      -- SIGNED CONSTRAINTS
+      ----------------------------------------
+      if v_sig_ran_incl_configured then
+        for i in 0 to priv_sig_constraints.ran_incl'length-1 loop
+          v_check_ok := v_check_ok and check_parameters_within_range(length, priv_sig_constraints.ran_incl(i).min_value, priv_sig_constraints.ran_incl(i).max_value, C_LOCAL_CALL_3);
+        end loop;
+        if not v_check_ok then
+          return v_ret;
+        end if;
+        if priv_cyclic_mode = CYCLIC then
+          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Cyclic mode not supported for signed constraints. Ignoring cyclic configuration.", priv_scope);
+        end if;
+        if priv_uniqueness = UNIQUE then
+          alert(TB_WARNING, C_LOCAL_CALL_3 & "=> Uniqueness not supported for signed type. Ignoring uniqueness configuration.", priv_scope);
+        end if;
+        v_ret := randm_ranges(length, msg_id_panel, C_LOCAL_CALL_3);
+        log(ID_RAND_GEN, C_LOCAL_CALL_3 & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+
+      ----------------------------------------
+      -- INTEGER CONSTRAINTS
+      ----------------------------------------
+      else
+        for i in 0 to priv_int_constraints.ran_incl'length-1 loop
+          v_check_ok := v_check_ok and check_parameters_within_range(length, priv_int_constraints.ran_incl(i).min_value, priv_int_constraints.ran_incl(i).max_value, C_LOCAL_CALL_1, signed_values => true);
+        end loop;
+        v_check_ok := v_check_ok and check_parameters_within_range(length, priv_int_constraints.val_incl.all, C_LOCAL_CALL_1, signed_values => true);
+        v_check_ok := v_check_ok and check_parameters_within_range(length, priv_int_constraints.val_excl.all, C_LOCAL_CALL_1, signed_values => true);
+        if not v_check_ok then
+          return v_ret;
+        end if;
+        if priv_uniqueness = UNIQUE then
+          alert(TB_WARNING, C_LOCAL_CALL_1 & "=> Uniqueness not supported for signed type. Ignoring uniqueness configuration.", priv_scope);
+        end if;
+
+        case unsigned'(v_ran_incl_configured & v_val_incl_configured & v_val_excl_configured) is
+          ----------------------------------------
+          -- RANGE | SET OF VALUES | RANGE + SET OF VALUES | RANGE + EXCLUDE | SET OF VALUES + EXCLUDE | RANGE + SET OF VALUES + EXCLUDE
+          ----------------------------------------
+          when "100" | "010" | "110" | "101" | "011" | "111" =>
+            v_ret_int := randm(msg_id_panel, C_LOCAL_CALL_1);
+            v_ret     := to_signed(v_ret_int,length);
+          ----------------------------------------
+          -- EXCLUDE
+          ----------------------------------------
+          when "001" =>
+            v_ret := rand(length, EXCL, priv_int_constraints.val_excl.all, priv_cyclic_mode, msg_id_panel, C_LOCAL_CALL_1);
+          ----------------------------------------
+          -- NO CONSTRAINTS
+          ----------------------------------------
+          when "000" =>
+            v_ret := rand(length, priv_cyclic_mode, msg_id_panel, C_LOCAL_CALL_1);
+
+          when others =>
+            alert(TB_ERROR, C_LOCAL_CALL_1 & "=> Unexpected constraints: " & to_string(signed'(v_ran_incl_configured & v_val_incl_configured &
+              v_val_excl_configured)), priv_scope);
+            return v_ret;
+        end case;
+        log(ID_RAND_GEN, C_LOCAL_CALL_1 & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
+      end if;
+
+      return v_ret;
+    end function;
+
+    impure function randm(
+      constant length       : positive;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
+    return std_logic_vector is
+      variable v_ret : unsigned(length-1 downto 0);
+    begin
+      v_ret := randm(length, msg_id_panel, "slv");
+      return std_logic_vector(v_ret);
     end function;
 
   end protected body t_rand;

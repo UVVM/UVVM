@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>General Randomization &mdash; General Randomization and Functional Coverage 0.0.1 documentation</title>
+  <title>Enhanced Randomization &mdash; Randomization and Functional Coverage 0.0.1 documentation</title>
   
 
   
@@ -42,7 +42,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="t_rand (protected)" href="rand_pkg_t_rand.html" />
-    <link rel="prev" title="General Randomization and Functional Coverage" href="index.html" /> 
+    <link rel="prev" title="Randomization and Functional Coverage" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,7 +92,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">General Randomization</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Enhanced Randomization</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#single-method-approach">Single-method approach</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#constraints">Constraints</a></li>
@@ -125,6 +125,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Info</a></li>
 </ul>
 
             
@@ -140,7 +141,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">General Randomization and Functional Coverage</a>
+          <a href="index.html">Randomization and Functional Coverage</a>
         
       </nav>
 
@@ -173,7 +174,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>General Randomization</li>
+      <li>Enhanced Randomization</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -192,16 +193,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="general-randomization">
-<h1>General Randomization<a class="headerlink" href="#general-randomization" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="enhanced-randomization">
+<h1>Enhanced Randomization<a class="headerlink" href="#enhanced-randomization" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="getting-started">
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
-<p>All the functionality for <strong>General Randomization</strong>, using protected types, can be found in <em>uvvm_util/src/rand_pkg.vhd</em>. For more
+<p>All the functionality for <strong>Enhanced Randomization</strong>, using protected types, can be found in <em>uvvm_util/src/rand_pkg.vhd</em>. For more
 information on protected types see <strong>link</strong>.</p>
 <p>For more simple functionality, not using protected types, the <strong>Basic Randomization</strong> can be found in <em>uvvm_util/src/methods_pkg.vhd</em>.</p>
 <p>For a more balanced randomization between small and large ranges/sets, the <a class="reference internal" href="optimized_rand.html#optimized-randomization"><span class="std std-ref">Optimized Randomization</span></a> under <em>uvvm_util/src/func_cov_pkg.vhd</em>
 may be used.</p>
-<p>To generate a random value using General Randomization it is necessary to import the utility library, create a variable with the
+<p>To generate a random value using Enhanced Randomization it is necessary to import the utility library, create a variable with the
 protected type <em>t_rand</em> and call either the <code class="docutils literal notranslate"><span class="pre">rand()</span></code> or the <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function from the variable depending on which approach
 is being used:</p>
 <p><strong>1. Single-method approach:</strong> The <code class="docutils literal notranslate"><span class="pre">rand()</span></code> function is constrained by the parameters it receives plus additional configuration
@@ -309,7 +310,7 @@ combinations of different constraints, such as multiple ranges.</p>
 <span class="n">rand_bool</span>     <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The unsigned, signed and std_logic_vector functions can return vectors of any size, however the min and max constraints are
+<p>The unsigned, signed and std_logic_vector functions can return vectors of any length, however the min and max constraints are
 limited by the integer’s 32-bit range. Additional overloads for these types using unsigned/signed/std_logic_vector corresponding
 min and max constraints are provided as well.</p>
 <blockquote>
@@ -319,18 +320,22 @@ min and max constraints are provided as well.</p>
 <li><p><a class="reference internal" href="rand_pkg_t_rand.html#rand-slv-long"><span class="std std-ref">std_logic_vector</span></a></p></li>
 </ul>
 </div></blockquote>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">rand_uns</span>  <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
-<span class="n">rand_uns</span>  <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
-<span class="n">rand_sign</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
-<span class="n">rand_sign</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>
-<span class="n">rand_slv</span>  <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>                   <span class="c1">-- SLV is interpreted as unsigned</span>
-<span class="n">rand_slv</span>  <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_RANGE</span><span class="p">,</span> <span class="n">v_max_range</span><span class="p">);</span>  <span class="c1">-- SLV is interpreted as unsigned</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">rand_uns</span>  <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_sign</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_slv</span>  <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span> <span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>  <span class="c1">-- SLV is interpreted as unsigned</span>
+
+<span class="c1">-- In the following overloads, the length of the return value is equal to the largest length of the 2 parameters</span>
+<span class="n">rand_uns</span>  <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_sign</span> <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_slv</span>  <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span> <span class="n">v_max_value</span><span class="p">);</span> <span class="c1">-- SLV is interpreted as unsigned</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="multi-method-approach">
 <h2>Multi-method approach<a class="headerlink" href="#multi-method-approach" title="Permalink to this headline">¶</a></h2>
+<p>Using the single-method approach does not have any effect on the multi-method approach or vice-versa. However, for readability it
+is not recommended to mix them.</p>
 <div class="section" id="id1">
 <h3>Constraints<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>By using the following procedures, different combinations of constraints can be added for the <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function. Note that when
@@ -399,7 +404,11 @@ reusing the same <em>my_rand</em> variable, the <code class="docutils literal no
 constraints: <code class="docutils literal notranslate"><span class="pre">add_range_time()</span></code>, <code class="docutils literal notranslate"><span class="pre">add_val_time()</span></code> and <code class="docutils literal notranslate"><span class="pre">excl_val_time()</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>There is no limit on the number of constraints that can be added.</p>
+<ul class="simple">
+<li><p>There is no limit on the number of constraints which can be added.</p></li>
+<li><p>The order in which the constraints are added does not matter.</p></li>
+<li><p>If a value is repeated in different “add” constraints, the probability of that value being selected will increase.</p></li>
+</ul>
 </div>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
@@ -454,9 +463,9 @@ generated. The procedure <code class="docutils literal notranslate"><span class=
 <span class="n">rand_slv</span>      <span class="o">:=</span> <span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">);</span> <span class="c1">-- SLV is interpreted as unsigned</span>
 </pre></div>
 </div>
-<p>The unsigned, signed and std_logic_vector functions can return vectors of any size, however the integer constraints are limited
+<p>The unsigned, signed and std_logic_vector functions can return vectors of any length, however the integer constraints are limited
 to a 32-bit range. Additional overloads for adding range constraints using unsigned/signed types are provided as well. The
-maximum size of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg.</p>
+maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENGTH in adaptations_pkg.</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="rand_pkg_t_rand.html#add-range-unsigned"><span class="std std-ref">unsigned</span></a></p></li>
@@ -805,8 +814,8 @@ The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined i
 <h2>Additional info<a class="headerlink" href="#additional-info" title="Permalink to this headline">¶</a></h2>
 <p>Log messages within the procedures and functions in the <em>rand_pkg</em> use the following message IDs (disabled by default):</p>
 <ul class="simple">
-<li><p>ID_RAND_GEN: Used for logging “General Randomization” values returned by <code class="docutils literal notranslate"><span class="pre">rand()/randm()</span></code>.</p></li>
-<li><p>ID_RAND_CONF: Used for logging “General Randomization” configuration changes, except from name and scope.</p></li>
+<li><p>ID_RAND_GEN: Used for logging “Enhanced Randomization” values returned by <code class="docutils literal notranslate"><span class="pre">rand()/randm()</span></code>.</p></li>
+<li><p>ID_RAND_CONF: Used for logging “Enhanced Randomization” configuration changes, except from name and scope.</p></li>
 </ul>
 <p>The default scope for log messages in the <em>rand_pkg</em> is C_TB_SCOPE_DEFAULT and it can be updated using the procedure <code class="docutils literal notranslate"><span class="pre">set_scope()</span></code>.
 The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.</p>
@@ -832,7 +841,7 @@ The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these c
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="rand_pkg_t_rand.html" class="btn btn-neutral float-right" title="t_rand (protected)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="index.html" class="btn btn-neutral float-left" title="General Randomization and Functional Coverage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Randomization and Functional Coverage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

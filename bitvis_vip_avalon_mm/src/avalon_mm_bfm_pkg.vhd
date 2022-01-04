@@ -601,7 +601,7 @@ package body avalon_mm_bfm_pkg is
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after v_clock_period/4;
 
     if ext_proc_call = "" then
-      log(ID_BFM, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
       -- Log will be handled by calling procedure (e.g. avalon_mm_check)
     end if;

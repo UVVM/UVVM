@@ -9,6 +9,12 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2022.XX.XX
+--------------------
+Released: 2022-XX-XX
+- Use correct message ID for avalon_mm_read_request() log in BFM.
+
+
 v2 2021.11.12
 --------------------
 Released: 2021-11-12

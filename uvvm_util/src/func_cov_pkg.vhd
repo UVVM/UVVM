@@ -1043,6 +1043,7 @@ package body func_cov_pkg is
     variable priv_invalid_bins                  : t_cov_bin_vector_ptr                          := new t_cov_bin_vector(0 to C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED-1);
     variable priv_invalid_bins_idx              : natural                                       := 0;
     variable priv_num_bins_crossed              : integer                                       := C_UNINITIALIZED;
+    variable priv_sampled_coverpoint            : boolean                                       := false;
     variable priv_rand_gen                      : t_rand;
     variable priv_rand_transition_bin_idx       : integer                                       := C_UNINITIALIZED;
     variable priv_rand_transition_bin_value_idx : t_natural_vector(0 to C_MAX_NUM_CROSS_BINS-1) := (others => 0);
@@ -1313,6 +1314,8 @@ package body func_cov_pkg is
     begin
       initialize_coverpoint(local_call);
 
+        check_value(not priv_sampled_coverpoint, TB_WARNING, "Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be correct.",
+          priv_scope, ID_NEVER, caller_name => local_call);
       check_value(coverpoint1_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 1 is empty", priv_scope, ID_NEVER, caller_name => local_call);
       check_value(coverpoint2_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 2 is empty", priv_scope, ID_NEVER, caller_name => local_call);
       check_value(coverpoint3_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 3 is empty", priv_scope, ID_NEVER, caller_name => local_call);
@@ -1789,12 +1792,12 @@ package body func_cov_pkg is
         writeline(file_handler, v_line);
       end procedure;
 
-      --procedure write_value(
-      --  constant value : in boolean) is
-      --begin
-      --  write(v_line, value);
-      --  writeline(file_handler, v_line);
-      --end procedure;
+      procedure write_value(
+        constant value : in boolean) is
+      begin
+        write(v_line, value);
+        writeline(file_handler, v_line);
+      end procedure;
 
       procedure write_bins(
         constant bin_idx    : in natural;
@@ -1829,6 +1832,7 @@ package body func_cov_pkg is
         write_value(priv_name);
         write_value(priv_scope);
         write_value(priv_num_bins_crossed);
+        write_value(priv_sampled_coverpoint);
         write_value(integer_vector(priv_rand_gen.get_rand_seeds(VOID)));
         write_value(priv_rand_transition_bin_idx);
         write_value(integer_vector(priv_rand_transition_bin_value_idx));
@@ -1896,12 +1900,12 @@ package body func_cov_pkg is
         read(v_line, value);
       end procedure;
 
-      --procedure read_value(
-      --  variable value : out boolean) is
-      --begin
-      --  readline(file_handler, v_line);
-      --  read(v_line, value);
-      --end procedure;
+      procedure read_value(
+        variable value : out boolean) is
+      begin
+        readline(file_handler, v_line);
+        read(v_line, value);
+      end procedure;
 
       procedure read_bins(
         constant bin_idx    : in    natural;
@@ -1961,6 +1965,7 @@ package body func_cov_pkg is
       read_value(priv_num_bins_crossed);
       check_value(priv_num_bins_crossed <= C_MAX_NUM_CROSS_BINS, TB_FAILURE, "Cannot load the " & to_string(priv_num_bins_crossed) & " crossed bins. Increase C_MAX_NUM_CROSS_BINS",
         priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      read_value(priv_sampled_coverpoint);
       read_value(v_rand_seeds);
       priv_rand_gen.set_rand_seeds(t_positive_vector(v_rand_seeds));
       read_value(priv_rand_transition_bin_idx);
@@ -2036,6 +2041,7 @@ package body func_cov_pkg is
         protected_covergroup_status.set_total_goal_bin_hits(priv_id, 0);
         protected_covergroup_status.set_total_bin_hits(priv_id, 0);
       end if;
+      priv_sampled_coverpoint := false;
     end procedure;
 
     procedure set_num_allocated_bins(
@@ -2082,6 +2088,7 @@ package body func_cov_pkg is
       priv_invalid_bins                  := new t_cov_bin_vector(0 to C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED-1);
       priv_invalid_bins_idx              := 0;
       priv_num_bins_crossed              := C_UNINITIALIZED;
+      priv_sampled_coverpoint            := false;
       priv_rand_gen.set_rand_seeds(C_RAND_INIT_SEED_1, C_RAND_INIT_SEED_2);
       priv_rand_transition_bin_idx       := C_UNINITIALIZED;
       priv_rand_transition_bin_value_idx := (others => 0);
@@ -2886,7 +2893,9 @@ package body func_cov_pkg is
           priv_bins(i).transition_mask := (others => '0');
         end loop;
       end if;
+
       DEALLOCATE(v_proc_call);
+      priv_sampled_coverpoint := true;
     end procedure;
 
     impure function get_coverage(

@@ -255,6 +255,11 @@ it before the sequencer has added the bins, the testbench will generate a TB_ERR
     my_coverpoint.sample_coverage(read_addr);
     ...
 
+.. note::
+
+    It is recommended to add all the bins at the beginning of the testbench (time 0 ns) to avoid adding any bins after the coverpoint 
+    has been sampled. If this happens, a TB_WARNING alert will be generated because some bins might have incomplete coverage.
+
 Bin memory allocation
 ==================================================================================================================================
 For users who want more control over the memory usage during simulation, it is possible to configure how large the bin list is 
@@ -409,6 +414,11 @@ Sampling coverage
 The procedure ``sample_coverage()`` is used to collect coverage in a coverpoint (using integer parameter) or a cross (using 
 integer_vector parameter). This will increment the number of hits in the bin containing the sampled value. Once the number of hits 
 in a bin has reached the minimum coverage, the bin will be marked as covered.
+
+.. important::
+
+    It is not recommended to add more bins after sampling a coverpoint, since the new bins will be missing any previous sampled
+    coverage. A TB_WARNING alert is generated whenever this occurs.
 
 Overlapping bins
 ==================================================================================================================================
@@ -857,6 +867,7 @@ The database for a coverpoint is stored using the following file format:
     [coverpoint_name]
     [scope]
     [number_of_bins_crossed]
+    [sampled_coverpoint]
     [randomization_seed_1] [randomization_seed_2]
     [transition_bin_idx]
     [transition_bin_value_idx_1] [transition_bin_value_idx_2] ... [transition_bin_value_idx_n]

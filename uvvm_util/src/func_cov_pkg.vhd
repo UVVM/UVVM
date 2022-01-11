@@ -237,9 +237,10 @@ package func_cov_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure load_coverage_db(
-      constant file_name        : in string;
-      constant report_verbosity : in t_report_verbosity := HOLES_ONLY;
-      constant msg_id_panel     : in t_msg_id_panel     := shared_msg_id_panel);
+      constant file_name                : in string;
+      constant alert_level_if_not_found : in t_alert_level      := TB_ERROR;
+      constant report_verbosity         : in t_report_verbosity := HOLES_ONLY;
+      constant msg_id_panel             : in t_msg_id_panel     := shared_msg_id_panel);
 
     procedure clear_coverage(
       constant VOID : in t_void);
@@ -1863,9 +1864,10 @@ package body func_cov_pkg is
     end procedure;
 
     procedure load_coverage_db(
-      constant file_name        : in string;
-      constant report_verbosity : in t_report_verbosity := HOLES_ONLY;
-      constant msg_id_panel     : in t_msg_id_panel     := shared_msg_id_panel) is
+      constant file_name                : in string;
+      constant alert_level_if_not_found : in t_alert_level      := TB_ERROR;
+      constant report_verbosity         : in t_report_verbosity := HOLES_ONLY;
+      constant msg_id_panel             : in t_msg_id_panel     := shared_msg_id_panel) is
       constant C_LOCAL_CALL  : string := "load_coverage_db(" & file_name & ")";
       file file_handler      : text;
       variable v_open_status : file_open_status;
@@ -1944,7 +1946,7 @@ package body func_cov_pkg is
 
       file_open(v_open_status, file_handler, file_name, read_mode);
       if v_open_status /= open_ok then
-        alert(TB_WARNING, C_LOCAL_CALL & "=> Cannot open file: " & file_name, priv_scope);
+        alert(alert_level_if_not_found, C_LOCAL_CALL & "=> Cannot open file: " & file_name, priv_scope);
         return;
       end if;
 

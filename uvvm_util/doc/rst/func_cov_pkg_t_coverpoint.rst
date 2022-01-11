@@ -301,27 +301,31 @@ Writes the coverpoint model, configuration and accumulated counters to a file. :
 
 load_coverage_db()
 ----------------------------------------------------------------------------------------------------------------------------------
-Loads the coverpoint model, configuration and accumulated counters from a file. ::
+Loads the coverpoint model, configuration and accumulated counters from a file. It also prints a coverage report for the loaded
+coverpoint. ::
 
-    load_coverage_db(file_name, [report_verbosity, [msg_id_panel]])
+    load_coverage_db(file_name, [alert_level_if_not_found, [report_verbosity, [msg_id_panel]]])
 
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| Object   | Name               | Dir.   | Type                         | Description                                           |
-+==========+====================+========+==============================+=======================================================+
-| constant | file_name          | in     | string                       | Name of the file where the coverpoint data is stored  |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | report_verbosity   | in     | :ref:`t_report_verbosity`    | Verbosity of the coverage report printed when the     |
-|          |                    |        |                              | coverpoint is loaded. Default value is HOLES_ONLY.    |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
-|          |                    |        |                              | value is shared_msg_id_panel.                         |
-+----------+--------------------+--------+------------------------------+-------------------------------------------------------+
++----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
+| Object   | Name                     | Dir.   | Type                         | Description                                           |
++==========+==========================+========+==============================+=======================================================+
+| constant | file_name                | in     | string                       | Name of the file where the coverpoint data is stored  |
++----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | alert_level_if_not_found | in     | t_alert_level                | Sets the severity of the alert when the file is not   |
+|          |                          |        |                              | found. Default value is TB_ERROR.                     |
++----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | report_verbosity         | in     | :ref:`t_report_verbosity`    | Verbosity of the coverage report printed when the     |
+|          |                          |        |                              | coverpoint is loaded. Default value is HOLES_ONLY.    |
++----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | msg_id_panel             | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
+|          |                          |        |                              | value is shared_msg_id_panel.                         |
++----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
 
 .. code-block::
 
     -- Example:
     my_coverpoint.load_coverage_db("my_coverpoint_db.txt");
-    my_coverpoint.load_coverage_db("my_coverpoint_db.txt", VERBOSE);
+    my_coverpoint.load_coverage_db("my_coverpoint_db.txt", TB_NOTE, VERBOSE);
 
 
 clear_coverage()

@@ -792,14 +792,11 @@ that this must be done for every coverpoint in the testbench and they must be wr
     * Loading a database into a coverpoint will overwrite all its information, therefore it is suggested to always load before 
       sampling coverage or adding any extra bins.
     * If a database is loaded into a coverpoint which is already initialized, a TB_WARNING will be generated.
+    * If the file to be loaded is not found, a TB_ERROR will be generated.
 
 *Example 2: There is a single testcase file which is run using different generics in a specified order.*
 
-* Same as Example 1, but using the generics to identify the first TC which should not load the database.
-
-.. note::
-
-    If a file is not found when trying to load, a TB_WARNING will be generated.
+* Same steps as Example 1, but using the generics to identify the first TC which should add the bins instead of loading the database.
 
 *Example 3: The testcases are run in parallel.*
 

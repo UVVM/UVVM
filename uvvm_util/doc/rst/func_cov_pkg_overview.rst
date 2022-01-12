@@ -806,7 +806,7 @@ that this must be done for every coverpoint in the testbench and they must be wr
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
 
-*Example 1: The testcases are in different files and are run in a specified order.*
+*Example 1: The testcases are run in a specified order.*
 
 #. TC_1 adds bins to a coverpoint, samples coverage and writes the database to "coverpoint_1.txt".
 #. TC_2 loads the database from "coverpoint_1.txt", samples coverage and writes the updated database to "coverpoint_1.txt", which 
@@ -817,14 +817,20 @@ that this must be done for every coverpoint in the testbench and they must be wr
 
     If the file to be loaded is not found, a TB_ERROR will be generated.
 
-*Example 2: There is a single testcase file which is run using different generics in a specified order.*
+*Example 2: The testcases are run in a random sequence.*
 
-* Same steps as Example 1, but using the generics to identify the first TC which should add the bins instead of loading the database.
+#. Each TC adds bins to a coverpoint, loads the database from "coverpoint_1.txt", samples coverage and writes the updated database
+   back to the same file "coverpoint_1.txt".
+
+.. note::
+
+    In this example, the first testcase run will not find any database file so the *alert_level_if_not_found* parameter in 
+    ``load_coverage_db()`` must be set to TB_NOTE or NO_ALERT for every testcase so the simulation can complete successfuly.
 
 *Example 3: The testcases are run in parallel.*
 
 #. Each TC adds bins to a coverpoint, samples coverage and writes the database to a different file.
-#. After all simulations are done, use a script to merge the database files.
+#. After all simulations are done, use a script to merge the database files for the given coverpoint.
 
 .. note::
 

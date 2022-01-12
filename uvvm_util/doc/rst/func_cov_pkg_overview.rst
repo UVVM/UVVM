@@ -417,8 +417,8 @@ in a bin has reached the minimum coverage, the bin will be marked as covered.
 
 .. important::
 
-    It is NOT recommended to add more bins after sampling a coverpoint, since the new bins will be missing any previous sampled
-    coverage. A TB_WARNING alert is generated whenever this occurs.
+    It is NOT recommended to add more bins to a given coverpoint after it has been sampled, since the new bins will be missing any 
+    previous sampled coverage. A TB_WARNING alert is generated whenever this occurs.
 
 Overlapping bins
 ==================================================================================================================================
@@ -780,12 +780,23 @@ accumulated counters at the end of one testcase and load it at the beginning of 
 which writes all the necessary information to a file and ``load_coverage_db()`` which reads it back into a new coverpoint. Note 
 that this must be done for every coverpoint in the testbench and they must be written to separate files.
 
+When using ``load_coverage_db()``, the following applies for the given coverpoint:
+
+    * The complete configuration is overwritten.
+    * The bins matching with the loaded bins (same type, values, min_hits and rand_weight) are also overwritten.
+    * Any loaded bins which are not found in the given coverpoint are added.
+    * Any bins in the given coverpoint which are not found in the loaded coverpoint are kept. However, depending on the 
+      *new_bins_acceptance* parameter, an alert can be generated whenever this occurs. The default behaviour is to generate a 
+      TB_WARNING alert to ensure that all the testcases collect coverage from the same bins. However, for instance when running 
+      two testcases in a certain order, one might add extra bins in the second testcase which are irrelevant for the first one, 
+      and in this case the alert can be removed.
+
 .. important::
 
-    * It is NOT recommended to add more bins after loading the database in a coverpoint to avoid creating duplicate bins. A 
+    * It is NOT recommended to add more bins to a given coverpoint after loading the database to avoid creating duplicate bins. A 
       TB_WARNING alert is generated whenever this occurs.
-    * It is NOT recommended to sample a coverpoint before loading the database since that coverage will be ovewritten. A TB_WARNING 
-      alert is generated whenever this occurs.
+    * It is NOT recommended to sample a coverpoint before loading the database since that coverage will be overwritten. A 
+      TB_WARNING alert is generated whenever this occurs.
 
 .. hint::
     When loading a database, the coverage report will be written to the log. In this case, it also contains the number of TC that 
@@ -825,7 +836,7 @@ that this must be done for every coverpoint in the testbench and they must be wr
 .. note::
 
     In this example, the first testcase run will not find any database file so the *alert_level_if_not_found* parameter in 
-    ``load_coverage_db()`` must be set to TB_NOTE or NO_ALERT for every testcase so the simulation can complete successfuly.
+    ``load_coverage_db()`` must be set to TB_NOTE or NO_ALERT for every testcase so the simulation can complete successfully.
 
 *Example 3: The testcases are run in parallel.*
 

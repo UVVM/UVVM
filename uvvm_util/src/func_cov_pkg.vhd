@@ -39,6 +39,7 @@ package func_cov_pkg is
   type t_coverage_type is (BINS, HITS, BINS_AND_HITS);
   type t_overall_coverage_type is (COVPTS, BINS, HITS);
   type t_rand_sample_cov is (SAMPLE_COV, NO_SAMPLE_COV);
+  type t_new_bins_acceptance is (NO_ALERT_ON_NEW_BINS, WARNING_ON_NEW_BINS, ERROR_ON_NEW_BINS);
   type t_cov_bin_type is (VAL, VAL_IGNORE, VAL_ILLEGAL, RAN, RAN_IGNORE, RAN_ILLEGAL, TRN, TRN_IGNORE, TRN_ILLEGAL);
 
   type t_new_bin is record
@@ -238,9 +239,10 @@ package func_cov_pkg is
 
     procedure load_coverage_db(
       constant file_name                : in string;
-      constant alert_level_if_not_found : in t_alert_level      := TB_ERROR;
-      constant report_verbosity         : in t_report_verbosity := HOLES_ONLY;
-      constant msg_id_panel             : in t_msg_id_panel     := shared_msg_id_panel);
+      constant new_bins_acceptance      : in t_new_bins_acceptance := WARNING_ON_NEW_BINS;
+      constant alert_level_if_not_found : in t_alert_level         := TB_ERROR;
+      constant report_verbosity         : in t_report_verbosity    := HOLES_ONLY;
+      constant msg_id_panel             : in t_msg_id_panel        := shared_msg_id_panel);
 
     procedure clear_coverage(
       constant VOID : in t_void);
@@ -1871,16 +1873,18 @@ package body func_cov_pkg is
 
     procedure load_coverage_db(
       constant file_name                : in string;
-      constant alert_level_if_not_found : in t_alert_level      := TB_ERROR;
-      constant report_verbosity         : in t_report_verbosity := HOLES_ONLY;
-      constant msg_id_panel             : in t_msg_id_panel     := shared_msg_id_panel) is
-      constant C_LOCAL_CALL  : string := "load_coverage_db(" & file_name & ")";
-      file file_handler      : text;
-      variable v_open_status : file_open_status;
-      variable v_line        : line;
-      variable v_value       : integer;
-      variable v_rand_seeds  : integer_vector(0 to 1);
+      constant new_bins_acceptance      : in t_new_bins_acceptance := WARNING_ON_NEW_BINS;
+      constant alert_level_if_not_found : in t_alert_level         := TB_ERROR;
+      constant report_verbosity         : in t_report_verbosity    := HOLES_ONLY;
+      constant msg_id_panel             : in t_msg_id_panel        := shared_msg_id_panel) is
+      constant C_LOCAL_CALL      : string := "load_coverage_db(" & file_name & ")";
+      file file_handler          : text;
+      variable v_open_status     : file_open_status;
+      variable v_line            : line;
+      variable v_value           : integer;
+      variable v_rand_seeds      : integer_vector(0 to 1);
       variable v_rand_transition_bin_value_idx : integer_vector(0 to C_MAX_NUM_CROSS_BINS-1);
+      variable v_loaded_bins_idx : natural;
 
       procedure read_value(
         variable value : out integer) is
@@ -1916,33 +1920,69 @@ package body func_cov_pkg is
       end procedure;
 
       procedure read_bins(
-        constant bins_idx    : in    natural;
-        variable bins_vector : inout t_cov_bin_vector_ptr) is
-        variable v_contains   : integer;
-        variable v_num_values : integer;
+        variable bins_idx        : inout natural;
+        variable bins_vector     : inout t_cov_bin_vector_ptr;
+        constant loaded_bins_idx : in    natural) is
+        variable v_loaded_bins : t_cov_bin_vector(0 to loaded_bins_idx-1);
+        variable v_contains    : integer;
+        variable v_num_values  : integer;
+        variable v_alert_level : t_alert_level;
       begin
-        if bins_idx > bins_vector'length-1 then
-          resize_bin_vector(bins_vector, bins_idx);
-        end if;
-        for i in 0 to bins_idx-1 loop
+        -- Read all the bins and copy them to a temporary variable
+        for i in 0 to loaded_bins_idx-1 loop
           readline(file_handler, v_line);
-          read(v_line, bins_vector(i).name);  -- read() crops the string
+          read(v_line, v_loaded_bins(i).name);  -- read() crops the string
           readline(file_handler, v_line);
-          read(v_line, bins_vector(i).hits);
-          read(v_line, bins_vector(i).min_hits);
-          read(v_line, bins_vector(i).rand_weight);
+          read(v_line, v_loaded_bins(i).hits);
+          read(v_line, v_loaded_bins(i).min_hits);
+          read(v_line, v_loaded_bins(i).rand_weight);
           for j in 0 to priv_num_bins_crossed-1 loop
             readline(file_handler, v_line);
             read(v_line, v_contains);
-            bins_vector(i).cross_bins(j).contains := t_cov_bin_type'val(v_contains);
+            v_loaded_bins(i).cross_bins(j).contains := t_cov_bin_type'val(v_contains);
             read(v_line, v_num_values);
             check_value(v_num_values <= C_FC_MAX_NUM_BIN_VALUES, TB_FAILURE, "Cannot load the " & to_string(v_num_values) & " bin values. Increase C_FC_MAX_NUM_BIN_VALUES",
               priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-            bins_vector(i).cross_bins(j).num_values := v_num_values;
+            v_loaded_bins(i).cross_bins(j).num_values := v_num_values;
             for k in 0 to v_num_values-1 loop
-              read(v_line, bins_vector(i).cross_bins(j).values(k));
+              read(v_line, v_loaded_bins(i).cross_bins(j).values(k));
             end loop;
           end loop;
+        end loop;
+
+        -- Resize the bin vector in case it's not big enough
+        if (bins_idx + loaded_bins_idx) > bins_vector'length-1 then
+          resize_bin_vector(bins_vector, (bins_idx + loaded_bins_idx));
+        end if;
+
+        -- Iterate through the current bins and compare them with the loaded bins
+        for i in 0 to bins_idx-1 loop
+          for j in 0 to v_loaded_bins'length-1 loop
+            -- Match only the unique elements in the bin
+            if bins_vector(i).cross_bins = v_loaded_bins(j).cross_bins and bins_vector(i).min_hits = v_loaded_bins(j).min_hits and
+               bins_vector(i).rand_weight = v_loaded_bins(j).rand_weight
+            then
+              -- Overwrite the rest of the elements in the bin using the loaded data
+              bins_vector(i).name := v_loaded_bins(j).name;
+              bins_vector(i).hits := v_loaded_bins(j).hits;
+              -- Delete the bin from the loaded bins
+              v_loaded_bins(j).cross_bins(0).num_values := 0;
+              exit;
+            -- Generate an alert if the current bin was not found in the loaded bins
+            elsif j = v_loaded_bins'length-1 and new_bins_acceptance /= NO_ALERT_ON_NEW_BINS then
+              v_alert_level := TB_ERROR when new_bins_acceptance = ERROR_ON_NEW_BINS else TB_WARNING;
+              alert(v_alert_level, C_LOCAL_CALL & "=> bin[" & get_bin_values(bins_vector(i)) & ", min_hits:" & to_string(bins_vector(i).min_hits) &
+                ", rand_weight:" & to_string(bins_vector(i).rand_weight) & "] not found in loaded database. Coverage for this bin might not be correct.", priv_scope);
+            end if;
+          end loop;
+        end loop;
+
+        -- Add any extra loaded bins not found in the current bins
+        for i in 0 to v_loaded_bins'length-1 loop
+          if v_loaded_bins(i).cross_bins(0).num_values /= 0 then
+            bins_vector(bins_idx) := v_loaded_bins(i);
+            bins_idx := bins_idx + 1;
+          end if;
         end loop;
       end procedure;
 
@@ -2012,10 +2052,10 @@ package body func_cov_pkg is
       read_value(v_value);
       protected_covergroup_status.set_covpts_coverage_goal(v_value);
       -- Bin structure
-      read_value(priv_bins_idx);
-      read_bins(priv_bins_idx, priv_bins);
-      read_value(priv_invalid_bins_idx);
-      read_bins(priv_invalid_bins_idx, priv_invalid_bins);
+      read_value(v_loaded_bins_idx);
+      read_bins(priv_bins_idx, priv_bins, v_loaded_bins_idx);
+      read_value(v_loaded_bins_idx);
+      read_bins(priv_invalid_bins_idx, priv_invalid_bins, v_loaded_bins_idx);
 
       file_close(file_handler);
       DEALLOCATE(v_line);

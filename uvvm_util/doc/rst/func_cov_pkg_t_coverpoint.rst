@@ -304,12 +304,16 @@ load_coverage_db()
 Loads the coverpoint model, configuration and accumulated counters from a file. It also prints a coverage report for the loaded
 coverpoint. ::
 
-    load_coverage_db(file_name, [alert_level_if_not_found, [report_verbosity, [msg_id_panel]]])
+    load_coverage_db(file_name, [new_bins_acceptance, [alert_level_if_not_found, [report_verbosity, [msg_id_panel]]]])
 
 +----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name                     | Dir.   | Type                         | Description                                           |
 +==========+==========================+========+==============================+=======================================================+
 | constant | file_name                | in     | string                       | Name of the file where the coverpoint data is stored  |
++----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
+| constant | new_bins_acceptance      | in     | :ref:`t_new_bins_acceptance` | Defines whether to generate an alert when finding new |
+|          |                          |        |                              | bins in the current coverpoint which are not in the   |
+|          |                          |        |                              | loaded database. Default value is WARNING_ON_NEW_BINS.|
 +----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | alert_level_if_not_found | in     | t_alert_level                | Sets the severity of the alert when the file is not   |
 |          |                          |        |                              | found. Default value is TB_ERROR.                     |
@@ -325,7 +329,8 @@ coverpoint. ::
 
     -- Example:
     my_coverpoint.load_coverage_db("my_coverpoint_db.txt");
-    my_coverpoint.load_coverage_db("my_coverpoint_db.txt", TB_NOTE, VERBOSE);
+    my_coverpoint.load_coverage_db("my_coverpoint_db.txt", ERROR_ON_NEW_BINS);
+    my_coverpoint.load_coverage_db("my_coverpoint_db.txt", NO_ALERT_ON_NEW_BINS, TB_NOTE, VERBOSE);
 
 
 clear_coverage()

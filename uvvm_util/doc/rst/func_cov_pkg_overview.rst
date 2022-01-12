@@ -787,6 +787,25 @@ that this must be done for every coverpoint in the testbench and they must be wr
     * It is NOT recommended to sample a coverpoint before loading the database since that coverage will be ovewritten. A TB_WARNING 
       alert is generated whenever this occurs.
 
+.. hint::
+    When loading a database, the coverage report will be written to the log. In this case, it also contains the number of TC that 
+    have accumulated coverage for the given coverpoint. This way one can see if there is a missing TC for instance when setting 
+    the *alert_level_if_not_found* parameter in ``load_coverage_db()`` to TB_NOTE or NO_ALERT.
+
+.. code-block:: none
+
+    # UVVM:  =================================================================================================================
+    # UVVM:  0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                      
+    # UVVM:  =================================================================================================================
+    # UVVM:  Coverpoint:              Covpt_1    (accumulated over this and 2 previous testcases)
+    # UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%  
+    # UVVM:  -----------------------------------------------------------------------------------------------------------------
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
+    # UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -            
+    # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
+    # UVVM:  -----------------------------------------------------------------------------------------------------------------
+    # UVVM:  =================================================================================================================
+
 *Example 1: The testcases are in different files and are run in a specified order.*
 
 #. TC_1 adds bins to a coverpoint, samples coverage and writes the database to "coverpoint_1.txt".
@@ -869,6 +888,7 @@ The database for a coverpoint is stored using the following file format:
     [scope]
     [number_of_bins_crossed]
     [sampled_coverpoint]
+    [num_tc_accumulated]
     [randomization_seed_1] [randomization_seed_2]
     [transition_bin_idx]
     [transition_bin_value_idx_1] [transition_bin_value_idx_2] ... [transition_bin_value_idx_n]

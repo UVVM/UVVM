@@ -417,7 +417,7 @@ in a bin has reached the minimum coverage, the bin will be marked as covered.
 
 .. important::
 
-    It is not recommended to add more bins after sampling a coverpoint, since the new bins will be missing any previous sampled
+    It is NOT recommended to add more bins after sampling a coverpoint, since the new bins will be missing any previous sampled
     coverage. A TB_WARNING alert is generated whenever this occurs.
 
 Overlapping bins
@@ -780,6 +780,13 @@ accumulated counters at the end of one testcase and load it at the beginning of 
 which writes all the necessary information to a file and ``load_coverage_db()`` which reads it back into a new coverpoint. Note 
 that this must be done for every coverpoint in the testbench and they must be written to separate files.
 
+.. important::
+
+    * It is NOT recommended to add more bins after loading the database in a coverpoint to avoid creating duplicate bins. A 
+      TB_WARNING alert is generated whenever this occurs.
+    * It is NOT recommended to sample a coverpoint before loading the database since that coverage will be ovewritten. A TB_WARNING 
+      alert is generated whenever this occurs.
+
 *Example 1: The testcases are in different files and are run in a specified order.*
 
 #. TC_1 adds bins to a coverpoint, samples coverage and writes the database to "coverpoint_1.txt".
@@ -789,10 +796,7 @@ that this must be done for every coverpoint in the testbench and they must be wr
 
 .. note::
 
-    * Loading a database into a coverpoint will overwrite all its information, therefore it is suggested to always load before 
-      sampling coverage or adding any extra bins.
-    * If a database is loaded into a coverpoint which is already initialized, a TB_WARNING will be generated.
-    * If the file to be loaded is not found, a TB_ERROR will be generated.
+    If the file to be loaded is not found, a TB_ERROR will be generated.
 
 *Example 2: There is a single testcase file which is run using different generics in a specified order.*
 

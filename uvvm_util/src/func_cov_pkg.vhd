@@ -1045,6 +1045,7 @@ package body func_cov_pkg is
     variable priv_invalid_bins_idx              : natural                                       := 0;
     variable priv_num_bins_crossed              : integer                                       := C_UNINITIALIZED;
     variable priv_sampled_coverpoint            : boolean                                       := false;
+    variable priv_loaded_coverpoint             : boolean                                       := false;
     variable priv_rand_gen                      : t_rand;
     variable priv_rand_transition_bin_idx       : integer                                       := C_UNINITIALIZED;
     variable priv_rand_transition_bin_value_idx : t_natural_vector(0 to C_MAX_NUM_CROSS_BINS-1) := (others => 0);
@@ -1315,8 +1316,12 @@ package body func_cov_pkg is
     begin
       initialize_coverpoint(local_call);
 
-        check_value(not priv_sampled_coverpoint, TB_WARNING, "Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be correct.",
-          priv_scope, ID_NEVER, caller_name => local_call);
+      if priv_loaded_coverpoint then
+        alert(TB_WARNING, local_call & "=> It is recommended to always add all the bins before loading a database to avoid creating duplicate bins.", priv_scope);
+      elsif priv_sampled_coverpoint then
+        alert(TB_WARNING, local_call & "=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be correct.", priv_scope);
+      end if;
+
       check_value(coverpoint1_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 1 is empty", priv_scope, ID_NEVER, caller_name => local_call);
       check_value(coverpoint2_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 2 is empty", priv_scope, ID_NEVER, caller_name => local_call);
       check_value(coverpoint3_num_bins_crossed /= C_UNINITIALIZED, TB_FAILURE, "Coverpoint 3 is empty", priv_scope, ID_NEVER, caller_name => local_call);
@@ -1943,6 +1948,7 @@ package body func_cov_pkg is
 
     begin
       log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+      priv_loaded_coverpoint := true;
 
       file_open(v_open_status, file_handler, file_name, read_mode);
       if v_open_status /= open_ok then
@@ -1950,13 +1956,15 @@ package body func_cov_pkg is
         return;
       end if;
 
+      if priv_sampled_coverpoint then
+        alert(TB_WARNING, C_LOCAL_CALL & "=> Coverpoint has already been sampled, loading DB afterwards is not recommended since coverage in the bins will be overwritten", priv_scope);
+      end if;
+
       -- Add coverpoint to covergroup status register
       if priv_id = C_DEALLOCATED_ID then
         priv_id := protected_covergroup_status.add_coverpoint(VOID);
         check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Number of coverpoints exceeds C_FC_MAX_NUM_COVERPOINTS.\n Increase C_FC_MAX_NUM_COVERPOINTS in adaptations package.",
           priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-      else
-        alert(TB_WARNING, C_LOCAL_CALL & "=> " & to_string(priv_name) & " will be overwritten.", priv_scope);
       end if;
 
       -- Coverpoint config
@@ -2044,6 +2052,7 @@ package body func_cov_pkg is
         protected_covergroup_status.set_total_bin_hits(priv_id, 0);
       end if;
       priv_sampled_coverpoint := false;
+      priv_loaded_coverpoint  := false;
     end procedure;
 
     procedure set_num_allocated_bins(
@@ -2091,6 +2100,7 @@ package body func_cov_pkg is
       priv_invalid_bins_idx              := 0;
       priv_num_bins_crossed              := C_UNINITIALIZED;
       priv_sampled_coverpoint            := false;
+      priv_loaded_coverpoint             := false;
       priv_rand_gen.set_rand_seeds(C_RAND_INIT_SEED_1, C_RAND_INIT_SEED_2);
       priv_rand_transition_bin_idx       := C_UNINITIALIZED;
       priv_rand_transition_bin_value_idx := (others => 0);

@@ -13,8 +13,6 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -31,7 +29,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -90,7 +87,7 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functional Coverage</a><ul>
@@ -451,6 +448,11 @@ it before the sequencer has added the bins, the testbench will generate a TB_ERR
 <span class="p">...</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to add all the bins at the beginning of the testbench (time 0 ns) to avoid adding any bins after the coverpoint
+has been sampled. If this happens, a TB_WARNING alert will be generated because some bins might have incomplete coverage.</p>
+</div>
 </div>
 <div class="section" id="bin-memory-allocation">
 <h3>Bin memory allocation<a class="headerlink" href="#bin-memory-allocation" title="Permalink to this headline">¶</a></h3>
@@ -593,6 +595,11 @@ overloads support up to 5 crossed elements.</p>
 <p>The procedure <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> is used to collect coverage in a coverpoint (using integer parameter) or a cross (using
 integer_vector parameter). This will increment the number of hits in the bin containing the sampled value. Once the number of hits
 in a bin has reached the minimum coverage, the bin will be marked as covered.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is NOT recommended to add more bins to a given coverpoint after it has been sampled, since the new bins will be missing any
+previous sampled coverage. A TB_WARNING alert is generated whenever this occurs.</p>
+</div>
 <div class="section" id="overlapping-bins">
 <h3>Overlapping bins<a class="headerlink" href="#overlapping-bins" title="Permalink to this headline">¶</a></h3>
 <p>If a sampled value is contained in more than one valid bin (not ignore or illegal), all the valid bins will collect the coverage,
@@ -912,7 +919,48 @@ which are oversampled.</p></li>
 accumulated counters at the end of one testcase and load it at the beginning of the next. This can be done with <code class="docutils literal notranslate"><span class="pre">write_coverage_db()</span></code>
 which writes all the necessary information to a file and <code class="docutils literal notranslate"><span class="pre">load_coverage_db()</span></code> which reads it back into a new coverpoint. Note
 that this must be done for every coverpoint in the testbench and they must be written to separate files.</p>
-<p><em>Example 1: The testcases are in different files and are run in a specified order.</em></p>
+<p>When using <code class="docutils literal notranslate"><span class="pre">load_coverage_db()</span></code>, the following applies for the given coverpoint:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The complete configuration is overwritten.</p></li>
+<li><p>The bins matching with the loaded bins (same type, values, min_hits and rand_weight) are also overwritten.</p></li>
+<li><p>Any loaded bins which are not found in the given coverpoint are added.</p></li>
+<li><p>Any bins in the given coverpoint which are not found in the loaded coverpoint are kept. However, depending on the
+<em>new_bins_acceptance</em> parameter, an alert can be generated whenever this occurs. The default behaviour is to generate a
+TB_WARNING alert to ensure that all the testcases collect coverage from the same bins. However, for instance when running
+two testcases in a certain order, one might add extra bins in the second testcase which are irrelevant for the first one,
+and in this case the alert can be removed.</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>It is NOT recommended to add more bins to a given coverpoint after loading the database to avoid creating duplicate bins. A
+TB_WARNING alert is generated whenever this occurs.</p></li>
+<li><p>It is NOT recommended to sample a coverpoint before loading the database since that coverage will be overwritten. A
+TB_WARNING alert is generated whenever this occurs.</p></li>
+</ul>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>When loading a database, the coverage report will be written to the log. In this case, it also contains the number of TC that
+have accumulated coverage for the given coverpoint. This way one can see if there is a missing TC for instance when setting
+the <em>alert_level_if_not_found</em> parameter in <code class="docutils literal notranslate"><span class="pre">load_coverage_db()</span></code> to TB_NOTE or NO_ALERT.</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  0 ns *** COVERAGE HOLES REPORT: TB seq. ***
+# UVVM:  =================================================================================================================
+# UVVM:  Coverpoint:              Covpt_1    (accumulated over this and 2 previous testcases)
+# UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%
+# UVVM:  -----------------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE
+# UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -
+# UVVM:           (0-&gt;1-&gt;2-&gt;3)            0           2           0.00%            transition_1              -
+# UVVM:  -----------------------------------------------------------------------------------------------------------------
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+<p><em>Example 1: The testcases are run in a specified order.</em></p>
 <ol class="arabic simple">
 <li><p>TC_1 adds bins to a coverpoint, samples coverage and writes the database to “coverpoint_1.txt”.</p></li>
 <li><p>TC_2 loads the database from “coverpoint_1.txt”, samples coverage and writes the updated database to “coverpoint_1.txt”, which
@@ -921,24 +969,22 @@ overwrites the content of the file.</p></li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p>Loading a database into a coverpoint will overwrite all its information, therefore it is suggested to always load before
-sampling coverage or adding any extra bins.</p></li>
-<li><p>If a database is loaded into a coverpoint which is already initialized, a TB_WARNING will be generated.</p></li>
-</ul>
+<p>If the file to be loaded is not found, a TB_ERROR will be generated.</p>
 </div>
-<p><em>Example 2: There is a single testcase file which is run using different generics in a specified order.</em></p>
-<ul class="simple">
-<li><p>Same as Example 1, but using the generics to identify the first TC which should not load the database.</p></li>
-</ul>
+<p><em>Example 2: The testcases are run in a random sequence.</em></p>
+<ol class="arabic simple">
+<li><p>Each TC adds bins to a coverpoint, loads the database from “coverpoint_1.txt”, samples coverage and writes the updated database
+back to the same file “coverpoint_1.txt”.</p></li>
+</ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If a file is not found when trying to load, a TB_WARNING will be generated.</p>
+<p>In this example, the first testcase run will not find any database file so the <em>alert_level_if_not_found</em> parameter in
+<code class="docutils literal notranslate"><span class="pre">load_coverage_db()</span></code> must be set to TB_NOTE or NO_ALERT for every testcase so the simulation can complete successfully.</p>
 </div>
 <p><em>Example 3: The testcases are run in parallel.</em></p>
 <ol class="arabic simple">
 <li><p>Each TC adds bins to a coverpoint, samples coverage and writes the database to a different file.</p></li>
-<li><p>After all simulations are done, use a script to merge the database files.</p></li>
+<li><p>After all simulations are done, use a script to merge the database files for the given coverpoint.</p></li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -997,6 +1043,8 @@ and only want to keep the model and configuration.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">coverpoint_name</span><span class="p">]</span>
 <span class="p">[</span><span class="n">scope</span><span class="p">]</span>
 <span class="p">[</span><span class="n">number_of_bins_crossed</span><span class="p">]</span>
+<span class="p">[</span><span class="n">sampled_coverpoint</span><span class="p">]</span>
+<span class="p">[</span><span class="n">num_tc_accumulated</span><span class="p">]</span>
 <span class="p">[</span><span class="n">randomization_seed_1</span><span class="p">]</span> <span class="p">[</span><span class="n">randomization_seed_2</span><span class="p">]</span>
 <span class="p">[</span><span class="n">transition_bin_idx</span><span class="p">]</span>
 <span class="p">[</span><span class="n">transition_bin_value_idx_1</span><span class="p">]</span> <span class="p">[</span><span class="n">transition_bin_value_idx_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">transition_bin_value_idx_n</span><span class="p">]</span>
@@ -1018,7 +1066,7 @@ and only want to keep the model and configuration.</p>
 <span class="p">[</span><span class="n">bin_idx</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">bin_idx</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
   <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">name</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">transition_mask</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span>
   <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
     <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">bin_type</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">num_values</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_1</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span><span class="p">]</span>
   <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
@@ -1026,7 +1074,7 @@ and only want to keep the model and configuration.</p>
 <span class="p">[</span><span class="n">invalid_bin_idx</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">invalid_bin_idx</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
   <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">name</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">transition_mask</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span>
   <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
     <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">bin_type</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">num_values</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_1</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span><span class="p">]</span>
   <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
@@ -1062,20 +1110,20 @@ and only want to keep the model and configuration.</p>
 <td><p>string</p></td>
 <td><p>string</p></td>
 </tr>
-<tr class="row-even"><td><p>illegal_bin_alert_level</p></td>
+<tr class="row-even"><td><p>sampled_coverpoint</p></td>
+<td><p>boolean</p></td>
+<td><p>boolean</p></td>
+</tr>
+<tr class="row-odd"><td><p>illegal_bin_alert_level</p></td>
 <td><p>t_alert_level</p></td>
 <td><p>integer</p></td>
 </tr>
-<tr class="row-odd"><td><p>bin_overlap_alert_level</p></td>
+<tr class="row-even"><td><p>bin_overlap_alert_level</p></td>
 <td><p>t_alert_level</p></td>
 <td><p>integer</p></td>
 </tr>
-<tr class="row-even"><td><p>name</p></td>
+<tr class="row-odd"><td><p>name</p></td>
 <td><p>string</p></td>
-<td><p>string</p></td>
-</tr>
-<tr class="row-odd"><td><p>transition_mask</p></td>
-<td><p>std_logic_vector</p></td>
 <td><p>string</p></td>
 </tr>
 <tr class="row-even"><td><p>bin_type</p></td>
@@ -1088,6 +1136,8 @@ and only want to keep the model and configuration.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>MY_CROSS
 NEW_SCOPE
 2
+TRUE
+0
 1082914553 1166884309
 4
 3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1107,36 +1157,36 @@ NEW_SCOPE
 100
 5
 bin_0
-0 1 -1 0000000111
+0 1 -1
 0 1 10
 0 1 1010
 single
-2 8 20 0000000111
+2 8 20
 0 1 20
 0 1 1020
 multiple
-3 9 30 0000000111
+3 9 30
 0 3 30 35 39
 0 3 1030 1035 1039
 range
-10 15 40 0000000111
+10 15 40
 3 2 40 49
 3 2 1040 1049
 transition
-1 5 50 0000000111
+1 5 50
 6 6 50 51 52 53 54 55
 6 6 1050 1051 1052 1053 1054 1055
 3
 ignore_single
-1 0 0 1111111111
+1 0 0
 1 1 110
 1 1 1110
 illegal_range
-4 0 0 0000111111
+4 0 0
 5 2 226 229
 5 2 1226 1229
 illegal_transition
-1 0 0 0000000111
+1 0 0
 8 3 231 237 237
 8 3 1231 1237 1237
 </pre></div>

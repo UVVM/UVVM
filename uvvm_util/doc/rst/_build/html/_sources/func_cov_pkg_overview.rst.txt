@@ -255,6 +255,11 @@ it before the sequencer has added the bins, the testbench will generate a TB_ERR
     my_coverpoint.sample_coverage(read_addr);
     ...
 
+.. note::
+
+    It is recommended to add all the bins at the beginning of the testbench (time 0 ns) to avoid adding any bins after the coverpoint 
+    has been sampled. If this happens, a TB_WARNING alert will be generated because some bins might have incomplete coverage.
+
 Bin memory allocation
 ==================================================================================================================================
 For users who want more control over the memory usage during simulation, it is possible to configure how large the bin list is 
@@ -409,6 +414,11 @@ Sampling coverage
 The procedure ``sample_coverage()`` is used to collect coverage in a coverpoint (using integer parameter) or a cross (using 
 integer_vector parameter). This will increment the number of hits in the bin containing the sampled value. Once the number of hits 
 in a bin has reached the minimum coverage, the bin will be marked as covered.
+
+.. important::
+
+    It is NOT recommended to add more bins to a given coverpoint after it has been sampled, since the new bins will be missing any 
+    previous sampled coverage. A TB_WARNING alert is generated whenever this occurs.
 
 Overlapping bins
 ==================================================================================================================================
@@ -770,7 +780,44 @@ accumulated counters at the end of one testcase and load it at the beginning of 
 which writes all the necessary information to a file and ``load_coverage_db()`` which reads it back into a new coverpoint. Note 
 that this must be done for every coverpoint in the testbench and they must be written to separate files.
 
-*Example 1: The testcases are in different files and are run in a specified order.*
+When using ``load_coverage_db()``, the following applies for the given coverpoint:
+
+    * The complete configuration is overwritten.
+    * The bins matching with the loaded bins (same type, values, min_hits and rand_weight) are also overwritten.
+    * Any loaded bins which are not found in the given coverpoint are added.
+    * Any bins in the given coverpoint which are not found in the loaded coverpoint are kept. However, depending on the 
+      *new_bins_acceptance* parameter, an alert can be generated whenever this occurs. The default behaviour is to generate a 
+      TB_WARNING alert to ensure that all the testcases collect coverage from the same bins. However, for instance when running 
+      two testcases in a certain order, one might add extra bins in the second testcase which are irrelevant for the first one, 
+      and in this case the alert can be removed.
+
+.. important::
+
+    * It is NOT recommended to add more bins to a given coverpoint after loading the database to avoid creating duplicate bins. A 
+      TB_WARNING alert is generated whenever this occurs.
+    * It is NOT recommended to sample a coverpoint before loading the database since that coverage will be overwritten. A 
+      TB_WARNING alert is generated whenever this occurs.
+
+.. hint::
+    When loading a database, the coverage report will be written to the log. In this case, it also contains the number of TC that 
+    have accumulated coverage for the given coverpoint. This way one can see if there is a missing TC for instance when setting 
+    the *alert_level_if_not_found* parameter in ``load_coverage_db()`` to TB_NOTE or NO_ALERT.
+
+.. code-block:: none
+
+    # UVVM:  =================================================================================================================
+    # UVVM:  0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                      
+    # UVVM:  =================================================================================================================
+    # UVVM:  Coverpoint:              Covpt_1    (accumulated over this and 2 previous testcases)
+    # UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%  
+    # UVVM:  -----------------------------------------------------------------------------------------------------------------
+    # UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE     
+    # UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -            
+    # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
+    # UVVM:  -----------------------------------------------------------------------------------------------------------------
+    # UVVM:  =================================================================================================================
+
+*Example 1: The testcases are run in a specified order.*
 
 #. TC_1 adds bins to a coverpoint, samples coverage and writes the database to "coverpoint_1.txt".
 #. TC_2 loads the database from "coverpoint_1.txt", samples coverage and writes the updated database to "coverpoint_1.txt", which 
@@ -779,22 +826,22 @@ that this must be done for every coverpoint in the testbench and they must be wr
 
 .. note::
 
-    * Loading a database into a coverpoint will overwrite all its information, therefore it is suggested to always load before 
-      sampling coverage or adding any extra bins.
-    * If a database is loaded into a coverpoint which is already initialized, a TB_WARNING will be generated.
+    If the file to be loaded is not found, a TB_ERROR will be generated.
 
-*Example 2: There is a single testcase file which is run using different generics in a specified order.*
+*Example 2: The testcases are run in a random sequence.*
 
-* Same as Example 1, but using the generics to identify the first TC which should not load the database.
+#. Each TC adds bins to a coverpoint, loads the database from "coverpoint_1.txt", samples coverage and writes the updated database
+   back to the same file "coverpoint_1.txt".
 
 .. note::
 
-    If a file is not found when trying to load, a TB_WARNING will be generated.
+    In this example, the first testcase run will not find any database file so the *alert_level_if_not_found* parameter in 
+    ``load_coverage_db()`` must be set to TB_NOTE or NO_ALERT for every testcase so the simulation can complete successfully.
 
 *Example 3: The testcases are run in parallel.*
 
 #. Each TC adds bins to a coverpoint, samples coverage and writes the database to a different file.
-#. After all simulations are done, use a script to merge the database files.
+#. After all simulations are done, use a script to merge the database files for the given coverpoint.
 
 .. note::
 
@@ -857,6 +904,8 @@ The database for a coverpoint is stored using the following file format:
     [coverpoint_name]
     [scope]
     [number_of_bins_crossed]
+    [sampled_coverpoint]
+    [num_tc_accumulated]
     [randomization_seed_1] [randomization_seed_2]
     [transition_bin_idx]
     [transition_bin_value_idx_1] [transition_bin_value_idx_2] ... [transition_bin_value_idx_n]
@@ -878,7 +927,7 @@ The database for a coverpoint is stored using the following file format:
     [bin_idx]
     for i in 0 to bin_idx-1 loop
       [bin(i).name]
-      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight] [bin(i).transition_mask]
+      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight]
       for j in 0 to number_of_bins_crossed-1 loop
         [bin(i).cross(j).bin_type] [bin(i).cross(j).num_values] [bin(i).cross(j).values_1] [bin(i).cross(j).values_2] ... [bin(i).cross(j).values_n]
       end loop;
@@ -886,7 +935,7 @@ The database for a coverpoint is stored using the following file format:
     [invalid_bin_idx]
     for i in 0 to invalid_bin_idx-1 loop
       [invalid_bin(i).name]
-      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight] [invalid_bin(i).transition_mask]
+      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight]
       for j in 0 to number_of_bins_crossed-1 loop
         [invalid_bin(i).cross(j).bin_type] [invalid_bin(i).cross(j).num_values] [invalid_bin(i).cross(j).values_1] [invalid_bin(i).cross(j).values_2] ... [invalid_bin(i).cross(j).values_n]
       end loop;
@@ -908,13 +957,13 @@ Most of the values are integer numbers except for a few:
 +-----------------------------+------------------+--------------+
 | scope                       | string           | string       |
 +-----------------------------+------------------+--------------+
+| sampled_coverpoint          | boolean          | boolean      |
++-----------------------------+------------------+--------------+
 | illegal_bin_alert_level     | t_alert_level    | integer      |
 +-----------------------------+------------------+--------------+
 | bin_overlap_alert_level     | t_alert_level    | integer      |
 +-----------------------------+------------------+--------------+
 | name                        | string           | string       |
-+-----------------------------+------------------+--------------+
-| transition_mask             | std_logic_vector | string       |
 +-----------------------------+------------------+--------------+
 | bin_type                    | t_cov_bin_type   | integer      |
 +-----------------------------+------------------+--------------+
@@ -926,6 +975,8 @@ Example of the file output:
     MY_CROSS            
     NEW_SCOPE                     
     2
+    TRUE
+    0
     1082914553 1166884309
     4
     3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -945,36 +996,36 @@ Example of the file output:
     100
     5
     bin_0               
-    0 1 -1 0000000111
+    0 1 -1
     0 1 10 
     0 1 1010 
     single              
-    2 8 20 0000000111
+    2 8 20
     0 1 20 
     0 1 1020 
     multiple            
-    3 9 30 0000000111
+    3 9 30
     0 3 30 35 39 
     0 3 1030 1035 1039 
     range               
-    10 15 40 0000000111
+    10 15 40
     3 2 40 49 
     3 2 1040 1049 
     transition          
-    1 5 50 0000000111
+    1 5 50
     6 6 50 51 52 53 54 55 
     6 6 1050 1051 1052 1053 1054 1055 
     3
     ignore_single       
-    1 0 0 1111111111
+    1 0 0
     1 1 110 
     1 1 1110 
     illegal_range       
-    4 0 0 0000111111
+    4 0 0
     5 2 226 229 
     5 2 1226 1229 
     illegal_transition  
-    1 0 0 0000000111
+    1 0 0
     8 3 231 237 237 
     8 3 1231 1237 1237 
 

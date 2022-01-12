@@ -957,6 +957,8 @@ Most of the values are integer numbers except for a few:
 +-----------------------------+------------------+--------------+
 | scope                       | string           | string       |
 +-----------------------------+------------------+--------------+
+| sampled_coverpoint          | boolean          | boolean      |
++-----------------------------+------------------+--------------+
 | illegal_bin_alert_level     | t_alert_level    | integer      |
 +-----------------------------+------------------+--------------+
 | bin_overlap_alert_level     | t_alert_level    | integer      |
@@ -973,6 +975,8 @@ Example of the file output:
     MY_CROSS            
     NEW_SCOPE                     
     2
+    TRUE
+    0
     1082914553 1166884309
     4
     3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -992,36 +996,36 @@ Example of the file output:
     100
     5
     bin_0               
-    0 1 -1 0000000111
+    0 1 -1
     0 1 10 
     0 1 1010 
     single              
-    2 8 20 0000000111
+    2 8 20
     0 1 20 
     0 1 1020 
     multiple            
-    3 9 30 0000000111
+    3 9 30
     0 3 30 35 39 
     0 3 1030 1035 1039 
     range               
-    10 15 40 0000000111
+    10 15 40
     3 2 40 49 
     3 2 1040 1049 
     transition          
-    1 5 50 0000000111
+    1 5 50
     6 6 50 51 52 53 54 55 
     6 6 1050 1051 1052 1053 1054 1055 
     3
     ignore_single       
-    1 0 0 1111111111
+    1 0 0
     1 1 110 
     1 1 1110 
     illegal_range       
-    4 0 0 0000111111
+    4 0 0
     5 2 226 229 
     5 2 1226 1229 
     illegal_transition  
-    1 0 0 0000000111
+    1 0 0
     8 3 231 237 237 
     8 3 1231 1237 1237 
 

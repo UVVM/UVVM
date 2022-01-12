@@ -1807,24 +1807,23 @@ package body func_cov_pkg is
       end procedure;
 
       procedure write_bins(
-        constant bin_idx    : in natural;
-        variable bin_vector : in t_cov_bin_vector_ptr) is
+        constant bins_idx    : in natural;
+        variable bins_vector : in t_cov_bin_vector_ptr) is
       begin
-        write(v_line, bin_idx);
+        write(v_line, bins_idx);
         writeline(file_handler, v_line);
-        for i in 0 to bin_idx-1 loop
-          write(v_line, bin_vector(i).name);
+        for i in 0 to bins_idx-1 loop
+          write(v_line, bins_vector(i).name);
           writeline(file_handler, v_line);
-          write(v_line, to_string(bin_vector(i).hits) & ' ' &
-                        to_string(bin_vector(i).min_hits) & ' ' &
-                        to_string(bin_vector(i).rand_weight) & ' ' &
-                        to_string(bin_vector(i).transition_mask));
+          write(v_line, to_string(bins_vector(i).hits) & ' ' &
+                        to_string(bins_vector(i).min_hits) & ' ' &
+                        to_string(bins_vector(i).rand_weight));
           writeline(file_handler, v_line);
           for j in 0 to priv_num_bins_crossed-1 loop
-            write(v_line, to_string(t_cov_bin_type'pos(bin_vector(i).cross_bins(j).contains)) & ' ' &
-                          to_string(bin_vector(i).cross_bins(j).num_values) & ' ');
-            for k in 0 to bin_vector(i).cross_bins(j).num_values-1 loop
-              write(v_line, bin_vector(i).cross_bins(j).values(k));
+            write(v_line, to_string(t_cov_bin_type'pos(bins_vector(i).cross_bins(j).contains)) & ' ' &
+                          to_string(bins_vector(i).cross_bins(j).num_values) & ' ');
+            for k in 0 to bins_vector(i).cross_bins(j).num_values-1 loop
+              write(v_line, bins_vector(i).cross_bins(j).values(k));
               write(v_line, ' ');
             end loop;
             writeline(file_handler, v_line);
@@ -1917,32 +1916,31 @@ package body func_cov_pkg is
       end procedure;
 
       procedure read_bins(
-        constant bin_idx    : in    natural;
-        variable bin_vector : inout t_cov_bin_vector_ptr) is
+        constant bins_idx    : in    natural;
+        variable bins_vector : inout t_cov_bin_vector_ptr) is
         variable v_contains   : integer;
         variable v_num_values : integer;
       begin
-        if bin_idx > bin_vector'length-1 then
-          resize_bin_vector(bin_vector, bin_idx);
+        if bins_idx > bins_vector'length-1 then
+          resize_bin_vector(bins_vector, bins_idx);
         end if;
-        for i in 0 to bin_idx-1 loop
+        for i in 0 to bins_idx-1 loop
           readline(file_handler, v_line);
-          read(v_line, bin_vector(i).name);  -- read() crops the string
+          read(v_line, bins_vector(i).name);  -- read() crops the string
           readline(file_handler, v_line);
-          read(v_line, bin_vector(i).hits);
-          read(v_line, bin_vector(i).min_hits);
-          read(v_line, bin_vector(i).rand_weight);
-          read(v_line, bin_vector(i).transition_mask);
+          read(v_line, bins_vector(i).hits);
+          read(v_line, bins_vector(i).min_hits);
+          read(v_line, bins_vector(i).rand_weight);
           for j in 0 to priv_num_bins_crossed-1 loop
             readline(file_handler, v_line);
             read(v_line, v_contains);
-            bin_vector(i).cross_bins(j).contains := t_cov_bin_type'val(v_contains);
+            bins_vector(i).cross_bins(j).contains := t_cov_bin_type'val(v_contains);
             read(v_line, v_num_values);
             check_value(v_num_values <= C_FC_MAX_NUM_BIN_VALUES, TB_FAILURE, "Cannot load the " & to_string(v_num_values) & " bin values. Increase C_FC_MAX_NUM_BIN_VALUES",
               priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
-            bin_vector(i).cross_bins(j).num_values := v_num_values;
+            bins_vector(i).cross_bins(j).num_values := v_num_values;
             for k in 0 to v_num_values-1 loop
-              read(v_line, bin_vector(i).cross_bins(j).values(k));
+              read(v_line, bins_vector(i).cross_bins(j).values(k));
             end loop;
           end loop;
         end loop;

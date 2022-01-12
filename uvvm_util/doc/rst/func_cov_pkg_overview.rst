@@ -910,7 +910,7 @@ The database for a coverpoint is stored using the following file format:
     [bin_idx]
     for i in 0 to bin_idx-1 loop
       [bin(i).name]
-      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight] [bin(i).transition_mask]
+      [bin(i).hits] [bin(i).min_hits] [bin(i).rand_weight]
       for j in 0 to number_of_bins_crossed-1 loop
         [bin(i).cross(j).bin_type] [bin(i).cross(j).num_values] [bin(i).cross(j).values_1] [bin(i).cross(j).values_2] ... [bin(i).cross(j).values_n]
       end loop;
@@ -918,7 +918,7 @@ The database for a coverpoint is stored using the following file format:
     [invalid_bin_idx]
     for i in 0 to invalid_bin_idx-1 loop
       [invalid_bin(i).name]
-      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight] [invalid_bin(i).transition_mask]
+      [invalid_bin(i).hits] [invalid_bin(i).min_hits] [invalid_bin(i).rand_weight]
       for j in 0 to number_of_bins_crossed-1 loop
         [invalid_bin(i).cross(j).bin_type] [invalid_bin(i).cross(j).num_values] [invalid_bin(i).cross(j).values_1] [invalid_bin(i).cross(j).values_2] ... [invalid_bin(i).cross(j).values_n]
       end loop;
@@ -945,8 +945,6 @@ Most of the values are integer numbers except for a few:
 | bin_overlap_alert_level     | t_alert_level    | integer      |
 +-----------------------------+------------------+--------------+
 | name                        | string           | string       |
-+-----------------------------+------------------+--------------+
-| transition_mask             | std_logic_vector | string       |
 +-----------------------------+------------------+--------------+
 | bin_type                    | t_cov_bin_type   | integer      |
 +-----------------------------+------------------+--------------+

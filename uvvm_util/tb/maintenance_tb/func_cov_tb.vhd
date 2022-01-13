@@ -2555,7 +2555,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a non-existing file");
       ------------------------------------------------------------
-      increment_expected_alerts(TB_WARNING,1);
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "dummy.txt");
 
       ------------------------------------------------------------
@@ -2695,7 +2695,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "coverpoint.txt", NON_VERBOSE);
+      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "coverpoint.txt", report_verbosity => NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2770,7 +2770,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2.load_coverage_db(GC_FILE_PATH & "cross.txt", NON_VERBOSE);
+      v_cross_x2.load_coverage_db(GC_FILE_PATH & "cross.txt", report_verbosity => NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;

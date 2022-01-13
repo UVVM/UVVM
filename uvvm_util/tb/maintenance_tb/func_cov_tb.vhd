@@ -487,6 +487,15 @@ begin
       end loop;
     end procedure;
 
+    -- Overload
+    procedure delete_coverpoint(
+      variable coverpoint : inout t_coverpoint) is
+    begin
+      coverpoint.delete_coverpoint(VOID);
+      v_bin_idx         := 0;
+      v_invalid_bin_idx := 0;
+    end procedure;
+
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
@@ -541,6 +550,8 @@ begin
       check_bin(shared_coverpoint, v_bin_idx, VAL,  100, hits => 1);
       check_bin(shared_coverpoint, v_bin_idx, VAL,  101, hits => 1);
 
+      delete_coverpoint(shared_coverpoint);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with multiple values");
       ------------------------------------------------------------
@@ -562,6 +573,8 @@ begin
       check_bin(v_coverpoint_a, v_bin_idx, VAL, (202,204,206,208), hits => 4);
       check_bin(v_coverpoint_a, v_bin_idx, VAL, (210,211,212,213,214,215,216,217,218,219), hits => 10);
       check_bin(v_coverpoint_a, v_bin_idx, VAL, (220,221,222,223,224,225,226,227,228,229), hits => 10);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with ranges of values");
@@ -616,6 +629,8 @@ begin
       check_bin(v_coverpoint_a, v_bin_idx, VAL, 343, hits => 1);
       check_bin(v_coverpoint_a, v_bin_idx, VAL, 355, hits => 1);
 
+      delete_coverpoint(v_coverpoint_a);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins created from a vector");
       ------------------------------------------------------------
@@ -659,6 +674,8 @@ begin
       check_bin(v_coverpoint_a, v_bin_idx, VAL, 2, hits => 1);
       check_bin(v_coverpoint_a, v_bin_idx, VAL, 3, hits => 1);
 
+      delete_coverpoint(v_coverpoint_a);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with transitions of values");
       ------------------------------------------------------------
@@ -693,6 +710,8 @@ begin
       check_bin(v_coverpoint_a, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429), hits => 3);
       check_bin(v_coverpoint_a, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439), hits => 3);
 
+      delete_coverpoint(v_coverpoint_a);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore bins with single values");
       ------------------------------------------------------------
@@ -715,6 +734,8 @@ begin
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE,  2000, hits => 1);
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE,  2001, hits => 1);
 
+      delete_coverpoint(v_coverpoint_a);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore bins with ranges of values");
       ------------------------------------------------------------
@@ -733,6 +754,8 @@ begin
       v_invalid_bin_idx := v_invalid_bin_idx-2;
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (2100,2109), hits => 10);
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 2115, hits => 1);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore bins with transitions of values");
@@ -763,12 +786,14 @@ begin
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2210,2210,2210,2218,2215,2215,2210), hits => 3);
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229), hits => 3);
 
-      v_coverpoint_a.set_illegal_bin_alert_level(WARNING);
-      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with single values");
       ------------------------------------------------------------
+      v_coverpoint_a.set_illegal_bin_alert_level(WARNING);
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+
       v_coverpoint_a.add_bins(illegal_bin(-3001));
       v_coverpoint_a.add_bins(illegal_bin(-3000));
       v_coverpoint_a.add_bins(illegal_bin(3000));
@@ -789,9 +814,14 @@ begin
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL,  3000, hits => 1);
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL,  3001, hits => 1);
 
+      delete_coverpoint(v_coverpoint_a);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with ranges of values");
       ------------------------------------------------------------
+      v_coverpoint_a.set_illegal_bin_alert_level(WARNING);
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+
       v_coverpoint_a.add_bins(illegal_bin_range(3100,3109));
       v_coverpoint_a.add_bins(illegal_bin_range(3115,3115));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
@@ -809,9 +839,14 @@ begin
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109), hits => 10);
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 3115, hits => 1);
 
+      delete_coverpoint(v_coverpoint_a);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with transitions of values");
       ------------------------------------------------------------
+      v_coverpoint_a.set_illegal_bin_alert_level(WARNING);
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+
       v_coverpoint_a.add_bins(illegal_bin_transition((3201,3203,3201)));
       v_coverpoint_a.add_bins(illegal_bin_transition((3201,3203,3201,3209)));
       v_coverpoint_a.add_bins(illegal_bin_transition((3210,3210,3210,3218,3215,3215,3210)));
@@ -838,6 +873,8 @@ begin
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201,3209), hits => 8);
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3210,3210,3210,3218,3215,3215,3210), hits => 3);
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), hits => 3);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing concatenation of bins");
@@ -877,6 +914,8 @@ begin
       check_num_bins(v_coverpoint_a, v_bin_idx, v_invalid_bin_idx);
       check_coverage_completed(v_coverpoint_a);
       v_coverpoint_a.report_coverage(VERBOSE);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins and ignore bins with transitions of values");
@@ -928,171 +967,186 @@ begin
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (5003,5010), hits => 1, name => "ignore_transition");
       check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 5004, hits => 3, name => "ignore_value");
 
+      delete_coverpoint(v_coverpoint_a);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
       ------------------------------------------------------------
-      v_bin_idx         := 0;
-      v_invalid_bin_idx := 0;
-
+      increment_expected_alerts(TB_WARNING, 9); -- For adding bins after sampling warnings
       for i in 1 to 10 loop
         v_bin_val  := v_rand.rand(100,500);
         v_min_hits := v_rand.rand(1,20);
-        v_coverpoint_b.add_bins(bin(v_bin_val), v_min_hits);
+        v_coverpoint_a.add_bins(bin(v_bin_val), v_min_hits);
 
-        check_bin(v_coverpoint_b, v_bin_idx, VAL, v_bin_val, v_min_hits);
+        check_bin(v_coverpoint_a, v_bin_idx, VAL, v_bin_val, v_min_hits);
 
         -- Check the coverage increases when the bin is sampled until it is 100%
         for j in 0 to v_min_hits-1 loop
-          check_bins_coverage(v_coverpoint_b, 100.0*real(i-1)/real(i));
-          check_hits_coverage(v_coverpoint_b, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
-          sample_bins(v_coverpoint_b, v_bin_val, 1);
+          check_bins_coverage(v_coverpoint_a, 100.0*real(i-1)/real(i));
+          check_hits_coverage(v_coverpoint_a, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
+          sample_bins(v_coverpoint_a, v_bin_val, 1);
         end loop;
-        check_coverage_completed(v_coverpoint_b);
+        check_coverage_completed(v_coverpoint_a);
 
         v_bin_idx := v_bin_idx-1;
-        check_bin(v_coverpoint_b, v_bin_idx, VAL, v_bin_val, v_min_hits, hits => v_min_hits);
+        check_bin(v_coverpoint_a, v_bin_idx, VAL, v_bin_val, v_min_hits, hits => v_min_hits);
         v_prev_min_hits := v_prev_min_hits + v_min_hits;
       end loop;
 
-      v_coverpoint_b.report_coverage(VERBOSE);
+      v_coverpoint_a.report_coverage(VERBOSE);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin names");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(bin(1000));
-      v_coverpoint_b.add_bins(bin(1001), "my_bin_1");
-      v_coverpoint_b.add_bins(bin(1002), 5, "my_bin_2");
-      v_coverpoint_b.add_bins(bin(1003), 5, 1, "my_bin_3");
-      v_coverpoint_b.add_bins(bin(1004), 5, 1, "my_bin_long_name_abcdefghijklmno"); -- C_FC_MAX_NAME_LENGTH = 20
+      v_coverpoint_a.add_bins(bin(1000));
+      v_coverpoint_a.add_bins(bin(1001), "my_bin_1");
+      v_coverpoint_a.add_bins(bin(1002), 5, "my_bin_2");
+      v_coverpoint_a.add_bins(bin(1003), 5, 1, "my_bin_3");
+      v_coverpoint_a.add_bins(bin(1004), 5, 1, "my_bin_long_name_abcdefghijklmno"); -- C_FC_MAX_NAME_LENGTH = 20
 
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1000);
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1001, name => "my_bin_1");
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1002, 5, name => "my_bin_2");
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1003, 5, 1, name => "my_bin_3");
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1004, 5, 1, name => "my_bin_long_name_abc");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1000);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1001, name => "my_bin_1");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1002, 5, name => "my_bin_2");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1003, 5, 1, name => "my_bin_3");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1004, 5, 1, name => "my_bin_long_name_abc");
 
-      v_coverpoint_b.report_coverage(VERBOSE);
+      v_coverpoint_a.report_coverage(VERBOSE);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - valid bins");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(bin(2000));
-      v_coverpoint_b.add_bins(bin(2000));
-      v_coverpoint_b.add_bins(bin(2000));
-      v_coverpoint_b.add_bins(bin((2100,2101,2102,2113,2114)));
-      v_coverpoint_b.add_bins(bin((2114,2115,2116,2117)));
-      v_coverpoint_b.add_bins(bin_range(2200,2250));
-      v_coverpoint_b.add_bins(bin_range(2249,2299));
+      v_coverpoint_a.add_bins(bin(2000));
+      v_coverpoint_a.add_bins(bin(2000));
+      v_coverpoint_a.add_bins(bin(2000));
+      v_coverpoint_a.add_bins(bin((2100,2101,2102,2113,2114)));
+      v_coverpoint_a.add_bins(bin((2114,2115,2116,2117)));
+      v_coverpoint_a.add_bins(bin_range(2200,2250));
+      v_coverpoint_a.add_bins(bin_range(2249,2299));
 
-      sample_bins(v_coverpoint_b, (2000,2001), 1);
-      sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
-      sample_bins(v_coverpoint_b, (2248,2249,2250,2251), 1);
+      sample_bins(v_coverpoint_a, (2000,2001), 1);
+      sample_bins(v_coverpoint_a, (2113,2114,2115), 1);
+      sample_bins(v_coverpoint_a, (2248,2249,2250,2251), 1);
 
-      v_coverpoint_b.set_bin_overlap_alert_level(TB_WARNING);
-      check_value(v_coverpoint_b.get_bin_overlap_alert_level(VOID) = TB_WARNING, ERROR, "Checking bin overlap alert level");
+      v_coverpoint_a.set_bin_overlap_alert_level(TB_WARNING);
+      check_value(v_coverpoint_a.get_bin_overlap_alert_level(VOID) = TB_WARNING, ERROR, "Checking bin overlap alert level");
       increment_expected_alerts(TB_WARNING, 4);
-      sample_bins(v_coverpoint_b, (2000,2001), 1);
-      sample_bins(v_coverpoint_b, (2113,2114,2115), 1);
-      sample_bins(v_coverpoint_b, (2248,2249,2250,2251), 1);
+      sample_bins(v_coverpoint_a, (2000,2001), 1);
+      sample_bins(v_coverpoint_a, (2113,2114,2115), 1);
+      sample_bins(v_coverpoint_a, (2248,2249,2250,2251), 1);
 
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 2000, hits => 2);
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 2000, hits => 2);
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 2000, hits => 2);
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, (2100,2101,2102,2113,2114), hits => 4);
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, (2114,2115,2116,2117), hits => 4);
-      check_bin(v_coverpoint_b, v_bin_idx, RAN, (2200,2250), hits => 6);
-      check_bin(v_coverpoint_b, v_bin_idx, RAN, (2249,2299), hits => 6);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 2000, hits => 2);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 2000, hits => 2);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 2000, hits => 2);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (2100,2101,2102,2113,2114), hits => 4);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (2114,2115,2116,2117), hits => 4);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (2200,2250), hits => 6);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (2249,2299), hits => 6);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - valid and ignore bins");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(bin_range(3000,3020), "overlap");
-      v_coverpoint_b.add_bins(ignore_bin_range(3005,3015));
+      v_coverpoint_a.add_bins(bin_range(3000,3020), "overlap");
+      v_coverpoint_a.add_bins(ignore_bin_range(3005,3015));
 
-      sample_bins(v_coverpoint_b, (3000,3004,3005,3006,3014,3015,3016,3020), 1);
+      sample_bins(v_coverpoint_a, (3000,3004,3005,3006,3014,3015,3016,3020), 1);
 
-      check_bin(v_coverpoint_b, v_bin_idx, RAN, (3000,3020), hits => 4, name => "overlap");
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (3005,3015), hits => 4);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (3000,3020), hits => 4, name => "overlap");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (3005,3015), hits => 4);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - valid and illegal bins");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(bin_range(3100,3120), "overlap");
-      v_coverpoint_b.add_bins(illegal_bin_range(3105,3115));
+      v_coverpoint_a.add_bins(bin_range(3100,3120), "overlap");
+      v_coverpoint_a.add_bins(illegal_bin_range(3105,3115));
 
-      v_coverpoint_b.set_illegal_bin_alert_level(WARNING);
-      check_value(v_coverpoint_b.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+      v_coverpoint_a.set_illegal_bin_alert_level(WARNING);
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
       increment_expected_alerts(WARNING,4);
-      sample_bins(v_coverpoint_b, (3100,3104,3105,3106,3114,3115,3116,3120), 1);
+      sample_bins(v_coverpoint_a, (3100,3104,3105,3106,3114,3115,3116,3120), 1);
 
-      check_bin(v_coverpoint_b, v_bin_idx, RAN, (3100,3120), hits => 4, name => "overlap");
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (3105,3115), hits => 4);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (3100,3120), hits => 4, name => "overlap");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (3105,3115), hits => 4);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin overlap - ignore and illegal bins");
       ------------------------------------------------------------
-      v_coverpoint_b.add_bins(ignore_bin_range(3200,3220));
-      v_coverpoint_b.add_bins(illegal_bin_range(3205,3215));
+      v_coverpoint_a.add_bins(ignore_bin_range(3200,3220));
+      v_coverpoint_a.add_bins(illegal_bin_range(3205,3215));
 
+      v_coverpoint_a.set_illegal_bin_alert_level(WARNING);
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
       increment_expected_alerts(WARNING,4);
-      sample_bins(v_coverpoint_b, (3200,3204,3205,3206,3214,3215,3216,3220), 1);
+      sample_bins(v_coverpoint_a, (3200,3204,3205,3206,3214,3215,3216,3220), 1);
 
       -- Illegal bin takes precedence over ignore bin, even though both are counted
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (3200,3220), hits => 8);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (3205,3215), hits => 4);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (3200,3220), hits => 8);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (3205,3215), hits => 4);
 
-      v_coverpoint_b.report_coverage(VERBOSE);
+      v_coverpoint_a.report_coverage(VERBOSE);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint name and scope");
       ------------------------------------------------------------
-      v_coverpoint_b.set_name("MY_COVERPOINT_2_abcdefghiklmno"); -- C_FC_MAX_NAME_LENGTH = 20
-      check_value(v_coverpoint_b.get_name(VOID), "MY_COVERPOINT_2_abcd", ERROR, "Checking name");
-      v_coverpoint_b.set_scope("MY_SCOPE_2");
-      check_value(v_coverpoint_b.get_scope(VOID), "MY_SCOPE_2", ERROR, "Checking scope");
+      v_coverpoint_a.set_name("MY_COVERPOINT_2_abcdefghiklmno"); -- C_FC_MAX_NAME_LENGTH = 20
+      check_value(v_coverpoint_a.get_name(VOID), "MY_COVERPOINT_2_abcd", ERROR, "Checking name");
+      v_coverpoint_a.set_scope("MY_SCOPE_2");
+      check_value(v_coverpoint_a.get_scope(VOID), "MY_SCOPE_2", ERROR, "Checking scope");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint num bins allocation error");
       ------------------------------------------------------------
+      v_coverpoint_a.set_num_allocated_bins(40);
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
-      v_coverpoint_b.set_num_allocated_bins(10);
+      v_coverpoint_a.set_num_allocated_bins(10);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing C_FC_MAX_NUM_NEW_BINS limit");
       ------------------------------------------------------------
       disable_log_msg(ID_FUNC_COV_BINS_INFO);
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,C_FC_MAX_NUM_NEW_BINS));     -- OK
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,C_FC_MAX_NUM_NEW_BINS+1));   -- OK
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,C_FC_MAX_NUM_NEW_BINS));     -- OK
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,C_FC_MAX_NUM_NEW_BINS+1));   -- OK
 
       increment_expected_alerts_and_stop_limit(TB_ERROR, 6);
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS));   -- OK
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS+1)); -- ERROR
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS+2)); -- ERROR
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS));   -- OK
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS+1)); -- ERROR
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+1,C_FC_MAX_NUM_NEW_BINS+2)); -- ERROR
 
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS));   -- OK
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+1)); -- ERROR
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+2)); -- ERROR
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+3)); -- ERROR
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS));   -- OK
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+1)); -- ERROR
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+2)); -- ERROR
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS+2,C_FC_MAX_NUM_NEW_BINS+3)); -- ERROR
 
-      v_coverpoint_b.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,0) & bin(0));                -- ERROR
+      v_coverpoint_a.add_bins(bin_range(1,C_FC_MAX_NUM_NEW_BINS,0) & bin(0));                -- ERROR
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing C_FC_MAX_PROC_CALL_LENGTH limit");
       ------------------------------------------------------------
       disable_log_msg(ID_FUNC_COV_BINS_INFO);
-      v_coverpoint_b.add_bins(bin(integer'left));
-      v_coverpoint_b.add_bins(ignore_bin(integer'left));
-      v_coverpoint_b.add_bins(illegal_bin(integer'left));
-      v_coverpoint_b.add_bins(bin_range(integer'left,integer'left+1,integer'right));
-      v_coverpoint_b.add_bins(bin_transition((0,1,2,3,4,5,6,7,8,9)));
-      v_coverpoint_b.add_bins(bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)));
+      v_coverpoint_a.add_bins(bin(integer'left));
+      v_coverpoint_a.add_bins(ignore_bin(integer'left));
+      v_coverpoint_a.add_bins(illegal_bin(integer'left));
+      v_coverpoint_a.add_bins(bin_range(integer'left,integer'left+1,integer'right));
+      v_coverpoint_a.add_bins(bin_transition((0,1,2,3,4,5,6,7,8,9)));
+      v_coverpoint_a.add_bins(bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)));
 
-      v_coverpoint_b.add_bins(bin(integer'left) & bin(integer'left));
-      v_coverpoint_b.add_bins(ignore_bin(integer'left) & ignore_bin(integer'left));
-      v_coverpoint_b.add_bins(illegal_bin(integer'left) & illegal_bin(integer'left));
-      v_coverpoint_b.add_bins(bin_range(integer'left,integer'left+1,integer'right) & bin_range(integer'left,integer'left+1,integer'right));
-      v_coverpoint_b.add_bins(bin_transition((0,1,2,3,4,5,6,7,8,9)) & bin_transition((0,1,2,3,4,5,6,7,8,9)));
-      v_coverpoint_b.add_bins(bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)) &
+      v_coverpoint_a.add_bins(bin(integer'left) & bin(integer'left));
+      v_coverpoint_a.add_bins(ignore_bin(integer'left) & ignore_bin(integer'left));
+      v_coverpoint_a.add_bins(illegal_bin(integer'left) & illegal_bin(integer'left));
+      v_coverpoint_a.add_bins(bin_range(integer'left,integer'left+1,integer'right) & bin_range(integer'left,integer'left+1,integer'right));
+      v_coverpoint_a.add_bins(bin_transition((0,1,2,3,4,5,6,7,8,9)) & bin_transition((0,1,2,3,4,5,6,7,8,9)));
+      v_coverpoint_a.add_bins(bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)) &
         bin_transition((100000000,100000001,100000002,100000003,100000004,100000005,100000006,100000007,100000008,100000009)));
 
       ------------------------------------------------------------

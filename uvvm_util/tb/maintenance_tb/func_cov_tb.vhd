@@ -1977,6 +1977,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with multiple values");
       ------------------------------------------------------------
       v_min_hits := 2;
+      increment_expected_alerts(TB_WARNING, 5); -- For adding bins after sampling warnings
       v_coverpoint_a.add_bins(bin((200,201,202,203,204)), v_min_hits);
       v_coverpoint_a.add_bins(bin((210,211,212,213,214)), v_min_hits);
       v_coverpoint_a.add_bins(bin((220,221,222,223,224)), v_min_hits);
@@ -1999,6 +2000,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with a range of values");
       ------------------------------------------------------------
       v_min_hits := 3;
+      increment_expected_alerts(TB_WARNING, 5); -- For adding bins after sampling warnings
       v_coverpoint_a.add_bins(bin_range(300,309), v_min_hits);
       v_coverpoint_a.add_bins(bin_range(310,319), v_min_hits);
       v_coverpoint_a.add_bins(bin_range(320,329), v_min_hits);
@@ -2021,6 +2023,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with a transition of values");
       ------------------------------------------------------------
       v_min_hits := 4;
+      increment_expected_alerts(TB_WARNING, 5); -- For adding bins after sampling warnings
       v_coverpoint_a.add_bins(bin_transition((400,402,404,406,408)), v_min_hits);
       v_coverpoint_a.add_bins(bin_transition((410,412,414,416,418)), v_min_hits);
       v_coverpoint_a.add_bins(bin_transition((420,422,424,426,428)), v_min_hits);
@@ -2043,6 +2046,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among different types of bins");
       ------------------------------------------------------------
       v_min_hits := 5;
+      increment_expected_alerts(TB_WARNING, 4); -- For adding bins after sampling warnings
       v_coverpoint_a.add_bins(bin(60), v_min_hits);
       v_coverpoint_a.add_bins(bin((250,251,252,253,254)), v_min_hits);
       v_coverpoint_a.add_bins(bin_range(350,359), v_min_hits);
@@ -2275,6 +2279,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with multiple values");
       ------------------------------------------------------------
       v_min_hits := 2;
+      increment_expected_alerts(TB_WARNING, 5); -- For adding bins after sampling warnings
       v_cross_x2.add_cross(bin((200,201,202)), bin((205,206,207)), v_min_hits);
       v_cross_x2.add_cross(bin((210,211,212)), bin((215,216,217)), v_min_hits);
       v_cross_x2.add_cross(bin((220,221,222)), bin((225,226,227)), v_min_hits);
@@ -2297,6 +2302,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with a range of values");
       ------------------------------------------------------------
       v_min_hits := 3;
+      increment_expected_alerts(TB_WARNING, 5); -- For adding bins after sampling warnings
       v_cross_x2.add_cross(bin_range(300,304), bin_range(305,309), v_min_hits);
       v_cross_x2.add_cross(bin_range(310,314), bin_range(315,319), v_min_hits);
       v_cross_x2.add_cross(bin_range(320,324), bin_range(325,329), v_min_hits);
@@ -2319,6 +2325,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among bins with a transition of values");
       ------------------------------------------------------------
       v_min_hits := 4;
+      increment_expected_alerts(TB_WARNING, 5); -- For adding bins after sampling warnings
       v_cross_x2.add_cross(bin_transition((400,402,404)), bin_transition((405,407,409)), v_min_hits);
       v_cross_x2.add_cross(bin_transition((410,412,414)), bin_transition((415,417,419)), v_min_hits);
       v_cross_x2.add_cross(bin_transition((420,422,424)), bin_transition((425,427,429)), v_min_hits);
@@ -2341,6 +2348,7 @@ begin
       log(ID_LOG_HDR, "Testing randomization among different types of bins");
       ------------------------------------------------------------
       v_min_hits := 5;
+      increment_expected_alerts(TB_WARNING, 4); -- For adding bins after sampling warnings
       v_cross_x2.add_cross(bin(60), bin((250,251,252,253,254)), v_min_hits);
       v_cross_x2.add_cross(bin(70), bin_range(352,355), v_min_hits);
       v_cross_x2.add_cross(bin_transition((450,452,454,456,458)), bin(80), v_min_hits);

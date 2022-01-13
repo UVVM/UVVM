@@ -46,6 +46,7 @@ begin
   -- PROCESS: p_main
   --------------------------------------------------------------------------------
   p_main : process
+    variable v_coverpoint_a     : t_coverpoint;
     variable v_coverpoint_b     : t_coverpoint;
     variable v_coverpoint_c     : t_coverpoint;
     variable v_coverpoint_d     : t_coverpoint;
@@ -543,389 +544,389 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with multiple values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin((202,204,206,208)));
-      shared_coverpoint.add_bins(bin((210,211,212,213,214,215,216,217,218,219)));
+      v_coverpoint_a.add_bins(bin((202,204,206,208)));
+      v_coverpoint_a.add_bins(bin((210,211,212,213,214,215,216,217,218,219)));
       increment_expected_alerts(TB_WARNING,1);
-      shared_coverpoint.add_bins(bin((220,221,222,223,224,225,226,227,228,229,230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
+      v_coverpoint_a.add_bins(bin((220,221,222,223,224,225,226,227,228,229,230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (202,204,206,208));
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (210,211,212,213,214,215,216,217,218,219));
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (220,221,222,223,224,225,226,227,228,229));
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (202,204,206,208));
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (210,211,212,213,214,215,216,217,218,219));
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (220,221,222,223,224,225,226,227,228,229));
 
-      sample_bins(shared_coverpoint, (202,204,206,208), 1);
-      sample_bins(shared_coverpoint, (210,211,212,213,214,215,216,217,218,219), 1);
-      sample_bins(shared_coverpoint, (220,221,222,223,224,225,226,227,228,229), 1);
-      sample_bins(shared_coverpoint, (201,203,205,207,209,230), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (202,204,206,208), 1);
+      sample_bins(v_coverpoint_a, (210,211,212,213,214,215,216,217,218,219), 1);
+      sample_bins(v_coverpoint_a, (220,221,222,223,224,225,226,227,228,229), 1);
+      sample_bins(v_coverpoint_a, (201,203,205,207,209,230), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-3;
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (202,204,206,208), hits => 4);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (210,211,212,213,214,215,216,217,218,219), hits => 10);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (220,221,222,223,224,225,226,227,228,229), hits => 10);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (202,204,206,208), hits => 4);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (210,211,212,213,214,215,216,217,218,219), hits => 10);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (220,221,222,223,224,225,226,227,228,229), hits => 10);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with ranges of values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin_range(300,309));
-      shared_coverpoint.add_bins(bin_range(311,315,2));
-      shared_coverpoint.add_bins(bin_range(320,328,3));
-      shared_coverpoint.add_bins(bin_range(330,334,20));
-      shared_coverpoint.add_bins(bin_range(341,343,0));
-      shared_coverpoint.add_bins(bin_range(355,355));
+      v_coverpoint_a.add_bins(bin_range(300,309));
+      v_coverpoint_a.add_bins(bin_range(311,315,2));
+      v_coverpoint_a.add_bins(bin_range(320,328,3));
+      v_coverpoint_a.add_bins(bin_range(330,334,20));
+      v_coverpoint_a.add_bins(bin_range(341,343,0));
+      v_coverpoint_a.add_bins(bin_range(355,355));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
-      shared_coverpoint.add_bins(bin_range(363,361));
+      v_coverpoint_a.add_bins(bin_range(363,361));
 
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (300,309));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (311,312));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (313,315));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (320,322));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (323,325));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (326,328));
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 330);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 331);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 332);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 333);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 334);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 341);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 342);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 343);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 355);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (300,309));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (311,312));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (313,315));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (320,322));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (323,325));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (326,328));
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 330);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 331);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 332);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 333);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 334);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 341);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 342);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 343);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 355);
 
-      sample_bins(shared_coverpoint, (300,301,302,303,304,305,306,307,308,309), 1);
-      sample_bins(shared_coverpoint, (311,312,313,314,315), 1);
-      sample_bins(shared_coverpoint, (320,321,322,323,324,325,326,327,328), 1);
-      sample_bins(shared_coverpoint, (330,331,332,333,334), 1);
-      sample_bins(shared_coverpoint, (341,342,343), 1);
-      sample_bins(shared_coverpoint, (355), 1);
-      sample_bins(shared_coverpoint, (310,316,317,318,319,329,335,340,344,354,356), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (300,301,302,303,304,305,306,307,308,309), 1);
+      sample_bins(v_coverpoint_a, (311,312,313,314,315), 1);
+      sample_bins(v_coverpoint_a, (320,321,322,323,324,325,326,327,328), 1);
+      sample_bins(v_coverpoint_a, (330,331,332,333,334), 1);
+      sample_bins(v_coverpoint_a, (341,342,343), 1);
+      sample_bins(v_coverpoint_a, (355), 1);
+      sample_bins(v_coverpoint_a, (310,316,317,318,319,329,335,340,344,354,356), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-15;
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (300,309), hits => 10);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (311,312), hits => 2);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (313,315), hits => 3);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (320,322), hits => 3);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (323,325), hits => 3);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (326,328), hits => 3);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 330, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 331, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 332, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 333, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 334, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 341, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 342, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 343, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 355, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (300,309), hits => 10);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (311,312), hits => 2);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (313,315), hits => 3);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (320,322), hits => 3);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (323,325), hits => 3);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (326,328), hits => 3);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 330, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 331, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 332, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 333, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 334, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 341, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 342, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 343, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 355, hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins created from a vector");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin_vector(v_vector));
-      shared_coverpoint.add_bins(bin_vector(v_vector,2));
-      shared_coverpoint.add_bins(bin_vector(v_vector,3));
-      shared_coverpoint.add_bins(bin_vector(v_vector,20));
-      shared_coverpoint.add_bins(bin_vector(v_vector,0));
+      v_coverpoint_a.add_bins(bin_vector(v_vector));
+      v_coverpoint_a.add_bins(bin_vector(v_vector,2));
+      v_coverpoint_a.add_bins(bin_vector(v_vector,3));
+      v_coverpoint_a.add_bins(bin_vector(v_vector,20));
+      v_coverpoint_a.add_bins(bin_vector(v_vector,0));
 
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (0,3));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (0,1));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (2,3));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (0,0));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (1,1));
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (2,3));
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 0);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 2);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 3);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 0);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 2);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 3);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (0,3));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (0,1));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (2,3));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (0,0));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (1,1));
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (2,3));
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 0);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 2);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 3);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 0);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 2);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 3);
 
-      sample_bins(shared_coverpoint, (0,1,2,3), 1);
-      sample_bins(shared_coverpoint, (-1,4,5,6), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (0,1,2,3), 1);
+      sample_bins(v_coverpoint_a, (-1,4,5,6), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-14;
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (0,3), hits => 4);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (0,1), hits => 2);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (2,3), hits => 2);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (0,0), hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (1,1), hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (2,3), hits => 2);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 0, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 1, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 2, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 3, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 0, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 1, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 2, hits => 1);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 3, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (0,3), hits => 4);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (0,1), hits => 2);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (2,3), hits => 2);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (0,0), hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (1,1), hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (2,3), hits => 2);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 0, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 2, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 3, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 0, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 2, hits => 1);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 3, hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins with transitions of values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin_transition((401,403,401)));
-      shared_coverpoint.add_bins(bin_transition((401,403,401,409)));
-      shared_coverpoint.add_bins(bin_transition((410,410,410,418,415,415,410)));
-      shared_coverpoint.add_bins(bin_transition((420,421,422,423,424,425,426,427,428,429)));
+      v_coverpoint_a.add_bins(bin_transition((401,403,401)));
+      v_coverpoint_a.add_bins(bin_transition((401,403,401,409)));
+      v_coverpoint_a.add_bins(bin_transition((410,410,410,418,415,415,410)));
+      v_coverpoint_a.add_bins(bin_transition((420,421,422,423,424,425,426,427,428,429)));
       increment_expected_alerts(TB_WARNING,1);
-      shared_coverpoint.add_bins(bin_transition((430,431,432,433,434,435,436,437,438,439,440))); -- C_FC_MAX_NUM_BIN_VALUES = 10
+      v_coverpoint_a.add_bins(bin_transition((430,431,432,433,434,435,436,437,438,439,440))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (401,403,401));
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (401,403,401,409));
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (410,410,410,418,415,415,410));
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429));
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439));
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (401,403,401));
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (401,403,401,409));
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (410,410,410,418,415,415,410));
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429));
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439));
 
-      sample_bins(shared_coverpoint, (401,403,401,409), 2);
-      sample_bins(shared_coverpoint, (401,403,401,403,401,409), 2);
-      sample_bins(shared_coverpoint, (401,403,401,403,401,403,401,409), 2);
-      sample_bins(shared_coverpoint, (401,403,401,401,403,401,409), 2);
-      sample_bins(shared_coverpoint, (410,410,410,418,415,415,410), 3);
-      sample_bins(shared_coverpoint, (420,421,422,423,424,425,426,427,428,429), 3);
-      sample_bins(shared_coverpoint, (430,431,432,433,434,435,436,437,438,439), 3);
-      sample_bins(shared_coverpoint, (410,410,410,418,415,414,410), 1);             -- Sample values outside bins
-      sample_bins(shared_coverpoint, (420,421,422,423,424,425,426,427,428,430), 1); -- Sample values outside bins
-      sample_bins(shared_coverpoint, (430,431,432,433,434,435,436,437,438,440), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (401,403,401,409), 2);
+      sample_bins(v_coverpoint_a, (401,403,401,403,401,409), 2);
+      sample_bins(v_coverpoint_a, (401,403,401,403,401,403,401,409), 2);
+      sample_bins(v_coverpoint_a, (401,403,401,401,403,401,409), 2);
+      sample_bins(v_coverpoint_a, (410,410,410,418,415,415,410), 3);
+      sample_bins(v_coverpoint_a, (420,421,422,423,424,425,426,427,428,429), 3);
+      sample_bins(v_coverpoint_a, (430,431,432,433,434,435,436,437,438,439), 3);
+      sample_bins(v_coverpoint_a, (410,410,410,418,415,414,410), 1);             -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (420,421,422,423,424,425,426,427,428,430), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (430,431,432,433,434,435,436,437,438,440), 1); -- Sample values outside bins
 
       v_bin_idx := v_bin_idx-5;
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (401,403,401), hits => 12);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (401,403,401,409), hits => 8);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (410,410,410,418,415,415,410), hits => 3);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429), hits => 3);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439), hits => 3);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (401,403,401), hits => 12);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (401,403,401,409), hits => 8);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (410,410,410,418,415,415,410), hits => 3);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (420,421,422,423,424,425,426,427,428,429), hits => 3);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (430,431,432,433,434,435,436,437,438,439), hits => 3);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore bins with single values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(ignore_bin(-2001));
-      shared_coverpoint.add_bins(ignore_bin(-2000));
-      shared_coverpoint.add_bins(ignore_bin(2000));
-      shared_coverpoint.add_bins(ignore_bin(2001));
+      v_coverpoint_a.add_bins(ignore_bin(-2001));
+      v_coverpoint_a.add_bins(ignore_bin(-2000));
+      v_coverpoint_a.add_bins(ignore_bin(2000));
+      v_coverpoint_a.add_bins(ignore_bin(2001));
 
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, -2001);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, -2000);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE,  2000);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE,  2001);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, -2001);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, -2000);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE,  2000);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE,  2001);
 
-      sample_bins(shared_coverpoint, (-2001,-2000,2000,2001), 1);
-      sample_bins(shared_coverpoint, (-2003,-2002,2002,2003), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (-2001,-2000,2000,2001), 1);
+      sample_bins(v_coverpoint_a, (-2003,-2002,2002,2003), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-4;
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, -2001, hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, -2000, hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE,  2000, hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE,  2001, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, -2001, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, -2000, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE,  2000, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE,  2001, hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore bins with ranges of values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(ignore_bin_range(2100,2109));
-      shared_coverpoint.add_bins(ignore_bin_range(2115,2115));
+      v_coverpoint_a.add_bins(ignore_bin_range(2100,2109));
+      v_coverpoint_a.add_bins(ignore_bin_range(2115,2115));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
-      shared_coverpoint.add_bins(ignore_bin_range(2129,2126));
+      v_coverpoint_a.add_bins(ignore_bin_range(2129,2126));
 
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (2100,2109));
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 2115);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (2100,2109));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 2115);
 
-      sample_bins(shared_coverpoint, (2100,2101,2102,2103,2104,2105,2106,2107,2108,2109), 1);
-      sample_bins(shared_coverpoint, (2115), 1);
-      sample_bins(shared_coverpoint, (2110,2111,2114,2116), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (2100,2101,2102,2103,2104,2105,2106,2107,2108,2109), 1);
+      sample_bins(v_coverpoint_a, (2115), 1);
+      sample_bins(v_coverpoint_a, (2110,2111,2114,2116), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-2;
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (2100,2109), hits => 10);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 2115, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (2100,2109), hits => 10);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 2115, hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore bins with transitions of values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(ignore_bin_transition((2201,2203,2201)));
-      shared_coverpoint.add_bins(ignore_bin_transition((2201,2203,2201,2209)));
-      shared_coverpoint.add_bins(ignore_bin_transition((2210,2210,2210,2218,2215,2215,2210)));
+      v_coverpoint_a.add_bins(ignore_bin_transition((2201,2203,2201)));
+      v_coverpoint_a.add_bins(ignore_bin_transition((2201,2203,2201,2209)));
+      v_coverpoint_a.add_bins(ignore_bin_transition((2210,2210,2210,2218,2215,2215,2210)));
       increment_expected_alerts(TB_WARNING,1);
-      shared_coverpoint.add_bins(ignore_bin_transition((2220,2221,2222,2223,2224,2225,2226,2227,2228,2229,2230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
+      v_coverpoint_a.add_bins(ignore_bin_transition((2220,2221,2222,2223,2224,2225,2226,2227,2228,2229,2230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201));
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201,2209));
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2210,2210,2210,2218,2215,2215,2210));
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201,2209));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2210,2210,2210,2218,2215,2215,2210));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229));
 
-      sample_bins(shared_coverpoint, (2201,2203,2201,2209), 2);
-      sample_bins(shared_coverpoint, (2201,2203,2201,2203,2201,2209), 2);
-      sample_bins(shared_coverpoint, (2201,2203,2201,2203,2201,2203,2201,2209), 2);
-      sample_bins(shared_coverpoint, (2201,2203,2201,2201,2203,2201,2209), 2);
-      sample_bins(shared_coverpoint, (2210,2210,2210,2218,2215,2215,2210), 3);
-      sample_bins(shared_coverpoint, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229), 3);
-      sample_bins(shared_coverpoint, (2210,2210,2210,2218,2215,2214,2210), 1);                -- Sample values outside bins
-      sample_bins(shared_coverpoint, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2230), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (2201,2203,2201,2209), 2);
+      sample_bins(v_coverpoint_a, (2201,2203,2201,2203,2201,2209), 2);
+      sample_bins(v_coverpoint_a, (2201,2203,2201,2203,2201,2203,2201,2209), 2);
+      sample_bins(v_coverpoint_a, (2201,2203,2201,2201,2203,2201,2209), 2);
+      sample_bins(v_coverpoint_a, (2210,2210,2210,2218,2215,2215,2210), 3);
+      sample_bins(v_coverpoint_a, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229), 3);
+      sample_bins(v_coverpoint_a, (2210,2210,2210,2218,2215,2214,2210), 1);                -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2230), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-4;
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201), hits => 12);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201,2209), hits => 8);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2210,2210,2210,2218,2215,2215,2210), hits => 3);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229), hits => 3);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201), hits => 12);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2201,2209), hits => 8);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2210,2210,2210,2218,2215,2215,2210), hits => 3);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2220,2221,2222,2223,2224,2225,2226,2227,2228,2229), hits => 3);
 
-      shared_coverpoint.set_illegal_bin_alert_level(WARNING);
-      check_value(shared_coverpoint.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+      v_coverpoint_a.set_illegal_bin_alert_level(WARNING);
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with single values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(illegal_bin(-3001));
-      shared_coverpoint.add_bins(illegal_bin(-3000));
-      shared_coverpoint.add_bins(illegal_bin(3000));
-      shared_coverpoint.add_bins(illegal_bin(3001));
+      v_coverpoint_a.add_bins(illegal_bin(-3001));
+      v_coverpoint_a.add_bins(illegal_bin(-3000));
+      v_coverpoint_a.add_bins(illegal_bin(3000));
+      v_coverpoint_a.add_bins(illegal_bin(3001));
 
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, -3001);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, -3000);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL,  3000);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL,  3001);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, -3001);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, -3000);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL,  3000);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL,  3001);
 
       increment_expected_alerts(WARNING,4);
-      sample_bins(shared_coverpoint, (-3001,-3000,3000,3001), 1);
-      sample_bins(shared_coverpoint, (-3003,-3002,3002,3003), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (-3001,-3000,3000,3001), 1);
+      sample_bins(v_coverpoint_a, (-3003,-3002,3002,3003), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-4;
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, -3001, hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, -3000, hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL,  3000, hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL,  3001, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, -3001, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, -3000, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL,  3000, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL,  3001, hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with ranges of values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(illegal_bin_range(3100,3109));
-      shared_coverpoint.add_bins(illegal_bin_range(3115,3115));
+      v_coverpoint_a.add_bins(illegal_bin_range(3100,3109));
+      v_coverpoint_a.add_bins(illegal_bin_range(3115,3115));
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
-      shared_coverpoint.add_bins(illegal_bin_range(3129,3126));
+      v_coverpoint_a.add_bins(illegal_bin_range(3129,3126));
 
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109));
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, 3115);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 3115);
 
       increment_expected_alerts(WARNING,11);
-      sample_bins(shared_coverpoint, (3100,3101,3102,3103,3104,3105,3106,3107,3108,3109), 1);
-      sample_bins(shared_coverpoint, (3115), 1);
-      sample_bins(shared_coverpoint, (3110,3111,3114,3116), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (3100,3101,3102,3103,3104,3105,3106,3107,3108,3109), 1);
+      sample_bins(v_coverpoint_a, (3115), 1);
+      sample_bins(v_coverpoint_a, (3110,3111,3114,3116), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-2;
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109), hits => 10);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, 3115, hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109), hits => 10);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 3115, hits => 1);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal bins with transitions of values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(illegal_bin_transition((3201,3203,3201)));
-      shared_coverpoint.add_bins(illegal_bin_transition((3201,3203,3201,3209)));
-      shared_coverpoint.add_bins(illegal_bin_transition((3210,3210,3210,3218,3215,3215,3210)));
+      v_coverpoint_a.add_bins(illegal_bin_transition((3201,3203,3201)));
+      v_coverpoint_a.add_bins(illegal_bin_transition((3201,3203,3201,3209)));
+      v_coverpoint_a.add_bins(illegal_bin_transition((3210,3210,3210,3218,3215,3215,3210)));
       increment_expected_alerts(TB_WARNING,1);
-      shared_coverpoint.add_bins(illegal_bin_transition((3220,3221,3222,3223,3224,3225,3226,3227,3228,3229,3230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
+      v_coverpoint_a.add_bins(illegal_bin_transition((3220,3221,3222,3223,3224,3225,3226,3227,3228,3229,3230))); -- C_FC_MAX_NUM_BIN_VALUES = 10
 
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201));
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201,3209));
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3210,3210,3210,3218,3215,3215,3210));
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201,3209));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3210,3210,3210,3218,3215,3215,3210));
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229));
 
       increment_expected_alerts(WARNING,26);
-      sample_bins(shared_coverpoint, (3201,3203,3201,3209), 2);
-      sample_bins(shared_coverpoint, (3201,3203,3201,3203,3201,3209), 2);
-      sample_bins(shared_coverpoint, (3201,3203,3201,3203,3201,3203,3201,3209), 2);
-      sample_bins(shared_coverpoint, (3201,3203,3201,3201,3203,3201,3209), 2);
-      sample_bins(shared_coverpoint, (3210,3210,3210,3218,3215,3215,3210), 3);
-      sample_bins(shared_coverpoint, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), 3);
-      sample_bins(shared_coverpoint, (3210,3210,3210,3218,3215,3214,3210), 1);                -- Sample values outside bins
-      sample_bins(shared_coverpoint, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3230), 1); -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (3201,3203,3201,3209), 2);
+      sample_bins(v_coverpoint_a, (3201,3203,3201,3203,3201,3209), 2);
+      sample_bins(v_coverpoint_a, (3201,3203,3201,3203,3201,3203,3201,3209), 2);
+      sample_bins(v_coverpoint_a, (3201,3203,3201,3201,3203,3201,3209), 2);
+      sample_bins(v_coverpoint_a, (3210,3210,3210,3218,3215,3215,3210), 3);
+      sample_bins(v_coverpoint_a, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), 3);
+      sample_bins(v_coverpoint_a, (3210,3210,3210,3218,3215,3214,3210), 1);                -- Sample values outside bins
+      sample_bins(v_coverpoint_a, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3230), 1); -- Sample values outside bins
 
       v_invalid_bin_idx := v_invalid_bin_idx-4;
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201), hits => 12);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201,3209), hits => 8);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3210,3210,3210,3218,3215,3215,3210), hits => 3);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), hits => 3);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201), hits => 12);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3201,3209), hits => 8);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3210,3210,3210,3218,3215,3215,3210), hits => 3);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3220,3221,3222,3223,3224,3225,3226,3227,3228,3229), hits => 3);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing concatenation of bins");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin(4000) & bin((4100,4110,4120)) & bin_range(4200,4209,2) & bin_transition((4300,4302,4304,4305)), "concatenated");
-      shared_coverpoint.add_bins(bin_range(4400,4450) & ignore_bin(4401) & ignore_bin_range(4410,4420) & ignore_bin_transition((4400,4425,4450)), "concatenated");
+      v_coverpoint_a.add_bins(bin(4000) & bin((4100,4110,4120)) & bin_range(4200,4209,2) & bin_transition((4300,4302,4304,4305)), "concatenated");
+      v_coverpoint_a.add_bins(bin_range(4400,4450) & ignore_bin(4401) & ignore_bin_range(4410,4420) & ignore_bin_transition((4400,4425,4450)), "concatenated");
 
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 4000,                  name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (4100,4110,4120),      name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (4200,4204),           name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (4205,4209),           name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (4300,4302,4304,4305), name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (4400,4450),           name => "concatenated");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 4401,             name => "concatenated");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (4410,4420),      name => "concatenated");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4400,4425,4450), name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 4000,                  name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (4100,4110,4120),      name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (4200,4204),           name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (4205,4209),           name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (4300,4302,4304,4305), name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (4400,4450),           name => "concatenated");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 4401,             name => "concatenated");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (4410,4420),      name => "concatenated");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (4400,4425,4450), name => "concatenated");
 
-      sample_bins(shared_coverpoint, (4000), 1);
-      sample_bins(shared_coverpoint, (4100,4110,4120), 1);
-      sample_bins(shared_coverpoint, (4200,4201,4202,4203,4204,4205,4206,4207,4208,4209), 1);
-      sample_bins(shared_coverpoint, (4300,4302,4304,4305), 1);
-      sample_bins(shared_coverpoint, (4400,4402,4449,4450), 1);
-      sample_bins(shared_coverpoint, (4401,4410,4420,4400,4425,4450), 1); -- Sample ignore bins (note that first 2 values of transition are valid bins)
+      sample_bins(v_coverpoint_a, (4000), 1);
+      sample_bins(v_coverpoint_a, (4100,4110,4120), 1);
+      sample_bins(v_coverpoint_a, (4200,4201,4202,4203,4204,4205,4206,4207,4208,4209), 1);
+      sample_bins(v_coverpoint_a, (4300,4302,4304,4305), 1);
+      sample_bins(v_coverpoint_a, (4400,4402,4449,4450), 1);
+      sample_bins(v_coverpoint_a, (4401,4410,4420,4400,4425,4450), 1); -- Sample ignore bins (note that first 2 values of transition are valid bins)
 
       v_bin_idx := v_bin_idx-6;
       v_invalid_bin_idx := v_invalid_bin_idx-3;
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 4000, hits => 1,                  name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (4100,4110,4120), hits => 3,      name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (4200,4204), hits => 5,           name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (4205,4209), hits => 5,           name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (4300,4302,4304,4305), hits => 1, name => "concatenated");
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (4400,4450), hits => 6,           name => "concatenated");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 4401, hits => 1,             name => "concatenated");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (4410,4420), hits => 2,      name => "concatenated");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (4400,4425,4450), hits => 1, name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 4000, hits => 1,                  name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (4100,4110,4120), hits => 3,      name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (4200,4204), hits => 5,           name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (4205,4209), hits => 5,           name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (4300,4302,4304,4305), hits => 1, name => "concatenated");
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (4400,4450), hits => 6,           name => "concatenated");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 4401, hits => 1,             name => "concatenated");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (4410,4420), hits => 2,      name => "concatenated");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (4400,4425,4450), hits => 1, name => "concatenated");
 
-      check_num_bins(shared_coverpoint, v_bin_idx, v_invalid_bin_idx);
-      check_coverage_completed(shared_coverpoint);
-      shared_coverpoint.report_coverage(VERBOSE);
+      check_num_bins(v_coverpoint_a, v_bin_idx, v_invalid_bin_idx);
+      check_coverage_completed(v_coverpoint_a);
+      v_coverpoint_a.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bins and ignore bins with transitions of values");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin_transition((5000,5001,5010)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5001,5020)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5001,5030)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5002,5010)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5002,5020)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5002,5030)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5003,5010)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5003,5020)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5003,5030)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5004,5010)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5004,5020)), "transition");
-      shared_coverpoint.add_bins(bin_transition((5000,5004,5030)), "transition");
-      shared_coverpoint.add_bins(ignore_bin_transition((5000,5001,5010)), "ignore_transition");
-      shared_coverpoint.add_bins(ignore_bin_transition((5000,5002)), "ignore_transition");
-      shared_coverpoint.add_bins(ignore_bin_transition((5003,5010)), "ignore_transition");
-      shared_coverpoint.add_bins(ignore_bin(5004), "ignore_value");
+      v_coverpoint_a.add_bins(bin_transition((5000,5001,5010)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5001,5020)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5001,5030)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5002,5010)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5002,5020)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5002,5030)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5003,5010)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5003,5020)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5003,5030)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5004,5010)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5004,5020)), "transition");
+      v_coverpoint_a.add_bins(bin_transition((5000,5004,5030)), "transition");
+      v_coverpoint_a.add_bins(ignore_bin_transition((5000,5001,5010)), "ignore_transition");
+      v_coverpoint_a.add_bins(ignore_bin_transition((5000,5002)), "ignore_transition");
+      v_coverpoint_a.add_bins(ignore_bin_transition((5003,5010)), "ignore_transition");
+      v_coverpoint_a.add_bins(ignore_bin(5004), "ignore_value");
 
-      sample_bins(shared_coverpoint, (5000,5001,5010), 1);
-      sample_bins(shared_coverpoint, (5000,5001,5020), 1);
-      sample_bins(shared_coverpoint, (5000,5001,5030), 1);
-      sample_bins(shared_coverpoint, (5000,5002,5010), 1);
-      sample_bins(shared_coverpoint, (5000,5002,5020), 1);
-      sample_bins(shared_coverpoint, (5000,5002,5030), 1);
-      sample_bins(shared_coverpoint, (5000,5003,5010), 1);
-      sample_bins(shared_coverpoint, (5000,5003,5020), 1);
-      sample_bins(shared_coverpoint, (5000,5003,5030), 1);
-      sample_bins(shared_coverpoint, (5000,5004,5010), 1);
-      sample_bins(shared_coverpoint, (5000,5004,5020), 1);
-      sample_bins(shared_coverpoint, (5000,5004,5030), 1);
+      sample_bins(v_coverpoint_a, (5000,5001,5010), 1);
+      sample_bins(v_coverpoint_a, (5000,5001,5020), 1);
+      sample_bins(v_coverpoint_a, (5000,5001,5030), 1);
+      sample_bins(v_coverpoint_a, (5000,5002,5010), 1);
+      sample_bins(v_coverpoint_a, (5000,5002,5020), 1);
+      sample_bins(v_coverpoint_a, (5000,5002,5030), 1);
+      sample_bins(v_coverpoint_a, (5000,5003,5010), 1);
+      sample_bins(v_coverpoint_a, (5000,5003,5020), 1);
+      sample_bins(v_coverpoint_a, (5000,5003,5030), 1);
+      sample_bins(v_coverpoint_a, (5000,5004,5010), 1);
+      sample_bins(v_coverpoint_a, (5000,5004,5020), 1);
+      sample_bins(v_coverpoint_a, (5000,5004,5030), 1);
 
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5001,5010), hits => 0, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5001,5020), hits => 1, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5001,5030), hits => 1, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5002,5010), hits => 0, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5002,5020), hits => 0, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5002,5030), hits => 0, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5003,5010), hits => 0, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5003,5020), hits => 1, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5003,5030), hits => 1, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5004,5010), hits => 0, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5004,5020), hits => 0, name => "transition");
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (5000,5004,5030), hits => 0, name => "transition");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5000,5001,5010), hits => 1, name => "ignore_transition");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5000,5002), hits => 3, name => "ignore_transition");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (5003,5010), hits => 1, name => "ignore_transition");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 5004, hits => 3, name => "ignore_value");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5001,5010), hits => 0, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5001,5020), hits => 1, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5001,5030), hits => 1, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5002,5010), hits => 0, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5002,5020), hits => 0, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5002,5030), hits => 0, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5003,5010), hits => 0, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5003,5020), hits => 1, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5003,5030), hits => 1, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5004,5010), hits => 0, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5004,5020), hits => 0, name => "transition");
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (5000,5004,5030), hits => 0, name => "transition");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (5000,5001,5010), hits => 1, name => "ignore_transition");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (5000,5002), hits => 3, name => "ignore_transition");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (5003,5010), hits => 1, name => "ignore_transition");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 5004, hits => 3, name => "ignore_value");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
@@ -1097,7 +1098,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing C_FC_MAX_NUM_COVERPOINTS limit");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin(0));
+      v_coverpoint_a.add_bins(bin(0));
       v_coverpoint_b.add_bins(bin(0));
       v_coverpoint_c.add_bins(bin(0));
       v_coverpoint_d.add_bins(bin(0));
@@ -1611,11 +1612,11 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross of coverpoints with different bins");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin(100));
-      shared_coverpoint.add_bins(bin_range(200,207));
-      shared_coverpoint.add_bins(ignore_bin(300));
-      shared_coverpoint.add_bins(ignore_bin_range(400,407));
-      shared_coverpoint.add_bins(illegal_bin_transition((501,503,505)));
+      v_coverpoint_a.add_bins(bin(100));
+      v_coverpoint_a.add_bins(bin_range(200,207));
+      v_coverpoint_a.add_bins(ignore_bin(300));
+      v_coverpoint_a.add_bins(ignore_bin_range(400,407));
+      v_coverpoint_a.add_bins(illegal_bin_transition((501,503,505)));
 
       v_coverpoint_b.add_bins(bin((1002,1004,1006)));
       v_coverpoint_b.add_bins(bin_transition((1116,1117,1118)));
@@ -1623,7 +1624,7 @@ begin
       v_coverpoint_b.add_bins(illegal_bin(1310));
       v_coverpoint_b.add_bins(illegal_bin_range(1415,1419));
 
-      v_cross_x2.add_cross(shared_coverpoint, v_coverpoint_b);
+      v_cross_x2.add_cross(v_coverpoint_a, v_coverpoint_b);
 
       check_cross_bin(v_cross_x2, v_bin_idx,                 (VAL,VAL),                 (0 => 100), (1002,1004,1006),    name => "bin_0");
       check_cross_bin(v_cross_x2, v_bin_idx,                 (VAL,TRN),                 (0 => 100), (1116,1117,1118),    name => "bin_1");
@@ -1736,15 +1737,15 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross of 3 elements");
       ------------------------------------------------------------
-      shared_coverpoint.delete_coverpoint(VOID);
+      v_coverpoint_a.delete_coverpoint(VOID);
       v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_c.delete_coverpoint(VOID);
       v_coverpoint_d.delete_coverpoint(VOID);
 
-      shared_coverpoint.add_bins(bin(100) & bin(101));
+      v_coverpoint_a.add_bins(bin(100) & bin(101));
       v_coverpoint_b.add_bins(bin(200) & bin(201));
       v_coverpoint_c.add_bins(bin(300));
-      v_cross_x3.add_cross(shared_coverpoint, v_coverpoint_b, v_coverpoint_c);
+      v_cross_x3.add_cross(v_coverpoint_a, v_coverpoint_b, v_coverpoint_c);
 
       v_bin_idx := 0;
       check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300));
@@ -1770,7 +1771,7 @@ begin
       log(ID_LOG_HDR, "Testing cross of 4 elements");
       ------------------------------------------------------------
       v_coverpoint_d.add_bins(bin(400));
-      v_cross_x4.add_cross(shared_coverpoint, v_coverpoint_b, v_coverpoint_c, v_coverpoint_d);
+      v_cross_x4.add_cross(v_coverpoint_a, v_coverpoint_b, v_coverpoint_c, v_coverpoint_d);
 
       v_bin_idx := 0;
       check_cross_bin(v_cross_x4, v_bin_idx, (VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400));
@@ -1796,7 +1797,7 @@ begin
       log(ID_LOG_HDR, "Testing cross of 5 elements");
       ------------------------------------------------------------
       v_coverpoint_e.add_bins(bin(500));
-      v_cross_x5.add_cross(shared_coverpoint, v_coverpoint_b, v_coverpoint_c, v_coverpoint_d, v_coverpoint_e);
+      v_cross_x5.add_cross(v_coverpoint_a, v_coverpoint_b, v_coverpoint_c, v_coverpoint_d, v_coverpoint_e);
 
       v_bin_idx := 0;
       check_cross_bin(v_cross_x5, v_bin_idx, (VAL,VAL,VAL,VAL,VAL), (0 => 100), (0 => 200), (0 => 300), (0 => 400), (0 => 500));
@@ -1827,13 +1828,13 @@ begin
       log(ID_LOG_HDR, "Testing seeds");
       ------------------------------------------------------------
       log(ID_SEQUENCER, "Check default seed values for uninitialized coverpoint");
-      v_seeds := shared_coverpoint.get_rand_seeds(VOID);
+      v_seeds := v_coverpoint_a.get_rand_seeds(VOID);
       check_value(v_seeds(0), C_RAND_INIT_SEED_1, ERROR, "Checking initial seed 1");
       check_value(v_seeds(1), C_RAND_INIT_SEED_2, ERROR, "Checking initial seed 2");
 
       log(ID_SEQUENCER, "Check default seed values using default name for initialized coverpoint");
-      shared_coverpoint.set_bin_overlap_alert_level(NO_ALERT);   -- Initializes coverpoint
-      v_seeds := shared_coverpoint.get_rand_seeds(VOID);
+      v_coverpoint_a.set_bin_overlap_alert_level(NO_ALERT);   -- Initializes coverpoint
+      v_seeds := v_coverpoint_a.get_rand_seeds(VOID);
       check_value(v_seeds(0), 85514, ERROR, "Checking initial seed 1");
       check_value(v_seeds(1), 85614, ERROR, "Checking initial seed 2");
 
@@ -1858,115 +1859,115 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization doesn't select ignore or illegal bins");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(ignore_bin(2000), "bin_0");
-      shared_coverpoint.add_bins(ignore_bin_range(2100,2109), "bin_1");
-      shared_coverpoint.add_bins(ignore_bin_transition((2201,2203,2205,2209)), "bin_2");
-      shared_coverpoint.add_bins(illegal_bin(3000), "bin_3");
-      shared_coverpoint.add_bins(illegal_bin_range(3100,3109), "bin_4");
-      shared_coverpoint.add_bins(illegal_bin_transition((3201,3203,3205,3209)), "bin_5");
+      v_coverpoint_a.add_bins(ignore_bin(2000), "bin_0");
+      v_coverpoint_a.add_bins(ignore_bin_range(2100,2109), "bin_1");
+      v_coverpoint_a.add_bins(ignore_bin_transition((2201,2203,2205,2209)), "bin_2");
+      v_coverpoint_a.add_bins(illegal_bin(3000), "bin_3");
+      v_coverpoint_a.add_bins(illegal_bin_range(3100,3109), "bin_4");
+      v_coverpoint_a.add_bins(illegal_bin_transition((3201,3203,3205,3209)), "bin_5");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization among bins with single values");
       ------------------------------------------------------------
       v_min_hits := 1;
-      shared_coverpoint.add_bins(bin_range(1,50,0));
+      v_coverpoint_a.add_bins(bin_range(1,50,0));
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 50*v_min_hits loop
-        v_value := shared_coverpoint.rand(NO_SAMPLE_COV);
-        shared_coverpoint.sample_coverage(v_value);
+        v_value := v_coverpoint_a.rand(NO_SAMPLE_COV);
+        v_coverpoint_a.sample_coverage(v_value);
       end loop;
 
       for i in 1 to 50 loop
-        check_bin(shared_coverpoint, v_bin_idx, VAL, i, v_min_hits, hits => v_min_hits);
+        check_bin(v_coverpoint_a, v_bin_idx, VAL, i, v_min_hits, hits => v_min_hits);
       end loop;
-      check_coverage_completed(shared_coverpoint);
+      check_coverage_completed(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization among bins with multiple values");
       ------------------------------------------------------------
       v_min_hits := 2;
-      shared_coverpoint.add_bins(bin((200,201,202,203,204)), v_min_hits);
-      shared_coverpoint.add_bins(bin((210,211,212,213,214)), v_min_hits);
-      shared_coverpoint.add_bins(bin((220,221,222,223,224)), v_min_hits);
-      shared_coverpoint.add_bins(bin((230,231,232,233,234)), v_min_hits);
-      shared_coverpoint.add_bins(bin((240,241,242,243,244)), v_min_hits);
+      v_coverpoint_a.add_bins(bin((200,201,202,203,204)), v_min_hits);
+      v_coverpoint_a.add_bins(bin((210,211,212,213,214)), v_min_hits);
+      v_coverpoint_a.add_bins(bin((220,221,222,223,224)), v_min_hits);
+      v_coverpoint_a.add_bins(bin((230,231,232,233,234)), v_min_hits);
+      v_coverpoint_a.add_bins(bin((240,241,242,243,244)), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*v_min_hits loop
-        v_value := shared_coverpoint.rand(SAMPLE_COV);
+        v_value := v_coverpoint_a.rand(SAMPLE_COV);
       end loop;
 
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (200,201,202,203,204), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (210,211,212,213,214), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (220,221,222,223,224), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (230,231,232,233,234), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (240,241,242,243,244), v_min_hits, hits => v_min_hits);
-      check_coverage_completed(shared_coverpoint);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (200,201,202,203,204), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (210,211,212,213,214), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (220,221,222,223,224), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (230,231,232,233,234), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (240,241,242,243,244), v_min_hits, hits => v_min_hits);
+      check_coverage_completed(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization among bins with a range of values");
       ------------------------------------------------------------
       v_min_hits := 3;
-      shared_coverpoint.add_bins(bin_range(300,309), v_min_hits);
-      shared_coverpoint.add_bins(bin_range(310,319), v_min_hits);
-      shared_coverpoint.add_bins(bin_range(320,329), v_min_hits);
-      shared_coverpoint.add_bins(bin_range(330,339), v_min_hits);
-      shared_coverpoint.add_bins(bin_range(340,349), v_min_hits);
+      v_coverpoint_a.add_bins(bin_range(300,309), v_min_hits);
+      v_coverpoint_a.add_bins(bin_range(310,319), v_min_hits);
+      v_coverpoint_a.add_bins(bin_range(320,329), v_min_hits);
+      v_coverpoint_a.add_bins(bin_range(330,339), v_min_hits);
+      v_coverpoint_a.add_bins(bin_range(340,349), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*v_min_hits loop
-        v_value := shared_coverpoint.rand(SAMPLE_COV);
+        v_value := v_coverpoint_a.rand(SAMPLE_COV);
       end loop;
 
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (300,309), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (310,319), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (320,329), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (330,339), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (340,349), v_min_hits, hits => v_min_hits);
-      check_coverage_completed(shared_coverpoint);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (300,309), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (310,319), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (320,329), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (330,339), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (340,349), v_min_hits, hits => v_min_hits);
+      check_coverage_completed(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization among bins with a transition of values");
       ------------------------------------------------------------
       v_min_hits := 4;
-      shared_coverpoint.add_bins(bin_transition((400,402,404,406,408)), v_min_hits);
-      shared_coverpoint.add_bins(bin_transition((410,412,414,416,418)), v_min_hits);
-      shared_coverpoint.add_bins(bin_transition((420,422,424,426,428)), v_min_hits);
-      shared_coverpoint.add_bins(bin_transition((438,436,434,432,430)), v_min_hits);
-      shared_coverpoint.add_bins(bin_transition((440,443,443,447,443)), v_min_hits);
+      v_coverpoint_a.add_bins(bin_transition((400,402,404,406,408)), v_min_hits);
+      v_coverpoint_a.add_bins(bin_transition((410,412,414,416,418)), v_min_hits);
+      v_coverpoint_a.add_bins(bin_transition((420,422,424,426,428)), v_min_hits);
+      v_coverpoint_a.add_bins(bin_transition((438,436,434,432,430)), v_min_hits);
+      v_coverpoint_a.add_bins(bin_transition((440,443,443,447,443)), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to 5*5*v_min_hits loop
-        v_value := shared_coverpoint.rand(SAMPLE_COV);
+        v_value := v_coverpoint_a.rand(SAMPLE_COV);
       end loop;
 
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (400,402,404,406,408), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (410,412,414,416,418), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (420,422,424,426,428), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (438,436,434,432,430), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (440,443,443,447,443), v_min_hits, hits => v_min_hits);
-      check_coverage_completed(shared_coverpoint);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (400,402,404,406,408), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (410,412,414,416,418), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (420,422,424,426,428), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (438,436,434,432,430), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (440,443,443,447,443), v_min_hits, hits => v_min_hits);
+      check_coverage_completed(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization among different types of bins");
       ------------------------------------------------------------
       v_min_hits := 5;
-      shared_coverpoint.add_bins(bin(60), v_min_hits);
-      shared_coverpoint.add_bins(bin((250,251,252,253,254)), v_min_hits);
-      shared_coverpoint.add_bins(bin_range(350,359), v_min_hits);
-      shared_coverpoint.add_bins(bin_transition((450,452,452,458,455)), v_min_hits);
+      v_coverpoint_a.add_bins(bin(60), v_min_hits);
+      v_coverpoint_a.add_bins(bin((250,251,252,253,254)), v_min_hits);
+      v_coverpoint_a.add_bins(bin_range(350,359), v_min_hits);
+      v_coverpoint_a.add_bins(bin_transition((450,452,452,458,455)), v_min_hits);
 
       -- Randomize and sample the exact number of times to cover all bins
       for i in 1 to (3+5)*v_min_hits loop
-        v_value := shared_coverpoint.rand(SAMPLE_COV);
+        v_value := v_coverpoint_a.rand(SAMPLE_COV);
       end loop;
 
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 60,                    v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (250,251,252,253,254), v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (350,359),             v_min_hits, hits => v_min_hits);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (450,452,452,458,455), v_min_hits, hits => v_min_hits);
-      check_coverage_completed(shared_coverpoint);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 60,                    v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (250,251,252,253,254), v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (350,359),             v_min_hits, hits => v_min_hits);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (450,452,452,458,455), v_min_hits, hits => v_min_hits);
+      check_coverage_completed(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing all bins are selected for randomization when coverage is complete");
@@ -1975,22 +1976,22 @@ begin
 
       log(ID_SEQUENCER, "Calling rand() 1000 times");
       for i in 1 to 1000 loop
-        v_value := shared_coverpoint.rand(SAMPLE_COV);
+        v_value := v_coverpoint_a.rand(SAMPLE_COV);
       end loop;
 
       -- By checking that the number of hits in the bins is greater than their minimum coverage,
       -- we can assure that every bin was selected for randomization after the previous tests.
       for i in 0 to v_bin_idx-1 loop
         if i < 50 then
-          check_bin_hits_is_greater(shared_coverpoint, i, 1);
+          check_bin_hits_is_greater(v_coverpoint_a, i, 1);
         elsif i < 55 then
-          check_bin_hits_is_greater(shared_coverpoint, i, 2);
+          check_bin_hits_is_greater(v_coverpoint_a, i, 2);
         elsif i < 60 then
-          check_bin_hits_is_greater(shared_coverpoint, i, 3);
+          check_bin_hits_is_greater(v_coverpoint_a, i, 3);
         elsif i < 65 then
-          check_bin_hits_is_greater(shared_coverpoint, i, 4);
+          check_bin_hits_is_greater(v_coverpoint_a, i, 4);
         elsif i < 69 then
-          check_bin_hits_is_greater(shared_coverpoint, i, 5);
+          check_bin_hits_is_greater(v_coverpoint_a, i, 5);
         else
           alert(TB_ERROR, "check_bin_hits_is_greater() => Unexpected bin_idx: " & to_string(i));
         end if;
@@ -1999,14 +2000,14 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Checking that ignore and invalid bins were never selected during randomization");
       ------------------------------------------------------------
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 2000,                   hits => 0, name => "bin_0");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (2100,2109),            hits => 0, name => "bin_1");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2205,2209),  hits => 0, name => "bin_2");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, 3000,                  hits => 0, name => "bin_3");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109),           hits => 0, name => "bin_4");
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3205,3209), hits => 0, name => "bin_5");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 2000,                   hits => 0, name => "bin_0");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (2100,2109),            hits => 0, name => "bin_1");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (2201,2203,2205,2209),  hits => 0, name => "bin_2");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 3000,                  hits => 0, name => "bin_3");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (3100,3109),           hits => 0, name => "bin_4");
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (3201,3203,3205,3209), hits => 0, name => "bin_5");
 
-      shared_coverpoint.report_coverage(VERBOSE);
+      v_coverpoint_a.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing randomization weight - Adaptive");
@@ -2457,61 +2458,61 @@ begin
       log(ID_LOG_HDR, "Testing load database from a non-existing file");
       ------------------------------------------------------------
       increment_expected_alerts(TB_WARNING,1);
-      shared_coverpoint.load_coverage_db(GC_FILE_PATH & "dummy.txt");
+      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "dummy.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - coverpoint");
       ------------------------------------------------------------
       -- Add bins
-      shared_coverpoint.add_bins(bin(10));
-      shared_coverpoint.add_bins(bin(20), 8, 20, "single");
-      shared_coverpoint.add_bins(bin((30,35,39)), 9, 30, "multiple");
-      shared_coverpoint.add_bins(bin_range(40,49,2), 15, 40, "range");
-      shared_coverpoint.add_bins(bin_transition((50,51,52,53,54,55,56,57,58,59)), 5, 50, "transition");
-      shared_coverpoint.add_bins(ignore_bin(100));
-      shared_coverpoint.add_bins(ignore_bin(110), 1000, 500, "ignore_single");
-      shared_coverpoint.add_bins(ignore_bin_range(121,125), 1000, 500, "ignore_range");
-      shared_coverpoint.add_bins(ignore_bin_transition((132,134,136,138)), 1000, 500, "ignore_transition");
-      shared_coverpoint.add_bins(illegal_bin(200));
-      shared_coverpoint.add_bins(illegal_bin(210), 1000, 500, "illegal_single");
-      shared_coverpoint.add_bins(illegal_bin_range(226,229), 1000, 500, "illegal_range");
-      shared_coverpoint.add_bins(illegal_bin_transition((231,237,237,238,235,231)), 1000, 500, "illegal_transition");
+      v_coverpoint_a.add_bins(bin(10));
+      v_coverpoint_a.add_bins(bin(20), 8, 20, "single");
+      v_coverpoint_a.add_bins(bin((30,35,39)), 9, 30, "multiple");
+      v_coverpoint_a.add_bins(bin_range(40,49,2), 15, 40, "range");
+      v_coverpoint_a.add_bins(bin_transition((50,51,52,53,54,55,56,57,58,59)), 5, 50, "transition");
+      v_coverpoint_a.add_bins(ignore_bin(100));
+      v_coverpoint_a.add_bins(ignore_bin(110), 1000, 500, "ignore_single");
+      v_coverpoint_a.add_bins(ignore_bin_range(121,125), 1000, 500, "ignore_range");
+      v_coverpoint_a.add_bins(ignore_bin_transition((132,134,136,138)), 1000, 500, "ignore_transition");
+      v_coverpoint_a.add_bins(illegal_bin(200));
+      v_coverpoint_a.add_bins(illegal_bin(210), 1000, 500, "illegal_single");
+      v_coverpoint_a.add_bins(illegal_bin_range(226,229), 1000, 500, "illegal_range");
+      v_coverpoint_a.add_bins(illegal_bin_transition((231,237,237,238,235,231)), 1000, 500, "illegal_transition");
 
       -- Set configuration
-      shared_coverpoint.set_name("MY_COVERPOINT");
-      shared_coverpoint.set_scope("MY_SCOPE");
-      shared_coverpoint.set_illegal_bin_alert_level(TB_NOTE);
-      shared_coverpoint.set_bin_overlap_alert_level(TB_WARNING);
-      shared_coverpoint.set_overall_coverage_weight(5);
-      shared_coverpoint.set_bins_coverage_goal(50);
-      shared_coverpoint.set_hits_coverage_goal(200);
+      v_coverpoint_a.set_name("MY_COVERPOINT");
+      v_coverpoint_a.set_scope("MY_SCOPE");
+      v_coverpoint_a.set_illegal_bin_alert_level(TB_NOTE);
+      v_coverpoint_a.set_bin_overlap_alert_level(TB_WARNING);
+      v_coverpoint_a.set_overall_coverage_weight(5);
+      v_coverpoint_a.set_bins_coverage_goal(50);
+      v_coverpoint_a.set_hits_coverage_goal(200);
       fc_set_covpts_coverage_goal(80);
 
       -- Sample coverage
       increment_expected_alerts(TB_NOTE, 6);
-      sample_bins(shared_coverpoint, (20), 2);
-      sample_bins(shared_coverpoint, (30,35,39), 1);
-      sample_bins(shared_coverpoint, (40,41,42,43,44), 1);
-      sample_bins(shared_coverpoint, (45,46,47,48,49), 1);
-      sample_bins(shared_coverpoint, (50,51,52,53,54,55,56,57,58,59), 1);
-      sample_bins(shared_coverpoint, (110), 1);
-      sample_bins(shared_coverpoint, (121,122,123,124,125), 1);
-      sample_bins(shared_coverpoint, (132,134,136,138), 2);
-      sample_bins(shared_coverpoint, (210), 1);
-      sample_bins(shared_coverpoint, (226,227,228,229), 1);
-      sample_bins(shared_coverpoint, (231,237,237,238,235,231), 1);
-      sample_bins(shared_coverpoint, (50,51,52), 1); -- To check transition is continued in next coverpoint
+      sample_bins(v_coverpoint_a, (20), 2);
+      sample_bins(v_coverpoint_a, (30,35,39), 1);
+      sample_bins(v_coverpoint_a, (40,41,42,43,44), 1);
+      sample_bins(v_coverpoint_a, (45,46,47,48,49), 1);
+      sample_bins(v_coverpoint_a, (50,51,52,53,54,55,56,57,58,59), 1);
+      sample_bins(v_coverpoint_a, (110), 1);
+      sample_bins(v_coverpoint_a, (121,122,123,124,125), 1);
+      sample_bins(v_coverpoint_a, (132,134,136,138), 2);
+      sample_bins(v_coverpoint_a, (210), 1);
+      sample_bins(v_coverpoint_a, (226,227,228,229), 1);
+      sample_bins(v_coverpoint_a, (231,237,237,238,235,231), 1);
+      sample_bins(v_coverpoint_a, (50,51,52), 1); -- To check transition is continued in next coverpoint
 
       -- Randomize until a transition bin is generated
       while v_value /= 50 loop
-        v_value := shared_coverpoint.rand(NO_SAMPLE_COV);
+        v_value := v_coverpoint_a.rand(NO_SAMPLE_COV);
       end loop;
       for i in 1 to 5 loop
-        v_value := shared_coverpoint.rand(NO_SAMPLE_COV);
+        v_value := v_coverpoint_a.rand(NO_SAMPLE_COV);
       end loop;
 
-      shared_coverpoint.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 30.19%
-      shared_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
+      v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 30.19%
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - cross");
@@ -2596,77 +2597,77 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
-      shared_coverpoint.load_coverage_db(GC_FILE_PATH & "coverpoint.txt", NON_VERBOSE);
+      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "coverpoint.txt", NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;
       v_invalid_bin_idx := 0;
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 10, name => "bin_0", hits => 0);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 20, 8, 20, "single", hits => 2);
-      check_bin(shared_coverpoint, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 3);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 5);
-      check_bin(shared_coverpoint, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 5);
-      check_bin(shared_coverpoint, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 5);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_IGNORE, (132,134,136,138), "ignore_transition", hits => 2);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, 200, "bin_10", hits => 0);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, 210, "illegal_single", hits => 1);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 4);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 1);
-      check_num_bins(shared_coverpoint, 6, 8);
-      check_bins_coverage(shared_coverpoint, 0.0);
-      check_bins_coverage(shared_coverpoint, 0.0, use_goal => true);   -- goal=50
-      check_hits_coverage(shared_coverpoint, 30.19);
-      check_hits_coverage(shared_coverpoint, 15.09, use_goal => true); -- goal=200
-      check_value(shared_coverpoint.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 10, name => "bin_0", hits => 0);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 20, 8, 20, "single", hits => 2);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 3);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 5);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 5);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 5);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (132,134,136,138), "ignore_transition", hits => 2);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 200, "bin_10", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 210, "illegal_single", hits => 1);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 4);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 1);
+      check_num_bins(v_coverpoint_a, 6, 8);
+      check_bins_coverage(v_coverpoint_a, 0.0);
+      check_bins_coverage(v_coverpoint_a, 0.0, use_goal => true);   -- goal=50
+      check_hits_coverage(v_coverpoint_a, 30.19);
+      check_hits_coverage(v_coverpoint_a, 15.09, use_goal => true); -- goal=200
+      check_value(v_coverpoint_a.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
 
       -- Check configuration
-      check_value(shared_coverpoint.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
-      check_value(shared_coverpoint.get_scope(VOID), "MY_SCOPE", ERROR, "Checking scope");
-      check_value(shared_coverpoint.get_illegal_bin_alert_level(VOID) = TB_NOTE, ERROR, "Checking illegal bin alert level");
-      check_value(shared_coverpoint.get_bin_overlap_alert_level(VOID) = TB_WARNING, ERROR, "Checking bin overlap alert level");
-      check_value(shared_coverpoint.get_overall_coverage_weight(VOID), 5, ERROR, "Checking coverage weight");
-      check_value(shared_coverpoint.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
-      check_value(shared_coverpoint.get_hits_coverage_goal(VOID), 200, ERROR, "Checking hits coverage goal");
+      check_value(v_coverpoint_a.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
+      check_value(v_coverpoint_a.get_scope(VOID), "MY_SCOPE", ERROR, "Checking scope");
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = TB_NOTE, ERROR, "Checking illegal bin alert level");
+      check_value(v_coverpoint_a.get_bin_overlap_alert_level(VOID) = TB_WARNING, ERROR, "Checking bin overlap alert level");
+      check_value(v_coverpoint_a.get_overall_coverage_weight(VOID), 5, ERROR, "Checking coverage weight");
+      check_value(v_coverpoint_a.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
+      check_value(v_coverpoint_a.get_hits_coverage_goal(VOID), 200, ERROR, "Checking hits coverage goal");
       check_value(fc_get_covpts_coverage_goal(VOID), 80, ERROR, "Checking coverpoints coverage goal");
-      v_seeds := shared_coverpoint.get_rand_seeds(VOID);
+      v_seeds := v_coverpoint_a.get_rand_seeds(VOID);
       check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Check randomization state
-      check_value(shared_coverpoint.rand(NO_SAMPLE_COV), 56, ERROR, "Checking rand transition");
-      check_value(shared_coverpoint.rand(NO_SAMPLE_COV), 57, ERROR, "Checking rand transition");
-      check_value(shared_coverpoint.rand(NO_SAMPLE_COV), 58, ERROR, "Checking rand transition");
-      check_value(shared_coverpoint.rand(NO_SAMPLE_COV), 59, ERROR, "Checking rand transition");
+      check_value(v_coverpoint_a.rand(NO_SAMPLE_COV), 56, ERROR, "Checking rand transition");
+      check_value(v_coverpoint_a.rand(NO_SAMPLE_COV), 57, ERROR, "Checking rand transition");
+      check_value(v_coverpoint_a.rand(NO_SAMPLE_COV), 58, ERROR, "Checking rand transition");
+      check_value(v_coverpoint_a.rand(NO_SAMPLE_COV), 59, ERROR, "Checking rand transition");
 
       -- Add extra bins to check the bin indexes are stored correctly
-      shared_coverpoint.add_bins(bin(1000));
-      shared_coverpoint.add_bins(ignore_bin(1001));
-      shared_coverpoint.add_bins(illegal_bin(1002));
-      check_bin(shared_coverpoint, v_bin_idx, VAL, 1000, name => "bin_14", hits => 0);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_IGNORE, 1001, "bin_15", hits => 0);
-      check_invalid_bin(shared_coverpoint, v_invalid_bin_idx, VAL_ILLEGAL, 1002, "bin_16", hits => 0);
+      v_coverpoint_a.add_bins(bin(1000));
+      v_coverpoint_a.add_bins(ignore_bin(1001));
+      v_coverpoint_a.add_bins(illegal_bin(1002));
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1000, name => "bin_14", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 1001, "bin_15", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 1002, "bin_16", hits => 0);
 
       -- Sample coverage
       increment_expected_alerts(TB_NOTE, 6);
-      sample_bins(shared_coverpoint, (53,54,55,56,57,58,59), 1); -- To check transition started in previous coverpoint
-      sample_bins(shared_coverpoint, (20), 2);
-      sample_bins(shared_coverpoint, (30,35,39), 1);
-      sample_bins(shared_coverpoint, (40,41,42,43,44), 1);
-      sample_bins(shared_coverpoint, (45,46,47,48,49), 1);
-      sample_bins(shared_coverpoint, (50,51,52,53,54,55,56,57,58,59), 1);
-      sample_bins(shared_coverpoint, (110), 1);
-      sample_bins(shared_coverpoint, (121,122,123,124,125), 1);
-      sample_bins(shared_coverpoint, (132,134,136,138), 2);
-      sample_bins(shared_coverpoint, (210), 1);
-      sample_bins(shared_coverpoint, (226,227,228,229), 1);
-      sample_bins(shared_coverpoint, (231,237,237,238,235,231), 1);
-      sample_bins(shared_coverpoint, (50,51,52,53), 1); -- To check transition is continued in next coverpoint
+      sample_bins(v_coverpoint_a, (53,54,55,56,57,58,59), 1); -- To check transition started in previous coverpoint
+      sample_bins(v_coverpoint_a, (20), 2);
+      sample_bins(v_coverpoint_a, (30,35,39), 1);
+      sample_bins(v_coverpoint_a, (40,41,42,43,44), 1);
+      sample_bins(v_coverpoint_a, (45,46,47,48,49), 1);
+      sample_bins(v_coverpoint_a, (50,51,52,53,54,55,56,57,58,59), 1);
+      sample_bins(v_coverpoint_a, (110), 1);
+      sample_bins(v_coverpoint_a, (121,122,123,124,125), 1);
+      sample_bins(v_coverpoint_a, (132,134,136,138), 2);
+      sample_bins(v_coverpoint_a, (210), 1);
+      sample_bins(v_coverpoint_a, (226,227,228,229), 1);
+      sample_bins(v_coverpoint_a, (231,237,237,238,235,231), 1);
+      sample_bins(v_coverpoint_a, (50,51,52,53), 1); -- To check transition is continued in next coverpoint
 
-      shared_coverpoint.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 61.11%
-      shared_coverpoint.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
+      v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 61.11%
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - cross");
@@ -2908,13 +2909,13 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load DB to an already initialized coverpoint - overwrite");
       ------------------------------------------------------------
-      check_value(shared_coverpoint.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
-      check_value(shared_coverpoint.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
+      check_value(v_coverpoint_a.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
+      check_value(v_coverpoint_a.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
 
       increment_expected_alerts(TB_WARNING, 1);
-      shared_coverpoint.load_coverage_db(GC_FILE_PATH & "cross.txt");
-      check_value(shared_coverpoint.get_name(VOID), "MY_CROSS", ERROR, "Checking name");
-      check_value(shared_coverpoint.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
+      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "cross.txt");
+      check_value(v_coverpoint_a.get_name(VOID), "MY_CROSS", ERROR, "Checking name");
+      check_value(v_coverpoint_a.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing clearing a coverpoint's coverage");
@@ -2955,44 +2956,44 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing empty reports");
       ------------------------------------------------------------
-      shared_coverpoint.report_config(VOID);
-      shared_coverpoint.report_coverage(VERBOSE);
+      v_coverpoint_a.report_config(VOID);
+      v_coverpoint_a.report_coverage(VERBOSE);
       fc_report_overall_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint reports");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin_range(0,125), 8, "mem_addr_low");
-      shared_coverpoint.add_bins(bin((126,127,128)), "mem_addr_mid");
-      shared_coverpoint.add_bins(bin_range(129,255), 4, "mem_addr_high");
-      shared_coverpoint.add_bins(bin_transition((0,1,2,3)), 2, 10, "transition_1");
-      shared_coverpoint.add_bins(bin_transition((0,15,127,248,249,250,251,252,253,254)), 2, 10, "transition_2");
-      shared_coverpoint.add_bins(ignore_bin(100), 10, 10, "ignore_addr");             -- min_hits and rand_weight are discarded
-      shared_coverpoint.add_bins(ignore_bin_transition((1000,15,127,248,249,250,251,252,253,254)), "ignore_transition");
-      shared_coverpoint.add_bins(illegal_bin_range(256,511), 10, 10, "illegal_addr"); -- min_hits and rand_weight are discarded
-      shared_coverpoint.add_bins(illegal_bin_transition((2000,15,127,248,249,250,251,252,253,254)), 2, "illegal_transition");
-      shared_coverpoint.sample_coverage(1);
-      shared_coverpoint.sample_coverage(2);
-      shared_coverpoint.sample_coverage(127);
+      v_coverpoint_a.add_bins(bin_range(0,125), 8, "mem_addr_low");
+      v_coverpoint_a.add_bins(bin((126,127,128)), "mem_addr_mid");
+      v_coverpoint_a.add_bins(bin_range(129,255), 4, "mem_addr_high");
+      v_coverpoint_a.add_bins(bin_transition((0,1,2,3)), 2, 10, "transition_1");
+      v_coverpoint_a.add_bins(bin_transition((0,15,127,248,249,250,251,252,253,254)), 2, 10, "transition_2");
+      v_coverpoint_a.add_bins(ignore_bin(100), 10, 10, "ignore_addr");             -- min_hits and rand_weight are discarded
+      v_coverpoint_a.add_bins(ignore_bin_transition((1000,15,127,248,249,250,251,252,253,254)), "ignore_transition");
+      v_coverpoint_a.add_bins(illegal_bin_range(256,511), 10, 10, "illegal_addr"); -- min_hits and rand_weight are discarded
+      v_coverpoint_a.add_bins(illegal_bin_transition((2000,15,127,248,249,250,251,252,253,254)), 2, "illegal_transition");
+      v_coverpoint_a.sample_coverage(1);
+      v_coverpoint_a.sample_coverage(2);
+      v_coverpoint_a.sample_coverage(127);
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      shared_coverpoint.sample_coverage(500);
-      sample_bins(shared_coverpoint, (0,15,127,248,249,250,251,252,253,254), 2);
+      v_coverpoint_a.sample_coverage(500);
+      sample_bins(v_coverpoint_a, (0,15,127,248,249,250,251,252,253,254), 2);
 
-      shared_coverpoint.report_coverage(VERBOSE);
-      shared_coverpoint.report_coverage(NON_VERBOSE);
-      shared_coverpoint.report_coverage(VOID);
-      shared_coverpoint.report_coverage(HOLES_ONLY);
+      v_coverpoint_a.report_coverage(VERBOSE);
+      v_coverpoint_a.report_coverage(NON_VERBOSE);
+      v_coverpoint_a.report_coverage(VOID);
+      v_coverpoint_a.report_coverage(HOLES_ONLY);
 
-      shared_coverpoint.report_coverage(VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
-      shared_coverpoint.report_coverage(NON_VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
-      shared_coverpoint.report_coverage(HOLES_ONLY, rand_weight_col => SHOW_RAND_WEIGHT);
+      v_coverpoint_a.report_coverage(VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
+      v_coverpoint_a.report_coverage(NON_VERBOSE, rand_weight_col => SHOW_RAND_WEIGHT);
+      v_coverpoint_a.report_coverage(HOLES_ONLY, rand_weight_col => SHOW_RAND_WEIGHT);
 
-      shared_coverpoint.set_bins_coverage_goal(50);
-      shared_coverpoint.report_coverage(VERBOSE);
-      shared_coverpoint.report_coverage(NON_VERBOSE);
-      shared_coverpoint.report_coverage(HOLES_ONLY);
+      v_coverpoint_a.set_bins_coverage_goal(50);
+      v_coverpoint_a.report_coverage(VERBOSE);
+      v_coverpoint_a.report_coverage(NON_VERBOSE);
+      v_coverpoint_a.report_coverage(HOLES_ONLY);
 
-      shared_coverpoint.report_config(VOID);
+      v_coverpoint_a.report_config(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross reports");
@@ -3047,11 +3048,11 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing reports written to a file");
       ------------------------------------------------------------
-      shared_coverpoint.report_config(GC_TESTCASE & "_Report_config.txt", write_mode);
+      v_coverpoint_a.report_config(GC_TESTCASE & "_Report_config.txt", write_mode);
       v_cross_x2.report_config(GC_TESTCASE & "_Report_config.txt");
       v_cross_x3.report_config(GC_TESTCASE & "_Report_config.txt");
 
-      shared_coverpoint.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt", write_mode);
+      v_coverpoint_a.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt", write_mode);
       v_cross_x2.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
       v_cross_x3.report_coverage(VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
       fc_report_overall_coverage(NON_VERBOSE, GC_TESTCASE & "_Report_coverage.txt");
@@ -3072,26 +3073,26 @@ begin
       v_num_bins       := 15;
       v_min_hits       := 10;
       v_total_min_hits := real(v_num_bins*v_min_hits);
-      shared_coverpoint.add_bins(bin_range(1,v_num_bins,0),v_min_hits);
+      v_coverpoint_a.add_bins(bin_range(1,v_num_bins,0),v_min_hits);
 
       for bin in 1 to v_num_bins loop
         for hits in 1 to v_min_hits loop
-          check_bins_coverage(shared_coverpoint, 100.0*real(bin-1)/real(v_num_bins));
-          check_hits_coverage(shared_coverpoint, 100.0*real((bin-1)*v_min_hits+hits-1)/v_total_min_hits);
-          shared_coverpoint.sample_coverage(bin);
+          check_bins_coverage(v_coverpoint_a, 100.0*real(bin-1)/real(v_num_bins));
+          check_hits_coverage(v_coverpoint_a, 100.0*real((bin-1)*v_min_hits+hits-1)/v_total_min_hits);
+          v_coverpoint_a.sample_coverage(bin);
         end loop;
       end loop;
-      check_coverage_completed(shared_coverpoint);
-      check_value(shared_coverpoint.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
+      check_coverage_completed(v_coverpoint_a);
+      check_value(v_coverpoint_a.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
 
       log(ID_LOG_HDR, "Continue sampling bins and check coverage remains 100%");
       for i in 1 to 50 loop
-        shared_coverpoint.sample_coverage(i mod 20); -- Sample also values outside the bins
+        v_coverpoint_a.sample_coverage(i mod 20); -- Sample also values outside the bins
       end loop;
-      check_coverage_completed(shared_coverpoint);
-      check_value(shared_coverpoint.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
+      check_coverage_completed(v_coverpoint_a);
+      check_value(v_coverpoint_a.coverage_completed(BINS_AND_HITS), ERROR, "Checking coverage_completed(BINS_AND_HITS)");
 
-      shared_coverpoint.report_coverage(VOID);
+      v_coverpoint_a.report_coverage(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverage status with configured hits goal < 100");
@@ -3322,121 +3323,121 @@ begin
       check_value(fc_overall_coverage_completed(VOID), false, ERROR, "fc_overall_coverage_completed(VOID)");
       fc_report_overall_coverage(VERBOSE);
 
-      check_value(shared_coverpoint.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "get_illegal_bin_alert_level(VOID)");
-      check_value(shared_coverpoint.get_bin_overlap_alert_level(VOID) = NO_ALERT, ERROR, "get_bin_overlap_alert_level(VOID)");
-      check_value(shared_coverpoint.get_overall_coverage_weight(VOID), 1, ERROR, "get_overall_coverage_weight(VOID)");
-      check_value(shared_coverpoint.get_bins_coverage_goal(VOID), 100, ERROR, "get_bins_coverage_goal(VOID)");
-      check_value(shared_coverpoint.get_hits_coverage_goal(VOID), 100, ERROR, "get_hits_coverage_goal(VOID)");
-      check_value(shared_coverpoint.get_name(VOID), "", ERROR, "get_name(VOID)");
-      check_value(shared_coverpoint.get_scope(VOID), C_TB_SCOPE_DEFAULT, ERROR, "get_scope(VOID)");
-      check_value(shared_coverpoint.is_defined(VOID), false, ERROR, "is_defined(VOID)");
-      check_value(shared_coverpoint.get_coverage(BINS), 0.0, ERROR, "Checking get_coverage(BINS)");
-      check_value(shared_coverpoint.get_coverage(HITS), 0.0, ERROR, "Checking get_coverage(HITS)");
-      check_value(shared_coverpoint.coverage_completed(BINS), false, ERROR, "coverage_completed(BINS)");
-      check_value(shared_coverpoint.coverage_completed(HITS), false, ERROR, "coverage_completed(HITS)");
-      check_value(shared_coverpoint.coverage_completed(BINS_AND_HITS), false, ERROR, "coverage_completed(BINS_AND_HITS)");
-      v_seeds := shared_coverpoint.get_rand_seeds(VOID);
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "get_illegal_bin_alert_level(VOID)");
+      check_value(v_coverpoint_a.get_bin_overlap_alert_level(VOID) = NO_ALERT, ERROR, "get_bin_overlap_alert_level(VOID)");
+      check_value(v_coverpoint_a.get_overall_coverage_weight(VOID), 1, ERROR, "get_overall_coverage_weight(VOID)");
+      check_value(v_coverpoint_a.get_bins_coverage_goal(VOID), 100, ERROR, "get_bins_coverage_goal(VOID)");
+      check_value(v_coverpoint_a.get_hits_coverage_goal(VOID), 100, ERROR, "get_hits_coverage_goal(VOID)");
+      check_value(v_coverpoint_a.get_name(VOID), "", ERROR, "get_name(VOID)");
+      check_value(v_coverpoint_a.get_scope(VOID), C_TB_SCOPE_DEFAULT, ERROR, "get_scope(VOID)");
+      check_value(v_coverpoint_a.is_defined(VOID), false, ERROR, "is_defined(VOID)");
+      check_value(v_coverpoint_a.get_coverage(BINS), 0.0, ERROR, "Checking get_coverage(BINS)");
+      check_value(v_coverpoint_a.get_coverage(HITS), 0.0, ERROR, "Checking get_coverage(HITS)");
+      check_value(v_coverpoint_a.coverage_completed(BINS), false, ERROR, "coverage_completed(BINS)");
+      check_value(v_coverpoint_a.coverage_completed(HITS), false, ERROR, "coverage_completed(HITS)");
+      check_value(v_coverpoint_a.coverage_completed(BINS_AND_HITS), false, ERROR, "coverage_completed(BINS_AND_HITS)");
+      v_seeds := v_coverpoint_a.get_rand_seeds(VOID);
       check_value(v_seeds(0), C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1), C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
-      shared_coverpoint.report_coverage(VOID);
-      shared_coverpoint.report_config(VOID);
-      shared_coverpoint.clear_coverage(VOID);
-      shared_coverpoint.delete_coverpoint(VOID);
+      v_coverpoint_a.report_coverage(VOID);
+      v_coverpoint_a.report_config(VOID);
+      v_coverpoint_a.clear_coverage(VOID);
+      v_coverpoint_a.delete_coverpoint(VOID);
 
       increment_expected_alerts_and_stop_limit(TB_ERROR,5);
-      v_value             := shared_coverpoint.rand(NO_SAMPLE_COV);
-      v_values_x2(0 to 0) := shared_coverpoint.rand(NO_SAMPLE_COV);
-      shared_coverpoint.sample_coverage(5);
-      shared_coverpoint.sample_coverage((5,6,7));
-      shared_coverpoint.write_coverage_db(GC_FILE_PATH & "file.txt");
+      v_value             := v_coverpoint_a.rand(NO_SAMPLE_COV);
+      v_values_x2(0 to 0) := v_coverpoint_a.rand(NO_SAMPLE_COV);
+      v_coverpoint_a.sample_coverage(5);
+      v_coverpoint_a.sample_coverage((5,6,7));
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "file.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing deleting a coverpoint");
       ------------------------------------------------------------
       log(ID_SEQUENCER, "Set up the coverpoint");
-      shared_coverpoint.set_name("MY_COVERPOINT");
-      shared_coverpoint.set_scope("MY_SCOPE");
-      shared_coverpoint.set_illegal_bin_alert_level(FAILURE);
-      shared_coverpoint.set_bin_overlap_alert_level(TB_ERROR);
-      shared_coverpoint.set_overall_coverage_weight(5);
-      shared_coverpoint.set_bins_coverage_goal(50);
-      shared_coverpoint.set_hits_coverage_goal(200);
-      shared_coverpoint.add_bins(bin_range(1,100,0));
-      shared_coverpoint.add_bins(ignore_bin_range(101,200));
+      v_coverpoint_a.set_name("MY_COVERPOINT");
+      v_coverpoint_a.set_scope("MY_SCOPE");
+      v_coverpoint_a.set_illegal_bin_alert_level(FAILURE);
+      v_coverpoint_a.set_bin_overlap_alert_level(TB_ERROR);
+      v_coverpoint_a.set_overall_coverage_weight(5);
+      v_coverpoint_a.set_bins_coverage_goal(50);
+      v_coverpoint_a.set_hits_coverage_goal(200);
+      v_coverpoint_a.add_bins(bin_range(1,100,0));
+      v_coverpoint_a.add_bins(ignore_bin_range(101,200));
       for i in 1 to 50 loop
-        shared_coverpoint.sample_coverage(i);
+        v_coverpoint_a.sample_coverage(i);
       end loop;
-      shared_coverpoint.set_rand_seeds(12345, 67890);
+      v_coverpoint_a.set_rand_seeds(12345, 67890);
 
       log(ID_SEQUENCER, "Check the coverpoint has the right configuration");
-      check_value(shared_coverpoint.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
-      check_value(shared_coverpoint.get_scope(VOID), "MY_SCOPE", ERROR, "Checking scope");
-      check_value(shared_coverpoint.get_illegal_bin_alert_level(VOID) = FAILURE, ERROR, "Checking illegal bin alert level");
-      check_value(shared_coverpoint.get_bin_overlap_alert_level(VOID) = TB_ERROR, ERROR, "Checking bin overlap alert level");
-      check_value(shared_coverpoint.get_overall_coverage_weight(VOID), 5, ERROR, "Checking coverage weight");
-      check_value(shared_coverpoint.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
-      check_value(shared_coverpoint.get_hits_coverage_goal(VOID), 200, ERROR, "Checking hits coverage goal");
-      check_value(shared_coverpoint.is_defined(VOID), true, ERROR, "Checking is_defined(VOID)");
-      check_value(shared_coverpoint.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
-      check_value(shared_coverpoint.get_num_valid_bins(VOID), 100, ERROR, "Checking num_valid_bins");
-      check_value(shared_coverpoint.get_num_invalid_bins(VOID), 1, ERROR, "Checking num_invalid_bins");
-      check_value(shared_coverpoint.get_coverage(BINS), 50.0, ERROR, "Checking bins coverage");
-      check_value(shared_coverpoint.get_coverage(HITS), 50.0, ERROR, "Checking hits coverage");
+      check_value(v_coverpoint_a.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
+      check_value(v_coverpoint_a.get_scope(VOID), "MY_SCOPE", ERROR, "Checking scope");
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = FAILURE, ERROR, "Checking illegal bin alert level");
+      check_value(v_coverpoint_a.get_bin_overlap_alert_level(VOID) = TB_ERROR, ERROR, "Checking bin overlap alert level");
+      check_value(v_coverpoint_a.get_overall_coverage_weight(VOID), 5, ERROR, "Checking coverage weight");
+      check_value(v_coverpoint_a.get_bins_coverage_goal(VOID), 50, ERROR, "Checking bins coverage goal");
+      check_value(v_coverpoint_a.get_hits_coverage_goal(VOID), 200, ERROR, "Checking hits coverage goal");
+      check_value(v_coverpoint_a.is_defined(VOID), true, ERROR, "Checking is_defined(VOID)");
+      check_value(v_coverpoint_a.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
+      check_value(v_coverpoint_a.get_num_valid_bins(VOID), 100, ERROR, "Checking num_valid_bins");
+      check_value(v_coverpoint_a.get_num_invalid_bins(VOID), 1, ERROR, "Checking num_invalid_bins");
+      check_value(v_coverpoint_a.get_coverage(BINS), 50.0, ERROR, "Checking bins coverage");
+      check_value(v_coverpoint_a.get_coverage(HITS), 50.0, ERROR, "Checking hits coverage");
       check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "Checking covpts overall coverage");
       check_value(fc_get_overall_coverage(BINS), 50.0, ERROR, "Checking bins overall coverage");
       check_value(fc_get_overall_coverage(HITS), 50.0, ERROR, "Checking hits overall coverage");
-      v_seeds := shared_coverpoint.get_rand_seeds(VOID);
+      v_seeds := v_coverpoint_a.get_rand_seeds(VOID);
       check_value(v_seeds(0), 12345, ERROR, "Checking seed 1");
       check_value(v_seeds(1), 67890, ERROR, "Checking seed 2");
-      shared_coverpoint.report_coverage(VOID);
-      shared_coverpoint.report_config(VOID);
+      v_coverpoint_a.report_coverage(VOID);
+      v_coverpoint_a.report_config(VOID);
       fc_report_overall_coverage(VERBOSE);
 
       log(ID_SEQUENCER, "Delete and check the coverpoint has default values");
-      shared_coverpoint.delete_coverpoint(VOID);
-      check_value(shared_coverpoint.get_name(VOID), "", ERROR, "Checking name");
-      check_value(shared_coverpoint.get_scope(VOID), C_TB_SCOPE_DEFAULT, ERROR, "Checking scope");
-      check_value(shared_coverpoint.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "Checking illegal bin alert level");
-      check_value(shared_coverpoint.get_bin_overlap_alert_level(VOID) = NO_ALERT, ERROR, "Checking bin overlap alert level");
-      check_value(shared_coverpoint.get_overall_coverage_weight(VOID), 1, ERROR, "Checking coverage weight");
-      check_value(shared_coverpoint.get_bins_coverage_goal(VOID), 100, ERROR, "Checking bins coverage goal");
-      check_value(shared_coverpoint.get_hits_coverage_goal(VOID), 100, ERROR, "Checking hits coverage goal");
-      check_value(shared_coverpoint.is_defined(VOID), false, ERROR, "Checking is_defined(VOID)");
-      check_value(shared_coverpoint.get_num_bins_crossed(VOID), -1, ERROR, "Checking num_bins_crossed");
-      check_value(shared_coverpoint.get_num_valid_bins(VOID), 0, ERROR, "Checking num_valid_bins");
-      check_value(shared_coverpoint.get_num_invalid_bins(VOID), 0, ERROR, "Checking num_invalid_bins");
-      check_value(shared_coverpoint.get_coverage(BINS), 0.0, ERROR, "Checking bins coverage");
-      check_value(shared_coverpoint.get_coverage(HITS), 0.0, ERROR, "Checking hits coverage");
+      v_coverpoint_a.delete_coverpoint(VOID);
+      check_value(v_coverpoint_a.get_name(VOID), "", ERROR, "Checking name");
+      check_value(v_coverpoint_a.get_scope(VOID), C_TB_SCOPE_DEFAULT, ERROR, "Checking scope");
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = ERROR, ERROR, "Checking illegal bin alert level");
+      check_value(v_coverpoint_a.get_bin_overlap_alert_level(VOID) = NO_ALERT, ERROR, "Checking bin overlap alert level");
+      check_value(v_coverpoint_a.get_overall_coverage_weight(VOID), 1, ERROR, "Checking coverage weight");
+      check_value(v_coverpoint_a.get_bins_coverage_goal(VOID), 100, ERROR, "Checking bins coverage goal");
+      check_value(v_coverpoint_a.get_hits_coverage_goal(VOID), 100, ERROR, "Checking hits coverage goal");
+      check_value(v_coverpoint_a.is_defined(VOID), false, ERROR, "Checking is_defined(VOID)");
+      check_value(v_coverpoint_a.get_num_bins_crossed(VOID), -1, ERROR, "Checking num_bins_crossed");
+      check_value(v_coverpoint_a.get_num_valid_bins(VOID), 0, ERROR, "Checking num_valid_bins");
+      check_value(v_coverpoint_a.get_num_invalid_bins(VOID), 0, ERROR, "Checking num_invalid_bins");
+      check_value(v_coverpoint_a.get_coverage(BINS), 0.0, ERROR, "Checking bins coverage");
+      check_value(v_coverpoint_a.get_coverage(HITS), 0.0, ERROR, "Checking hits coverage");
       check_value(fc_get_overall_coverage(COVPTS), 0.0, ERROR, "Checking covpts overall coverage");
       check_value(fc_get_overall_coverage(BINS), 0.0, ERROR, "Checking bins overall coverage");
       check_value(fc_get_overall_coverage(HITS), 0.0, ERROR, "Checking hits overall coverage");
-      v_seeds := shared_coverpoint.get_rand_seeds(VOID);
+      v_seeds := v_coverpoint_a.get_rand_seeds(VOID);
       check_value(v_seeds(0), C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1), C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
-      shared_coverpoint.report_coverage(VOID);
-      shared_coverpoint.report_config(VOID);
+      v_coverpoint_a.report_coverage(VOID);
+      v_coverpoint_a.report_config(VOID);
       fc_report_overall_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing deleting several coverpoints");
       ------------------------------------------------------------
-      shared_coverpoint.add_bins(bin(1));
+      v_coverpoint_a.add_bins(bin(1));
       v_coverpoint_b.add_bins(bin(2));
       v_coverpoint_c.add_bins(bin(3));
       v_coverpoint_d.add_bins(bin(4));
       fc_report_overall_coverage(VERBOSE);
 
-      shared_coverpoint.delete_coverpoint(VOID);   -- 1st
+      v_coverpoint_a.delete_coverpoint(VOID);   -- 1st
       v_coverpoint_c.delete_coverpoint(VOID); -- 3rd
       v_coverpoint_d.delete_coverpoint(VOID); -- 4th
       fc_report_overall_coverage(VERBOSE);
 
-      shared_coverpoint.add_cross(bin(1000), bin(2000));
+      v_coverpoint_a.add_cross(bin(1000), bin(2000));
       v_coverpoint_c.add_cross(bin(1001), bin(2001));
       v_coverpoint_d.add_cross(bin(1002), bin(2002));
       fc_report_overall_coverage(VERBOSE);
 
-      shared_coverpoint.delete_coverpoint(VOID);
+      v_coverpoint_a.delete_coverpoint(VOID);
       v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_c.delete_coverpoint(VOID);
       v_coverpoint_d.delete_coverpoint(VOID);
@@ -3445,8 +3446,8 @@ begin
       log(ID_LOG_HDR, "Testing initializing coverpoints with config procedures");
       ------------------------------------------------------------
       -- The following "set" procedures will initialize each coverpoint (use different variables for each config)
-      shared_coverpoint.set_illegal_bin_alert_level(FAILURE);
-      check_value(shared_coverpoint.get_illegal_bin_alert_level(VOID) = FAILURE, ERROR, "get_illegal_bin_alert_level(VOID)");
+      v_coverpoint_a.set_illegal_bin_alert_level(FAILURE);
+      check_value(v_coverpoint_a.get_illegal_bin_alert_level(VOID) = FAILURE, ERROR, "get_illegal_bin_alert_level(VOID)");
       v_coverpoint_b.set_bin_overlap_alert_level(TB_WARNING);
       check_value(v_coverpoint_b.get_bin_overlap_alert_level(VOID) = TB_WARNING, ERROR, "get_bin_overlap_alert_level(VOID)");
       v_coverpoint_c.set_overall_coverage_weight(5);
@@ -3467,14 +3468,14 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing methods with initialized coverpoint without bins");
       ------------------------------------------------------------
-      check_value(shared_coverpoint.is_defined(VOID), false, ERROR, "is_defined(VOID)");
-      shared_coverpoint.write_coverage_db(GC_FILE_PATH & "file.txt");
+      check_value(v_coverpoint_a.is_defined(VOID), false, ERROR, "is_defined(VOID)");
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "file.txt");
 
       increment_expected_alerts_and_stop_limit(TB_ERROR,4);
-      v_value             := shared_coverpoint.rand(NO_SAMPLE_COV);
-      v_values_x2(0 to 0) := shared_coverpoint.rand(NO_SAMPLE_COV);
-      shared_coverpoint.sample_coverage(5);
-      shared_coverpoint.sample_coverage((5,6,7));
+      v_value             := v_coverpoint_a.rand(NO_SAMPLE_COV);
+      v_values_x2(0 to 0) := v_coverpoint_a.rand(NO_SAMPLE_COV);
+      v_coverpoint_a.sample_coverage(5);
+      v_coverpoint_a.sample_coverage((5,6,7));
 
     end if;
 

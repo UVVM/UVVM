@@ -1107,9 +1107,13 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint num bins allocation error");
       ------------------------------------------------------------
-      v_coverpoint_a.set_num_allocated_bins(40);
-      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_coverpoint_a.set_num_allocated_bins(50);
       v_coverpoint_a.set_num_allocated_bins(10);
+      v_coverpoint_a.add_bins(bin_range(1,10,10));
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_coverpoint_a.set_num_allocated_bins(5);
+
+      delete_coverpoint(v_coverpoint_a);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing C_FC_MAX_NUM_NEW_BINS limit");

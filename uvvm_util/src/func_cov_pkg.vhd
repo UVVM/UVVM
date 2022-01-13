@@ -1535,16 +1535,18 @@ package body func_cov_pkg is
     -- Resizes the bin vector by creating a new memory structure and deallocating the old one
     procedure resize_bin_vector(
       variable bin_vector : inout t_cov_bin_vector_ptr;
+      constant num_bins   : in    natural := 0;
       constant size       : in    natural := 0) is
       variable v_copy_ptr : t_cov_bin_vector_ptr;
     begin
       v_copy_ptr := bin_vector;
       if size = 0 then
         bin_vector := new t_cov_bin_vector(0 to v_copy_ptr'length-1 + priv_num_bins_allocated_increment);
+        bin_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
       else
         bin_vector := new t_cov_bin_vector(0 to size-1);
+        bin_vector(0 to num_bins-1) := v_copy_ptr(0 to num_bins-1);
       end if;
-      bin_vector(0 to v_copy_ptr'length-1) := v_copy_ptr.all;
       DEALLOCATE(v_copy_ptr);
     end procedure;
 
@@ -1952,7 +1954,7 @@ package body func_cov_pkg is
 
         -- Resize the bin vector in case it's not big enough
         if (bins_idx + loaded_bins_idx) > bins_vector'length-1 then
-          resize_bin_vector(bins_vector, (bins_idx + loaded_bins_idx));
+          resize_bin_vector(bins_vector, bins_idx, (bins_idx + loaded_bins_idx));
         end if;
 
         -- Iterate through the current bins and compare them with the loaded bins
@@ -2106,7 +2108,7 @@ package body func_cov_pkg is
       initialize_coverpoint(C_LOCAL_CALL);
       log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       if value >= priv_bins_idx then
-        resize_bin_vector(priv_bins, value);
+        resize_bin_vector(priv_bins, priv_bins_idx, value);
       else
         alert(TB_ERROR, C_LOCAL_CALL & "=> Cannot set the allocated size to a value smaller than the actual number of bins", priv_scope);
       end if;

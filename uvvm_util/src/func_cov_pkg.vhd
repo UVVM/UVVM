@@ -1540,7 +1540,7 @@ package body func_cov_pkg is
     begin
       v_copy_ptr := bin_vector;
       if size = 0 then
-        bin_vector := new t_cov_bin_vector(0 to v_copy_ptr'length + priv_num_bins_allocated_increment);
+        bin_vector := new t_cov_bin_vector(0 to v_copy_ptr'length-1 + priv_num_bins_allocated_increment);
       else
         bin_vector := new t_cov_bin_vector(0 to size-1);
       end if;

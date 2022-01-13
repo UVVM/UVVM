@@ -1197,6 +1197,8 @@ begin
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => -101), (0 => 101), hits => 1);
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => -102), (0 => 102), hits => 1);
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with multiple values");
       ------------------------------------------------------------
@@ -1213,6 +1215,8 @@ begin
       v_bin_idx := v_bin_idx-2;
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (201,202), (214,215), hits => 4);
       check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (222,224,226), (231,233,235,237), hits => 12);
+
+      delete_coverpoint(v_cross_x2);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with ranges of values");
@@ -1246,6 +1250,8 @@ begin
       check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (327,329), (331,332), hits => 6);
       check_cross_bin(v_cross_x2, v_bin_idx, (RAN,RAN), (327,329), (333,335), hits => 9);
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with transitions of values");
       ------------------------------------------------------------
@@ -1270,6 +1276,8 @@ begin
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (401,403,401,405), (416,417,418,419), hits => 4);
       check_cross_bin(v_cross_x2, v_bin_idx, (TRN,TRN), (428,427,425,421), (431,434,434,439), hits => 3);
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore cross with single values");
       ------------------------------------------------------------
@@ -1289,6 +1297,8 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => -2002), (0 => 2002), hits => 1);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => -2003), (0 => 2003), hits => 1);
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore cross with ranges of values");
       ------------------------------------------------------------
@@ -1301,6 +1311,8 @@ begin
 
       v_invalid_bin_idx := v_invalid_bin_idx-1;
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), (2100,2107), (2115,2119), hits => 8);
+
+      delete_coverpoint(v_cross_x2);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing ignore cross with transitions of values");
@@ -1326,12 +1338,14 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2201,2203,2201,2205), (2206,2207,2208,2209), hits => 4);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,TRN_IGNORE), (2218,2217,2215,2211), (2212,2214,2216,2218), hits => 3);
 
-      v_cross_x2.set_illegal_bin_alert_level(WARNING);
-      check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+      delete_coverpoint(v_cross_x2);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal cross with single values");
       ------------------------------------------------------------
+      v_cross_x2.set_illegal_bin_alert_level(WARNING);
+      check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+
       v_cross_x2.add_cross(illegal_bin(-3001), illegal_bin(3001));
       v_cross_x2.add_cross(illegal_bin(-3002), illegal_bin(3002));
       v_cross_x2.add_cross(illegal_bin(-3003), illegal_bin(3003));
@@ -1349,9 +1363,13 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => -3002), (0 => 3002), hits => 1);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => -3003), (0 => 3003), hits => 1);
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal cross with ranges of values");
       ------------------------------------------------------------
+      v_cross_x2.set_illegal_bin_alert_level(WARNING);
+      check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
       v_cross_x2.add_cross(illegal_bin_range(3100,3107), illegal_bin_range(3115,3119));
 
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (3100,3107), (3115,3119));
@@ -1363,9 +1381,13 @@ begin
       v_invalid_bin_idx := v_invalid_bin_idx-1;
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (3100,3107), (3115,3119), hits => 8);
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing illegal cross with transitions of values");
       ------------------------------------------------------------
+      v_cross_x2.set_illegal_bin_alert_level(WARNING);
+      check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
       v_cross_x2.add_cross(illegal_bin_transition((3201,3203,3201)), illegal_bin_transition((3212,3214,3216)));
       v_cross_x2.add_cross(illegal_bin_transition((3201,3203,3201,3205)), illegal_bin_transition((3212,3214,3216,3218)));
       v_cross_x2.add_cross(illegal_bin_transition((3228,3227,3225,3221)), illegal_bin_transition((3231,3234,3234,3239)));
@@ -1387,9 +1409,14 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3201,3203,3201,3205), (3212,3214,3216,3218), hits => 2);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (3228,3227,3225,3221), (3231,3234,3234,3239), hits => 3);
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross with different bins");
       ------------------------------------------------------------
+      v_cross_x2.set_illegal_bin_alert_level(WARNING);
+      check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+
       v_cross_x2.add_cross(bin(4000), bin((4010,4015,4019)), "cross_0");
       v_cross_x2.add_cross(bin_range(4100,4107), bin_transition((4111,4112,4115)), "cross_1");
       v_cross_x2.add_cross(ignore_bin(4201), ignore_bin_range(4212,4215), "cross_2");
@@ -1448,9 +1475,14 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,RAN_ILLEGAL),  (0 => 5000), (5010,5050),           name => "cross_10", hits => 3);
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_ILLEGAL,VAL_IGNORE),  (5105,5110,5115), (0 => 5150),      name => "cross_11", hits => 1);
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross using concatenation of bins");
       ------------------------------------------------------------
+      v_cross_x2.set_illegal_bin_alert_level(WARNING);
+      check_value(v_cross_x2.get_illegal_bin_alert_level(VOID) = WARNING, ERROR, "Checking illegal bin alert level");
+
       v_cross_x2.add_cross(bin(6000) & bin(6005) & bin(6010), bin_range(6100,6150,2), "concatenated");
       v_cross_x2.add_cross(bin_range(6200,6250) & ignore_bin_range(6220,6240), bin_range(6350,6399) & illegal_bin(6375), "concatenated");
 
@@ -1489,6 +1521,8 @@ begin
       check_num_bins(v_cross_x2, v_bin_idx, v_invalid_bin_idx);
       check_coverage_completed(v_cross_x2);
       v_cross_x2.report_coverage(VERBOSE);
+
+      delete_coverpoint(v_cross_x2);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross and ignore cross with transitions of values");
@@ -1544,49 +1578,50 @@ begin
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL), (7000,7004,7010), (0 => 7100), hits => 0, name => "ignore_transition");
       check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (TRN_IGNORE,VAL), (7000,7004,7020), (0 => 7104), hits => 1, name => "ignore_transition");
 
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
       ------------------------------------------------------------
-      v_cross_x2_b.delete_coverpoint(VOID);
-      v_bin_idx         := 0;
-      v_invalid_bin_idx := 0;
-
+      increment_expected_alerts(TB_WARNING, 9); -- For adding bins after sampling warnings
       for i in 1 to 10 loop
         v_bin_val  := v_rand.rand(100,500);
         v_min_hits := v_rand.rand(1,20);
-        v_cross_x2_b.add_cross(bin(v_bin_val), bin(v_bin_val+100), v_min_hits);
+        v_cross_x2.add_cross(bin(v_bin_val), bin(v_bin_val+100), v_min_hits);
 
-        check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => v_bin_val), (0 => v_bin_val+100), v_min_hits);
+        check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => v_bin_val), (0 => v_bin_val+100), v_min_hits);
 
         -- Check the coverage increases when the bin is sampled until it is 100%
         for j in 0 to v_min_hits-1 loop
-          check_bins_coverage(v_cross_x2_b, 100.0*real(i-1)/real(i));
-          check_hits_coverage(v_cross_x2_b, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
-          sample_cross_bins(v_cross_x2_b, (0 => (v_bin_val,v_bin_val+100)), 1);
+          check_bins_coverage(v_cross_x2, 100.0*real(i-1)/real(i));
+          check_hits_coverage(v_cross_x2, 100.0*real(j+v_prev_min_hits)/real(v_min_hits+v_prev_min_hits));
+          sample_cross_bins(v_cross_x2, (0 => (v_bin_val,v_bin_val+100)), 1);
         end loop;
-        check_coverage_completed(v_cross_x2_b);
+        check_coverage_completed(v_cross_x2);
 
         v_bin_idx := v_bin_idx-1;
-        check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => v_bin_val), (0 => v_bin_val+100), v_min_hits, hits => v_min_hits);
+        check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => v_bin_val), (0 => v_bin_val+100), v_min_hits, hits => v_min_hits);
         v_prev_min_hits := v_prev_min_hits + v_min_hits;
       end loop;
 
-      v_cross_x2_b.report_coverage(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE);
+
+      delete_coverpoint(v_cross_x2);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin names");
       ------------------------------------------------------------
-      v_cross_x2_b.add_cross(bin(1000), bin(2000));
-      v_cross_x2_b.add_cross(bin(1001), bin(2001), "my_bin_1");
-      v_cross_x2_b.add_cross(bin(1002), bin(2002), 5, "my_bin_2");
-      v_cross_x2_b.add_cross(bin(1003), bin(2003), 5, 1, "my_bin_3");
+      v_cross_x2.add_cross(bin(1000), bin(2000));
+      v_cross_x2.add_cross(bin(1001), bin(2001), "my_bin_1");
+      v_cross_x2.add_cross(bin(1002), bin(2002), 5, "my_bin_2");
+      v_cross_x2.add_cross(bin(1003), bin(2003), 5, 1, "my_bin_3");
 
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1000), (0 => 2000));
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1001), (0 => 2001), name => "my_bin_1");
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1002), (0 => 2002), 5, name => "my_bin_2");
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 1003), (0 => 2003), 5, 1, name => "my_bin_3");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 1000), (0 => 2000));
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 1001), (0 => 2001), name => "my_bin_1");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 1002), (0 => 2002), 5, name => "my_bin_2");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 1003), (0 => 2003), 5, 1, name => "my_bin_3");
 
-      v_cross_x2_b.report_coverage(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross of 3 elements");
@@ -1748,54 +1783,55 @@ begin
       check_coverage_completed(v_cross_x2);
       v_cross_x2.report_coverage(VERBOSE);
 
+      delete_coverpoint(v_coverpoint_a);
+      delete_coverpoint(v_coverpoint_b);
+      delete_coverpoint(v_cross_x2);
+
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing minimum coverage");
       ------------------------------------------------------------
-      v_bin_idx         := 0;
-      v_invalid_bin_idx := 0;
-
       v_min_hits := v_rand.rand(1,20);
-      v_coverpoint_c.add_bins(bin(100), v_min_hits + 10, "bin_a");
-      v_coverpoint_d.add_bins(bin(200), v_min_hits + 20, "bin_b");
-      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d, v_min_hits);
+      v_coverpoint_a.add_bins(bin(100), v_min_hits + 10, "bin_a");
+      v_coverpoint_b.add_bins(bin(200), v_min_hits + 20, "bin_b");
+      v_cross_x2.add_cross(v_coverpoint_a, v_coverpoint_b, v_min_hits);
 
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), v_min_hits);
 
       -- Check the coverage increases when the bin is sampled until it is 100%
       for j in 0 to v_min_hits-1 loop
-        check_hits_coverage(v_cross_x2_b, 100.0*real(j)/real(v_min_hits));
-        sample_cross_bins(v_cross_x2_b, (0 => (100,200)), 1);
+        check_hits_coverage(v_cross_x2, 100.0*real(j)/real(v_min_hits));
+        sample_cross_bins(v_cross_x2, (0 => (100,200)), 1);
       end loop;
-      check_coverage_completed(v_cross_x2_b);
+      check_coverage_completed(v_cross_x2);
 
       v_bin_idx := v_bin_idx-1;
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), v_min_hits, hits => v_min_hits);
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), v_min_hits, hits => v_min_hits);
 
-      v_cross_x2_b.report_coverage(VERBOSE);
+      v_cross_x2.report_coverage(VERBOSE);
+
+      delete_coverpoint(v_cross_x2);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing bin names");
       ------------------------------------------------------------
-      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d);
-      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d, "my_bin_1");
-      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d, 5, "my_bin_2");
-      v_cross_x2_b.add_cross(v_coverpoint_c, v_coverpoint_d, 5, 1, "my_bin_3");
+      v_cross_x2.add_cross(v_coverpoint_a, v_coverpoint_b);
+      v_cross_x2.add_cross(v_coverpoint_a, v_coverpoint_b, "my_bin_1");
+      v_cross_x2.add_cross(v_coverpoint_a, v_coverpoint_b, 5, "my_bin_2");
+      v_cross_x2.add_cross(v_coverpoint_a, v_coverpoint_b, 5, 1, "my_bin_3");
 
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200));
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), name => "my_bin_1");
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, name => "my_bin_2");
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, 1, name => "my_bin_3");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200));
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), name => "my_bin_1");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, name => "my_bin_2");
+      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 100), (0 => 200), 5, 1, name => "my_bin_3");
 
-      v_cross_x2_b.report_coverage(VERBOSE);
+      delete_coverpoint(v_coverpoint_a);
+      delete_coverpoint(v_coverpoint_b);
+      delete_coverpoint(v_cross_x2);
+      v_cross_x2.report_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing cross of 3 elements");
       ------------------------------------------------------------
-      v_coverpoint_a.delete_coverpoint(VOID);
-      v_coverpoint_b.delete_coverpoint(VOID);
-      v_coverpoint_c.delete_coverpoint(VOID);
-      v_coverpoint_d.delete_coverpoint(VOID);
-
       v_coverpoint_a.add_bins(bin(100) & bin(101));
       v_coverpoint_b.add_bins(bin(200) & bin(201));
       v_coverpoint_c.add_bins(bin(300));

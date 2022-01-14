@@ -2561,6 +2561,11 @@ begin
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "dummy.txt");
+      v_coverpoint_a.clear_coverage(VOID);
+
+      increment_expected_alerts(TB_NOTE,1);
+      v_cross_x2.load_coverage_db(GC_FILE_PATH & "dummy.txt", alert_level_if_not_found => TB_NOTE);
+      v_cross_x2.delete_coverpoint(VOID);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - coverpoint");
@@ -2605,7 +2610,7 @@ begin
       sample_bins(v_coverpoint_a, (231,237,237,238,235,231), 1);
 
       v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 30.19% / 15.09%
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - cross");
@@ -2650,7 +2655,7 @@ begin
       sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
 
       v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 30.19% / 40.25%
-      v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
+      v_cross_x2.write_coverage_db(GC_FILE_PATH & "db_cross.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - max data");
@@ -2664,9 +2669,273 @@ begin
       end loop;
 
       v_cross_x3.report_coverage(VERBOSE); -- Bins: 25.00%, Hits: 25.00%
-      v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
+      v_cross_x3.write_coverage_db(GC_FILE_PATH & "db_cross_max.txt");
 
       fc_report_overall_coverage(VERBOSE);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing adding bins after sampling");
+      ------------------------------------------------------------
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint_b.add_bins(bin(10));
+      v_coverpoint_b.sample_coverage(10);
+      v_coverpoint_b.add_bins(bin(10));
+      v_bin_idx := 0;
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 10, hits => 1);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 10, hits => 0);
+
+      log(ID_SEQUENCER, "Check bins can be safely added after clearing the coverage");
+      v_coverpoint_b.clear_coverage(VOID);
+      v_coverpoint_b.add_bins(bin(10));
+      check_value(v_coverpoint_b.get_num_valid_bins(VOID), 3, ERROR, "Checking number of valid bins");
+
+      increment_expected_alerts(TB_WARNING,1);
+      v_cross_x2_b.add_cross(bin(10), bin(1010));
+      v_cross_x2_b.sample_coverage((10,1010));
+      v_cross_x2_b.add_cross(bin(10), bin(1010));
+      v_bin_idx := 0;
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 10), (0 => 1010), hits => 1);
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (0 => 10), (0 => 1010), hits => 0);
+
+      log(ID_SEQUENCER, "Check bins can be safely added after deleting the coverpoint");
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x2_b.add_cross(bin(10), bin(1010));
+      check_value(v_cross_x2_b.get_num_valid_bins(VOID), 1, ERROR, "Checking number of valid bins");
+
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_cross_x2_b.delete_coverpoint(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing adding bins after load_coverage_db()");
+      ------------------------------------------------------------
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      v_coverpoint_b.add_bins(bin(10));
+      check_value(v_coverpoint_b.get_num_valid_bins(VOID), 7, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Check bins can be safely added after clearing the coverage");
+      v_coverpoint_b.clear_coverage(VOID);
+      v_coverpoint_b.add_bins(bin(10));
+      check_value(v_coverpoint_b.get_num_valid_bins(VOID), 8, ERROR, "Checking number of valid bins");
+
+      increment_expected_alerts(TB_WARNING,1);
+      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_cross.txt");
+      v_cross_x2_b.add_cross(bin(10), bin(1010));
+      check_value(v_cross_x2_b.get_num_valid_bins(VOID), 7, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Check bins can be safely added after deleting the coverpoint");
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x2_b.add_cross(bin(10), bin(1010));
+      check_value(v_cross_x2_b.get_num_valid_bins(VOID), 1, ERROR, "Checking number of valid bins");
+
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_cross_x2_b.delete_coverpoint(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing sampling before load_coverage_db()");
+      ------------------------------------------------------------
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint_b.add_bins(bin(10));
+      v_coverpoint_b.sample_coverage(10);
+      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      v_bin_idx := 0;
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 10, name => "bin_0", hits => 0);
+
+      increment_expected_alerts(TB_WARNING,1);
+      v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+
+      log(ID_SEQUENCER, "Check DB can be safely loaded after clearing the coverage");
+      v_coverpoint_d.add_bins(bin(10));
+      v_coverpoint_d.sample_coverage(10);
+      v_coverpoint_d.clear_coverage(VOID);
+      v_coverpoint_d.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+
+      log(ID_SEQUENCER, "Check DB can be safely loaded after deleting the coverpoint");
+      v_coverpoint_e.add_bins(bin(10));
+      v_coverpoint_e.sample_coverage(10);
+      v_coverpoint_e.delete_coverpoint(VOID);
+      v_coverpoint_e.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_c.delete_coverpoint(VOID);
+      v_coverpoint_d.delete_coverpoint(VOID);
+      v_coverpoint_e.delete_coverpoint(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing accumulated testcases counter");
+      ------------------------------------------------------------
+      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "dummy.txt", alert_level_if_not_found => NO_ALERT);
+      v_coverpoint_a.report_coverage(VOID);
+      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      v_coverpoint_b.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      v_coverpoint_c.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      v_coverpoint_d.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+
+      log(ID_SEQUENCER, "Check accumulated testcases counter is reset after clearing the coverage");
+      v_coverpoint_c.clear_coverage(VOID);
+      v_coverpoint_c.report_coverage(VOID);
+
+      log(ID_SEQUENCER, "Check accumulated testcases counter is reset after deleting the coverpoint");
+      v_coverpoint_d.delete_coverpoint(VOID);
+      v_coverpoint_d.report_coverage(VOID);
+
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_c.delete_coverpoint(VOID);
+      v_coverpoint_d.delete_coverpoint(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing clearing a coverpoint's coverage");
+      ------------------------------------------------------------
+      v_coverpoint_a.set_illegal_bin_alert_level(TB_ERROR);
+      sample_bins(v_coverpoint_a, (231,237,237), 1);
+      v_coverpoint_a.clear_coverage(VOID);
+      sample_bins(v_coverpoint_a, (238,235,231), 1); -- To test transition_mask is cleared
+
+      -- Check bins and coverage
+      v_bin_idx := 0;
+      v_invalid_bin_idx := 0;
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 10, name => "bin_0", hits => 0);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, 20, 8, 20, "single", hits => 0);
+      check_bin(v_coverpoint_a, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 0);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 0);
+      check_bin(v_coverpoint_a, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 0);
+      check_bin(v_coverpoint_a, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_IGNORE, (132,134,136,138), "ignore_transition", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 200, "bin_10", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 210, "illegal_single", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 0);
+      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 0);
+      check_bins_coverage(v_coverpoint_a, 0.0);
+      check_bins_coverage(v_coverpoint_a, 0.0, use_goal => true);
+      check_hits_coverage(v_coverpoint_a, 0.0);
+      check_hits_coverage(v_coverpoint_a, 0.0, use_goal => true);
+      v_coverpoint_a.report_coverage(VERBOSE);
+
+      v_coverpoint_a.delete_coverpoint(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing accumulating coverage in random order - WARNING_ON_NEW_BINS");
+      ------------------------------------------------------------
+      v_coverpoint_a.add_bins(bin(1) & bin(2));
+      sample_bins(v_coverpoint_a, (1,2), 3);
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+
+      log(ID_SEQUENCER, "Load to empty coverpoint");
+      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_bin_idx := 0;
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
+      check_bin(v_coverpoint_b, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
+      check_value(v_coverpoint_b.get_num_valid_bins(VOID), 2, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Load to coverpoint with same bins");
+      v_coverpoint_c.add_bins(bin(1) & bin(2));
+      v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_bin_idx := 0;
+      check_bin(v_coverpoint_c, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
+      check_bin(v_coverpoint_c, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
+      check_value(v_coverpoint_c.get_num_valid_bins(VOID), 2, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Load to coverpoint with same bins, but different name");
+      v_coverpoint_d.add_bins(bin(1) & bin(2), "new_bins");
+      v_coverpoint_d.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_bin_idx := 0;
+      check_bin(v_coverpoint_d, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
+      check_bin(v_coverpoint_d, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
+      check_value(v_coverpoint_d.get_num_valid_bins(VOID), 2, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Load to coverpoint with one of the same bins");
+      v_coverpoint_e.add_bins(bin(1));
+      v_coverpoint_e.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_bin_idx := 0;
+      check_bin(v_coverpoint_e, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
+      check_bin(v_coverpoint_e, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
+      check_value(v_coverpoint_e.get_num_valid_bins(VOID), 2, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Load to coverpoint with same bins plus an extra bin");
+      increment_expected_alerts(TB_WARNING,1);
+      v_cross_x2_b.add_bins(bin(1) & bin(2) & bin(3));
+      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt"); -- ALERT of new bin_3
+      v_bin_idx := 0;
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 3, name => "bin_2", hits => 0);
+      check_value(v_cross_x2_b.get_num_valid_bins(VOID), 3, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Load to coverpoint with same bins, but different min_hits");
+      increment_expected_alerts(TB_WARNING,2);
+      v_cross_x3_b.add_bins(bin(1) & bin(2), 10);
+      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt"); -- ALERT of mismatching bin_1 and bin_2
+      v_bin_idx := 0;
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 10, name => "bin_0", hits => 0);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 10, name => "bin_1", hits => 0);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 1,  name => "bin_0", hits => 3);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 1,  name => "bin_1", hits => 3);
+      check_value(v_cross_x3_b.get_num_valid_bins(VOID), 4, ERROR, "Checking number of valid bins");
+
+      v_coverpoint_a.delete_coverpoint(VOID);
+      v_coverpoint_b.delete_coverpoint(VOID);
+      v_coverpoint_c.delete_coverpoint(VOID);
+      v_coverpoint_d.delete_coverpoint(VOID);
+      v_coverpoint_e.delete_coverpoint(VOID);
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x3_b.delete_coverpoint(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing accumulating coverage in random order - ERROR_ON_NEW_BINS");
+      ------------------------------------------------------------
+      log(ID_SEQUENCER, "Load to coverpoint with same bins plus an extra bin");
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_cross_x2_b.add_bins(bin(1) & bin(2) & bin(3));
+      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt", ERROR_ON_NEW_BINS); -- ALERT of new bin_3
+      v_bin_idx := 0;
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 3, name => "bin_2", hits => 0);
+      check_value(v_cross_x2_b.get_num_valid_bins(VOID), 3, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Load to coverpoint with same bins, but different min_hits");
+      increment_expected_alerts_and_stop_limit(TB_ERROR,2);
+      v_cross_x3_b.add_bins(bin(1) & bin(2), 10);
+      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt", ERROR_ON_NEW_BINS); -- ALERT of mismatching bin_1 and bin_2
+      v_bin_idx := 0;
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 10, name => "bin_0", hits => 0);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 10, name => "bin_1", hits => 0);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 1,  name => "bin_0", hits => 3);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 1,  name => "bin_1", hits => 3);
+      check_value(v_cross_x3_b.get_num_valid_bins(VOID), 4, ERROR, "Checking number of valid bins");
+
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x3_b.delete_coverpoint(VOID);
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing accumulating coverage in random order - NO_ALERT_ON_NEW_BINS");
+      ------------------------------------------------------------
+      log(ID_SEQUENCER, "Load to coverpoint with same bins plus an extra bin");
+      v_cross_x2_b.add_bins(bin(1) & bin(2) & bin(3));
+      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt", NO_ALERT_ON_NEW_BINS);
+      v_bin_idx := 0;
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
+      check_bin(v_cross_x2_b, v_bin_idx, VAL, 3, name => "bin_2", hits => 0);
+      check_value(v_cross_x2_b.get_num_valid_bins(VOID), 3, ERROR, "Checking number of valid bins");
+
+      log(ID_SEQUENCER, "Load to coverpoint with same bins, but different min_hits");
+      v_cross_x3_b.add_bins(bin(1) & bin(2), 10);
+      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt", NO_ALERT_ON_NEW_BINS);
+      v_bin_idx := 0;
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 10, name => "bin_0", hits => 0);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 10, name => "bin_1", hits => 0);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 1,  name => "bin_0", hits => 3);
+      check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 1,  name => "bin_1", hits => 3);
+      check_value(v_cross_x3_b.get_num_valid_bins(VOID), 4, ERROR, "Checking number of valid bins");
+
+      v_cross_x2_b.delete_coverpoint(VOID);
+      v_cross_x3_b.delete_coverpoint(VOID);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_database_2" then
@@ -2682,7 +2951,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "coverpoint.txt", report_verbosity => NON_VERBOSE);
+      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt", report_verbosity => NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2736,12 +3005,12 @@ begin
       sample_bins(v_coverpoint_a, (231,237,237,238,235,231), 1);
 
       v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 60.38% / 30.19%
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2.load_coverage_db(GC_FILE_PATH & "cross.txt", report_verbosity => NON_VERBOSE);
+      v_cross_x2.load_coverage_db(GC_FILE_PATH & "db_cross.txt", report_verbosity => NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2795,12 +3064,12 @@ begin
       sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
 
       v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 60.38% / 80.50%
-      v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
+      v_cross_x2.write_coverage_db(GC_FILE_PATH & "db_cross.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - max data");
       ------------------------------------------------------------
-      v_cross_x3.load_coverage_db(GC_FILE_PATH & "cross_max.txt");
+      v_cross_x3.load_coverage_db(GC_FILE_PATH & "db_cross_max.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2825,14 +3094,14 @@ begin
       end loop;
 
       v_cross_x3.report_coverage(VERBOSE); -- Bins: 50.00%, Hits: 50.00%
-      v_cross_x3.write_coverage_db(GC_FILE_PATH & "cross_max.txt");
+      v_cross_x3.write_coverage_db(GC_FILE_PATH & "db_cross_max.txt");
 
       fc_report_overall_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "coverpoint.txt");
+      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2876,7 +3145,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "cross.txt");
+      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_cross.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2920,7 +3189,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - max data");
       ------------------------------------------------------------
-      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "cross_max.txt");
+      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "db_cross_max.txt");
 
       -- Check bins and coverage
       v_bin_idx := 0;
@@ -2949,47 +3218,6 @@ begin
       v_cross_x3_b.report_coverage(VERBOSE);
 
       fc_report_overall_coverage(VERBOSE);
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing load DB to an already initialized coverpoint - overwrite");
-      ------------------------------------------------------------
-      check_value(v_coverpoint_a.get_name(VOID), "MY_COVERPOINT", ERROR, "Checking name");
-      check_value(v_coverpoint_a.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
-
-      increment_expected_alerts(TB_WARNING, 1);
-      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "cross.txt");
-      check_value(v_coverpoint_a.get_name(VOID), "MY_CROSS", ERROR, "Checking name");
-      check_value(v_coverpoint_a.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
-
-      ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing clearing a coverpoint's coverage");
-      ------------------------------------------------------------
-      sample_bins(v_coverpoint_b, (50,51,52), 1);
-      v_coverpoint_b.clear_coverage(VOID);
-      sample_bins(v_coverpoint_b, (53,54,55,56,57,58,59), 1); -- To test transition_mask is cleared
-
-      -- Check bins and coverage
-      v_bin_idx := 0;
-      v_invalid_bin_idx := 0;
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 10, name => "bin_0", hits => 0);
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, 20, 8, 20, "single", hits => 0);
-      check_bin(v_coverpoint_b, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 0);
-      check_bin(v_coverpoint_b, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 0);
-      check_bin(v_coverpoint_b, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 0);
-      check_bin(v_coverpoint_b, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 0);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 0);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 0);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_IGNORE, (132,134,136,138), "ignore_transition", hits => 0);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_ILLEGAL, 200, "bin_10", hits => 0);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_ILLEGAL, 210, "illegal_single", hits => 0);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 0);
-      check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 0);
-      check_bins_coverage(v_coverpoint_b, 0.0);
-      check_bins_coverage(v_coverpoint_b, 0.0, use_goal => true);
-      check_hits_coverage(v_coverpoint_b, 0.0);
-      check_hits_coverage(v_coverpoint_b, 0.0, use_goal => true);
-      v_coverpoint_b.report_coverage(VERBOSE);
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_reports" then
@@ -3393,7 +3621,7 @@ begin
       v_values_x2(0 to 0) := v_coverpoint_a.rand(NO_SAMPLE_COV);
       v_coverpoint_a.sample_coverage(5);
       v_coverpoint_a.sample_coverage((5,6,7));
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "file.txt");
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_file.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing deleting a coverpoint");
@@ -3513,7 +3741,7 @@ begin
       log(ID_LOG_HDR, "Testing methods with initialized coverpoint without bins");
       ------------------------------------------------------------
       check_value(v_coverpoint_a.is_defined(VOID), false, ERROR, "is_defined(VOID)");
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "file.txt");
+      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_file.txt");
 
       increment_expected_alerts_and_stop_limit(TB_ERROR,4);
       v_value             := v_coverpoint_a.rand(NO_SAMPLE_COV);

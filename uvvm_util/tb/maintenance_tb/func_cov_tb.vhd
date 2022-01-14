@@ -2603,17 +2603,8 @@ begin
       sample_bins(v_coverpoint_a, (210), 1);
       sample_bins(v_coverpoint_a, (226,227,228,229), 1);
       sample_bins(v_coverpoint_a, (231,237,237,238,235,231), 1);
-      sample_bins(v_coverpoint_a, (50,51,52), 1); -- To check transition is continued in next coverpoint
 
-      -- Randomize until a transition bin is generated
-      while v_value /= 50 loop
-        v_value := v_coverpoint_a.rand(NO_SAMPLE_COV);
-      end loop;
-      for i in 1 to 5 loop
-        v_value := v_coverpoint_a.rand(NO_SAMPLE_COV);
-      end loop;
-
-      v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 30.19%
+      v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 30.19% / 15.09%
       v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
@@ -2657,17 +2648,8 @@ begin
       sample_cross_bins(v_cross_x2, (0 => (210,1210)), 1);
       sample_cross_bins(v_cross_x2, ((226,1226),(227,1227),(228,1228),(229,1229)), 1);
       sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
-      sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052)), 1); -- To check transition is continued in next coverpoint
 
-      -- Randomize until a transition bin is generated
-      while v_values_x2(0) /= 50 and v_values_x2(1) /= 1050 loop
-        v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
-      end loop;
-      for i in 1 to 2 loop
-        v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
-      end loop;
-
-      v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 30.19%
+      v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 30.19% / 40.25%
       v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
@@ -2688,14 +2670,15 @@ begin
 
     --===================================================================================
     elsif GC_TESTCASE = "fc_database_2" then
-    -- IMPORTANT: This testcase must be run after fc_database since it checks the accumulated coverage
+    -- IMPORTANT: This testcase must be run after fc_database since it checks the accumulated
+    -- coverage when running testcases in sequence
     --===================================================================================
-      -- 1. Load coverpoint from file1, check, modify and write back to file1
-      -- 2. Load cross from file2, check, modify and write back to file2
-      -- 3. Load max-sized cross from file3, check, modify and write back to file3
-      -- 4. Load coverpoint from file1 into coverpoint_b, check and modify
-      -- 5. Load cross from file2 into cross_b, check and modify
-      -- 6. Load max-sized cross from file3 into max-sized cross_b, check and modify
+      -- 1. Load coverpoint from file1, check, sample and write back to file1
+      -- 2. Load cross from file2, check, sample and write back to file2
+      -- 3. Load max-sized cross from file3, check, sample and write back to file3
+      -- 4. Load coverpoint from file1 into coverpoint_b, check and sample
+      -- 5. Load cross from file2 into cross_b, check and sample
+      -- 6. Load max-sized cross from file3 into max-sized cross_b, check and sample
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
@@ -2738,23 +2721,8 @@ begin
       check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
-      -- Check randomization state
-      check_value(v_coverpoint_a.rand(NO_SAMPLE_COV), 56, ERROR, "Checking rand transition");
-      check_value(v_coverpoint_a.rand(NO_SAMPLE_COV), 57, ERROR, "Checking rand transition");
-      check_value(v_coverpoint_a.rand(NO_SAMPLE_COV), 58, ERROR, "Checking rand transition");
-      check_value(v_coverpoint_a.rand(NO_SAMPLE_COV), 59, ERROR, "Checking rand transition");
-
-      -- Add extra bins to check the bin indexes are stored correctly
-      v_coverpoint_a.add_bins(bin(1000));
-      v_coverpoint_a.add_bins(ignore_bin(1001));
-      v_coverpoint_a.add_bins(illegal_bin(1002));
-      check_bin(v_coverpoint_a, v_bin_idx, VAL, 1000, name => "bin_14", hits => 0);
-      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_IGNORE, 1001, "bin_15", hits => 0);
-      check_invalid_bin(v_coverpoint_a, v_invalid_bin_idx, VAL_ILLEGAL, 1002, "bin_16", hits => 0);
-
       -- Sample coverage
       increment_expected_alerts(TB_NOTE, 6);
-      sample_bins(v_coverpoint_a, (53,54,55,56,57,58,59), 1); -- To check transition started in previous coverpoint
       sample_bins(v_coverpoint_a, (20), 2);
       sample_bins(v_coverpoint_a, (30,35,39), 1);
       sample_bins(v_coverpoint_a, (40,41,42,43,44), 1);
@@ -2766,9 +2734,8 @@ begin
       sample_bins(v_coverpoint_a, (210), 1);
       sample_bins(v_coverpoint_a, (226,227,228,229), 1);
       sample_bins(v_coverpoint_a, (231,237,237,238,235,231), 1);
-      sample_bins(v_coverpoint_a, (50,51,52,53), 1); -- To check transition is continued in next coverpoint
 
-      v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 61.11%
+      v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 60.38% / 30.19%
       v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "coverpoint.txt");
 
       ------------------------------------------------------------
@@ -2813,28 +2780,8 @@ begin
       check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
-      -- Check randomization state
-      v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
-      check_value(v_values_x2(0), 53, ERROR, "Checking rand transition");
-      check_value(v_values_x2(1), 1053, ERROR, "Checking rand transition");
-      v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
-      check_value(v_values_x2(0), 54, ERROR, "Checking rand transition");
-      check_value(v_values_x2(1), 1054, ERROR, "Checking rand transition");
-      v_values_x2 := v_cross_x2.rand(NO_SAMPLE_COV);
-      check_value(v_values_x2(0), 55, ERROR, "Checking rand transition");
-      check_value(v_values_x2(1), 1055, ERROR, "Checking rand transition");
-
-      -- Add extra bins to check the bin indexes are stored correctly
-      v_cross_x2.add_cross(bin(1000), bin(2000));
-      v_cross_x2.add_cross(ignore_bin(1001), ignore_bin(2001));
-      v_cross_x2.add_cross(illegal_bin(1002), illegal_bin(2002));
-      check_cross_bin(v_cross_x2, v_bin_idx, (VAL,VAL), (0 => 1000), (0 => 2000), name => "bin_14", hits => 0);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => 1001), (0 => 2001), "bin_15", hits => 0);
-      check_invalid_cross_bin(v_cross_x2, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => 1002), (0 => 2002), "bin_16", hits => 0);
-
       -- Sample coverage
       increment_expected_alerts(TB_WARNING, 6);
-      sample_cross_bins(v_cross_x2, ((53,1053),(54,1054),(55,1055)), 1); -- To check transition started in previous coverpoint
       sample_cross_bins(v_cross_x2, (0 => (20,1020)), 2);
       sample_cross_bins(v_cross_x2, ((30,1030),(35,1035),(39,1039)), 1);
       sample_cross_bins(v_cross_x2, ((40,1040),(41,1041),(42,1042),(43,1043),(44,1044)), 1);
@@ -2846,9 +2793,8 @@ begin
       sample_cross_bins(v_cross_x2, (0 => (210,1210)), 1);
       sample_cross_bins(v_cross_x2, ((226,1226),(227,1227),(228,1228),(229,1229)), 1);
       sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
-      sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052),(53,1053)), 1); -- To check transition is continued in next coverpoint
 
-      v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0%, Hits: 61.11%
+      v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 60.38% / 80.50%
       v_cross_x2.write_coverage_db(GC_FILE_PATH & "cross.txt");
 
       ------------------------------------------------------------
@@ -2896,7 +2842,7 @@ begin
       check_bin(v_coverpoint_b, v_bin_idx, VAL, (30,35,39), 9, 30, "multiple", hits => 6);
       check_bin(v_coverpoint_b, v_bin_idx, RAN, (40,44), 15, 40, "range", hits => 10);
       check_bin(v_coverpoint_b, v_bin_idx, RAN, (45,49), 15, 40, "range", hits => 10);
-      check_bin(v_coverpoint_b, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 3);
+      check_bin(v_coverpoint_b, v_bin_idx, TRN, (50,51,52,53,54,55,56,57,58,59), 5, 50, "transition", hits => 2);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 100, "bin_6", hits => 0);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_IGNORE, 110, "ignore_single", hits => 2);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_IGNORE, (121,125), "ignore_range", hits => 10);
@@ -2905,25 +2851,23 @@ begin
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, VAL_ILLEGAL, 210, "illegal_single", hits => 2);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, RAN_ILLEGAL, (226,229), "illegal_range", hits => 8);
       check_invalid_bin(v_coverpoint_b, v_invalid_bin_idx, TRN_ILLEGAL, (231,237,237,238,235,231), "illegal_transition", hits => 2);
-      check_num_bins(v_coverpoint_b, 7, 10);
+      check_num_bins(v_coverpoint_b, 6, 8);
       check_bins_coverage(v_coverpoint_b, 0.0);
       check_bins_coverage(v_coverpoint_b, 0.0, use_goal => true);   -- goal=50
-      check_hits_coverage(v_coverpoint_b, 61.11);
-      check_hits_coverage(v_coverpoint_b, 30.56, use_goal => true); -- goal=200
+      check_hits_coverage(v_coverpoint_b, 60.38);
+      check_hits_coverage(v_coverpoint_b, 30.19, use_goal => true); -- goal=200
       check_value(v_coverpoint_b.get_num_bins_crossed(VOID), 1, ERROR, "Checking num_bins_crossed");
       v_seeds := v_coverpoint_b.get_rand_seeds(VOID);
       check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Sample coverage
-      sample_bins(v_coverpoint_b, (54,55,56,57,58,59), 1); -- To check transition started in previous coverpoint
       sample_bins(v_coverpoint_b, (10), 2);
       sample_bins(v_coverpoint_b, (20), 12);
       sample_bins(v_coverpoint_b, (30,35,39), 4);
       sample_bins(v_coverpoint_b, (40,41,42,43,44), 4);
       sample_bins(v_coverpoint_b, (45,46,47,48,49), 4);
-      sample_bins(v_coverpoint_b, (50,51,52,53,54,55,56,57,58,59), 6);
-      sample_bins(v_coverpoint_b, (1000), 2);
+      sample_bins(v_coverpoint_b, (50,51,52,53,54,55,56,57,58,59), 8);
 
       check_coverage_completed(v_coverpoint_b);
       check_coverage_completed(v_coverpoint_b, use_goal => true);
@@ -2942,7 +2886,7 @@ begin
       check_cross_bin(v_cross_x2_b, v_bin_idx, (VAL,VAL), (30,35,39), (1030,1035,1039), 9, 30, "multiple", hits => 6);
       check_cross_bin(v_cross_x2_b, v_bin_idx, (RAN,RAN), (40,44), (1040,1049), 15, 40, "range", hits => 10);
       check_cross_bin(v_cross_x2_b, v_bin_idx, (RAN,RAN), (45,49), (1040,1049), 15, 40, "range", hits => 10);
-      check_cross_bin(v_cross_x2_b, v_bin_idx, (TRN,TRN), (50,51,52,53,54,55), (1050,1051,1052,1053,1054,1055), 5, 50, "transition", hits => 3);
+      check_cross_bin(v_cross_x2_b, v_bin_idx, (TRN,TRN), (50,51,52,53,54,55), (1050,1051,1052,1053,1054,1055), 5, 50, "transition", hits => 2);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => 100), (0 => 1100), "bin_6", hits => 0);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (VAL_IGNORE,VAL_IGNORE), (0 => 110), (0 => 1110), "ignore_single", hits => 2);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (RAN_IGNORE,RAN_IGNORE), (121,125), (1121,1125), "ignore_range", hits => 10);
@@ -2951,25 +2895,23 @@ begin
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (VAL_ILLEGAL,VAL_ILLEGAL), (0 => 210), (0 => 1210), "illegal_single", hits => 2);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (RAN_ILLEGAL,RAN_ILLEGAL), (226,229), (1226,1229), "illegal_range", hits => 8);
       check_invalid_cross_bin(v_cross_x2_b, v_invalid_bin_idx, (TRN_ILLEGAL,TRN_ILLEGAL), (231,237,237), (1231,1237,1237), "illegal_transition", hits => 2);
-      check_num_bins(v_cross_x2_b, 7, 10);
+      check_num_bins(v_cross_x2_b, 6, 8);
       check_bins_coverage(v_cross_x2_b, 0.0);
       check_bins_coverage(v_cross_x2_b, 0.0, use_goal => true);   -- goal=50
-      check_hits_coverage(v_cross_x2_b, 61.11);
-      check_hits_coverage(v_cross_x2_b, 81.48, use_goal => true); -- goal=75
+      check_hits_coverage(v_cross_x2_b, 60.38);
+      check_hits_coverage(v_cross_x2_b, 80.50, use_goal => true); -- goal=75
       check_value(v_cross_x2_b.get_num_bins_crossed(VOID), 2, ERROR, "Checking num_bins_crossed");
       v_seeds := v_cross_x2_b.get_rand_seeds(VOID);
       check_value(v_seeds(0) /= C_RAND_INIT_SEED_1, ERROR, "Checking seed 1");
       check_value(v_seeds(1) /= C_RAND_INIT_SEED_2, ERROR, "Checking seed 2");
 
       -- Sample coverage
-      sample_cross_bins(v_cross_x2_b, ((54,1054),(55,1055)), 1); -- To check transition started in previous coverpoint
       sample_cross_bins(v_cross_x2_b, (0 => (10,1010)), 1);
       sample_cross_bins(v_cross_x2_b, (0 => (20,1020)), 4);
       sample_cross_bins(v_cross_x2_b, ((30,1030),(35,1035),(39,1039)), 1);
       sample_cross_bins(v_cross_x2_b, ((40,1040),(41,1041),(42,1042),(43,1043),(44,1044)), 1);
       sample_cross_bins(v_cross_x2_b, ((45,1045),(46,1046),(47,1047),(48,1048),(49,1049)), 1);
-      sample_cross_bins(v_cross_x2_b, ((50,1050),(51,1051),(52,1052),(53,1053),(54,1054),(55,1055)), 1);
-      sample_cross_bins(v_cross_x2_b, (0 => (1000,2000)), 1);
+      sample_cross_bins(v_cross_x2_b, ((50,1050),(51,1051),(52,1052),(53,1053),(54,1054),(55,1055)), 3);
 
       check_coverage_completed(v_cross_x2_b);
       check_coverage_completed(v_cross_x2_b, use_goal => true);

@@ -1046,11 +1046,6 @@ and only want to keep the model and configuration.</p>
 <span class="p">[</span><span class="n">sampled_coverpoint</span><span class="p">]</span>
 <span class="p">[</span><span class="n">num_tc_accumulated</span><span class="p">]</span>
 <span class="p">[</span><span class="n">randomization_seed_1</span><span class="p">]</span> <span class="p">[</span><span class="n">randomization_seed_2</span><span class="p">]</span>
-<span class="p">[</span><span class="n">transition_bin_idx</span><span class="p">]</span>
-<span class="p">[</span><span class="n">transition_bin_value_idx_1</span><span class="p">]</span> <span class="p">[</span><span class="n">transition_bin_value_idx_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">transition_bin_value_idx_n</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
-  <span class="p">[</span><span class="n">bin_sample_shift_reg_n</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="p">...</span> <span class="p">[</span><span class="n">bin_sample_shift_reg_2</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="p">[</span><span class="n">bin_sample_shift_reg_1</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
-<span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
 <span class="p">[</span><span class="n">illegal_bin_alert_level</span><span class="p">]</span>
 <span class="p">[</span><span class="n">bin_overlap_alert_level</span><span class="p">]</span>
 <span class="p">[</span><span class="n">number_of_valid_bins</span><span class="p">]</span>
@@ -1082,9 +1077,7 @@ and only want to keep the model and configuration.</p>
 </pre></div>
 </div>
 <p>The following values are constrained as:</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">transition_bin_value_idx_n</span>       <span class="c1">--&gt; n = C_MAX_NUM_CROSS_BINS = 16</span>
-<span class="n">bin_sample_shift_reg_n</span>           <span class="c1">--&gt; n = C_MAX_NUM_CROSS_BINS = 16</span>
-<span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span>         <span class="c1">--&gt; n = bin(i).cross(j).num_values</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span>         <span class="c1">--&gt; n = bin(i).cross(j).num_values</span>
 <span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span> <span class="c1">--&gt; n = invalid_bin(i).cross(j).num_values</span>
 </pre></div>
 </div>
@@ -1139,10 +1132,6 @@ NEW_SCOPE
 TRUE
 0
 1082914553 1166884309
-4
-3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-52 51 50 237 237 231 229 228 227 226
-1052 1051 1050 1237 1237 1231 1229 1228 1227 1226
 4
 7
 5

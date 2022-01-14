@@ -1845,11 +1845,6 @@ package body func_cov_pkg is
         write_value(priv_sampled_coverpoint);
         write_value(priv_num_tc_accumulated);
         write_value(integer_vector(priv_rand_gen.get_rand_seeds(VOID)));
-        write_value(priv_rand_transition_bin_idx);
-        write_value(integer_vector(priv_rand_transition_bin_value_idx));
-        for i in 0 to priv_num_bins_crossed-1 loop
-          write_value(priv_bin_sample_shift_reg(i));
-        end loop;
         write_value(t_alert_level'pos(priv_illegal_bin_alert_level));
         write_value(t_alert_level'pos(priv_bin_overlap_alert_level));
         -- Covergroup config
@@ -1885,7 +1880,6 @@ package body func_cov_pkg is
       variable v_line            : line;
       variable v_value           : integer;
       variable v_rand_seeds      : integer_vector(0 to 1);
-      variable v_rand_transition_bin_value_idx : integer_vector(0 to C_MAX_NUM_CROSS_BINS-1);
       variable v_loaded_bins_idx : natural;
 
       procedure read_value(
@@ -2021,12 +2015,6 @@ package body func_cov_pkg is
       read_value(priv_num_tc_accumulated);
       read_value(v_rand_seeds);
       priv_rand_gen.set_rand_seeds(t_positive_vector(v_rand_seeds));
-      read_value(priv_rand_transition_bin_idx);
-      read_value(v_rand_transition_bin_value_idx);
-      priv_rand_transition_bin_value_idx := t_natural_vector(v_rand_transition_bin_value_idx);
-      for i in 0 to priv_num_bins_crossed-1 loop
-        read_value(priv_bin_sample_shift_reg(i));
-      end loop;
       read_value(v_value);
       priv_illegal_bin_alert_level := t_alert_level'val(v_value);
       read_value(v_value);

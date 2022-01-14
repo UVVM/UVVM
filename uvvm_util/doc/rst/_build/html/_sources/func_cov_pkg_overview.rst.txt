@@ -907,11 +907,6 @@ The database for a coverpoint is stored using the following file format:
     [sampled_coverpoint]
     [num_tc_accumulated]
     [randomization_seed_1] [randomization_seed_2]
-    [transition_bin_idx]
-    [transition_bin_value_idx_1] [transition_bin_value_idx_2] ... [transition_bin_value_idx_n]
-    for i in 0 to number_of_bins_crossed-1 loop
-      [bin_sample_shift_reg_n(i)] ... [bin_sample_shift_reg_2(i)] [bin_sample_shift_reg_1(i)]
-    end loop;
     [illegal_bin_alert_level]
     [bin_overlap_alert_level]
     [number_of_valid_bins]
@@ -943,8 +938,6 @@ The database for a coverpoint is stored using the following file format:
 
 The following values are constrained as: ::
 
-    transition_bin_value_idx_n       --> n = C_MAX_NUM_CROSS_BINS = 16
-    bin_sample_shift_reg_n           --> n = C_MAX_NUM_CROSS_BINS = 16
     bin(i).cross(j).values_n         --> n = bin(i).cross(j).num_values
     invalid_bin(i).cross(j).values_n --> n = invalid_bin(i).cross(j).num_values
 
@@ -978,10 +971,6 @@ Example of the file output:
     TRUE
     0
     1082914553 1166884309
-    4
-    3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-    52 51 50 237 237 231 229 228 227 226
-    1052 1051 1050 1237 1237 1231 1229 1228 1227 1226
     4
     7
     5

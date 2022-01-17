@@ -2763,6 +2763,15 @@ begin
       v_coverpoint_e.delete_coverpoint(VOID);
 
       ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing loading to coverpoint with different num_bins_crossed");
+      ------------------------------------------------------------
+      v_cross_x2_b.add_cross(bin(1),bin(2));
+      increment_expected_alerts_and_stop_limit(TB_ERROR,1);
+      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+
+      v_cross_x2_b.delete_coverpoint(VOID);
+
+      ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing accumulated testcases counter");
       ------------------------------------------------------------
       v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "dummy.txt", alert_level_if_not_found => NO_ALERT);

@@ -1874,13 +1874,14 @@ package body func_cov_pkg is
       constant alert_level_if_not_found : in t_alert_level         := TB_ERROR;
       constant report_verbosity         : in t_report_verbosity    := HOLES_ONLY;
       constant msg_id_panel             : in t_msg_id_panel        := shared_msg_id_panel) is
-      constant C_LOCAL_CALL      : string := "load_coverage_db(" & file_name & ")";
-      file file_handler          : text;
-      variable v_open_status     : file_open_status;
-      variable v_line            : line;
-      variable v_value           : integer;
-      variable v_rand_seeds      : integer_vector(0 to 1);
-      variable v_loaded_bins_idx : natural;
+      constant C_LOCAL_CALL       : string := "load_coverage_db(" & file_name & ")";
+      file file_handler           : text;
+      variable v_open_status      : file_open_status;
+      variable v_line             : line;
+      variable v_value            : integer;
+      variable v_num_bins_crossed : natural;
+      variable v_rand_seeds       : integer_vector(0 to 1);
+      variable v_loaded_bins_idx  : natural;
 
       procedure read_value(
         variable value : out integer) is
@@ -1964,11 +1965,16 @@ package body func_cov_pkg is
               -- Delete the bin from the loaded bins
               v_loaded_bins(j).cross_bins(0).num_values := 0;
               exit;
-            -- Generate an alert if the current bin was not found in the loaded bins
-            elsif j = v_loaded_bins'length-1 and new_bins_acceptance /= NO_ALERT_ON_NEW_BINS then
-              v_alert_level := TB_ERROR when new_bins_acceptance = ERROR_ON_NEW_BINS else TB_WARNING;
-              alert(v_alert_level, C_LOCAL_CALL & "=> bin[" & get_bin_values(bins_vector(i)) & ", min_hits:" & to_string(bins_vector(i).min_hits) &
-                ", rand_weight:" & to_string(bins_vector(i).rand_weight) & "] not found in loaded database. Coverage for this bin might not be correct.", priv_scope);
+            elsif j = v_loaded_bins'length-1 then
+              -- Add bin information to the covergroup status since it was overwritten by the loaded data
+              protected_covergroup_status.increment_valid_bin_count(priv_id);
+              protected_covergroup_status.increment_min_hits_count(priv_id, bins_vector(i).min_hits);
+              -- Generate an alert if the current bin was not found in the loaded bins
+              if new_bins_acceptance /= NO_ALERT_ON_NEW_BINS then
+                v_alert_level := TB_ERROR when new_bins_acceptance = ERROR_ON_NEW_BINS else TB_WARNING;
+                alert(v_alert_level, C_LOCAL_CALL & "=> bin[" & get_bin_values(bins_vector(i)) & ", min_hits:" & to_string(bins_vector(i).min_hits) &
+                  ", rand_weight:" & to_string(bins_vector(i).rand_weight) & "] not found in loaded database. Coverage for this bin might not be correct.", priv_scope);
+              end if;
             end if;
           end loop;
         end loop;
@@ -2008,9 +2014,16 @@ package body func_cov_pkg is
       set_name(priv_name);
       read_value(priv_scope); -- read() crops the string
       set_scope(priv_scope);
-      read_value(priv_num_bins_crossed);
-      check_value(priv_num_bins_crossed <= C_MAX_NUM_CROSS_BINS, TB_FAILURE, "Cannot load the " & to_string(priv_num_bins_crossed) & " crossed bins. Increase C_MAX_NUM_CROSS_BINS",
-        priv_scope, ID_NEVER, caller_name => C_LOCAL_CALL);
+      read_value(v_num_bins_crossed);
+      if v_num_bins_crossed /= priv_num_bins_crossed and priv_num_bins_crossed /= C_UNINITIALIZED then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Cannot load " & to_string(v_num_bins_crossed) & " crossed bins to a coverpoint with " & to_string(priv_num_bins_crossed) & " crossed bins", priv_scope);
+        return;
+      elsif v_num_bins_crossed > C_MAX_NUM_CROSS_BINS then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> Cannot load " & to_string(v_num_bins_crossed) & " crossed bins. Increase C_MAX_NUM_CROSS_BINS", priv_scope);
+        return;
+      else
+        priv_num_bins_crossed := v_num_bins_crossed;
+      end if;
       read_value(priv_sampled_coverpoint);
       read_value(priv_num_tc_accumulated);
       read_value(v_rand_seeds);

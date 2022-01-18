@@ -12,7 +12,6 @@ class CoverageFileReader(object):
         self.filename = filename
         self.content = None
         self.cp = None
-        self.transition_bin_idx = 0
 
     def read(self):
         try:
@@ -43,22 +42,16 @@ class CoverageFileReader(object):
         self.cp.set_number_of_bins_crossed(number_of_bins_crossed)
         pointer += 1
 
+        self.cp.set_sampled_coverpoint(db[pointer])
+        pointer += 1
+
+        number_of_tc_accumulated = int(db[pointer])
+        self.cp.set_number_of_tc_accumulated(number_of_tc_accumulated)
+        pointer += 1
+
         seeds = db[pointer].split()
         self.cp.set_randomization_seed(seeds[0], seeds[1])
         pointer += 1
-
-        self.cp.set_transition_bin_idx(db[pointer])
-        pointer += 1
-
-        transition_bin_value_idx = db[pointer].split()
-        transition_bin_value_idx = [int(value) for value in transition_bin_value_idx]
-        self.cp.set_transition_bin_value_idx(transition_bin_value_idx)
-        pointer += 1
-
-        if number_of_bins_crossed > 0:
-            for idx in range(0, number_of_bins_crossed):
-                self.cp.add_bin_sample_shift_reg(db[idx + pointer])
-                pointer += 1
 
         self.cp.set_illegal_bin_alert_level(db[pointer])
         pointer += 1
@@ -112,7 +105,6 @@ class CoverageFileReader(object):
                 bin.set_hits(bin_data[0])
                 bin.set_min_hits(bin_data[1])
                 bin.set_rand_weight(bin_data[2])
-                bin.set_transition_mask(bin_data[3])
 
                 if number_of_bins_crossed > 0:
                     for sub_idx in range(0, number_of_bins_crossed):
@@ -144,7 +136,6 @@ class CoverageFileReader(object):
                 invalid_bin.set_hits(invalid_bin_data[0])
                 invalid_bin.set_min_hits(invalid_bin_data[1])
                 invalid_bin.set_rand_weight(invalid_bin_data[2])
-                invalid_bin.set_transition_mask(invalid_bin_data[3])
 
                 if number_of_bins_crossed > 0:
                     for sub_idx in range(0, number_of_bins_crossed):
@@ -169,10 +160,10 @@ class CoverPoint(object):
         self.name = None
         self.scope = None
         self.number_of_bins_crossed = 0
+        self.sampled_coverpoint = False
+        self.number_of_tc_accumulated = 0
         self.randomization_seed_1 = 0
         self.randomization_seed_2 = 0
-        self.transition_bin_value_idx = []
-        self.bin_sample_shift_reg = []
         self.illegal_bin_alert_level = None
         self.bin_overlap_alert_level = None
         self.number_of_valid_bins = 0
@@ -209,36 +200,24 @@ class CoverPoint(object):
     def get_number_of_bins_crossed(self) -> int:
         return self.number_of_bins_crossed
 
+    def set_sampled_coverpoint(self, sampled_coverpoint):
+        self.sampled_coverpoint = sampled_coverpoint
+
+    def get_sampled_coverpoint(self):
+        return self.sampled_coverpoint
+
+    def set_number_of_tc_accumulated(self, number_of_tc_accumulated):
+        self.number_of_tc_accumulated = int(number_of_tc_accumulated)
+
+    def get_number_of_tc_accumulated(self) -> int:
+        return self.number_of_tc_accumulated
+
     def set_randomization_seed(self, seed1, seed2):
         self.randomization_seed_1 = seed1
         self.randomization_seed_2 = seed2
 
     def get_randomization_seed(self):
         return (self.randomization_seed_1, self.randomization_seed_2)
-
-    def set_transition_bin_idx(self, idx):
-        self.transition_bin_idx = idx
-
-    def get_transition_bin_idx(self):
-        return self.transition_bin_idx
-
-    def set_transition_bin_value_idx(self, value_idx):
-        self.transition_bin_value_idx = value_idx
-
-    def add_transition_bin_value_idx(self, value_idx):
-        self.add_transition_bin_value_idx.append(value_idx)
-
-    def get_transition_bin_value_idx(self):
-        return self.add_transition_bin_value_idx
-
-    def set_bin_sample_shift_reg(self, value):
-        self.bin_sample_shift_reg = value
-
-    def add_bin_sample_shift_reg(self, value):
-        self.bin_sample_shift_reg.append(value)
-
-    def get_bin_sample_shift_reg(self):
-        return self.bin_sample_shift_reg
 
     def set_illegal_bin_alert_level(self, alert_level):
         self.illegal_bin_alert_level = alert_level
@@ -350,7 +329,6 @@ class Bin(object):
         self.hits = 0
         self.min_hits = 0
         self.rand_weight = 0
-        self.transition_mask = 0
         self.cross = []
 
     def set_name(self, name):
@@ -377,12 +355,6 @@ class Bin(object):
     def get_rand_weight(self):
         return self.rand_weight
 
-    def set_transition_mask(self, mask):
-        self.transition_mask = mask
-
-    def get_transition_mask(self):
-        return self.transition_mask
-
     def add_cross(self, cross):
         self.cross.append(cross)
 
@@ -397,7 +369,6 @@ class InvalidBin(Bin):
         self.hits = 0
         self.min_hits = 0
         self.rand_weight = 0
-        self.transition_mask = 0
         self.cross = []
 
 
@@ -438,7 +409,7 @@ class CoverageMerger(object):
         self.cov_file = '*.txt'
         self.recursive = False
         self.file_list = []
-        self.coverage_file_readeer_list = []
+        self.coverage_file_reader_list = []
         self._args()
         self.file_finder()
 
@@ -456,15 +427,15 @@ class CoverageMerger(object):
         for item in files:
             cfr = CoverageFileReader(item)
             cfr.read()
-            self.coverage_file_readeer_list.append(cfr)
+            self.coverage_file_reader_list.append(cfr)
 
 
     def merge(self):
         print('Searching for %s in %s' % (self.cov_file, self.cov_dir))
 
-        for cp_file in self.coverage_file_readeer_list:
+        for cp_file in self.coverage_file_reader_list:
             cp = cp_file.get_coverpoint()
-            print('\nCoverpoing: %s' % (cp.get_name()))
+            print('\nCoverpoint: %s' % (cp.get_name()))
 
             for bin in cp.get_bins():
                 print('Bin: %s' % (bin.get_name()))

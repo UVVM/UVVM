@@ -2560,11 +2560,11 @@ begin
       log(ID_LOG_HDR, "Testing load database from a non-existing file");
       ------------------------------------------------------------
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
-      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "dummy.txt");
+      v_coverpoint_a.load_coverage_db("dummy.txt");
       v_coverpoint_a.clear_coverage(VOID);
 
       increment_expected_alerts(TB_NOTE,1);
-      v_cross_x2.load_coverage_db(GC_FILE_PATH & "dummy.txt", alert_level_if_not_found => TB_NOTE);
+      v_cross_x2.load_coverage_db("dummy.txt", alert_level_if_not_found => TB_NOTE);
       v_cross_x2.delete_coverpoint(VOID);
 
       ------------------------------------------------------------
@@ -2774,7 +2774,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing accumulated testcases counter");
       ------------------------------------------------------------
-      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "dummy.txt", alert_level_if_not_found => NO_ALERT);
+      v_coverpoint_a.load_coverage_db("dummy.txt", alert_level_if_not_found => NO_ALERT);
       v_coverpoint_a.report_coverage(VOID);
       v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
       v_coverpoint_b.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
@@ -2832,10 +2832,10 @@ begin
       ------------------------------------------------------------
       v_coverpoint_a.add_bins(bin(1) & bin(2));
       sample_bins(v_coverpoint_a, (1,2), 3);
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_coverpoint_a.write_coverage_db("db_accumulated.txt");
 
       log(ID_SEQUENCER, "Load to empty coverpoint");
-      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_coverpoint_b.load_coverage_db("db_accumulated.txt");
       v_bin_idx := 0;
       check_bin(v_coverpoint_b, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
       check_bin(v_coverpoint_b, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
@@ -2843,7 +2843,7 @@ begin
 
       log(ID_SEQUENCER, "Load to coverpoint with same bins");
       v_coverpoint_c.add_bins(bin(1) & bin(2));
-      v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_coverpoint_c.load_coverage_db("db_accumulated.txt");
       v_bin_idx := 0;
       check_bin(v_coverpoint_c, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
       check_bin(v_coverpoint_c, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
@@ -2851,7 +2851,7 @@ begin
 
       log(ID_SEQUENCER, "Load to coverpoint with same bins, but different name");
       v_coverpoint_d.add_bins(bin(1) & bin(2), "new_bins");
-      v_coverpoint_d.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_coverpoint_d.load_coverage_db("db_accumulated.txt");
       v_bin_idx := 0;
       check_bin(v_coverpoint_d, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
       check_bin(v_coverpoint_d, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
@@ -2859,7 +2859,7 @@ begin
 
       log(ID_SEQUENCER, "Load to coverpoint with one of the same bins");
       v_coverpoint_e.add_bins(bin(1));
-      v_coverpoint_e.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt");
+      v_coverpoint_e.load_coverage_db("db_accumulated.txt");
       v_bin_idx := 0;
       check_bin(v_coverpoint_e, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
       check_bin(v_coverpoint_e, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
@@ -2868,7 +2868,7 @@ begin
       log(ID_SEQUENCER, "Load to coverpoint with same bins plus an extra bin");
       increment_expected_alerts(TB_WARNING,1);
       v_cross_x2_b.add_bins(bin(1) & bin(2) & bin(3));
-      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt"); -- ALERT of new bin_3
+      v_cross_x2_b.load_coverage_db("db_accumulated.txt"); -- ALERT of new bin_3
       v_bin_idx := 0;
       check_bin(v_cross_x2_b, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
       check_bin(v_cross_x2_b, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
@@ -2878,7 +2878,7 @@ begin
       log(ID_SEQUENCER, "Load to coverpoint with same bins, but different min_hits");
       increment_expected_alerts(TB_WARNING,2);
       v_cross_x3_b.add_bins(bin(1) & bin(2), 10);
-      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt"); -- ALERT of mismatching bin_1 and bin_2
+      v_cross_x3_b.load_coverage_db("db_accumulated.txt"); -- ALERT of mismatching bin_1 and bin_2
       v_bin_idx := 0;
       check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 10, name => "bin_0", hits => 0);
       check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 10, name => "bin_1", hits => 0);
@@ -2900,7 +2900,7 @@ begin
       log(ID_SEQUENCER, "Load to coverpoint with same bins plus an extra bin");
       increment_expected_alerts_and_stop_limit(TB_ERROR,1);
       v_cross_x2_b.add_bins(bin(1) & bin(2) & bin(3));
-      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt", ERROR_ON_NEW_BINS); -- ALERT of new bin_3
+      v_cross_x2_b.load_coverage_db("db_accumulated.txt", ERROR_ON_NEW_BINS); -- ALERT of new bin_3
       v_bin_idx := 0;
       check_bin(v_cross_x2_b, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
       check_bin(v_cross_x2_b, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
@@ -2910,7 +2910,7 @@ begin
       log(ID_SEQUENCER, "Load to coverpoint with same bins, but different min_hits");
       increment_expected_alerts_and_stop_limit(TB_ERROR,2);
       v_cross_x3_b.add_bins(bin(1) & bin(2), 10);
-      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt", ERROR_ON_NEW_BINS); -- ALERT of mismatching bin_1 and bin_2
+      v_cross_x3_b.load_coverage_db("db_accumulated.txt", ERROR_ON_NEW_BINS); -- ALERT of mismatching bin_1 and bin_2
       v_bin_idx := 0;
       check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 10, name => "bin_0", hits => 0);
       check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 10, name => "bin_1", hits => 0);
@@ -2926,7 +2926,7 @@ begin
       ------------------------------------------------------------
       log(ID_SEQUENCER, "Load to coverpoint with same bins plus an extra bin");
       v_cross_x2_b.add_bins(bin(1) & bin(2) & bin(3));
-      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt", NO_ALERT_ON_NEW_BINS);
+      v_cross_x2_b.load_coverage_db("db_accumulated.txt", NO_ALERT_ON_NEW_BINS);
       v_bin_idx := 0;
       check_bin(v_cross_x2_b, v_bin_idx, VAL, 1, name => "bin_0", hits => 3);
       check_bin(v_cross_x2_b, v_bin_idx, VAL, 2, name => "bin_1", hits => 3);
@@ -2935,7 +2935,7 @@ begin
 
       log(ID_SEQUENCER, "Load to coverpoint with same bins, but different min_hits");
       v_cross_x3_b.add_bins(bin(1) & bin(2), 10);
-      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "db_accumulated.txt", NO_ALERT_ON_NEW_BINS);
+      v_cross_x3_b.load_coverage_db("db_accumulated.txt", NO_ALERT_ON_NEW_BINS);
       v_bin_idx := 0;
       check_bin(v_cross_x3_b, v_bin_idx, VAL, 1, min_hits => 10, name => "bin_0", hits => 0);
       check_bin(v_cross_x3_b, v_bin_idx, VAL, 2, min_hits => 10, name => "bin_1", hits => 0);
@@ -3630,7 +3630,7 @@ begin
       v_values_x2(0 to 0) := v_coverpoint_a.rand(NO_SAMPLE_COV);
       v_coverpoint_a.sample_coverage(5);
       v_coverpoint_a.sample_coverage((5,6,7));
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_file.txt");
+      v_coverpoint_a.write_coverage_db("db_file.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing deleting a coverpoint");
@@ -3750,7 +3750,7 @@ begin
       log(ID_LOG_HDR, "Testing methods with initialized coverpoint without bins");
       ------------------------------------------------------------
       check_value(v_coverpoint_a.is_defined(VOID), false, ERROR, "is_defined(VOID)");
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_file.txt");
+      v_coverpoint_a.write_coverage_db("db_file.txt");
 
       increment_expected_alerts_and_stop_limit(TB_ERROR,4);
       v_value             := v_coverpoint_a.rand(NO_SAMPLE_COV);

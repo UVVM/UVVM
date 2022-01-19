@@ -10,7 +10,7 @@ class CoverageFileReader(object):
     def __init__(self, filename):
         self.filename = filename
         self.content = None
-        self.cp = None
+        self.covpt = None
 
     def read(self) -> bool:
         try:
@@ -21,88 +21,86 @@ class CoverageFileReader(object):
             return False
 
         # Check file header
-        if self.content[0] == "--UVVM_COVERAGE_FILE--":
+        if self.content[0] == "--UVVM_FUNCTIONAL_COVERAGE_FILE--":
             self.build_db()
             return True
         else:
             return False
 
     def get_coverpoint(self):
-        return self.cp
+        return self.covpt
 
     def build_db(self):
         pointer = 1  # Skip file header
         db = self.content
 
-        self.cp = CoverPoint()
+        self.covpt = CoverPoint()
         
-        self.cp.set_name(db[pointer].lower())
+        self.covpt.set_name(db[pointer].lower())
         pointer += 1
 
-        self.cp.set_scope(db[pointer])
+        self.covpt.set_scope(db[pointer])
         pointer += 1
 
         number_of_bins_crossed = int(db[pointer])
-        self.cp.set_number_of_bins_crossed(number_of_bins_crossed)
+        self.covpt.set_number_of_bins_crossed(number_of_bins_crossed)
         pointer += 1
 
-        self.cp.set_sampled_coverpoint(db[pointer])
+        self.covpt.set_sampled_coverpoint(db[pointer])
         pointer += 1
 
-        number_of_tc_accumulated = int(db[pointer])
-        self.cp.set_number_of_tc_accumulated(number_of_tc_accumulated)
+        self.covpt.set_number_of_tc_accumulated(db[pointer])
         pointer += 1
 
         seeds = db[pointer].split()
-        self.cp.set_randomization_seed(seeds[0], seeds[1])
+        self.covpt.set_randomization_seed(seeds[0], seeds[1])
         pointer += 1
 
-        self.cp.set_illegal_bin_alert_level(db[pointer])
+        self.covpt.set_illegal_bin_alert_level(db[pointer])
         pointer += 1
 
-        self.cp.set_bin_overlap_alert_level(db[pointer])
+        self.covpt.set_bin_overlap_alert_level(db[pointer])
         pointer += 1
 
-        self.cp.set_number_of_valid_bins(db[pointer])
+        self.covpt.set_number_of_valid_bins(db[pointer])
         pointer += 1
 
-        self.cp.set_number_of_covered_bins(db[pointer])
+        self.covpt.set_number_of_covered_bins(db[pointer])
         pointer += 1
 
-        self.cp.set_total_bin_min_hits(db[pointer])
+        self.covpt.set_total_bin_min_hits(db[pointer])
         pointer += 1
 
-        self.cp.set_total_bin_hits(db[pointer])
+        self.covpt.set_total_bin_hits(db[pointer])
         pointer += 1
 
-        self.cp.set_total_coverage_bin_hits(db[pointer])
+        self.covpt.set_total_coverage_bin_hits(db[pointer])
         pointer += 1
 
-        self.cp.set_total_goal_bin_hits(db[pointer])
+        self.covpt.set_total_goal_bin_hits(db[pointer])
         pointer += 1
 
-        self.cp.set_covpt_coverage_weight(db[pointer])
+        self.covpt.set_covpt_coverage_weight(db[pointer])
         pointer += 1
 
-        self.cp.set_bins_coverage_goal(db[pointer])
+        self.covpt.set_bins_coverage_goal(db[pointer])
         pointer += 1
 
-        self.cp.set_hits_coverage_goal(db[pointer])
+        self.covpt.set_hits_coverage_goal(db[pointer])
         pointer += 1
 
-        self.cp.set_covpts_coverage_goal(db[pointer])
+        self.covpt.set_covpts_coverage_goal(db[pointer])
         pointer += 1
 
         bin_idx = int(db[pointer])
-        self.cp.set_bin_idx(bin_idx)
+        self.covpt.set_bin_idx(bin_idx)
         pointer += 1
 
         if bin_idx > 0:
             for idx in range(0, bin_idx):
                 bin = Bin()
-                name = db[pointer]
+                bin.set_name(db[pointer])
                 pointer += 1
-                bin.set_name(name)
 
                 bin_data = db[pointer].split()
                 pointer += 1
@@ -113,27 +111,24 @@ class CoverageFileReader(object):
                 if number_of_bins_crossed > 0:
                     for sub_idx in range(0, number_of_bins_crossed):
                         cross = Cross()
-                        cross_data = db[pointer]
+                        cross_data = db[pointer].split()
                         pointer += 1
-
                         cross.set_bin_type(cross_data[0])
                         cross.set_num_values(cross_data[1])
                         cross.set_values(cross_data[2:])
 
                         bin.add_cross(cross)
-                self.cp.add_bin(bin)
+                self.covpt.add_bin(bin)
 
         invalid_bin_idx = int(db[pointer])
-        self.cp.set_invalid_bin_idx(invalid_bin_idx)
+        self.covpt.set_invalid_bin_idx(invalid_bin_idx)
         pointer += 1
 
-        if bin_idx > 0:
-        # if invalid_bin_idx > 0:
+        if invalid_bin_idx > 0:
             for idx in range(0, invalid_bin_idx):
                 invalid_bin = InvalidBin()
-                name = db[pointer]
+                invalid_bin.set_name(db[pointer])
                 pointer += 1
-                invalid_bin.set_name(name)
 
                 invalid_bin_data = db[pointer].split()
                 pointer += 1
@@ -144,15 +139,14 @@ class CoverageFileReader(object):
                 if number_of_bins_crossed > 0:
                     for sub_idx in range(0, number_of_bins_crossed):
                         cross = Cross()
-                        cross_data = db[pointer]
+                        cross_data = db[pointer].split()
                         pointer += 1
-
                         cross.set_bin_type(cross_data[0])
                         cross.set_num_values(cross_data[1])
                         cross.set_values(cross_data[2:])
 
                         invalid_bin.add_cross(cross)
-                self.cp.add_invalid_bin(invalid_bin)
+                self.covpt.add_invalid_bin(invalid_bin)
 
 
 class CoverPoint(object):
@@ -185,7 +179,7 @@ class CoverPoint(object):
     def set_name(self, name):
         self.name = name
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
 
     def set_scope(self, scope):
@@ -194,8 +188,8 @@ class CoverPoint(object):
     def get_scope(self) -> str:
         return self.scope
 
-    def set_number_of_bins_crossed(self, number_of_bins_crossed):
-        self.number_of_bins_crossed = int(number_of_bins_crossed)
+    def set_number_of_bins_crossed(self, num):
+        self.number_of_bins_crossed = int(num)
 
     def get_number_of_bins_crossed(self) -> int:
         return self.number_of_bins_crossed
@@ -203,11 +197,11 @@ class CoverPoint(object):
     def set_sampled_coverpoint(self, sampled_coverpoint):
         self.sampled_coverpoint = sampled_coverpoint
 
-    def get_sampled_coverpoint(self):
+    def get_sampled_coverpoint(self) -> bool:
         return self.sampled_coverpoint
 
-    def set_number_of_tc_accumulated(self, number_of_tc_accumulated):
-        self.number_of_tc_accumulated = int(number_of_tc_accumulated)
+    def set_number_of_tc_accumulated(self, num):
+        self.number_of_tc_accumulated = int(num)
 
     def get_number_of_tc_accumulated(self) -> int:
         return self.number_of_tc_accumulated
@@ -222,79 +216,79 @@ class CoverPoint(object):
     def set_illegal_bin_alert_level(self, alert_level):
         self.illegal_bin_alert_level = alert_level
 
-    def get_illegal_bin_alert_level(self):
+    def get_illegal_bin_alert_level(self) -> str:
         return self.illegal_bin_alert_level
 
     def set_bin_overlap_alert_level(self, alert_level):
         self.bin_overlap_alert_level = alert_level
 
-    def get_bin_overlap_alert_level(self):
+    def get_bin_overlap_alert_level(self) -> str:
         return self.bin_overlap_alert_level
 
-    def set_number_of_valid_bins(self, numb):
-        self.number_of_valid_bins = numb
+    def set_number_of_valid_bins(self, num):
+        self.number_of_valid_bins = int(num)
 
-    def get_number_of_valid_bins(self):
+    def get_number_of_valid_bins(self) -> int:
         return self.number_of_valid_bins
 
-    def set_number_of_covered_bins(self, numb):
-        self.number_of_covered_bins = numb
+    def set_number_of_covered_bins(self, num):
+        self.number_of_covered_bins = int(num)
 
-    def get_number_of_covered_bins(self):
+    def get_number_of_covered_bins(self) -> int:
         return self.number_of_covered_bins
 
-    def set_total_bin_min_hits(self, numb):
-        self.total_bin_min_hits = numb
+    def set_total_bin_min_hits(self, hits):
+        self.total_bin_min_hits = int(hits)
 
-    def get_total_bin_min_hits(self):
+    def get_total_bin_min_hits(self) -> int:
         return self.total_bin_min_hits
 
-    def set_total_bin_hits(self, numb):
-        self.total_bin_hits = numb
+    def set_total_bin_hits(self, hits):
+        self.total_bin_hits = int(hits)
 
-    def get_total_bin_hits(self):
+    def get_total_bin_hits(self) -> int:
         return self.total_bin_hits
 
-    def set_total_coverage_bin_hits(self, numb):
-        self.total_coverage_bin_hits = numb
+    def set_total_coverage_bin_hits(self, hits):
+        self.total_coverage_bin_hits = int(hits)
 
-    def get_total_coverage_bin_hits(self):
+    def get_total_coverage_bin_hits(self) -> int:
         return self.total_coverage_bin_hits
 
-    def set_total_goal_bin_hits(self, numb):
-        self.total_goal_bin_hits = numb
+    def set_total_goal_bin_hits(self, hits):
+        self.total_goal_bin_hits = int(hits)
 
-    def get_total_goal_bin_hits(self):
+    def get_total_goal_bin_hits(self) -> int:
         return self.total_goal_bin_hits
 
-    def set_covpt_coverage_weight(self, numb):
-        self.covpt_coverage_weight = numb
+    def set_covpt_coverage_weight(self, weight):
+        self.covpt_coverage_weight = int(weight)
 
-    def get_covpt_coverage_weight(self):
+    def get_covpt_coverage_weight(self) -> int:
         return self.covpt_coverage_weight
 
-    def set_bins_coverage_goal(self, numb):
-        self.bins_coverage_goal = numb
+    def set_bins_coverage_goal(self, goal):
+        self.bins_coverage_goal = int(goal)
 
-    def get_bins_coverage_goal(self):
+    def get_bins_coverage_goal(self) -> int:
         return self.bins_coverage_goal
 
-    def set_hits_coverage_goal(self, numb):
-        self.hits_coverage_goal = numb
+    def set_hits_coverage_goal(self, goal):
+        self.hits_coverage_goal = int(goal)
 
-    def get_hits_coverage_goal(self):
+    def get_hits_coverage_goal(self) -> int:
         return self.hits_coverage_goal
 
-    def set_covpts_coverage_goal(self, numb):
-        self.covpts_coverage_goal = numb
+    def set_covpts_coverage_goal(self, goal):
+        self.covpts_coverage_goal = int(goal)
 
-    def get_covpts_coverage_goal(self):
+    def get_covpts_coverage_goal(self) -> int:
         return self.covpts_coverage_goal
 
-    def set_bin_idx(self, numb):
-        self.bin_idx = numb
+    def set_bin_idx(self, idx):
+        self.bin_idx = int(idx)
 
-    def get_bin_idx(self):
+    def get_bin_idx(self) -> int:
         return self.bin_idx
 
     def set_bins(self, bins):
@@ -307,9 +301,9 @@ class CoverPoint(object):
         return self.bins
 
     def set_invalid_bin_idx(self, idx):
-        self.invalid_bin_idx = idx
+        self.invalid_bin_idx = int(idx)
 
-    def get_invalid_bin_idx(self):
+    def get_invalid_bin_idx(self) -> int:
         return self.invalid_bin_idx
 
     def set_invalid_bins(self, bins):
@@ -334,25 +328,25 @@ class Bin(object):
     def set_name(self, name):
         self.name = name
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
 
-    def set_hits(self, numb):
-        self.hits = numb
+    def set_hits(self, hits):
+        self.hits = int(hits)
 
-    def get_hits(self):
+    def get_hits(self) -> int:
         return self.hits
 
-    def set_min_hits(self, numb):
-        self.min_hits = numb
+    def set_min_hits(self, hits):
+        self.min_hits = int(hits)
 
-    def get_min_hits(self):
+    def get_min_hits(self) -> int:
         return self.min_hits
 
-    def set_rand_weight(self, numb):
-        self.rand_weight = numb
+    def set_rand_weight(self, weight):
+        self.rand_weight = int(weight)
 
-    def get_rand_weight(self):
+    def get_rand_weight(self) -> int:
         return self.rand_weight
 
     def add_cross(self, cross):
@@ -382,13 +376,13 @@ class Cross(object):
     def set_bin_type(self, bin_type):
         self.bin_type = bin_type
 
-    def get_bin_type(self):
+    def get_bin_type(self) -> str:
         return self.bin_type
 
-    def set_num_values(self, numb):
-        self.num_values = numb
+    def set_num_values(self, num):
+        self.num_values = int(num)
 
-    def get_num_values(self):
+    def get_num_values(self) -> int:
         return self.num_values
 
     def set_values(self, values):
@@ -431,14 +425,14 @@ class CoverageMerger(object):
     def merge(self):
         print('Searching for %s in %s' % (self.cov_file, self.cov_dir))
 
-        for cp_file in self.cov_file_reader_list:
-            cp = cp_file.get_coverpoint()
-            print('\nCoverpoint: %s' % (cp.get_name()))
+        for covpt_file in self.cov_file_reader_list:
+            covpt = covpt_file.get_coverpoint()
+            print('\nCoverpoint: %s' % (covpt.get_name()))
 
-            for bin in cp.get_bins():
+            for bin in covpt.get_bins():
                 print('Bin: %s' % (bin.get_name()))
 
-            for invalid_bin in cp.get_invalid_bins():
+            for invalid_bin in covpt.get_invalid_bins():
                 print('Invalid bin: %s' % (invalid_bin.get_name()))
 
     def _info(self):

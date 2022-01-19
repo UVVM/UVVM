@@ -7,27 +7,31 @@ from glob import glob
 
 class CoverageFileReader(object):
 
-
     def __init__(self, filename):
         self.filename = filename
         self.content = None
         self.cp = None
 
-    def read(self):
+    def read(self) -> bool:
         try:
             with open(self.filename, mode='r') as read_file:
                 self.content = [file_line.strip() for file_line in read_file.readlines()]
         except OSError:
             print('Unable to open file: %s' % (self.filename))
-            return
+            return False
 
-        self.build_db()
+        # Check file header
+        if self.content[0] == "--UVVM_COVERAGE_FILE--":
+            self.build_db()
+            return True
+        else:
+            return False
 
     def get_coverpoint(self):
         return self.cp
 
     def build_db(self):
-        pointer = 0
+        pointer = 1  # Skip file header
         db = self.content
 
         self.cp = CoverPoint()
@@ -151,10 +155,7 @@ class CoverageFileReader(object):
                 self.cp.add_invalid_bin(invalid_bin)
 
 
-
-
 class CoverPoint(object):
-
 
     def __init__(self):
         self.name = None
@@ -181,13 +182,12 @@ class CoverPoint(object):
         self.invalid_bin_idx = 0
         self.invalid_bins = []
 
-        
     def set_name(self, name):
         self.name = name
-    
+
     def get_name(self):
         return self.name
-    
+
     def set_scope(self, scope):
         self.scope = scope
 
@@ -320,8 +320,8 @@ class CoverPoint(object):
 
     def get_invalid_bins(self):
         return self.invalid_bins
-    
-    
+
+
 class Bin(object):
 
     def __init__(self):
@@ -360,7 +360,7 @@ class Bin(object):
 
     def get_cross(self):
         return self.cross
-    
+
 
 class InvalidBin(Bin):
 
@@ -401,19 +401,18 @@ class Cross(object):
         return self.values
 
 
-
 class CoverageMerger(object):
 
     def __init__(self):
         self.cov_dir = './hdlunit/test'
         self.cov_file = '*.txt'
         self.recursive = False
-        self.file_list = []
-        self.coverage_file_reader_list = []
+        self.cov_file_reader_list = []
+        self._info()
         self._args()
         self.file_finder()
 
-    def file_finder(self) -> list:
+    def file_finder(self):
         if self.recursive is True:
             filename = os.path.join(self.cov_dir, '**', self.cov_file)
         else:
@@ -422,18 +421,17 @@ class CoverageMerger(object):
         cov_file_dir = os.path.normpath(filename)
         cov_file_dir = os.path.realpath(cov_file_dir)
 
-        files = glob(cov_file_dir, recursive = True)
+        files_list = glob(cov_file_dir, recursive = True)
 
-        for item in files:
+        for item in files_list:
             cfr = CoverageFileReader(item)
-            cfr.read()
-            self.coverage_file_reader_list.append(cfr)
-
+            if cfr.read() == True:
+                self.cov_file_reader_list.append(cfr)
 
     def merge(self):
         print('Searching for %s in %s' % (self.cov_file, self.cov_dir))
 
-        for cp_file in self.coverage_file_reader_list:
+        for cp_file in self.cov_file_reader_list:
             cp = cp_file.get_coverpoint()
             print('\nCoverpoint: %s' % (cp.get_name()))
 
@@ -443,6 +441,8 @@ class CoverageMerger(object):
             for invalid_bin in cp.get_invalid_bins():
                 print('Invalid bin: %s' % (invalid_bin.get_name()))
 
+    def _info(self):
+        print('** Running UVVM Coverage Database Merger **')
 
     def _args(self):
         arg_parser = argparse.ArgumentParser(description='UVVM Coverage Database Merger')
@@ -458,8 +458,6 @@ class CoverageMerger(object):
             self.cov_file = args.file[0]
         if args.recursive:
             self.recursive = True
-
-
 
 
 if __name__ == '__main__':

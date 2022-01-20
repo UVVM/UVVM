@@ -214,6 +214,9 @@ class CoverPoint(object):
     def set_number_of_tc_accumulated(self, num):
         self.number_of_tc_accumulated = int(num)
 
+    def increment_number_of_tc_accumulated(self, num):
+        self.number_of_tc_accumulated += int(num)
+
     def get_number_of_tc_accumulated(self) -> int:
         return self.number_of_tc_accumulated
 
@@ -256,6 +259,9 @@ class CoverPoint(object):
 
     def set_total_bin_hits(self, hits):
         self.total_bin_hits = int(hits)
+
+    def increment_total_bin_hits(self, hits):
+        self.total_bin_hits += int(hits)
 
     def get_total_bin_hits(self) -> int:
         return self.total_bin_hits
@@ -355,6 +361,7 @@ class CoverPoint(object):
         txt.append('*** COVERAGE SUMMARY REPORT (VERBOSE) ***')
         txt.append('{:=<{width}}'.format('=', width=self.report_width))
         txt.append('Coverpoint:              {}    (accumulated over {} testcases)'.format(self.name, self.number_of_tc_accumulated))
+
         if self.bins_coverage_goal != 100 or self.hits_coverage_goal != 100:
             bins_goal = '{}'.format(self.bins_coverage_goal) + '%,'
             hits_goal = '{}'.format(self.hits_coverage_goal) + '%'
@@ -369,6 +376,7 @@ class CoverPoint(object):
         hits_goal = '{:.2f}'.format(self.get_hits_coverage("NO_GOAL")) + '%'
         txt.append('Coverage (for goal 100): Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
         txt.append('{:-<{width}}'.format('-', width=self.report_width))
+
         txt.append('{:^40} {:^15} {:^15} {:^15} {:^20} {:^15}'.format('BINS','HITS','MIN HITS','HIT COVERAGE','NAME','ILLEGAL/IGNORE'))
         for invalid_bin in self.invalid_bins:
             if invalid_bin.is_bin_illegal() is True:
@@ -381,6 +389,7 @@ class CoverPoint(object):
             txt.append('{:^40} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(bin.print_bin_info(), bin.get_hits(), bin.get_min_hits(), hit_cov, bin.get_name(), '-'))
         txt.append('{:-<{width}}'.format('-', width=self.report_width))
         txt.append('{:=<{width}}'.format('=', width=self.report_width))
+
         with open('func_cov_report.txt', mode='w') as output_file:
             for line in txt:
                 output_file.write(line + '\n') # Print to file
@@ -426,6 +435,9 @@ class Bin(object):
 
     def set_hits(self, hits):
         self.hits = int(hits)
+
+    def increment_hits(self, hits):
+        self.hits += int(hits)
 
     def get_hits(self) -> int:
         return self.hits
@@ -474,7 +486,6 @@ class Bin(object):
         txt = ''
         for cross_idx, cross_bin in enumerate(self.cross_bins):
             bin_type = cross_bin.get_bin_type()
-            # num_values = cross_bin.get_num_values() # TODO: check num_values?
             values = cross_bin.get_values()
             if bin_type == "VAL" or bin_type == "VAL_IGNORE" or bin_type == "VAL_ILLEGAL":
                 txt += '('
@@ -581,32 +592,62 @@ class CoverageMerger(object):
 
     def merge(self):
         for cov_file in self.cov_file_reader_list:
-            covpt = cov_file.get_coverpoint()
-            # self.print_covpt_debug(covpt)
-
+            new_covpt = cov_file.get_coverpoint()
             merged = False
+            # Check each coverpoint loaded from a new file against the merged coverpoints list
             for merged_covpt in self.merged_covpt_list:
-                if merged_covpt.get_name().lower() == covpt.get_name().lower(): # TODO: match more elements
-                    # TODO: match bins
-                    # print('match: {}'format(covpt.get_name()))
-                    bin_list = covpt.get_bins()
+                # Coverpoints must match in: name & number_of_bins_crossed TODO: should we check these too in VHDL? currently everything is overwritten
+                if merged_covpt.get_name().lower() == new_covpt.get_name().lower() and merged_covpt.get_number_of_bins_crossed() == new_covpt.get_number_of_bins_crossed():
+                    # Overwrite coverpoint's configuration with latest loaded data
+                    merged_covpt.set_covpt_coverage_weight(new_covpt.get_covpt_coverage_weight())
+                    merged_covpt.set_bins_coverage_goal(new_covpt.get_bins_coverage_goal())
+                    merged_covpt.set_hits_coverage_goal(new_covpt.get_hits_coverage_goal())
+                    merged_covpt.set_covpts_coverage_goal(new_covpt.get_covpts_coverage_goal())
+
+                    # Merge bins
+                    new_bin_list = new_covpt.get_bins()
                     merged_bin_list = merged_covpt.get_bins()
                     num_covered_bins = 0
-                    for i in range(merged_covpt.get_bin_idx()):
-                        # TODO: merge bin
-                        hits = int(merged_bin_list[i].get_hits()) + int(bin_list[i].get_hits())
-                        merged_bin_list[i].set_hits(hits)
-                        if hits >= merged_bin_list[i].get_min_hits():
+                    total_coverage_bin_hits = 0
+                    total_goal_bin_hits = 0
+                    # TODO: assume lists have same number of bins, however different lengths are allowed
+                    for idx, merged_bin in enumerate(merged_bin_list):
+                        # TODO: Bins must match in: type, num_values, values, min_hits & rand_weight
+                        merged_bin.set_name(new_bin_list[idx].get_name())
+                        merged_bin.increment_hits(new_bin_list[idx].get_hits())
+                        # Calculate new counters after merging
+                        if merged_bin.get_hits() >= merged_bin.get_min_hits():
                             num_covered_bins += 1
-                    # TODO: merge other covpt values
+                            total_coverage_bin_hits += merged_bin.get_min_hits()
+                            total_goal_bin_hits += merged_bin.get_min_hits() * merged_covpt.get_hits_coverage_goal() / 100
+                        else:
+                            total_coverage_bin_hits += merged_bin.get_hits()
+                            total_goal_bin_hits += merged_bin.get_hits()
                     merged_covpt.set_bins(merged_bin_list)
-                    merged_covpt.set_number_of_tc_accumulated(merged_covpt.get_number_of_tc_accumulated()+1)
+
+                    # Merge ignore and illegal bins
+                    new_bin_list = new_covpt.get_invalid_bins()
+                    merged_bin_list = merged_covpt.get_invalid_bins()
+                    # TODO: assume lists have same number of bins, however different lengths are allowed
+                    for idx, merged_bin in enumerate(merged_bin_list):
+                        # TODO: Bins must match in: type, num_values, values, min_hits & rand_weight
+                        merged_bin.set_name(new_bin_list[idx].get_name())
+                        merged_bin.increment_hits(new_bin_list[idx].get_hits())
+                    merged_covpt.set_invalid_bins(merged_bin_list)
+
+                    # Update coverpoint's coverage counters
+                    # merged_covpt.set_number_of_valid_bins(num_valid_bins) # TODO: use when implementing different bin list lengths
                     merged_covpt.set_number_of_covered_bins(num_covered_bins)
+                    # merged_covpt.set_total_bin_min_hits(total_bin_min_hits) # TODO: use when implementing different bin list lengths
+                    merged_covpt.increment_total_bin_hits(new_covpt.get_total_bin_hits())
+                    merged_covpt.set_total_coverage_bin_hits(total_coverage_bin_hits)
+                    merged_covpt.set_total_goal_bin_hits(total_goal_bin_hits)
+                    merged_covpt.increment_number_of_tc_accumulated(1)
                     merged = True
 
             if merged is False:
-                covpt.set_number_of_tc_accumulated(1)
-                self.merged_covpt_list.append(covpt)
+                new_covpt.increment_number_of_tc_accumulated(1)
+                self.merged_covpt_list.append(new_covpt)
 
     def print_report(self):
         for covpt in self.merged_covpt_list:

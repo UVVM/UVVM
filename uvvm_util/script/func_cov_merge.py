@@ -4,6 +4,16 @@ import argparse
 import re
 from glob import glob
 
+t_cov_bin_type = {0: "VAL",
+                  1: "VAL_IGNORE",
+                  2: "VAL_ILLEGAL",
+                  3: "RAN",
+                  4: "RAN_IGNORE",
+                  5: "RAN_ILLEGAL",
+                  6: "TRN",
+                  7: "TRN_IGNORE",
+                  8: "TRN_ILLEGAL"}
+
 
 class CoverageFileReader(object):
 
@@ -17,7 +27,7 @@ class CoverageFileReader(object):
             with open(self.filename, mode='r') as read_file:
                 self.content = [file_line.strip() for file_line in read_file.readlines()]
         except OSError:
-            print('Unable to open file: %s' % (self.filename))
+            print('Unable to open file: {}'.format(self.filename))
             return False
 
         # Check file header
@@ -36,7 +46,7 @@ class CoverageFileReader(object):
 
         self.covpt = CoverPoint()
         
-        self.covpt.set_name(db[pointer].lower())
+        self.covpt.set_name(db[pointer])
         pointer += 1
 
         self.covpt.set_scope(db[pointer])
@@ -110,14 +120,14 @@ class CoverageFileReader(object):
 
                 if number_of_bins_crossed > 0:
                     for sub_idx in range(0, number_of_bins_crossed):
-                        cross = Cross()
-                        cross_data = db[pointer].split()
+                        cross_bin = CrossBin()
+                        cross_bin_data = db[pointer].split()
                         pointer += 1
-                        cross.set_bin_type(cross_data[0])
-                        cross.set_num_values(cross_data[1])
-                        cross.set_values(cross_data[2:])
+                        cross_bin.set_bin_type(cross_bin_data[0])
+                        cross_bin.set_num_values(cross_bin_data[1])
+                        cross_bin.set_values(cross_bin_data[2:])
 
-                        bin.add_cross(cross)
+                        bin.add_cross_bin(cross_bin)
                 self.covpt.add_bin(bin)
 
         invalid_bin_idx = int(db[pointer])
@@ -126,7 +136,7 @@ class CoverageFileReader(object):
 
         if invalid_bin_idx > 0:
             for idx in range(0, invalid_bin_idx):
-                invalid_bin = InvalidBin()
+                invalid_bin = Bin()
                 invalid_bin.set_name(db[pointer])
                 pointer += 1
 
@@ -138,14 +148,14 @@ class CoverageFileReader(object):
 
                 if number_of_bins_crossed > 0:
                     for sub_idx in range(0, number_of_bins_crossed):
-                        cross = Cross()
-                        cross_data = db[pointer].split()
+                        cross_bin = CrossBin()
+                        cross_bin_data = db[pointer].split()
                         pointer += 1
-                        cross.set_bin_type(cross_data[0])
-                        cross.set_num_values(cross_data[1])
-                        cross.set_values(cross_data[2:])
+                        cross_bin.set_bin_type(cross_bin_data[0])
+                        cross_bin.set_num_values(cross_bin_data[1])
+                        cross_bin.set_values(cross_bin_data[2:])
 
-                        invalid_bin.add_cross(cross)
+                        invalid_bin.add_cross_bin(cross_bin)
                 self.covpt.add_invalid_bin(invalid_bin)
 
 
@@ -175,6 +185,7 @@ class CoverPoint(object):
         self.bins = []
         self.invalid_bin_idx = 0
         self.invalid_bins = []
+        self.report_width = 130
 
     def set_name(self, name):
         self.name = name
@@ -315,6 +326,88 @@ class CoverPoint(object):
     def get_invalid_bins(self):
         return self.invalid_bins
 
+    def get_bins_coverage(self, cov_representation) -> float:
+        coverage = 0.0
+        if self.number_of_valid_bins > 0:
+            coverage = self.number_of_covered_bins * 100 / self.number_of_valid_bins
+        if cov_representation == "GOAL_CAPPED" or cov_representation == "GOAL_UNCAPPED":
+            coverage *= 100 / self.bins_coverage_goal
+        if cov_representation == "GOAL_CAPPED" and coverage > 100.0:
+            coverage = 100.0
+        return coverage
+
+    def get_hits_coverage(self, cov_representation) -> float:
+        coverage = 0.0
+        tot_goal_bin_min_hits = self.total_bin_min_hits * self.hits_coverage_goal / 100
+        if cov_representation == "GOAL_CAPPED":
+            if tot_goal_bin_min_hits > 0.0: coverage = self.total_goal_bin_hits * 100 / tot_goal_bin_min_hits
+            if coverage > 100.0: coverage = 100.0
+        elif cov_representation == "GOAL_UNCAPPED":
+            if tot_goal_bin_min_hits > 0.0: coverage = self.total_bin_hits * 100 / tot_goal_bin_min_hits
+        else: # NO_GOAL
+            if self.total_bin_min_hits > 0: coverage = self.total_coverage_bin_hits * 100 / self.total_bin_min_hits
+        return coverage
+
+    # TODO: how to handle bins with many values: shift or print in line under?
+    def print_verbose(self):
+        txt = []
+        txt.append('{:=<{width}}'.format('=', width=self.report_width))
+        txt.append('*** COVERAGE SUMMARY REPORT (VERBOSE) ***')
+        txt.append('{:=<{width}}'.format('=', width=self.report_width))
+        txt.append('Coverpoint:              {}    (accumulated over {} testcases)'.format(self.name, self.number_of_tc_accumulated))
+        if self.bins_coverage_goal != 100 or self.hits_coverage_goal != 100:
+            bins_goal = '{}'.format(self.bins_coverage_goal) + '%,'
+            hits_goal = '{}'.format(self.hits_coverage_goal) + '%'
+            txt.append('Goal:                    Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
+            bins_goal = '{:.2f}'.format(self.get_bins_coverage("GOAL_CAPPED")) + '%,'
+            hits_goal = '{:.2f}'.format(self.get_hits_coverage("GOAL_CAPPED")) + '%'
+            txt.append('% of Goal:               Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
+            bins_goal = '{:.2f}'.format(self.get_bins_coverage("GOAL_UNCAPPED")) + '%,'
+            hits_goal = '{:.2f}'.format(self.get_hits_coverage("GOAL_UNCAPPED")) + '%'
+            txt.append('% of Goal (uncapped):    Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
+        bins_goal = '{:.2f}'.format(self.get_bins_coverage("NO_GOAL")) + '%,'
+        hits_goal = '{:.2f}'.format(self.get_hits_coverage("NO_GOAL")) + '%'
+        txt.append('Coverage (for goal 100): Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
+        txt.append('{:-<{width}}'.format('-', width=self.report_width))
+        txt.append('{:^40} {:^15} {:^15} {:^15} {:^20} {:^15}'.format('BINS','HITS','MIN HITS','HIT COVERAGE','NAME','ILLEGAL/IGNORE'))
+        for invalid_bin in self.invalid_bins:
+            if invalid_bin.is_bin_illegal() is True:
+                txt.append('{:^40} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(invalid_bin.print_bin_info(), invalid_bin.get_hits(), 'N/A', 'N/A', invalid_bin.get_name(), 'ILLEGAL'))
+        for invalid_bin in self.invalid_bins:
+            if invalid_bin.is_bin_ignore() is True:
+                txt.append('{:^40} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(invalid_bin.print_bin_info(), invalid_bin.get_hits(), 'N/A', 'N/A', invalid_bin.get_name(), 'IGNORE'))
+        for bin in self.bins:
+            hit_cov = '{:.2f}'.format(bin.get_bin_coverage()) + '%'
+            txt.append('{:^40} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(bin.print_bin_info(), bin.get_hits(), bin.get_min_hits(), hit_cov, bin.get_name(), '-'))
+        txt.append('{:-<{width}}'.format('-', width=self.report_width))
+        txt.append('{:=<{width}}'.format('=', width=self.report_width))
+        with open('func_cov_report.txt', mode='w') as output_file:
+            for line in txt:
+                output_file.write(line + '\n') # Print to file
+                print(line)                    # Print to terminal
+
+    # TODO
+    def print_non_verbose(self):
+        txt = []
+        txt.append('=================================================================================================================')
+        txt.append('*** COVERAGE SUMMARY REPORT (NON VERBOSE) ***')
+        txt.append('=================================================================================================================')
+        with open('func_cov_report.txt', mode='w') as output_file:
+            for line in txt:
+                output_file.write(line + '\n') # Print to file
+                print(line)                    # Print to terminal
+
+    # TODO
+    def print_holes(self):
+        txt = []
+        txt.append('=================================================================================================================')
+        txt.append('*** COVERAGE HOLES REPORT ***')
+        txt.append('=================================================================================================================')
+        with open('func_cov_report.txt', mode='w') as output_file:
+            for line in txt:
+                output_file.write(line + '\n') # Print to file
+                print(line)                    # Print to terminal
+
 
 class Bin(object):
 
@@ -323,7 +416,7 @@ class Bin(object):
         self.hits = 0
         self.min_hits = 0
         self.rand_weight = 0
-        self.cross = []
+        self.cross_bins = []
 
     def set_name(self, name):
         self.name = name
@@ -349,24 +442,58 @@ class Bin(object):
     def get_rand_weight(self) -> int:
         return self.rand_weight
 
-    def add_cross(self, cross):
-        self.cross.append(cross)
+    def add_cross_bin(self, cross_bin):
+        self.cross_bins.append(cross_bin)
 
-    def get_cross(self):
-        return self.cross
+    def get_cross_bins(self):
+        return self.cross_bins
+
+    def is_bin_illegal(self) -> bool:
+        for cross_bin in self.cross_bins:
+            bin_type = cross_bin.get_bin_type()
+            if bin_type == "VAL_ILLEGAL" or bin_type == "RAN_ILLEGAL" or bin_type == "TRN_ILLEGAL":
+                return True
+        else:
+            return False
+
+    def is_bin_ignore(self) -> bool:
+        for cross_bin in self.cross_bins:
+            bin_type = cross_bin.get_bin_type()
+            if bin_type == "VAL_IGNORE" or bin_type == "RAN_IGNORE" or bin_type == "TRN_IGNORE":
+                return True
+        else:
+            return False
+
+    def get_bin_coverage(self) -> float:
+        if self.hits < self.min_hits:
+            return self.hits * 100 / self.min_hits;
+        else:
+            return 100.0
+
+    def print_bin_info(self) -> str:
+        txt = ''
+        for cross_idx, cross_bin in enumerate(self.cross_bins):
+            bin_type = cross_bin.get_bin_type()
+            # num_values = cross_bin.get_num_values() # TODO: check num_values?
+            values = cross_bin.get_values()
+            if bin_type == "VAL" or bin_type == "VAL_IGNORE" or bin_type == "VAL_ILLEGAL":
+                txt += '('
+                for idx, val in enumerate(values):
+                    txt += val
+                    if idx < len(values)-1: txt += ','
+                txt += ')'
+            elif bin_type == "RAN" or bin_type == "RAN_IGNORE" or bin_type == "RAN_ILLEGAL":
+                txt += '(' + values[0] + ' to ' + values[1] + ')'
+            elif bin_type == "TRN" or bin_type == "TRN_IGNORE" or bin_type == "TRN_ILLEGAL":
+                txt += '('
+                for idx, val in enumerate(values):
+                    txt += val
+                    if idx < len(values)-1: txt += '->'
+                txt += ')'
+        return txt
 
 
-class InvalidBin(Bin):
-
-    def __init__(self):
-        self.name = None
-        self.hits = 0
-        self.min_hits = 0
-        self.rand_weight = 0
-        self.cross = []
-
-
-class Cross(object):
+class CrossBin(object):
 
     def __init__(self):
         self.bin_type = None
@@ -374,7 +501,7 @@ class Cross(object):
         self.values = []
 
     def set_bin_type(self, bin_type):
-        self.bin_type = bin_type
+        self.bin_type = t_cov_bin_type[int(bin_type)]
 
     def get_bin_type(self) -> str:
         return self.bin_type
@@ -401,12 +528,42 @@ class CoverageMerger(object):
         self.cov_dir = './hdlunit/test'
         self.cov_file = '*.txt'
         self.recursive = False
+        self.verbose = True
+        self.holes = False
         self.cov_file_reader_list = []
+        self.merged_covpt_list = []
         self._info()
         self._args()
-        self.file_finder()
+        self._file_finder()
 
-    def file_finder(self):
+    def _info(self):
+        print('** Running UVVM Coverage Database Merger **')
+
+    def _args(self):
+        arg_parser = argparse.ArgumentParser(description='UVVM Coverage Database Merger')
+        arg_parser.add_argument('-d', '--dir', action='store', type=str, nargs=1, help='search directory. Default = ./hdlunit/test')
+        arg_parser.add_argument('-f', '--file', action='store', type=str, nargs=1, help='coverage database file ending. Default = .txt')
+        arg_parser.add_argument('-r', '--recursive', action='store_true', help='recursive directory file search. Default = no recursive search')
+        arg_parser.add_argument('-nv', '--non_verbose', action='store_true', help='print non_verbose report. Default = verbose')
+        arg_parser.add_argument('-hl', '--holes', action='store_true', help='print coverage holes report. Default = verbose')
+
+        args = arg_parser.parse_args(sys.argv[1:])
+
+        if args.dir:
+            self.cov_dir = args.dir[0]
+        if args.file:
+            self.cov_file = args.file[0]
+        if args.recursive:
+            self.recursive = True
+        if args.non_verbose:
+            self.verbose = False
+        if args.holes:
+            self.verbose = False
+            self.holes = True
+
+    def _file_finder(self):
+        print('Searching for {} in {}'.format(self.cov_file, self.cov_dir))
+
         if self.recursive is True:
             filename = os.path.join(self.cov_dir, '**', self.cov_file)
         else:
@@ -419,41 +576,49 @@ class CoverageMerger(object):
 
         for item in files_list:
             cfr = CoverageFileReader(item)
-            if cfr.read() == True:
+            if cfr.read() is True:
                 self.cov_file_reader_list.append(cfr)
 
     def merge(self):
-        print('Searching for %s in %s' % (self.cov_file, self.cov_dir))
+        for cov_file in self.cov_file_reader_list:
+            covpt = cov_file.get_coverpoint()
+            # self.print_covpt_debug(covpt)
 
-        for covpt_file in self.cov_file_reader_list:
-            covpt = covpt_file.get_coverpoint()
-            print('\nCoverpoint: %s' % (covpt.get_name()))
+            merged = False
+            for merged_covpt in self.merged_covpt_list:
+                if merged_covpt.get_name().lower() == covpt.get_name().lower(): # TODO: match more elements
+                    # TODO: match bins
+                    # print('match: {}'format(covpt.get_name()))
+                    bin_list = covpt.get_bins()
+                    merged_bin_list = merged_covpt.get_bins()
+                    num_covered_bins = 0
+                    for i in range(merged_covpt.get_bin_idx()):
+                        # TODO: merge bin
+                        hits = int(merged_bin_list[i].get_hits()) + int(bin_list[i].get_hits())
+                        merged_bin_list[i].set_hits(hits)
+                        if hits >= merged_bin_list[i].get_min_hits():
+                            num_covered_bins += 1
+                    # TODO: merge other covpt values
+                    merged_covpt.set_bins(merged_bin_list)
+                    merged_covpt.set_number_of_tc_accumulated(merged_covpt.get_number_of_tc_accumulated()+1)
+                    merged_covpt.set_number_of_covered_bins(num_covered_bins)
+                    merged = True
 
-            for bin in covpt.get_bins():
-                print('Bin: %s' % (bin.get_name()))
+            if merged is False:
+                covpt.set_number_of_tc_accumulated(1)
+                self.merged_covpt_list.append(covpt)
 
-            for invalid_bin in covpt.get_invalid_bins():
-                print('Invalid bin: %s' % (invalid_bin.get_name()))
-
-    def _info(self):
-        print('** Running UVVM Coverage Database Merger **')
-
-    def _args(self):
-        arg_parser = argparse.ArgumentParser(description='UVVM Coverage Database Merger')
-        arg_parser.add_argument('-d', '--dir', action='store', type=str, nargs=1, help='search directory. Default = ./hdlunit/test')
-        arg_parser.add_argument('-f', '--file', action='store', type=str, nargs=1, help='coverage database file ending. Default = .txt')
-        arg_parser.add_argument('-r', '--recursive', action='store_true', help='recursive directory file search. Default = no recursive search')
-
-        args = arg_parser.parse_args(sys.argv[1:])
-
-        if args.dir:
-            self.cov_dir = args.dir[0]
-        if args.file:
-            self.cov_file = args.file[0]
-        if args.recursive:
-            self.recursive = True
+    def print_report(self):
+        for covpt in self.merged_covpt_list:
+            if self.holes is True:
+                covpt.print_holes()
+            elif self.verbose is True:
+                covpt.print_verbose()
+            else:
+                covpt.print_non_verbose()
 
 
 if __name__ == '__main__':
     cm = CoverageMerger()
     cm.merge()
+    cm.print_report()

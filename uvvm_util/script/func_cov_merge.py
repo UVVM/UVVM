@@ -186,6 +186,7 @@ class CoverPoint(object):
         self.invalid_bin_idx = 0
         self.invalid_bins = []
         self.report_width = 130
+        self.report_bin_width = 40
 
     def set_name(self, name):
         self.name = name
@@ -354,8 +355,7 @@ class CoverPoint(object):
             if self.total_bin_min_hits > 0: coverage = self.total_coverage_bin_hits * 100 / self.total_bin_min_hits
         return coverage
 
-    # TODO: how to handle bins with many values: shift or print in line under?
-    def print_verbose(self):
+    def print_verbose(self, file_name):
         txt = []
         txt.append('{:=<{width}}'.format('=', width=self.report_width))
         txt.append('*** COVERAGE SUMMARY REPORT (VERBOSE) ***')
@@ -366,53 +366,63 @@ class CoverPoint(object):
             bins_goal = '{}'.format(self.bins_coverage_goal) + '%,'
             hits_goal = '{}'.format(self.hits_coverage_goal) + '%'
             txt.append('Goal:                    Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
-            bins_goal = '{:.2f}'.format(self.get_bins_coverage("GOAL_CAPPED")) + '%,'
-            hits_goal = '{:.2f}'.format(self.get_hits_coverage("GOAL_CAPPED")) + '%'
-            txt.append('% of Goal:               Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
-            bins_goal = '{:.2f}'.format(self.get_bins_coverage("GOAL_UNCAPPED")) + '%,'
-            hits_goal = '{:.2f}'.format(self.get_hits_coverage("GOAL_UNCAPPED")) + '%'
-            txt.append('% of Goal (uncapped):    Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
-        bins_goal = '{:.2f}'.format(self.get_bins_coverage("NO_GOAL")) + '%,'
-        hits_goal = '{:.2f}'.format(self.get_hits_coverage("NO_GOAL")) + '%'
-        txt.append('Coverage (for goal 100): Bins: {:<10} Hits: {:<10}'.format(bins_goal, hits_goal))
+            bins_cov = '{:.2f}'.format(self.get_bins_coverage("GOAL_CAPPED")) + '%,'
+            hits_cov = '{:.2f}'.format(self.get_hits_coverage("GOAL_CAPPED")) + '%'
+            txt.append('% of Goal:               Bins: {:<10} Hits: {:<10}'.format(bins_cov, hits_cov))
+            bins_cov = '{:.2f}'.format(self.get_bins_coverage("GOAL_UNCAPPED")) + '%,'
+            hits_cov = '{:.2f}'.format(self.get_hits_coverage("GOAL_UNCAPPED")) + '%'
+            txt.append('% of Goal (uncapped):    Bins: {:<10} Hits: {:<10}'.format(bins_cov, hits_cov))
+        bins_cov = '{:.2f}'.format(self.get_bins_coverage("NO_GOAL")) + '%,'
+        hits_cov = '{:.2f}'.format(self.get_hits_coverage("NO_GOAL")) + '%'
+        txt.append('Coverage (for goal 100): Bins: {:<10} Hits: {:<10}'.format(bins_cov, hits_cov))
         txt.append('{:-<{width}}'.format('-', width=self.report_width))
 
-        txt.append('{:^40} {:^15} {:^15} {:^15} {:^20} {:^15}'.format('BINS','HITS','MIN HITS','HIT COVERAGE','NAME','ILLEGAL/IGNORE'))
+        txt.append('{:^{bin_col}} {:^15} {:^15} {:^15} {:^20} {:^15}'.format('BINS','HITS','MIN HITS','HIT COVERAGE','NAME','ILLEGAL/IGNORE',bin_col=self.report_bin_width))
         for invalid_bin in self.invalid_bins:
             if invalid_bin.is_bin_illegal() is True:
-                txt.append('{:^40} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(invalid_bin.print_bin_info(), invalid_bin.get_hits(), 'N/A', 'N/A', invalid_bin.get_name(), 'ILLEGAL'))
+                txt.append('{:^{bin_col}.{bin_col}} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(invalid_bin.print_bin_info(self.report_bin_width), invalid_bin.get_hits(), 'N/A', 'N/A', invalid_bin.get_name(), 'ILLEGAL', bin_col=self.report_bin_width))
         for invalid_bin in self.invalid_bins:
             if invalid_bin.is_bin_ignore() is True:
-                txt.append('{:^40} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(invalid_bin.print_bin_info(), invalid_bin.get_hits(), 'N/A', 'N/A', invalid_bin.get_name(), 'IGNORE'))
+                txt.append('{:^{bin_col}.{bin_col}} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(invalid_bin.print_bin_info(self.report_bin_width), invalid_bin.get_hits(), 'N/A', 'N/A', invalid_bin.get_name(), 'IGNORE', bin_col=self.report_bin_width))
         for bin in self.bins:
             hit_cov = '{:.2f}'.format(bin.get_bin_coverage()) + '%'
-            txt.append('{:^40} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(bin.print_bin_info(), bin.get_hits(), bin.get_min_hits(), hit_cov, bin.get_name(), '-'))
+            txt.append('{:^{bin_col}.{bin_col}} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(bin.print_bin_info(self.report_bin_width), bin.get_hits(), bin.get_min_hits(), hit_cov, bin.get_name(), '-', bin_col=self.report_bin_width))
         txt.append('{:-<{width}}'.format('-', width=self.report_width))
+
+        for invalid_bin in self.invalid_bins:
+            if invalid_bin.is_bin_illegal() is True and invalid_bin.print_bin_info(self.report_bin_width) == invalid_bin.get_name():
+                txt.append('{}:{}'.format(invalid_bin.get_name(), invalid_bin.print_bin_info()))
+        for invalid_bin in self.invalid_bins:
+            if invalid_bin.is_bin_ignore() is True and invalid_bin.print_bin_info(self.report_bin_width) == invalid_bin.get_name():
+                txt.append('{}:{}'.format(invalid_bin.get_name(), invalid_bin.print_bin_info()))
+        for bin in self.bins:
+            if bin.print_bin_info(self.report_bin_width) == bin.get_name():
+                txt.append('{}:{}'.format(bin.get_name(), bin.print_bin_info()))
         txt.append('{:=<{width}}'.format('=', width=self.report_width))
 
-        with open('func_cov_report.txt', mode='w') as output_file:
+        with open(file_name, mode='a') as output_file:
             for line in txt:
                 output_file.write(line + '\n') # Print to file
                 print(line)                    # Print to terminal
 
     # TODO
-    def print_non_verbose(self):
+    def print_non_verbose(self, file_name):
         txt = []
         txt.append('=================================================================================================================')
         txt.append('*** COVERAGE SUMMARY REPORT (NON VERBOSE) ***')
         txt.append('=================================================================================================================')
-        with open('func_cov_report.txt', mode='w') as output_file:
+        with open(file_name, mode='a') as output_file:
             for line in txt:
                 output_file.write(line + '\n') # Print to file
                 print(line)                    # Print to terminal
 
     # TODO
-    def print_holes(self):
+    def print_holes(self, file_name):
         txt = []
         txt.append('=================================================================================================================')
         txt.append('*** COVERAGE HOLES REPORT ***')
         txt.append('=================================================================================================================')
-        with open('func_cov_report.txt', mode='w') as output_file:
+        with open(file_name, mode='a') as output_file:
             for line in txt:
                 output_file.write(line + '\n') # Print to file
                 print(line)                    # Print to terminal
@@ -482,7 +492,7 @@ class Bin(object):
         else:
             return 100.0
 
-    def print_bin_info(self) -> str:
+    def print_bin_info(self, max_width=-1) -> str:
         txt = ''
         for cross_idx, cross_bin in enumerate(self.cross_bins):
             bin_type = cross_bin.get_bin_type()
@@ -501,7 +511,12 @@ class Bin(object):
                     txt += val
                     if idx < len(values)-1: txt += '->'
                 txt += ')'
-        return txt
+            if cross_idx < len(self.cross_bins)-1: txt += 'x'
+
+        if max_width != -1 and len(txt) > max_width:
+            return self.name
+        else:
+            return txt
 
 
 class CrossBin(object):
@@ -538,11 +553,13 @@ class CoverageMerger(object):
     def __init__(self):
         self.cov_dir = './hdlunit/test'
         self.cov_file = '*.txt'
+        self.output_file = 'func_cov_report.txt'
         self.recursive = False
         self.verbose = True
         self.holes = False
         self.cov_file_reader_list = []
         self.merged_covpt_list = []
+        self.report_width = 150
         self._info()
         self._args()
         self._file_finder()
@@ -589,6 +606,107 @@ class CoverageMerger(object):
             cfr = CoverageFileReader(item)
             if cfr.read() is True:
                 self.cov_file_reader_list.append(cfr)
+
+        if os.path.exists(self.output_file):
+            os.remove(self.output_file)
+
+    def _get_total_bins_coverage(self) -> float:
+        tot_covered_bins = 0
+        tot_valid_bins = 0
+        for covpt in self.merged_covpt_list:
+            tot_covered_bins += covpt.get_number_of_covered_bins() * covpt.get_covpt_coverage_weight()
+            tot_valid_bins   += covpt.get_number_of_valid_bins() * covpt.get_covpt_coverage_weight()
+        if tot_valid_bins > 0:
+            return tot_covered_bins * 100 / tot_valid_bins
+        else:
+            return 0.0
+
+    def _get_total_hits_coverage(self) -> float:
+        tot_bin_hits = 0
+        tot_bin_min_hits = 0
+        for covpt in self.merged_covpt_list:
+            tot_bin_hits     += covpt.get_total_coverage_bin_hits() * covpt.get_covpt_coverage_weight()
+            tot_bin_min_hits += covpt.get_total_bin_min_hits() * covpt.get_covpt_coverage_weight()
+        if tot_bin_min_hits > 0:
+            return tot_bin_hits * 100 / tot_bin_min_hits
+        else:
+            return 0.0
+
+    def _get_total_covpts_coverage(self, cov_representation) -> float:
+        tot_covered_covpts = 0
+        tot_covpts = 0
+        coverage = 0.0
+        for covpt in self.merged_covpt_list:
+            if covpt.get_total_coverage_bin_hits() >= covpt.get_total_bin_min_hits():
+                tot_covered_covpts += covpt.get_covpt_coverage_weight()
+            tot_covpts += covpt.get_covpt_coverage_weight()
+        if tot_covpts > 0:
+            coverage = tot_covered_covpts * 100 / tot_covpts
+        if cov_representation == "GOAL_CAPPED" or cov_representation == "GOAL_UNCAPPED":
+            coverage = coverage * 100 / covpt.get_covpts_coverage_goal()
+        if cov_representation == "GOAL_CAPPED" and coverage > 100.0:
+            coverage = 100.0
+        return coverage
+
+    def _print_overall_verbose(self):
+        txt = []
+        txt.append('{:=<{width}}'.format('=', width=self.report_width))
+        txt.append('*** OVERALL COVERAGE REPORT (VERBOSE) ***')
+
+        if self.merged_covpt_list[0].get_covpts_coverage_goal() != 100:
+            covpts_goal = '{}'.format(self.merged_covpt_list[0].get_covpts_coverage_goal()) + '%'
+            txt.append('Goal:                    Covpts: {:<10}'.format(covpts_goal))
+            covpts_cov = '{:.2f}'.format(self._get_total_covpts_coverage("GOAL_CAPPED")) + '%'
+            txt.append('% of Goal:               Covpts: {:<10}'.format(covpts_cov))
+            covpts_cov = '{:.2f}'.format(self._get_total_covpts_coverage("GOAL_UNCAPPED")) + '%'
+            txt.append('% of Goal (uncapped):    Covpts: {:<10}'.format(covpts_cov))
+        covpts_cov = '{:.2f}'.format(self._get_total_covpts_coverage("NO_GOAL")) + '%,'
+        bins_cov = '{:.2f}'.format(self._get_total_bins_coverage()) + '%,'
+        hits_cov = '{:.2f}'.format(self._get_total_hits_coverage()) + '%'
+        txt.append('Coverage (for goal 100): Covpts: {:<10} Bins: {:<10} Hits: {:<10}'.format(covpts_cov, bins_cov, hits_cov))
+        txt.append('{:=<{width}}'.format('=', width=self.report_width))
+
+        txt.append('{:^20} {:^20} {:^20} {:^20} {:^20} {:^20} {:^20}'.format('COVERPOINT','COVERAGE WEIGHT','COVERED BINS','COVERAGE(BINS|HITS)','GOAL(BINS|HITS)','% OF GOAL(BINS|HITS)','NUM TESTCASES'))
+        for covpt in self.merged_covpt_list:
+            covered_bins = '{} / {}'.format(covpt.get_number_of_covered_bins(), covpt.get_number_of_valid_bins())
+            bins_cov = '{:.2f}'.format(covpt.get_bins_coverage("NO_GOAL")) + '%'
+            hits_cov = '{:.2f}'.format(covpt.get_hits_coverage("NO_GOAL")) + '%'
+            coverage = '{} | {}'.format(bins_cov, hits_cov)
+            bins_goal = '{}'.format(covpt.bins_coverage_goal) + '%'
+            hits_goal = '{}'.format(covpt.hits_coverage_goal) + '%'
+            goal = '{} | {}'.format(bins_goal, hits_goal)
+            bins_cov = '{:.2f}'.format(covpt.get_bins_coverage("GOAL_CAPPED")) + '%'
+            hits_cov = '{:.2f}'.format(covpt.get_hits_coverage("GOAL_CAPPED")) + '%'
+            coverage_w_goal = '{} | {}'.format(bins_cov, hits_cov)
+            txt.append('{:^20.20} {:^20} {:^20} {:^20} {:^20} {:^20} {:^20}'.format(covpt.get_name(), covpt.get_covpt_coverage_weight(), covered_bins, coverage, goal, coverage_w_goal, covpt.get_number_of_tc_accumulated()))
+        txt.append('{:=<{width}}'.format('=', width=self.report_width))
+
+        with open(self.output_file, mode='a') as output_file:
+            for line in txt:
+                output_file.write(line + '\n') # Print to file
+                print(line)                    # Print to terminal
+
+    # TODO
+    def _print_overall_non_verbose(self):
+        txt = []
+        txt.append('=================================================================================================================')
+        txt.append('*** OVERALL COVERAGE REPORT (NON VERBOSE) ***')
+        txt.append('=================================================================================================================')
+        with open(self.output_file, mode='a') as output_file:
+            for line in txt:
+                output_file.write(line + '\n') # Print to file
+                print(line)                    # Print to terminal
+
+    # TODO
+    def _print_overall_holes(self):
+        txt = []
+        txt.append('=================================================================================================================')
+        txt.append('*** OVERALL HOLES REPORT ***')
+        txt.append('=================================================================================================================')
+        with open(self.output_file, mode='a') as output_file:
+            for line in txt:
+                output_file.write(line + '\n') # Print to file
+                print(line)                    # Print to terminal
 
     def merge(self):
         for cov_file in self.cov_file_reader_list:
@@ -649,17 +767,26 @@ class CoverageMerger(object):
                 new_covpt.increment_number_of_tc_accumulated(1)
                 self.merged_covpt_list.append(new_covpt)
 
-    def print_report(self):
+    def print_covpt_report(self):
         for covpt in self.merged_covpt_list:
             if self.holes is True:
-                covpt.print_holes()
+                covpt.print_holes(self.output_file)
             elif self.verbose is True:
-                covpt.print_verbose()
+                covpt.print_verbose(self.output_file)
             else:
-                covpt.print_non_verbose()
+                covpt.print_non_verbose(self.output_file)
+
+    def print_overall_report(self):
+        if self.holes is True:
+            self._print_overall_holes()
+        elif self.verbose is True:
+            self._print_overall_verbose()
+        else:
+            self._print_overall_non_verbose()
 
 
 if __name__ == '__main__':
     cm = CoverageMerger()
     cm.merge()
-    cm.print_report()
+    cm.print_covpt_report()
+    cm.print_overall_report()

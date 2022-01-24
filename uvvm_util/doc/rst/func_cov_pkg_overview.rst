@@ -654,6 +654,7 @@ Overall Verbose
 
     # UVVM:  =================================================================================================================
     # UVVM:  0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                          
+    # UVVM:  =================================================================================================================
     # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
     # UVVM:  =================================================================================================================
     # UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS) 
@@ -678,6 +679,7 @@ Overall Non-Verbose
 
     # UVVM:  =================================================================================================================
     # UVVM:  0 ns *** OVERALL COVERAGE REPORT (NON VERBOSE): TB seq. ***                                                      
+    # UVVM:  =================================================================================================================
     # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
     # UVVM:  =================================================================================================================
 
@@ -692,6 +694,7 @@ Overall Holes
 
     # UVVM:  =================================================================================================================
     # UVVM:  0 ns *** OVERALL HOLES REPORT: TB seq. ***                                                                       
+    # UVVM:  =================================================================================================================
     # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
     # UVVM:  =================================================================================================================
     # UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS) 
@@ -965,8 +968,8 @@ Example of the file output:
 
 .. code-block:: none
 
-    MY_CROSS            
-    NEW_SCOPE                     
+    MY_CROSS
+    NEW_SCOPE
     2
     TRUE
     0
@@ -984,36 +987,36 @@ Example of the file output:
     200
     100
     5
-    bin_0               
+    bin_0
     0 1 -1
     0 1 10 
     0 1 1010 
-    single              
+    single
     2 8 20
     0 1 20 
     0 1 1020 
-    multiple            
+    multiple
     3 9 30
     0 3 30 35 39 
     0 3 1030 1035 1039 
-    range               
+    range
     10 15 40
     3 2 40 49 
     3 2 1040 1049 
-    transition          
+    transition
     1 5 50
     6 6 50 51 52 53 54 55 
     6 6 1050 1051 1052 1053 1054 1055 
     3
-    ignore_single       
+    ignore_single
     1 0 0
     1 1 110 
     1 1 1110 
-    illegal_range       
+    illegal_range
     4 0 0
     5 2 226 229 
     5 2 1226 1229 
-    illegal_transition  
+    illegal_transition
     1 0 0
     8 3 231 237 237 
     8 3 1231 1237 1237 

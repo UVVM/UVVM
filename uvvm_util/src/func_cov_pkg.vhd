@@ -1037,6 +1037,8 @@ package body func_cov_pkg is
     constant C_DEALLOCATED_ID      : integer := -1;
     -- Indicates an uninitialized natural value
     constant C_UNINITIALIZED       : integer := -1;
+    -- Header used in the database files for authentication
+    constant C_DB_FILE_HEADER      : string  := "--UVVM_FUNCTIONAL_COVERAGE_FILE--";
 
     variable priv_id                            : integer                                       := C_DEALLOCATED_ID;
     variable priv_name                          : string(1 to C_FC_MAX_NAME_LENGTH);
@@ -1817,7 +1819,7 @@ package body func_cov_pkg is
         write(v_line, bins_idx);
         writeline(file_handler, v_line);
         for i in 0 to bins_idx-1 loop
-          write(v_line, bins_vector(i).name);
+          write(v_line, to_string(bins_vector(i).name));
           writeline(file_handler, v_line);
           write(v_line, to_string(bins_vector(i).hits) & ' ' &
                         to_string(bins_vector(i).min_hits) & ' ' &
@@ -1838,9 +1840,10 @@ package body func_cov_pkg is
     begin
       if priv_id /= C_DEALLOCATED_ID then
         log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
+        write_value(C_DB_FILE_HEADER);
         -- Coverpoint config
-        write_value(priv_name);
-        write_value(priv_scope);
+        write_value(to_string(priv_name));
+        write_value(to_string(priv_scope));
         write_value(priv_num_bins_crossed);
         write_value(priv_sampled_coverpoint);
         write_value(priv_num_tc_accumulated);
@@ -1903,13 +1906,6 @@ package body func_cov_pkg is
       end procedure;
 
       procedure read_value(
-        variable value : out string) is
-      begin
-        readline(file_handler, v_line);
-        read(v_line, value);
-      end procedure;
-
-      procedure read_value(
         variable value : out boolean) is
       begin
         readline(file_handler, v_line);
@@ -1928,7 +1924,7 @@ package body func_cov_pkg is
         -- Read all the bins and copy them to a temporary variable
         for i in 0 to loaded_bins_idx-1 loop
           readline(file_handler, v_line);
-          read(v_line, v_loaded_bins(i).name);  -- read() crops the string
+          v_loaded_bins(i).name := v_line.all & fill_string(NUL, C_FC_MAX_NAME_LENGTH-v_line'length);
           readline(file_handler, v_line);
           read(v_line, v_loaded_bins(i).hits);
           read(v_line, v_loaded_bins(i).min_hits);
@@ -1998,6 +1994,13 @@ package body func_cov_pkg is
         return;
       end if;
 
+      -- Check file header
+      readline(file_handler, v_line);
+      if v_line.all /= C_DB_FILE_HEADER then
+        alert(TB_ERROR, C_LOCAL_CALL & "=> File has an unknown format", priv_scope);
+        return;
+      end if;
+
       if priv_sampled_coverpoint then
         alert(TB_WARNING, C_LOCAL_CALL & "=> Coverpoint has already been sampled, loading DB afterwards is not recommended since coverage in the bins will be overwritten", priv_scope);
       end if;
@@ -2010,10 +2013,10 @@ package body func_cov_pkg is
       end if;
 
       -- Coverpoint config
-      read_value(priv_name);  -- read() crops the string
-      set_name(priv_name);
-      read_value(priv_scope); -- read() crops the string
-      set_scope(priv_scope);
+      readline(file_handler, v_line);
+      set_name(v_line.all);
+      readline(file_handler, v_line);
+      set_scope(v_line.all);
       read_value(v_num_bins_crossed);
       if v_num_bins_crossed /= priv_num_bins_crossed and priv_num_bins_crossed /= C_UNINITIALIZED then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Cannot load " & to_string(v_num_bins_crossed) & " crossed bins to a coverpoint with " & to_string(priv_num_bins_crossed) & " crossed bins", priv_scope);

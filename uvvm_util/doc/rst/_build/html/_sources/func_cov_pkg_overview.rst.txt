@@ -900,10 +900,12 @@ The database for a coverpoint is stored using the following file format:
 
 .. note::
 
-    The *for loops* and the leading spaces in the indented lines are only for better readability and not part of the data.
+    * The FILE_HEADER is a constant used to identify the functional coverage files created by UVVM.
+    * The *for loops* and the leading spaces in the indented lines are only for better readability and not part of the data.
 
 .. code-block::
 
+    [FILE_HEADER]
     [coverpoint_name]
     [scope]
     [number_of_bins_crossed]
@@ -968,6 +970,7 @@ Example of the file output:
 
 .. code-block:: none
 
+    --UVVM_FUNCTIONAL_COVERAGE_FILE--
     MY_CROSS
     NEW_SCOPE
     2

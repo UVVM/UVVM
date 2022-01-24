@@ -1041,9 +1041,13 @@ and only want to keep the model and configuration.</p>
 <p>The database for a coverpoint is stored using the following file format:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The <em>for loops</em> and the leading spaces in the indented lines are only for better readability and not part of the data.</p>
+<ul class="simple">
+<li><p>The FILE_HEADER is a constant used to identify the functional coverage files created by UVVM.</p></li>
+<li><p>The <em>for loops</em> and the leading spaces in the indented lines are only for better readability and not part of the data.</p></li>
+</ul>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">coverpoint_name</span><span class="p">]</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">FILE_HEADER</span><span class="p">]</span>
+<span class="p">[</span><span class="n">coverpoint_name</span><span class="p">]</span>
 <span class="p">[</span><span class="n">scope</span><span class="p">]</span>
 <span class="p">[</span><span class="n">number_of_bins_crossed</span><span class="p">]</span>
 <span class="p">[</span><span class="n">sampled_coverpoint</span><span class="p">]</span>
@@ -1129,7 +1133,8 @@ and only want to keep the model and configuration.</p>
 </tbody>
 </table>
 <p>Example of the file output:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>MY_CROSS
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--UVVM_FUNCTIONAL_COVERAGE_FILE--
+MY_CROSS
 NEW_SCOPE
 2
 TRUE

@@ -463,6 +463,15 @@ class Bin(object):
     def get_cross_bins(self):
         return self.cross_bins
 
+    def compare_cross_bins(self, exp_cross_bins) -> bool:
+        if len(self.cross_bins) != len(exp_cross_bins):
+            return False
+        else:
+            for idx, cross_bin in enumerate(self.cross_bins):
+                if cross_bin.get_bin_type() != exp_cross_bins[idx].get_bin_type() or cross_bin.get_num_values() != exp_cross_bins[idx].get_num_values() or cross_bin.get_values() != exp_cross_bins[idx].get_values():
+                    return False
+        return True
+
     def is_bin_illegal(self) -> bool:
         for cross_bin in self.cross_bins:
             bin_type = cross_bin.get_bin_type()
@@ -563,7 +572,8 @@ class CoverageMerger(object):
     def _args(self):
         arg_parser = argparse.ArgumentParser(description='UVVM Coverage Database Merger')
         arg_parser.add_argument('-d', '--dir', action='store', type=str, nargs=1, help='search directory. Default = ./hdlunit/test')
-        arg_parser.add_argument('-f', '--file', action='store', type=str, nargs=1, help='coverage database file ending. Default = .txt')
+        arg_parser.add_argument('-f', '--file', action='store', type=str, nargs=1, help='coverage database file extension. Default = .txt')
+        arg_parser.add_argument('-o', '--output', action='store', type=str, nargs=1, help='coverage database output file. Default = func_cov_report.txt')
         arg_parser.add_argument('-r', '--recursive', action='store_true', help='recursive directory file search. Default = no recursive search')
         arg_parser.add_argument('-nv', '--non_verbose', action='store_true', help='print non_verbose report. Default = verbose')
         arg_parser.add_argument('-hl', '--holes', action='store_true', help='print coverage holes report. Default = verbose')
@@ -574,6 +584,8 @@ class CoverageMerger(object):
             self.cov_dir = args.dir[0]
         if args.file:
             self.cov_file = args.file[0]
+        if args.output:
+            self.output_file = args.output[0]
         if args.recursive:
             self.recursive = True
         if args.non_verbose:
@@ -693,51 +705,64 @@ class CoverageMerger(object):
         for cov_file in self.cov_file_reader_list:
             new_covpt = cov_file.get_coverpoint()
             merged = False
-            # Check each coverpoint loaded from a new file against the merged coverpoints list
+            # Compare the coverpoint loaded from a new file against the merged coverpoints list
             for merged_covpt in self.merged_covpt_list:
-                # Coverpoints must match in: name & number_of_bins_crossed TODO: should we check these too in VHDL? currently everything is overwritten
+                # Coverpoints must match in: name & number_of_bins_crossed
                 if merged_covpt.get_name().lower() == new_covpt.get_name().lower() and merged_covpt.get_number_of_bins_crossed() == new_covpt.get_number_of_bins_crossed():
                     # Overwrite coverpoint's configuration with latest loaded data
                     merged_covpt.set_covpt_coverage_weight(new_covpt.get_covpt_coverage_weight())
                     merged_covpt.set_bins_coverage_goal(new_covpt.get_bins_coverage_goal())
                     merged_covpt.set_hits_coverage_goal(new_covpt.get_hits_coverage_goal())
                     merged_covpt.set_covpts_coverage_goal(new_covpt.get_covpts_coverage_goal())
+                    num_valid_bins = merged_covpt.get_number_of_valid_bins()
+                    num_covered_bins = 0
+                    total_bin_min_hits = merged_covpt.get_total_bin_min_hits()
+                    total_coverage_bin_hits = 0
+                    total_goal_bin_hits = 0
 
                     # Merge bins
                     new_bin_list = new_covpt.get_bins()
                     merged_bin_list = merged_covpt.get_bins()
-                    num_covered_bins = 0
-                    total_coverage_bin_hits = 0
-                    total_goal_bin_hits = 0
-                    # TODO: assume lists have same number of bins, however different lengths are allowed
-                    for idx, merged_bin in enumerate(merged_bin_list):
-                        # TODO: Bins must match in: type, num_values, values, min_hits & rand_weight
-                        merged_bin.set_name(new_bin_list[idx].get_name())
-                        merged_bin.increment_hits(new_bin_list[idx].get_hits())
-                        # Calculate new counters after merging
-                        if merged_bin.get_hits() >= merged_bin.get_min_hits():
-                            num_covered_bins += 1
-                            total_coverage_bin_hits += merged_bin.get_min_hits()
-                            total_goal_bin_hits += merged_bin.get_min_hits() * merged_covpt.get_hits_coverage_goal() / 100
-                        else:
-                            total_coverage_bin_hits += merged_bin.get_hits()
-                            total_goal_bin_hits += merged_bin.get_hits()
+                    for merged_bin in merged_bin_list:
+                        for new_bin in new_bin_list:
+                            if merged_bin.compare_cross_bins(new_bin.get_cross_bins()) and merged_bin.get_min_hits() == new_bin.get_min_hits() and merged_bin.get_rand_weight() == new_bin.get_rand_weight():
+                                merged_bin.set_name(new_bin.get_name())
+                                merged_bin.increment_hits(new_bin.get_hits())
+                                new_bin_list.remove(new_bin)
+                                # Calculate new counters after merging
+                                if merged_bin.get_hits() >= merged_bin.get_min_hits():
+                                    num_covered_bins += 1
+                                    total_coverage_bin_hits += merged_bin.get_min_hits()
+                                    total_goal_bin_hits += merged_bin.get_min_hits() * merged_covpt.get_hits_coverage_goal() / 100
+                                else:
+                                    total_coverage_bin_hits += merged_bin.get_hits()
+                                    total_goal_bin_hits += merged_bin.get_hits()
+                                break
+                    # Add any extra bins not found in previous files
+                    num_valid_bins += len(new_bin_list)
+                    for new_bin in new_bin_list:
+                        total_bin_min_hits += new_bin.get_min_hits()
+                    merged_bin_list.extend(new_bin_list)
                     merged_covpt.set_bins(merged_bin_list)
 
                     # Merge ignore and illegal bins
                     new_bin_list = new_covpt.get_invalid_bins()
                     merged_bin_list = merged_covpt.get_invalid_bins()
-                    # TODO: assume lists have same number of bins, however different lengths are allowed
-                    for idx, merged_bin in enumerate(merged_bin_list):
-                        # TODO: Bins must match in: type, num_values, values, min_hits & rand_weight
-                        merged_bin.set_name(new_bin_list[idx].get_name())
-                        merged_bin.increment_hits(new_bin_list[idx].get_hits())
+                    for merged_bin in merged_bin_list:
+                        for new_bin in new_bin_list:
+                            if merged_bin.compare_cross_bins(new_bin.get_cross_bins()) and merged_bin.get_min_hits() == new_bin.get_min_hits() and merged_bin.get_rand_weight() == new_bin.get_rand_weight():
+                                merged_bin.set_name(new_bin.get_name())
+                                merged_bin.increment_hits(new_bin.get_hits())
+                                new_bin_list.remove(new_bin)
+                                break
+                    # Add any extra bins not found in previous files
+                    merged_bin_list.extend(new_bin_list)
                     merged_covpt.set_invalid_bins(merged_bin_list)
 
                     # Update coverpoint's coverage counters
-                    # merged_covpt.set_number_of_valid_bins(num_valid_bins) # TODO: use when implementing different bin list lengths
+                    merged_covpt.set_number_of_valid_bins(num_valid_bins)
                     merged_covpt.set_number_of_covered_bins(num_covered_bins)
-                    # merged_covpt.set_total_bin_min_hits(total_bin_min_hits) # TODO: use when implementing different bin list lengths
+                    merged_covpt.set_total_bin_min_hits(total_bin_min_hits)
                     merged_covpt.increment_total_bin_hits(new_covpt.get_total_bin_hits())
                     merged_covpt.set_total_coverage_bin_hits(total_coverage_bin_hits)
                     merged_covpt.set_total_goal_bin_hits(total_goal_bin_hits)

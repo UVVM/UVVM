@@ -802,9 +802,11 @@ When using ``load_coverage_db()``, the following applies for the given coverpoin
       TB_WARNING alert is generated whenever this occurs.
 
 .. hint::
-    When loading a database, the coverage report will be written to the log. In this case, it also contains the number of TC that 
-    have accumulated coverage for the given coverpoint. This way one can see if there is a missing TC for instance when setting 
-    the *alert_level_if_not_found* parameter in ``load_coverage_db()`` to TB_NOTE or NO_ALERT.
+    * When loading a database, the coverage report will be written to the log. In this case, it also contains the number of testcases 
+      that have accumulated coverage for the given coverpoint. This way one can see if there is a missing testcase for instance 
+      when setting the *alert_level_if_not_found* parameter in ``load_coverage_db()`` to TB_NOTE or NO_ALERT.
+    * The overall coverage report will also contain a new column NUM TESTCASES indicating the total number of testcases that have 
+      accumulated coverage for each coverpoint.
 
 .. code-block:: none
 
@@ -819,6 +821,20 @@ When using ``load_coverage_db()``, the following applies for the given coverpoin
     # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
+
+.. code-block:: none
+
+    # UVVM:  ===================================================================================================================================
+    # UVVM:  0 ns *** OVERALL HOLES REPORT: TB seq. ***                                                                       
+    # UVVM:  ===================================================================================================================================
+    # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
+    # UVVM:  ===================================================================================================================================
+    # UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS)   NUM TESTCASES 
+    # UVVM:        Covpt_1            1              3 / 5         60.00% | 76.47%       50% | 100%        100.00% | 76.47%          3
+    # UVVM:        Covpt_4            1              0 / 4          0.00% | 0.00%        100% | 100%         0.00% | 0.00%           1
+    # UVVM:        Covpt_5            1              0 / 1          0.00% | 0.00%        100% | 100%         0.00% | 0.00%           1
+    # UVVM:        Covpt_7            1              0 / 3          0.00% | 0.00%        100% | 100%         0.00% | 0.00%           1
+    # UVVM:  ===================================================================================================================================
 
 *Example 1: The testcases are run in a specified order.*
 

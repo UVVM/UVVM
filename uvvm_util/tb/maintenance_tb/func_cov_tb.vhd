@@ -2776,19 +2776,28 @@ begin
       ------------------------------------------------------------
       v_coverpoint_a.load_coverage_db("dummy.txt", alert_level_if_not_found => NO_ALERT);
       v_coverpoint_a.report_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
+
       v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      fc_report_overall_coverage(VERBOSE);
       v_coverpoint_b.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+
       v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      fc_report_overall_coverage(VERBOSE);
       v_coverpoint_c.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+
       v_coverpoint_d.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      fc_report_overall_coverage(VERBOSE);
 
       log(ID_SEQUENCER, "Check accumulated testcases counter is reset after clearing the coverage");
       v_coverpoint_c.clear_coverage(VOID);
       v_coverpoint_c.report_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
       log(ID_SEQUENCER, "Check accumulated testcases counter is reset after deleting the coverpoint");
       v_coverpoint_d.delete_coverpoint(VOID);
       v_coverpoint_d.report_coverage(VOID);
+      fc_report_overall_coverage(VERBOSE);
 
       v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_c.delete_coverpoint(VOID);

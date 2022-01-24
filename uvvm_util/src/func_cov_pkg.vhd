@@ -941,11 +941,12 @@ package body func_cov_pkg is
     constant C_HEADER_3        : string := "*** OVERALL HOLES REPORT: " & to_string(scope) & " ***";
     constant C_COLUMN_WIDTH    : positive := 20;
     constant C_PRINT_GOAL      : boolean := protected_covergroup_status.get_covpts_coverage_goal(VOID) /= 100;
+    variable C_PRINT_NUM_TC    : boolean := protected_covergroup_status.is_covpt_loaded(VOID);
     variable v_line            : line;
     variable v_log_extra_space : integer := 0;
   begin
     -- Calculate how much space we can insert between the columns of the report
-    v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_FC_MAX_NAME_LENGTH - C_COLUMN_WIDTH*5)/7;
+    v_log_extra_space := (C_LOG_LINE_WIDTH - C_PREFIX'length - C_FC_MAX_NAME_LENGTH - C_COLUMN_WIDTH*6)/8;
     if v_log_extra_space < 1 then
       alert(TB_WARNING, "C_LOG_LINE_WIDTH is too small or C_FC_MAX_NAME_LENGTH is too big, the report will not be properly aligned.", scope);
       v_log_extra_space := 1;
@@ -961,7 +962,6 @@ package body func_cov_pkg is
       write(v_line, timestamp_header(now, justify(C_HEADER_3, LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
     end if;
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
-
 
     -- Print summary
     write(v_line, return_string_if_true("Goal:                    Covpts: " & to_string(protected_covergroup_status.get_covpts_coverage_goal(VOID)) & "%" & LF, C_PRINT_GOAL) &
@@ -982,7 +982,8 @@ package body func_cov_pkg is
         justify("COVERED BINS"        , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("COVERAGE(BINS|HITS)" , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
         justify("GOAL(BINS|HITS)"     , center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
-        justify("% OF GOAL(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+        justify("% OF GOAL(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        return_string_if_true(justify("NUM TESTCASES", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), C_PRINT_NUM_TC),
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       -- Print coverpoints
@@ -1000,7 +1001,8 @@ package body func_cov_pkg is
               justify(to_string(protected_covergroup_status.get_bins_coverage_goal(i)) & "% | " &
                       to_string(protected_covergroup_status.get_hits_coverage_goal(i)) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
               justify(to_string(protected_covergroup_status.get_bins_coverage(i, GOAL_CAPPED),2) & "% | " &
-                      to_string(protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+                      to_string(protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED),2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              return_string_if_true(justify(to_string(protected_covergroup_status.get_num_tc_accumulated(i)+1), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), C_PRINT_NUM_TC),
               left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end if;
@@ -1987,6 +1989,7 @@ package body func_cov_pkg is
     begin
       log(ID_FUNC_COV_CONFIG, get_name_prefix(VOID) & C_LOCAL_CALL, priv_scope, msg_id_panel);
       priv_loaded_coverpoint := true;
+      protected_covergroup_status.set_covpt_is_loaded(VOID);
 
       file_open(v_open_status, file_handler, file_name, read_mode);
       if v_open_status /= open_ok then
@@ -2067,6 +2070,7 @@ package body func_cov_pkg is
       DEALLOCATE(v_line);
 
       priv_num_tc_accumulated := priv_num_tc_accumulated + 1;
+      protected_covergroup_status.set_num_tc_accumulated(priv_id, priv_num_tc_accumulated);
       report_coverage(report_verbosity);
     end procedure;
 
@@ -2098,6 +2102,7 @@ package body func_cov_pkg is
         protected_covergroup_status.set_total_coverage_bin_hits(priv_id, 0);
         protected_covergroup_status.set_total_goal_bin_hits(priv_id, 0);
         protected_covergroup_status.set_total_bin_hits(priv_id, 0);
+        protected_covergroup_status.set_num_tc_accumulated(priv_id, 0);
       end if;
       priv_sampled_coverpoint := false;
       priv_loaded_coverpoint  := false;

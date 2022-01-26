@@ -801,12 +801,9 @@ When using ``load_coverage_db()``, the following applies for the given coverpoin
     * It is NOT recommended to sample a coverpoint before loading the database since that coverage will be overwritten. A 
       TB_WARNING alert is generated whenever this occurs.
 
-.. hint::
-    * When loading a database, the coverage report will be written to the log. In this case, it also contains the number of testcases 
-      that have accumulated coverage for the given coverpoint. This way one can see if there is a missing testcase for instance 
-      when setting the *alert_level_if_not_found* parameter in ``load_coverage_db()`` to TB_NOTE or NO_ALERT.
-    * The overall coverage report will also contain a new column NUM TESTCASES indicating the total number of testcases that have 
-      accumulated coverage for each coverpoint.
+When loading a database, the coverage report will be written to the log. In this case, it also contains the number of testcases 
+that have accumulated coverage for the given coverpoint. This way one can see if there is a missing testcase for instance when 
+setting the *alert_level_if_not_found* parameter in ``load_coverage_db()`` to TB_NOTE or NO_ALERT.
 
 .. code-block:: none
 
@@ -821,6 +818,9 @@ When using ``load_coverage_db()``, the following applies for the given coverpoin
     # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
+
+The overall coverage report will also contain a new column NUM TESTCASES indicating the total number of testcases that have 
+accumulated coverage for each coverpoint.
 
 .. code-block:: none
 
@@ -860,7 +860,8 @@ When using ``load_coverage_db()``, the following applies for the given coverpoin
 *Example 3: The testcases are run in parallel.*
 
 #. Each TC adds bins to a coverpoint, samples coverage and writes the database to a different file.
-#. After all simulations are done, use a script to merge the database files for the given coverpoint.
+#. After all simulations are done, use the :ref:`func_cov_pkg_coverage_merge_script` to merge the database files for the given 
+   coverpoint.
 
 .. note::
 
@@ -1040,9 +1041,49 @@ Example of the file output:
     8 3 231 237 237 
     8 3 1231 1237 1237 
 
-Script
+.. _func_cov_pkg_coverage_merge_script:
+
+Coverage merge script
 ==================================================================================================================================
-TBD
+A python script to accumulate coverage from different database files is provided in *uvvm_util/script/func_cov_merge.py*.
+
++------------------+------------------+--------------------------------------------+-------------------------+
+| Arguments                           | Description                                | Default value           |
++==================+==================+============================================+=========================+
+| -h               | --help           | Help screen                                |                         |
++------------------+------------------+--------------------------------------------+-------------------------+
+| -d DIR           | --dir DIR        | Search directory                           | ./hdlunit/test          |
++------------------+------------------+--------------------------------------------+-------------------------+
+| -f FILE          | --file FILE      | Coverage database file name/extension      | .txt                    |
++------------------+------------------+--------------------------------------------+-------------------------+
+| -o OUTPUT        | --output OUTPUT  | Coverage database output file              | func_cov_report.txt     |
++------------------+------------------+--------------------------------------------+-------------------------+
+| -r               | --recursive      | Recursive directory file search            |                         |
++------------------+------------------+--------------------------------------------+-------------------------+
+| -nv              | --non_verbose    | Print non_verbose report                   | Print verbose report    |
++------------------+------------------+--------------------------------------------+-------------------------+
+| -hl              | --holes          | Print coverage holes report                | Print verbose report    |
++------------------+------------------+--------------------------------------------+-------------------------+
+
+.. code-block::
+
+    py ../script/func_cov_merge.py -f db_*.txt -o func_cov_report_holes.txt -r -hl
+
+The script will print, both to the terminal and a file, the *coverage report* for each coverpoint and the *overall coverage
+report* with a similar format to :ref:`func_cov_pkg_coverage_report`. The verbosity of the reports can be adjusted using the 
+arguments -nv or -hl.
+
+The following rules apply when merging a coverpoint from different files:
+
+    * The coverpoint's name must match.
+    * The coverpoint's number_of_bins_crossed must match.
+    * The coverpoint's configuration, e.g. coverage_weight and coverage goals, is overwritten with the last loaded file. For this 
+      reason it is recommended to ensure the same configuration is used in all the testcases for the given coverpoint.
+    * The coverpoint's bins must match in: type, values, min_hits and rand_weight.
+    * The matching bins' name is overwritten with the last loaded file. Again, it is recommended to use the same bin name in all 
+      the testcases for the given coverpoint.
+    * The matching bins' hits are accumulated.
+    * Any non-matching bins are added to the merged coverpoint.
 
 **********************************************************************************************************************************
 Clearing a coverpoint

@@ -136,7 +136,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#overall-coverage-accumulation">Overall coverage accumulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clearing-coverage">Clearing coverage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#file-format">File format</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#script">Script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coverage-merge-script">Coverage merge script</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#clearing-a-coverpoint">Clearing a coverpoint</a></li>
@@ -944,16 +944,9 @@ TB_WARNING alert is generated whenever this occurs.</p></li>
 TB_WARNING alert is generated whenever this occurs.</p></li>
 </ul>
 </div>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<ul class="simple">
-<li><p>When loading a database, the coverage report will be written to the log. In this case, it also contains the number of testcases
-that have accumulated coverage for the given coverpoint. This way one can see if there is a missing testcase for instance
-when setting the <em>alert_level_if_not_found</em> parameter in <code class="docutils literal notranslate"><span class="pre">load_coverage_db()</span></code> to TB_NOTE or NO_ALERT.</p></li>
-<li><p>The overall coverage report will also contain a new column NUM TESTCASES indicating the total number of testcases that have
-accumulated coverage for each coverpoint.</p></li>
-</ul>
-</div>
+<p>When loading a database, the coverage report will be written to the log. In this case, it also contains the number of testcases
+that have accumulated coverage for the given coverpoint. This way one can see if there is a missing testcase for instance when
+setting the <em>alert_level_if_not_found</em> parameter in <code class="docutils literal notranslate"><span class="pre">load_coverage_db()</span></code> to TB_NOTE or NO_ALERT.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
 # UVVM:  0 ns *** COVERAGE HOLES REPORT: TB seq. ***
 # UVVM:  =================================================================================================================
@@ -967,6 +960,8 @@ accumulated coverage for each coverpoint.</p></li>
 # UVVM:  =================================================================================================================
 </pre></div>
 </div>
+<p>The overall coverage report will also contain a new column NUM TESTCASES indicating the total number of testcases that have
+accumulated coverage for each coverpoint.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  ===================================================================================================================================
 # UVVM:  0 ns *** OVERALL HOLES REPORT: TB seq. ***
 # UVVM:  ===================================================================================================================================
@@ -1004,7 +999,8 @@ back to the same file “coverpoint_1.txt”.</p></li>
 <p><em>Example 3: The testcases are run in parallel.</em></p>
 <ol class="arabic simple">
 <li><p>Each TC adds bins to a coverpoint, samples coverage and writes the database to a different file.</p></li>
-<li><p>After all simulations are done, use a script to merge the database files for the given coverpoint.</p></li>
+<li><p>After all simulations are done, use the <a class="reference internal" href="#func-cov-pkg-coverage-merge-script"><span class="std std-ref">Coverage merge script</span></a> to merge the database files for the given
+coverpoint.</p></li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1206,9 +1202,80 @@ illegal_transition
 </pre></div>
 </div>
 </div>
-<div class="section" id="script">
-<h3>Script<a class="headerlink" href="#script" title="Permalink to this headline">¶</a></h3>
-<p>TBD</p>
+<div class="section" id="coverage-merge-script">
+<span id="func-cov-pkg-coverage-merge-script"></span><h3>Coverage merge script<a class="headerlink" href="#coverage-merge-script" title="Permalink to this headline">¶</a></h3>
+<p>A python script to accumulate coverage from different database files is provided in <em>uvvm_util/script/func_cov_merge.py</em>.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 42%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head" colspan="2"><p>Arguments</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>-h</p></td>
+<td><p>–help</p></td>
+<td><p>Help screen</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-d DIR</p></td>
+<td><p>–dir DIR</p></td>
+<td><p>Search directory</p></td>
+<td><p>./hdlunit/test</p></td>
+</tr>
+<tr class="row-even"><td><p>-f FILE</p></td>
+<td><p>–file FILE</p></td>
+<td><p>Coverage database file name/extension</p></td>
+<td><p>.txt</p></td>
+</tr>
+<tr class="row-odd"><td><p>-o OUTPUT</p></td>
+<td><p>–output OUTPUT</p></td>
+<td><p>Coverage database output file</p></td>
+<td><p>func_cov_report.txt</p></td>
+</tr>
+<tr class="row-even"><td><p>-r</p></td>
+<td><p>–recursive</p></td>
+<td><p>Recursive directory file search</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-nv</p></td>
+<td><p>–non_verbose</p></td>
+<td><p>Print non_verbose report</p></td>
+<td><p>Print verbose report</p></td>
+</tr>
+<tr class="row-even"><td><p>-hl</p></td>
+<td><p>–holes</p></td>
+<td><p>Print coverage holes report</p></td>
+<td><p>Print verbose report</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">py</span> <span class="p">..</span><span class="o">/</span><span class="n">script</span><span class="o">/</span><span class="n">func_cov_merge</span><span class="p">.</span><span class="n">py</span> <span class="o">-</span><span class="n">f</span> <span class="n">db_</span><span class="o">*</span><span class="p">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">o</span> <span class="n">func_cov_report_holes</span><span class="p">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">r</span> <span class="o">-</span><span class="n">hl</span>
+</pre></div>
+</div>
+<p>The script will print, both to the terminal and a file, the <em>coverage report</em> for each coverpoint and the <em>overall coverage
+report</em> with a similar format to <a class="reference internal" href="#func-cov-pkg-coverage-report"><span class="std std-ref">Coverage report</span></a>. The verbosity of the reports can be adjusted using the
+arguments -nv or -hl.</p>
+<p>The following rules apply when merging a coverpoint from different files:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The coverpoint’s name must match.</p></li>
+<li><p>The coverpoint’s number_of_bins_crossed must match.</p></li>
+<li><p>The coverpoint’s configuration, e.g. coverage_weight and coverage goals, is overwritten with the last loaded file. For this
+reason it is recommended to ensure the same configuration is used in all the testcases for the given coverpoint.</p></li>
+<li><p>The coverpoint’s bins must match in: type, values, min_hits and rand_weight.</p></li>
+<li><p>The matching bins’ name is overwritten with the last loaded file. Again, it is recommended to use the same bin name in all
+the testcases for the given coverpoint.</p></li>
+<li><p>The matching bins’ hits are accumulated.</p></li>
+<li><p>Any non-matching bins are added to the merged coverpoint.</p></li>
+</ul>
+</div></blockquote>
 </div>
 </div>
 <div class="section" id="clearing-a-coverpoint">

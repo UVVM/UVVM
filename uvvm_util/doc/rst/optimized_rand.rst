@@ -43,7 +43,7 @@ for randomization until all the bins are :ref:`covered <concept_covered>`.
 
       -- Example 1: The loop will iterate 100 times to generate random values from the 100 different bins
       -- Randomization sequence example: 64,42,35,7,89,92,...
-      my_coverpoint.add_bins(bin_range(1,100));
+      my_coverpoint.add_bins(bin_range(1,100,0));
       while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
         my_addr := my_coverpoint.rand(NO_SAMPLE_COV);
         configure_addr(my_addr);
@@ -58,7 +58,7 @@ for randomization until all the bins are :ref:`covered <concept_covered>`.
       -- Randomization sequence example: 3,7,0,30
       my_coverpoint.add_bins(bin(0));
       my_coverpoint.add_bins(bin(3));
-      my_coverpoint.add_bins(bin_range(5,10,1));
+      my_coverpoint.add_bins(bin_range(5,10));
       my_coverpoint.add_bins(bin((20,30,40,50)));
       while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
         my_addr := my_coverpoint.rand(NO_SAMPLE_COV);
@@ -159,9 +159,9 @@ this weight will be reduced by 1 every time the bin is sampled, thus balancing t
 
     add_bins(bin, min_hits, [bin_name])
 
-    my_coverpoint.add_bins(bin(0), 10); -- rand_weight = min_hits = 10
-    my_coverpoint.add_bins(bin(2), 5);  -- rand_weight = min_hits = 5
-    my_coverpoint.add_bins(bin(4), 5);  -- rand_weight = min_hits = 5
+    my_coverpoint.add_bins(bin(0), 10);         -- rand_weight = min_hits = 10
+    my_coverpoint.add_bins(bin(2), 5);          -- rand_weight = min_hits = 5
+    my_coverpoint.add_bins(bin_range(4,8), 5);  -- rand_weight = min_hits = 5
     while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
       my_addr := my_coverpoint.rand(SAMPLE_COV);
       configure_addr(my_addr);
@@ -170,7 +170,7 @@ this weight will be reduced by 1 every time the bin is sampled, thus balancing t
 
     -- Example of how the sampling of the generated random values affect the randomization weights:
     -- ======= ========================= ========================= =========================
-    --  Value            bin(0)                    bin(2)                    bin(4)           
+    --  Value            bin(0)                    bin(2)                bin_range(4,8)     
     -- ======= ========================= ========================= =========================
     --    -     50.0% (rand_weight = 10)  25.0% (rand_weight = 5)   25.0% (rand_weight = 5) 
     --    0     47.3% (rand_weight = 9)   26.3% (rand_weight = 5)   26.3% (rand_weight = 5) 
@@ -179,6 +179,7 @@ this weight will be reduced by 1 every time the bin is sampled, thus balancing t
     --    4     43.8% (rand_weight = 7)   31.2% (rand_weight = 5)   25.0% (rand_weight = 4) 
     --    0     40.0% (rand_weight = 6)   33.3% (rand_weight = 5)   26.7% (rand_weight = 4) 
     --    2     42.8% (rand_weight = 6)   28.6% (rand_weight = 4)   28.6% (rand_weight = 4) 
+    --    5     46.1% (rand_weight = 6)   30.8% (rand_weight = 4)   23.1% (rand_weight = 3) 
     -- ======= ========================= ========================= =========================
 
 **********************************************************************************************************************************
@@ -196,7 +197,7 @@ not included in the transition bins, we can use a range bin:
     -- be sampled.
     my_coverpoint.add_bins(bin_transition((1,5,10)), 1);
     my_coverpoint.add_bins(bin_transition((1,6,20)), 1);
-    my_coverpoint.add_bins(bin_range(1,20,1), 9);
+    my_coverpoint.add_bins(bin_range(1,20), 9);
 
     while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
       my_addr := my_coverpoint.rand(SAMPLE_COV);

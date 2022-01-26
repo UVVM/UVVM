@@ -708,6 +708,10 @@ class CoverageMerger(object):
                 print(line)                    # Print to terminal
 
     def merge(self):
+        if len(self.cov_file_reader_list) == 0:
+            print('No valid database files were found')
+            sys.exit(1)
+
         for cov_file in self.cov_file_reader_list:
             new_covpt = cov_file.get_coverpoint()
             merged = False

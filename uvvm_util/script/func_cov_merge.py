@@ -598,7 +598,10 @@ class CoverageMerger(object):
             self.holes = True
 
     def _file_finder(self):
-        print('Searching for {} in {}'.format(self.cov_file, self.cov_dir))
+        if self.recursive is True:
+            print('Searching for {} in {} using recursive search'.format(self.cov_file, self.cov_dir))
+        else:
+            print('Searching for {} in {}'.format(self.cov_file, self.cov_dir))
 
         if self.recursive is True:
             filename = os.path.join(self.cov_dir, '**', self.cov_file)
@@ -780,6 +783,7 @@ class CoverageMerger(object):
                 self.merged_covpt_list.append(new_covpt)
 
     def print_covpt_report(self):
+        print('Writing reports to {}'.format(self.output_file))
         for covpt in self.merged_covpt_list:
             if self.holes is True:
                 covpt.print_report(self.output_file, 'HOLES')

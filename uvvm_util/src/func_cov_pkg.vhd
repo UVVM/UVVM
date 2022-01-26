@@ -1965,8 +1965,10 @@ package body func_cov_pkg is
               exit;
             elsif j = v_loaded_bins'length-1 then
               -- Add bin information to the covergroup status since it was overwritten by the loaded data
-              protected_covergroup_status.increment_valid_bin_count(priv_id);
-              protected_covergroup_status.increment_min_hits_count(priv_id, bins_vector(i).min_hits);
+              if not(is_bin_ignore(bins_vector(i)) or is_bin_illegal(bins_vector(i))) then
+                protected_covergroup_status.increment_valid_bin_count(priv_id);
+                protected_covergroup_status.increment_min_hits_count(priv_id, bins_vector(i).min_hits);
+              end if;
               -- Generate an alert if the current bin was not found in the loaded bins
               if new_bins_acceptance /= NO_ALERT_ON_NEW_BINS then
                 v_alert_level := TB_ERROR when new_bins_acceptance = ERROR_ON_NEW_BINS else TB_WARNING;

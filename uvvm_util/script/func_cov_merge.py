@@ -31,7 +31,7 @@ class CoverageFileReader(object):
             return False
 
         # Check file header
-        if self.content[0] == "--UVVM_FUNCTIONAL_COVERAGE_FILE--":
+        if len(self.content) != 0 and self.content[0] == "--UVVM_FUNCTIONAL_COVERAGE_FILE--":
             self.build_db()
             return True
         else:
@@ -396,7 +396,7 @@ class CoverPoint(object):
             if invalid_bin.is_bin_ignore() is True and verbosity == 'VERBOSE':
                 txt.append('{:^{bin_col}.{bin_col}} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(invalid_bin.print_bin_info(self.report_bin_width), invalid_bin.get_hits(), 'N/A', 'N/A', invalid_bin.get_name(), 'IGNORE', bin_col=self.report_bin_width))
         for bin in self.bins:
-            if verbosity == 'VERBOSE' or verbosity == 'NON_VERBOSE' or (verbosity == 'HOLES' and bin.get_hits() < bin.get_min_hits()*self.hits_coverage_goal/100):
+            if verbosity == 'VERBOSE' or verbosity == 'NON_VERBOSE' or (verbosity == 'HOLES' and bin.get_hits() < bin.get_total_min_hits(self.hits_coverage_goal)):
                 hit_cov = '{:.2f}'.format(bin.get_bin_coverage()) + '%'
                 txt.append('{:^{bin_col}.{bin_col}} {:^15} {:^15} {:^15} {:^20.20} {:^15}'.format(bin.print_bin_info(self.report_bin_width), bin.get_hits(), bin.get_min_hits(), hit_cov, bin.get_name(), '-', bin_col=self.report_bin_width))
         txt.append('{:-<{width}}'.format('-', width=self.report_width))
@@ -410,7 +410,7 @@ class CoverPoint(object):
                 if invalid_bin.print_bin_info(self.report_bin_width) == invalid_bin.get_name():
                     txt.append('{}: {}'.format(invalid_bin.get_name(), invalid_bin.print_bin_info()))
         for bin in self.bins:
-            if verbosity == 'VERBOSE' or verbosity == 'NON_VERBOSE' or (verbosity == 'HOLES' and bin.get_hits() < bin.get_min_hits()*self.hits_coverage_goal/100):
+            if verbosity == 'VERBOSE' or verbosity == 'NON_VERBOSE' or (verbosity == 'HOLES' and bin.get_hits() < bin.get_total_min_hits(self.hits_coverage_goal)):
                 if bin.print_bin_info(self.report_bin_width) == bin.get_name():
                     txt.append('{}: {}'.format(bin.get_name(), bin.print_bin_info()))
         txt.append('{:=<{width}}'.format('=', width=self.report_width))
@@ -450,6 +450,9 @@ class Bin(object):
 
     def get_min_hits(self) -> int:
         return self.min_hits
+
+    def get_total_min_hits(self, hits_coverage_goal) -> int:
+        return int(round(self.min_hits * hits_coverage_goal / 100, 0))
 
     def set_rand_weight(self, weight):
         self.rand_weight = int(weight)
@@ -714,11 +717,6 @@ class CoverageMerger(object):
                     merged_covpt.set_bins_coverage_goal(new_covpt.get_bins_coverage_goal())
                     merged_covpt.set_hits_coverage_goal(new_covpt.get_hits_coverage_goal())
                     merged_covpt.set_covpts_coverage_goal(new_covpt.get_covpts_coverage_goal())
-                    num_valid_bins = merged_covpt.get_number_of_valid_bins()
-                    num_covered_bins = 0
-                    total_bin_min_hits = merged_covpt.get_total_bin_min_hits()
-                    total_coverage_bin_hits = 0
-                    total_goal_bin_hits = 0
 
                     # Merge bins
                     new_bin_list = new_covpt.get_bins()
@@ -729,21 +727,29 @@ class CoverageMerger(object):
                                 merged_bin.set_name(new_bin.get_name())
                                 merged_bin.increment_hits(new_bin.get_hits())
                                 new_bin_list.remove(new_bin)
-                                # Calculate new counters after merging
-                                if merged_bin.get_hits() >= merged_bin.get_min_hits():
-                                    num_covered_bins += 1
-                                    total_coverage_bin_hits += merged_bin.get_min_hits()
-                                    total_goal_bin_hits += merged_bin.get_min_hits() * merged_covpt.get_hits_coverage_goal() / 100
-                                else:
-                                    total_coverage_bin_hits += merged_bin.get_hits()
-                                    total_goal_bin_hits += merged_bin.get_hits()
                                 break
                     # Add any extra bins not found in previous files
-                    num_valid_bins += len(new_bin_list)
-                    for new_bin in new_bin_list:
-                        total_bin_min_hits += new_bin.get_min_hits()
                     merged_bin_list.extend(new_bin_list)
                     merged_covpt.set_bins(merged_bin_list)
+
+                    # Calculate new coverage counters after merging
+                    num_valid_bins = merged_covpt.get_number_of_valid_bins() + len(new_bin_list)
+                    total_bin_min_hits = merged_covpt.get_total_bin_min_hits()
+                    for new_bin in new_bin_list:
+                        total_bin_min_hits += new_bin.get_min_hits()
+                    num_covered_bins = 0
+                    total_coverage_bin_hits = 0
+                    total_goal_bin_hits = 0
+                    for merged_bin in merged_bin_list:
+                        if merged_bin.get_hits() >= merged_bin.get_min_hits():
+                            num_covered_bins += 1
+                            total_coverage_bin_hits += merged_bin.get_min_hits()
+                        else:
+                            total_coverage_bin_hits += merged_bin.get_hits()
+                        if merged_bin.get_hits() >= merged_bin.get_total_min_hits(merged_covpt.get_hits_coverage_goal()):
+                            total_goal_bin_hits += merged_bin.get_total_min_hits(merged_covpt.get_hits_coverage_goal())
+                        else:
+                            total_goal_bin_hits += merged_bin.get_hits()
 
                     # Merge ignore and illegal bins
                     new_bin_list = new_covpt.get_invalid_bins()

@@ -3238,6 +3238,222 @@ begin
       fc_report_overall_coverage(VERBOSE);
 
     --===================================================================================
+    elsif GC_TESTCASE = "fc_database_3" then
+    -- IMPORTANT: This testcase only generates database files which are to be tested with
+    -- the python script for coverage accumulation. This test is intended for when running
+    -- testcases in parallel
+    --===================================================================================
+      disable_log_msg(ID_FUNC_COV_BINS_INFO);
+      disable_log_msg(ID_FUNC_COV_SAMPLE);
+
+      fc_set_covpts_coverage_goal(40); -- Will be used for the whole testcase, i.e. all the coverpoints
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing coverpoint with same bins and different coverage values");
+      ------------------------------------------------------------
+      -- Add bins
+      v_coverpoint_a.add_bins(bin(10));
+      v_coverpoint_a.add_bins(bin(20), 8, 20, "single");
+      v_coverpoint_a.add_bins(bin((30,35,39)), 9, 30, "multiple");
+      v_coverpoint_a.add_bins(bin_range(40,49,2), 15, 40, "range");
+      v_coverpoint_a.add_bins(bin_transition((50,51,52,53,54,55,56,57,58,59)), 5, 50, "transition");
+      v_coverpoint_a.add_bins(ignore_bin(100));
+      v_coverpoint_a.add_bins(ignore_bin(110), 1000, 500, "ignore_single");
+      v_coverpoint_a.add_bins(ignore_bin_range(121,125), 1000, 500, "ignore_range");
+      v_coverpoint_a.add_bins(ignore_bin_transition((132,134,136,138)), 1000, 500, "ignore_transition");
+      v_coverpoint_a.add_bins(illegal_bin(200));
+      v_coverpoint_a.add_bins(illegal_bin(210), 1000, 500, "illegal_single");
+      v_coverpoint_a.add_bins(illegal_bin_range(226,229), 1000, 500, "illegal_range");
+      v_coverpoint_a.add_bins(illegal_bin_transition((231,237,237,238,235,231)), 1000, 500, "illegal_transition");
+
+      -- Set configuration
+      v_coverpoint_a.set_name("Covpt_A");
+      v_coverpoint_a.set_illegal_bin_alert_level(TB_NOTE);
+      v_coverpoint_a.set_overall_coverage_weight(5);
+      v_coverpoint_a.set_bins_coverage_goal(50);
+      v_coverpoint_a.set_hits_coverage_goal(200);
+
+      -- Sample coverage
+      increment_expected_alerts(TB_NOTE, 6);
+      sample_bins(v_coverpoint_a, (20), 2);
+      sample_bins(v_coverpoint_a, (30,35,39), 1);
+      sample_bins(v_coverpoint_a, (40,41,42,43,44), 1);
+      sample_bins(v_coverpoint_a, (45,46,47,48,49), 1);
+      sample_bins(v_coverpoint_a, (50,51,52,53,54,55,56,57,58,59), 1);
+      sample_bins(v_coverpoint_a, (110), 1);
+      sample_bins(v_coverpoint_a, (121,122,123,124,125), 1);
+      sample_bins(v_coverpoint_a, (132,134,136,138), 2);
+      sample_bins(v_coverpoint_a, (210), 1);
+      sample_bins(v_coverpoint_a, (226,227,228,229), 1);
+      sample_bins(v_coverpoint_a, (231,237,237,238,235,231), 1);
+
+      -- Write to file 1
+      v_coverpoint_a.write_coverage_db("db_covpt_parallel_1.txt");
+      -- Write to file 2
+      v_coverpoint_a.write_coverage_db("db_covpt_parallel_2.txt");
+
+      -- Use same coverpoint and sample different coverage
+      v_coverpoint_a.clear_coverage(VOID);
+      sample_bins(v_coverpoint_a, (10), 1);
+      sample_bins(v_coverpoint_a, (20), 4);
+      sample_bins(v_coverpoint_a, (30,35,39), 1);
+      sample_bins(v_coverpoint_a, (40,41,42,43,44), 1);
+      sample_bins(v_coverpoint_a, (45,46,47,48,49), 1);
+      sample_bins(v_coverpoint_a, (50,51,52,53,54,55,56,57,58,59), 3);
+
+      -- Write to file 3
+      v_coverpoint_a.write_coverage_db("db_covpt_parallel_3.txt");
+
+      -----------------------------------------------------------------------
+      -- Expected result
+      -----------------------------------------------------------------------
+      --Coverpoint:              Covpt_A    (accumulated over 3 testcases)
+      --Goal:                    Bins: 50%,       Hits: 200%
+      --% of Goal:               Bins: 100.00%,   Hits: 50.00%
+      --% of Goal (uncapped):    Bins: 200.00%,   Hits: 50.00%
+      --Coverage (for goal 100): Bins: 100.00%,   Hits: 100.00%
+      -----------------------------------------------------------------------
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross with different bins and coverage values");
+      ------------------------------------------------------------
+      -- Add bins
+      v_cross_x2.add_cross(bin(10), bin(1010));
+      v_cross_x2.add_cross(bin(20), bin(1020), 8, 20, "single");
+      v_cross_x2.add_cross(bin((30,35,39)), bin((1030,1035,1039)), 9, 30, "multiple");
+      v_cross_x2.add_cross(bin_range(40,49,2), bin_range(1040,1049), 15, 40, "range");
+      v_cross_x2.add_cross(bin_transition((50,51,52,53,54,55)), bin_transition((1050,1051,1052,1053,1054,1055)), 5, 50, "transition");
+      v_cross_x2.add_cross(ignore_bin(100), ignore_bin(1100));
+      v_cross_x2.add_cross(ignore_bin(110), ignore_bin(1110), 1000, 500, "ignore_single");
+      v_cross_x2.add_cross(ignore_bin_range(121,125), ignore_bin_range(1121,1125), 1000, 500, "ignore_range");
+      v_cross_x2.add_cross(ignore_bin_transition((132,134,136,138)), ignore_bin_transition((1132,1134,1136,1138)), 1000, 500, "ignore_transition");
+      v_cross_x2.add_cross(illegal_bin(200), illegal_bin(1200));
+      v_cross_x2.add_cross(illegal_bin(210), illegal_bin(1210), 1000, 500, "illegal_single");
+      v_cross_x2.add_cross(illegal_bin_range(226,229), illegal_bin_range(1226,1229), 1000, 500, "illegal_range");
+      v_cross_x2.add_cross(illegal_bin_transition((231,237,237)), illegal_bin_transition((1231,1237,1237)), 1000, 500, "illegal_transition");
+
+      -- Add bins
+      --v_cross_x2_b.add_cross(bin(10), bin(1010)); -- unused
+      v_cross_x2_b.add_cross(bin(10), bin(10000));  -- new
+      v_cross_x2_b.add_cross(bin(10), bin(10001));  -- new
+      v_cross_x2_b.add_cross(bin(20), bin(1020), 8, 20, "single");
+      v_cross_x2_b.add_cross(bin((30,35,39)), bin((1030,1035,1039)), 9, 30, "multiple");
+      v_cross_x2_b.add_cross(bin_range(40,49,2), bin_range(1040,1049), 15, 40, "range");
+      v_cross_x2_b.add_cross(bin_transition((50,51,52,53,54,55)), bin_transition((1050,1051,1052,1053,1054,1055)), 5, 50, "transition");
+      --v_cross_x2_b.add_cross(ignore_bin(100), ignore_bin(1100)); -- unused
+      v_cross_x2_b.add_cross(ignore_bin(100), ignore_bin(20000));  -- new
+      v_cross_x2_b.add_cross(ignore_bin(100), ignore_bin(20001));  -- new
+      v_cross_x2_b.add_cross(ignore_bin(110), ignore_bin(1110), 1000, 500, "ignore_single");
+      v_cross_x2_b.add_cross(ignore_bin_range(121,125), ignore_bin_range(1121,1125), 1000, 500, "ignore_range");
+      v_cross_x2_b.add_cross(ignore_bin_transition((132,134,136,138)), ignore_bin_transition((1132,1134,1136,1138)), 1000, 500, "ignore_transition");
+      --v_cross_x2_b.add_cross(illegal_bin(200), illegal_bin(1200)); -- unused
+      v_cross_x2_b.add_cross(illegal_bin(200), illegal_bin(30000));  -- new
+      v_cross_x2_b.add_cross(illegal_bin(200), illegal_bin(30001));  -- new
+      v_cross_x2_b.add_cross(illegal_bin(210), illegal_bin(1210), 1000, 500, "illegal_single");
+      v_cross_x2_b.add_cross(illegal_bin_range(226,229), illegal_bin_range(1226,1229), 1000, 500, "illegal_range");
+      v_cross_x2_b.add_cross(illegal_bin_transition((231,237,237)), illegal_bin_transition((1231,1237,1237)), 1000, 500, "illegal_transition");
+
+      -- Set configuration
+      v_cross_x2.set_name("Cross_B");
+      v_cross_x2.set_illegal_bin_alert_level(TB_WARNING);
+      v_cross_x2.set_overall_coverage_weight(8);
+      v_cross_x2.set_bins_coverage_goal(50);
+      v_cross_x2.set_hits_coverage_goal(75);
+
+      -- Set configuration
+      v_cross_x2_b.set_name("Cross_B");
+      v_cross_x2_b.set_illegal_bin_alert_level(TB_WARNING);
+      v_cross_x2_b.set_overall_coverage_weight(8);
+      v_cross_x2_b.set_bins_coverage_goal(50);
+      v_cross_x2_b.set_hits_coverage_goal(75);
+
+      -- Sample coverage
+      increment_expected_alerts(TB_WARNING, 6);
+      sample_cross_bins(v_cross_x2, (0 => (20,1020)), 2);
+      sample_cross_bins(v_cross_x2, ((30,1030),(35,1035),(39,1039)), 1);
+      sample_cross_bins(v_cross_x2, ((40,1040),(41,1041),(42,1042),(43,1043),(44,1044)), 1);
+      sample_cross_bins(v_cross_x2, ((45,1045),(46,1046),(47,1047),(48,1048),(49,1049)), 1);
+      sample_cross_bins(v_cross_x2, ((50,1050),(51,1051),(52,1052),(53,1053),(54,1054),(55,1055)), 1);
+      sample_cross_bins(v_cross_x2, (0 => (110,1110)), 1);
+      sample_cross_bins(v_cross_x2, ((121,1121),(122,1122),(123,1123),(124,1124),(125,1125)), 1);
+      sample_cross_bins(v_cross_x2, ((132,1132),(134,1134),(136,1136),(138,1138)), 2);
+      sample_cross_bins(v_cross_x2, (0 => (210,1210)), 1);
+      sample_cross_bins(v_cross_x2, ((226,1226),(227,1227),(228,1228),(229,1229)), 1);
+      sample_cross_bins(v_cross_x2, ((231,1231),(237,1237),(237,1237)), 1);
+
+      v_cross_x2.write_coverage_db("db_cross_parallel_1.txt");
+
+      -- Sample coverage
+      increment_expected_alerts(TB_WARNING, 8);
+      sample_cross_bins(v_cross_x2_b, (0 => (10,10000)), 5);
+      sample_cross_bins(v_cross_x2_b, (0 => (10,10001)), 3);
+      sample_cross_bins(v_cross_x2_b, (0 => (20,1020)), 8);
+      sample_cross_bins(v_cross_x2_b, ((30,1030),(35,1035),(39,1039)), 5);
+      sample_cross_bins(v_cross_x2_b, ((40,1040),(41,1041),(42,1042),(43,1043),(44,1044)), 2);
+      sample_cross_bins(v_cross_x2_b, ((45,1045),(46,1046),(47,1047),(48,1048),(49,1049)), 2);
+      sample_cross_bins(v_cross_x2_b, ((50,1050),(51,1051),(52,1052),(53,1053),(54,1054),(55,1055)), 4);
+      sample_cross_bins(v_cross_x2_b, (0 => (100,20000)), 1);
+      sample_cross_bins(v_cross_x2_b, (0 => (100,20001)), 1);
+      sample_cross_bins(v_cross_x2_b, (0 => (110,1110)), 1);
+      sample_cross_bins(v_cross_x2_b, ((121,1121),(122,1122),(123,1123),(124,1124),(125,1125)), 1);
+      sample_cross_bins(v_cross_x2_b, ((132,1132),(134,1134),(136,1136),(138,1138)), 2);
+      sample_cross_bins(v_cross_x2_b, (0 => (200,30000)), 1);
+      sample_cross_bins(v_cross_x2_b, (0 => (200,30001)), 1);
+      sample_cross_bins(v_cross_x2_b, (0 => (210,1210)), 1);
+      sample_cross_bins(v_cross_x2_b, ((226,1226),(227,1227),(228,1228),(229,1229)), 1);
+      sample_cross_bins(v_cross_x2_b, ((231,1231),(237,1237),(237,1237)), 1);
+
+      v_cross_x2_b.write_coverage_db("db_cross_parallel_2.txt");
+
+      -----------------------------------------------------------------------
+      -- Expected result
+      -----------------------------------------------------------------------
+      --Coverpoint:              Cross_B    (accumulated over 2 testcases)
+      --Goal:                    Bins: 50%,       Hits: 75%
+      --% of Goal:               Bins: 100.00%,   Hits: 99.39%
+      --% of Goal (uncapped):    Bins: 175.00%,   Hits: 172.12%
+      --Coverage (for goal 100): Bins: 87.50%,    Hits: 98.18%
+      -----------------------------------------------------------------------
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross with a single coverage file");
+      ------------------------------------------------------------
+      -- Add bins
+      v_cross_x3.add_cross(bin_range(1,10,0), bin(200), bin(300)); -- TODO: use 16-cross
+
+      -- Set configuration
+      v_cross_x3.set_name("Cross_C");
+
+      -- Sample coverage
+      for i in 1 to 10 loop
+        v_cross_x3.sample_coverage((i, 200, 300));
+      end loop;
+
+      v_cross_x3.write_coverage_db("db_cross_parallel_3.txt");
+
+      -----------------------------------------------------------------------
+      -- Expected result
+      -----------------------------------------------------------------------
+      --Coverpoint:              Cross_C
+      --Coverage (for goal 100): Bins: 100.00%,   Hits: 100.00%
+      -----------------------------------------------------------------------
+
+      -----------------------------------------------------------------------
+      -- Expected final result
+      -----------------------------------------------------------------------
+      --Goal:                    Covpts: 40%
+      --% of Goal:               Covpts: 100.00%
+      --% of Goal (uncapped):    Covpts: 107.14%
+      --Coverage (for goal 100): Covpts: 42.86%,   Bins: 92.31%,   Hits: 98.88%
+      --======================================================================================================================================================
+      --     COVERPOINT        COVERAGE WEIGHT        COVERED BINS     COVERAGE(BINS|HITS)    GOAL(BINS|HITS)    % OF GOAL(BINS|HITS)    NUM TESTCASES
+      --      Covpt_A                 5                  6 / 6          100.00% | 100.00%        50% | 200%        100.00% | 50.00%            3
+      --      Cross_B                 8                  7 / 8           87.50% | 98.18%         50% | 75%         100.00% | 99.39%            2
+      --      Cross_C                 1                 10 / 10         100.00% | 100.00%       100% | 100%        100.00% | 100.00%           1
+      --======================================================================================================================================================
+      -----------------------------------------------------------------------
+
+    --===================================================================================
     elsif GC_TESTCASE = "fc_reports" then
     --===================================================================================
       disable_log_msg(ID_FUNC_COV_SAMPLE);

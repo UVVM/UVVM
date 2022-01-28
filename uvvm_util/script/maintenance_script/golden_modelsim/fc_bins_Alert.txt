@@ -34,23 +34,23 @@ UVVM:                     Increase C_FC_MAX_NUM_BIN_VALUES in adaptations packag
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #1  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(-3001)=> Sampled illegal_bin(-3001)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_9] sample_coverage(-3001)=> Sampled illegal_bin(-3001)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #2  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(-3000)=> Sampled illegal_bin(-3000)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_9] sample_coverage(-3000)=> Sampled illegal_bin(-3000)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #3  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3000)=> Sampled illegal_bin(3000)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_9] sample_coverage(3000)=> Sampled illegal_bin(3000)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #4  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3001)=> Sampled illegal_bin(3001)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_9] sample_coverage(3001)=> Sampled illegal_bin(3001)
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
@@ -62,58 +62,58 @@ UVVM:
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #5  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3100)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3100)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #6  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3101)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3101)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #7  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3102)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3102)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #8  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3103)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3103)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #9  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3104)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3104)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #10  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3105)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3105)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #11  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3106)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3106)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #12  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3107)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3107)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #13  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3108)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3108)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #14  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3109)=> Sampled illegal_bin_range(3100 to 3109)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3109)=> Sampled illegal_bin_range(3100 to 3109)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #15  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3115)=> Sampled illegal_bin(3115)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_10] sample_coverage(3115)=> Sampled illegal_bin(3115)
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #4  ***
@@ -123,199 +123,253 @@ UVVM:                     Increase C_FC_MAX_NUM_BIN_VALUES in adaptations packag
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #16  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #17  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #18  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #19  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #20  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #21  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #22  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #23  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #24  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #25  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #26  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #27  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #28  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #29  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #30  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #31  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #32  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #33  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #34  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3201)=> Sampled illegal_bin_transition(3201->3203->3201)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #35  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3209)=> Sampled illegal_bin_transition(3201->3203->3201->3209)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #36  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3210)=> Sampled illegal_bin_transition(3210->3210->3210->3218->3215->3215->3210)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3210)=> Sampled illegal_bin_transition(3210->3210->3210->3218->3215->3215->3210)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #37  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3210)=> Sampled illegal_bin_transition(3210->3210->3210->3218->3215->3215->3210)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3210)=> Sampled illegal_bin_transition(3210->3210->3210->3218->3215->3215->3210)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #38  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3210)=> Sampled illegal_bin_transition(3210->3210->3210->3218->3215->3215->3210)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3210)=> Sampled illegal_bin_transition(3210->3210->3210->3218->3215->3215->3210)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #39  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3229)=> Sampled illegal_bin_transition(3220->3221->3222->3223->3224->3225->3226->3227->3228->3229)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3229)=> Sampled illegal_bin_transition(3220->3221->3222->3223->3224->3225->3226->3227->3228->3229)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #40  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3229)=> Sampled illegal_bin_transition(3220->3221->3222->3223->3224->3225->3226->3227->3228->3229)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3229)=> Sampled illegal_bin_transition(3220->3221->3222->3223->3224->3225->3226->3227->3228->3229)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #41  ***
-UVVM:           100 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(3229)=> Sampled illegal_bin_transition(3220->3221->3222->3223->3224->3225->3226->3227->3228->3229)
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_11] sample_coverage(3229)=> Sampled illegal_bin_transition(3220->3221->3222->3223->3224->3225->3226->3227->3228->3229)
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #5  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] There is an overlap between 3 bins.
+UVVM:                    add_bins(bin(229), min_hits:18, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #6  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] There is an overlap between 2 bins.
+UVVM:                    add_bins(bin(102), min_hits:1, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #7  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] There is an overlap between 2 bins.
+UVVM:                    add_bins(bin(184), min_hits:17, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #8  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] There is an overlap between 2 bins.
+UVVM:                    add_bins(bin(268), min_hits:14, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    add_bins(bin(366), min_hits:13, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    add_bins(bin(483), min_hits:9, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    add_bins(bin(186), min_hits:10, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    add_bins(bin(460), min_hits:19, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #13  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    add_bins(bin(190), min_hits:1, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #14  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_16] There is an overlap between 3 bins.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #15  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_16] There is an overlap between 2 bins.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #16  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_16] There is an overlap between 2 bins.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #17  ***
+UVVM:           100 ns   TB seq.
+UVVM:                    [Covpt_16] There is an overlap between 2 bins.
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #42  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] sample_coverage(3105)=> Sampled illegal_bin_range(3105 to 3115)
+UVVM:                    [Covpt_18] sample_coverage(3105)=> Sampled illegal_bin_range(3105 to 3115)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #43  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] sample_coverage(3106)=> Sampled illegal_bin_range(3105 to 3115)
+UVVM:                    [Covpt_18] sample_coverage(3106)=> Sampled illegal_bin_range(3105 to 3115)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #44  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] sample_coverage(3114)=> Sampled illegal_bin_range(3105 to 3115)
+UVVM:                    [Covpt_18] sample_coverage(3114)=> Sampled illegal_bin_range(3105 to 3115)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #45  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] sample_coverage(3115)=> Sampled illegal_bin_range(3105 to 3115)
+UVVM:                    [Covpt_18] sample_coverage(3115)=> Sampled illegal_bin_range(3105 to 3115)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #46  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] sample_coverage(3205)=> Sampled illegal_bin_range(3205 to 3215)
+UVVM:                    [Covpt_19] sample_coverage(3205)=> Sampled illegal_bin_range(3205 to 3215)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #47  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] sample_coverage(3206)=> Sampled illegal_bin_range(3205 to 3215)
+UVVM:                    [Covpt_19] sample_coverage(3206)=> Sampled illegal_bin_range(3205 to 3215)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #48  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] sample_coverage(3214)=> Sampled illegal_bin_range(3205 to 3215)
+UVVM:                    [Covpt_19] sample_coverage(3214)=> Sampled illegal_bin_range(3205 to 3215)
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #49  ***
 UVVM:           100 ns   TB seq.
-UVVM:                    [Covpt_2] sample_coverage(3215)=> Sampled illegal_bin_range(3205 to 3215)
+UVVM:                    [Covpt_19] sample_coverage(3215)=> Sampled illegal_bin_range(3205 to 3215)
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #4  ***
 UVVM:           100 ns   MY_SCOPE_2
-UVVM:                    set_num_allocated_bins(10)=> Cannot set the allocated size to a value smaller than the actual number of bins
+UVVM:                    set_num_allocated_bins(5)=> Cannot set the allocated size to a value smaller than the actual number of bins
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 

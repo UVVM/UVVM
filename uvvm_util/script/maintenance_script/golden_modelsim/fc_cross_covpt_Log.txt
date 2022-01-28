@@ -251,6 +251,9 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_1] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_2] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_3] delete_coverpoint()
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing minimum coverage
@@ -318,35 +321,34 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_6] delete_coverpoint()
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing bin names
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(Covpt_4, Covpt_5, "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_6] Adding cross: (100) x (200), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(Covpt_4, Covpt_5, "my_bin_1")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_6] Adding cross: (100) x (200), min_hits:1, rand_weight:1, "my_bin_1"
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(Covpt_4, Covpt_5, min_hits:5, "my_bin_2")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_6] Adding cross: (100) x (200), min_hits:5, rand_weight:5, "my_bin_2"
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(Covpt_4, Covpt_5, min_hits:5, rand_weight:1, "my_bin_3")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_6] Adding cross: (100) x (200), min_hits:5, rand_weight:1, "my_bin_3"
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_7] add_cross(Covpt_4, Covpt_5, "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_7] Adding cross: (100) x (200), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_7] add_cross(Covpt_4, Covpt_5, "my_bin_1")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_7] Adding cross: (100) x (200), min_hits:1, rand_weight:1, "my_bin_1"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_7] add_cross(Covpt_4, Covpt_5, min_hits:5, "my_bin_2")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_7] Adding cross: (100) x (200), min_hits:5, rand_weight:5, "my_bin_2"
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_7] add_cross(Covpt_4, Covpt_5, min_hits:5, rand_weight:1, "my_bin_3")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_7] Adding cross: (100) x (200), min_hits:5, rand_weight:1, "my_bin_3"
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_0
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for my_bin_1
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for my_bin_2
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for my_bin_3
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_4] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_5] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_7] delete_coverpoint()
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): TB seq. ***                                                                                                             
 UVVM:      ====================================================================================================================================================================
-UVVM:      Coverpoint:              Covpt_6
-UVVM:      Coverage (for goal 100): Bins: 20.00%,   Hits: 62.50%  
+UVVM:      Coverpoint:              
+UVVM:      Coverage (for goal 100): Bins: 0.0%,     Hits: 0.0%    
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
-UVVM:                        (100)x(200)                        20                20             100.00%               bin_0                 -                                 
-UVVM:                        (100)x(200)                        0                 1               0.00%                bin_1                 -                                 
-UVVM:                        (100)x(200)                        0                 1               0.00%              my_bin_1                -                                 
-UVVM:                        (100)x(200)                        0                 5               0.00%              my_bin_2                -                                 
-UVVM:                        (100)x(200)                        0                 5               0.00%              my_bin_3                -                                 
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
@@ -355,27 +357,23 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross of 3 elements
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_1] delete_coverpoint()
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_2] delete_coverpoint()
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_4] delete_coverpoint()
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_5] delete_coverpoint()
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_7] add_bins(bin(100),bin(101), "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_7] Adding bins: (100),(101), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_8] add_bins(bin(200),bin(201), "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_8] Adding bins: (200),(201), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_9] add_bins(bin(300), "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_9] Adding bins: (300), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_10] add_cross(Covpt_7, Covpt_8, Covpt_9, "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_10] Adding cross: (100),(101) x (200),(201) x (300), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_8] add_bins(bin(100),bin(101), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_8] Adding bins: (100),(101), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_9] add_bins(bin(200),bin(201), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_9] Adding bins: (200),(201), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_10] add_bins(bin(300), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_10] Adding bins: (300), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_11] add_cross(Covpt_8, Covpt_9, Covpt_10, "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_11] Adding cross: (100),(101) x (200),(201) x (300), min_hits:1, rand_weight:1, ""
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_0
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_2
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_3
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_10] sample_coverage((100, 200, 300))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_10] sample_coverage((100, 201, 300))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_10] sample_coverage((101, 200, 300))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_10] sample_coverage((101, 201, 300))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_10] sample_coverage((100, 200, 301))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_11] sample_coverage((100, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_11] sample_coverage((100, 201, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_11] sample_coverage((101, 200, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_11] sample_coverage((101, 201, 300))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_11] sample_coverage((100, 200, 301))
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_0
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_2
@@ -384,7 +382,7 @@ UVVM:
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): TB seq. ***                                                                                                             
 UVVM:      ====================================================================================================================================================================
-UVVM:      Coverpoint:              Covpt_10
+UVVM:      Coverpoint:              Covpt_11
 UVVM:      Coverage (for goal 100): Bins: 100.00%,  Hits: 100.00% 
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
@@ -400,20 +398,20 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross of 4 elements
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_11] add_bins(bin(400), "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_11] Adding bins: (400), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_12] add_cross(Covpt_7, Covpt_8, Covpt_9, Covpt_11, "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_12] Adding cross: (100),(101) x (200),(201) x (300) x (400), min_hits:1,
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_12] add_bins(bin(400), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_12] Adding bins: (400), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_13] add_cross(Covpt_8, Covpt_9, Covpt_10, Covpt_12, "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_13] Adding cross: (100),(101) x (200),(201) x (300) x (400), min_hits:1,
 UVVM:                                                                             rand_weight:1, ""
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_0
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_2
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_3
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_12] sample_coverage((100, 200, 300, 400))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_12] sample_coverage((100, 201, 300, 400))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_12] sample_coverage((101, 200, 300, 400))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_12] sample_coverage((101, 201, 300, 400))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_12] sample_coverage((100, 200, 300, 401))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_13] sample_coverage((100, 200, 300, 400))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_13] sample_coverage((100, 201, 300, 400))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_13] sample_coverage((101, 200, 300, 400))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_13] sample_coverage((101, 201, 300, 400))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_13] sample_coverage((100, 200, 300, 401))
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_0
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_2
@@ -422,7 +420,7 @@ UVVM:
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): TB seq. ***                                                                                                             
 UVVM:      ====================================================================================================================================================================
-UVVM:      Coverpoint:              Covpt_12
+UVVM:      Coverpoint:              Covpt_13
 UVVM:      Coverage (for goal 100): Bins: 100.00%,  Hits: 100.00% 
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
@@ -438,20 +436,20 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross of 5 elements
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_13] add_bins(bin(500), "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_13] Adding bins: (500), min_hits:1, rand_weight:1, ""
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_14] add_cross(Covpt_7, Covpt_8, Covpt_9, Covpt_11, Covpt_13, "")
-UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_14] Adding cross: (100),(101) x (200),(201) x (300) x (400) x (500), min_hits:1,
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_14] add_bins(bin(500), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_14] Adding bins: (500), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_15] add_cross(Covpt_8, Covpt_9, Covpt_10, Covpt_12, Covpt_14, "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_15] Adding cross: (100),(101) x (200),(201) x (300) x (400) x (500), min_hits:1,
 UVVM:                                                                             rand_weight:1, ""
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_0
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_2
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_3
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_14] sample_coverage((100, 200, 300, 400, 500))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_14] sample_coverage((100, 201, 300, 400, 500))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_14] sample_coverage((101, 200, 300, 400, 500))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_14] sample_coverage((101, 201, 300, 400, 500))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_14] sample_coverage((100, 200, 300, 400, 501))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_15] sample_coverage((100, 200, 300, 400, 500))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_15] sample_coverage((100, 201, 300, 400, 500))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_15] sample_coverage((101, 200, 300, 400, 500))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_15] sample_coverage((101, 201, 300, 400, 500))
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_15] sample_coverage((100, 200, 300, 400, 501))
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_0
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_2
@@ -460,7 +458,7 @@ UVVM:
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): TB seq. ***                                                                                                             
 UVVM:      ====================================================================================================================================================================
-UVVM:      Coverpoint:              Covpt_14
+UVVM:      Coverpoint:              Covpt_15
 UVVM:      Coverage (for goal 100): Bins: 100.00%,  Hits: 100.00% 
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          

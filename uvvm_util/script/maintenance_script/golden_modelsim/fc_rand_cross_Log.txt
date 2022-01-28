@@ -146,14 +146,45 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing randomization among bins with multiple values
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 5. 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((200, 201, 202)), bin((205, 206, 207)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin((200, 201, 202)), bin((205, 206, 207)), min_hits:2, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (200, 201, 202) x (205, 206, 207), min_hits:2, rand_weight:2, ""
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((210, 211, 212)), bin((215, 216, 217)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin((210, 211, 212)), bin((215, 216, 217)), min_hits:2, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (210, 211, 212) x (215, 216, 217), min_hits:2, rand_weight:2, ""
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((220, 221, 222)), bin((225, 226, 227)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin((220, 221, 222)), bin((225, 226, 227)), min_hits:2, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (220, 221, 222) x (225, 226, 227), min_hits:2, rand_weight:2, ""
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((230, 231, 232)), bin((235, 236, 237)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin((230, 231, 232)), bin((235, 236, 237)), min_hits:2, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (230, 231, 232) x (235, 236, 237), min_hits:2, rand_weight:2, ""
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin((240, 241, 242)), bin((245, 246, 247)), min_hits:2, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin((240, 241, 242)), bin((245, 246, 247)), min_hits:2, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (240, 241, 242) x (245, 246, 247), min_hits:2, rand_weight:2, ""
 UVVM: ID_FUNC_COV_RAND                   0.0 ns  TB seq.                        [Covpt_1] rand(SAMPLE_COV)=> (222, 226)
@@ -177,14 +208,45 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing randomization among bins with a range of values
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 5. 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(300, 304), bin_range(305, 309), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_range(300, 304), bin_range(305, 309), min_hits:3, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (300 to 304) x (305 to 309), min_hits:3, rand_weight:3, ""
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(310, 314), bin_range(315, 319), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_range(310, 314), bin_range(315, 319), min_hits:3, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (310 to 314) x (315 to 319), min_hits:3, rand_weight:3, ""
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(320, 324), bin_range(325, 329), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_range(320, 324), bin_range(325, 329), min_hits:3, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (320 to 324) x (325 to 329), min_hits:3, rand_weight:3, ""
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(330, 334), bin_range(335, 339), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_range(330, 334), bin_range(335, 339), min_hits:3, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (330 to 334) x (335 to 339), min_hits:3, rand_weight:3, ""
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(340, 344), bin_range(345, 349), min_hits:3, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_range(340, 344), bin_range(345, 349), min_hits:3, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (340 to 344) x (345 to 349), min_hits:3, rand_weight:3, ""
 UVVM: ID_FUNC_COV_RAND                   0.0 ns  TB seq.                        [Covpt_1] rand(SAMPLE_COV)=> (312, 317)
@@ -213,18 +275,49 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing randomization among bins with a transition of values
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 5. 
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((400, 402, 404)), bin_transition((405, 407, 409)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_transition((400, 402, 404)), bin_transition((405, 407, 409)),
 UVVM:                                                                           min_hits:4, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (400->402->404) x (405->407->409), min_hits:4, rand_weight:4, ""
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((410, 412, 414)), bin_transition((415, 417, 419)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_transition((410, 412, 414)), bin_transition((415, 417, 419)),
 UVVM:                                                                           min_hits:4, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (410->412->414) x (415->417->419), min_hits:4, rand_weight:4, ""
+UVVM: 
+UVVM: ***  TB_WARNING #13  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((420, 422, 424)), bin_transition((425, 427, 429)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_transition((420, 422, 424)), bin_transition((425, 427, 429)),
 UVVM:                                                                           min_hits:4, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (420->422->424) x (425->427->429), min_hits:4, rand_weight:4, ""
+UVVM: 
+UVVM: ***  TB_WARNING #14  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((430, 432, 434)), bin_transition((439, 437, 435)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_transition((430, 432, 434)), bin_transition((439, 437, 435)),
 UVVM:                                                                           min_hits:4, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (430->432->434) x (439->437->435), min_hits:4, rand_weight:4, ""
+UVVM: 
+UVVM: ***  TB_WARNING #15  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((440, 442, 442)), bin_transition((445, 445, 449)), min_hits:4, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_transition((440, 442, 442)), bin_transition((445, 445, 449)),
 UVVM:                                                                           min_hits:4, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (440->442->442) x (445->445->449), min_hits:4, rand_weight:4, ""
@@ -299,12 +392,37 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing randomization among different types of bins
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 4. 
+UVVM: 
+UVVM: ***  TB_WARNING #16  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin(60), bin((250, 251, 252, 253, 254)), min_hits:5, "")=> Coverpoint has already been sampled, adding more bins is not recommended
+UVVM:                    otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin(60), bin((250, 251, 252, 253, 254)), min_hits:5, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (60) x (250, 251, 252, 253, 254), min_hits:5, rand_weight:5, ""
+UVVM: 
+UVVM: ***  TB_WARNING #17  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin(70), bin_range(352, 355), min_hits:5, "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their
+UVVM:                    coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin(70), bin_range(352, 355), min_hits:5, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (70) x (352 to 355), min_hits:5, rand_weight:5, ""
+UVVM: 
+UVVM: ***  TB_WARNING #18  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_transition((450, 452, 454, 456, 458)), bin(80), min_hits:5, "")=> Coverpoint has already been sampled, adding more bins is not
+UVVM:                    recommended otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_transition((450, 452, 454, 456, 458)), bin(80), min_hits:5, "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (450->452->454->456->458) x (80), min_hits:5, rand_weight:5, ""
+UVVM: 
+UVVM: ***  TB_WARNING #19  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin_range(360, 369), bin_transition((466, 463, 463, 464, 461)), min_hits:5, "")=> Coverpoint has already been sampled, adding more bins is
+UVVM:                    not recommended otherwise their coverage might not be correct.
+UVVM: 
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_cross(bin_range(360, 369), bin_transition((466, 463, 463, 464, 461)), min_hits:5,
 UVVM:                                                                           "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_1] Adding cross: (360 to 369) x (466->463->463->464->461), min_hits:5, rand_weight:5,
@@ -966,7 +1084,7 @@ UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
 UVVM:                NOTE         :      0         0         0         ok
 UVVM:                TB_NOTE      :      0         0         0         ok
 UVVM:                WARNING      :      0         0         0         ok
-UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                TB_WARNING   :     19        19         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :      0         0         0         ok
 UVVM:                TB_ERROR     :      0         0         0         ok

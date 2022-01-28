@@ -34,7 +34,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
 UVVM:             0 ns   TB seq.
-UVVM:                    write_coverage_db(Y://bitvis//uvvm//uvvm_util//simfile.txt)=> Coverpoint has not been initialized
+UVVM:                    write_coverage_db(db_file.txt)=> Coverpoint has not been initialized
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 

@@ -53,12 +53,17 @@ hdlunit.add_generics(entity="generic_queue_tb",
 hdlunit.add_generics(entity="simplified_data_queue_tb",
                      generics=["GC_TESTCASE", "simplified_data_queue_tb"])
 
-output_path = os_adjust_path(os.getcwd())
+output_path = os_adjust_path(os.getcwd() + '//')
 hdlunit.add_generics(entity='func_cov_tb',
                      architecture='func',
                      generics=['GC_FILE_PATH', (output_path, 'PATH')])
 
 hdlunit.start(regression_mode=True, gui_mode=False)
+
+# Run coverage accumulation script
+hdlunit.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_report_verbose.txt -r")
+hdlunit.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_report_non_verbose.txt -r -nv")
+hdlunit.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_report_holes.txt -r -hl")
 
 num_failing_tests = hdlunit.get_num_fail_tests()
 num_passing_tests = hdlunit.get_num_pass_tests()

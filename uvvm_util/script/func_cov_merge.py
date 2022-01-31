@@ -556,9 +556,9 @@ class CrossBin(object):
 class CoverageMerger(object):
 
     def __init__(self):
-        self.cov_dir = './hdlunit/test'
+        self.cov_dir = '.'
         self.cov_file = '*.txt'
-        self.output_file = 'func_cov_report.txt'
+        self.output_file = 'func_cov_accumulated.txt'
         self.recursive = False
         self.verbose = True
         self.holes = False
@@ -574,9 +574,9 @@ class CoverageMerger(object):
 
     def _args(self):
         arg_parser = argparse.ArgumentParser(description='UVVM Coverage Database Merger')
-        arg_parser.add_argument('-d', '--dir', action='store', type=str, nargs=1, help='search directory. Default = ./hdlunit/test')
+        arg_parser.add_argument('-d', '--dir', action='store', type=str, nargs=1, help='search directory. Default = current directory')
         arg_parser.add_argument('-f', '--file', action='store', type=str, nargs=1, help='coverage database file name/extension. Default = .txt')
-        arg_parser.add_argument('-o', '--output', action='store', type=str, nargs=1, help='coverage database output file. Default = func_cov_report.txt')
+        arg_parser.add_argument('-o', '--output', action='store', type=str, nargs=1, help='coverage database output file. Default = func_cov_accumulated.txt')
         arg_parser.add_argument('-r', '--recursive', action='store_true', help='recursive directory file search')
         arg_parser.add_argument('-nv', '--non_verbose', action='store_true', help='print non_verbose report. Default = verbose')
         arg_parser.add_argument('-hl', '--holes', action='store_true', help='print coverage holes report. Default = verbose')

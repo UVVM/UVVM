@@ -1047,23 +1047,23 @@ Coverage merge script
 ==================================================================================================================================
 A python script to accumulate coverage from different database files is provided in *uvvm_util/script/func_cov_merge.py*.
 
-+------------------+------------------+--------------------------------------------+-------------------------+
-| Arguments                           | Description                                | Default value           |
-+==================+==================+============================================+=========================+
-| -h               | --help           | Help screen                                |                         |
-+------------------+------------------+--------------------------------------------+-------------------------+
-| -d DIR           | --dir DIR        | Search directory                           | ./hdlunit/test          |
-+------------------+------------------+--------------------------------------------+-------------------------+
-| -f FILE          | --file FILE      | Coverage database file name/extension      | .txt                    |
-+------------------+------------------+--------------------------------------------+-------------------------+
-| -o OUTPUT        | --output OUTPUT  | Coverage database output file              | func_cov_report.txt     |
-+------------------+------------------+--------------------------------------------+-------------------------+
-| -r               | --recursive      | Recursive directory file search            |                         |
-+------------------+------------------+--------------------------------------------+-------------------------+
-| -nv              | --non_verbose    | Print non_verbose report                   | Print verbose report    |
-+------------------+------------------+--------------------------------------------+-------------------------+
-| -hl              | --holes          | Print coverage holes report                | Print verbose report    |
-+------------------+------------------+--------------------------------------------+-------------------------+
++------------------+------------------+--------------------------------------------+----------------------------+
+| Arguments                           | Description                                | Default value              |
++==================+==================+============================================+============================+
+| -h               | --help           | Help screen                                |                            |
++------------------+------------------+--------------------------------------------+----------------------------+
+| -d DIR           | --dir DIR        | Search directory                           | Current directory          |
++------------------+------------------+--------------------------------------------+----------------------------+
+| -f FILE          | --file FILE      | Coverage database file name/extension      | .txt                       |
++------------------+------------------+--------------------------------------------+----------------------------+
+| -o OUTPUT        | --output OUTPUT  | Coverage database output file              | func_cov_accumulated.txt   |
++------------------+------------------+--------------------------------------------+----------------------------+
+| -r               | --recursive      | Recursive directory file search            |                            |
++------------------+------------------+--------------------------------------------+----------------------------+
+| -nv              | --non_verbose    | Print non_verbose report                   | Print verbose report       |
++------------------+------------------+--------------------------------------------+----------------------------+
+| -hl              | --holes          | Print coverage holes report                | Print verbose report       |
++------------------+------------------+--------------------------------------------+----------------------------+
 
 .. code-block::
 
@@ -1071,7 +1071,7 @@ A python script to accumulate coverage from different database files is provided
 
 The script will print, both to the terminal and a file, the *coverage report* for each coverpoint and the *overall coverage
 report* with a similar format to :ref:`func_cov_pkg_coverage_report`. The verbosity of the reports can be adjusted using the 
-arguments -nv or -hl.
+arguments -nv or -hl. Note that the output file path is relative to the directory where the script is run.
 
 The following rules apply when merging a coverpoint from different files:
 

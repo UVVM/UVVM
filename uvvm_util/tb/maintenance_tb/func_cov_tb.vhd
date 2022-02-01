@@ -3246,7 +3246,7 @@ begin
       disable_log_msg(ID_FUNC_COV_BINS_INFO);
       disable_log_msg(ID_FUNC_COV_SAMPLE);
 
-      fc_set_covpts_coverage_goal(40); -- Will be used for the whole testcase, i.e. all the coverpoints
+      fc_set_covpts_coverage_goal(50); -- Will be used for the whole testcase, i.e. all the coverpoints
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing coverpoint with same bins and different coverage values");
@@ -3315,7 +3315,7 @@ begin
       -----------------------------------------------------------------------
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing cross with different bins and coverage values");
+      log(ID_LOG_HDR, "Testing cross with different number of bins and coverage values");
       ------------------------------------------------------------
       -- Add bins
       v_cross_x2.add_cross(bin(10), bin(1010));
@@ -3416,40 +3416,88 @@ begin
       -----------------------------------------------------------------------
 
       ------------------------------------------------------------
-      log(ID_LOG_HDR, "Testing cross with a single coverage file");
+      log(ID_LOG_HDR, "Testing cross with different bins and coverage values");
       ------------------------------------------------------------
       -- Add bins
-      v_cross_x3.add_cross(bin_range(1,10,0), bin(200), bin(300)); -- TODO: use 16-cross
+      v_cross_x3.add_cross(bin_range(1,10), bin(200), bin(300));
+      v_cross_x3.add_cross(bin_range(11,20), bin(210), bin(310));
+      v_cross_x3.add_cross(bin_range(21,30), bin(220), bin(320));
+
+      -- Add bins
+      v_cross_x3_b.add_cross(bin_range(1,10), bin(200), bin(400));
+      v_cross_x3_b.add_cross(bin_range(11,20), bin(210), bin(410));
+      v_cross_x3_b.add_cross(bin_range(21,30), bin(220), bin(420));
 
       -- Set configuration
       v_cross_x3.set_name("Cross_C");
+      v_cross_x3.set_overall_coverage_weight(6);
+      v_cross_x3.set_hits_coverage_goal(150);
+
+      -- Set configuration
+      v_cross_x3_b.set_name("Cross_C");
+      v_cross_x3_b.set_overall_coverage_weight(6);
+      v_cross_x3_b.set_hits_coverage_goal(150);
 
       -- Sample coverage
-      for i in 1 to 10 loop
-        v_cross_x3.sample_coverage((i, 200, 300));
-      end loop;
+      sample_cross_bins(v_cross_x3, (0 => (5,200,300)), 3);
+      sample_cross_bins(v_cross_x3, (0 => (15,210,310)), 3);
+      sample_cross_bins(v_cross_x3, (0 => (25,220,320)), 3);
 
       v_cross_x3.write_coverage_db("db_cross_parallel_3.txt");
+
+      -- Sample coverage
+      sample_cross_bins(v_cross_x3_b, (0 => (5,200,400)), 3);
+      sample_cross_bins(v_cross_x3_b, (0 => (15,210,410)), 3);
+      sample_cross_bins(v_cross_x3_b, (0 => (25,220,420)), 3);
+
+      v_cross_x3_b.write_coverage_db("db_cross_parallel_4.txt");
 
       -----------------------------------------------------------------------
       -- Expected result
       -----------------------------------------------------------------------
-      --Coverpoint:              Cross_C
+      --Coverpoint:              Cross_C    (accumulated over 2 testcases)
+      --Goal:                    Bins: 100%,      Hits: 150%
+      --% of Goal:               Bins: 100.00%,   Hits: 100.00%
+      --% of Goal (uncapped):    Bins: 100.00%,   Hits: 200.00%
+      --Coverage (for goal 100): Bins: 100.00%,   Hits: 100.00%
+      -----------------------------------------------------------------------
+
+      ------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing cross with a single coverage file");
+      ------------------------------------------------------------
+      -- Add bins
+      v_cross_x4.add_cross(bin_range(1,10,0), bin(200), bin(300), bin(400)); -- TODO: use 16-cross
+
+      -- Set configuration
+      v_cross_x4.set_name("Cross_D");
+
+      -- Sample coverage
+      for i in 1 to 10 loop
+        v_cross_x4.sample_coverage((i, 200, 300, 400));
+      end loop;
+
+      v_cross_x4.write_coverage_db("db_cross_parallel_5.txt");
+
+      -----------------------------------------------------------------------
+      -- Expected result
+      -----------------------------------------------------------------------
+      --Coverpoint:              Cross_D
       --Coverage (for goal 100): Bins: 100.00%,   Hits: 100.00%
       -----------------------------------------------------------------------
 
       -----------------------------------------------------------------------
       -- Expected final result
       -----------------------------------------------------------------------
-      --Goal:                    Covpts: 40%
+      --Goal:                    Covpts: 50%
       --% of Goal:               Covpts: 100.00%
-      --% of Goal (uncapped):    Covpts: 107.14%
-      --Coverage (for goal 100): Covpts: 42.86%,   Bins: 92.31%,   Hits: 98.88%
+      --% of Goal (uncapped):    Covpts: 120.00%
+      --Coverage (for goal 100): Covpts: 60.00%,   Bins: 94.29%,   Hits: 98.93%
       --======================================================================================================================================================
       --     COVERPOINT        COVERAGE WEIGHT        COVERED BINS     COVERAGE(BINS|HITS)    GOAL(BINS|HITS)    % OF GOAL(BINS|HITS)    NUM TESTCASES
       --      Covpt_A                 5                  6 / 6          100.00% | 100.00%        50% | 200%        100.00% | 50.00%            3
       --      Cross_B                 8                  7 / 8           87.50% | 98.18%         50% | 75%         100.00% | 99.39%            2
-      --      Cross_C                 1                 10 / 10         100.00% | 100.00%       100% | 100%        100.00% | 100.00%           1
+      --      Cross_C                 6                  6 / 6          100.00% | 100.00%       100% | 150%        100.00% | 100.00%           2
+      --      Cross_D                 1                 10 / 10         100.00% | 100.00%       100% | 100%        100.00% | 100.00%           1
       --======================================================================================================================================================
       -----------------------------------------------------------------------
 

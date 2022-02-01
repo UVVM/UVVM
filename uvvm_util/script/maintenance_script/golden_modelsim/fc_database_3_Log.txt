@@ -10,7 +10,7 @@ UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        
 UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_CONFIG). 
 UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_FUNC_COV_BINS_INFO). 
 UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_FUNC_COV_SAMPLE). 
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        fc_set_covpts_coverage_goal(40)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        fc_set_covpts_coverage_goal(50)
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing coverpoint with same bins and different coverage values
@@ -72,7 +72,7 @@ UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] write_coverage_db(db_covpt_parallel_3.txt)
 UVVM: 
 UVVM: 
-UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross with different bins and coverage values
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross with different number of bins and coverage values
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(10), bin(1010), "")
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(20), bin(1020), min_hits:8, rand_weight:20, "single")
@@ -205,10 +205,26 @@ UVVM:
 UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] write_coverage_db(db_cross_parallel_2.txt)
 UVVM: 
 UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross with different bins and coverage values
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_cross(bin_range(1, 10), bin(200), bin(300), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_cross(bin_range(11, 20), bin(210), bin(310), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_cross(bin_range(21, 30), bin(220), bin(320), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_cross(bin_range(1, 10), bin(200), bin(400), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_cross(bin_range(11, 20), bin(210), bin(410), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_cross(bin_range(21, 30), bin(220), bin(420), "")
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] set_overall_coverage_weight(6)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] set_hits_coverage_goal(150)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] set_overall_coverage_weight(6)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] set_hits_coverage_goal(150)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] write_coverage_db(db_cross_parallel_3.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] write_coverage_db(db_cross_parallel_4.txt)
+UVVM: 
+UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross with a single coverage file
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_cross(bin_range(1, 10, num_bins:0), bin(200), bin(300), "")
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] write_coverage_db(db_cross_parallel_3.txt)
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(bin_range(1, 10, num_bins:0), bin(200), bin(300), bin(400), "")
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_D] write_coverage_db(db_cross_parallel_5.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***

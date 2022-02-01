@@ -15,6 +15,12 @@ t_cov_bin_type = {0: "VAL",
                   8: "TRN_ILLEGAL"}
 
 
+class bcolors:
+    OKGREEN = '\033[32m'
+    WARNING = '\033[33m'
+    ENDC = '\033[37;40m'
+
+
 class CoverageFileReader(object):
 
     def __init__(self, filename):
@@ -185,6 +191,7 @@ class CoverPoint(object):
         self.bins = []
         self.invalid_bin_idx = 0
         self.invalid_bins = []
+        self.bins_mismatch = False
         self.report_width = 130
         self.report_bin_width = 40
 
@@ -332,6 +339,12 @@ class CoverPoint(object):
 
     def get_invalid_bins(self):
         return self.invalid_bins
+
+    def set_bins_mismatch(self, mismatch):
+        self.bins_mismatch = mismatch
+
+    def get_bins_mismatch(self) -> bool:
+        return self.bins_mismatch
 
     def get_bins_coverage(self, cov_representation) -> float:
         coverage = 0.0
@@ -560,6 +573,7 @@ class CoverageMerger(object):
         self.cov_file = '*.txt'
         self.output_file = 'func_cov_accumulated.txt'
         self.recursive = False
+        self.ignore_mismatch = False
         self.verbose = True
         self.holes = False
         self.cov_file_reader_list = []
@@ -578,6 +592,7 @@ class CoverageMerger(object):
         arg_parser.add_argument('-f', '--file', action='store', type=str, nargs=1, help='coverage database file name/extension. Default = .txt')
         arg_parser.add_argument('-o', '--output', action='store', type=str, nargs=1, help='coverage database output file. Default = func_cov_accumulated.txt')
         arg_parser.add_argument('-r', '--recursive', action='store_true', help='recursive directory file search')
+        arg_parser.add_argument('-im', '--ignore_mismatch', action='store_true', help='do not report coverpoints with mismatching bins')
         arg_parser.add_argument('-nv', '--non_verbose', action='store_true', help='print non_verbose report. Default = verbose')
         arg_parser.add_argument('-hl', '--holes', action='store_true', help='print coverage holes report. Default = verbose')
 
@@ -591,6 +606,8 @@ class CoverageMerger(object):
             self.output_file = args.output[0]
         if args.recursive:
             self.recursive = True
+        if args.ignore_mismatch:
+            self.ignore_mismatch = True
         if args.non_verbose:
             self.verbose = False
         if args.holes:
@@ -728,6 +745,8 @@ class CoverageMerger(object):
                     # Merge bins
                     new_bin_list = new_covpt.get_bins()
                     merged_bin_list = merged_covpt.get_bins()
+                    if len(new_bin_list) != len(merged_bin_list):
+                        merged_covpt.set_bins_mismatch(True)
                     for merged_bin in merged_bin_list:
                         for new_bin in new_bin_list:
                             if merged_bin.compare_cross_bins(new_bin.get_cross_bins()) and merged_bin.get_min_hits() == new_bin.get_min_hits() and merged_bin.get_rand_weight() == new_bin.get_rand_weight():
@@ -735,6 +754,8 @@ class CoverageMerger(object):
                                 merged_bin.increment_hits(new_bin.get_hits())
                                 new_bin_list.remove(new_bin)
                                 break
+                    if len(new_bin_list) != 0:
+                        merged_covpt.set_bins_mismatch(True)
                     # Add any extra bins not found in previous files
                     merged_bin_list.extend(new_bin_list)
                     merged_covpt.set_bins(merged_bin_list)
@@ -761,6 +782,8 @@ class CoverageMerger(object):
                     # Merge ignore and illegal bins
                     new_bin_list = new_covpt.get_invalid_bins()
                     merged_bin_list = merged_covpt.get_invalid_bins()
+                    if len(new_bin_list) != len(merged_bin_list):
+                        merged_covpt.set_bins_mismatch(True)
                     for merged_bin in merged_bin_list:
                         for new_bin in new_bin_list:
                             if merged_bin.compare_cross_bins(new_bin.get_cross_bins()) and merged_bin.get_min_hits() == new_bin.get_min_hits() and merged_bin.get_rand_weight() == new_bin.get_rand_weight():
@@ -768,6 +791,8 @@ class CoverageMerger(object):
                                 merged_bin.increment_hits(new_bin.get_hits())
                                 new_bin_list.remove(new_bin)
                                 break
+                    if len(new_bin_list) != 0:
+                        merged_covpt.set_bins_mismatch(True)
                     # Add any extra bins not found in previous files
                     merged_bin_list.extend(new_bin_list)
                     merged_covpt.set_invalid_bins(merged_bin_list)
@@ -805,8 +830,33 @@ class CoverageMerger(object):
             self._print_overall_report('NON_VERBOSE')
 
 
+    def print_bins_mismatch(self):
+        if self.ignore_mismatch is False:
+            txt = []
+            color_txt = []
+            found_covpts = False
+
+            txt.append('\n' + 'Coverpoints with mismatching bins:')
+            color_txt.append('\n' + bcolors.WARNING + 'Coverpoints with mismatching bins:' + bcolors.ENDC)
+            for covpt in self.merged_covpt_list:
+                if covpt.get_bins_mismatch() is True:
+                    txt.append(covpt.get_name())
+                    color_txt.append(bcolors.WARNING + covpt.get_name() + bcolors.ENDC)
+                    found_covpts = True
+            if found_covpts is False:
+                txt.append('None')
+                color_txt.append(bcolors.OKGREEN + 'None' + bcolors.ENDC)
+
+            with open(self.output_file, mode='a') as output_file:
+                for line in txt:
+                    output_file.write(line + '\n') # Print to file
+                for line in color_txt:
+                    print(line)                    # Print to terminal
+
+
 if __name__ == '__main__':
     cm = CoverageMerger()
     cm.merge()
     cm.print_covpt_report()
     cm.print_overall_report()
+    cm.print_bins_mismatch()

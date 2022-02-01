@@ -1207,9 +1207,9 @@ illegal_transition
 <p>A python script to accumulate coverage from different database files is provided in <em>uvvm_util/script/func_cov_merge.py</em>.</p>
 <table class="docutils align-default">
 <colgroup>
+<col style="width: 16%" />
 <col style="width: 17%" />
-<col style="width: 17%" />
-<col style="width: 42%" />
+<col style="width: 43%" />
 <col style="width: 24%" />
 </colgroup>
 <thead>
@@ -1227,7 +1227,7 @@ illegal_transition
 <tr class="row-odd"><td><p>-d DIR</p></td>
 <td><p>–dir DIR</p></td>
 <td><p>Search directory</p></td>
-<td><p>./hdlunit/test</p></td>
+<td><p>Current directory</p></td>
 </tr>
 <tr class="row-even"><td><p>-f FILE</p></td>
 <td><p>–file FILE</p></td>
@@ -1237,19 +1237,24 @@ illegal_transition
 <tr class="row-odd"><td><p>-o OUTPUT</p></td>
 <td><p>–output OUTPUT</p></td>
 <td><p>Coverage database output file</p></td>
-<td><p>func_cov_report.txt</p></td>
+<td><p>func_cov_accumulated.txt</p></td>
 </tr>
 <tr class="row-even"><td><p>-r</p></td>
 <td><p>–recursive</p></td>
 <td><p>Recursive directory file search</p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p>-nv</p></td>
+<tr class="row-odd"><td><p>-im</p></td>
+<td><p>–ignore_mismatch</p></td>
+<td><p>Do not report coverpoints with mismatching bins</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>-nv</p></td>
 <td><p>–non_verbose</p></td>
 <td><p>Print non_verbose report</p></td>
 <td><p>Print verbose report</p></td>
 </tr>
-<tr class="row-even"><td><p>-hl</p></td>
+<tr class="row-odd"><td><p>-hl</p></td>
 <td><p>–holes</p></td>
 <td><p>Print coverage holes report</p></td>
 <td><p>Print verbose report</p></td>
@@ -1261,7 +1266,7 @@ illegal_transition
 </div>
 <p>The script will print, both to the terminal and a file, the <em>coverage report</em> for each coverpoint and the <em>overall coverage
 report</em> with a similar format to <a class="reference internal" href="#func-cov-pkg-coverage-report"><span class="std std-ref">Coverage report</span></a>. The verbosity of the reports can be adjusted using the
-arguments -nv or -hl.</p>
+arguments -nv or -hl. Note that the output file path is relative to the directory where the script is run.</p>
 <p>The following rules apply when merging a coverpoint from different files:</p>
 <blockquote>
 <div><ul class="simple">
@@ -1274,6 +1279,7 @@ reason it is recommended to ensure the same configuration is used in all the tes
 the testcases for the given coverpoint.</p></li>
 <li><p>The matching bins’ hits are accumulated.</p></li>
 <li><p>Any non-matching bins are added to the merged coverpoint.</p></li>
+<li><p>If a coverpoint has mismatching bins it will be reported at the end. This message can be disabled by using the -im argument.</p></li>
 </ul>
 </div></blockquote>
 </div>

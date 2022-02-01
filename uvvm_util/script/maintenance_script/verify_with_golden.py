@@ -28,7 +28,7 @@ def get_test_file_list():
         filepath = dirpath + os.sep + file
         if not 'report.txt' in file:
           filelist.append(filepath)
-      elif 'func_cov_report' in file and '.txt' in file:
+      elif 'func_cov' in file and '.txt' in file:
         filepath = dirpath + os.sep + file
         filelist.append(filepath)
   return filelist

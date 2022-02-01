@@ -63,7 +63,7 @@ hdlunit.start(regression_mode=True, gui_mode=False)
 # Run coverage accumulation script
 hdlunit.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_verbose.txt -r")
 hdlunit.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_non_verbose.txt -r -nv")
-hdlunit.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_holes.txt -r -hl")
+hdlunit.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_holes.txt -r -hl -im")
 
 num_failing_tests = hdlunit.get_num_fail_tests()
 num_passing_tests = hdlunit.get_num_pass_tests()

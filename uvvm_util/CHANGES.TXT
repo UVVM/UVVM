@@ -3,6 +3,14 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.0
+----------
+Released: 2022-XX-XX
+- FC: Generate an alert when adding bins to a coverpoint which has been sampled.
+- FC: Major updates in the coverage database accumulation mechanism.
+- FC: Added a python script to merge coverage database files.
+- FC: Fixed a bug in set_num_allocated_bins() not allowing to reduce size.
+
 v2.18.1
 ----------
 Released: 2021-11-12

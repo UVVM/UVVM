@@ -17,6 +17,7 @@ Released: 2022-XX-XX
 - FC: Major updates in the coverage database accumulation mechanism.
 - FC: Added a python script to merge coverage database files.
 - FC: Fixed a bug in set_num_allocated_bins() not allowing to reduce size.
+- FC: Disabled extra randomization log messages when using optimized randomization.
 
 
 v2 2021.11.12

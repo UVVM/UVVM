@@ -3260,6 +3260,7 @@ package body func_cov_pkg is
       constant ext_proc_call : string := "")
     return integer_vector is
       constant C_LOCAL_CALL      : string := "rand(" & to_upper(to_string(sampling)) & ")";
+      constant C_MSG_ID_ENABLED  : boolean := msg_id_panel(ID_RAND_GEN) = ENABLED;
       variable v_bin_weight_list : t_val_weight_int_vec(0 to priv_bins_idx-1);
       variable v_acc_weight      : natural := 0;
       variable v_values_vec      : integer_vector(0 to C_FC_MAX_NUM_BIN_VALUES-1);
@@ -3271,6 +3272,9 @@ package body func_cov_pkg is
       if priv_num_bins_crossed = C_UNINITIALIZED then
         alert(TB_ERROR, C_LOCAL_CALL & "=> Coverpoint does not contain any bins", priv_scope);
         return v_ret;
+      end if;
+      if C_MSG_ID_ENABLED then
+        disable_log_msg(ID_RAND_GEN, QUIET);
       end if;
 
       -- A transition bin returns all the transition values before allowing to select a different bin value
@@ -3346,6 +3350,9 @@ package body func_cov_pkg is
 
       if ext_proc_call = "" then -- Do not print log message when being called from another method
         log(ID_FUNC_COV_RAND, get_name_prefix(VOID) & C_LOCAL_CALL & "=> " & to_string(v_ret), priv_scope, msg_id_panel);
+      end if;
+      if C_MSG_ID_ENABLED then
+        enable_log_msg(ID_RAND_GEN, QUIET);
       end if;
       return v_ret;
     end function;

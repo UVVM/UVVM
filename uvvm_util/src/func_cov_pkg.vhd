@@ -1564,8 +1564,7 @@ package body func_cov_pkg is
       constant use_rand_weight : in    boolean;
       constant bin_name        : in    string) is
       constant C_NUM_CROSS_BINS  : natural := bin_array'length;
-      variable v_bin_is_valid    : boolean := true;
-      variable v_bin_is_illegal  : boolean := false;
+      variable v_bin_is_valid    : boolean;
       variable v_num_transitions : integer;
     begin
       check_value(priv_id /= C_DEALLOCATED_ID, TB_FAILURE, "Coverpoint has not been initialized", priv_scope, ID_NEVER);
@@ -1576,13 +1575,11 @@ package body func_cov_pkg is
         -- Last element of the array has been reached, add bins
         if bin_array_idx = C_NUM_CROSS_BINS-1 then
           -- Check that all the bins being added are valid
+          v_bin_is_valid := true;
           for j in 0 to C_NUM_CROSS_BINS-1 loop
             v_bin_is_valid := v_bin_is_valid and (bin_array(j).bin_vector(idx_reg(j)).contains = VAL or
                                                   bin_array(j).bin_vector(idx_reg(j)).contains = RAN or
                                                   bin_array(j).bin_vector(idx_reg(j)).contains = TRN);
-            v_bin_is_illegal := v_bin_is_illegal or (bin_array(j).bin_vector(idx_reg(j)).contains = VAL_ILLEGAL or
-                                                     bin_array(j).bin_vector(idx_reg(j)).contains = RAN_ILLEGAL or
-                                                     bin_array(j).bin_vector(idx_reg(j)).contains = TRN_ILLEGAL);
           end loop;
           v_num_transitions := C_UNINITIALIZED;
 

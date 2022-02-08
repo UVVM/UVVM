@@ -19,6 +19,7 @@ Released: 2022-XX-XX
 - FC: Fixed a bug in set_num_allocated_bins() not allowing to reduce size.
 - FC: Disabled extra randomization log messages when using optimized randomization.
 - FC: Fixed bins not being added when concatenated after ignore or illegal bins.
+- Added demo for advanced randomization and functional coverage.
 
 
 v2 2021.11.12

@@ -1042,7 +1042,7 @@ def build_parial_cov_list(run_configuration, container):
     # and add any wildcard matches.
     #==========================================================================
     not_found_pc_file_list = []
-    for pc_file in partial_coverage_files:
+    for pc_file in partial_coverage_files[:]:
         if not(os.path.isfile(pc_file)):
             # Remove the wildcard item from list
             partial_coverage_files.remove(pc_file)

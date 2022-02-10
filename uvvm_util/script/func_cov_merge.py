@@ -748,7 +748,7 @@ class CoverageMerger(object):
                     if len(new_bin_list) != len(merged_bin_list):
                         merged_covpt.set_bins_mismatch(True)
                     for merged_bin in merged_bin_list:
-                        for new_bin in new_bin_list:
+                        for new_bin in new_bin_list[:]:
                             if merged_bin.compare_cross_bins(new_bin.get_cross_bins()) and merged_bin.get_min_hits() == new_bin.get_min_hits() and merged_bin.get_rand_weight() == new_bin.get_rand_weight():
                                 merged_bin.set_name(new_bin.get_name())
                                 merged_bin.increment_hits(new_bin.get_hits())
@@ -785,7 +785,7 @@ class CoverageMerger(object):
                     if len(new_bin_list) != len(merged_bin_list):
                         merged_covpt.set_bins_mismatch(True)
                     for merged_bin in merged_bin_list:
-                        for new_bin in new_bin_list:
+                        for new_bin in new_bin_list[:]:
                             if merged_bin.compare_cross_bins(new_bin.get_cross_bins()) and merged_bin.get_min_hits() == new_bin.get_min_hits() and merged_bin.get_rand_weight() == new_bin.get_rand_weight():
                                 merged_bin.set_name(new_bin.get_name())
                                 merged_bin.increment_hits(new_bin.get_hits())

@@ -1,672 +1,516 @@
 .. _utility_library:
 
-#######################################################################################################################
+##################################################################################################################################
 Utility Library
-#######################################################################################################################
+##################################################################################################################################
 
-***********************************************************************************************************************	     
+**********************************************************************************************************************************
 Methods
-***********************************************************************************************************************	     
-
-
+**********************************************************************************************************************************
 .. note::
-   **1**: Arguments common for most methods (green text) are described in chapter 1.12.
-   
-   **2**: All methods are defined in uvvm_util.methods_pkg, unless otherwise noted.
-   
-   **Legend**: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
-   
-   ``*`` IEEE=Method is native for VHDL2008 (Method is listed here for completeness.)
 
-
+   * All methods are defined in uvvm_util.methods_pkg, unless otherwise noted.
+   * **Legend**: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
+   * IEEE=Method is native for VHDL2008 (method is listed here for completeness).
 
 Checks and awaits
-=======================================================================================================================
+==================================================================================================================================
 
-**Note:** Although all check and await methods have optional [alert_level], it is best practice to always evaluate and 
-assign the most fitting alert_level for any given check or await.
+.. hint::
+
+    Although all check and await methods have optional [alert_level], it is best practice to always evaluate and assign the most 
+    fitting alert_level for any given check or await.
 
 
 check_value()
--------------
+----------------------------------------------------------------------------------------------------------------------------------
+Checks if value equals exp, and alerts with severity alert_level if the values do not match. The result of the check is returned as 
+a boolean if the method is called as a function. ::
 
-Checks if val equals exp, and alerts with severity alert_level if the values do not match.
-The result of the check is returned as a boolean if the method is called as a function.
+    [boolean :=] check_value(value(bool), [exp(bool)], [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value(value(sl), exp(sl), [match_strictness], [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value(value(slv), exp(slv), [match_strictness], [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
+    [boolean :=] check_value(value(t_slv_array), exp(t_slv_array), [match_strictness], [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
+    [boolean :=] check_value(value(t_unsigned_array), exp(t_unsigned_array), [match_strictness], alert_level, msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
+    [boolean :=] check_value(value(t_signed_array), exp(t_signed_array), [match_strictness], alert_level, msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
+    [boolean :=] check_value(value(u), exp(u), [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]] )
+    [boolean :=] check_value(value(s), exp(s), [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
+    [boolean :=] check_value(value(int), exp(int), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value(value(real), exp(real), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value(value(time), exp(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
-Returns
-^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | value              | in     | *see overloads*              | Value to be checked                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | exp                | in     | *see overloads*              | Expected value                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | match_strictness   | in     | :ref:`t_match_strictness`    | Specifies if match needs to be exact or std_match, e.g. |
+|          |                    |        |                              | 'H' = '1'. Default value is MATCH_STD.                  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | radix              | in     | :ref:`t_radix`               | Controls how the vector is represented in the log.      |
+|          |                    |        |                              | Default value is HEX_BIN_IF_INVALID.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | format             | in     | :ref:`t_format_zeros`        | Controls how the vector is formatted in the log. Default|
+|          |                    |        |                              | value is KEEP_LEADING_0.                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+|          |                    |        |                              | Default value is ID_POS_ACK.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-Boolean
+.. code-block::
 
-
-Parameters
-^^^^^^^^^^
-
-.. code-block:: shell
-
-    value(bool), [exp(bool)], [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    value(sl), exp(sl), [match_strictness], [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    value(slv), exp(slv), [match_strictness], [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]]
-
-    value(t_slv_array), exp(t_slv_array), [match_strictness], [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]]
-
-    value(u), exp(u), [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]] 
-
-    value(t_unsigned_array), exp(t_unsigned_array), [match_strictness], alert_level, msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]]
-
-    value(s), exp(s), [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]]
-
-    value(t_signed_array), exp(t_signed_array), [match_strictness], alert_level, msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]]
-
-    value(int), exp(int), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    value(real), exp(real), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]] 
-
-    value(time),exp(time),[alert_level],msg, [scope,[msg_id,[msg_id_panel]]]
-
-
-If val is of type slv, unsigned or signed, there are additional optional arguments:
-
-**match_strictness**  - Specifies if match needs to be exact or std_match, e.g. ‘H’ = ‘1’.
-(MATCH_EXACT, MATCH_STD, MATCH_STD_INCL_Z, MATCH_STD_INCL_ZXUW)                               
-    
-**radix** - For the vector representation in the log: BIN, HEX, DEC or HEX_BIN_IF_INVALID.
-(HEX_BIN_IF_INVALID means hexadecimal, unless there are the vector contains any U,     
-X, Z or W, - in which case it is also logged in binary radix.)                               
-    
-**format** - KEEP_LEADING_0 or SKIP_LEADING_0. Controls how the vector is formatted in the log.
-
+    -- Examples:
+    check_value(v_int_a, 42, WARNING, "Checking the integer");
+    v_check := check_value(v_slv5_a, "11100", MATCH_EXACT, "Checking the SLV", "My Scope", HEX, SKIP_LEADING_0, ID_SEQUENCER, shared_msg_id_panel);
 
 .. note::
-    Vectors are checked with MSB as left most and that the range is converted from “0 to N” to “N downto 0”.                     
-    A WARNING is given if arrays are of defined with opposite directions. Different ranges in any dimension will not match.
-      
-
-Defaults
-^^^^^^^^
-
-+-----------------+---------------------+
-| alert_level     | ERROR               |
-+-----------------+---------------------+                                
-| scope           | C_TB_SCOPE_DEFAULT  |
-+-----------------+---------------------+                             
-| match_strictness| MATCH_STD           |
-+-----------------+---------------------+                             
-| radix           | HEX_BIN_IF_INVALID  |
-+-----------------+---------------------+                             
-| format          | KEEP_LEADING_0      |
-+-----------------+---------------------+                             
-| msg_id          | ID_POS_ACK          |
-+-----------------+---------------------+                             
-| msg_id_panel    | shared_msg_id_panel |
-+-----------------+---------------------+                             
-    
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
-    check_value(v_int_a, 42, WARNING, “Checking the integer”);
-
-    v_check := check_value(v_slv5_a, “11100”, MATCH_EXACT, “Checking the SLV”, “My Scope”, HEX, SKIP_LEADING_0, ID_SEQUENCER, shared_msg_id_panel);
+    Vectors are checked with MSB as left most and that the range is converted from "0 to N" to "N downto 0". A WARNING is given if 
+    arrays are of defined with opposite directions. Different ranges in any dimension will not match.
 
 
 check_value_in_range()
-----------------------
+----------------------------------------------------------------------------------------------------------------------------------
+Checks if min_value ≤ val ≤ max_value, and alerts with severity alert_level if val is outside the range. The result of the check 
+is returned as a boolean if the method is called as a function. ::
 
-Checks if min_value ≤ val ≤ max_value, and alerts with severity alert_level if val is outside the range.
-The result of the check is returned as a boolean if the method is called as a function.    
+    [boolean :=] check_value_in_range(value(u), min_value(u), max_value(u), msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(s), min_value(s), max_value(s), msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(int), min_value(int), max_value(int), msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(time), min_value(time), max_value(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(real), min_value(real), max_value(real), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
-Returns
-^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | value              | in     | *see overloads*              | Value to be checked                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | min_value          | in     | *see overloads*              | Minimum value in the expected range                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | max_value          | in     | *see overloads*              | Maximum value in the expected range                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+|          |                    |        |                              | Default value is ID_POS_ACK.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-Boolean
+.. code-block::
 
-
-Parameters
-^^^^^^^^^^
-
-.. code-block:: shell
-
-    value(u), min_value(u), max_value(u), msg, [scope, [msg_id, [msg_id_panel]]]
-
-    value(s), min_value(s), max_value(s), msg, [scope, [msg_id, [msg_id_panel]]]
-
-    value(int), min_value(int), max_value(int), msg, [scope, [msg_id, [msg_id_panel]]]
-
-    value(time), min_value(time), max_value(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    value(real), min_value(real), max_value(real), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-                                      
-                            
-Defaults
-^^^^^^^^
-
-+-----------------+---------------------+
-| alert_level     | ERROR               |
-+-----------------+---------------------+
-| scope           | C_TB_SCOPE_DEFAULT  |
-+-----------------+---------------------+
-| msg_id          | ID_POS_ACK          |
-+-----------------+---------------------+
-| msg_id_panel    | shared_msg_id_panel |
-+-----------------+---------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
-    check_value_in_range(v_int_a, 10, 100, “Checking that integer is in range”);
-
+    -- Examples:
+    check_value_in_range(v_int_a, 10, 100, "Checking that integer is in range");
 
 
 check_stable()
---------------
+----------------------------------------------------------------------------------------------------------------------------------
+Checks if the target signal has been stable in stable_req time. If not, an alert is asserted. ::
 
-Checks if the target signal has been stable in stable_req time. If not, an alert is asserted.
+    check_stable(target(bool), stable_req, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    check_stable(target(sl), stable_req, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    check_stable(target(slv), stable_req, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    check_stable(target(u), stable_req, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    check_stable(target(s), stable_req, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    check_stable(target(int), stable_req, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    check_stable(target(real), stable_req, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | target             | in     | *see overloads*              | Signal to be checked                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | stable_req         | in     | time                         | Period of time to check if the signal is stable         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+|          |                    |        |                              | Default value is ID_POS_ACK.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
-    target(bool), stable_req(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(sl), stable_req(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-    
-    target(slv), stable_req(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(u), stable_req(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(s), stable_req(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(int), stable_req(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(real), stable_req(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-
-Defaults
-^^^^^^^^
-
-+-----------------+---------------------+
-| alert_level     | ERROR               |
-+-----------------+---------------------+
-| scope           | C_TB_SCOPE_DEFAULT  |
-+-----------------+---------------------+
-| msg_id          | ID_POS_ACK          |
-+-----------------+---------------------+
-| msg_id_panel    | shared_msg_id_panel |
-+-----------------+---------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
-    check_stable(slv8, 9 ns, “Checking if SLV is stable”);
-
-
+    -- Examples:
+    check_stable(slv8, 9 ns, "Checking if SLV is stable");
 
 
 await_change()
---------------
+----------------------------------------------------------------------------------------------------------------------------------
+Waits until the target signal changes, or times out after max_time. An alert is asserted if the signal does not change between 
+min_time and max_time. Note that if the value changes at exactly max_time, the timeout gets precedence. ::
 
-Waits until the target signal changes, or times out after max_time. An alert is asserted if the signal does not change between min_time
-and max_time.
-Note that if the value changes at exactly max_time, the timeout gets
-precedence.
+    await_change(target(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change(target(sl), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change(target(slv), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change(target(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change(target(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change(target(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change(target(real), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | target             | in     | *see overloads*              | Signal to be checked                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | min_time           | in     | time                         | Minimum time that must pass before the signal changes   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | max_time           | in     | time                         | Maximum time for the signal to change                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+|          |                    |        |                              | Default value is ID_POS_ACK.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
-    target(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(sl), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(slv), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-    target(real), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]]
-
-
-Defaults
-^^^^^^^^
-
-+-----------------+---------------------+
-| alert_level     | ERROR               |
-+-----------------+---------------------+
-| scope           | C_TB_SCOPE_DEFAULT  |
-+-----------------+---------------------+
-| msg_id          | ID_POS_ACK          |
-+-----------------+---------------------+
-| msg_id_panel    | shared_msg_id_panel |
-+-----------------+---------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
-    await_change(bol, 3 ns, 5 ns, “Awaiting change on bol signal”);
+    -- Examples:
+    await_change(bol, 3 ns, 5 ns, "Awaiting change on bol signal");
 
 
 await_value()
--------------
+----------------------------------------------------------------------------------------------------------------------------------
+Waits until the target signal equals the exp signal, or times out after max_time. An alert is asserted if the signal does not 
+equal the expected value between min_time and max_time. Note that if the value changes to the expected value at exactly max_time, 
+the timeout gets precedence. ::
 
-Waits until the target signal equals the exp signal, or times out after max_time.
-An alert is asserted if the signal does not equal the expected value between min_time and max_time.
-*Note* that if the value changes to the expected value at exactly max_time, the timeout gets precedence.
+    await_value(target(sl), exp(sl), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(bool), exp(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(real), exp(real), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | target             | in     | *see overloads*              | Signal to be checked                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | exp                | in     | *see overloads*              | Expected value                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | match_strictness   | in     | :ref:`t_match_strictness`    | Specifies if match needs to be exact or std_match, e.g. |
+|          |                    |        |                              | 'H' = '1'. Default value is MATCH_STD.                  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+|          |                    |        |                              | Default value is ID_POS_ACK.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
-    target(sl), exp(sl), [match_strictness], min_time, max_time, [alert_level], msg, [scope, (etc.)]
-
-    target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, (etc.)]
-
-    target(bool), exp(bool), min_time, max_time, [alert_level], msg, [scope, (etc.)]]
-
-    target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, (etc.)]]
-
-    target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, (etc.)]]
-
-    target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, (etc.)]]
-
-    target(real), exp(real), min_time, max_time, [alert_level], msg, [scope, (etc.)]]
-
-
-**match_strictness** - Specifies if match needs to be exact or std_match , e.g. ‘H’ = ‘1’. (MATCH_EXACT, MATCH_STD)
-
-Defaults
-^^^^^^^^
-
-+-----------------+---------------------+
-| alert_level     | ERROR               |
-+-----------------+---------------------+
-| scope           | C_TB_SCOPE_DEFAULT  |
-+-----------------+---------------------+
-| msg_id          | ID_POS_ACK          |
-+-----------------+---------------------+
-| msg_id_panel    | shared_msg_id_panel |
-+-----------------+---------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
-    await_value(bol, true, 10 ns, 20 ns, “Waiting for bol to become true”);
-
-    await_value(slv8, “10101010”, MATCH_STD, 3 ns, 7 ns, WARNING, “Waiting for slv8 value”);
+    -- Examples:
+    await_value(bol, true, 10 ns, 20 ns, "Waiting for bol to become true");
+    await_value(slv8, "10101010", MATCH_STD, 3 ns, 7 ns, WARNING, "Waiting for slv8 value");
 
 
 await_stable()
---------------
+----------------------------------------------------------------------------------------------------------------------------------
+Wait until the target signal has been stable for at least stable_req. Report an error if this does not occurr within the time 
+specified by timeout. Note that **stable** refers to that the signal has not had an event (i.e. not changed value). ::
 
-Wait until the target signal has been stable for at least 'stable_req'. Report an error if this does not occurr within the time specified by 'timeout'.
-*Note:* 'Stable' refers to that the signal has not had an event (i.e. not changed value).
+    await_stable(target(bool), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_stable(target(sl), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_stable(target(slv), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_stable(target(u), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_stable(target(s), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_stable(target(int), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_stable(target(real), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | target             | in     | *see overloads*              | Signal to be checked                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | stable_req         | in     | time                         | Period of time to check if the signal is stable         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | stable_req_from    | in     | :ref:`t_from_point_in_time`  | Point in time to start checking stability of the signal |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | timeout            | in     | time                         | Timeout for the signal to be stable during the required |
+|          |                    |        |                              | time                                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | timeout_from       | in     | :ref:`t_from_point_in_time`  | Point in time when the timeout starts counting          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+|          |                    |        |                              | Default value is ID_POS_ACK.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
-    target(bool), stable_req(time), stable_req_from(t_from_point_in_time), timeout (time), timeout_from(t_from_point_in_time), [alert_level], msg, [scope, (etc.)]
-
-    target(sl), stable_req(time), stable_req_from(t_from_point_in_time), timeout (time), timeout_from(t_from_point_in_time), [alert_level], msg, [scope, (etc.)]
-
-    target(slv), stable_req(time), stable_req_from(t_from_point_in_time), timeout (time), timeout_from(t_from_point_in_time), [alert_level], msg, [scope, (etc.)]
-
-    target(u), stable_req(time), stable_req_from(t_from_point_in_time), timeout (time), timeout_from(t_from_point_in_time), [alert_level], msg, [scope, (etc.)]
-
-    target(s), stable_req(time), stable_req_from(t_from_point_in_time), timeout (time), timeout_from(t_from_point_in_time), [alert_level], msg, [scope, (etc.)]
-
-    target(int), stable_req(time), stable_req_from(t_from_point_in_time), timeout (time), timeout_from(t_from_point_in_time), [alert_level], msg, [scope, (etc.)]
-
-    target(real), stable_req(time), stable_req_from(t_from_point_in_time), timeout (time), timeout_from(t_from_point_in_time), [alert_level], msg, [scope, (etc.)]
-
-
-Description of special arguments:
-
-stable_req_from : 
-
-- FROM_NOW: Target must be stable 'stable_req' from now.
-- FROM_LAST_EVENT: Target must be stable 'stable_req' from the last event of target.
-
-timeout_from :
-
-- FROM_NOW: The timeout argument is given in time from now.
-- FROM_LAST_EVENT: The timeout argument is given in time the last event of target.
-
-
-Defaults
-^^^^^^^^
-
-+-----------------+---------------------+
-| alert_level     | ERROR               |
-+-----------------+---------------------+
-| scope           | C_TB_SCOPE_DEFAULT  |
-+-----------------+---------------------+
-| msg_id          | ID_POS_ACK          |
-+-----------------+---------------------+
-| msg_id_panel    | shared_msg_id_panel |
-+-----------------+---------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
-    await_stable(u8, 20 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, ERROR, “Waiting for u8 to stabilize”);
-
-
+    -- Examples:
+    await_stable(u8, 20 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, ERROR, "Waiting for u8 to stabilize");
 
 
 Logging and verbosity control
-=======================================================================================================================
-
+==================================================================================================================================
 
 set_log_file_name()
--------------------
+----------------------------------------------------------------------------------------------------------------------------------
+Sets the log file name. To ensure that the entire log transcript is written to a single file, this should be called prior to any 
+other procedures (except set_alert_file_name()). If file name is set after a log message has been written to the log file, a 
+warning will be reported. This warning can be disabled by setting C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME false in the 
+adaptations_pkg. ::
 
-Sets the log file name. To ensure that the entire log transcript is written to a single file, 
-this should be called prior to any other procedures (except set_alert_file_name()). 
-If file name is set after a log message has been written to the log file, a warning will be reported. 
-This warning can be disabled by setting C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME false in the adaptations_pkg.
+    set_log_file_name([file_name])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | file_name          | in     | string                       | Name of the log file. Default value is C_LOG_FILE_NAME. |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
-    [file_name(string)]
-
-
-Defaults
-^^^^^^^^
-
-+-----------------+---------------------+
-| file_name       | C_LOG_FILE_NAME     |
-+-----------------+---------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell    
-
-    set_log_file_name(“new_log_file_name.txt”);
+    -- Examples:
+    set_log_file_name("new_log_file_name.txt");
 
 
 log()
------
-
-Writes message to log. If the msg_id is enabled in msg_id_panel, log the msg. Log destination defines where the message will 
-be written to (CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY). If log destination is not specified, the default value in 
-shared_default_log_destination found in the adaptations_pkg.vhd will be used. log_file_name defines the log file that the text 
-block shall be written to. The “open_mode” parameter indicates how the log file shall be opened (write_mode, append_mode).
-
-Parameters
-^^^^^^^^^^
-
-.. code-block:: shell
-
-    [msg_id], msg, [scope, [msg_id_panel, [log_destination(t_log_destination), [log_file_name(string), [open_mode(file_open_kind)]]]]]
-
-
-
-General string handling features for log()
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
+Writes a message to the log. Note that if the msg_id is disabled in the msg_id_panel, the message will not be shown. Some general 
+string handling features are:
 
 * All log messages will be given using the user defined layout in adaptations_pkg.vhd
 * \\n may be used to force line shifts. Line shift will occur after scope column, before message column
 * \\r may be used to force line shift at start of log message. The result will be a blank line apart from prefix 
   (message ID, timestamp and scope will be omitted on the first line)
 
+.. code-block::
 
-Defaults
-^^^^^^^^
+    log([msg_id], msg, [scope, [msg_id_panel, [log_destination, [log_file_name, [open_mode]]]]])
 
-+-------------------+-------------------------------+
-| msg_id            | C_TB_MSG_ID_DEFAULT           |
-+-------------------+-------------------------------+
-| scope             | C_TB_SCOPE_DEFAULT            |
-+-------------------+-------------------------------+
-| msg_id_panel      | shared_msg_id_panel           |
-+-------------------+-------------------------------+
-| log_destination   | shared_default_log_destination|
-+-------------------+-------------------------------+
-| log_file_name     | C_LOG_FILE_NAME               |
-+-------------------+-------------------------------+
-| open_mode         | append_mode                   |
-+-------------------+-------------------------------+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
+|          |                    |        |                              | Default value is C_TB_MSG_ID_DEFAULT.                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | log_destination    | in     | :ref:`t_log_destination`     | Defines where the message will be written to. Default   |
+|          |                    |        |                              | value is shared_default_log_destination.                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | log_file_name      | in     | string                       | Defines the log file where message shall be written to. |
+|          |                    |        |                              | Default value is C_LOG_FILE_NAME.                       |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | open_mode          | in     | file_open_kind               | Indicates how the log file shall be opened (write_mode, |
+|          |                    |        |                              | append_mode). Default value is append_mode.             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
+.. code-block::
 
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
-    log(ID_SEQUENCER, “message to log”);
-
-    log(ID_BFM, “Msg”, “MyScope”, local_msg_id_panel, LOG_ONLY, “new_log.txt”, write_mode);
+    -- Examples:
+    log(ID_SEQUENCER, "message to log");
+    log(ID_BFM, "Msg", "MyScope", local_msg_id_panel, LOG_ONLY, "new_log.txt", write_mode);
 
 
 log_text_block()
-----------------
+----------------------------------------------------------------------------------------------------------------------------------
+Writes a text block from a VHDL line to the log. ::
 
-Writes text block from VHDL line to log. Formatting either FORMATTED or UNFORMATTED. msg_header is an optional header message for the text_block.
-log_if_block_empty defines how an empty text block is handled (WRITE_HDR_IF_BLOCK_EMPTY/SKIP_LOG_IF_BLOCK_EMPTY/NOTIFY_IF_BLOCK_EMPTY).
-Log destination defines where the message will be written to (CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY). Log file name defines the log file that 
-the text block shall be written to. open_mode indicates how the log file shall be opened (write_mode, append_mode).
+    log_text_block(msg_id, text_block, formatting, [msg_header, [scope, [msg_id_panel, [log_if_block_empty, [log_destination, [log_file_name, [open_mode]]]]]]])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| variable | text_block         | inout  | line                         | Line where the text block is stored                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | formatting         | in     | :ref:`t_log_format`          | Whether the text is formatted or not                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_header         | in     | string                       | Header message for the text_block. Default value is "". |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | log_if_block_empty | in     | :ref:`t_log_if_block_empty`  | Defines how an empty text block is handled. Default     |
+|          |                    |        |                              | value is WRITE_HDR_IF_BLOCK_EMPTY.                      |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | log_destination    | in     | :ref:`t_log_destination`     | Defines where the text block will be written to. Default|
+|          |                    |        |                              | value is shared_default_log_destination.                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | log_file_name      | in     | string                       | Defines the log file where text block shall be written  |
+|          |                    |        |                              | to. Default value is C_LOG_FILE_NAME.                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | open_mode          | in     | file_open_kind               | Indicates how the log file shall be opened (write_mode, |
+|          |                    |        |                              | append_mode). Default value is append_mode.             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
+    -- Examples:
     log_text_block(ID_SEQUENCER, v_line, UNFORMATTED);
-
-    log_text_block(ID_BFM, v_line, FORMATTED, “Header”, “MyScope”);
-
-
-
-Defaults
-^^^^^^^^
-
-+-----------------------+-------------------------------+
-| msg_header            | “”                            |
-+-----------------------+-------------------------------+
-| scope                 | C_TB_SCOPE_DEFAULT            |
-+-----------------------+-------------------------------+
-| msg_id_panel          | shared_msg_id_panel           |
-+-----------------------+-------------------------------+
-| log_if_block_empty    | WRITE_HDR_IF_BLOCK_EMPTY      |
-+-----------------------+-------------------------------+
-| log_destination       | shared_default_log_destination|
-+-----------------------+-------------------------------+
-| log_file_name         | C_LOG_FILE_NAME               |
-+-----------------------+-------------------------------+
-| open_mode             | append_mode                   |
-+-----------------------+-------------------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
-    log_text_block(ID_SEQUENCER, v_line, UNFORMATTED);
-    
-    log_text_block(ID_BFM, v_line, FORMATTED, “Header”, “MyScope”);
-
+    log_text_block(ID_BFM, v_line, FORMATTED, "Header", "MyScope");
 
 
 enable_log_msg()
-----------------
+----------------------------------------------------------------------------------------------------------------------------------
+Enables logging for the given msg_id. (See :ref:`message_ids` for examples of different IDs). ::
 
-Enables logging for the given msg_id. (See ID-list on front page for special purpose IDs).
-Logging of enable_log_msg() can be turned off by setting quietness=QUIET.
+    enable_log_msg(msg_id, [quietness, [scope]])
+    enable_log_msg(msg_id, msg, [quietness, [scope]])
+    enable_log_msg(msg_id, msg_id_panel, [msg, [scope, [quietness]]])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | quietness          | in     | :ref:`t_quietness`           | Logging of this procedure can be turned off by setting  |
+|          |                    |        |                              | quietness=QUIET. Default value is NON_QUIET.            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert.       |
+|          |                    |        |                              | Default value is "".                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| variable | msg_id_panel       | inout  | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
-    msg_id, [quietness(t_quietness), [scope]]
-    
-    msg_id, msg, [quietness(t_quietness), [scope]]
-    
-    msg_id, msg_id_panel, [msg, [scope, [quietness(t_quietness)]]]
-
-Defaults
-^^^^^^^^
-
-+-----------------------+-------------------------------+
-| msg_id_panel          | shared_msg_id_panel           |
-+-----------------------+-------------------------------+
-| msg                   | ””                            |
-+-----------------------+-------------------------------+
-| scope                 | C_TB_SCOPE_DEFAULT            |
-+-----------------------+-------------------------------+
-| quietness             | NON_QUIET                     |
-+-----------------------+-------------------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
+    -- Examples:
     enable_log_msg(ID_SEQUENCER);
 
 
 disable_log_msg()
------------------
+----------------------------------------------------------------------------------------------------------------------------------
+Disables logging for the given msg_id. (See :ref:`message_ids` for examples of different IDs). ::
 
-Disables logging for the given msg_id. (See ID-list on front page for special purpose IDs).
-Logging of disable_log_msg() can be turned off by setting quietness=QUIET.
+    disable_log_msg(msg_id, [quietness, [scope]])
+    disable_log_msg(msg_id, msg, [quietness, [scope]])
+    disable_log_msg(msg_id, msg_id_panel, [msg, [scope, [quietness]]])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | quietness          | in     | :ref:`t_quietness`           | Logging of this procedure can be turned off by setting  |
+|          |                    |        |                              | quietness=QUIET. Default value is NON_QUIET.            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert.       |
+|          |                    |        |                              | Default value is "".                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| variable | msg_id_panel       | inout  | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
-    msg_id, [quietness(t_quietness), [scope]]
-
-    msg_id, msg, [quietness(t_quietness), [scope]]
-
-    msg_id, msg_id_panel, [msg, [scope, [quietness(t_quietness)]]]
-
-
-Defaults
-^^^^^^^^
-
-+-----------------------+-------------------------------+
-| msg_id_panel          | shared_msg_id_panel           |
-+-----------------------+-------------------------------+
-| msg                   | ””                            |
-+-----------------------+-------------------------------+
-| scope                 | C_TB_SCOPE_DEFAULT            |
-+-----------------------+-------------------------------+
-| quietness             | NON_QUIET                     |
-+-----------------------+-------------------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
+    -- Examples:
     disable_log_msg(ID_LOG_HDR);
 
 
-
 is_log_msg_enabled ()
----------------------
+----------------------------------------------------------------------------------------------------------------------------------
+Returns true if the given message ID is enabled, otherwise false. ::
 
-Returns Boolean ‘true’ if given message ID is enabled. Otherwise ‘false’
+    boolean := is_log_msg_enabled(msg_id, [msg_id_panel])
 
-Returns
-^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-Boolean
+.. code-block::
 
-
-Parameters
-^^^^^^^^^^
-
-.. code-block:: shell
-
-    msg_id, [msg_id_panel]
-
-
-Defaults
-^^^^^^^^
-
-+-----------------------+-------------------------------+
-| msg_id_panel          | shared_msg_id_panel           |
-+-----------------------+-------------------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
+    -- Examples:
     v_is_enabled := is_log_msg_enabled(ID_SEQUENCER);
 
 
 set_log_destination()
----------------------
+----------------------------------------------------------------------------------------------------------------------------------
+Sets the default log destination for all log procedures. The destination specified in this log_destination will be used unless the 
+log_destination argument in the log procedure is specified. A log message is written to log ID ID_LOG_MSG_CTRL if quietness is set 
+to NON_QUIET.
 
-Sets the default log destination for all log procedures (CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY). 
-The destination specified in this log_destination will be used unless the log_destination argument in 
-the log procedure is specified. A log message is written to log ID ID_LOG_MSG_CTRL if quietness is set to NON_QUIET .
+    set_log_destination(log_destination, [quietness])
 
-Parameters
-^^^^^^^^^^
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | log_destination    | in     | :ref:`t_log_destination`     | Defines where all the log procedures will be written to |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | quietness          | in     | :ref:`t_quietness`           | Logging of this procedure can be turned off by setting  |
+|          |                    |        |                              | quietness=QUIET. Default value is NON_QUIET.            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
-.. code-block:: shell
+.. code-block::
 
-    t_log_destination, [quietness(t_quietness)]
-
-
-
-Defaults
-^^^^^^^^
-
-+-----------------------+-------------------------------+
-| Quietness             | NON_QUIET                     |
-+-----------------------+-------------------------------+
-
-
-Examples
-^^^^^^^^
-
-.. code-block:: shell
-
+    -- Examples:
     set_log_destination(CONSOLE_ONLY);
-
-
 
 
 Alert handling
@@ -2233,6 +2077,8 @@ Examples
 
     terminate_watchdog(watchdog_ctrl)
 
+
+.. _message_ids:
 
 Message IDs
 =======================================================================================================================

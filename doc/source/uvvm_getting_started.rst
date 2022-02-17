@@ -1,5 +1,7 @@
+.. _getting_started:
+
 #######################################################################################################################
-UVVM Getting Started
+Getting Started
 #######################################################################################################################
 
 This is an introduction and step-by-step guide for beginning with UVVM, along with examples of common tasks that the

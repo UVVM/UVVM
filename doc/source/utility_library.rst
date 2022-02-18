@@ -2460,6 +2460,13 @@ There are two other main documents for the UVVM Utility Library (available from 
 There is also a webinar available on ‘Making a simple, structured and efficient VHDL testbench – Step-by-step’ 
 (via Aldec). Link on our downloads page.
 
+**********************************************************************************************************************************
+Types
+**********************************************************************************************************************************
+.. toctree::
+   :maxdepth: 1
+
+   types_pkg.rst
 
 ***********************************************************************************************************************	     
 Compilation

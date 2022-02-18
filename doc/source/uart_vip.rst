@@ -5,4 +5,4 @@ Bitvis VIP UART
 
 
 
-.. include:: ip.rst
+.. include:: ip_disclaimer.rst

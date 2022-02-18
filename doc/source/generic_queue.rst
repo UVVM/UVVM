@@ -557,5 +557,5 @@ elements exceeds the value set by set_queue_count_threshold().
    v_queue_level_severity := generic_queue.get_queue_count_threshold_severity(VOID);
 
 
-.. include:: ip.rst
+.. include:: ip_disclaimer.rst
 

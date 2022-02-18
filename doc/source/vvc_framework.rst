@@ -8,4 +8,4 @@ VVC Framework
 
 
 
-.. include:: ip.rst
+.. include:: ip_disclaimer.rst

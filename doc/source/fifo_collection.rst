@@ -194,5 +194,5 @@ This function deallocates the FIFO buffer, all the FIFO pointers are reset.
     uvvm_fifo_deallocate(VOID);
 
 
-.. include:: ip.rst
+.. include:: ip_disclaimer.rst
     

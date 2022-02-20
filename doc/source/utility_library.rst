@@ -7,9 +7,10 @@ Utility Library
 **********************************************************************************************************************************
 Methods
 **********************************************************************************************************************************
+All methods are defined in methods_pkg, unless otherwise noted.
+
 .. note::
 
-   * All methods are defined in uvvm_util.methods_pkg, unless otherwise noted.
    * **Legend**: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
    * IEEE=Method is native for VHDL2008 (method is listed here for completeness).
 
@@ -76,6 +77,7 @@ a boolean if the method is called as a function. ::
     v_check := check_value(v_slv5_a, "11100", MATCH_EXACT, "Checking the SLV", "My Scope", HEX, SKIP_LEADING_0, ID_SEQUENCER, shared_msg_id_panel);
 
 .. note::
+
     Vectors are checked with MSB as left most and that the range is converted from "0 to N" to "N downto 0". A WARNING is given if 
     arrays are of defined with opposite directions. Different ranges in any dimension will not match.
 
@@ -405,6 +407,8 @@ Writes a text block from a VHDL line to the log. ::
     log_text_block(ID_BFM, v_line, FORMATTED, "Header", "MyScope");
 
 
+.. _util_enable_log_msg:
+
 enable_log_msg()
 ----------------------------------------------------------------------------------------------------------------------------------
 Enables logging for the given msg_id. (See :ref:`message_ids` for examples of different IDs). ::
@@ -436,6 +440,8 @@ Enables logging for the given msg_id. (See :ref:`message_ids` for examples of di
     -- Examples:
     enable_log_msg(ID_SEQUENCER);
 
+
+.. _util_disable_log_msg:
 
 disable_log_msg()
 ----------------------------------------------------------------------------------------------------------------------------------

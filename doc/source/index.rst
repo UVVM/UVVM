@@ -10,6 +10,7 @@ UVVM
    uvvm_getting_started.rst
    utility_library.rst
    vvc_framework.rst
+   protected_types.rst
    fifo_collection.rst
    generic_queue.rst
    sbi_vip.rst

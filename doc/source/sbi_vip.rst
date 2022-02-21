@@ -43,70 +43,66 @@ Configuration Record
 
 Default value for the record is C_SBI_BFM_CONFIG_DEFAULT.
 
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| Record element               | Type                         | Default             | Description                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=====================+=============================================+
-| max_wait_cycles              | integer                      | 10                  | The maximum number of clock cycles to wait  |
-|                              |                              |                     | for the DUT ready signal before reporting a |
-|                              |                              |                     | timeout alert                               |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| max_wait_cycles_severity     | :ref:`t_alert_level`         | FAILURE             | The above timeout will have this severity   |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| use_fixed_wait_cycles_read   | boolean                      | false               | When true, wait 'fixed_wait_cycles_read'    |
-|                              |                              |                     | after asserting rena signal, before sampling|
-|                              |                              |                     | rdata                                       |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| fixed_wait_cycles_read       | natural                      | 0                   | Number of clock cycles to wait after        |
-|                              |                              |                     | asserting rena signal, before sampling rdata|
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| clock_period                 | time                         | -1 ns               | Period of the clock signal                  |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| clock_period_margin          | time                         | 0 ns                | Input clock period margin to specified      |
-|                              |                              |                     | clock_period. Will check 'T/2' if input     |
-|                              |                              |                     | clock is low when BFM is called and 'T' if  |
-|                              |                              |                     | input clock is high.                        |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| clock_margin_severity        | :ref:`t_alert_level`         | TB_ERROR            | The above margin will have this severity    |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| setup_time                   | time                         | -1 ns               | Generated signals setup time. Suggested     |
-|                              |                              |                     | value is clock_period/4. An alert is        |
-|                              |                              |                     | reported if setup_time exceeds              |
-|                              |                              |                     | clock_period/2.                             |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| hold_time                    | time                         | -1 ns               | Generated signals hold time. Suggested value|
-|                              |                              |                     | is clock_period/4. An alert is reported if  |
-|                              |                              |                     | hold_time exceeds clock_period/2.           |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_ONLY  | | When set to SYNC_ON_CLOCK_ONLY the BFM    |
-|                              |                              |                     |   will enter on the first falling edge,     |
-|                              |                              |                     |   estimate the clock period, synchronise the|
-|                              |                              |                     |   output signals and exit ¼ clock period    |
-|                              |                              |                     |   after a succeeding rising edge.           |
-|                              |                              |                     | | When set to SYNC_WITH_SETUP_AND_HOLD the  |
-|                              |                              |                     |   BFM will use the configured setup_time,   |
-|                              |                              |                     |   hold_time and clock_period to synchronise |
-|                              |                              |                     |   output signals with clock edges.          |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT         | | Matching strictness for std_logic values  |
-|                              |                              |                     |   in check procedures.                      |
-|                              |                              |                     | | MATCH_EXACT requires both values to be the|
-|                              |                              |                     |   same. Note that the expected value can    |
-|                              |                              |                     |   contain the don’t care operator '-'.      |
-|                              |                              |                     | | MATCH_STD allows comparisons between 'H'  |
-|                              |                              |                     |   and '1', 'L' and '0' and '-' in both      |
-|                              |                              |                     |   values.                                   |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| id_for_bfm                   | t_msg_id                     | ID_BFM              | Message ID used for logging general messages|
-|                              |                              |                     | in the BFM                                  |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT         | Message ID used for logging waits in the BFM|
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL         | Message ID used for logging polling in the  |
-|                              |                              |                     | BFM                                         |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
-| use_ready_signal             | boolean                      | true                | Whether or not to use the interface 'ready' |
-|                              |                              |                     | signal                                      |
-+------------------------------+------------------------------+---------------------+---------------------------------------------+
+| max_wait_cycles              | integer                      | 10              | The maximum number of clock cycles to wait for  |
+|                              |                              |                 | the DUT ready signal before reporting a timeout |
+|                              |                              |                 | alert                                           |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| max_wait_cycles_severity     | :ref:`t_alert_level`         | FAILURE         | The above timeout will have this severity       |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| use_fixed_wait_cycles_read   | boolean                      | false           | When true, wait 'fixed_wait_cycles_read' after  |
+|                              |                              |                 | asserting rena signal, before sampling rdata    |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| fixed_wait_cycles_read       | natural                      | 0               | Number of clock cycles to wait after asserting  |
+|                              |                              |                 | rena signal, before sampling rdata              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| clock_period                 | time                         | -1 ns           | Period of the clock signal                      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| clock_period_margin          | time                         | 0 ns            | Input clock period margin to specified          |
+|                              |                              |                 | clock_period. Will check 'T/2' if input clock is|
+|                              |                              |                 | low when BFM is called and 'T' if input clock is|
+|                              |                              |                 | high.                                           |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| clock_margin_severity        | :ref:`t_alert_level`         | TB_ERROR        | The above margin will have this severity        |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| setup_time                   | time                         | -1 ns           | Generated signals setup time. Suggested value   |
+|                              |                              |                 | is clock_period/4. An alert is reported if      |
+|                              |                              |                 | setup_time exceeds clock_period/2.              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| hold_time                    | time                         | -1 ns           | Generated signals hold time. Suggested value    |
+|                              |                              |                 | is clock_period/4. An alert is reported if      |
+|                              |                              |                 | hold_time exceeds clock_period/2.               |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| | When set to SYNC_ON_CLOCK_ONLY the BFM will   |
+|                              |                              | NLY             |   enter on the first falling edge, estimate the |
+|                              |                              |                 |   clock period, synchronise the output signals  |
+|                              |                              |                 |   and exit ¼ clock period after a succeeding    |
+|                              |                              |                 |   rising edge.                                  |
+|                              |                              |                 | | When set to SYNC_WITH_SETUP_AND_HOLD the BFM  |
+|                              |                              |                 |   will use the configured setup_time, hold_time |
+|                              |                              |                 |   and clock_period to synchronise output signals|
+|                              |                              |                 |   with clock edges.                             |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | | Matching strictness for std_logic values in   |
+|                              |                              |                 |   check procedures.                             |
+|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
+|                              |                              |                 |   same. Note that the expected value can contain|
+|                              |                              |                 |   the don’t care operator '-'.                  |
+|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
+|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
+|                              |                              |                 | the BFM                                         |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL     | Message ID used for logging polling in the BFM  |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| use_ready_signal             | boolean                      | true            | Whether or not to use the interface 'ready'     |
+|                              |                              |                 | signal                                          |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 Methods
 ==================================================================================================================================

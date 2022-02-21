@@ -7,7 +7,7 @@ Utility Library
 **********************************************************************************************************************************
 Methods
 **********************************************************************************************************************************
-* All methods are defined in methods_pkg, unless otherwise noted.
+* All methods are defined in methods_pkg.vhd, unless otherwise noted.
 * All parameters in brackets are optional.
 * **Legend**: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
 * IEEE=Method is native for VHDL2008 (method is listed here for completeness).
@@ -2527,6 +2527,7 @@ Modelsim and Riviera-PRO users can compile the library by sourcing the following
 
 The uvvm_util project is opened by opening ``sim/uvvm_util.mpf`` in Modelsim.
 
+.. _util_simulator_compatibility:
 
 ***********************************************************************************************************************	     
 Simulator compatibility and setup

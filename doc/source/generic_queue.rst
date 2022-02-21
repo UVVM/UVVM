@@ -84,11 +84,12 @@ Declaration
 **********************************************************************************************************************************
 Methods
 **********************************************************************************************************************************
-All Generic Queue functions and procedures are defined in the UVVM Generic Queue package, generic_queue_pkg.vhd. The generic queue 
-can be used with a single instance or with multiple instances. An instance is a separate queue. When multiple instances are used 
-the methods are called with the instance parameter. When only using a single generic queue instance, the instance parameter may be 
-omitted if that instance is instance 1. Multiple instances are typically used when multiple queues with the same data types are 
-needed. All parameters in brackets are optional.
+* All generic queue functions and procedures are defined in generic_queue_pkg.vhd.
+* The generic queue can be used with a single instance or with multiple instances. An instance is a separate queue.
+* When multiple instances are used, the methods are called with the instance parameter.
+* When only using a single generic queue instance, the instance parameter may be omitted if that instance is instance 1.
+* Multiple instances are typically used when multiple queues with the same data types are needed.
+* All parameters in brackets are optional.
 
 add()
 ----------------------------------------------------------------------------------------------------------------------------------

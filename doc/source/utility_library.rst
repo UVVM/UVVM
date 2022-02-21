@@ -7,12 +7,10 @@ Utility Library
 **********************************************************************************************************************************
 Methods
 **********************************************************************************************************************************
-All methods are defined in methods_pkg, unless otherwise noted.
-
-.. note::
-
-   * **Legend**: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
-   * IEEE=Method is native for VHDL2008 (method is listed here for completeness).
+* All methods are defined in methods_pkg, unless otherwise noted.
+* All parameters in brackets are optional.
+* **Legend**: bool=boolean, sl=std_logic, slv=std_logic_vector, u=unsigned, s=signed, int=integer
+* IEEE=Method is native for VHDL2008 (method is listed here for completeness).
 
 Checks and awaits
 ==================================================================================================================================

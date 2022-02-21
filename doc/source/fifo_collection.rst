@@ -25,7 +25,8 @@ Functional Parameters
 **********************************************************************************************************************************
 Methods
 **********************************************************************************************************************************
-All FIFO functions and procedures are defined in the UVVM Data FIFO package, data_fifo_pkg.vhd
+* All FIFO functions and procedures are defined in data_fifo_pkg.vhd
+* All parameters in brackets are optional.
 
 uvvm_fifo_init()
 ----------------------------------------------------------------------------------------------------------------------------------

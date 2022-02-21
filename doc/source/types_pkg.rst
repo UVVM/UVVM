@@ -1,4 +1,4 @@
-Type definitions used in the Utility Library.
+Type definitions used in the Utility Library, defined in types_pkg.
 
 .. _t_alert_level:
 

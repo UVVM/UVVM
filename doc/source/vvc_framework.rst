@@ -7,7 +7,8 @@ VVC Framework
 **********************************************************************************************************************************
 Common VVC Methods
 **********************************************************************************************************************************
-All VVC procedures are defined in the UVVM VVC framework common methods package, td_vvc_framework_common_methods_pkg.vhd
+* All VVC procedures are defined in td_vvc_framework_common_methods_pkg.vhd and ti_vvc_framework_support_pkg.vhd
+* All parameters in brackets are optional.
 
 await_completion()
 ----------------------------------------------------------------------------------------------------------------------------------

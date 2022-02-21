@@ -453,6 +453,7 @@ See description above. C_VVCT_ALL_INSTANCES = ALL_INSTANCES.
 
     This command parameter might be removed in a future release and we encourage the use of ALL_INSTANCES.
 
+.. _vvc_framework_essential_mechanisms:
 
 **********************************************************************************************************************************
 Essential Mechanisms

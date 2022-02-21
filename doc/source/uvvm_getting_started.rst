@@ -6,9 +6,6 @@ Getting Started
 This is an introduction and step-by-step guide for beginning with UVVM, along with examples of common tasks that the designers 
 will have to carry out.
 
-**********************************************************************************************************************************
-Introduction
-**********************************************************************************************************************************
 UVVM (Universal VHDL Verification Methodology) is a free and open source methodology for making very structured VHDL-based 
 testbenches. UVVM has been released with two different complexity levels, a low complexity UVVM Light repository with the Utility 
 library and BFMs (Bus Functional Models), without advanced features such as VVCs and command distribution system, and the complete 

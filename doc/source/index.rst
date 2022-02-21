@@ -7,6 +7,7 @@ UVVM
    :hidden:
    :caption: Contents:
 
+   uvvm_intro.rst
    uvvm_getting_started.rst
    utility_library.rst
    vvc_framework.rst
@@ -15,5 +16,3 @@ UVVM
    generic_queue.rst
    sbi_vip.rst
    uart_vip.rst
-
-.. include:: uvvm_intro.rst

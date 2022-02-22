@@ -4,6 +4,8 @@
 VVC Framework
 ##################################################################################################################################
 
+.. _vvc_framework_methods:
+
 **********************************************************************************************************************************
 Common VVC Methods
 **********************************************************************************************************************************
@@ -11,7 +13,7 @@ Common VVC Methods
 * All parameters in brackets are optional.
 
 await_completion()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Tells the VVC to await the completion of either all pending commands or a specified command index. A message will be logged before 
 and at the end of the wait. The procedure will report an alert if not all commands have completed within the specified timeout. 
 The severity of this alert will be TB_ERROR. It is also possible to :ref:`broadcast and multicast <vvc_framework_broadcasting>`.
@@ -87,6 +89,7 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 
     -- Examples (new method):
     variable my_vvc_info_list : t_vvc_info_list;
+    ...
     my_vvc_info_list.add("SBI_VVC", 1);
     my_vvc_info_list.add("AXISTREAM_VVC", 3, v_cmd_idx);
     my_vvc_info_list.add("UART_VVC", ALL_INSTANCES, ALL_CHANNELS);
@@ -97,7 +100,7 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 
 
 await_any_completion()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Replaced by ``await_completion(ANY_OF, vvc_info_list, timeout, list_action, msg, scope)`` above to allow VVCs to accept commands 
 while waiting for completion. This command still works as previously, but with less functionality than the new 
 ``await_completion()``. ::
@@ -111,7 +114,7 @@ while waiting for completion. This command still works as previously, but with l
 
 
 enable_log_msg()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Instructs the VVC to enable a given log ID. This call will be forwarded to the UVVM Utility Library :ref:`util_enable_log_msg` 
 function. It is also possible to :ref:`broadcast and multicast <vvc_framework_broadcasting>`. ::
 
@@ -152,7 +155,7 @@ function. It is also possible to :ref:`broadcast and multicast <vvc_framework_br
 
 
 disable_log_msg()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Instructs the VVC to disable a given log ID. This call will be forwarded to the UVVM Utility Library :ref:`util_disable_log_msg` 
 function. It is also possible to :ref:`broadcast and multicast <vvc_framework_broadcasting>`. ::
 
@@ -193,7 +196,7 @@ function. It is also possible to :ref:`broadcast and multicast <vvc_framework_br
 
 
 flush_command_queue()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Flushes the VVC command queue for the specified VVC target/channel. The procedure will log information with log ID ID_IMMEDIATE_CMD.
 It is also possible to :ref:`broadcast and multicast <vvc_framework_broadcasting>`. ::
 
@@ -227,7 +230,7 @@ It is also possible to :ref:`broadcast and multicast <vvc_framework_broadcasting
 
 
 fetch_result()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Fetches a stored result using the command index. A result is stored when using e.g. the read or receive commands in a VVC. The 
 fetched result is available on the *result* output. The Boolean output *fetch_is_accepted* is used to indicate if the fetch was 
 successful or not. A fetch can fail if e.g. the wanted_idx did not have a result to store, or the wanted_idx read has not yet been 
@@ -277,7 +280,7 @@ successful fetch, a message with log ID ID_UVVM_CMD_RESULT is logged. ::
 
 
 insert_delay()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Inserts a delay of *delay* clock cycles or *delay* seconds in the VVC. It is also possible to 
 :ref:`broadcast and multicast <vvc_framework_broadcasting>`. ::
 
@@ -314,7 +317,7 @@ Inserts a delay of *delay* clock cycles or *delay* seconds in the VVC. It is als
 
 
 terminate_current_command()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Terminates the current command in the VVC, if the currently running BFM command supports the terminate signal. It is also possible 
 to :ref:`broadcast and multicast <vvc_framework_broadcasting>`. ::
 
@@ -348,7 +351,7 @@ to :ref:`broadcast and multicast <vvc_framework_broadcasting>`. ::
 
 
 terminate_all_commands()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Terminates the current command in the VVC, if the currently running BFM command supports the terminate signal. The procedure also 
 flushes the VVC command queue, removing all pending commands. It is also possible to 
 :ref:`broadcast and multicast <vvc_framework_broadcasting>`. ::
@@ -383,7 +386,7 @@ flushes the VVC command queue, removing all pending commands. It is also possibl
 
 
 get_last_received_cmd_idx()
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Gets the command index of the last command received by the VVC interpreter. Necessary for getting the command index of a read for 
 fetch_result. ::
 
@@ -412,11 +415,11 @@ fetch_result. ::
 .. _vvc_framework_broadcasting:
 
 Broadcasting and Multicasting
-----------------------------------------------------------------------------------------------------------------------------------
+==================================================================================================================================
 Commands in UVVM can be distributed to all instances of a VVC or to all VVCs using dedicated parameters.
 
 VVC_BROADCAST
-^^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 The VVC_BROADCAST command parameter can be used when a command is to target all VVCs within the test environment, reducing the 
 number of command instructions needed in the testbench. ::
 
@@ -426,7 +429,7 @@ number of command instructions needed in the testbench. ::
 
 
 ALL_INSTANCES
-^^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 The ALL_INSTANCES command parameter can be used when a command is targeting all instances of a VVC within the test environment, 
 reducing the number of command instructions needed in the testbench. ::
 
@@ -436,7 +439,7 @@ reducing the number of command instructions needed in the testbench. ::
 
 
 ALL_CHANNELS
-^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 The ALL_CHANNELS command parameter can be used when a command is targeting all channels of a VVC within the test environment, 
 reducing the number of command instructions needed in the testbench. ::
 
@@ -446,7 +449,7 @@ reducing the number of command instructions needed in the testbench. ::
 
 
 C_VVCT_ALL_INSTANCES
-^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------------------------------------------------------------------------------------------
 See description above. C_VVCT_ALL_INSTANCES = ALL_INSTANCES.
 
 .. warning::
@@ -458,6 +461,86 @@ See description above. C_VVCT_ALL_INSTANCES = ALL_INSTANCES.
 **********************************************************************************************************************************
 Essential Mechanisms
 **********************************************************************************************************************************
+
+Libraries
+==================================================================================================================================
+
+UVVM Initialization
+==================================================================================================================================
+
+UVVM and VVC User Accessible Shared Variables and Global Signals
+==================================================================================================================================
+
+VVC Status, Configuration and Transaction Information
+==================================================================================================================================
+
+.. _vvc_framework_activity_watchdog:
+
+Activity Watchdog
+==================================================================================================================================
+
+.. _vvc_framework_transaction_info:
+
+Distribution of Transaction Info - From VVCs and/or Monitors
+==================================================================================================================================
+
+VVC Local Sequencers
+==================================================================================================================================
+UVVM testbenches may have one or more central sequencers – also known as test sequencers or test drivers. A single test sequencer 
+is recommended in order to reduce complexity – as synchronization between multiple parallel test sequencer could be really complex.
+UVVM does however also provide support for so called local sequencers. These sequencers will typically run inside the VVCs 
+executor process. The executor will typically run a single transaction via a BFM procedure towards the DUT interface, like an 
+sbi_write() or uart_expect() procedure. For more advanced VVCs it would however make sense to send even higher level commands to a 
+VVC, like requesting it to transmit N random bytes, or setting up a peripheral by writing to multiple configuration registers. In 
+these cases, a single command to the VVC will trigger a complete sequence of accesses towards the DUT. The code inside the VVC 
+executors handling these sequences are called local sequencers as they are local to the VVC and thus also improves re-use. These 
+sequences of transactions may also be defined as Compound Transactions (see chapter 6.2).
+
+An example of a local sequencer is the randomisation sequences in the UART VVC, and poll_until in the SBI VVC.
+
+Local sequencer requirements
+----------------------------------------------------------------------------------------------------------------------------------
+The following requirements should be followed when making local sequencers (basically any VVC command resulting in more than one base transaction):
+
+    #. If Transaction Info is supported, then both the leaf transaction and the compound transaction info should be updated. (The 
+       latter is not required)
+    #. The sequence should be handled directly inside the VVC executor – and not inside the BFM (Otherwise updating the leaf 
+       transactions for Transaction Info could be difficult)
+    #. It should be possible to terminate
+
+Protocol Aware Error Injection
+==================================================================================================================================
+
+Randomisation
+==================================================================================================================================
+
+Testbench Data Routing
+==================================================================================================================================
+
+Controlling Property Checkers
+==================================================================================================================================
+
+VVC Parameters and Sequence for Randomization, Sources and Destinations
+==================================================================================================================================
+
+Multiple Central Sequencers
+==================================================================================================================================
+
+Monitors
+==================================================================================================================================
+
+.. _vvc_framework_compile_scripts:
+
+Compile Scripts
+==================================================================================================================================
+
+.. _vvc_framework_verbosity_ctrl:
+
+Scope of Verbosity Control
+==================================================================================================================================
+
+Hierarchical VVCs
+==================================================================================================================================
 
 **********************************************************************************************************************************
 VVC Implementation Guide

@@ -45,7 +45,7 @@ Default value for the record is C_SBI_BFM_CONFIG_DEFAULT.
 
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
-+==============================+==============================+=====================+=============================================+
++==============================+==============================+=================+=================================================+
 | max_wait_cycles              | integer                      | 10              | The maximum number of clock cycles to wait for  |
 |                              |                              |                 | the DUT ready signal before reporting a timeout |
 |                              |                              |                 | alert                                           |
@@ -111,6 +111,8 @@ Methods
 * All parameters in brackets are optional.
 
 
+.. _sbi_write_bfm:
+
 sbi_write()
 ----------------------------------------------------------------------------------------------------------------------------------
 Writes the given data to the given address on the DUT, using the SBI protocol:
@@ -173,7 +175,7 @@ The procedure reports an alert if ready signal is not set to '1' within 'config.
     sbi_write(C_ADDR_UART_TX, x"40", "Set baud rate to 9600");
 
 
-.. _sbi_read:
+.. _sbi_read_bfm:
 
 sbi_read()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -236,14 +238,16 @@ The procedure reports an alert if ready signal is not set to '1' within 'config.
     sbi_read(C_ADDR_UART_BAUD, v_data_out, "Read UART baud rate");
 
 
+.. _sbi_check_bfm:
+
 sbi_check()
 ----------------------------------------------------------------------------------------------------------------------------------
-Reads data from the DUT at the given address, using the SBI protocol described under :ref:`sbi_read`. After reading data from the 
-SBI bus, the read data is compared with the expected data.
+Reads data from the DUT at the given address, using the SBI protocol described under :ref:`sbi_read_bfm`. After reading data from 
+the SBI bus, the read data is compared with the expected data.
 
 * If the check was successful, and the read data matches the expected data, a log message is written with ID 'config.id_for_bfm'.
 * If the read data did not match the expected data, an alert with severity 'alert_level' will be reported.
-* The procedure will also report alerts for the same conditions as the :ref:`sbi_read` procedure.
+* The procedure will also report alerts for the same conditions as the :ref:`sbi_read_bfm` procedure.
 
 .. code-block::
 
@@ -287,11 +291,13 @@ SBI bus, the read data is compared with the expected data.
     sbi_check(C_ADDR_UART_RX, x"3B", "Check data from UART RX buffer");
 
 
+.. _sbi_poll_until_bfm:
+
 sbi_poll_until()
 ----------------------------------------------------------------------------------------------------------------------------------
-Reads data from the DUT at the given address, using the SBI protocol described under :ref:`sbi_read`. After reading data from the 
-DUT, the read data is compared with the expected data. If the read data does not match the expected data, the process is repeated 
-until one or more of the following occurs:
+Reads data from the DUT at the given address, using the SBI protocol described under :ref:`sbi_read_bfm`. After reading data from 
+the DUT, the read data is compared with the expected data. If the read data does not match the expected data, the process is 
+repeated until one or more of the following occurs:
 
 #. The read data matches the expected data
 #. The number of read retries is equal to 'max_polls'
@@ -303,7 +309,7 @@ set to 0 (ns), this constraint will be ignored and interpreted as no limit.
 
 * If the check was successful, and the read data matches the expected data, a log message is written with ID 'config.id_for_bfm'.
 * If the read data did not match the expected data, an alert with severity 'alert_level' will be reported.
-* The procedure will also report alerts for the same conditions as the :ref:`sbi_read` procedure.
+* The procedure will also report alerts for the same conditions as the :ref:`sbi_read_bfm` procedure.
 * If the procedure is terminated using 'terminate_loop' a log message with ID ID_TERMINATE_CMD will be issued.
 
 .. code-block::
@@ -388,6 +394,8 @@ The SBI BFM is used in the IRQC example provided with the UVVM Utility Library. 
 
 There is also a webinar available on 'Making a simple, structured and efficient VHDL testbench – Step-by-step' (via Aldec [#f1]_)
 
+.. _sbi_protocol:
+
 SBI protocol
 ----------------------------------------------------------------------------------------------------------------------------------
 SBI is our name for the simplest bus interface possible, one that has been used for decades in the electronics industry. Some 
@@ -422,12 +430,9 @@ Compilation
 * The SBI BFM may only be compiled with VHDL 2008. It is dependent on the :ref:`utility_library`, which is only compatible with 
   VHDL 2008.
 * After UVVM-Util has been compiled, the sbi_bfm_pkg.vhd can be compiled into any desired library.
-* See :ref:`vvc_framework_essential_mechanisms` for information about compile scripts.
+* See :ref:`Essential Mechanisms - Compile Scripts <vvc_framework_compile_scripts>` for information about compile scripts.
 
-Simulator compatibility and setup
-----------------------------------------------------------------------------------------------------------------------------------
-* See :ref:`uvvm_prerequisites` for a list of supported simulators.
-* For required simulator setup see :ref:`UVVM-Util Simulator compatibility and setup <util_simulator_compatibility>`.
+.. include:: simulator_compatibility.rst
 
 Local BFM overloads
 ==================================================================================================================================
@@ -473,6 +478,493 @@ Using a local overload like this also allows the following – if wanted:
 ***********************************************************************************************************************	     
 VVC
 ***********************************************************************************************************************	     
+* VVC functionality is defined in sbi_vvc.vhd
+* For general information see :ref:`VVC Framework - Essential Mechanisms <vvc_framework_essential_mechanisms>`.
+
+Entity
+==================================================================================================================================
+
+Generics
+----------------------------------------------------------------------------------------------------------------------------------
+
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| Name                         | Type                         | Default         | Description                                     |
++==============================+==============================+=================+=================================================+
+| GC_ADDR_WIDTH                | integer                      | 8               | Width of the SBI address bus                    |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_DATA_WIDTH                | integer                      | 32              | Width of the SBI data bus                       |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_INSTANCE_IDX              | natural                      | 1               | Instance number to assign the VVC               |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_SBI_CONFIG                | :ref:`t_sbi_bfm_config       | C_SBI_BFM_CONFI\| Configuration for the SBI BFM, see SBI BFM      |
+|                              | <t_sbi_bfm_config>`          | G_DEFAULT       | documentation                                   |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_CMD_QUEUE_COUNT_MAX       | natural                      | 1000            | Absolute maximum number of commands in the VVC  |
+|                              |                              |                 | command queue                                   |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_CMD_QUEUE_COUNT_THRESHOLD | natural                      | 950             | An alert will be generated when reaching this   |
+|                              |                              |                 | threshold to indicate that the command queue is |
+|                              |                              |                 | almost full. The queue will still accept new co\|
+|                              |                              |                 | mmands until it reaches GC_CMD_QUEUE_COUNT_MAX. |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_CMD_QUEUE_COUNT_THRESHOLD\| :ref:`t_alert_level`         | WARNING         | Alert severity which will be used when command  |
+| _SEVERITY                    |                              |                 | queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_RESULT_QUEUE_COUNT_MAX    | natural                      | 1000            | Maximum number of unfetched results before      |
+|                              |                              |                 | result_queue is full                            |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_RESULT_QUEUE_COUNT_THRESH\| natural                      | 950             | An alert will be issued if result queue exceeds |
+| OLD                          |                              |                 | this count. Used for early warning if result    |
+|                              |                              |                 | queue is almost full. Will be ignored if set to |
+|                              |                              |                 | 0.                                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| GC_RESULT_QUEUE_COUNT_THRESH\| :ref:`t_alert_level`         | WARNING         | Severity of alert to be initiated if exceeding  |
+| OLD_SEVERITY                 |                              |                 | GC_RESULT_QUEUE_COUNT_THRESHOLD                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+Signals
+----------------------------------------------------------------------------------------------------------------------------------
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | clk                | in     | std_logic                    | VVC Clock signal                                        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| signal   | sbi_vvc_master_if  | inout  | :ref:`t_sbi_if <t_sbi_if>`   | SBI signal interface record                             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+In this VVC, the interface has been encapsulated in a signal record of type t_sbi_if in order to improve readability of the code. 
+Since the SBI interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained 
+vectors need to be constrained when the interface signals are instantiated. For this interface, it could look like: ::
+
+    signal sbi_if_1 : t_sbi_if( addr(C_ADDR_WIDTH-1 downto 0),
+                                wdata(C_DATA_WIDTH-1 downto 0),
+                                rdata(C_DATA_WIDTH-1 downto 0) );
+
+Configuration Record
+==================================================================================================================================
+**vvc_config** accessible via **shared_sbi_vvc_config**
+
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| Record element               | Type                         | Default         | Description                                     |
++==============================+==============================+=================+=================================================+
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_SBI_INTER_BFM\| | Delay between any requested BFM accesses      |
+|                              |                              | _DELAY_DEFAULT  |   towards the DUT.                              |
+|                              |                              |                 | | TIME_START2START: Time from a BFM start to the|
+|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
+|                              |                              |                 |   access takes longer than TIME_START2START).   |
+|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
+|                              |                              |                 |   next BFM start.                               |
+|                              |                              |                 | | Any insert_delay() command will add to the    |
+|                              |                              |                 |   above minimum delays, giving for instance the |
+|                              |                              |                 |   ability to skew the BFM starting time.        |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
+|                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
+|                              |                              |                 | result in an ERROR.                             |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| cmd_queue_count_threshold    | natural                      | C_CMD_QUEUE_COU\| An alert will be issued if command queue exceeds|
+|                              |                              | NT_THRESHOLD    | this count. Used for early warning if command   |
+|                              |                              |                 | queue is almost full. Will be ignored if set to |
+|                              |                              |                 | 0.                                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| cmd_queue_count_threshold_se\| :ref:`t_alert_level`         | C_CMD_QUEUE_COU\| Severity of alert to be initiated if exceeding  |
+| verity                       |                              | NT_THRESHOLD_SE\| cmd_queue_count_threshold                       |
+|                              |                              | ERITY           |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| result_queue_count_max       | natural                      | C_RESULT_QUEUE\ | Maximum number of unfetched results before      |
+|                              |                              | _COUNT_MAX      | result_queue is full                            |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| result_queue_count_threshold | natural                      | C_RESULT_QUEUE\ | An alert will be issued if result queue exceeds |
+|                              |                              | _COUNT_THRESHOLD| this count. Used for early warning if result    |
+|                              |                              |                 | queue is almost full. Will be ignored if set to |
+|                              |                              |                 | 0.                                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| result_queue_count_threshold\| :ref:`t_alert_level`         | C_RESULT_QUEUE\ | Severity of alert to be initiated if exceeding  |
+| _severity                    |                              | _COUNT_THRESHOL\| result_queue_count_threshold                    |
+|                              |                              | D_SEVERITY      |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| bfm_config                   | :ref:`t_sbi_bfm_config       | C_SBI_BFM_CONFI\| Configuration for the SBI BFM, see SBI BFM      |
+|                              | <t_sbi_bfm_config>`          | G_DEFAULT       | documentation                                   |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| msg_id_panel                 | t_msg_id_panel               | C_VVC_MSG_ID_PA\| VVC dedicated message ID panel. See             |
+|                              |                              | NEL_DEFAULT     | :ref:`vvc_framework_verbosity_ctrl` for how to  |
+|                              |                              |                 | use verbosity control.                          |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
+
+    shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_sbi_vvc_config(1).bfm_config.id_for_bfm := ID_BFM;
+
+Status Record
+==================================================================================================================================
+**vvc_status** accessible via **shared_sbi_vvc_status**
+
+The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the 
+test sequencer. The record contents can be seen below:
+
++-------------------------+------------------------------+---------------------------------------------------------+
+| Record element          | Type                         | Description                                             |
++=========================+==============================+=========================================================+
+| current_cmd_idx         | natural                      | Command index currently running                         |
++-------------------------+------------------------------+---------------------------------------------------------+
+| previous_cmd_idx        | natural                      | Previous command index to run                           |
++-------------------------+------------------------------+---------------------------------------------------------+
+| pending_cmd_idx         | natural                      | Pending number of commands in the command queue         |
++-------------------------+------------------------------+---------------------------------------------------------+
+
+Methods
+==================================================================================================================================
+* All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).
+* It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
+* See :ref:`vvc_framework_methods` for procedures which are common to all VVCs.
+* All parameters in brackets are optional.
+
+.. caution::
+
+    Orange description is preliminary.
+
+.. raw:: html
+
+    <style> .orange {color:orange} </style>
+
+.. role:: orange
+
+sbi_write()
+----------------------------------------------------------------------------------------------------------------------------------
+| Adds a write command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. It has two 
+  variants using either just data for a basic single transaction, or num_words + randomisation for a more advanced version.
+| When the basic write command is scheduled to run, the executor calls the SBI BFM :ref:`sbi_write_bfm` procedure.
+| :orange:`When the more advanced randomisation command is applied, the basic BFM sbi_write() transaction is executed num_words 
+  times with new random data each time – according to the given randomisation profile. Current defined randomisation profiles are: 
+  RANDOM: Standard uniform random. This is provided as an example.`
+
+.. code-block::
+
+    sbi_write(VVCT, vvc_instance_idx, addr, data, msg, [scope])
+    sbi_write(VVCT, vvc_instance_idx, addr, num_words, randomisation, msg, [scope])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | addr               | in     | unsigned                     | The address of a SW accessible register. Could be offset|
+|          |                    |        |                              | or full address depending on the DUT.                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | data               | in     | std_logic_vector             | The data to be written (in sbi_write) or the expected   |
+|          |                    |        |                              | data (in sbi_check/sbi_poll_until)                      |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    sbi_write(SBI_VVCT, 1, x"1000", x"40", "Set UART baud rate to 9600", C_SCOPE);
+    sbi_write(SBI_VVCT, 1, x"1001", 7, RANDOM, "Write 7 random bytes to UART TX");
+
+    -- It is recommended to use constants to improve the readability of the code, e.g.:
+    sbi_write(SBI_VVCT, 1, C_ADDR_UART_BAUDRATE, C_BAUDRATE_9600, "Set UART baud rate to 9600");
+
+
+sbi_read()
+----------------------------------------------------------------------------------------------------------------------------------
+| Adds a read command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. When the 
+  read command is scheduled to run, the executor calls the SBI BFM :ref:`sbi_read_bfm` procedure.
+| The value read from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the 
+  read data will be stored in the VVC for a potential future fetch (see example with fetch_result below).
+| :orange:`If the option TO_SB is applied the read data will be sent to the SBI_VVC dedicated scoreboard where it will be checked 
+  against the expected value (provided by the testbench).`
+
+.. code-block::
+
+    sbi_read(VVCT, vvc_instance_idx, addr, msg, [scope])
+    sbi_read(VVCT, vvc_instance_idx, addr, TO_SB, msg, [scope])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | addr               | in     | unsigned                     | The address of a SW accessible register. Could be offset|
+|          |                    |        |                              | or full address depending on the DUT.                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    sbi_read(SBI_VVCT, 1, x"1000", "Read UART baud rate", C_SCOPE);
+    sbi_read(SBI_VVCT, 1, x"1002", TO_SB, "Read UART RX and send to Scoreboard", C_SCOPE);
+
+    -- It is recommended to use constants to improve the readability of the code, e.g.:
+    sbi_read(SBI_VVCT, 1, C_ADDR_UART_BAUDRATE, "Read UART baud rate");
+
+    -- Example with fetch_result() call: Result is placed in v_data
+    variable v_cmd_idx : natural;                       -- Command index for the last read
+    variable v_data    : work.vvc_cmd_pkg.t_vvc_result; -- Result from read.
+    ...
+    sbi_read(SBI_VVCT, 1, C_ADDR_UART_BAUDRATE, "Read from Peripheral 1");
+    v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 1);
+    await_completion(SBI_VVCT,1, v_cmd_idx, 1 us, "Wait for read to finish");
+    fetch_result(SBI_VVCT,1, v_cmd_idx, v_data, "Fetching result from read operation");
+
+
+sbi_check()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a check command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. When the 
+check command is scheduled to run, the executor calls the SBI BFM :ref:`sbi_check_bfm` procedure. The sbi_check() procedure will 
+perform a read operation, then check if the read data is equal to the expected data in the data parameter. If the read data is not 
+equal to the expected data parameter, an alert with severity 'alert_level' will be issued. The read data will not be stored in 
+this procedure. ::
+
+    sbi_check(VVCT, vvc_instance_idx, addr, data, msg, [alert_level, [scope]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | addr               | in     | unsigned                     | The address of a SW accessible register. Could be offset|
+|          |                    |        |                              | or full address depending on the DUT.                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | data               | in     | std_logic_vector             | The data to be written (in sbi_write) or the expected   |
+|          |                    |        |                              | data (in sbi_check/sbi_poll_until)                      |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    sbi_check(SBI_VVCT, 1, x"1155", x"3B", "Check data from UART RX");
+    sbi_check(SBI_VVCT, 1, x"1155", x"3B", "Check data from UART RX", TB_ERROR, C_SCOPE):
+
+    -- It is recommended to use constants to improve the readability of the code, e.g.:
+    sbi_check(SBI_VVCT, 1, C_ADDR_UART_RX, C_UART_START_BYTE, "Check data from UART RX");
+
+
+sbi_poll_until()
+----------------------------------------------------------------------------------------------------------------------------------
+Adds a poll_until command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. When the 
+write command is scheduled to run, the executor calls the SBI BFM :ref:`sbi_poll_until_bfm` procedure. The sbi_poll_until() 
+procedure will perform a read operation, then check if the read data is equal to the data in the data parameter. If the read data 
+is not equal to the expected data parameter, the process will be repeated until the read data is equal to the expected data, or 
+the procedure is terminated by either a terminate command, a timeout or the poll limit set in max_polls. The read data will not be 
+stored by this procedure. ::
+
+    sbi_poll_until(VVCT, vvc_instance_idx, addr, data, msg, [max_polls, [timeout, [alert_level, [scope]]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| signal   | VVCT               | inout  | t_vvc_target_record          | VVC target type compiled into each VVC in order to      |
+|          |                    |        |                              | differentiate between VVCs                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | vvc_instance_idx   | in     | integer                      | Instance number of the VVC                              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | addr               | in     | unsigned                     | The address of a SW accessible register. Could be offset|
+|          |                    |        |                              | or full address depending on the DUT.                   |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | data               | in     | std_logic_vector             | The data to be written (in sbi_write) or the expected   |
+|          |                    |        |                              | data (in sbi_check/sbi_poll_until)                      |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | max_polls          | in     | integer                      | The maximum number of polls (reads) before the expected |
+|          |                    |        |                              | data must be found. Exceeding this limit results in an  |
+|          |                    |        |                              | alert with severity 'alert_level'. Default value is 100.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | timeout            | in     | time                         | The maximum time to pass before the expected data must  |
+|          |                    |        |                              | be found. Exceeding this limit results in an alert with |
+|          |                    |        |                              | severity 'alert_level'. Default value is 1 us.          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_VVC_CMD_SCOPE_DEFAULT.               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    sbi_poll_until(SBI_VVCT, 1, x"1155", x"0D", "Read UART RX until CR is found");
+    sbi_poll_until(SBI_VVCT, 1, x"1155", x"0D", "Read UART RX until CR is found", 5, 0 ns, TB_WARNING, C_SCOPE);
+
+    -- It is recommended to use constants to improve the readability of the code, e.g.:
+    sbi_poll_until(SBI_VVCT, 1, C_ADDR_UART_RX, C_CR_BYTE, "Read UART RX until CR is found");
+
+Activity Watchdog
+==================================================================================================================================
+The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will 
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC 
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog 
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered 
+within the specified timeout period.
+
+Include ``activity_watchdog(num_exp_vvc, timeout, [alert_level, [msg]])`` in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.
+
+More information can be found in :ref:`Essential Mechanisms - Activity Watchdog <vvc_framework_activity_watchdog>`.
+
+Transaction Info
+==================================================================================================================================
+This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the 
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share 
+information directly from the VVC to a DUT model.
+
+.. table:: SBI transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via **shared_sbi_vvc_transaction_info.bt**
+
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | Info field                   | Type                         | Default         | Description                                     |
+    +==============================+==============================+=================+=================================================+
+    | operation                    | t_operation                  | NO_OPERATION    | Current VVC operation, e.g. INSERT_DELAY,       |
+    |                              |                              |                 | POLL_UNTIL, READ, WRITE                         |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | address                      | unsigned(31 downto 0)        | 0x0             | Address of the SBI read or write transaction    |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | data                         | slv(31 downto 0)             | 0x0             | Data for SBI read or write transaction          |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
+    |                              |                              | ULT             |                                                 |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    |  -> msg                      | string                       | ""              | Message of executing VVC command                |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | transaction_status           | t_transaction_status         | C_TRANSACTION_S\| Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    |                              |                              | TATUS_DEFAULT   | SUCCEEDED during a transaction                  |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+.. table:: SBI transaction info record fields. Transaction type: t_compound_transaction (CT) ) - accessible via **shared_sbi_vvc_transaction_info.ct**
+
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | DTT field                    | Type                         | Default         | Description                                     |
+    +==============================+==============================+=================+=================================================+
+    | operation                    | t_operation                  | NO_OPERATION    | Current VVC operation, e.g. INSERT_DELAY,       |
+    |                              |                              |                 | POLL_UNTIL, READ, WRITE                         |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | address                      | unsigned(31 downto 0)        | 0x0             | Address of the SBI read or write transaction    |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | data                         | slv(31 downto 0)             | 0x0             | Data for SBI read or write transaction          |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | randomisation                | t_randomisation              | NA              | sbi_write() will generate random data when set  |
+    |                              |                              |                 | to RANDOM                                       |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | num_words                    | natural                      | 1               | Use with randomisation to write a number of     |
+    |                              |                              |                 | random words using a single sbi_write() command |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | max_polls                    | integer                      | 1               | Maximum number of polls allowed in the          |
+    |                              |                              |                 | sbi_poll_until() procedure. 0 means no limit.   |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | vvc_meta                     | t_vvc_meta                   | C_VVC_META_DEFA\| VVC meta data of the executing VVC command      |
+    |                              |                              | ULT             |                                                 |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    |  -> msg                      | string                       | ""              | Message of executing VVC command                |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    |  -> cmd_idx                  | integer                      | -1              | Command index of executing VVC command          |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+    | transaction_status           | t_transaction_status         | C_TRANSACTION_S\| Set to INACTIVE, IN_PROGRESS, FAILED or         |
+    |                              |                              | TATUS_DEFAULT   | SUCCEEDED during a transaction                  |
+    +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+
+More information can be found in :ref:`Essential Mechanisms - Distribution of Transaction Info <vvc_framework_transaction_info>`.
+
+Scoreboard
+==================================================================================================================================
+This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
+i.e. sbi_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
+TO_SB parameter is applied. The SBI scoreboard is accessible from the testbench as a shared variable SBI_VVC_SB, located in the 
+vvc_methods_pkg.vhd, e.g. ::
+
+    SBI_VVC_SB.add_expected(C_SBI_VVC_IDX, pad_sb_slv(v_expected), "Adding expected");
+
+The SBI scoreboard is per default a 32 bits wide standard logic vector. When sending expected data to the scoreboard, where the 
+data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_sbi_sb() function, e.g. ::
+
+    SBI_VVC_SB.add_expected(<SBI VVC instance number>, pad_sbi_sb(<exp data>));
+
+See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
+Scoreboard commands are available for the SBI VVC scoreboard using the SBI_VVC_SB.
+
+Additional Documentation
+==================================================================================================================================
+For additional documentation on the SBI protocol, please see :ref:`sbi_protocol`.
+
+Compilation
+==================================================================================================================================
+The SBI VVC must be compiled with VHDL 2008. It is dependent on the following libraries:
+
+    * UVVM Utility Library (UVVM-Util), version 2.15.0 and up
+    * UVVM VVC Framework, version 2.11.0 and up
+    * SBI BFM
+    * Bitvis VIP Scoreboard
+
+Before compiling the SBI VVC, assure that uvvm_vvc_framework, uvvm_util and bitvis_vip_scoreboard have been compiled.
+
+See :ref:`Essential Mechanisms - Compile Scripts <vvc_framework_compile_scripts>` for information about compile scripts.
+
+.. table:: Compile order for the SBI VVC
+
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | Compile to library           | File                                           | Comment                                         |
+    +==============================+================================================+=================================================+
+    | bitvis_vip_sbi               | sbi_bfm_pkg.vhd                                | SBI BFM                                         |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | bitvis_vip_sbi               | transaction_pkg.vhd                            | SBI transaction package with DTT types,         |
+    |                              |                                                | constants, etc.                                 |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | bitvis_vip_sbi               | vvc_cmd_pkg.vhd                                | SBI VVC command types and operations            |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | bitvis_vip_sbi               | ../uvvm_vvc_framework/src_target_dependent/td\ | UVVM VVC target support package, compiled into  |
+    |                              | _target_support_pkg.vhd                        | the SBI VVC library                             |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | bitvis_vip_sbi               | ../uvvm_vvc_framework/src_target_dependent/td\ | Common UVVM framework methods compiled into the |
+    |                              | _vvc_framework_common_methods_pkg.vhd          | SBI VVC library                                 |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | bitvis_vip_sbi               | vvc_methods_pkg.vhd                            | SBI VVC methods                                 |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | bitvis_vip_sbi               | ../uvvm_vvc_framework/src_target_dependent/td\ | UVVM queue package for the VVC                  |
+    |                              | _queue_pkg.vhd                                 |                                                 |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | bitvis_vip_sbi               | ../uvvm_vvc_framework/src_target_dependent/td\ | UVVM VVC entity support compiled into the SBI   |
+    |                              | _vvc_entity_support_pkg.vhd                    | VVC library                                     |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+    | bitvis_vip_sbi               | sbi_vvc.vhd                                    | SBI VVC                                         |
+    +------------------------------+------------------------------------------------+-------------------------------------------------+
+
+.. include:: simulator_compatibility.rst
+
+.. important::
+
+    * This is a simplified Verification IP (VIP) for SBI.
+    * The given VIP complies with the basic SBI protocol and thus allows a normal access towards a SBI interface.
+    * This VIP is not a SBI protocol checker.
+    * For a more advanced VIP please contact Bitvis AS at support@bitvis.no
+
 
 .. include:: ip_disclaimer.rst
 

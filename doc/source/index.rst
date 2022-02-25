@@ -10,6 +10,9 @@ UVVM
    uvvm_intro.rst
    uvvm_getting_started.rst
    utility_library.rst
+   rand_pkg_overview.rst
+   func_cov_pkg_overview.rst
+   optimized_rand.rst
    vvc_framework.rst
    protected_types.rst
    fifo_collection.rst

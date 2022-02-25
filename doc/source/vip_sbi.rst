@@ -965,8 +965,8 @@ See :ref:`Essential Mechanisms - Compile Scripts <vvc_framework_compile_scripts>
     * This VIP is not a SBI protocol checker.
     * For a more advanced VIP please contact Bitvis AS at support@bitvis.no
 
-
 .. include:: ip_disclaimer.rst
+
 
 .. rubric:: Footnotes
 

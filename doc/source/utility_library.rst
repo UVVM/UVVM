@@ -825,6 +825,8 @@ These shared variables are natural, read only types.
     | The variable is set when there is a mismatch between the expected and the actual ERROR or FAILURE alerts.
 
 
+.. _basic_randomization:
+
 Basic Randomization
 ==================================================================================================================================
 

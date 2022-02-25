@@ -4,10 +4,10 @@ Enhanced Randomization
 **********************************************************************************************************************************
 Getting started
 **********************************************************************************************************************************
-All the functionality for **Enhanced Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*. For more 
-information on protected types see **link**.
+All the functionality for **Enhanced Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*. For 
+more information on protected types see :ref:`protected_types`.
 
-For more simple functionality, not using protected types, the **Basic Randomization** can be found in *uvvm_util/src/methods_pkg.vhd*.
+For more simple functionality, not using protected types, refer to the :ref:`basic_randomization`.
 
 For a more balanced randomization between small and large ranges/sets, the :ref:`optimized_randomization` under *uvvm_util/src/func_cov_pkg.vhd* 
 may be used.

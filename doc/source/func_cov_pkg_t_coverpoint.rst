@@ -209,7 +209,7 @@ Configures the alert level when an illegal bin is sampled. Default value is ERRO
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | alert_level        | in     | t_alert_level                | Sets the severity for the alert, e.g. ERROR           |
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -248,7 +248,7 @@ Configures the alert level when overlapping bins are sampled (not including igno
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                           |
 +==========+====================+========+==============================+=======================================================+
-| constant | alert_level        | in     | t_alert_level                | Sets the severity for the alert, e.g. ERROR           |
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert, e.g. ERROR           |
 +----------+--------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default  |
 |          |                    |        |                              | value is shared_msg_id_panel.                         |
@@ -315,7 +315,7 @@ coverpoint. ::
 |          |                          |        |                              | bins in the current coverpoint which are not in the   |
 |          |                          |        |                              | loaded database. Default value is WARNING_ON_NEW_BINS.|
 +----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
-| constant | alert_level_if_not_found | in     | t_alert_level                | Sets the severity of the alert when the file is not   |
+| constant | alert_level_if_not_found | in     | :ref:`t_alert_level`         | Sets the severity of the alert when the file is not   |
 |          |                          |        |                              | found. Default value is TB_ERROR.                     |
 +----------+--------------------------+--------+------------------------------+-------------------------------------------------------+
 | constant | report_verbosity         | in     | :ref:`t_report_verbosity`    | Verbosity of the coverage report printed when the     |

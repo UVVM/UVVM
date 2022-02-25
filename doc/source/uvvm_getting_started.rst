@@ -31,10 +31,10 @@ receive the updates is by cloning UVVM with git.
 
 #. After cloning or unzipping UVVM you have all that is needed to start using UVVM and all of its features with your testbench.
 
-.. figure:: images/uvvm_getting_started/clone_download_instructions.png
-   :width: 700
-   :align: center
+.. image:: images/uvvm_getting_started/clone_download_instructions.png
    :alt: UVVM on GitHub
+   :width: 600pt
+   :align: center
 
 Updating UVVM
 ==================================================================================================================================
@@ -63,8 +63,8 @@ Include ``uvvm_util_context`` and the VVCs or BFMs you will be using in your tes
 The context files will ensure that everything necessary are made available from within the testbench, e.g.
    
 .. image:: images/uvvm_getting_started/testbench_with_sbi_vvc.png
-   :width: 500
-   :name: testbench_example
+   :alt: Testbench example
+   :width: 400pt
 
 **********************************************************************************************************************************
 Compilation
@@ -99,8 +99,8 @@ and the vsim command / Modelsim GUI is run from the ``/my_project`` folder with 
 * Modelsim GUI example:
 
 .. image:: images/uvvm_getting_started/modelsim_gui_compilation.png
-   :width: 500
-   :name: modelsim_gui
+   :alt: Modelsim example
+   :width: 400pt
 
 .. note::
 

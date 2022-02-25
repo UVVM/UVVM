@@ -405,12 +405,14 @@ Thus, we have defined a name and an exact behaviour, with some flexibility.
 SBI is a single cycle bus with an optional ready-signalling. The protocol for SBI with and without ready-signalling is given below. 
 Data is sampled on rising edge **a** and **b**.
 
-.. figure:: images/vip_sbi/sbi_protocol_1.png
-   :width: 600
+.. image:: images/vip_sbi/sbi_protocol_1.png
+   :alt: SBI protocol without ready
+   :width: 450pt
    :align: center
 
-.. figure:: images/vip_sbi/sbi_protocol_2.png
-   :width: 1000
+.. image:: images/vip_sbi/sbi_protocol_2.png
+   :alt: SBI protocol with ready
+   :width: 750pt
    :align: center
 
 As can be seen from the figure all required signals including data input must be ready on the rising edge of the clock. This also 

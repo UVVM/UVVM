@@ -2051,8 +2051,8 @@ Using Hierarchical Alert Reporting
 
 **Example output**
 
-.. image:: /images/hierarchical_alerts.png
-
+.. figure:: /images/hierarchical_alerts.png
+   :alt: Example output
 
 Methods
 ==================================================================================================================================

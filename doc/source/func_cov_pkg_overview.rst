@@ -59,6 +59,7 @@ one bin with a range of values and one bin with a transition of values. Each of 
 how many times the coverpoint has been sampled with the corresponding values of the bins.
 
 .. figure:: images/functional_coverage/func_cov_coverpoint.png
+   :alt: Coverpoint representation
    :width: 400pt
    :align: center
 
@@ -68,6 +69,7 @@ In Figure 2, we can see a cross named *src_addr_x_dst_addr* which contains eight
 combinations of values for *src_addr* and *dst_addr*.
 
 .. figure:: images/functional_coverage/func_cov_cross.png
+   :alt: Cross representation
    :width: 400pt
    :align: center
 

@@ -18,8 +18,8 @@ import os
 # -- Project information -----------------------------------------------------
 
 project = 'UVVM'
-copyright = '2021, UVVM'
 author = 'UVVM'
+copyright = '2021, UVVM'
 
 # The full version, including alpha/beta/rc tags
 def read_uvvm_version(fname):
@@ -63,6 +63,7 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 highlight_language = 'VHDL'
+
 
 # -- Options for HTML output -------------------------------------------------
 

@@ -546,4 +546,4 @@ Hierarchical VVCs
 VVC Implementation Guide
 **********************************************************************************************************************************
 
-.. include:: ip_disclaimer.rst
+.. include:: rst_snippets/ip_disclaimer.rst

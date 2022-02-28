@@ -669,4 +669,4 @@ The following links contain information regarding the API of the protected type 
    rand_pkg_t_rand.rst
    rand_pkg_types.rst
 
-.. include:: ip_disclaimer.rst
+.. include:: rst_snippets/ip_disclaimer.rst

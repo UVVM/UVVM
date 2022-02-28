@@ -406,4 +406,4 @@ set_queue_count_threshold(). ::
    v_queue_level_severity := generic_queue.get_queue_count_threshold_severity(VOID);
 
 
-.. include:: ip_disclaimer.rst
+.. include:: rst_snippets/ip_disclaimer.rst

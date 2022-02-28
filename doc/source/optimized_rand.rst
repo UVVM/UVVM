@@ -213,7 +213,7 @@ Additional info
 
     Optimized Randomization was inspired by similar functionality in SystemVerilog and OSVVM.
 
-.. include:: ip_disclaimer.rst
+.. include:: rst_snippets/ip_disclaimer.rst
 
 
 .. rubric:: Footnotes

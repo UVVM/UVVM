@@ -1131,4 +1131,4 @@ all the type definitions inside *func_cov_pkg*.
    func_cov_pkg_methods.rst
    func_cov_pkg_types.rst
 
-.. include:: ip_disclaimer.rst
+.. include:: rst_snippets/ip_disclaimer.rst

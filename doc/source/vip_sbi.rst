@@ -434,7 +434,7 @@ Compilation
 * After UVVM-Util has been compiled, the sbi_bfm_pkg.vhd can be compiled into any desired library.
 * See :ref:`Essential Mechanisms - Compile Scripts <vvc_framework_compile_scripts>` for information about compile scripts.
 
-.. include:: simulator_compatibility.rst
+.. include:: rst_snippets/simulator_compatibility.rst
 
 Local BFM overloads
 ==================================================================================================================================
@@ -819,18 +819,8 @@ stored by this procedure. ::
     -- It is recommended to use constants to improve the readability of the code, e.g.:
     sbi_poll_until(SBI_VVCT, 1, C_ADDR_UART_RX, C_CR_BYTE, "Read UART RX until CR is found");
 
-Activity Watchdog
-==================================================================================================================================
-The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will 
-register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC 
-activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog 
-is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered 
-within the specified timeout period.
 
-Include ``activity_watchdog(num_exp_vvc, timeout, [alert_level, [msg]])`` in the testbench to start using the activity watchdog.
-Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.
-
-More information can be found in :ref:`Essential Mechanisms - Activity Watchdog <vvc_framework_activity_watchdog>`.
+.. include:: rst_snippets/vip_activity_watchdog.rst
 
 Transaction Info
 ==================================================================================================================================
@@ -958,7 +948,7 @@ See :ref:`Essential Mechanisms - Compile Scripts <vvc_framework_compile_scripts>
     | bitvis_vip_sbi               | sbi_vvc.vhd                                    | SBI VVC                                         |
     +------------------------------+------------------------------------------------+-------------------------------------------------+
 
-.. include:: simulator_compatibility.rst
+.. include:: rst_snippets/simulator_compatibility.rst
 
 .. important::
 
@@ -967,7 +957,7 @@ See :ref:`Essential Mechanisms - Compile Scripts <vvc_framework_compile_scripts>
     * This VIP is not a SBI protocol checker.
     * For a more advanced VIP please contact Bitvis AS at support@bitvis.no
 
-.. include:: ip_disclaimer.rst
+.. include:: rst_snippets/ip_disclaimer.rst
 
 
 .. rubric:: Footnotes

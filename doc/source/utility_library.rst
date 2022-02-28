@@ -472,7 +472,7 @@ Disables logging for the given msg_id. (See :ref:`message_ids` for examples of d
     disable_log_msg(ID_LOG_HDR);
 
 
-is_log_msg_enabled ()
+is_log_msg_enabled()
 ----------------------------------------------------------------------------------------------------------------------------------
 Returns true if the given message ID is enabled, otherwise false. ::
 
@@ -2118,7 +2118,7 @@ Increment the expected alert counter for a scope. ::
 +==========+====================+========+==============================+=========================================================+
 | constant | scope              | in     | string                       |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref`:`t_alert_level`        |                                                         |
+| constant | alert_level        | in     | :ref:`t_alert_level`         |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | amount             | in     | natural                      | Default value is 1.                                     |
 |          |                    |        |                              |                                                         |
@@ -2145,7 +2145,7 @@ Set the expected alert counter for a scope. ::
 +==========+====================+========+==============================+=========================================================+
 | constant | scope              | in     | string                       |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref`:`t_alert_level`        |                                                         |
+| constant | alert_level        | in     | :ref:`t_alert_level`         |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | expected_alerts    | in     | natural                      |                                                         |
 |          |                    |        |                              |                                                         |
@@ -2168,7 +2168,7 @@ Increment the stop limit for a scope. ::
 +==========+====================+========+==============================+=========================================================+
 | constant | scope              | in     | string                       |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref`:`t_alert_level`        |                                                         |
+| constant | alert_level        | in     | :ref:`t_alert_level`         |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | amount             | in     | natural                      | Default value is 1.                                     |
 |          |                    |        |                              |                                                         |
@@ -2191,7 +2191,7 @@ Set the stop limit for a scope. ::
 +==========+====================+========+==============================+=========================================================+
 | constant | scope              | in     | string                       |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | alert_level        | in     | :ref`:`t_alert_level`        |                                                         |
+| constant | alert_level        | in     | :ref:`t_alert_level`         |                                                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | stop_limit         | in     | natural                      |                                                         |
 |          |                    |        |                              |                                                         |
@@ -2399,7 +2399,7 @@ Required setup:
     * Simulator transcript (and log file viewer) should be set to a fixed width font type for proper alignment (e.g. Courier New 8)
     * Simulator must be set up to break the simulation on failure (or lower severity)
 
-.. include:: ip_disclaimer.rst
+.. include:: rst_snippets/ip_disclaimer.rst
 
 
 .. rubric:: Footnotes

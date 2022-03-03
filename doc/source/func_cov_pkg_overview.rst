@@ -564,8 +564,9 @@ The amount of information can be adjusted by using the parameter verbosity.
 
 .. note::
 
-    When the bin values don't fit under the BINS column, the bin name is printed instead and the values are printed at the bottom 
-    of the report.
+    * All coverage values are capped to 100%, unless otherwise noted.
+    * When the bin values don't fit under the BINS column, the bin name is printed instead and the values are printed at the bottom 
+      of the report.
 
 Coverpoint Verbose
 ==================================================================================================================================

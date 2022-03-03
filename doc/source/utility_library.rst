@@ -804,6 +804,8 @@ Logs the status of all check counters, typically at the end of simulation. VOID 
     report_check_counters(INTERMEDIATE);
 
 
+.. _util_shared_variables:
+
 Shared variables
 ----------------------------------------------------------------------------------------------------------------------------------
 These shared variables are natural, read only types.
@@ -1960,51 +1962,201 @@ Types
 **********************************************************************************************************************************
 Message IDs
 **********************************************************************************************************************************
-A subset of message IDs is listed in the table below. All the message IDs are defined in adaptations_pkg.vhd
+The predefined message IDs are listed in the table below. All the message IDs are defined in adaptations_pkg.vhd
 
-+-----------------------+-------------------------------------------------------------------+
-| Message ID            | Description                                                       |
-+=======================+===================================================================+
-| ID_LOG_HDR            | For all test sequencer log headers.                               |
-|                       | Special format with preceding empty line and underlined message   |
-|                       | (also applies to ID_LOG_HDR_LARGE and ID_LOG_HDR_XL).             |
-+-----------------------+-------------------------------------------------------------------+
-| ID_SEQUENCER          | For all other test sequencer messages.                            |
-+-----------------------+-------------------------------------------------------------------+
-| ID_SEQUENCER_SUB      | For general purpose procedures defined inside TB and called from  |
-|                       | test sequencer.                                                   |
-+-----------------------+-------------------------------------------------------------------+
-| ID_POS_ACK            | A general positive acknowledge for check routines (incl. awaits). |
-+-----------------------+-------------------------------------------------------------------+
-| ID_BFM                | BFM operation (e.g. message that a write operation is completed)  |
-|                       | (BFM: Bus Functional Model, basically a procedure to handle a     |
-|                       | physical interface).                                              |
-+-----------------------+-------------------------------------------------------------------+
-| ID_BFM_WAIT           | Typically BFM is waiting for response (e.g. waiting for ready, or |
-|                       | predefined number of wait states).                                |
-+-----------------------+-------------------------------------------------------------------+
-| ID_BFM_POLL           | Used inside a BFM when polling until reading a given value, i.e., |
-|                       | to show all reads until expected value found.                     |
-+-----------------------+-------------------------------------------------------------------+
-| ID_PACKET_INITIATE    |A packet has been initiated (either about to start or just started)|
-+-----------------------+-------------------------------------------------------------------+
-| ID_PACKET_COMPLETE    | Packet completion.                                                |
-+-----------------------+-------------------------------------------------------------------+
-| ID_PACKET_HDR         | Packet header information.                                        |
-+-----------------------+-------------------------------------------------------------------+
-| ID_PACKET_DATA        | Packet data information.                                          |
-+-----------------------+-------------------------------------------------------------------+
-| ID_LOG_MSG_CTRL       | Dedicated ID for enable/disable_log_msg.                          |
-+-----------------------+-------------------------------------------------------------------+
-| ID_CLOCK_GEN          | Used for logging when clock generators are enabled or disabled.   |
-+-----------------------+-------------------------------------------------------------------+
-| ID_GEN_PULSE          | Used for logging when a gen_pulse procedure starts pulsing a      |
-|                       | signal.                                                           |
-+-----------------------+-------------------------------------------------------------------+
-| ID_NEVER              | Used for avoiding log entry. Cannot be enabled.                   |
-+-----------------------+-------------------------------------------------------------------+
-| ALL_MESSAGES          | Not an ID. Applies to all IDs (apart from ID_NEVER).              |
-+-----------------------+-------------------------------------------------------------------+
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| Message ID               | Description                                                                                         |
++==========================+=====================================================================================================+
+| -- **Bitvis utility methods**                                                                                                  |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| NO_ID                    | Used as default prior to setting actual ID when transfering ID as a field in a record               |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_UTIL_BURIED           | Used for buried log messages where msg and scope cannot be modified from outside                    |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_BITVIS_DEBUG          | Bitvis internal ID used for UVVM debugging                                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_UTIL_SETUP            | Used for Utility setup                                                                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_LOG_MSG_CTRL          | Dedicated ID for enable/disable_log_msg.                                                            |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_ALERT_CTRL            | Used inside Utility library only - when setting IGNORE or REGARD on various alerts.                 |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_NEVER                 | Used for avoiding log entry. Cannot be enabled.                                                     |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FINISH_OR_STOP        | Used when terminating the complete simulation - independent of why                                  |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CLOCK_GEN             | Used for logging when clock generators are enabled or disabled.                                     |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_GEN_PULSE             | Used for logging when a gen_pulse procedure starts pulsing a signal.                                |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_BLOCKING              | Used for logging when using synchronisation flags                                                   |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_WATCHDOG              | Used for logging the activity of the watchdog                                                       |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_RAND_GEN              | Used for logging "Enhanced Randomization" values returned by rand()\randm()                         |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_RAND_CONF             | Used for logging "Enhanced Randomization" configuration changes, except from name and scope         |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FUNC_COV_BINS         | Used for logging functional coverage add_bins() and add_cross() methods                             |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FUNC_COV_BINS_INFO    | Used for logging functional coverage add_bins() and add_cross() methods detailed information        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FUNC_COV_RAND         | Used for logging functional coverage "Optimized Randomization" values returned by rand()            |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FUNC_COV_SAMPLE       | Used for logging functional coverage sampling                                                       |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FUNC_COV_CONFIG       | Used for logging functional coverage configuration changes                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **General**                                                                                                                 |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_POS_ACK               | To write a positive acknowledge on a check                                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Directly inside test sequencers**                                                                                         |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_LOG_HDR               | For all test sequencer log headers. Special format with preceding empty line and underlined message |
+|                          | (also applies to ID_LOG_HDR_LARGE and ID_LOG_HDR_XL).                                               |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_LOG_HDR_LARGE         | For all test sequencer large log headers.                                                           |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_LOG_HDR_XL            | For all test sequencer extra large log headers.                                                     |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SEQUENCER             | For all other test sequencer messages.                                                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SEQUENCER_SUB         | For general purpose procedures defined inside TB and called from test sequencer.                    |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **BFMs**                                                                                                                    |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_BFM                   | BFM operation (e.g. message that a write operation is completed) (BFM: Bus Functional Model,        |
+|                          | basically a procedure to handle a physical interface).                                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_BFM_WAIT              | Typically BFM is waiting for response (e.g. waiting for ready, or predefined number of wait states).|
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_BFM_POLL              | Used inside a BFM when polling until reading a given value, i.e., to show all reads until expected  |
+|                          | value found.                                                                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_BFM_POLL_SUMMARY      | Used inside a BFM when showing the summary of data that has been received while waiting for expected|
+|                          | data.                                                                                               |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CHANNEL_BFM           | Used inside a BFM when the protocol is split into separate channels                                 |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_TERMINATE_CMD         | Typically used inside a loop in a procedure to end the loop (e.g. for sbi_poll_until() or any looped|
+|                          | generation of random stimuli                                                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Segment Ids, finest granularity of packet data**                                                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SEGMENT_INITIATE      | Notify that a segment is about to be transmitted or received                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SEGMENT_COMPLETE      | Notify that a segment has been transmitted or received                                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SEGMENT_HDR           | Notify that a segment header has been transmitted or received. It also writes header info           |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SEGMENT_DATA          | Notify that a segment data has been transmitted or received. It also writes segment data            |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Packet Ids, medium granularity of packet data**                                                                           |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_PACKET_INITIATE       | Notify that a packet is about to be transmitted or received                                         |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_PACKET_PREAMBLE       | Notify that a packet preamble has been transmitted or received                                      |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_PACKET_COMPLETE       | Notify that a packet has been transmitted or received                                               |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_PACKET_HDR            | Notify that a packet header has been transmitted or received. It also writes header info            |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_PACKET_DATA           | Notify that a packet data has been transmitted or received. It also writes packet data              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_PACKET_CHECKSUM       | Notify that a packet checksum has been transmitted or received                                      |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_PACKET_GAP            | Notify that an interpacket gap is in process                                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_PACKET_PAYLOAD        | Notify that a packet payload has been transmitted or received                                       |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Frame Ids, roughest granularity of packet data**                                                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FRAME_INITIATE        | Notify that a frame is about to be transmitted or received                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FRAME_COMPLETE        | Notify that a frame has been transmitted or received                                                |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FRAME_HDR             | Notify that a frame header has been transmitted or received. It also writes header info             |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FRAME_DATA            | Notify that a frame data has been transmitted or received. It also writes frame data                |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Distributed command systems**                                                                                             |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_UVVM_SEND_CMD         | Logs the commands sent to the VVC                                                                   |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_UVVM_CMD_ACK          | Logs the command's ACKs or timeouts from the VVC                                                    |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_UVVM_CMD_RESULT       | Logs the fetched results from the VVC                                                               |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CMD_INTERPRETER       | Message from VVC interpreter about correctly received and queued/issued command                     |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CMD_INTERPRETER_WAIT  | Message from VVC interpreter that it is actively waiting for a command                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_IMMEDIATE_CMD         | Message from VVC interpreter that an IMMEDIATE command has been executed                            |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_IMMEDIATE_CMD_WAIT    | Message from VVC interpreter that an IMMEDIATE command is waiting for command to complete           |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CMD_EXECUTOR          | Message from VVC executor about correctly received command - prior to actual execution              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CMD_EXECUTOR_WAIT     | Message from VVC executor that it is actively waiting for a command                                 |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CHANNEL_EXECUTOR      | Message from a channel specific VVC executor process                                                |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CHANNEL_EXECUTOR_WAIT | Message from a channel specific VVC executor process that it is actively waiting for a command      |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_NEW_HVVC_CMD_SEQ      | Message from a lower level VVC which receives a new command sequence from an HVVC                   |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_INSERTED_DELAY        | Message from VVC executor that it is waiting a given delay                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Await completion**                                                                                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_OLD_AWAIT_COMPLETION  | Temporary log messages related to old await_completion mechanism. Will be removed in v3.0           |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_AWAIT_COMPLETION      | Used for logging the procedure call waiting for completion                                          |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_AWAIT_COMPLETION_LIST | Used for logging modifications to the list of VVCs waiting for completion                           |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_AWAIT_COMPLETION_WAIT | Used for logging when the procedure starts waiting for completion                                   |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_AWAIT_COMPLETION_END  | Used for logging when the procedure has finished waiting for completion                             |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Distributed data**                                                                                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_UVVM_DATA_QUEUE       | Information about UVVM data FIFO/stack (initialization, put, get, etc)                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **VVC system**                                                                                                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CONSTRUCTOR           | Constructor message from VVCs (or other components/process when needed)                             |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CONSTRUCTOR_SUB       | Constructor message for lower level constructor messages (like Queue-information and other          |
+|                          | limitations)                                                                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_VVC_ACTIVITY          |                                                                                                     |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Monitors**                                                                                                                |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_MONITOR               | General monitor information                                                                         |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_MONITOR_ERROR         | General monitor errors                                                                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **SB package**                                                                                                              |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_DATA                  | To write general handling of data                                                                   |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_CTRL                  | To write general control/config information                                                         |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Specification vs Verification IDs**                                                                                       |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FILE_OPEN_CLOSE       | Id used when opening / closing file                                                                 |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_FILE_PARSER           | Id used in file parsers                                                                             |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SPEC_COV              | Messages from the specification coverage methods                                                    |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **Special purpose - Not really IDs**                                                                                        |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ALL_MESSAGES             | Not an ID. Applies to all IDs (apart from ID_NEVER).                                                |
++--------------------------+-----------------------------------------------------------------------------------------------------+
 
 Message IDs are used for verbosity control in many of the procedures and functions in UVVM-Util, and are toggled by using the 
 procedures :ref:`util_enable_log_msg` and :ref:`util_disable_log_msg`.
@@ -2217,98 +2369,32 @@ constant VOID : t_void
 **********************************************************************************************************************************
 Adaptations package
 **********************************************************************************************************************************
-* The adaptations_pkg.vhd is intended for local modifications to library behaviour and log layout. 
-* This way only one file needs to merge when a new version of the library is released.
-* This package may of course also be used to set up a company or project specific behaviour and layout. 
-* The layout constants and global signals are described in the following tables:
+The adaptations_pkg.vhd is intended for local modifications to library behaviour and log layout. This way only one file needs to 
+merge when a new version of the library is released. This package may of course also be used to set up a company or project 
+specific behaviour and layout.
 
-+-----------------------------------------------+-------------------------------------------------------------------+
-| Constant                                      | Description                                                       |
-+===============================================+===================================================================+
-| C_ALERT_FILE_NAME                             | Name of the alert file.                                           |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_FILE_NAME                               | Name of the log file.                                             |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_SHOW_UVVM_UTILITY_LIBRARY_INFO              | General information about the UVVM Utility Library will be shown  |
-|                                               | when this is enabled.                                             |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_SHOW_UVVM_UTILITY_LIBRARY_RELEASE_INFO      | Release information will be shown when this is enabled.           |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_UVVM_TIMEOUT                                | General timeout for UVVM wait statements.                         |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_PREFIX                                  | The prefix to all log messages. "UVVM: " by default.              |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_PREFIX_WIDTH                            | Number of characters to be used for the log prefix.               |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_MSG_ID_WIDTH                            | Number of characters to be used for the message ID.               |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_TIME_WIDTH                              | Number of characters to be used for the log time. Three characters|
-|                                               | are used for time unit, e.g., ' ns'.                              |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_TIME_BASE                               | The unit in which time is shown in the log. Either ns or ps.      |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_TIME_DECIMALS                           | Number of decimals to show for the time.                          |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_SCOPE_WIDTH                             | Number of characters to be used to show log scope.                |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_LINE_WIDTH                              | Number of characters allowed in each line in the log.             |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_INFO_WIDTH                              | Number of characters of information allowed in each line in the   |
-|                                               | log. By default, this is set to                                   |
-|                                               | C_LOG_LINE_WIDTH – C_LOG_PREFIX_WIDTH.                            |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_HDR_FOR_WAVEVIEW_WIDTH                  | Number of characters for a string in the waveview indicating last |
-|                                               | log header.                                                       |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME    | Whether or not to report a warning if the log or alert files are  |
-|                                               | renamed after they have been written.                             |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_USE_BACKSLASH_N_AS_LF                       | If true '\n' will be interpreted as line feed.                    |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_USE_BACKSLASH_R_AS_LF                       | If true '\r' placed as the first character in the string will be  |
-|                                               | interpreted as a LF where the timestamp, Id etc. will be omitted. |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_SINGLE_LINE_ALERT                           | If true prints alerts on a single line. Default false.            |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_SINGLE_LINE_LOG                             | If true prints logs messages on a single line. Default false.     |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_TB_SCOPE_DEFAULT                            | The default scope in the test sequencer.                          |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_LOG_TIME_TRUNC_WARNING                      | Yields a single TB_WARNING if time stamp truncated.               |
-|                                               | Otherwise none.                                                   |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_DEFAULT_MSG_ID_PANEL                        | Sets the default message IDs that shall be shown in the log.      |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_MSG_ID_INDENT                               | Sets the indentation for each message ID.                         |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_DEFAULT_ALERT_ATTENTION                     | Sets the default alert attention.                                 |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_DEFAULT_STOP_LIMIT                          | Sets the default alert stop limit.                                |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_ENABLE_HIERARCHICAL_ALERTS                  | Whether or not to enable hierarchical alert summary.              |
-|                                               | Default false.                                                    |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_BASE_HIERARCHY_LEVEL                        | The name of the base/top level node that all other nodes in the   |
-|                                               | tree will originate from.                                         |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_DEPRECATE_SETTING                           | Sets how the user is to be notified if a procedure has been       |
-|                                               | deprecated and will be removed in later versions.                 |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_VVC_RESULT_DEFAULT_ARRAY_DEPTH              | Default for how many results (e.g. reads) a VVC can store before  |
-|                                               | overwriting old results                                           |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_VVC_MSG_ID_PANEL_DEFAULT                    | Default message ID panel to use in VVCs                           |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_SHOW_LOG_ID                                 | Whether or not to show the Log ID field                           |
-+-----------------------------------------------+-------------------------------------------------------------------+
-| C_SHOW_LOG_SCOPE                              | Whether or not to show the Log Scope field                        |
-+-----------------------------------------------+-------------------------------------------------------------------+
+The package has constants for customizing functionality such as:
+
+    * setting the alert and log files names
+    * removing UVVM initial and release info printed in simulation
+    * log format, e.g.: log prefix, log widths, scope default value
+    * :ref:`message ids <message_ids>`
+    * verbosity control, e.g.: default log msg ID, default message ID panel, default message ID indentation
+    * alert counters, e.g.: default alert attention, default stop limit
+    * hierarchical alerts, e.g.: enabling hierarchical alerts
+    * synchronization, e.g.: maximum sync flags
+    * enhanced randomization, e.g.: initial randomization seeds
+    * functional coverage, e.g.: maximum number of coverpoints
+    * VVC framework, e.g.: maximum number of VVC instances
+    * scoreboard, e.g.: maximum number of SB instances
+    * hierarchical VVCs, e.g.: supported interfaces
+    * CRC
 
 +-----------------------------------+-------------------+-----------------------------------------------------------+
 | Global signal                     | Type              | Description                                               |
 +===================================+===================+===========================================================+
-| global_show_msg_for_uvvm_cmd      | boolean           | If true messages for Bitvis UVVM commands will be shown   |
-|                                   |                   | if applicable.                                            |
+| global_show_msg_for_uvvm_cmd      | boolean           | If true, the msg parameter for the commands using the     |
+|                                   |                   | msg_id ID_UVVM_SEND_CMD will be shown                     |
 +-----------------------------------+-------------------+-----------------------------------------------------------+
 
 +-----------------------------------+-------------------+-----------------------------------------------------------+

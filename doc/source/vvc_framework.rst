@@ -862,8 +862,8 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
     * **Monitor trigger signal** : *global_<protocol-name>_monitor_transaction_trigger*, e.g. global_uart_monitor_transaction_trigger
     * **Monitor shared variable** : *shared_<protocol-name>_monitor_transaction_info*, e.g. shared_uart_monitor_transaction_info
     * **VVC trigger signal**: *global_<protocol-name>_vvc_transaction_trigger*, e.g. global_uart_vvc_transaction_trigger.
-    * **VVC shared variable** : *shared_<protocol-name>_vvc_transaction_info*, e.g, shared_uart_vvc_transaction_info. The VVC is also 
-      responsible for filling out the vvc_meta record field.
+    * **VVC shared variable** : *shared_<protocol-name>_vvc_transaction_info*, e.g, shared_uart_vvc_transaction_info. The VVC is 
+      also responsible for filling out the vvc_meta record field.
 
 .. table:: Table 5 - Transaction Info record **t_<if>_transaction_group** for an UART interface - accessible via 
            **shared_uart_vvc_transaction_info(vvc_idx)** t_uart_transaction_group_array
@@ -1243,33 +1243,281 @@ See :ref:`vvc_framework_vvc_parameters_and_sequence` for parameter sequence and 
 
 Testbench Data Routing
 ==================================================================================================================================
+Transaction Info is providing a mechanism for passively routing source data (data entered into the DUT) out of the VVCs to other 
+parts of the testbench. This data routing is passive in the sense that the transaction data is just provided as a shared variable 
+- for anyone to read. This is covered in :ref:`vvc_framework_transaction_info`. There is however also a need for routing data 
+actively inside the testbench, where routing means fetching from or sending to predefined sources and destinations.
+
+To/from Buffer
+----------------------------------------------------------------------------------------------------------------------------------
+UVVM has a global buffer that is divided into multiple smaller buffers that may be indexed and accessed from anywhere in the 
+testbench. This functionality is described in :ref:`uvvm_fifo_collection`. VVC commands requesting sourcing data from or sending 
+data to these buffers use parameter TO_BUFFER or FROM_BUFFER, followed by the buffer index.
+
+To Scoreboard
+----------------------------------------------------------------------------------------------------------------------------------
+Scoreboards may be used anywhere inside the testbench, but for UVVM the following is recommended:
+
+    #. Use Scoreboards only on the destination side of the testbench, i.e. where data is received or fetched out of the DUT.
+       E.g. for a UART on the DUT UART TX side (= UART_VVC RX side).
+    #. Every VVC may be connected to one single Scoreboard.
+    #. The Scoreboard instance number should be the same as the VVC instance number.
+    #. When using VVCs, make sure the VVC passes the received data to its Scoreboard, do not check the data in the VVC. E.g. for a 
+       UART_VVC, use the receive-command (and not the expect-command) to forward received data to the Scoreboard.
+
+VVC commands requesting sending data to the Scoreboard use parameter TO_SB.
+
+Data routing options
+----------------------------------------------------------------------------------------------------------------------------------
+The profile names are defined in the type :ref:`t_data_routing`, which is defined in types_pkg.vhd
+
++----------------------------+---------------------------------------------------------------------------------------------------+
+| NA                         | Not applicable (To be used in a record where the field is present, but no data routing wanted)    |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| TO_SB                      | Data is passed on to the Scoreboard for the given VVC                                             |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| FROM_BUFFER                | Data is sourced from the UVVM global buffer                                                       |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| TO_BUFFER                  | Data is also sent to the UVVM global buffer                                                       |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| TO_FILE                    | TBD – Not yet implemented (Do not use – as this may change)                                       |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| FROM_FILE                  | TBD – Not yet implemented (Do not use – as this may change)                                       |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| <user-defined>             |                                                                                                   |
++----------------------------+---------------------------------------------------------------------------------------------------+
+
+VVC Command Syntax
+----------------------------------------------------------------------------------------------------------------------------------
+See :ref:`vvc_framework_vvc_parameters_and_sequence` for parameter sequence and options.
 
 Controlling Property Checkers
 ==================================================================================================================================
+A major VVC advantage is that lots of very useful additional functionality may be added inside the VVC entity, meaning that all 
+the verification support for a given interface can be encapsulated inside a single VHDL entity. A major advantage of UVVM is that 
+adding additional functionality and controlling it from the test sequencers is really simple.
+
+One very useful additional functionality is property checkers, and some typical examples of this could be to check the minimum 
+allowed bit period, the minimum inter-packet gap, back-to-back restrictions, etc., or in general to check a given requirement 
+continuously - especially when this is easier to do outside the BFM - for instance in a dedicated checker process.
+
+A dedicated checker process would typically just wait for a trigger condition on the interface (like a UART data bit changing its 
+level), then wait again for a next trigger (the next data bit), and then check that the time between the two changes is not less 
+than the minimum allowed bit period. This check could then be repeated forever. It is however recommended that the check could be 
+turned on and off for more flexibility.
+
+Property check configuration
+----------------------------------------------------------------------------------------------------------------------------------
+In UVVM, turning checkers on and off is controlled by the VVC configuration (see :ref:`vvc_framework_status_config_transaction_info`), 
+and often additional control of the checker behaviour is also required. Thus, it is recommended to include the checker control for 
+each individual check in a dedicated sub-record. An example on this (for the UART VVC) is shown below. See :ref:`UART VVC 
+<vip_uart_vvc>` for implementation. ::
+
+    .bit_rate_checker              -- Sub-record containing all control of the property checker behaviour
+        .enable      boolean       -- Enables or disables the complete bit rate checker
+        .min_period  time
+        .alert_level t_alert_level
+
+For this example, the bit rate checker inside the UART_VVC RX will trigger on changes on the DUT TX and execute the check if 
+enable is TRUE.
+
+Setting up the configuration
+----------------------------------------------------------------------------------------------------------------------------------
+The bit rate checker configuration may be changed directly from the sequencer via the shared variable VVC configuration.
 
 .. _vvc_framework_vvc_parameters_and_sequence:
 
 VVC Parameters and Sequence for Randomization, Sources and Destinations
 ==================================================================================================================================
+In order to assure a common syntax and understanding for the various VVC commands controlling these features, the sequence and 
+type of parameters have been defined as follows:
+
++--------------------+-------------------------------+---------------+---------------------+-------------------+----------------------+
+| Parameter sequence | Preceding command part        | [Repetitions] | Randomness          | Data routing type | [Data routing index] |
++====================+===============================+===============+=====================+===================+======================+
+| Example A          | uart_transmit(UART_VVCT,1,TX) | 4             | RANDOM_FAVOUR_EDGES | TO_BUFFER         | 5                    |
++--------------------+-------------------------------+---------------+---------------------+-------------------+----------------------+
+| Example B          | uart_receive(UART_VVCT,1,RX)  |               |                     | TO_SB             |                      |
++--------------------+-------------------------------+---------------+---------------------+-------------------+----------------------+
+
+Example A means: make 4 transactions with random data (using predefined profile RANDOM_FAVOUR_EDGES) and send the data also to 
+BUFFER 5, e.g. ::
+
+    uart_transmit(UART_VVCT,1,TX, 4, RANDOM_FAVOUR_EDGES, TO_BUFFER, C_UART_BUFFER, "my message");
+
+Example B means: keep on receiving data and send the received data also to the local Scoreboard, e.g. ::
+
+    uart_receive(UART_VVCT,1,RX, 4, TO_SB, "my message");
+
+Exactly what variants will be available for each VVC is up to the VVC designer, but this gives the sequence and the options.
 
 Multiple Central Sequencers
 ==================================================================================================================================
+A structured test environment is important, and we recommend the use of a structured test harness to instantiate VVCs, DUT, clock 
+generator and so forth. The testbench may consist of one or more test sequencers which are used to control the complete testbench 
+architecture with any number of VVCs, although for a better testbench overview we recommend having a single central test sequencer 
+only - for most testbenches.
 
 Monitors
 ==================================================================================================================================
+Monitors could be great to check the interface accesses to a DUT - to report the transaction to the testbench - with all relevant 
+info like operation (write, read, transmit, ...), data, address, etc. This information may be critical in order to understand the 
+operation of the DUT and its expected outputs. A monitor is not a protocol checker, but may of course check various properties of 
+an interface/protocol. A typical Monitor will however only provide the relevant basic information and leave more advance 
+interpretation to other parts of a testbench. For simple protocols like the UART, UVVM also includes basic error checking in the 
+Monitor - as this happens at a very low level. For more advanced protocols it would make sense to just pass on the low level info 
+to a higher level checker. The reason for making a dedicated monitor rather than leaving that to the testbench model is to achieve 
+a better testbench structure and more efficient reuse.
+
+It should however be mentioned that implementing Transaction Info (see :ref:`vvc_framework_transaction_info`) inside a VVC 
+significantly reduces the need for a dedicated monitor, as the VVC will then be able to pass the complete transaction information 
+on to, for instance, a model inside the Testbench.
+
+Transfer of Monitor information to the testbench
+----------------------------------------------------------------------------------------------------------------------------------
+The mechanism for passing the monitor deduced transaction out of the monitor is almost exactly the same as for passing transaction 
+info out of a VVC - as described in :ref:`vvc_framework_transaction_info`. The only difference is that the monitor can only 
+provide parts of what the VVC can provide.
+
+    * No monitor can provide info about compound transactions.
+    * For a split transaction protocol like Avalon - only the sub-transactions could be provided (which could be analysed at the 
+      higher level to provide Base transactions).
+    * A monitor cannot provide meta data like command index or command message.
+
+As the monitor does not know what to expect at the beginning of a transaction the following field limitations apply:
+
+    * Operation: Can only be known some time after the start of the transaction. Will be set when the type of the transaction is 
+      known, e.g. TRANSMIT or RECEIVE for UART (otherwise NO_OPERATION).
+    * | Transaction_status: Will be set to FAILED or SUCCEEDED as soon as the result is 100% given. Prior to that - during the 
+        transaction: IN_PROGRESS.
+      | FAILED/SUCCEEDED will remain for the transaction_display_time given inside the monitor configuration record, or until the 
+        next transaction FAILED or SUCCEEDED.
+
+An example of a complete monitor is shown in the UART VIP directory.
+
+Transaction info transfer signals
+----------------------------------------------------------------------------------------------------------------------------------
+The Transaction info provided out of a Monitor uses a set of a global signal and a shared variable. These and all related VHDL 
+types are defined in transaction_pkg.
+
+    * **Monitor trigger signal** : *global_<protocol-name>_monitor_transaction_trigger*, e.g. global_uart_monitor_transaction_trigger(channel, instance number)
+    * **Monitor shared variable** : *shared_<protocol-name>_monitor_transaction_info*, e.g. shared_uart_monitor_transaction_info(channel, instance number)
+
+See :ref:`vvc_framework_transaction_info_record` Table 5 for more details.
 
 .. _vvc_framework_compile_scripts:
 
 Compile Scripts
 ==================================================================================================================================
+In the script folder in the root directory the *compile_all.do* compiles all UVVM components. This script may be called with one 
+to three input arguments:
+
+    * The first input argument is the directory of the script folder at the root directory from the working directory.
+    * The second input argument is the target directory of the compiled libraries, by default every library is compiled in a sim 
+      folder in the corresponding components directory.
+    * The third input argument is the directory to a custom component list in .txt format. The script will only compile the 
+      components listed in that file. By default, the script uses the file component_list.txt located in uvvm/script. This file 
+      can be modified so that only some components are compiled.
+
+.. code-block:: console
+
+    Example: do uvvm/script/compile_all.do uvvm/script
+
+There are also compile scripts for all UVVM components located in the script folder of each UVVM component. These scripts can be 
+called with two input arguments:
+
+    * The first input argument is the directory of the component folder from the working directory.
+    * The second input argument is the target directory of the compiled library, default is the sim folder in the respective 
+      component.
+
+.. code-block:: console
+
+    Example: do uvvm/uvvm_vvc_framework/script/compile_src.do uvvm/uvvm_vvc_framework
 
 .. _vvc_framework_verbosity_ctrl:
 
 Scope of Verbosity Control
 ==================================================================================================================================
+| Message IDs are used for verbosity control in many of the procedures and functions in UVVM, as well as log messages and checks 
+  in VVCs, BFMs and Scoreboards.
+| Note that VVCs and Scoreboards come with dedicated message ID panels and are not affected by the global message ID panel, but 
+  accessed by addressing the targeting VVC or Scoreboard and, if applicable, instance number or with a broadcast.
+| Also note that when a VVC is executing commands triggered by an HVVC (Hierarchical-VVC), e.g. SBI write due to Ethernet transmit, 
+  the VVC will use the HVVC's message ID panel instead. See :ref:`vvc_frameworks_hierarchical_vvcs` for an example of the HVVC 
+  structure.
+
+.. code-block::
+
+    -- Global message ID panel. Does not apply to VVCs or Scoreboards, as they have their own local message ID panel
+    disable_log_msg(ALL_MESSAGES);
+    enable_log_msg(ID_SEQUENCER);
+
+    -- VVC message ID panel
+    disable_log_msg(VVC_BROADCAST, ALL_MESSAGES);            -- broadcast to all VVCs and instances
+    enable_log_msg(I2C_VVCT, C_VVC_INSTANCE_1, ID_BFM_WAIT); -- I2C VVC instance 1
+    enable_log_msg(I2C_VVTC, C_VVC_INSTANCE_2, ID_BFM_WAIT); -- I2C VVC instance 2
+
+    -- Scoreboard message ID panel
+    shared variable sb_under_test : record_sb_pkg.t_generic_sb;
+    ...
+    sb_under_test.disable_log_msg(ALL_INSTANCES, ID_CTRL);  -- broadcast to all SB instances
+    sb_under_test.enable_log_msg(C_SB_INSTANCE_1, ID_DATA); -- SB instance 1
+
+The predefined message IDs are listed in :ref:`message_ids`.
+
+.. _vvc_frameworks_hierarchical_vvcs:
 
 Hierarchical VVCs
 ==================================================================================================================================
+Many protocols and applications consist of several abstraction levels, e.g. physical layer, link layer, transaction layer, etc. 
+When writing a test case for a higher level you most likely want to ignore the underlying levels and only deal with the scope of 
+the relevant level. The test case will be less complex and easier to both write and read. A hierarchical VVC (HVVC) is a VVC of a 
+higher protocol level than the physical layer, i.e. it has no physical connections. The test case only communicates with the HVVC 
+which communicate with the lower level. Data is propagated upwards and downwards between the HVVC and DUT through a standard VVC 
+connected to the DUT.
+
+The HVVC-to-VVC Bridge is the connection between a hierarchical VVC (HVVC) and the VVC at a lower protocol level, in this context 
+referred to only as the VVC. Communications between the HVVC and VVC is handled by the HVVC-to-VVC Bridge. Data is transferred 
+between the HVVC and HVVC-to-VVC Bridge on a common interface and converted in the HVVC-to-VVC Bridge to/from the specific 
+interface of the VVC used. An example of this concept used on Ethernet is seen in Figure 8.
+
+.. figure:: /images/vvc_framework/hvvc_to_vvc_bridge.png
+   :alt: HVVC-to-VVC Bridge
+   :width: 550pt
+   :align: center
+
+   Figure 8 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC
+
+HVVC usage
+----------------------------------------------------------------------------------------------------------------------------------
+To simulate an HVVC you only need to do the following:
+
+    #. Instantiate the HVVC in the test harness and set the generic GC_PHY_INTERFACE to the physical interface you want to use.
+    #. Instantiate the VVC of the physical interface with the same instance index as GC_PHY_VVC_INSTANCE_IDX.
+    #. Connect the VVC of the physical interface to the DUT.
+
+.. code-block::
+
+    i1_ethernet_vvc : entity bitvis_vip_ethernet.ethernet_vvc
+      generic map(
+        GC_INSTANCE_IDX         => C_VVC_ETH,
+        GC_PHY_INTERFACE        => GMII,
+        GC_PHY_VVC_INSTANCE_IDX => C_VVC_GMII
+    );
+
+    i1_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
+      generic map (
+        GC_INSTANCE_IDX  => C_VVC_GMII
+      )
+      port map (
+        gmii_vvc_tx_if => gmii_vvc_tx_if,
+        gmii_vvc_rx_if => gmii_vvc_rx_if
+    );
+
+Any VVC can be used as a physical interface, however it needs to have an HVVC-to-VVC Bridge implementation. You can find the 
+available implementations under *bitvis_vip_hvvc_to_vvc_bridge/src*.
+
+For information on how to implement your own, see :ref:`vip_hvvc_to_vvc_bridge`.
 
 **********************************************************************************************************************************
 VVC Implementation Guide

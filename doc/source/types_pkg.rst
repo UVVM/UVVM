@@ -214,3 +214,10 @@ ALLOW_WIDER, ALLOW_NARROWER, ALLOW_WIDER_NARROWER, ALLOW_EXACT_ONLY
 .. note::
 
     This type is defined in bfm_common_pkg.vhd
+
+
+.. _t_data_routing:
+
+t_data_routing
+----------------------------------------------------------------------------------------------------------------------------------
+NA, TO_SB, TO_BUFFER, FROM_BUFFER, TO_RECEIVE_BUFFER

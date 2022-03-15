@@ -554,6 +554,8 @@ Available information is dependent on VVC type and typical information is: ::
 
     This shared variable is replacing the shared_<vvc_name>_transaction_info, which will soon be deprecated.
 
+.. _vvc_framework_status_config_transaction_info:
+
 VVC Status, Configuration and Transaction Information
 ==================================================================================================================================
 The VVC status, configuration and transaction information records are defined in each individual VVC methods package.
@@ -1108,7 +1110,7 @@ these cases, a single command to the VVC will trigger a complete sequence of acc
 executors handling these sequences are called local sequencers as they are local to the VVC and thus also improves re-use. These 
 sequences of transactions may also be defined as Compound Transactions (see :ref:`vvc_framework_transaction_info_definitions`).
 
-An example of a local sequencer is the randomisation sequences in the UART VVC, and poll_until in the SBI VVC.
+An example of a local sequencer is the randomization sequences in the UART VVC, and poll_until in the SBI VVC.
 
 Local sequencer requirements
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1124,15 +1126,128 @@ base transaction):
 
 Protocol Aware Error Injection
 ==================================================================================================================================
+Error injection into the DUT could be very useful in a testbench in order to test how the DUT handles interface errors when these 
+errors are: a) to be detected and corrected, b) detected only, and c) not detected but may or may not affect the behaviour.
 
-Randomisation
+Protocol aware error injection is defined here as intelligent error injection, given knowledge about the interface and protocol, 
+e.g. to inject a parity error in a protocol rather than just inverting or delaying a signal without pre-defined detailed support 
+to do this at the right place. The latter is supported by a dedicated "brute force" error injection VIP 'bitvis_vip_error_injection' 
+in UVVM.
+
+UVVM has a pre-defined methodology for handling protocol aware error injection in a structured way.
+
+.. note::
+
+    Only some VVCs and BFMs currently support error injection. The principles shown for these VVCs and BFMs may be applied 
+    directly also for user defined VIP.
+
+UVVM error injection principles
+----------------------------------------------------------------------------------------------------------------------------------
+Error injection may be applied randomly, with no limitations. For UVVM however, we recommend the following approach:
+
+    #. No randomization of behaviour inside BFMs when this could affect the DUT behaviour or output (and a monitor would be 
+       required to check the actual DUT stimuli). Hence BFM procedures should only be called with parameters explicitly defining 
+       the interface behaviour (from the BFM side). Thus no parity error randomization inside. The only exception is for behaviour 
+       that should not affect the DUT. Thus the position of a data bit error could be randomized inside the BFM.
+    #. It is recommended that more advanced VVCs include randomization - in order to distribute this away from the test sequencer 
+       and increase the re-use value of a VVC. Thus a VVC may be told to apply say 10% parity errors for a UART_VVC transmission 
+       into the DUT. In that case the VVC will randomly - with a 10% probability - inject a parity error into the DUT. As the VVC 
+       uses a BFM to handle the actual interface/protocol, this means that in 10% of the BFM transmit calls the VVC will request a 
+       parity error to be injected.
+
+Error injection in BFMs
+----------------------------------------------------------------------------------------------------------------------------------
+In order to simplify the specification of which errors to inject, the complete error injection specification is given as a 
+sub-record inside the BFM configuration. E.g. inside the UART BFM configuration the following sub-record is defined - with fields 
+specifying the error injection details (details given in :ref:`UART BFM <vip_uart_bfm>`).
+
+    * error_injection (fixed name, but type will differ)
+        * parity_bit_error (boolean)
+        * stop_bit_error (boolean)
+
+In order to initiate error injection, the BFM config record must be modified and included in the BFM procedure call.
+
+Error injection in VVCs
+----------------------------------------------------------------------------------------------------------------------------------
+In order to simplify the specification of which errors to inject, the complete error injection specification is given as a 
+sub-record inside the VVC configuration (Note: not the BFM config). E.g. inside the UART VVC configuration the following 
+sub-record is defined - with fields specifying the error injection details (Details given in :ref:`UART VVC <vip_uart_vvc>`).
+
+    * error_injection
+        * parity_bit_error_prob (real between 0.0 and 1.0)
+        * stop_bit_error_prob (real between 0.0 and 1.0)
+
+In order to initiate error injection, the VVC config record must be assigned the wanted values via the VVC configuration shared 
+variable (see :ref:`vvc_framework_status_config_transaction_info`).
+
+.. note::
+
+    The Error injection sub-record inside the VVC configuration will override that of the BFM configuration. Any compound or more 
+    advanced transactions may of course also request error injection directly or indirectly via the VVC command itself.
+
+Naming and type usage
+----------------------------------------------------------------------------------------------------------------------------------
+The error injection sub-record will be VVC and BFM dedicated, and thus any names and types may be used, and even sub-records under 
+'error_injection' is required. The VVC and BFM error injection records may differ or be the same. The only requirement is that 
+readability is prioritised. Values should be checked against legal ranges or values.
+
+Built-in randomization
 ==================================================================================================================================
+UVVM provides functions and procedures for simple generation of random numbers (real, integer, time) and vectors, described in 
+:ref:`basic_randomization`. It also provides a more complete randomization package using protected types, which is described in 
+:ref:`rand_pkg_overview`. And a more advanced randomization without replacement, described in :ref:`optimized_randomization`.
+
+.. note::
+
+    Only some VVCs currently include built-in randomization (e.g. UART TX VVC and SBI VVC.) The principles shown for these VVCs 
+    may be applied directly also for a user defined VIP.
+
+UVVM VIP randomization principles
+----------------------------------------------------------------------------------------------------------------------------------
+Randomization may of course be applied with no limitations in a UVVM based testbench. For UVVM VIP however, we recommend the same 
+general approach as for error injection randomizations:
+
+    #. No randomization of data inside BFMs as this would affect the DUT behaviour or output (and a monitor would be required to 
+       check the actual DUT stimuli). Hence BFM procedures should only be called with explicit data.
+    #. It is recommended that more advanced VVCs include functionality for randomization of data - in order to distribute this 
+       away from the test sequencer and increase the re-use value of a VVC. Thus, a VVC may be told to apply random data, in which 
+       case the VVC will randomly generate data according to a given profile (e.g. uniform) and provide that data to the interface 
+       via the BFM call. The profile and constraints will depend on the needs and the VVC implementation
+
+Data randomization in BFMs
+----------------------------------------------------------------------------------------------------------------------------------
+There is no data randomization inside a normal BFM, for the reason given above.
+
+Data randomization in VVCs
+----------------------------------------------------------------------------------------------------------------------------------
+A VVC may be commanded to generate constrained random data, where data in this sense could also be addresses, lengths, etc. 
+Typically such commands would allow flexibility for the number of accesses and other important aspects - like scoreboards, common 
+buffers, files, etc. A few randomization profiles have been predefined both as typical use cases and as examples for future 
+extensions, when needed. The profile names are defined in the type **t_randomisation**, which is declared in the adaptations_pkg.vhd 
+to allow users to add more profiles.
+
++----------------------------+---------------------------------------------------------------------------------------------------+
+| NA                         | Not applicable (To be used in a record where the field is present, but no randomization wanted)   |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| RANDOM                     | Uniform distribution                                                                              |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| RANDOM_FAVOUR_EDGES        | | Significantly more edge cases, where "edge" differs between various interfaces.                 |
+|                            | | E.g. UART: Cover patterns like 01111111, 00000000, 11111111, 11111110, 01010101, 10101010.      |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| <user-defined>             |                                                                                                   |
++----------------------------+---------------------------------------------------------------------------------------------------+
+
+VVC Command Syntax
+----------------------------------------------------------------------------------------------------------------------------------
+See :ref:`vvc_framework_vvc_parameters_and_sequence` for parameter sequence and options.
 
 Testbench Data Routing
 ==================================================================================================================================
 
 Controlling Property Checkers
 ==================================================================================================================================
+
+.. _vvc_framework_vvc_parameters_and_sequence:
 
 VVC Parameters and Sequence for Randomization, Sources and Destinations
 ==================================================================================================================================

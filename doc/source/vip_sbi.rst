@@ -636,10 +636,10 @@ Methods
 sbi_write()
 ----------------------------------------------------------------------------------------------------------------------------------
 | Adds a write command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. It has two 
-  variants using either just data for a basic single transaction, or num_words + randomisation for a more advanced version.
+  variants using either just data for a basic single transaction, or num_words + randomization for a more advanced version.
 | When the basic write command is scheduled to run, the executor calls the SBI BFM :ref:`sbi_write_bfm` procedure.
-| :orange:`When the more advanced randomisation command is applied, the basic BFM sbi_write() transaction is executed num_words 
-  times with new random data each time – according to the given randomisation profile. Current defined randomisation profiles are: 
+| :orange:`When the more advanced randomization command is applied, the basic BFM sbi_write() transaction is executed num_words 
+  times with new random data each time – according to the given randomization profile. Current defined randomization profiles are: 
   RANDOM: Standard uniform random. This is provided as an example.`
 
 .. code-block::
@@ -866,7 +866,7 @@ information directly from the VVC to a DUT model.
     | randomisation                | t_randomisation              | NA              | sbi_write() will generate random data when set  |
     |                              |                              |                 | to RANDOM                                       |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-    | num_words                    | natural                      | 1               | Use with randomisation to write a number of     |
+    | num_words                    | natural                      | 1               | Use with randomization to write a number of     |
     |                              |                              |                 | random words using a single sbi_write() command |
     +------------------------------+------------------------------+-----------------+-------------------------------------------------+
     | max_polls                    | integer                      | 1               | Maximum number of polls allowed in the          |

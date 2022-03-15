@@ -79,7 +79,7 @@ Main Features
 * A logging and alert system that supports full verbosity control of functionality and hierarchy
 * A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through 
   the execution queue - until it is executed and completed towards the DUT
-* Allows 3rd party randomisation and functional coverage to be included in the central test sequencer - or even better - inside 
+* Allows 3rd party randomization and functional coverage to be included in the central test sequencer - or even better - inside 
   the VVCs in the local sequencers for better control and encapsulation
 * Simple integration with regression test tools like Jenkins
 * Quick references are available for UVVM Utility Library, VVC Framework and all the BFMs/VVCs

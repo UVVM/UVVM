@@ -17,6 +17,7 @@ UVVM
    protected_types.rst
    fifo_collection.rst
    generic_queue.rst
+   vip_hvvc_to_vvc_bridge.rst
    vip_sbi.rst
    vip_scoreboard.rst
    vip_uart.rst

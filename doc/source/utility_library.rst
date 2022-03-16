@@ -924,6 +924,8 @@ Sets the global seeds to seed1 and seed2. ::
     randomize(12, 14, "Setting global seeds");
 
 
+.. _util_string_handling:
+
 String handling
 ==================================================================================================================================
 Methods are defined in string_methods_pkg.vhd

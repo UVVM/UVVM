@@ -29,7 +29,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_avalon_mm;
 use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity avalon_mm_spi_tb is
   generic (

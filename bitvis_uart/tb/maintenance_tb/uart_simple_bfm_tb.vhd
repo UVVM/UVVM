@@ -30,7 +30,7 @@ use bitvis_vip_uart.uart_bfm_pkg.all;
 
 use work.uart_pif_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity uart_simple_bfm_tb is
   generic (

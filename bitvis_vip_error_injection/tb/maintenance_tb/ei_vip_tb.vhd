@@ -11,7 +11,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_error_injection;
 use bitvis_vip_error_injection.error_injection_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 entity ei_vip_tb is
   generic (
     GC_TESTCASE : string := "UVVM"

@@ -30,7 +30,7 @@ context bitvis_vip_axi.vvc_context;
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity axi_vvc_tb is
   generic (

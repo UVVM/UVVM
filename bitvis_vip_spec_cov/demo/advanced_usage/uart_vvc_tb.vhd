@@ -35,7 +35,7 @@ library bitvis_vip_spec_cov;
 use bitvis_vip_spec_cov.spec_cov_pkg.all;
 use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test bench entity
 entity uart_vvc_tb is
   generic (GC_TESTCASE : natural := 0);

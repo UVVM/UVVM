@@ -37,7 +37,7 @@ use bitvis_vip_uart.uart_bfm_pkg.all;
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test bench entity
 entity vvc_tb is
   generic (

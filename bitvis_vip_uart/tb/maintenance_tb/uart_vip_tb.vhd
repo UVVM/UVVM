@@ -31,7 +31,7 @@ context bitvis_vip_sbi.vvc_context;
 library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity uart_vvc_new_tb is
   generic (

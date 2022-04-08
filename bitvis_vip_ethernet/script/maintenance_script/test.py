@@ -57,7 +57,7 @@ hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_ethernet")
 compile_directives_93 = ["-suppress", "1346,1236,1090", "-93"]
 hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd", "xilinxcorelib")
 hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim") # 08
-hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd", "unisim", directives=compile_directives_93) #version="93")
+hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd", "unisim", com_options=compile_directives_93) #version="93")
 hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/*.vhd", "mac_master") 
 hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/*.vhd", "mac_master")
 hdlunit.add_files("../../tb/maintenance_tb/ethernet_mac-master/generic/*.vhd", "mac_master")

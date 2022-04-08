@@ -34,7 +34,7 @@ context bitvis_vip_uart.vvc_context;
 use work.uart_transaction_sb_pkg.all;
 use work.monitor_cmd_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity uart_monitor_tb is
   generic (

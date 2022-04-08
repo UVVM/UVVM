@@ -29,7 +29,7 @@ use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
 use work.irqc_pif_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity irqc_tb is
   generic (

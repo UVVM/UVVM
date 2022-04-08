@@ -24,7 +24,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_avalon_st;
 use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity avalon_st_bfm_tb is
   generic(

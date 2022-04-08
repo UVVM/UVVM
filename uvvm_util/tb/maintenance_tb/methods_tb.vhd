@@ -29,7 +29,7 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
---hdlunit:tb
+--hdlregression:tb
 entity methods_tb is
   generic (
     GC_TESTCASE : string := "UVVM"

@@ -9,7 +9,7 @@ library bitvis_vip_axi;
 use bitvis_vip_axi.axi_bfm_pkg.all;
 use bitvis_vip_axi.axi_slave_model_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 entity axi_simple_tb is
   generic (
     GC_TESTCASE : string := "UVVM"

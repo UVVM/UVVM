@@ -27,7 +27,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_rgmii;
 context bitvis_vip_rgmii.vvc_context;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity rgmii_vvc_tb is
   generic(

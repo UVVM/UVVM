@@ -27,7 +27,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity avalon_mm_vvc_pipeline_tb is
   generic (

@@ -30,7 +30,7 @@ context bitvis_vip_gmii.vvc_context;
 library bitvis_vip_ethernet;
 context bitvis_vip_ethernet.vvc_context;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity ethernet_gmii_tb is
   generic (

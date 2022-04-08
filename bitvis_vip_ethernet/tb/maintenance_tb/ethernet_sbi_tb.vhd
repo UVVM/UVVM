@@ -32,7 +32,7 @@ context bitvis_vip_ethernet.vvc_context;
 
 use work.ethernet_sbi_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity ethernet_sbi_tb is
   generic (

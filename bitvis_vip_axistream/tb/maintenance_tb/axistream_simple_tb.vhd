@@ -27,7 +27,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_axistream;
 use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity axistream_simple_tb is
   generic (

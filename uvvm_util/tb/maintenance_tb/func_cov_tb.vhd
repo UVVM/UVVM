@@ -3094,9 +3094,9 @@ begin
       v_invalid_bin_idx := 0;
       for i in 1 to 100 loop
         if i < 26 then
-          check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), ((0 => i),(0 => 200),(0 => 300)), name => "bin_" & to_string(i-1), hits => 1);
+          check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => i),(0 => 200),(0 => 300), name => "bin_" & to_string(i-1), hits => 1);
         else
-          check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), ((0 => i),(0 => 200),(0 => 300)), name => "bin_" & to_string(i-1), hits => 0);
+          check_cross_bin(v_cross_x3, v_bin_idx, (VAL,VAL,VAL), (0 => i),(0 => 200),(0 => 300), name => "bin_" & to_string(i-1), hits => 0);
         end if;
       end loop;
       check_num_bins(v_cross_x3, 100, 0);
@@ -3214,9 +3214,9 @@ begin
       v_invalid_bin_idx := 0;
       for i in 1 to 100 loop
         if i < 51 then
-          check_cross_bin(v_cross_x3_b, v_bin_idx, (VAL,VAL,VAL), ((0 => i),(0 => 200),(0 => 300)), name => "bin_" & to_string(i-1), hits => 1);
+          check_cross_bin(v_cross_x3_b, v_bin_idx, (VAL,VAL,VAL), (0 => i),(0 => 200),(0 => 300), name => "bin_" & to_string(i-1), hits => 1);
         else
-          check_cross_bin(v_cross_x3_b, v_bin_idx, (VAL,VAL,VAL), ((0 => i),(0 => 200),(0 => 300)), name => "bin_" & to_string(i-1), hits => 0);
+          check_cross_bin(v_cross_x3_b, v_bin_idx, (VAL,VAL,VAL), (0 => i),(0 => 200),(0 => 300), name => "bin_" & to_string(i-1), hits => 0);
         end if;
       end loop;
       check_num_bins(v_cross_x3_b, 100, 0);

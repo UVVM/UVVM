@@ -71,8 +71,7 @@ package vvc_methods_pkg is
     others             => DISABLED
   );
 
-  type t_vvc_config is
-  record
+  type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay;          -- Minimum delay between protocol accesses from the VVC. If parameter delay_type is set to NO_DELAY, protocol accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural;                    -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural;                    -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
@@ -98,8 +97,7 @@ package vvc_methods_pkg is
     msg_id_panel                          => C_ETHERNET_VVC_MSG_ID_PANEL_DEFAULT
   );
 
-  type t_vvc_status is
-  record
+  type t_vvc_status is record
     current_cmd_idx  : natural;
     previous_cmd_idx : natural;
     pending_cmd_cnt  : natural;

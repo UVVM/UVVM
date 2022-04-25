@@ -504,8 +504,6 @@ package body td_vvc_framework_common_methods_pkg is
     wait for 0 ns;
     wait for 0 ns;
     wait for 0 ns;
-    wait for 0 ns;
-    wait for 0 ns;
    
     -- Only log wanted_idx when it's given as a parameter
     if wanted_idx = -1 then

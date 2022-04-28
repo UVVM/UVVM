@@ -1115,7 +1115,8 @@ The maximum number of coverpoints that can be created is determined by C_FC_MAX_
 
 .. note::
 
-    Functional Coverage was inspired by similar functionality in SystemVerilog and OSVVM.
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inpired by general statistics and similar 
+    functionality in SystemVerilog and OSVVM.
 
 .. _func_cov_pkg:
 

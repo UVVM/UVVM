@@ -655,7 +655,8 @@ The number of decimal digits displayed in the real values logs can be adjusted w
 
 .. note::
 
-    Enhanced Randomization was inspired by similar functionality in SystemVerilog and OSVVM.
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inpired by general statistics and similar 
+    functionality in SystemVerilog and OSVVM.
 
 .. _rand_pkg:
 

@@ -211,7 +211,8 @@ Additional info
 
 .. note::
 
-    Optimized Randomization was inspired by similar functionality in SystemVerilog and OSVVM.
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inpired by general statistics and similar 
+    functionality in SystemVerilog and OSVVM.
 
 .. include:: rst_snippets/ip_disclaimer.rst
 

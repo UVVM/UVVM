@@ -29,5 +29,3 @@ __pycache__/
 
 # rst
 *.doctree
-*.js
-*.css

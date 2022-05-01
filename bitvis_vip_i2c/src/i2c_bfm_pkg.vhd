@@ -1499,7 +1499,7 @@ package body i2c_bfm_pkg is
     if to_X01(sda) = '1' and to_X01(scl) = '1' then
       -- await the start condition
       await_value(sda, '0', 0 ns, config.max_wait_sda_change + config.max_wait_sda_change/100, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-      await_value(scl, '0', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+      await_value(scl, '0', 0 ns, config.master_sda_to_scl + config.master_sda_to_scl/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
 
       if sda = '0' then
         if not config.enable_10_bits_addressing then

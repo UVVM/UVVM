@@ -21,6 +21,7 @@ Released: 2022-XX-XX
 - FC: Fixed bins not being added when concatenated after ignore or illegal bins.
 - Added demo for advanced randomization and functional coverage.
 - Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occur with partial coverage files not found.
+- Fixed i2c_slave_receive() not checking master_sda_to_scl configuration correctly.
 
 
 v2 2021.11.12

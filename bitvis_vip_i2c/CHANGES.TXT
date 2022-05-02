@@ -1,6 +1,11 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+v2.7.2
+----------
+Released: 2022-XX-XX
+- Fixed i2c_slave_receive() not checking master_sda_to_scl configuration correctly.
+
 v2.7.1
 ----------
 Released: 2021-05-26

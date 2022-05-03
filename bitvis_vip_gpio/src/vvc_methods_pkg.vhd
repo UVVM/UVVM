@@ -52,8 +52,7 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => warning
     );
 
-  type t_vvc_config is
-  record
+  type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay;
     cmd_queue_count_max                   : natural;
     cmd_queue_count_threshold_severity    : t_alert_level;
@@ -82,8 +81,7 @@ package vvc_methods_pkg is
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
     );
 
-  type t_vvc_status is
-  record
+  type t_vvc_status is record
     current_cmd_idx  : natural;
     previous_cmd_idx : natural;
     pending_cmd_cnt  : natural;
@@ -97,8 +95,7 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
     );
 
-  type t_transaction_info is
-  record
+  type t_transaction_info is record
     operation : t_operation;
     msg       : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     data      : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);

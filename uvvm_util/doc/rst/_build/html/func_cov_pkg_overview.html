@@ -1,0 +1,1235 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Functional Coverage &mdash; Randomization and Functional Coverage 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="t_coverpoint (protected)" href="func_cov_pkg_t_coverpoint.html" />
+    <link rel="prev" title="Types" href="rand_pkg_types.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Functional Coverage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#concepts">Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-and-adding-bins">Creating and adding bins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ignore-bins">Ignore bins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#illegal-bins">Illegal bins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-predefined-bins">Using predefined bins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-bins-from-separate-process">Adding bins from separate process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bin-memory-allocation">Bin memory allocation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#bin-name">Bin name</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#minimum-coverage">Minimum coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cross-coverage">Cross coverage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-bins">Using bins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-coverpoints">Using coverpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sampling-coverage">Sampling coverage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overlapping-bins">Overlapping bins</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#coverage-status">Coverage status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coverage-goal">Coverage goal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bins-coverage-goal">Bins coverage goal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hits-coverage-goal">Hits coverage goal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coverpoints-coverage-goal">Coverpoints coverage goal</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#coverage-weight">Coverage weight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coverpoint-name">Coverpoint name</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coverage-report">Coverage report</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coverpoint-verbose">Coverpoint Verbose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coverpoint-non-verbose">Coverpoint Non-Verbose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coverpoint-holes">Coverpoint Holes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overall-verbose">Overall Verbose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overall-non-verbose">Overall Non-Verbose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overall-holes">Overall Holes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-goal">Using goal</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-report">Configuration report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coverage-database">Coverage database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overall-coverage-accumulation">Overall coverage accumulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clearing-coverage">Clearing coverage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-format">File format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#script">Script</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#clearing-a-coverpoint">Clearing a coverpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-info">Additional info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#func-cov-pkg">func_cov_pkg</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="func_cov_pkg_t_coverpoint.html">t_coverpoint (protected)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="func_cov_pkg_methods.html">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="func_cov_pkg_types.html">Types</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Info</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Randomization and Functional Coverage</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Functional Coverage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/func_cov_pkg_overview.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="functional-coverage">
+<span id="func-cov-pkg-overview"></span><h1>Functional Coverage<a class="headerlink" href="#functional-coverage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>All the functionality for coverage can be found in <em>uvvm_util/src/func_cov_pkg.vhd</em>.</p>
+<p>To start using functional coverage it is necessary to import the utility library, create a variable with the protected
+type <em>t_coverpoint</em> and call the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedures from the variable.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span> <span class="nn">uvvm_util</span><span class="p">;</span>
+<span class="n">context</span> <span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="k">signal</span> <span class="n">bus_addr</span> <span class="o">:</span> <span class="kt">natural</span><span class="p">;</span>
+<span class="k">shared</span> <span class="k">variable</span> <span class="n">my_coverpoint</span> <span class="o">:</span> <span class="n">t_coverpoint</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">p_main</span> <span class="o">:</span> <span class="k">process</span>
+<span class="k">begin</span>
+  <span class="c1">-- Add bins to the coverpoint</span>
+  <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s">&quot;bin_zero&quot;</span><span class="p">);</span>
+  <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">254</span><span class="p">));</span>
+  <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="s">&quot;bin_max&quot;</span><span class="p">);</span>
+
+  <span class="c1">-- Sample the data</span>
+  <span class="k">while</span> <span class="k">not</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">coverage_completed</span><span class="p">(</span><span class="n">BINS_AND_HITS</span><span class="p">))</span> <span class="k">loop</span>
+    <span class="n">bus_addr</span> <span class="o">&lt;=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">SAMPLE_COV</span><span class="p">);</span>
+    <span class="n">configure_addr</span><span class="p">(</span><span class="n">bus_addr</span><span class="p">);</span>
+    <span class="k">wait</span> <span class="k">for</span> <span class="n">C_CLK_PERIOD</span><span class="p">;</span>
+  <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+
+  <span class="c1">-- Print the coverage report</span>
+  <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+  <span class="p">...</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The syntax for all methods is given in <a class="reference internal" href="#func-cov-pkg"><span class="std std-ref">func_cov_pkg</span></a>.</p>
+</div>
+</div>
+<div class="section" id="concepts">
+<h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h2>
+<p>There are three main elements in the functional coverage data structure: bin, coverpoint and cross.</p>
+<ul class="simple">
+<li><p>A bin associates a counter with a value, a set of values or a transitions of values. The counter is incremented when the
+coverpoint or cross is sampled.</p></li>
+<li><p>A cross represents a combination of two or more objects (variable/signal/coverpoint).</p></li>
+<li><p>A coverpoint represents a specification point to verify, e.g. a packet size, a memory address or a cross of the two. It is
+associated with one or several bins.</p></li>
+</ul>
+<p>Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.</p>
+<p>In Figure 1, we can see a coverpoint named <em>memory_address</em> which contains six different bins: four bins with a single value each,
+one bin with a range of values and one bin with a transition of values. Each of the bins has a different counter value reflecting
+how many times the coverpoint has been sampled with the corresponding values of the bins.</p>
+<div class="figure align-center" id="id2">
+<a class="reference internal image-reference" href="_images/func_cov_coverpoint.png"><img alt="_images/func_cov_coverpoint.png" src="_images/func_cov_coverpoint.png" style="width: 400pt;" /></a>
+<p class="caption"><span class="caption-text">Figure 1</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>In Figure 2, we can see a cross named <em>src_addr_x_dst_addr</em> which contains eight different bins. Each bin contains different
+combinations of values for <em>src_addr</em> and <em>dst_addr</em>.</p>
+<div class="figure align-center" id="id3">
+<a class="reference internal image-reference" href="_images/func_cov_cross.png"><img alt="_images/func_cov_cross.png" src="_images/func_cov_cross.png" style="width: 400pt;" /></a>
+<p class="caption"><span class="caption-text">Figure 2</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The bin values are represented as integer numbers. In order to use functional coverage for other types of values, such as
+unsigned, enumerated, etc., they must be converted to integer values first.</p>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="n">t_state</span><span class="na">&#39;pos</span><span class="p">(</span><span class="n">IDLE</span><span class="p">)));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="n">t_state</span><span class="na">&#39;pos</span><span class="p">(</span><span class="n">RUNNING</span><span class="p">)));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">sample_coverage</span><span class="p">(</span><span class="n">t_state</span><span class="na">&#39;pos</span><span class="p">(</span><span class="n">fsm_state</span><span class="p">));</span>
+<span class="n">rand_state_int</span> <span class="o">:=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">NO_SAMPLE_COV</span><span class="p">);</span>
+<span class="n">rand_state</span>     <span class="o">&lt;=</span> <span class="n">t_state</span><span class="na">&#39;val</span><span class="p">(</span><span class="n">rand_state_int</span><span class="p">);</span>
+
+<span class="c1">-- Example 2</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="n">to_integer</span><span class="p">(</span><span class="kt">unsigned</span><span class="p">&#39;(</span><span class="mh">x&quot;00&quot;</span><span class="p">))));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="n">to_integer</span><span class="p">(</span><span class="kt">unsigned</span><span class="p">&#39;(</span><span class="mh">x&quot;FF&quot;</span><span class="p">))));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">sample_coverage</span><span class="p">(</span><span class="n">to_integer</span><span class="p">(</span><span class="n">address</span><span class="p">));</span>
+<span class="n">rand_addr_int</span> <span class="o">:=</span> <span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">NO_SAMPLE_COV</span><span class="p">);</span>
+<span class="n">rand_addr</span>     <span class="o">&lt;=</span> <span class="n">to_unsigned</span><span class="p">(</span><span class="n">rand_addr_int</span><span class="p">,</span><span class="n">rand_addr</span><span class="na">&#39;length</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-and-adding-bins">
+<h2>Creating and adding bins<a class="headerlink" href="#creating-and-adding-bins" title="Permalink to this headline">¶</a></h2>
+<p>Different functions are used to create bins, while a procedure is used to add them to the coverpoint. This is necessary for
+several reasons: better readability, avoiding conflicts with overloads which have similar parameters and supporting adding
+multiple types of bins in a single line.</p>
+<p>Bins can be created using the following <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Create a single bin for a single value</span>
+<span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">-- 2. Create a single bin for multiple values (sample any of the values to increase the bin counter)</span>
+<span class="n">bin</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>             <span class="c1">-- Note the use of double parentheses due to the integer_vector parameter</span>
+
+<span class="c1">-- 3. Create a single bin for a range of values</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">-- 4. Create a number of bins from a range of values</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>         <span class="c1">-- creates 2 bins: 1 to 4, 5 to 8</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>         <span class="c1">-- creates 3 bins: 1 to 2, 3 to 5, 6 to 8</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>         <span class="c1">-- creates 8 bins: 1,2,3,4,5,6,7,8</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>         <span class="c1">-- creates 8 bins: 1,2,3,4,5,6,7,8</span>
+<span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>        <span class="c1">-- creates 8 bins: 1,2,3,4,5,6,7,8</span>
+
+<span class="c1">-- 5. Create a single bin for a vector&#39;s range</span>
+<span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+
+<span class="c1">-- 6. Create a number of bins from a vector&#39;s range</span>
+<span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>        <span class="c1">-- creates 4 bins</span>
+<span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>        <span class="c1">-- creates 2^(addr&#39;length) bins</span>
+
+<span class="c1">-- 7. Create a single bin for a transition of values</span>
+<span class="n">bin_transition</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>  <span class="c1">-- Note the use of double parentheses due to the integer_vector parameter</span>
+</pre></div>
+</div>
+<p>With the functions above and the procedure <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code>, bins can be added to the coverpoint.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Add a single bin for a single value</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+
+<span class="c1">-- 2. Add a single bin for multiple values (sample any of the values to increase the bin counter)</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">)));</span>
+
+<span class="c1">-- 3. Add a single bin for a range of values</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">));</span>
+
+<span class="c1">-- 4. Add a number of bins from a range of values</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+
+<span class="c1">-- 5. Add a single bin for a vector&#39;s range</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+
+<span class="c1">-- 6. Add a number of bins from a vector&#39;s range</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">4</span><span class="p">));</span>
+
+<span class="c1">-- 7. Add a single bin for a transition of values</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">)));</span>
+</pre></div>
+</div>
+<p>The bin functions may be concatenated to add several bins at once.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span> <span class="o">&amp;</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The maximum number of bins which can be added at once using a single <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> call is limited by C_FC_MAX_NUM_NEW_BINS
+defined in adaptations_pkg.</p>
+</div>
+<div class="section" id="ignore-bins">
+<h3>Ignore bins<a class="headerlink" href="#ignore-bins" title="Permalink to this headline">¶</a></h3>
+<p>Specific values or transitions can be excluded from the coverage by using ignore bins. This is useful to:</p>
+<ul class="simple">
+<li><p>Discard one or more values in a range</p></li>
+<li><p>Discard one or more values after automatically creating bins</p></li>
+<li><p>Discard complete or partial transitions</p></li>
+</ul>
+<p>Note that the order in which the bins are added, both valid and ignore, does not matter.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">99</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">50</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_range</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">ignore_bin_range</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span><span class="mi">80</span><span class="p">));</span>
+
+<span class="c1">-- Example 2</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+
+<span class="c1">-- Example 3</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">)));</span> <span class="c1">--&gt; Ignored</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">)));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">)));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="p">)));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">20</span><span class="p">)));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">30</span><span class="p">)));</span> <span class="c1">--&gt; Ignored</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">10</span><span class="p">)));</span> <span class="c1">--&gt; Ignored</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">20</span><span class="p">)));</span> <span class="c1">--&gt; Ignored</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">)));</span> <span class="c1">--&gt; Ignored</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">30</span><span class="p">)));</span> <span class="c1">-- Ignores all transitions which include 0,2,30</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_transition</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">)));</span>   <span class="c1">-- Ignores all transitions which include 1,10</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>                   <span class="c1">-- Ignores any bin which contains 5, including transitions</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="illegal-bins">
+<h3>Illegal bins<a class="headerlink" href="#illegal-bins" title="Permalink to this headline">¶</a></h3>
+<p>Specific values or transitions can be marked as illegal which will exclude them from the coverage and generate an alert if they are
+sampled. The default severity of the alert is ERROR and can be configured using the <code class="docutils literal notranslate"><span class="pre">set_illegal_bin_alert_level()</span></code> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_illegal_bin_alert_level</span><span class="p">(</span><span class="n">WARNING</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">256</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">220</span><span class="p">,</span> <span class="mi">250</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin_transition</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">)));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-predefined-bins">
+<h3>Using predefined bins<a class="headerlink" href="#using-predefined-bins" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes it is useful to define bins which have a particular meaning or which are used several times. A constant or a variable
+can be created using the type <em>t_new_bin_array(0 to 0)</em> which is returned by any of the bin functions.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">constant</span> <span class="n">C_BIN_IDLE</span>    <span class="o">:</span> <span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span> <span class="k">to</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:=</span> <span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">constant</span> <span class="n">C_BIN_RUNNING</span> <span class="o">:</span> <span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span> <span class="k">to</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:=</span> <span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="k">constant</span> <span class="n">C_BIN_ILLEGAL</span> <span class="o">:</span> <span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span> <span class="k">to</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:=</span> <span class="n">illegal_bin</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="k">variable</span> <span class="n">v_bin_sequence</span> <span class="o">:</span> <span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span> <span class="k">to</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:=</span> <span class="n">bin_transition</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">));</span>
+<span class="k">variable</span> <span class="n">v_bin_ranges</span>   <span class="o">:</span> <span class="n">t_new_bin_array</span><span class="p">(</span><span class="mi">0</span> <span class="k">to</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:=</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">C_BIN_IDLE</span><span class="p">,</span> <span class="n">v_bin_sequence</span> <span class="o">&amp;</span> <span class="n">v_bin_ranges</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">C_BIN_RUNNING</span><span class="p">,</span> <span class="n">v_bin_sequence</span> <span class="o">&amp;</span> <span class="n">v_bin_ranges</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">C_BIN_ILLEGAL</span><span class="p">,</span> <span class="n">v_bin_sequence</span> <span class="o">&amp;</span> <span class="n">v_bin_ranges</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="adding-bins-from-separate-process">
+<h3>Adding bins from separate process<a class="headerlink" href="#adding-bins-from-separate-process" title="Permalink to this headline">¶</a></h3>
+<p>In some cases there is one process that creates the coverpoint model and another process that samples the data, e.g. a sequencer
+adds the bins to the coverpoint and a VVC samples the data from the DUT. If for some reason the VVC receives some data and samples
+it before the sequencer has added the bins, the testbench will generate a TB_ERROR alert. In cases like this we can use the function
+<code class="docutils literal notranslate"><span class="pre">is_defined()</span></code> to check if the coverpoint has any bins before sampling the data.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Process 1 (Sequencer)</span>
+<span class="p">...</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">256</span><span class="p">));</span>
+<span class="p">...</span>
+
+<span class="c1">-- Process 2 (VVC)</span>
+<span class="p">...</span>
+<span class="k">while</span> <span class="k">not</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">is_defined</span><span class="p">(</span><span class="n">VOID</span><span class="p">))</span> <span class="k">loop</span>
+  <span class="k">wait</span> <span class="k">for</span> <span class="n">C_CLK_PERIOD</span><span class="p">;</span>
+<span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">sample_coverage</span><span class="p">(</span><span class="n">read_addr</span><span class="p">);</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bin-memory-allocation">
+<h3>Bin memory allocation<a class="headerlink" href="#bin-memory-allocation" title="Permalink to this headline">¶</a></h3>
+<p>For users who want more control over the memory usage during simulation, it is possible to configure how large the bin list is
+initially (C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED) and how much the size increments (C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT)
+when the list becomes full. These constants are defined in adaptations_pkg.</p>
+<p>Moreover, the procedures <code class="docutils literal notranslate"><span class="pre">set_num_allocated_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">set_num_allocated_bins_increment()</span></code> can be used to reconfigure a
+coverpoint’s respective values.</p>
+</div>
+</div>
+<div class="section" id="bin-name">
+<h2>Bin name<a class="headerlink" href="#bin-name" title="Permalink to this headline">¶</a></h2>
+<p>Bins can be named by using the optional parameter <em>bin_name</em> in the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure. If no name is given to the bin, a
+default name will be automatically given. Having a bin name is useful when reading the reports.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="p">[</span><span class="n">bin_name</span><span class="p">])</span>
+
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="s">&quot;bin_max&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.</p>
+</div>
+<div class="section" id="minimum-coverage">
+<h2>Minimum coverage<a class="headerlink" href="#minimum-coverage" title="Permalink to this headline">¶</a></h2>
+<p>By default all bins created have a minimum coverage of 1, i.e. they only need to be sampled once to be covered. The parameter
+<em>min_hits</em> in the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure specifies how many times the bin must be sampled in order to be marked as covered.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="n">min_hits</span><span class="p">,</span> <span class="p">[</span><span class="n">bin_name</span><span class="p">])</span>
+
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">5</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cross-coverage">
+<h2>Cross coverage<a class="headerlink" href="#cross-coverage" title="Permalink to this headline">¶</a></h2>
+<p>It can be used to track combinations of values from two or more objects (variable/signal/coverpoint).
+For example, when certain combinations of source address and destination address of the Ethernet protocol need to be verified.
+This can be done in two different ways using the <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedure and <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>.</p>
+<ul>
+<li><p>Every type of bin (single value, multiple values, range, transition, ignore &amp; illegal) can be crossed with each other.</p></li>
+<li><p>When crossing several transition bins, they must have the same number of transitions, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span> <span class="n">bin_transition</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">32</span><span class="p">),</span> <span class="n">bin_transition</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="mi">512</span><span class="p">),</span> <span class="n">bin</span><span class="p">(</span><span class="mi">16384</span><span class="p">));</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Once the number of crossed bins has been set in a coverpoint, by calling the first <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code>, it cannot be
+changed anymore.</p>
+</div>
+<div class="section" id="using-bins">
+<h3>Using bins<a class="headerlink" href="#using-bins" title="Permalink to this headline">¶</a></h3>
+<p>This is a “faster” way of creating the crosses and useful when we need specific combinations of values. The <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code>
+overloads support up to 5 crossed elements.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin1</span><span class="p">,</span> <span class="n">bin2</span><span class="p">,</span> <span class="p">[</span><span class="n">bin_name</span><span class="p">])</span>
+
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">15</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">31</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">63</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">)),</span> <span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="mi">127</span><span class="p">),</span> <span class="s">&quot;illegal_bin&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  --------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE      NAME       ILLEGAL/IGNORE
+# UVVM:     (10, 20, 30)x(64 to 127)      0          N/A           N/A        illegal_bin      ILLEGAL
+# UVVM:          (10)x(0 to 15)           0           1           0.00%          bin_0            -
+# UVVM:          (20)x(16 to 31)          0           1           0.00%          bin_1            -
+# UVVM:          (30)x(32 to 63)          0           1           0.00%          bin_2            -
+# UVVM:  ========================================================================================================
+</pre></div>
+</div>
+<p>The bin functions may also be concatenated to add several bins at once.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin1</span><span class="p">,</span> <span class="n">bin2</span><span class="p">,</span> <span class="n">bin3</span><span class="p">,</span> <span class="p">[</span><span class="n">bin_name</span><span class="p">])</span>
+
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin_range</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span> <span class="n">bin</span><span class="p">(</span><span class="mi">1000</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  --------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE      NAME       ILLEGAL/IGNORE
+# UVVM:       (10)x(0 to 7)x(1000)        0           1           0.00%          bin_0            -
+# UVVM:       (10)x(8 to 15)x(1000)       0           1           0.00%          bin_1            -
+# UVVM:       (20)x(0 to 7)x(1000)        0           1           0.00%          bin_2            -
+# UVVM:       (20)x(8 to 15)x(1000)       0           1           0.00%          bin_3            -
+# UVVM:       (30)x(0 to 7)x(1000)        0           1           0.00%          bin_4            -
+# UVVM:       (30)x(8 to 15)x(1000)       0           1           0.00%          bin_5            -
+# UVVM:  ========================================================================================================
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-coverpoints">
+<h3>Using coverpoints<a class="headerlink" href="#using-coverpoints" title="Permalink to this headline">¶</a></h3>
+<p>This alternative is useful when the coverpoints are already created and we don’t want to repeat the declaration of the bins. The
+<code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> overloads support up to 16 crossed elements. <strong>Beta release only supports up to 5 crossed elements.</strong></p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint_addr</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">my_coverpoint_size</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">127</span><span class="p">));</span>
+<span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">my_coverpoint_addr</span><span class="p">,</span> <span class="n">my_coverpoint_size</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  --------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE      NAME       ILLEGAL/IGNORE
+# UVVM:          (0)x(0 to 127)           0           1           0.00%          bin_0            -
+# UVVM:          (1)x(0 to 127)           0           1           0.00%          bin_1            -
+# UVVM:          (2)x(0 to 127)           0           1           0.00%          bin_2            -
+# UVVM:          (3)x(0 to 127)           0           1           0.00%          bin_3            -
+# UVVM:  ========================================================================================================
+</pre></div>
+</div>
+<p>Another benefit of this alternative is that we can cross already crossed coverpoints.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint_addr</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">my_coverpoint_size</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">127</span><span class="p">));</span>
+<span class="n">my_cross_addr_size</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">my_coverpoint_addr</span><span class="p">,</span> <span class="n">my_coverpoint_size</span><span class="p">);</span>
+
+<span class="n">my_coverpoint_mode</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">bin</span><span class="p">(</span><span class="mi">3000</span><span class="p">));</span>
+<span class="n">my_cross_addr_size_mode</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">my_cross_addr_size</span><span class="p">,</span> <span class="n">my_coverpoint_mode</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  --------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE      NAME       ILLEGAL/IGNORE
+# UVVM:       (0)x(0 to 127)x(1000)       0           1           0.00%          bin_0            -
+# UVVM:       (0)x(0 to 127)x(2000)       0           1           0.00%          bin_1            -
+# UVVM:       (0)x(0 to 127)x(3000)       0           1           0.00%          bin_2            -
+# UVVM:       (1)x(0 to 127)x(1000)       0           1           0.00%          bin_3            -
+# UVVM:       (1)x(0 to 127)x(2000)       0           1           0.00%          bin_4            -
+# UVVM:       (1)x(0 to 127)x(3000)       0           1           0.00%          bin_5            -
+# UVVM:       (2)x(0 to 127)x(1000)       0           1           0.00%          bin_6            -
+# UVVM:       (2)x(0 to 127)x(2000)       0           1           0.00%          bin_7            -
+# UVVM:       (2)x(0 to 127)x(3000)       0           1           0.00%          bin_8            -
+# UVVM:       (3)x(0 to 127)x(1000)       0           1           0.00%          bin_9            -
+# UVVM:       (3)x(0 to 127)x(2000)       0           1           0.00%         bin_10            -
+# UVVM:       (3)x(0 to 127)x(3000)       0           1           0.00%         bin_11            -
+# UVVM:  ========================================================================================================
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sampling-coverage">
+<h2>Sampling coverage<a class="headerlink" href="#sampling-coverage" title="Permalink to this headline">¶</a></h2>
+<p>The procedure <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> is used to collect coverage in a coverpoint (using integer parameter) or a cross (using
+integer_vector parameter). This will increment the number of hits in the bin containing the sampled value. Once the number of hits
+in a bin has reached the minimum coverage, the bin will be marked as covered.</p>
+<div class="section" id="overlapping-bins">
+<h3>Overlapping bins<a class="headerlink" href="#overlapping-bins" title="Permalink to this headline">¶</a></h3>
+<p>If a sampled value is contained in more than one valid bin (not ignore or illegal), all the valid bins will collect the coverage,
+i.e. increment the number of hits.</p>
+<p>In case this is unintended behaviour in the testbench, an alert can be generated when overlapping valid bins are sampled, by using
+the procedure <code class="docutils literal notranslate"><span class="pre">set_bin_overlap_alert_level()</span></code>, to select the severity of the alert.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_bin_overlap_alert_level</span><span class="p">(</span><span class="n">TB_WARNING</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">16</span><span class="p">),</span> <span class="s">&quot;valid_sizes&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="s">&quot;big_sizes&quot;</span><span class="p">);</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">sample_coverage</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>However, if a sampled value is contained in both ignore or illegal and valid bins, the ignore/illegal bin will take precedence and
+the valid bin will be skipped.</p>
+<p>Also, if a sampled value is contained in both ignore and illegal bins, then the illegal bin will take precedence.</p>
+</div>
+</div>
+<div class="section" id="coverage-status">
+<span id="func-cov-pkg-coverage-status"></span><h2>Coverage status<a class="headerlink" href="#coverage-status" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to track the current coverage in the coverpoint with the function <code class="docutils literal notranslate"><span class="pre">get_coverage()</span></code>, which returns a real
+number representing the percentage value. There are 2 coverage types:</p>
+<ul class="simple">
+<li><p><strong>Bins Coverage</strong>: percentage of the number of bins which are covered in the coverpoint <em>(covered_bins/total_bins)</em></p></li>
+<li><p><strong>Hits Coverage</strong>: percentage of the number of hits in relation to the number of min_hits for all the bins in the
+coverpoint <em>(bin1_hits/bin1_min_hits + bin2_hits/bin2_min_hits + …)</em></p></li>
+</ul>
+<p>It is also possible to check if the bins and/or hits coverage is complete using the function <code class="docutils literal notranslate"><span class="pre">coverage_completed()</span></code>. Normally,
+both the bins and the hits coverage are completed at the same time, except when they have a different coverage goal (explained in
+the next section).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span> <span class="s">&quot;Bins Coverage: &quot;</span> <span class="o">&amp;</span> <span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="s">&quot;%&quot;</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span> <span class="s">&quot;Hits Coverage: &quot;</span> <span class="o">&amp;</span> <span class="n">to_string</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">get_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="s">&quot;%&quot;</span><span class="p">);</span>
+
+<span class="c1">-- Do something while the coverpoint&#39;s coverage is incomplete</span>
+<span class="k">while</span> <span class="k">not</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">coverage_completed</span><span class="p">(</span><span class="n">BINS_AND_HITS</span><span class="p">))</span> <span class="k">loop</span>
+<span class="p">...</span>
+<span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Similar functions for the overall status of the coverpoints are <code class="docutils literal notranslate"><span class="pre">fc_get_overall_coverage()</span></code> and <code class="docutils literal notranslate"><span class="pre">fc_overall_coverage_completed()</span></code>.
+Thus, an additional coverage type is defined:</p>
+<ul class="simple">
+<li><p><strong>Covpts Coverage</strong>: percentage of the number of coverpoints which are covered <em>(covered_covpts/total_covpts)</em></p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span> <span class="s">&quot;Covpts Overall Coverage: &quot;</span> <span class="o">&amp;</span> <span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">COVPTS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="s">&quot;%&quot;</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span> <span class="s">&quot;Bins Overall Coverage: &quot;</span> <span class="o">&amp;</span> <span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="s">&quot;%&quot;</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span> <span class="s">&quot;Hits Overall Coverage: &quot;</span> <span class="o">&amp;</span> <span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="s">&quot;%&quot;</span><span class="p">);</span>
+
+<span class="c1">-- Do something while the overall coverage is incomplete</span>
+<span class="k">while</span> <span class="k">not</span><span class="p">(</span><span class="n">fc_overall_coverage_completed</span><span class="p">(</span><span class="n">VOID</span><span class="p">))</span> <span class="k">loop</span>
+<span class="p">...</span>
+<span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="coverage-goal">
+<h2>Coverage goal<a class="headerlink" href="#coverage-goal" title="Permalink to this headline">¶</a></h2>
+<p>Defines a percentage of the total coverage to complete. This can be used to scale the simulation time without changing the minimum
+coverage for each bin. It must be set at the beginning of the testbench, before sampling any coverage. There are 3 types:</p>
+<div class="section" id="bins-coverage-goal">
+<h3>Bins coverage goal<a class="headerlink" href="#bins-coverage-goal" title="Permalink to this headline">¶</a></h3>
+<p>This value defines the percentage of the number of bins which need to be covered in the coverpoint and therefore the range is
+between 1 and 100. Default value is 100 (as in 100%).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Cover only 75% of the total number of bins in the coverpoint</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_bins_coverage_goal</span><span class="p">(</span><span class="mi">75</span><span class="p">);</span>
+
+<span class="c1">-- Cover only 10% of the total number of bins in the coverpoint</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_bins_coverage_goal</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hits-coverage-goal">
+<h3>Hits coverage goal<a class="headerlink" href="#hits-coverage-goal" title="Permalink to this headline">¶</a></h3>
+<p>This value defines the percentage of the min_hits which need to be covered for each bin in the coverpoint. Default value is 100
+(as in 100%).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Cover only half the min_hits of each bin in the coverpoint</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_hits_coverage_goal</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>
+
+<span class="c1">-- Cover twice the min_hits of each bin in the coverpoint</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">set_hits_coverage_goal</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="coverpoints-coverage-goal">
+<h3>Coverpoints coverage goal<a class="headerlink" href="#coverpoints-coverage-goal" title="Permalink to this headline">¶</a></h3>
+<p>This value defines the percentage of the number of coverpoints which need to be covered and therefore the range is between 1 and
+100. Default value is 100 (as in 100%).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Cover only 25% of the total number of coverpoints</span>
+<span class="n">fc_set_covpts_coverage_goal</span><span class="p">(</span><span class="mi">25</span><span class="p">);</span>
+
+<span class="c1">-- Cover only 80% of the total number of coverpoints</span>
+<span class="n">fc_set_covpts_coverage_goal</span><span class="p">(</span><span class="mi">80</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="coverage-weight">
+<h2>Coverage weight<a class="headerlink" href="#coverage-weight" title="Permalink to this headline">¶</a></h2>
+<p>It specifies the weight of a coverpoint used when calculating the overall coverage. It must be set at the beginning of the
+testbench, before sampling any coverage. If set to 0, the coverpoint will be excluded from the overall coverage calculation.
+Default value is 1.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint_1</span><span class="p">.</span><span class="n">set_overall_coverage_weight</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>  <span class="c1">-- If only this coverpoint is covered, total coverage will be 75%</span>
+<span class="n">my_coverpoint_2</span><span class="p">.</span><span class="n">set_overall_coverage_weight</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>  <span class="c1">-- If only this coverpoint is covered, total coverage will be 25%</span>
+<span class="n">my_coverpoint_3</span><span class="p">.</span><span class="n">set_overall_coverage_weight</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>  <span class="c1">-- This coverpoint is excluded from the total coverage calculation</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="coverpoint-name">
+<h2>Coverpoint name<a class="headerlink" href="#coverpoint-name" title="Permalink to this headline">¶</a></h2>
+<p>A default name is automatically given to the coverpoint when it is configured for the first time or the first bin is added. The
+name can be modified by calling the <code class="docutils literal notranslate"><span class="pre">set_name()</span></code> procedure.</p>
+<p>The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.</p>
+</div>
+<div class="section" id="coverage-report">
+<span id="func-cov-pkg-coverage-report"></span><h2>Coverage report<a class="headerlink" href="#coverage-report" title="Permalink to this headline">¶</a></h2>
+<p>A detailed report for the coverage and the bins in the coverpoint can be printed using the <code class="docutils literal notranslate"><span class="pre">report_coverage()</span></code> procedure.</p>
+<p>An overall report for all the coverpoints in the testbench can be printed using the <code class="docutils literal notranslate"><span class="pre">fc_report_overall_coverage()</span></code> procedure.
+Note that only key information is contained in the report, i.e. bins are not included.</p>
+<p>The amount of information can be adjusted by using the parameter verbosity.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When the bin values don’t fit under the BINS column, the bin name is printed instead and the values are printed at the bottom
+of the report.</p>
+</div>
+<div class="section" id="coverpoint-verbose">
+<h3>Coverpoint Verbose<a class="headerlink" href="#coverpoint-verbose" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">);</span> <span class="c1">-- Prints illegal, ignore and valid bins</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): TB seq. ***
+# UVVM:  =================================================================================================================
+# UVVM:  Coverpoint:              Covpt_1
+# UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%
+# UVVM:  -----------------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE
+# UVVM:           (256 to 511)            1          N/A           N/A             illegal_addr           ILLEGAL
+# UVVM:        illegal_transition         0          N/A           N/A          illegal_transition        ILLEGAL
+# UVVM:               (100)               0          N/A           N/A              ignore_addr            IGNORE
+# UVVM:         ignore_transition         0          N/A           N/A           ignore_transition         IGNORE
+# UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -
+# UVVM:          (126, 127, 128)          3           1          100.00%           mem_addr_mid              -
+# UVVM:           (129 to 255)            14          4          100.00%           mem_addr_high             -
+# UVVM:           (0-&gt;1-&gt;2-&gt;3)            0           2           0.00%            transition_1              -
+# UVVM:           transition_2            2           2          100.00%           transition_2              -
+# UVVM:  -----------------------------------------------------------------------------------------------------------------
+# UVVM:  illegal_transition: (2000-&gt;15-&gt;127-&gt;248-&gt;249-&gt;250-&gt;251-&gt;252-&gt;253-&gt;254)
+# UVVM:  ignore_transition: (1000-&gt;15-&gt;127-&gt;248-&gt;249-&gt;250-&gt;251-&gt;252-&gt;253-&gt;254)
+# UVVM:  transition_2: (0-&gt;15-&gt;127-&gt;248-&gt;249-&gt;250-&gt;251-&gt;252-&gt;253-&gt;254)
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+</div>
+<div class="section" id="coverpoint-non-verbose">
+<h3>Coverpoint Non-Verbose<a class="headerlink" href="#coverpoint-non-verbose" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span> <span class="c1">-- Same as using NON_VERBOSE. Prints illegal (only when hits &gt; 0) and valid bins</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***
+# UVVM:  =================================================================================================================
+# UVVM:  Coverpoint:              Covpt_1
+# UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%
+# UVVM:  -----------------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE
+# UVVM:           (256 to 511)            1          N/A           N/A             illegal_addr           ILLEGAL
+# UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -
+# UVVM:          (126, 127, 128)          3           1          100.00%           mem_addr_mid              -
+# UVVM:           (129 to 255)            14          4          100.00%           mem_addr_high             -
+# UVVM:           (0-&gt;1-&gt;2-&gt;3)            0           2           0.00%            transition_1              -
+# UVVM:           transition_2            2           2          100.00%           transition_2              -
+# UVVM:  -----------------------------------------------------------------------------------------------------------------
+# UVVM:  transition_2: (0-&gt;15-&gt;127-&gt;248-&gt;249-&gt;250-&gt;251-&gt;252-&gt;253-&gt;254)
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+</div>
+<div class="section" id="coverpoint-holes">
+<h3>Coverpoint Holes<a class="headerlink" href="#coverpoint-holes" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">);</span> <span class="c1">-- Prints only the uncovered bins</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  0 ns *** COVERAGE HOLES REPORT: TB seq. ***
+# UVVM:  =================================================================================================================
+# UVVM:  Coverpoint:              Covpt_1
+# UVVM:  Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%
+# UVVM:  -----------------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE
+# UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -
+# UVVM:           (0-&gt;1-&gt;2-&gt;3)            0           2           0.00%            transition_1              -
+# UVVM:  -----------------------------------------------------------------------------------------------------------------
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+</div>
+<div class="section" id="overall-verbose">
+<h3>Overall Verbose<a class="headerlink" href="#overall-verbose" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">);</span> <span class="c1">-- Prints all the coverpoints</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***
+# UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%
+# UVVM:  =================================================================================================================
+# UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS)
+# UVVM:        Covpt_1            1              3 / 5         60.00% | 76.47%       50% | 100%        100.00% | 76.47%
+# UVVM:        Covpt_2            1              3 / 3        100.00% | 100.00%      100% | 100%       100.00% | 100.00%
+# UVVM:        Covpt_3            1              6 / 6        100.00% | 100.00%      100% | 100%       100.00% | 100.00%
+# UVVM:        Covpt_4            1              0 / 4          0.00% | 0.00%        100% | 100%         0.00% | 0.00%
+# UVVM:        Covpt_5            1              0 / 1          0.00% | 0.00%        100% | 100%         0.00% | 0.00%
+# UVVM:        Covpt_6            1              4 / 4        100.00% | 100.00%      100% | 100%       100.00% | 100.00%
+# UVVM:        Covpt_7            1              0 / 3          0.00% | 0.00%        100% | 100%         0.00% | 0.00%
+# UVVM:        Covpt_8            1             12 / 12       100.00% | 100.00%      100% | 100%       100.00% | 100.00%
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+</div>
+<div class="section" id="overall-non-verbose">
+<h3>Overall Non-Verbose<a class="headerlink" href="#overall-non-verbose" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span> <span class="c1">-- Same as using NON_VERBOSE. Prints only the summary</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  0 ns *** OVERALL COVERAGE REPORT (NON VERBOSE): TB seq. ***
+# UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+</div>
+<div class="section" id="overall-holes">
+<h3>Overall Holes<a class="headerlink" href="#overall-holes" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">);</span> <span class="c1">-- Prints the uncovered coverpoints</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  0 ns *** OVERALL HOLES REPORT: TB seq. ***
+# UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%
+# UVVM:  =================================================================================================================
+# UVVM:      COVERPOINT    COVERAGE WEIGHT   COVERED BINS    COVERAGE(BINS|HITS)   GOAL(BINS|HITS)   % OF GOAL(BINS|HITS)
+# UVVM:        Covpt_1            1              3 / 5         60.00% | 76.47%       50% | 100%        100.00% | 76.47%
+# UVVM:        Covpt_4            1              0 / 4          0.00% | 0.00%        100% | 100%         0.00% | 0.00%
+# UVVM:        Covpt_5            1              0 / 1          0.00% | 0.00%        100% | 100%         0.00% | 0.00%
+# UVVM:        Covpt_7            1              0 / 3          0.00% | 0.00%        100% | 100%         0.00% | 0.00%
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-goal">
+<h3>Using goal<a class="headerlink" href="#using-goal" title="Permalink to this headline">¶</a></h3>
+<p>When either the bins goal, the hits goal or the coverpoints goal is configured with a value different than 100, the corresponding
+report shows 3 extra lines:</p>
+<ul class="simple">
+<li><p><strong>Goal</strong> = configured goal value.</p></li>
+<li><p><strong>% of Goal</strong> = percentage of the covered goal, stops at 100%.</p></li>
+<li><p><strong>% of Goal (uncapped)</strong> = percentage of the covered goal without limits. This is useful to see if there are bins
+which are oversampled.</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM: ==================================================================================================================
+# UVVM: 0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***
+# UVVM: ==================================================================================================================
+# UVVM: Coverpoint:              Covpt_1
+# UVVM: Goal:                    Bins: 50%,      Hits: 100%
+# UVVM: % of Goal:               Bins: 100.00%,  Hits: 76.47%
+# UVVM: % of Goal (uncapped):    Bins: 120.00%,  Hits: 147.06%
+# UVVM: Coverage (for goal 100): Bins: 60.00%,   Hits: 76.47%
+# UVVM: ------------------------------------------------------------------------------------------------------------------
+# UVVM:               BINS               HITS      MIN HITS    HIT COVERAGE            NAME            ILLEGAL/IGNORE
+# UVVM:           (256 to 511)            1          N/A           N/A             illegal_addr           ILLEGAL
+# UVVM:            (0 to 125)             6           8           75.00%           mem_addr_low              -
+# UVVM:          (126, 127, 128)          3           1          100.00%           mem_addr_mid              -
+# UVVM:           (129 to 255)            14          4          100.00%           mem_addr_high             -
+# UVVM:           (0-&gt;1-&gt;2-&gt;3)            0           2           0.00%            transition_1              -
+# UVVM:           transition_2            2           2          100.00%           transition_2              -
+# UVVM: ------------------------------------------------------------------------------------------------------------------
+# UVVM: transition_2: (0-&gt;15-&gt;127-&gt;248-&gt;249-&gt;250-&gt;251-&gt;252-&gt;253-&gt;254)
+# UVVM: ==================================================================================================================
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  0 ns *** OVERALL COVERAGE REPORT (NON VERBOSE): TB seq. ***
+# UVVM:  =================================================================================================================
+# UVVM:  Goal:                    Covpts: 25%
+# UVVM:  % of Goal:               Covpts: 100.00%
+# UVVM:  % of Goal (uncapped):    Covpts: 200.00%
+# UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="configuration-report">
+<span id="func-cov-pkg-config-report"></span><h2>Configuration report<a class="headerlink" href="#configuration-report" title="Permalink to this headline">¶</a></h2>
+<p>A report containing all the configuration parameters can be printed using the <code class="docutils literal notranslate"><span class="pre">report_config()</span></code> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_config</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
+# UVVM:  ***  REPORT OF COVERPOINT CONFIGURATION ***
+# UVVM:  =================================================================================================================
+# UVVM:            NAME                    :                        Covpt_1
+# UVVM:            SCOPE                   :                        TB seq.
+# UVVM:            ILLEGAL BIN ALERT LEVEL :                        WARNING
+# UVVM:            DETECT BIN OVERLAP      :                          false
+# UVVM:            COVERAGE WEIGHT         :                              1
+# UVVM:            BINS COVERAGE GOAL      :                            100
+# UVVM:            HITS COVERAGE GOAL      :                            100
+# UVVM:            COVERPOINTS GOAL        :                            100
+# UVVM:            NUMBER OF BINS          :                             36
+# UVVM:            CROSS DIMENSIONS        :                              2
+# UVVM:  =================================================================================================================
+</pre></div>
+</div>
+</div>
+<div class="section" id="coverage-database">
+<h2>Coverage database<a class="headerlink" href="#coverage-database" title="Permalink to this headline">¶</a></h2>
+<p>In order to accumulate coverage when running several testcases we need to store the coverpoint model, configuration and the
+accumulated counters at the end of one testcase and load it at the beginning of the next. This can be done with <code class="docutils literal notranslate"><span class="pre">write_coverage_db()</span></code>
+which writes all the necessary information to a file and <code class="docutils literal notranslate"><span class="pre">load_coverage_db()</span></code> which reads it back into a new coverpoint. Note
+that this must be done for every coverpoint in the testbench and they must be written to separate files.</p>
+<p><em>Example 1: The testcases are in different files and are run in a specified order.</em></p>
+<ol class="arabic simple">
+<li><p>TC_1 adds bins to a coverpoint, samples coverage and writes the database to “coverpoint_1.txt”.</p></li>
+<li><p>TC_2 loads the database from “coverpoint_1.txt”, samples coverage and writes the updated database to “coverpoint_1.txt”, which
+overwrites the content of the file.</p></li>
+<li><p>TC_3 does the same as TC_2.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Loading a database into a coverpoint will overwrite all its information, therefore it is suggested to always load before
+sampling coverage or adding any extra bins.</p></li>
+<li><p>If a database is loaded into a coverpoint which is already initialized, a TB_WARNING will be generated.</p></li>
+</ul>
+</div>
+<p><em>Example 2: There is a single testcase file which is run using different generics in a specified order.</em></p>
+<ul class="simple">
+<li><p>Same as Example 1, but using the generics to identify the first TC which should not load the database.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If a file is not found when trying to load, a TB_WARNING will be generated.</p>
+</div>
+<p><em>Example 3: The testcases are run in parallel.</em></p>
+<ol class="arabic simple">
+<li><p>Each TC adds bins to a coverpoint, samples coverage and writes the database to a different file.</p></li>
+<li><p>After all simulations are done, use a script to merge the database files.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The downside of this approach is that the accumulated coverage will not be visible in simulation.</p>
+</div>
+<div class="section" id="overall-coverage-accumulation">
+<h3>Overall coverage accumulation<a class="headerlink" href="#overall-coverage-accumulation" title="Permalink to this headline">¶</a></h3>
+<p>Since the <code class="docutils literal notranslate"><span class="pre">write_coverage_db()</span></code> procedure is defined in a protected type, every single coverpoint needs to call the procedure to
+store its corresponding database, which can be tedious with many coverpoints. One way to simplify this, could be to define the
+coverpoints in a global package as shared variables and create a procedure, e.g. <code class="docutils literal notranslate"><span class="pre">write_overall_coverage_db()</span></code>, which calls the
+<code class="docutils literal notranslate"><span class="pre">write_coverage_db()</span></code> from every coverpoint defined in the package. The same applies for <code class="docutils literal notranslate"><span class="pre">load_coverage_db()</span></code>.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">package</span> <span class="n">global_fc_pkg</span> <span class="k">is</span>
+  <span class="c1">-- Global coverpoints</span>
+  <span class="k">shared</span> <span class="k">variable</span> <span class="n">shared_coverpoint1</span>   <span class="o">:</span> <span class="n">t_coverpoint</span><span class="p">;</span>
+  <span class="k">shared</span> <span class="k">variable</span> <span class="n">shared_coverpoint2</span>   <span class="o">:</span> <span class="n">t_coverpoint</span><span class="p">;</span>
+  <span class="k">shared</span> <span class="k">variable</span> <span class="n">shared_coverpoint3</span>   <span class="o">:</span> <span class="n">t_coverpoint</span><span class="p">;</span>
+  <span class="p">...</span>
+  <span class="k">shared</span> <span class="k">variable</span> <span class="n">shared_coverpoint100</span> <span class="o">:</span> <span class="n">t_coverpoint</span><span class="p">;</span>
+
+  <span class="k">procedure</span> <span class="n">write_overall_coverage_db</span><span class="p">(</span>
+    <span class="k">constant</span> <span class="n">VOID</span> <span class="o">:</span> <span class="k">in</span> <span class="n">t_void</span>
+  <span class="p">);</span>
+  <span class="k">procedure</span> <span class="n">load_overall_coverage_db</span><span class="p">(</span>
+    <span class="k">constant</span> <span class="n">VOID</span> <span class="o">:</span> <span class="k">in</span> <span class="n">t_void</span>
+  <span class="p">);</span>
+<span class="k">end</span> <span class="k">package</span> <span class="nc">global_fc_pkg</span><span class="p">;</span>
+
+<span class="k">package</span> <span class="k">body</span> <span class="n">global_fc_pkg</span> <span class="k">is</span>
+  <span class="k">procedure</span> <span class="n">write_overall_coverage_db</span><span class="p">(</span>
+    <span class="k">constant</span> <span class="n">VOID</span> <span class="o">:</span> <span class="k">in</span> <span class="n">t_void</span><span class="p">)</span> <span class="k">is</span>
+  <span class="k">begin</span>
+    <span class="n">shared_coverpoint1</span><span class="p">.</span><span class="n">write_coverage_db</span><span class="p">(</span><span class="s">&quot;covpt1.txt&quot;</span><span class="p">);</span>
+    <span class="n">shared_coverpoint2</span><span class="p">.</span><span class="n">write_coverage_db</span><span class="p">(</span><span class="s">&quot;covpt2.txt&quot;</span><span class="p">);</span>
+    <span class="n">shared_coverpoint3</span><span class="p">.</span><span class="n">write_coverage_db</span><span class="p">(</span><span class="s">&quot;covpt3.txt&quot;</span><span class="p">);</span>
+    <span class="p">...</span>
+    <span class="n">shared_coverpoint100</span><span class="p">.</span><span class="n">write_coverage_db</span><span class="p">(</span><span class="s">&quot;covpt100.txt&quot;</span><span class="p">);</span>
+  <span class="k">end</span> <span class="k">procedure</span><span class="p">;</span>
+  <span class="p">...</span>
+<span class="k">end</span> <span class="k">package</span> <span class="k">body</span> <span class="nc">global_fc_pkg</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="clearing-coverage">
+<h3>Clearing coverage<a class="headerlink" href="#clearing-coverage" title="Permalink to this headline">¶</a></h3>
+<p>A coverpoint’s coverage counters can be reset with <code class="docutils literal notranslate"><span class="pre">clear_coverage()</span></code>. This might be useful for example when running several
+testcases in a single testbench and the coverage needs to be restarted after each testcase or when loading a coverpoint database
+and only want to keep the model and configuration.</p>
+</div>
+<div class="section" id="file-format">
+<h3>File format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h3>
+<p>The database for a coverpoint is stored using the following file format:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <em>for loops</em> and the leading spaces in the indented lines are only for better readability and not part of the data.</p>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">coverpoint_name</span><span class="p">]</span>
+<span class="p">[</span><span class="n">scope</span><span class="p">]</span>
+<span class="p">[</span><span class="n">number_of_bins_crossed</span><span class="p">]</span>
+<span class="p">[</span><span class="n">randomization_seed_1</span><span class="p">]</span> <span class="p">[</span><span class="n">randomization_seed_2</span><span class="p">]</span>
+<span class="p">[</span><span class="n">transition_bin_idx</span><span class="p">]</span>
+<span class="p">[</span><span class="n">transition_bin_value_idx_1</span><span class="p">]</span> <span class="p">[</span><span class="n">transition_bin_value_idx_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">transition_bin_value_idx_n</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
+  <span class="p">[</span><span class="n">bin_sample_shift_reg_n</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="p">...</span> <span class="p">[</span><span class="n">bin_sample_shift_reg_2</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="p">[</span><span class="n">bin_sample_shift_reg_1</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+<span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+<span class="p">[</span><span class="n">illegal_bin_alert_level</span><span class="p">]</span>
+<span class="p">[</span><span class="n">bin_overlap_alert_level</span><span class="p">]</span>
+<span class="p">[</span><span class="n">number_of_valid_bins</span><span class="p">]</span>
+<span class="p">[</span><span class="n">number_of_covered_bins</span><span class="p">]</span>
+<span class="p">[</span><span class="n">total_bin_min_hits</span><span class="p">]</span>
+<span class="p">[</span><span class="n">total_bin_hits</span><span class="p">]</span>
+<span class="p">[</span><span class="n">total_coverage_bin_hits</span><span class="p">]</span>
+<span class="p">[</span><span class="n">total_goal_bin_hits</span><span class="p">]</span>
+<span class="p">[</span><span class="n">covpt_coverage_weight</span><span class="p">]</span>
+<span class="p">[</span><span class="n">bins_coverage_goal</span><span class="p">]</span>
+<span class="p">[</span><span class="n">hits_coverage_goal</span><span class="p">]</span>
+<span class="p">[</span><span class="n">covpts_coverage_goal</span><span class="p">]</span>
+<span class="p">[</span><span class="n">bin_idx</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">bin_idx</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
+  <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">name</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">transition_mask</span><span class="p">]</span>
+  <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
+    <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">bin_type</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">num_values</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_1</span><span class="p">]</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span><span class="p">]</span>
+  <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+<span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+<span class="p">[</span><span class="n">invalid_bin_idx</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">invalid_bin_idx</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
+  <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">name</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">min_hits</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">rand_weight</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">transition_mask</span><span class="p">]</span>
+  <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">number_of_bins_crossed</span><span class="o">-</span><span class="mi">1</span> <span class="k">loop</span>
+    <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">bin_type</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">num_values</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_1</span><span class="p">]</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_2</span><span class="p">]</span> <span class="p">...</span> <span class="p">[</span><span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span><span class="p">]</span>
+  <span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+<span class="k">end</span> <span class="k">loop</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The following values are constrained as:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">transition_bin_value_idx_n</span>       <span class="c1">--&gt; n = C_MAX_NUM_CROSS_BINS = 16</span>
+<span class="n">bin_sample_shift_reg_n</span>           <span class="c1">--&gt; n = C_MAX_NUM_CROSS_BINS = 16</span>
+<span class="n">bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span>         <span class="c1">--&gt; n = bin(i).cross(j).num_values</span>
+<span class="n">invalid_bin</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">cross</span><span class="p">(</span><span class="n">j</span><span class="p">).</span><span class="n">values_n</span> <span class="c1">--&gt; n = invalid_bin(i).cross(j).num_values</span>
+</pre></div>
+</div>
+<p>Most of the values are integer numbers except for a few:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 48%" />
+<col style="width: 30%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Original type</p></th>
+<th class="head"><p>Type in file</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>coverpoint_name</p></td>
+<td><p>string</p></td>
+<td><p>string</p></td>
+</tr>
+<tr class="row-odd"><td><p>scope</p></td>
+<td><p>string</p></td>
+<td><p>string</p></td>
+</tr>
+<tr class="row-even"><td><p>illegal_bin_alert_level</p></td>
+<td><p>t_alert_level</p></td>
+<td><p>integer</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin_overlap_alert_level</p></td>
+<td><p>t_alert_level</p></td>
+<td><p>integer</p></td>
+</tr>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>string</p></td>
+<td><p>string</p></td>
+</tr>
+<tr class="row-odd"><td><p>transition_mask</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>string</p></td>
+</tr>
+<tr class="row-even"><td><p>bin_type</p></td>
+<td><p>t_cov_bin_type</p></td>
+<td><p>integer</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of the file output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>MY_CROSS
+NEW_SCOPE
+2
+1082914553 1166884309
+4
+3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+52 51 50 237 237 231 229 228 227 226
+1052 1051 1050 1237 1237 1231 1229 1228 1227 1226
+4
+7
+5
+0
+38
+16
+16
+16
+8
+100
+200
+100
+5
+bin_0
+0 1 -1 0000000111
+0 1 10
+0 1 1010
+single
+2 8 20 0000000111
+0 1 20
+0 1 1020
+multiple
+3 9 30 0000000111
+0 3 30 35 39
+0 3 1030 1035 1039
+range
+10 15 40 0000000111
+3 2 40 49
+3 2 1040 1049
+transition
+1 5 50 0000000111
+6 6 50 51 52 53 54 55
+6 6 1050 1051 1052 1053 1054 1055
+3
+ignore_single
+1 0 0 1111111111
+1 1 110
+1 1 1110
+illegal_range
+4 0 0 0000111111
+5 2 226 229
+5 2 1226 1229
+illegal_transition
+1 0 0 0000000111
+8 3 231 237 237
+8 3 1231 1237 1237
+</pre></div>
+</div>
+</div>
+<div class="section" id="script">
+<h3>Script<a class="headerlink" href="#script" title="Permalink to this headline">¶</a></h3>
+<p>TBD</p>
+</div>
+</div>
+<div class="section" id="clearing-a-coverpoint">
+<h2>Clearing a coverpoint<a class="headerlink" href="#clearing-a-coverpoint" title="Permalink to this headline">¶</a></h2>
+<p>A coverpoint’s complete model, configuration and counters can be reset with <code class="docutils literal notranslate"><span class="pre">delete_coverpoint()</span></code>.</p>
+</div>
+<div class="section" id="additional-info">
+<h2>Additional info<a class="headerlink" href="#additional-info" title="Permalink to this headline">¶</a></h2>
+<p>Log messages within the procedures and functions in the <em>func_cov_pkg</em> use the following message IDs (disabled by default):</p>
+<ul class="simple">
+<li><p>ID_FUNC_COV_BINS: Used for logging functional coverage <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> methods. Note that each bin function within
+the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> log has a string length limited by C_FC_MAX_PROC_CALL_LENGTH defined in adaptations_pkg.</p></li>
+<li><p>ID_FUNC_COV_BINS_INFO: Used for logging functional coverage <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> methods detailed information.</p></li>
+<li><p>ID_FUNC_COV_RAND: Used for logging functional coverage “Optimized Randomization” values returned by rand().</p></li>
+<li><p>ID_FUNC_COV_SAMPLE: Used for logging functional coverage sampling.</p></li>
+<li><p>ID_FUNC_COV_CONFIG: Used for logging functional coverage configuration changes.</p></li>
+</ul>
+<p>The default scope for log messages in the <em>func_cov_pkg</em> is C_TB_SCOPE_DEFAULT and it can be updated using the procedure
+<code class="docutils literal notranslate"><span class="pre">set_scope()</span></code>. The maximum length of the scope is defined by C_LOG_SCOPE_WIDTH. Both of these constants are defined in adaptations_pkg.</p>
+<p>The maximum number of coverpoints that can be created is determined by C_FC_MAX_NUM_COVERPOINTS defined in adaptations_pkg.</p>
+</div>
+<div class="section" id="func-cov-pkg">
+<span id="id1"></span><h2>func_cov_pkg<a class="headerlink" href="#func-cov-pkg" title="Permalink to this headline">¶</a></h2>
+<p>The following links contain information regarding the API of the protected type <em>t_coverpoint</em>, the API for the general methods and
+all the type definitions inside <em>func_cov_pkg</em>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_t_coverpoint.html">t_coverpoint (protected)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_methods.html">Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_types.html">Types</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="func_cov_pkg_t_coverpoint.html" class="btn btn-neutral float-right" title="t_coverpoint (protected)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rand_pkg_types.html" class="btn btn-neutral float-left" title="Types" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, UVVM.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+  <style>
+         .wy-nav-content { max-width: 975px; }
+  </style>
+
+
+</body>
+</html>

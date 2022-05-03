@@ -40,8 +40,7 @@ package spi_bfm_pkg is
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_spi_bfm_config is
-  record
+  type t_spi_bfm_config is record
     CPOL             : std_logic;          -- sclk polarity, i.e. the base value of the clock.
                                            -- If CPOL is '0', the clock will be set to '0' when inactive, i.e., ordinary positive polarity.
     CPHA             : std_logic;          -- sclk phase, i.e. when data is sampled and transmitted w.r.t. sclk.

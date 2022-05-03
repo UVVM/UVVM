@@ -42,8 +42,7 @@ package i2c_bfm_pkg is
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_i2c_bfm_config is
-  record
+  type t_i2c_bfm_config is record
     enable_10_bits_addressing       : boolean;              -- true: 10-bit addressing enabled, false : 7-bit addressing enabled
     master_sda_to_scl               : time;                 -- Used in master mode, start condition. From sda active to scl active.
     master_scl_to_sda               : time;                 -- Used in master mode, stop condition. From scl inactive to sda inactive.

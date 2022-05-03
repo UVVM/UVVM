@@ -129,8 +129,8 @@ package vvc_methods_pkg is
     constant vvc_instance_idx             : in    integer;
     constant channel                      : in    t_channel;
     constant data_array                   : in    t_slv_array;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
     constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
     constant scope                        : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
@@ -233,7 +233,7 @@ package body vvc_methods_pkg is
              & ", " & to_string(data_array'length) & " bytes)";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
-    gmii_write(VVCT, vvc_instance_idx, channel, data_array, RELEASE_LINE_AFTER_TRANSFER, msg, scope, parent_msg_id_panel);
+    gmii_write(VVCT, vvc_instance_idx, channel, data_array, msg, RELEASE_LINE_AFTER_TRANSFER, scope, parent_msg_id_panel);
   end procedure;
 
   procedure gmii_write(
@@ -241,8 +241,8 @@ package body vvc_methods_pkg is
     constant vvc_instance_idx             : in    integer;
     constant channel                      : in    t_channel;
     constant data_array                   : in    t_slv_array;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
     constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
     constant scope                        : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel          : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is

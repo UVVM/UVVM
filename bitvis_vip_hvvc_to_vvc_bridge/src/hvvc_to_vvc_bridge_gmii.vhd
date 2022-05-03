@@ -122,7 +122,7 @@ begin
 
           v_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER when v_dut_if_field_pos_is_last else HOLD_LINE_AFTER_TRANSFER;
 
-          gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, v_data_bytes(0 to v_num_data_bytes-1), v_action_when_transfer_is_done, "HVVC: Write data via GMII.", GC_SCOPE, hvvc_to_bridge.msg_id_panel);
+          gmii_write(GMII_VVCT, GC_INSTANCE_IDX, TX, v_data_bytes(0 to v_num_data_bytes-1), "HVVC: Write data via GMII.", v_action_when_transfer_is_done, GC_SCOPE, hvvc_to_bridge.msg_id_panel);
           -- Enable the executor waiting log after receiving its last command
           if v_disabled_msg_id_exe_wait and v_dut_if_field_pos_is_last then
             shared_gmii_vvc_config(TX, GC_INSTANCE_IDX).msg_id_panel(ID_CMD_EXECUTOR_WAIT) := ENABLED;

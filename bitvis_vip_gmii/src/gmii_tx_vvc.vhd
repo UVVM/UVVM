@@ -280,9 +280,9 @@ begin
 
           -- Call the corresponding procedure in the BFM package.
           gmii_write(data_array                   => v_cmd.data_array(0 to v_cmd.data_array_length-1),
-                     action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
                      msg                          => format_msg(v_cmd),
                      gmii_tx_if                   => gmii_vvc_tx_if,
+                     action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
                      scope                        => C_SCOPE,
                      msg_id_panel                 => v_msg_id_panel,
                      config                       => vvc_config.bfm_config);

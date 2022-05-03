@@ -146,9 +146,9 @@ begin
     log(ID_LOG_HDR, "Testing a multiple byte transfer in several transactions");
     for i in 0 to 30 loop
       if i < 30 then
-        gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(i to i), HOLD_LINE_AFTER_TRANSFER, "");
+        gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(i to i), "", HOLD_LINE_AFTER_TRANSFER);
       else
-        gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(i to i), RELEASE_LINE_AFTER_TRANSFER, "");
+        gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(i to i), "", RELEASE_LINE_AFTER_TRANSFER);
       end if;
     end loop;
     gmii_expect(GMII_VVCT, C_VVC_IDX, RX, v_data_array(0 to 30), "");

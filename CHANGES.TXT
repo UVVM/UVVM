@@ -24,6 +24,8 @@ Released: 2022-XX-XX
 - Fixed i2c_slave_receive() not checking master_sda_to_scl configuration correctly.
 - Started conversion of complete UVVM documentation to RST & HTML format under uvvm/doc.
 - Moved RST documentation for rand_pkg and func_cov_pkg to uvvm/doc.
+- Added the parameter action_when_transfer_is_done to gmii_write() to support multi-field transfers
+  when using a hierarchical VVC, such as Ethernet.
 
 
 v2 2021.11.12

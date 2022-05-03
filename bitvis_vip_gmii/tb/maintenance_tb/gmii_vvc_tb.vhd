@@ -143,6 +143,19 @@ begin
     end loop;
     await_completion(GMII_VVCT, C_VVC_IDX, RX, 10 us);
 
+    log(ID_LOG_HDR, "Testing a multiple byte transfer in several transactions");
+    for i in 0 to 30 loop
+      if i < 30 then
+        gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(i to i), HOLD_LINE_AFTER_TRANSFER, "");
+      else
+        gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(i to i), RELEASE_LINE_AFTER_TRANSFER, "");
+      end if;
+    end loop;
+    gmii_expect(GMII_VVCT, C_VVC_IDX, RX, v_data_array(0 to 30), "");
+    wait for C_CLK_PERIOD*31;
+    check_stable(gmii_tx_if.txen, C_CLK_PERIOD*30, error, "Checking that TXEN was held high during the complete transfer", c_scope);
+    await_completion(GMII_VVCT, C_VVC_IDX, RX, 10 us);
+
     log(ID_LOG_HDR, "Testing read and fetch");
     gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array, "");
     gmii_read(GMII_VVCT, C_VVC_IDX, RX, "");

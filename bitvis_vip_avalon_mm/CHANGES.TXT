@@ -6,6 +6,7 @@ v2.8.2
 ----------
 Released: 2022-XX-XX
 - Use correct message ID for avalon_mm_read_request() log in BFM.
+- t_vvc_config, t_vvc_status, t_transaction_info and t_avalon_mm_bfm_config record declaration formatting.
 
 v2.8.1
 ----------

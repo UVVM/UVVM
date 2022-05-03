@@ -1,6 +1,10 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.7.5
+----------
+Released: 2022-05-xx
+- t_vvc_config, t_vvc_status, t_transaction_info and t_axistream_bfm_config record declaration formatting.
 
 v4.7.4
 ----------

@@ -28,6 +28,7 @@ Released: 2022-XX-XX
   when using a hierarchical VVC, such as Ethernet.
 - Fixed typo in GPIO VVC QuickRef.
 - Fixed wrong example in SPI VVC QuickRef.
+- Record declaration formatting in several packages - thanks to @m-kru for pull-request.
 
 
 v2 2021.11.12

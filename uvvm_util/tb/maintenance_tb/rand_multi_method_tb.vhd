@@ -23,7 +23,7 @@ context uvvm_util.uvvm_util_context;
 
 use work.rand_tb_pkg.all;
 
---HDLUnit:TB
+--HDLRegression:TB
 entity rand_multi_method_tb is
   generic(
     GC_TESTCASE : string

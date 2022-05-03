@@ -21,7 +21,7 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
---HDLUnit:TB
+--HDLRegression:TB
 entity func_cov_tb is
   generic(
     GC_TESTCASE  : string;

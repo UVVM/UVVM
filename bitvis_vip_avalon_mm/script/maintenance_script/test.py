@@ -5,9 +5,9 @@ from itertools import product
 
 
 try:
-    from hdlunit import HDLUnit
+    from hdlregression import HDLRegression
 except:
-    print('Unable to import HDLUnit module. See HDLUnit documentation for installation instructions.')
+    print('Unable to import HDLRegression module. See HDLRegression documentation for installation instructions.')
     sys.exit(1)
 
 
@@ -27,37 +27,37 @@ print('Verify Bitvis VIP Avalon MM')
 
 cleanup('Removing any previous runs.')
 
-hdlunit = HDLUnit(simulator='modelsim')
+hr = HDLRegression(simulator='modelsim')
 
 # Add util, fw and VIP Scoreboard
-hdlunit.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
-hdlunit.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hdlunit.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
+hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
+hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
 # Add Avalon MM VIP
-hdlunit.add_files("../../src/*.vhd", "bitvis_vip_avalon_mm")
-hdlunit.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_avalon_mm")
+hr.add_files("../../src/*.vhd", "bitvis_vip_avalon_mm")
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_avalon_mm")
 
 # Add TB/TH etc
-hdlunit.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_mm")
-hdlunit.start(regression_mode=True, gui_mode=False)
+hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_mm")
+hr.start(regression_mode=True, gui_mode=False)
 
-hdlunit.add_generics(entity="avalon_mm_vvc_pipeline_tb",
+hr.add_generics(entity="avalon_mm_vvc_pipeline_tb",
                      architecture=None,
                      generics=["GC_DELTA_DELAYED_VVC_CLK", True])
 
-hdlunit.add_generics(entity="avalon_mm_vvc_pipeline_tb",
+hr.add_generics(entity="avalon_mm_vvc_pipeline_tb",
                      architecture=None,
                      generics=["GC_DELTA_DELAYED_VVC_CLK", False])
 
-num_failing_tests = hdlunit.get_num_fail_tests()
-num_passing_tests = hdlunit.get_num_pass_tests()
+num_failing_tests = hr.get_num_fail_tests()
+num_passing_tests = hr.get_num_pass_tests()
 
 # No tests run error
 if num_passing_tests == 0:
     sys.exit(1)
 # Remove output only if OK
-if hdlunit.check_run_results(exp_fail=0) is True:
+if hr.check_run_results(exp_fail=0) is True:
     cleanup('Removing simulation output')
 # Return number of failing tests
 sys.exit(num_failing_tests)

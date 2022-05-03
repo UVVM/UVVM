@@ -32,7 +32,7 @@ context bitvis_vip_sbi.vvc_context;
 library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
 
---HDLUnit:TB
+--HDLRegression:TB
 entity cr_fc_demo_tb is
 end entity;
 

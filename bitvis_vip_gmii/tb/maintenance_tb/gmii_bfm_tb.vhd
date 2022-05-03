@@ -90,7 +90,7 @@ begin
       data_array                   : in t_byte_array;
       action_when_transfer_is_done : in t_action_when_transfer_is_done) is
     begin
-      gmii_write(data_array, action_when_transfer_is_done, "", gmii_tx_if, c_scope, shared_msg_id_panel, v_gmii_bfm_config);
+      gmii_write(data_array, "", gmii_tx_if, action_when_transfer_is_done, c_scope, shared_msg_id_panel, v_gmii_bfm_config);
     end procedure;
 
   begin

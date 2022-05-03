@@ -102,9 +102,9 @@ package gmii_bfm_pkg is
 
   procedure gmii_write (
     constant data_array                   : in    t_slv_array;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
     constant msg                          : in    string            := "";
     signal   gmii_tx_if                   : inout t_gmii_tx_if;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
     constant scope                        : in    string            := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel    := shared_msg_id_panel;
     constant config                       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
@@ -178,14 +178,14 @@ package body gmii_bfm_pkg is
     constant config       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   ) is
   begin
-    gmii_write(data_array, RELEASE_LINE_AFTER_TRANSFER, msg, gmii_tx_if, scope, msg_id_panel, config);
+    gmii_write(data_array, msg, gmii_tx_if, RELEASE_LINE_AFTER_TRANSFER, scope, msg_id_panel, config);
   end procedure;
 
   procedure gmii_write(
     constant data_array                   : in    t_slv_array;
-    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
     constant msg                          : in    string            := "";
     signal   gmii_tx_if                   : inout t_gmii_tx_if;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
     constant scope                        : in    string            := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel    := shared_msg_id_panel;
     constant config                       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT

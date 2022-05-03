@@ -26,6 +26,7 @@ Released: 2022-XX-XX
 - Moved RST documentation for rand_pkg and func_cov_pkg to uvvm/doc.
 - Added the parameter action_when_transfer_is_done to gmii_write() to support multi-field transfers
   when using a hierarchical VVC, such as Ethernet.
+- Fixed typo in Axistream VVC QuickRef.
 - Fixed typo in GPIO VVC QuickRef.
 - Fixed wrong example in SPI VVC QuickRef.
 - Record declaration formatting in several packages - thanks to @m-kru for pull-request.

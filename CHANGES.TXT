@@ -9,9 +9,9 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
-v2 2022.XX.XX
+v2 2022.05.05
 --------------------
-Released: 2022-XX-XX
+Released: 2022-05-05
 - Use correct message ID for avalon_mm_read_request() log in BFM.
 - FC: Generate an alert when adding bins to a coverpoint which has been sampled.
 - FC: Major updates in the coverage database accumulation mechanism.

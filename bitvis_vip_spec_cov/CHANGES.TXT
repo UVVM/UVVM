@@ -3,7 +3,7 @@ Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 
 v0.5.2
 ----------
-Released: 2022-XX-XX
+Released: 2022-05-05
 - Fixed crash that could occur with partial coverage files not found.
 
 v0.5.1

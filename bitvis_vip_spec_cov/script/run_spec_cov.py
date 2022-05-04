@@ -1076,7 +1076,7 @@ def build_partial_cov_list(run_configuration, container):
                 continue
 
     except:
-        error_msg = ("Error %s occurred with file %s when searching for CSV delimiter in PC file" %(sys.exc_info()[0], partial_coverage_file_name))
+        error_msg = ("Error %s occurred with file %s when searching for CSV delimiter in PC file %s" %(sys.exc_info()[0], partial_coverage_file_name, partial_coverage_files[0]))
         abort(error_code = 1, msg = error_msg)
 
     #==========================================================================

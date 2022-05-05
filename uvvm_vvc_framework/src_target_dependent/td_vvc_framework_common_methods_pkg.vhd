@@ -499,7 +499,6 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_vvc_instance_idx             : integer                                := vvc_instance_idx;
     variable v_vvc_channel                  : t_channel                              := vvc_channel;
   begin
-
     -- Only log wanted_idx when it's given as a parameter
     if wanted_idx = -1 then
       v_proc_call := new string'(proc_call_short);

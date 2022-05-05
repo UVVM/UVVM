@@ -21,14 +21,16 @@ def get_golden_file_list(simulator='modelsim'):
 def get_test_file_list():
   filelist = []
 
-  output_folder = os.path.abspath(os.path.join(os.getcwd(), 'hdlunit/test/'))
-  for subdir, dirs, files in os.walk(output_folder):
+  output_folder = os.path.abspath(os.path.join(os.getcwd(), '.')) # Look in sim/
+  for dirpath, dirs, files in os.walk(output_folder):
     for file in files:
-      if 'test' in subdir:
-        filepath = subdir + os.sep + file
-        if '.txt' in file:
-          if not 'report.txt' in file:
-            filelist.append(filepath)
+      if 'hdlunit' in dirpath and 'test' in dirpath and '.txt' in file:
+        filepath = dirpath + os.sep + file
+        if not 'report.txt' in file:
+          filelist.append(filepath)
+      elif 'func_cov' in file and '.txt' in file:
+        filepath = dirpath + os.sep + file
+        filelist.append(filepath)
   return filelist
 
 

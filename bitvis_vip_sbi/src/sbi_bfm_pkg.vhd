@@ -47,8 +47,7 @@ package sbi_bfm_pkg is
 
 
   -- Configuration record to be assigned in the test harness.
-  type t_sbi_bfm_config is
-  record
+  type t_sbi_bfm_config is record
     max_wait_cycles             : integer;            -- The maximum number of clock cycles to wait for the DUT ready signal before reporting a timeout alert.
     max_wait_cycles_severity    : t_alert_level;      -- The above timeout will have this severity
     use_fixed_wait_cycles_read  : boolean;            -- When true, wait 'fixed_wait_cycles_read' after asserting rena, before sampling rdata

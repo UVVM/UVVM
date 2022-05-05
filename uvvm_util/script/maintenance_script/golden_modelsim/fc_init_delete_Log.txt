@@ -23,7 +23,7 @@ UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***
 UVVM:      ====================================================================================================================================================================
 UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
 UVVM:      ====================================================================================================================================================================
-UVVM:                 COVERPOINT              COVERAGE WEIGHT            COVERED BINS           COVERAGE(BINS|HITS)         GOAL(BINS|HITS)        % OF GOAL(BINS|HITS)        
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
@@ -111,7 +111,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
 UVVM:             0 ns   TB seq.
-UVVM:                    write_coverage_db(Y://bitvis//uvvm//uvvm_util//simfile.txt)=> Coverpoint has not been initialized
+UVVM:                    write_coverage_db(db_file.txt)=> Coverpoint has not been initialized
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -342,8 +342,8 @@ UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***
 UVVM:      ====================================================================================================================================================================
 UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 50.00%,   Hits: 50.00%  
 UVVM:      ====================================================================================================================================================================
-UVVM:                 COVERPOINT              COVERAGE WEIGHT            COVERED BINS           COVERAGE(BINS|HITS)         GOAL(BINS|HITS)        % OF GOAL(BINS|HITS)        
-UVVM:                MY_COVERPOINT                   5                     50 / 100               50.00% | 50.00%             50% | 200%             100.00% | 25.00%          
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:             MY_COVERPOINT                5                  50 / 100            50.00% | 50.00%          50% | 200%          100.00% | 25.00%                            
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
@@ -402,7 +402,7 @@ UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***
 UVVM:      ====================================================================================================================================================================
 UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
 UVVM:      ====================================================================================================================================================================
-UVVM:                 COVERPOINT              COVERAGE WEIGHT            COVERED BINS           COVERAGE(BINS|HITS)         GOAL(BINS|HITS)        % OF GOAL(BINS|HITS)        
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
@@ -424,11 +424,11 @@ UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***
 UVVM:      ====================================================================================================================================================================
 UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
 UVVM:      ====================================================================================================================================================================
-UVVM:                 COVERPOINT              COVERAGE WEIGHT            COVERED BINS           COVERAGE(BINS|HITS)         GOAL(BINS|HITS)        % OF GOAL(BINS|HITS)        
-UVVM:                   Covpt_2                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
-UVVM:                   Covpt_3                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
-UVVM:                   Covpt_4                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
-UVVM:                   Covpt_5                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:                Covpt_2                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_3                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_4                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_5                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
@@ -441,8 +441,8 @@ UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***
 UVVM:      ====================================================================================================================================================================
 UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
 UVVM:      ====================================================================================================================================================================
-UVVM:                 COVERPOINT              COVERAGE WEIGHT            COVERED BINS           COVERAGE(BINS|HITS)         GOAL(BINS|HITS)        % OF GOAL(BINS|HITS)        
-UVVM:                   Covpt_3                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:                Covpt_3                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
@@ -458,11 +458,11 @@ UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***
 UVVM:      ====================================================================================================================================================================
 UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 0.00%,    Hits: 0.00%   
 UVVM:      ====================================================================================================================================================================
-UVVM:                 COVERPOINT              COVERAGE WEIGHT            COVERED BINS           COVERAGE(BINS|HITS)         GOAL(BINS|HITS)        % OF GOAL(BINS|HITS)        
-UVVM:                   Covpt_6                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
-UVVM:                   Covpt_3                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
-UVVM:                   Covpt_7                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
-UVVM:                   Covpt_8                      1                       0 / 1                 0.00% | 0.00%              100% | 100%              0.00% | 0.00%           
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)                          
+UVVM:                Covpt_6                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_3                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_7                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
+UVVM:                Covpt_8                   1                    0 / 1              0.00% | 0.00%           100% | 100%           0.00% | 0.00%                             
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
@@ -493,7 +493,7 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing methods with initialized coverpoint without bins
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean false. 'is_defined(VOID)'
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_9] write_coverage_db(Y://bitvis//uvvm//uvvm_util//simfile.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_9] write_coverage_db(db_file.txt)
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 4. 
 UVVM: 
 UVVM: =========================================================================================================================================================================

@@ -27,7 +27,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity clock_generator_tb is
   generic (

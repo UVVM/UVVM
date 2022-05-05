@@ -32,7 +32,7 @@
 
   use work.irqc_pif_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
   -- Test case entity
   entity irqc_demo_tb is
   end entity irqc_demo_tb;

@@ -57,8 +57,7 @@ package avalon_mm_bfm_pkg is
 
 
   -- Configuration record to be assigned in the test harness.
-  type t_avalon_mm_bfm_config is
-  record
+  type t_avalon_mm_bfm_config is record
     max_wait_cycles           : integer;            -- Sets the maximum number of wait cycles before an alert occurs when waiting for readdatavalid or stalling because of waitrequest
     max_wait_cycles_severity  : t_alert_level;      -- The above timeout will have this severity
     clock_period              : time;               -- Period of the clock signal.
@@ -601,7 +600,7 @@ package body avalon_mm_bfm_pkg is
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after v_clock_period/4;
 
     if ext_proc_call = "" then
-      log(ID_BFM, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
       -- Log will be handled by calling procedure (e.g. avalon_mm_check)
     end if;

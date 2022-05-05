@@ -27,7 +27,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_axilite;
 use bitvis_vip_axilite.axilite_bfm_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity axilite_simple_tb is
   generic (
@@ -142,23 +142,25 @@ begin
       axilite_read(addr_value, v_normalized_data, "", clk, axilite_if, C_SCOPE, shared_msg_id_panel,axilite_bfm_config);
     end;
 
+
     -- axilite read and return read data
-    impure function axilite_read(
-      interface   : natural range 1 to 2;
-      addr_value  : unsigned
-    ) return std_logic_vector is
+    procedure axilite_read (
+      read_value : out std_logic_vector;
+      interface  : in natural range 1 to 2;
+      addr_value : in unsigned
+    ) is
       variable v_read_data_if_1  : std_logic_vector(C_DATA_WIDTH_1-1 downto 0) := (others => '0');
       variable v_read_data_if_2  : std_logic_vector(C_DATA_WIDTH_2-1 downto 0) := (others => '0');
     begin
       case interface is
         when 1 =>
           axilite_read(addr_value, v_read_data_if_1, "", clk, axilite_if_1, C_SCOPE, shared_msg_id_panel, axilite_bfm_config);
-          return v_read_data_if_1;
-        when others => -- 2
+          read_value := v_read_data_if_1;
+        when others => --2
           axilite_read(addr_value, v_read_data_if_2, "", clk, axilite_if_2, C_SCOPE, shared_msg_id_panel, axilite_bfm_config);
-          return v_read_data_if_2;
+          read_value := v_read_data_if_2;
       end case;
-    end function;
+    end;
 
     -- overload for this testbench
     procedure axilite_check (
@@ -212,8 +214,9 @@ begin
     axilite_write(axilite_if_1, x"3000", x"beef");    -- op2
     axilite_write(axilite_if_1, x"6000", x"54321");   -- rw reg
 
-    v_read_data_1 := axilite_read(C_INTERFACE_1, x"3000");
-    v_read_data_1 := axilite_read(C_INTERFACE_1, x"6000");
+    axilite_read(v_read_data_1, C_INTERFACE_1, x"3000");
+    axilite_read(v_read_data_1, C_INTERFACE_1, x"6000");
+
     check_value(v_read_data_1, x"54321", error, "verifying read data on interface 1.");
 
     log("Check the written data");
@@ -252,9 +255,10 @@ begin
     axilite_write(axilite_if_2, x"0040", x"54321");   -- op3
     axilite_write(axilite_if_2, x"0060", x"54321");   -- rw reg
 
-    v_read_data_2 := axilite_read(C_INTERFACE_2, x"0030");
-    v_read_data_2 := axilite_read(C_INTERFACE_2, x"0040");
-    v_read_data_2 := axilite_read(C_INTERFACE_2, x"0060");
+    axilite_read(v_read_data_2, C_INTERFACE_2, x"0030");
+    axilite_read(v_read_data_2, C_INTERFACE_2, x"0040");
+    axilite_read(v_read_data_2, C_INTERFACE_2, x"0060");
+
     check_value(v_read_data_2, x"54321", error, "verifying read data on interface 2.");
 
 

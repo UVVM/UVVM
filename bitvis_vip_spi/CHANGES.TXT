@@ -1,11 +1,16 @@
 Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
+v3.9.3
+----------
+Released: 2022-05-05
+- Fixed wrong example in VVC QuickRef.
+- t_vvc_config, t_vvc_status, t_transaction_info and t_spi_bfm_config record declaration formatting.
+
 v3.9.2
 ----------
 Released: 2021-05-26
 - Corrected message ID for check_value() in BFM.
-
 
 v3.9.1
 ----------

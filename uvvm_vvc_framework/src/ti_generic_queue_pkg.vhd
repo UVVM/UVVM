@@ -266,8 +266,7 @@ package body ti_generic_queue_pkg is
     -- Types and control variables for the linked list implementation
     type t_element;
   type t_element_ptr is access t_element;
-  type t_element is
-  record
+  type t_element is record
     entry_num    : natural;
     next_element : t_element_ptr;
     element_data : t_generic_element;

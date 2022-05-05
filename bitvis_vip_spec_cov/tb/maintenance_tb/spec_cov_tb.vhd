@@ -26,7 +26,7 @@ library bitvis_vip_spec_cov;
 use bitvis_vip_spec_cov.spec_cov_pkg.all;
 use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 entity spec_cov_tb is
   generic (
     GC_TESTCASE     : string := "UVVM";

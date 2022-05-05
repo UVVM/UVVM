@@ -49,8 +49,7 @@ package avalon_st_bfm_pkg is
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_avalon_st_bfm_config is
-  record
+  type t_avalon_st_bfm_config is record
     max_wait_cycles             : natural;            -- Used for setting the maximum cycles to wait before an alert is issued when
                                                       -- waiting for ready or valid signals from the DUT.
     max_wait_cycles_severity    : t_alert_level;      -- Severity if max_wait_cycles expires.

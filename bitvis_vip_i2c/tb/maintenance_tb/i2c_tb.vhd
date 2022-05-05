@@ -42,7 +42,7 @@ context bitvis_vip_sbi.vvc_context;
 
 -------------------------------------------------------------------------------
 
---hdlunit:tb
+--hdlregression:tb
 entity i2c_vvc_tb is
   generic (
     GC_TESTCASE : string := "UVVM"

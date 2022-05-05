@@ -52,8 +52,7 @@ package uart_bfm_pkg is
     stop_bit_error    => false
   );
 
-  type t_uart_bfm_config is
-  record
+  type t_uart_bfm_config is record
     bit_time                                  : time;                 -- The time it takes to transfer one bit
     num_data_bits                             : natural range 7 to 8; -- Number of data bits to send per transmission
     idle_state                                : std_logic;            -- Bit value when line is idle

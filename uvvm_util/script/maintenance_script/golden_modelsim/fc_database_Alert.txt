@@ -1,65 +1,153 @@
 UVVM: 
-UVVM: ***  TB_WARNING #1  ***
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
 UVVM:             0 ns   TB seq.
-UVVM:                    load_coverage_db(Y://bitvis//uvvm//uvvm_util//simdummy.txt)=> Cannot open file: Y://bitvis//uvvm//uvvm_util//simdummy.txt
+UVVM:                    load_coverage_db(dummy.txt)=> Cannot open file: dummy.txt
+UVVM: =========================================================================================================================================================================
+UVVM: 
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
-UVVM:             0 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(210)=> Sampled illegal_bin(210)
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(dummy.txt)=> Cannot open file: dummy.txt
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #2  ***
 UVVM:             0 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(226)=> Sampled illegal_bin_range(226 to 229)
+UVVM:                    [MY_COVERPOINT] sample_coverage(210)=> Sampled illegal_bin(210)
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #3  ***
 UVVM:             0 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(227)=> Sampled illegal_bin_range(226 to 229)
+UVVM:                    [MY_COVERPOINT] sample_coverage(226)=> Sampled illegal_bin_range(226 to 229)
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #4  ***
 UVVM:             0 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(228)=> Sampled illegal_bin_range(226 to 229)
+UVVM:                    [MY_COVERPOINT] sample_coverage(227)=> Sampled illegal_bin_range(226 to 229)
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #5  ***
 UVVM:             0 ns   MY_SCOPE
-UVVM:                    [MY_COVERPOINT] sample_coverage(229)=> Sampled illegal_bin_range(226 to 229)
+UVVM:                    [MY_COVERPOINT] sample_coverage(228)=> Sampled illegal_bin_range(226 to 229)
 UVVM: 
 UVVM: 
 UVVM: ***  TB_NOTE #6  ***
 UVVM:             0 ns   MY_SCOPE
+UVVM:                    [MY_COVERPOINT] sample_coverage(229)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #7  ***
+UVVM:             0 ns   MY_SCOPE
 UVVM:                    [MY_COVERPOINT] sample_coverage(231)=> Sampled illegal_bin_transition(231->237->237->238->235->231)
 UVVM: 
 UVVM: 
-UVVM: ***  TB_WARNING #2  ***
+UVVM: ***  TB_WARNING #1  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((210, 1210))=> Sampled illegal_bin(1210)
 UVVM: 
 UVVM: 
-UVVM: ***  TB_WARNING #3  ***
+UVVM: ***  TB_WARNING #2  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((226, 1226))=> Sampled illegal_bin_range(1226 to 1229)
 UVVM: 
 UVVM: 
-UVVM: ***  TB_WARNING #4  ***
+UVVM: ***  TB_WARNING #3  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((227, 1227))=> Sampled illegal_bin_range(1226 to 1229)
 UVVM: 
 UVVM: 
-UVVM: ***  TB_WARNING #5  ***
+UVVM: ***  TB_WARNING #4  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((228, 1228))=> Sampled illegal_bin_range(1226 to 1229)
 UVVM: 
 UVVM: 
-UVVM: ***  TB_WARNING #6  ***
+UVVM: ***  TB_WARNING #5  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((229, 1229))=> Sampled illegal_bin_range(1226 to 1229)
 UVVM: 
 UVVM: 
-UVVM: ***  TB_WARNING #7  ***
+UVVM: ***  TB_WARNING #6  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((237, 1237))=> Sampled illegal_bin_transition(1231->1237->1237)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_bins(bin(10), "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin(10), bin(1010), "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    add_bins(bin(10), "")=> It is recommended to always add all the bins before loading a database to avoid creating duplicate bins.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    add_cross(bin(10), bin(1010), "")=> It is recommended to always add all the bins before loading a database to avoid creating duplicate bins.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Coverpoint has already been sampled, loading DB afterwards is not
+UVVM:                    recommended since coverage in the bins will be overwritten
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Coverpoint has already been sampled, loading DB afterwards is not
+UVVM:                    recommended since coverage in the bins will be overwritten
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Cannot load 1 crossed bins to a coverpoint with 2 crossed bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #13  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(3), min_hits:1, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #14  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(1), min_hits:10, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #15  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(2), min_hits:10, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(3), min_hits:1, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(1), min_hits:10, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(2), min_hits:10, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: =========================================================================================================================================================================
+UVVM: 
 UVVM: 

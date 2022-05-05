@@ -52,8 +52,7 @@ package axilite_bfm_pkg is
   );
 
   -- Configuration record to be assigned in the test harness.
-  type t_axilite_bfm_config is
-  record
+  type t_axilite_bfm_config is record
     max_wait_cycles             : natural;                    -- Used for setting the maximum cycles to wait before an alert is issued when waiting for ready and valid signals from the DUT.
     max_wait_cycles_severity    : t_alert_level;              -- The above timeout will have this severity
     clock_period                : time;                       -- Period of the clock signal.

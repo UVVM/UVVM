@@ -31,7 +31,7 @@ use IEEE.math_real.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity generic_queue_array_tb is
   generic (

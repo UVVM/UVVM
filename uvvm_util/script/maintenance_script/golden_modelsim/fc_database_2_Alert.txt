@@ -58,8 +58,3 @@ UVVM: ***  TB_WARNING #6  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((237, 1237))=> Sampled illegal_bin_transition(1231->1237->1237)
 UVVM: 
-UVVM: 
-UVVM: ***  TB_WARNING #7  ***
-UVVM:             0 ns   MY_SCOPE
-UVVM:                    load_coverage_db(Y://bitvis//uvvm//uvvm_util//simcross.txt)=> MY_COVERPOINT will be overwritten.
-UVVM: 

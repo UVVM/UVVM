@@ -47,8 +47,7 @@ package wishbone_bfm_pkg is
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_wishbone_bfm_config is
-  record
+  type t_wishbone_bfm_config is record
     max_wait_cycles             : integer;
     max_wait_cycles_severity    : t_alert_level;
     clock_period                : time;               -- Needed in the VVC

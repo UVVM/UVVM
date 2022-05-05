@@ -25,7 +25,7 @@ use work.data_queue_pkg.all;
 use work.data_fifo_pkg.all;
 use work.data_stack_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity simplified_data_queue_tb is
   generic (

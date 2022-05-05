@@ -52,8 +52,7 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => WARNING
   );
 
-  type t_vvc_config is
-  record
+  type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural;           -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural;           -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
@@ -81,8 +80,7 @@ package vvc_methods_pkg is
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
   );
 
-  type t_vvc_status is
-  record
+  type t_vvc_status is record
     current_cmd_idx  : natural;
     previous_cmd_idx : natural;
     pending_cmd_cnt  : natural;
@@ -124,6 +122,17 @@ package vvc_methods_pkg is
     constant msg                 : in    string;
     constant scope               : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure gmii_write(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant channel                      : in    t_channel;
+    constant data_array                   : in    t_slv_array;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
+    constant scope                        : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure gmii_read(
@@ -224,12 +233,31 @@ package body vvc_methods_pkg is
              & ", " & to_string(data_array'length) & " bytes)";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
+    gmii_write(VVCT, vvc_instance_idx, channel, data_array, msg, RELEASE_LINE_AFTER_TRANSFER, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure gmii_write(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in    integer;
+    constant channel                      : in    t_channel;
+    constant data_array                   : in    t_slv_array;
+    constant msg                          : in    string;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
+    constant scope                        : in    string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in    t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant proc_name : string := "gmii_write";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)
+             & ", " & to_string(data_array'length) & " bytes)";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+  begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, WRITE);
     shared_vvc_cmd.data_array(0 to data_array'length-1) := data_array;
     shared_vvc_cmd.data_array_length                    := data_array'length;
+    shared_vvc_cmd.action_when_transfer_is_done         := action_when_transfer_is_done;
     shared_vvc_cmd.parent_msg_id_panel                  := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;

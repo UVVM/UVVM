@@ -24,7 +24,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_gmii;
 use bitvis_vip_gmii.gmii_bfm_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity gmii_bfm_tb is
   generic(
@@ -86,6 +86,13 @@ begin
       gmii_write(data_array, "", gmii_tx_if, c_scope, shared_msg_id_panel, v_gmii_bfm_config);
     end procedure;
 
+    procedure gmii_write_multiple (
+      data_array                   : in t_byte_array;
+      action_when_transfer_is_done : in t_action_when_transfer_is_done) is
+    begin
+      gmii_write(data_array, "", gmii_tx_if, action_when_transfer_is_done, c_scope, shared_msg_id_panel, v_gmii_bfm_config);
+    end procedure;
+
   begin
 
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
@@ -124,6 +131,17 @@ begin
     for i in 0 to 30 loop
       gmii_write(data_array(0 to i));
     end loop;
+
+    await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+    log(ID_LOG_HDR, "Testing a multiple byte transfer in several transactions");
+    for i in 0 to 30 loop
+      if i < 30 then
+        gmii_write_multiple(data_array(i to i), HOLD_LINE_AFTER_TRANSFER);
+      else
+        gmii_write_multiple(data_array(i to i), RELEASE_LINE_AFTER_TRANSFER);
+      end if;
+    end loop;
+    check_stable(gmii_tx_if.txen, C_CLK_PERIOD*30, error, "Checking that TXEN was held high during the complete transfer", c_scope);
 
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing error case: read() valid data timeout");
@@ -204,6 +222,10 @@ begin
     for i in 0 to 30 loop
       gmii_expect(data_array(0 to i));
     end loop;
+
+    -- Testing a multiple byte transfer in several transactions
+    await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+    gmii_expect(data_array(0 to 30));
 
     -- Testing error case: read() valid data timeout
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);

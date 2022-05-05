@@ -24,7 +24,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_rgmii;
 use bitvis_vip_rgmii.rgmii_bfm_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity rgmii_bfm_tb is
   generic(

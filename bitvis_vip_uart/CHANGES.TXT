@@ -1,6 +1,11 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+v2.8.5
+----------
+Released: 2022-05-05
+- t_bit_rate_checker, t_vvc_config, t_vvc_status, t_transaction_info and t_uart_bfm_config record declaration formatting.
+
 v2.8.4
 ----------
 Released: 2021-10-22

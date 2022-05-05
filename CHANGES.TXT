@@ -9,6 +9,29 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2022.05.05
+--------------------
+Released: 2022-05-05
+- Use correct message ID for avalon_mm_read_request() log in BFM.
+- FC: Generate an alert when adding bins to a coverpoint which has been sampled.
+- FC: Major updates in the coverage database accumulation mechanism.
+- FC: Added a python script to merge coverage database files.
+- FC: Fixed a bug in set_num_allocated_bins() not allowing to reduce size.
+- FC: Disabled extra randomization log messages when using optimized randomization.
+- FC: Fixed bins not being added when concatenated after ignore or illegal bins.
+- Added demo for advanced randomization and functional coverage.
+- Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occur with partial coverage files not found.
+- Fixed i2c_slave_receive() not checking master_sda_to_scl configuration correctly.
+- Started conversion of complete UVVM documentation to RST & HTML format under uvvm/doc.
+- Moved RST documentation for rand_pkg and func_cov_pkg to uvvm/doc.
+- Added the parameter action_when_transfer_is_done to gmii_write() to support multi-field transfers
+  when using a hierarchical VVC, such as Ethernet.
+- Fixed typo and wrong examples in Axistream VVC QuickRef.
+- Fixed typo in GPIO VVC QuickRef.
+- Fixed wrong example in SPI VVC QuickRef.
+- Record declaration formatting in several packages - thanks to @m-kru for pull-request.
+
+
 v2 2021.11.12
 --------------------
 Released: 2021-11-12
@@ -52,7 +75,7 @@ Released: 2021-05-26
 - Corrected timeout value parameter for await_completion() in Common VVC Methods QR.
 - Summary alert report and hierarchical alerts report updated to 
   warn for minor alert mismatch.
-- Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occure if a requirement 
+- Fixed crash in bitvis_vip_spec_cov run_spec_cov.py that could occur if a requirement 
   and testcase were listed in combination multiple times.
 - Generic queue allow to insert to an empty queue with identifier position
   set to POSITION and position set to 1.

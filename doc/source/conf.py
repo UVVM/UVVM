@@ -14,13 +14,12 @@ import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-numfig = True
 
 # -- Project information -----------------------------------------------------
 
 project = 'UVVM'
-copyright = '2021, UVVM'
 author = 'UVVM'
+copyright = '2021, UVVM'
 
 # The full version, including alpha/beta/rc tags
 def read_uvvm_version(fname):
@@ -63,21 +62,8 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-
-# -- Options for HTML output -------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-html_theme = 'sphinx_rtd_theme'
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
-
-
 highlight_language = 'VHDL'
+
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -92,5 +78,10 @@ html_theme_options = {
     'logo_only': 'True'
 }
 
-html_logo = 'images/uvvm_3.png'
+html_logo = 'images/uvvm.png'
 
+
+# Add any paths that contain custom static files (such as style sheets) here,
+# relative to this directory. They are copied after the builtin static files,
+# so a file named "default.css" will overwrite the builtin "default.css".
+# html_static_path = ['_static']

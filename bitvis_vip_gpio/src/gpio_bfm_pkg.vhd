@@ -34,8 +34,7 @@ package gpio_bfm_pkg is
   constant C_SCOPE : string := "GPIO BFM";
 
   -- Configuration record to be assigned in the test harness.
-  type t_gpio_bfm_config is
-  record
+  type t_gpio_bfm_config is record
     clock_period     : time;
     match_strictness : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
     id_for_bfm       : t_msg_id;           -- The message ID used as a general message ID in the GPIO BFM

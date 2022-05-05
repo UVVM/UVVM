@@ -37,7 +37,7 @@ context bitvis_vip_spi.vvc_context;
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
 
---hdlunit:tb
+--hdlregression:tb
 entity spi_vvc_tb is
   generic (
     GC_TESTCASE         : string               := "UVVM";

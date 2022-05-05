@@ -53,8 +53,7 @@ package vvc_methods_pkg is
     inter_bfm_delay_violation_severity => warning
     );
 
-  type t_vvc_config is
-  record
+  type t_vvc_config is record
     inter_bfm_delay                       : t_inter_bfm_delay;  -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
     cmd_queue_count_max                   : natural;  -- Maximum pending number in command queue before queue is full. Adding additional commands will result in an ERROR.
     cmd_queue_count_threshold             : natural;  -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command queue exceeds this count.
@@ -84,8 +83,7 @@ package vvc_methods_pkg is
     parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
     );
 
-  type t_vvc_status is
-  record
+  type t_vvc_status is record
     current_cmd_idx  : natural;
     previous_cmd_idx : natural;
     pending_cmd_cnt  : natural;
@@ -100,8 +98,7 @@ package vvc_methods_pkg is
     );
 
   -- Transaction information for the wave view during simulation
-  type t_transaction_info is
-  record
+  type t_transaction_info is record
     operation                    : t_operation;
     msg                          : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     addr                         : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);

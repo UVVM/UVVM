@@ -47,8 +47,7 @@ package gmii_bfm_pkg is
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_gmii_bfm_config is
-  record
+  type t_gmii_bfm_config is record
     max_wait_cycles          : integer;            -- Used for setting the maximum cycles to wait before an alert is issued when
                                                    -- waiting for signals from the DUT.
     max_wait_cycles_severity : t_alert_level;      -- Severity if max_wait_cycles expires.
@@ -99,6 +98,16 @@ package gmii_bfm_pkg is
     constant scope        : in    string            := C_SCOPE;
     constant msg_id_panel : in    t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
+  );
+
+  procedure gmii_write (
+    constant data_array                   : in    t_slv_array;
+    constant msg                          : in    string            := "";
+    signal   gmii_tx_if                   : inout t_gmii_tx_if;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
+    constant scope                        : in    string            := C_SCOPE;
+    constant msg_id_panel                 : in    t_msg_id_panel    := shared_msg_id_panel;
+    constant config                       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   );
 
   ---------------------------------------------------------------------------------------------
@@ -168,6 +177,19 @@ package body gmii_bfm_pkg is
     constant msg_id_panel : in    t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   ) is
+  begin
+    gmii_write(data_array, msg, gmii_tx_if, RELEASE_LINE_AFTER_TRANSFER, scope, msg_id_panel, config);
+  end procedure;
+
+  procedure gmii_write(
+    constant data_array                   : in    t_slv_array;
+    constant msg                          : in    string            := "";
+    signal   gmii_tx_if                   : inout t_gmii_tx_if;
+    constant action_when_transfer_is_done : in    t_action_when_transfer_is_done;
+    constant scope                        : in    string            := C_SCOPE;
+    constant msg_id_panel                 : in    t_msg_id_panel    := shared_msg_id_panel;
+    constant config                       : in    t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
+  ) is
     constant proc_name              : string := "gmii_write";
     constant proc_call              : string := proc_name & "(" & to_string(data_array'length) & " bytes)";
     variable v_time_of_rising_edge  : time := -1 ns;  -- time stamp for clk period checking
@@ -181,7 +203,7 @@ package body gmii_bfm_pkg is
       check_value(config.hold_time < config.clock_period/2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_call);
     end if;
 
-    gmii_tx_if <= init_gmii_if_signals;
+    gmii_tx_if.gtxclk <= 'Z';
 
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(gmii_tx_if.gtxclk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
@@ -202,7 +224,10 @@ package body gmii_bfm_pkg is
       wait_on_bfm_exit(gmii_tx_if.gtxclk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
     end loop;
 
-    gmii_tx_if <= init_gmii_if_signals;
+    -- Only release the line after a single transfer or the end of a multi-field transfer, e.g. Ethernet
+    if action_when_transfer_is_done = RELEASE_LINE_AFTER_TRANSFER then
+      gmii_tx_if <= init_gmii_if_signals;
+    end if;
     log(config.id_for_bfm, proc_call & " DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure;
 

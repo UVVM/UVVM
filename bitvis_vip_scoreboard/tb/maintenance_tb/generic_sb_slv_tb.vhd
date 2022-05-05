@@ -24,7 +24,7 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity generic_sb_slv_tb is
   generic (

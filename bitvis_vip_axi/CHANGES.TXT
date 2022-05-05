@@ -1,7 +1,14 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
+
+v0.2.1
+----------
+Released: 2022-05-05
+- t_vvc_config, t_vvc_status, t_transaction_info and t_axi_bfm_config record declaration formatting.
+
 v0.2.0
+----------
 Released: 2021-10-22
 - Added support to force the VVC to execute only one transaction at a time.
 - Fixed bug where await_completion in certain cases didn't detect that the VVC was finished.

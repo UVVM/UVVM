@@ -280,7 +280,7 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   -- UVVM VVC Framework adaptations
   --------------------------------------------------------------------------------------------------------------------------------
-  signal global_show_msg_for_uvvm_cmd  : boolean := true;
+  signal global_show_msg_for_uvvm_cmd  : boolean := true; -- If true, the msg parameter for the commands using the msg_id ID_UVVM_SEND_CMD will be shown
 
   constant C_CMD_QUEUE_COUNT_MAX                     : natural       := 20;  -- (VVC Command queue)  May be overwritten for dedicated VVC
   constant C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY      : t_alert_level := WARNING;

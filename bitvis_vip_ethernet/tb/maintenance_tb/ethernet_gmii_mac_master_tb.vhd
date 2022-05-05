@@ -35,7 +35,7 @@ use work.ethernet_gmii_mac_master_pkg.all;
 library mac_master;
 use mac_master.ethernet_types.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity ethernet_gmii_mac_master_tb is
   generic (

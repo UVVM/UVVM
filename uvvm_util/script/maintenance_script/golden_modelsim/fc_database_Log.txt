@@ -12,13 +12,25 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing load database from a non-existing file
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(Y://bitvis//uvvm//uvvm_util//simdummy.txt)
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(dummy.txt)
 UVVM: 
-UVVM: ***  TB_WARNING #1  ***
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
 UVVM:             0 ns   TB seq.
-UVVM:                    load_coverage_db(Y://bitvis//uvvm//uvvm_util//simdummy.txt)=> Cannot open file: Y://bitvis//uvvm//uvvm_util//simdummy.txt
+UVVM:                    load_coverage_db(dummy.txt)=> Cannot open file: dummy.txt
+UVVM: =========================================================================================================================================================================
 UVVM: 
+UVVM: 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] clear_coverage()
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_NOTEs by 1. 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(dummy.txt)
+UVVM: 
+UVVM: ***  TB_NOTE #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(dummy.txt)=> Cannot open file: dummy.txt
+UVVM: 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] delete_coverpoint()
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing write database to a file - coverpoint
@@ -103,31 +115,31 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(138)
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(210)
 UVVM: 
-UVVM: ***  TB_NOTE #1  ***
+UVVM: ***  TB_NOTE #2  ***
 UVVM:             0 ns   MY_SCOPE
 UVVM:                    [MY_COVERPOINT] sample_coverage(210)=> Sampled illegal_bin(210)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(226)
 UVVM: 
-UVVM: ***  TB_NOTE #2  ***
+UVVM: ***  TB_NOTE #3  ***
 UVVM:             0 ns   MY_SCOPE
 UVVM:                    [MY_COVERPOINT] sample_coverage(226)=> Sampled illegal_bin_range(226 to 229)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(227)
 UVVM: 
-UVVM: ***  TB_NOTE #3  ***
+UVVM: ***  TB_NOTE #4  ***
 UVVM:             0 ns   MY_SCOPE
 UVVM:                    [MY_COVERPOINT] sample_coverage(227)=> Sampled illegal_bin_range(226 to 229)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(228)
 UVVM: 
-UVVM: ***  TB_NOTE #4  ***
+UVVM: ***  TB_NOTE #5  ***
 UVVM:             0 ns   MY_SCOPE
 UVVM:                    [MY_COVERPOINT] sample_coverage(228)=> Sampled illegal_bin_range(226 to 229)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(229)
 UVVM: 
-UVVM: ***  TB_NOTE #5  ***
+UVVM: ***  TB_NOTE #6  ***
 UVVM:             0 ns   MY_SCOPE
 UVVM:                    [MY_COVERPOINT] sample_coverage(229)=> Sampled illegal_bin_range(226 to 229)
 UVVM: 
@@ -138,19 +150,10 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(235)
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(231)
 UVVM: 
-UVVM: ***  TB_NOTE #6  ***
+UVVM: ***  TB_NOTE #7  ***
 UVVM:             0 ns   MY_SCOPE
 UVVM:                    [MY_COVERPOINT] sample_coverage(231)=> Sampled illegal_bin_transition(231->237->237->238->235->231)
 UVVM: 
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(50)
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(51)
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(52)
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 50
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 51
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 52
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 53
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 54
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] rand(NO_SAMPLE_COV)=> 55
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): MY_SCOPE ***                                                                                                            
@@ -180,7 +183,8 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] write_coverage_db(Y://bitvis//uvvm//uvvm_util//simcoverpoint.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
+UVVM:                                                                           write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing write database to a file - cross
@@ -272,31 +276,31 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((138, 1138))
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((210, 1210))
 UVVM: 
-UVVM: ***  TB_WARNING #2  ***
+UVVM: ***  TB_WARNING #1  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((210, 1210))=> Sampled illegal_bin(1210)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((226, 1226))
 UVVM: 
-UVVM: ***  TB_WARNING #3  ***
+UVVM: ***  TB_WARNING #2  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((226, 1226))=> Sampled illegal_bin_range(1226 to 1229)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((227, 1227))
 UVVM: 
-UVVM: ***  TB_WARNING #4  ***
+UVVM: ***  TB_WARNING #3  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((227, 1227))=> Sampled illegal_bin_range(1226 to 1229)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((228, 1228))
 UVVM: 
-UVVM: ***  TB_WARNING #5  ***
+UVVM: ***  TB_WARNING #4  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((228, 1228))=> Sampled illegal_bin_range(1226 to 1229)
 UVVM: 
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((229, 1229))
 UVVM: 
-UVVM: ***  TB_WARNING #6  ***
+UVVM: ***  TB_WARNING #5  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((229, 1229))=> Sampled illegal_bin_range(1226 to 1229)
 UVVM: 
@@ -304,16 +308,10 @@ UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((237, 1237))
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((237, 1237))
 UVVM: 
-UVVM: ***  TB_WARNING #7  ***
+UVVM: ***  TB_WARNING #6  ***
 UVVM:             0 ns   NEW_SCOPE
 UVVM:                    [MY_CROSS] sample_coverage((237, 1237))=> Sampled illegal_bin_transition(1231->1237->1237)
 UVVM: 
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((50, 1050))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((51, 1051))
-UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  NEW_SCOPE                      [MY_CROSS] sample_coverage((52, 1052))
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  NEW_SCOPE                      [MY_CROSS] rand(NO_SAMPLE_COV)=> (50, 1050)
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  NEW_SCOPE                      [MY_CROSS] rand(NO_SAMPLE_COV)=> (51, 1051)
-UVVM: ID_FUNC_COV_RAND                   0.0 ns  NEW_SCOPE                      [MY_CROSS] rand(NO_SAMPLE_COV)=> (52, 1052)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): NEW_SCOPE ***                                                                                                           
@@ -345,7 +343,7 @@ UVVM:      transition: (50->51->52->53->54->55)x(1050->1051->1052->1053->1054->1
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] write_coverage_db(Y://bitvis//uvvm//uvvm_util//simcross.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross.txt)
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing write database to a file - max data
@@ -495,7 +493,7 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_3] write_coverage_db(Y://bitvis//uvvm//uvvm_util//simcross_max.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_3] write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross_max.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
@@ -505,25 +503,898 @@ UVVM:      % of Goal:               Covpts: 0.00%
 UVVM:      % of Goal (uncapped):    Covpts: 0.00%
 UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 14.04%,   Hits: 29.53%  
 UVVM:      ====================================================================================================================================================================
-UVVM:                 COVERPOINT              COVERAGE WEIGHT            COVERED BINS           COVERAGE(BINS|HITS)         GOAL(BINS|HITS)        % OF GOAL(BINS|HITS)        
-UVVM:                MY_COVERPOINT                   5                       0 / 6                0.00% | 30.19%              50% | 200%              0.00% | 15.09%           
-UVVM:                  MY_CROSS                      8                       0 / 6                0.00% | 30.19%               50% | 75%              0.00% | 40.25%           
-UVVM:                   Covpt_3                      1                     25 / 100               25.00% | 25.00%             100% | 100%             25.00% | 25.00%          
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)       NUM TESTCASES      
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                1            
+UVVM:               MY_CROSS                   8                    0 / 6             0.00% | 30.19%            50% | 75%           0.00% | 40.25%                1            
+UVVM:                Covpt_3                   1                  25 / 100            25.00% | 25.00%          100% | 100%          25.00% | 25.00%               1            
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing adding bins after sampling
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_4] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_4] sample_coverage(10)
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_bins(bin(10), "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be correct.
+UVVM: 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_4] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check bins can be safely added after clearing the coverage
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_4] clear_coverage()
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_4] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 3. 'Checking number of valid bins'
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_cross(bin(10), bin(1010), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_5] Adding cross: (10) x (1010), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_5] sample_coverage((10, 1010))
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_cross(bin(10), bin(1010), "")=> Coverpoint has already been sampled, adding more bins is not recommended otherwise their coverage might not be
+UVVM:                    correct.
+UVVM: 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_cross(bin(10), bin(1010), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_5] Adding cross: (10) x (1010), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_cross_bin => OK, for bin_1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check bins can be safely added after deleting the coverpoint
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_5] delete_coverpoint()
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(bin(10), bin(1010), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_6] Adding cross: (10) x (1010), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 1. 'Checking number of valid bins'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_4] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_6] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing adding bins after load_coverage_db()
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 1 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    add_bins(bin(10), "")=> It is recommended to always add all the bins before loading a database to avoid creating duplicate bins.
+UVVM: 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  MY_SCOPE                         [MY_COVERPOINT] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 7. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check bins can be safely added after clearing the coverage
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] clear_coverage()
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  MY_SCOPE                       [MY_COVERPOINT] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  MY_SCOPE                         [MY_COVERPOINT] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 8. 'Checking number of valid bins'
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: NEW_SCOPE ***                                                                                                                       
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_CROSS    (accumulated over this and 1 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 75%     
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 40.25%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 40.25%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                        (10)x(1010)                        0                 1               0.00%                bin_0                 -                                 
+UVVM:                        (20)x(1020)                        2                 8               25.00%              single                 -                                 
+UVVM:              (30, 35, 39)x(1030, 1035, 1039)              3                 9               33.33%             multiple                -                                 
+UVVM:                 (40 to 44)x(1040 to 1049)                 5                 15              33.33%               range                 -                                 
+UVVM:                 (45 to 49)x(1040 to 1049)                 5                 15              33.33%               range                 -                                 
+UVVM:                        transition                         1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      transition: (50->51->52->53->54->55)x(1050->1051->1052->1053->1054->1055)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:             0 ns   NEW_SCOPE
+UVVM:                    add_cross(bin(10), bin(1010), "")=> It is recommended to always add all the bins before loading a database to avoid creating duplicate bins.
+UVVM: 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  NEW_SCOPE                      [MY_CROSS] add_cross(bin(10), bin(1010), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  NEW_SCOPE                        [MY_CROSS] Adding cross: (10) x (1010), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 7. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check bins can be safely added after deleting the coverpoint
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] delete_coverpoint()
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_9] add_cross(bin(10), bin(1010), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_9] Adding cross: (10) x (1010), min_hits:1, rand_weight:1, ""
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 1. 'Checking number of valid bins'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_9] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing sampling before load_coverage_db()
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_10] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_10] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_10] sample_coverage(10)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_10] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Coverpoint has already been sampled, loading DB afterwards is not
+UVVM:                    recommended since coverage in the bins will be overwritten
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 1 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 1 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
+UVVM:                                                                           load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Coverpoint has already been sampled, loading DB afterwards is not
+UVVM:                    recommended since coverage in the bins will be overwritten
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 1 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check DB can be safely loaded after clearing the coverage
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_12] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_12] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_12] sample_coverage(10)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_12] clear_coverage()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_12] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 1 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check DB can be safely loaded after deleting the coverpoint
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_13] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_13] Adding bins: (10), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_13] sample_coverage(10)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_13] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 1 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing loading to coverpoint with different num_bins_crossed
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_15] add_cross(bin(1), bin(2), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_15] Adding cross: (1) x (2), min_hits:1, rand_weight:1, ""
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_15] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   MY_SCOPE
+UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Cannot load 1 crossed bins to a coverpoint with 2 crossed bins
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing accumulated testcases counter
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] load_coverage_db(dummy.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): MY_SCOPE ***                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 0 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (210)                           1                N/A               N/A            illegal_single          ILLEGAL                              
+UVVM:                       (226 to 229)                        4                N/A               N/A             illegal_range          ILLEGAL                              
+UVVM:              (231->237->237->238->235->231)               1                N/A               N/A          illegal_transition        ILLEGAL                              
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Goal:                    Covpts: 80%
+UVVM:      % of Goal:               Covpts: 0.00%
+UVVM:      % of Goal (uncapped):    Covpts: 0.00%
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 14.04%,   Hits: 29.53%  
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)       NUM TESTCASES      
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                1            
+UVVM:               MY_CROSS                   8                    0 / 6             0.00% | 30.19%            50% | 75%           0.00% | 40.25%                1            
+UVVM:                Covpt_3                   1                  25 / 100            25.00% | 25.00%          100% | 100%          25.00% | 25.00%               1            
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 1 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Goal:                    Covpts: 80%
+UVVM:      % of Goal:               Covpts: 0.00%
+UVVM:      % of Goal (uncapped):    Covpts: 0.00%
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 12.02%,   Hits: 29.70%  
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)       NUM TESTCASES      
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                1            
+UVVM:               MY_CROSS                   8                    0 / 6             0.00% | 30.19%            50% | 75%           0.00% | 40.25%                1            
+UVVM:                Covpt_3                   1                  25 / 100            25.00% | 25.00%          100% | 100%          25.00% | 25.00%               1            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                2            
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
+UVVM:                                                                           write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 2 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Goal:                    Covpts: 80%
+UVVM:      % of Goal:               Covpts: 0.00%
+UVVM:      % of Goal (uncapped):    Covpts: 0.00%
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 10.50%,   Hits: 29.80%  
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)       NUM TESTCASES      
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                1            
+UVVM:               MY_CROSS                   8                    0 / 6             0.00% | 30.19%            50% | 75%           0.00% | 40.25%                1            
+UVVM:                Covpt_3                   1                  25 / 100            25.00% | 25.00%          100% | 100%          25.00% | 25.00%               1            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                2            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                3            
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
+UVVM:                                                                           write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT    (accumulated over this and 3 previous testcases)
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 15.09%  
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 15.09%  
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 30.19%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            2                 8               25.00%              single                 -                                 
+UVVM:                       (30, 35, 39)                        3                 9               33.33%             multiple                -                                 
+UVVM:                        (40 to 44)                         5                 15              33.33%               range                 -                                 
+UVVM:                        (45 to 49)                         5                 15              33.33%               range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          1                 5               20.00%            transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Goal:                    Covpts: 80%
+UVVM:      % of Goal:               Covpts: 0.00%
+UVVM:      % of Goal (uncapped):    Covpts: 0.00%
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 9.33%,    Hits: 29.86%  
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)       NUM TESTCASES      
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                1            
+UVVM:               MY_CROSS                   8                    0 / 6             0.00% | 30.19%            50% | 75%           0.00% | 40.25%                1            
+UVVM:                Covpt_3                   1                  25 / 100            25.00% | 25.00%          100% | 100%          25.00% | 25.00%               1            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                2            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                3            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                4            
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check accumulated testcases counter is reset after clearing the coverage
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] clear_coverage()
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): MY_SCOPE ***                                                                                                        
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 0.00%   
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 0.00%   
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 0.00%   
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            0                 8               0.00%               single                 -                                 
+UVVM:                       (30, 35, 39)                        0                 9               0.00%              multiple                -                                 
+UVVM:                        (40 to 44)                         0                 15              0.00%                range                 -                                 
+UVVM:                        (45 to 49)                         0                 15              0.00%                range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          0                 5               0.00%             transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Goal:                    Covpts: 80%
+UVVM:      % of Goal:               Covpts: 0.00%
+UVVM:      % of Goal (uncapped):    Covpts: 0.00%
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 9.33%,    Hits: 24.81%  
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)       NUM TESTCASES      
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                1            
+UVVM:               MY_CROSS                   8                    0 / 6             0.00% | 30.19%            50% | 75%           0.00% | 40.25%                1            
+UVVM:                Covpt_3                   1                  25 / 100            25.00% | 25.00%          100% | 100%          25.00% | 25.00%               1            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                2            
+UVVM:             MY_COVERPOINT                5                    0 / 6              0.00% | 0.00%           50% | 200%            0.00% | 0.00%                1            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                4            
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check accumulated testcases counter is reset after deleting the coverpoint
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): TB seq. ***                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              
+UVVM:      Coverage (for goal 100): Bins: 0.0%,     Hits: 0.0%    
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
+UVVM:      ====================================================================================================================================================================
+UVVM:      Goal:                    Covpts: 80%
+UVVM:      % of Goal:               Covpts: 0.00%
+UVVM:      % of Goal (uncapped):    Covpts: 0.00%
+UVVM:      Coverage (for goal 100): Covpts: 0.00%,    Bins: 10.50%,   Hits: 23.73%  
+UVVM:      ====================================================================================================================================================================
+UVVM:              COVERPOINT           COVERAGE WEIGHT         COVERED BINS        COVERAGE(BINS|HITS)      GOAL(BINS|HITS)     % OF GOAL(BINS|HITS)       NUM TESTCASES      
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                1            
+UVVM:               MY_CROSS                   8                    0 / 6             0.00% | 30.19%            50% | 75%           0.00% | 40.25%                1            
+UVVM:                Covpt_3                   1                  25 / 100            25.00% | 25.00%          100% | 100%          25.00% | 25.00%               1            
+UVVM:             MY_COVERPOINT                5                    0 / 6             0.00% | 30.19%           50% | 200%           0.00% | 15.09%                2            
+UVVM:             MY_COVERPOINT                5                    0 / 6              0.00% | 0.00%           50% | 200%            0.00% | 0.00%                1            
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing clearing a coverpoint's coverage
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] set_illegal_bin_alert_level(TB_ERROR)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(231)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(237)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(237)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] clear_coverage()
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(238)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(235)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] sample_coverage(231)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for single
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for multiple
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for range
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for range
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for transition
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_invalid_bin => OK, for bin_6
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_invalid_bin => OK, for ignore_single
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_invalid_bin => OK, for ignore_range
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_invalid_bin => OK, for ignore_transition
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_invalid_bin => OK, for bin_10
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_invalid_bin => OK, for illegal_single
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_invalid_bin => OK, for illegal_range
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_invalid_bin => OK, for illegal_transition
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bins_coverage => OK, for 0.00%
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bins_coverage(% of goal) => OK, for 0.00%
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_hits_coverage => OK, for 0.00%
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_hits_coverage(% of goal) => OK, for 0.00%
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE SUMMARY REPORT (VERBOSE): MY_SCOPE ***                                                                                                            
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              MY_COVERPOINT
+UVVM:      Goal:                    Bins: 50%,      Hits: 200%    
+UVVM:      % of Goal:               Bins: 0.00%,    Hits: 0.00%   
+UVVM:      % of Goal (uncapped):    Bins: 0.00%,    Hits: 0.00%   
+UVVM:      Coverage (for goal 100): Bins: 0.00%,    Hits: 0.00%   
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                           (200)                           0                N/A               N/A                bin_10              ILLEGAL                              
+UVVM:                           (210)                           0                N/A               N/A            illegal_single          ILLEGAL                              
+UVVM:                       (226 to 229)                        0                N/A               N/A             illegal_range          ILLEGAL                              
+UVVM:              (231->237->237->238->235->231)               0                N/A               N/A          illegal_transition        ILLEGAL                              
+UVVM:                           (100)                           0                N/A               N/A                 bin_6               IGNORE                              
+UVVM:                           (110)                           0                N/A               N/A             ignore_single           IGNORE                              
+UVVM:                       (121 to 125)                        0                N/A               N/A             ignore_range            IGNORE                              
+UVVM:                   (132->134->136->138)                    0                N/A               N/A           ignore_transition         IGNORE                              
+UVVM:                           (10)                            0                 1               0.00%                bin_0                 -                                 
+UVVM:                           (20)                            0                 8               0.00%               single                 -                                 
+UVVM:                       (30, 35, 39)                        0                 9               0.00%              multiple                -                                 
+UVVM:                        (40 to 44)                         0                 15              0.00%                range                 -                                 
+UVVM:                        (45 to 49)                         0                 15              0.00%                range                 -                                 
+UVVM:         (50->51->52->53->54->55->56->57->58->59)          0                 5               0.00%             transition               -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing accumulating coverage in random order - WARNING_ON_NEW_BINS
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_19] add_bins(bin(1),bin(2), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_19] Adding bins: (1),(2), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_19] sample_coverage(1)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_19] sample_coverage(2)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_19] sample_coverage(1)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_19] sample_coverage(2)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_19] sample_coverage(1)
+UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_19] sample_coverage(2)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] write_coverage_db(db_accumulated.txt)
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to empty coverpoint
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(db_accumulated.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 100.00%,  Hits: 100.00% 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 2. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with same bins
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_21] add_bins(bin(1),bin(2), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_21] Adding bins: (1),(2), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_21] load_coverage_db(db_accumulated.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 100.00%,  Hits: 100.00% 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 2. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with same bins, but different name
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_22] add_bins(bin(1),bin(2), "new_bins")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_22] Adding bins: (1),(2), min_hits:1, rand_weight:1, "new_bins"
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_22] load_coverage_db(db_accumulated.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 100.00%,  Hits: 100.00% 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 2. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with one of the same bins
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_23] add_bins(bin(1), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_23] Adding bins: (1), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_23] load_coverage_db(db_accumulated.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 100.00%,  Hits: 100.00% 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 2. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with same bins plus an extra bin
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_24] add_bins(bin(1),bin(2),bin(3), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_24] Adding bins: (1),(2),(3), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_24] load_coverage_db(db_accumulated.txt)
+UVVM: 
+UVVM: ***  TB_WARNING #13  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(3), min_hits:1, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 66.67%,   Hits: 66.67%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                            (3)                            0                 1               0.00%                bin_2                 -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_2
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 3. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with same bins, but different min_hits
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 2. 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_25] add_bins(bin(1),bin(2), min_hits:10, "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_25] Adding bins: (1),(2), min_hits:10, rand_weight:10, ""
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_25] load_coverage_db(db_accumulated.txt)
+UVVM: 
+UVVM: ***  TB_WARNING #14  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(1), min_hits:10, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #15  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(2), min_hits:10, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 50.00%,   Hits: 9.09%   
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                            (1)                            0                 10              0.00%                bin_0                 -                                 
+UVVM:                            (2)                            0                 10              0.00%                bin_1                 -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 4. 'Checking number of valid bins'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing accumulating coverage in random order - ERROR_ON_NEW_BINS
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with same bins plus an extra bin
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_26] add_bins(bin(1),bin(2),bin(3), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_26] Adding bins: (1),(2),(3), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_26] load_coverage_db(db_accumulated.txt)
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(3), min_hits:1, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 66.67%,   Hits: 66.67%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                            (3)                            0                 1               0.00%                bin_2                 -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_2
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 3. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with same bins, but different min_hits
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 2. 
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_27] add_bins(bin(1),bin(2), min_hits:10, "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_27] Adding bins: (1),(2), min_hits:10, rand_weight:10, ""
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_27] load_coverage_db(db_accumulated.txt)
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(1), min_hits:10, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    load_coverage_db(db_accumulated.txt)=> bin[(2), min_hits:10, rand_weight:-1] not found in loaded database. Coverage for this bin might not be correct.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 50.00%,   Hits: 9.09%   
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                            (1)                            0                 10              0.00%                bin_0                 -                                 
+UVVM:                            (2)                            0                 10              0.00%                bin_1                 -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 4. 'Checking number of valid bins'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing accumulating coverage in random order - NO_ALERT_ON_NEW_BINS
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with same bins plus an extra bin
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_28] add_bins(bin(1),bin(2),bin(3), "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_28] Adding bins: (1),(2),(3), min_hits:1, rand_weight:1, ""
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_28] load_coverage_db(db_accumulated.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 66.67%,   Hits: 66.67%  
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                            (3)                            0                 1               0.00%                bin_2                 -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_2
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 3. 'Checking number of valid bins'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Load to coverpoint with same bins, but different min_hits
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_29] add_bins(bin(1),bin(2), min_hits:10, "")
+UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_29] Adding bins: (1),(2), min_hits:10, rand_weight:10, ""
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_29] load_coverage_db(db_accumulated.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
+UVVM:      ====================================================================================================================================================================
+UVVM:      Coverpoint:              Covpt_19    (accumulated over this and 1 previous testcases)
+UVVM:      Coverage (for goal 100): Bins: 50.00%,   Hits: 9.09%   
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                           BINS                           HITS            MIN HITS        HIT COVERAGE            NAME            ILLEGAL/IGNORE                          
+UVVM:                            (1)                            0                 10              0.00%                bin_0                 -                                 
+UVVM:                            (2)                            0                 10              0.00%                bin_1                 -                                 
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_1
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 4. 'Checking number of valid bins'
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_19] delete_coverpoint()
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
 UVVM:      ====================================================================================================================================================================
 UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
 UVVM:                NOTE         :      0         0         0         ok
-UVVM:                TB_NOTE      :      6         6         0         ok
+UVVM:                TB_NOTE      :      7         7         0         ok
 UVVM:                WARNING      :      0         0         0         ok
-UVVM:                TB_WARNING   :      7         7         0         ok
+UVVM:                TB_WARNING   :     15        15         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :      0         0         0         ok
-UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                TB_ERROR     :      5         5         0         ok
 UVVM:                FAILURE      :      0         0         0         ok
 UVVM:                TB_FAILURE   :      0         0         0         ok
 UVVM:      ====================================================================================================================================================================

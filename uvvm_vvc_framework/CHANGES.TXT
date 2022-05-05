@@ -2,6 +2,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.3
+----------
+Released: 2022-05-05
+- t_element record declaration formatting.
+
 v2.12.2
 ----------
 Released: 2021-10-22

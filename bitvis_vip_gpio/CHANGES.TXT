@@ -1,11 +1,16 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.8.3
+----------
+Released: 2022-05-05
+- Fixed typo in VVC QuickRef.
+- t_vvc_config, t_vvc_status, t_transaction_info and t_gpio_bfm_config record declaration formatting.
+
 v1.8.2
 ----------
 Released: 2021-05-26
 - Corrected message ID for check_value() in BFM.
-
 
 v1.8.1
 ----------

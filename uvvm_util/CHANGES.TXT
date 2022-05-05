@@ -3,6 +3,19 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.0
+----------
+Released: 2022-05-05
+- FC: Generate an alert when adding bins to a coverpoint which has been sampled.
+- FC: Major updates in the coverage database accumulation mechanism.
+- FC: Added a python script to merge coverage database files.
+- FC: Fixed a bug in set_num_allocated_bins() not allowing to reduce size.
+- FC: Disabled extra randomization log messages when using optimized randomization.
+- FC: Fixed bins not being added when concatenated after ignore or illegal bins.
+- Added demo for advanced randomization and functional coverage.
+- Moved RST documentation for rand_pkg and func_cov_pkg to uvvm/doc.
+- t_element record declaration formatting.
+
 v2.18.1
 ----------
 Released: 2021-11-12

@@ -35,7 +35,7 @@ context bitvis_vip_ethernet.vvc_context;
 
 use work.ethernet_mac_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test case entity
 entity ethernet_sbi_gmii_demo_tb is
 end entity ethernet_sbi_gmii_demo_tb;

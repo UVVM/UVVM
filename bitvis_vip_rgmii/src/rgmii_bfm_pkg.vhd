@@ -47,8 +47,7 @@ package rgmii_bfm_pkg is
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_rgmii_bfm_config is
-  record
+  type t_rgmii_bfm_config is record
     max_wait_cycles          : integer;            -- Used for setting the maximum cycles to wait before an alert is issued when
                                                    -- waiting for signals from the DUT.
     max_wait_cycles_severity : t_alert_level;      -- Severity if max_wait_cycles expires.

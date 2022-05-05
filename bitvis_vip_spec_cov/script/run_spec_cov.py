@@ -577,7 +577,7 @@ def write_spec_cov_files(run_configuration, container, delimiter):
         
         run_configuration (dict) : selected configuration for this run.
 
-        requirement_container (Containter()) : container for requirement objects
+        requirement_container (Container()) : container for requirement objects
     
         testcase_container (Container()) : container for testcase objects
 
@@ -704,7 +704,7 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
         
         run_configuration (dict) : selected configuration for this run.
 
-        requirement_container (Containter()) : container for requirement objects
+        requirement_container (Container()) : container for requirement objects
     
         testcase_container (Container()) : container for testcase objects
 
@@ -794,7 +794,7 @@ def build_mapping_req_list(run_configuration, container, delimiter):
         
         run_configuration (dict) : selected configuration for this run.
 
-        requirement_container (Containter()) : container for requirement objects
+        requirement_container (Container()) : container for requirement objects
     
         testcase_container (Container()) : container for testcase objects
 
@@ -843,14 +843,14 @@ def build_req_list(run_configuration, container, delimiter):
     """
     This method will create any requirement and testcase objects which have not been 
     created when reading the partial coverage file(s).
-    Requirement objects are defined as OR listed or AND listed, dependening on how 
+    Requirement objects are defined as OR listed or AND listed, depending on how
     the testcases are listed with the requirements.
 
     Parameters:
         
         run_configuration (dict) : selected configuration for this run.
 
-        requirement_container (Containter()) : container for requirement objects
+        requirement_container (Container()) : container for requirement objects
     
         testcase_container (Container()) : container for testcase objects
 
@@ -889,7 +889,7 @@ def build_req_list(run_configuration, container, delimiter):
                         requirement.found_in_requirement_file = True
                         requirement.requirement_file_idx = row
 
-                        # Check, and mark, if user has chosen to omitt this requirement.
+                        # Check, and mark, if user has chosen to omit this requirement.
                         if user_omitted: 
                             requirement.is_user_omitted = True
 
@@ -988,12 +988,12 @@ def find_pc_summary(partial_coverage_file, container):
                 else:
                     continue
     except:
-        error_msg = ("Error %s occurred with file %s when searchin for PC summary line" %(sys.exc_info()[0], partial_coverage_file))
+        error_msg = ("Error %s occurred with file %s when searching for PC summary line" %(sys.exc_info()[0], partial_coverage_file))
         abort(error_code = 1, msg = error_msg)
     return False
 
 
-def build_parial_cov_list(run_configuration, container):
+def build_partial_cov_list(run_configuration, container):
     """
     This method will read the delimiter written by the spec_cov_pkg.vhd to 
     the partial_coverage CSV files, and updated the global delimiter.
@@ -1004,7 +1004,7 @@ def build_parial_cov_list(run_configuration, container):
     Parameters:
 
         run_configuration (dict) : selected configuration for this run.
-        containter (Container()) : container for requirement objects and testcase objects
+        container (Container()) : container for requirement objects and testcase objects
     """
     # For setting the global defined delimiter setting for CSV files.
     global delimiter
@@ -1042,14 +1042,14 @@ def build_parial_cov_list(run_configuration, container):
     # and add any wildcard matches.
     #==========================================================================
     not_found_pc_file_list = []
-    for pc_file in partial_coverage_files:
+    for pc_file in partial_coverage_files[:]:
         if not(os.path.isfile(pc_file)):
             # Remove the wildcard item from list
             partial_coverage_files.remove(pc_file)
             not_found_pc_file_list.append(pc_file)
             # Search for files matching wildcard
             for wildcard_file in glob.glob(pc_file):
-                # Add any mathing files if not already in list
+                # Add any matching files if not already in list
                 if os.path.isfile(wildcard_file) and not(wildcard_file in partial_coverage_files):
                     # Adjust path for windows and add to list
                     wildcard_file = wildcard_file.replace('\\', '/')
@@ -1076,7 +1076,7 @@ def build_parial_cov_list(run_configuration, container):
                 continue
 
     except:
-        error_msg = ("Error %s occurred with file %s when searchin for CSV delimiter in PC file" %(sys.exc_info()[0], partial_coverage_file_name))
+        error_msg = ("Error %s occurred with file %s when searching for CSV delimiter in PC file %s" %(sys.exc_info()[0], partial_coverage_file_name, partial_coverage_files[0]))
         abort(error_code = 1, msg = error_msg)
 
     #==========================================================================
@@ -1385,7 +1385,7 @@ def main():
     #   that the CSV delimiter can be determined.
     #==========================================================================
 
-    build_parial_cov_list(run_configuration, container)
+    build_partial_cov_list(run_configuration, container)
     build_req_list(run_configuration, container, delimiter)
     build_mapping_req_list(run_configuration, container, delimiter)
     build_spec_compliance_list(run_configuration, container, delimiter)

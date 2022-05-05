@@ -1,7 +1,14 @@
 Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
+
+v2.9.1
+----------
+Released: 2022-05-05
+- t_vvc_config, t_vvc_status, t_transaction_info and t_axilite_bfm_config record declaration formatting.
+
 v2.9.0
+----------
 Released: 2021-10-22
 - Added support to force the VVC to execute only one transaction at a time
 - Fixed bug where await_completion in certain cases didn't detect that the VVC was finished

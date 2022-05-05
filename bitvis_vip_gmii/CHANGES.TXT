@@ -1,11 +1,17 @@
 Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+v0.5.0
+----------
+Released: 2022-05-05
+- Added the parameter action_when_transfer_is_done to gmii_write() to support multi-field transfers
+  when using a hierarchical VVC, such as Ethernet.
+- t_vvc_config, t_vvc_status and t_gmii_bfm_config record declaration formatting.
+
 v0.4.1
 ----------
 Released: 2021-05-26
 - Corrected message ID for check_value() in BFM.
-
 
 v0.4.0
 ----------

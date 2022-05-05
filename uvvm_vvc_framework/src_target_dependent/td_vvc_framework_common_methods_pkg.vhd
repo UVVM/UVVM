@@ -499,6 +499,7 @@ package body td_vvc_framework_common_methods_pkg is
     variable v_vvc_instance_idx             : integer                                := vvc_instance_idx;
     variable v_vvc_channel                  : t_channel                              := vvc_channel;
   begin
+
     -- Only log wanted_idx when it's given as a parameter
     if wanted_idx = -1 then
       v_proc_call := new string'(proc_call_short);
@@ -526,6 +527,11 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is registered use the new mechanism
     if v_num_vvc_instances > 0 then
+      -- Wait for a few delta cycles to account for any potential extra delays in new or user VVCs.
+      wait for 0 ns;
+      wait for 0 ns;
+      wait for 0 ns;
+
       -- Checking if await selected (with a specified wanted_idx) is supported by this VVC
       if wanted_idx /= -1 and not shared_vvc_activity_register.priv_get_vvc_await_selected_supported(v_vvc_idx_in_activity_register(0)) then
         alert(TB_ERROR, v_proc_call.all & " await_completion with a specified wanted_idx is not supported by " & 

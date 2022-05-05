@@ -1,19 +1,22 @@
 Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
+v0.5.2
+----------
+Released: 2022-05-05
+- Fixed crash that could occur with partial coverage files not found.
+
 v0.5.1
 ----------
 Released: 2021-05-26
-- Fixed crash that could occure if a requirement and testcase were listed 
+- Fixed crash that could occur if a requirement and testcase were listed 
   in combination multiple times.
-
 
 v0.5.0
 ----------
 Released: 2020-12-21
 - Added option for omitting a requirement in the post-processing Python script.
 - Fixed sub-requirements could be listed as not-run requirements in CSV files.
-
 
 v0.4.0
 ----------

@@ -35,7 +35,7 @@ library bitvis_vip_scoreboard;
 use bitvis_vip_scoreboard.slv8_sb_pkg.all;
 use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
 
---hdlunit:tb
+--hdlregression:tb
 -- Test harness entity
 entity sb_uart_sbi_demo_tb is
 end entity sb_uart_sbi_demo_tb;

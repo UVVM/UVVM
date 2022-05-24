@@ -239,6 +239,7 @@ begin
         check_value(v_result.data_array(i)(v_result.data_array_word_size-1 downto 0), v_data_packet(i), ERROR, "Checking fetch result: data_array");
       end loop;
 
+      -- Note: Error cases based on forcing master_sop_o or master_eop_o will not work in Modelsim 2020.1 because of a simulator bug in which values forced on port signals fail to propagate.
       log(ID_LOG_HDR, "Testing error case: receive() with missing start of packet");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '0';

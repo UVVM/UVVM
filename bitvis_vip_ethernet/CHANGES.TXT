@@ -1,6 +1,11 @@
 Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
+v0.2.2
+----------
+Released: 2022-05-25
+- Fixed issue where Questa Sim coudl fail to read array width.
+
 v0.2.1
 ----------
 Released: 2022-05-05

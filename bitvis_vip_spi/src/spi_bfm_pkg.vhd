@@ -101,7 +101,7 @@ package spi_bfm_pkg is
     signal sclk                           : inout std_logic;
     signal ss_n                           : inout std_logic;
     signal mosi                           : inout std_logic;
-    signal miso                           : inout std_logic;
+    signal miso                           : in    std_logic;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;
@@ -474,7 +474,7 @@ package body spi_bfm_pkg is
     signal sclk                           : inout std_logic;
     signal ss_n                           : inout std_logic;
     signal mosi                           : inout std_logic;
-    signal miso                           : inout std_logic;
+    signal miso                           : in    std_logic;
     constant action_when_transfer_is_done : in    t_action_when_transfer_is_done := RELEASE_LINE_AFTER_TRANSFER;
     constant scope                        : in    string                         := C_SCOPE;
     constant msg_id_panel                 : in    t_msg_id_panel                 := shared_msg_id_panel;

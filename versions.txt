@@ -19,7 +19,7 @@ This project uses the following versions:
   bitvis_vip_uart, version v2.8.5
   bitvis_vip_spec_cov, version v0.5.2
   bitvis_vip_hvvc_to_vvc_bridge, version v0.1.1
-  bitvis_vip_ethernet, version v0.2.1
+  bitvis_vip_ethernet, version v0.2.2
   bitvis_vip_axi, version v0.2.1
   bitvis_vip_wishbone, version v0.1.1 BETA
   

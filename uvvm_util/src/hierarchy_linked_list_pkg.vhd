@@ -117,12 +117,12 @@ type t_hierarchy_linked_list is protected body
   type t_element;
   type t_element_ptr is access t_element;
   type t_element is record
-      first_child : t_element_ptr; -- Pointer to the first element in a linked list of children
-      next_sibling  : t_element_ptr;  -- Pointer to the next element in a linked list of siblings
-      prev_sibling : t_element_ptr; -- Pointer to the previous element in a linked list of siblings
-      parent : t_element_ptr;
-      element_data  : t_hierarchy_node;
-      hierarchy_level : natural; -- How far down the tree this node is. Used when printing summary.
+    first_child     : t_element_ptr;    -- Pointer to the first element in a linked list of children
+    next_sibling    : t_element_ptr;    -- Pointer to the next element in a linked list of siblings
+    prev_sibling    : t_element_ptr;    -- Pointer to the previous element in a linked list of siblings
+    parent          : t_element_ptr;
+    element_data    : t_hierarchy_node;
+    hierarchy_level : natural;          -- How far down the tree this node is. Used when printing summary.
   end record;
 
   variable vr_top_element_ptr     : t_element_ptr;

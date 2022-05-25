@@ -618,6 +618,7 @@ package body vvc_methods_pkg is
     constant local_proc_call : string := local_proc_name & "()";
     variable v_preamble_and_sfd     : std_logic_vector(63 downto 0) := (others => '0');
     variable v_packet               : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    alias a_bridge_to_hvvc_data_words : t_byte_array(0 to C_MAX_PACKET_LENGTH-1) is bridge_to_hvvc.data_words; -- Temporary fix to bug in Questa Sim 2022.1
     variable v_payload_length       : integer;
     variable v_proc_call            : line; -- Current proc_call, external or local
     variable v_use_preamble_and_sfd : boolean;
@@ -711,7 +712,8 @@ package body vvc_methods_pkg is
     -- Read MAC destination from bridge (if configured)
     if v_use_mac_dest then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, v_pos_mac_dest, scope, msg_id_panel);
-      v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
+      --v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
+      v_packet(8 to 13)              := a_bridge_to_hvvc_data_words(0 to 5); -- Temporary fix for bug in Questa Sim 2022.1
       received_frame.mac_destination := unsigned(convert_byte_array_to_slv(v_packet(8 to 13), LOWER_BYTE_LEFT));
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.mac_destination := received_frame.mac_destination;
@@ -720,7 +722,8 @@ package body vvc_methods_pkg is
     -- Read MAC source from bridge (if configured)
     if v_use_mac_source then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, v_pos_mac_source, scope, msg_id_panel);
-      v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
+      --v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
+      v_packet(14 to 19)        := a_bridge_to_hvvc_data_words(0 to 5); -- Temporary fix for bug in Questa Sim 2022.1
       received_frame.mac_source := unsigned(convert_byte_array_to_slv(v_packet(14 to 19), LOWER_BYTE_LEFT));
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
@@ -729,7 +732,8 @@ package body vvc_methods_pkg is
     -- Read payload length from bridge (if configured)
     if v_use_payload_length then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, v_pos_payload_length, scope, msg_id_panel);
-      v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
+      --v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
+      v_packet(20 to 21)            := a_bridge_to_hvvc_data_words(0 to 1); -- Temporary fix for bug in Questa Sim 2022.1
       received_frame.payload_length := to_integer(unsigned(convert_byte_array_to_slv(v_packet(20 to 21), LOWER_BYTE_LEFT)));
       v_payload_length              := received_frame.payload_length;
       -- Add info to the vvc_transaction_info
@@ -761,7 +765,8 @@ package body vvc_methods_pkg is
     -- Read FCS from bridge (if configured)
     if v_use_fcs then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, v_pos_fcs, scope, msg_id_panel);
-      v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
+      --v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
+      v_packet(22+v_payload_length to 22+v_payload_length+4-1) := a_bridge_to_hvvc_data_words(0 to 3); -- Temporary fix for bug in Questa Sim 2022.1
       -- For the FCS the MSb is received first, so we need to reverse the bits in each byte
       received_frame.fcs := convert_byte_array_to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)), LOWER_BYTE_LEFT);
       -- Add info to the vvc_transaction_info

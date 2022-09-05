@@ -101,10 +101,10 @@ NVC_GOPTS=--std=08
 NVC_AOPTS=
 NVC_EOPTS=
 NVC_ROPTS=
-ifeq ($(VHDL_RELAXED),TRUE)
+ifeq ($(SIM_VHDL_RELAXED),TRUE)
 	NVC_AOPTS:=$(NVC_AOPTS) --relaxed
 endif
-ifeq ($(VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
+ifeq ($(SIM_VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
 	NVC_ROPTS:=$(NVC_ROPTS) --ieee-warnings=off
 endif
 
@@ -149,7 +149,7 @@ VCOM=vcom
 VCOMOPTS=-2008 -explicit -vopt -stats=none
 VSIM=vsim
 VSIMOPTS=-t ps -c -onfinish stop -do "onfinish exit; run -all; exit"
-ifeq ($(VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
+ifeq ($(SIM_VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
 	VSIMOPTS:=-do "set NumericStdNoWarnings 1" $(VSIMOPTS)
 endif
 

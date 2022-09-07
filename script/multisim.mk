@@ -10,7 +10,7 @@
 ################################################################################
 # check for supported simulator
 
-SIM=$(MAKECMDGOALS)
+SIM:=$(MAKECMDGOALS)
 ifeq ($(filter $(SIM),ghdl nvc modelsim questa clean),)
 INDENT:=$(subst ,,	)
 all:
@@ -28,10 +28,20 @@ all:
 endif
 
 ################################################################################
+# global definitions
+
+# wave init script, if not already defined
+ifeq ($(WAVE_INIT),)
+WAVE_INIT=$(REPO_ROOT)/script/vcd2gtkw.sh
+endif
+
+GTKW:=$(addsuffix .gtkw,$(basename $(WAVE)))
+
+################################################################################
 # MSYS2 definitions
 
 ifeq ($(OS),Windows_NT)
-# default location of MSYS2 if not already defined
+# default location of MSYS2, if not already defined
 ifeq ($(MSYS2),)
 MSYS2:=C:\msys64
 endif
@@ -54,23 +64,23 @@ endif
 
 # precompiled vendor libraries, if not already defined
 ifeq ($(GHDL_LIBS),)
-GHDL_LIBS=uvvm xilinx-vivado intel
+GHDL_LIBS:=uvvm xilinx-vivado intel
 endif
 
 # GHDL executable
-GHDL=ghdl
+GHDL:=ghdl
 
-#-P$(GHDL_INSTALL_PATH)/lib/ghdl 
+#-P$(GHDL_INSTALL_PATH)/lib/ghdl
 
 # GHDL options: analysis, elaboration, run
-GHDL_AOPTS=--std=08 -fsynopsys -Wno-hide -Wno-shared $(addprefix -P$(GHDL_INSTALL_PATH)/lib/ghdl/vendors/,$(GHDL_LIBS))
-GHDL_EOPTS=--std=08 -fsynopsys $(addprefix -P$(GHDL_INSTALL_PATH)/lib/ghdl/vendors/,$(GHDL_LIBS))
-GHDL_ROPTS=--unbuffered --max-stack-alloc=0
-ifeq ($(SIM_VHDL_RELAXED),TRUE)
+GHDL_AOPTS:=--std=08 -fsynopsys -Wno-hide -Wno-shared $(addprefix -P$(GHDL_INSTALL_PATH)/lib/ghdl/vendors/,$(GHDL_LIBS))
+GHDL_EOPTS:=--std=08 -fsynopsys $(addprefix -P$(GHDL_INSTALL_PATH)/lib/ghdl/vendors/,$(GHDL_LIBS))
+GHDL_ROPTS:=--unbuffered --max-stack-alloc=0 $(addprefix --vcd=,$(WAVE))
+ifeq ($(VHDL_RELAXED),TRUE)
 GHDL_AOPTS:=$(GHDL_AOPTS) -frelaxed
 GHDL_EOPTS:=$(GHDL_EOPTS) -frelaxed
 endif
-ifeq ($(SIM_VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
+ifeq ($(VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
 GHDL_ROPTS:=$(GHDL_ROPTS) --ieee-asserts=disable
 endif
 
@@ -84,6 +94,12 @@ endef
 define RUN_CMD
 ghdl: $1
 	$(GHDL) --elab-run --work=$1 $(GHDL_EOPTS) $2 $(GHDL_ROPTS) $(strip $(addprefix -g,$(subst ;, ,$3)))
+ifneq ($(WAVE_LEVELS),)
+	$(WAVE_INIT) $(WAVE) $(GTKW) $(WAVE_LEVELS)
+endif
+ifneq ($(WAVE_VIEW),)
+	gtkwave $(WAVE) $(GTKW)
+endif
 endef
 
 endif
@@ -94,17 +110,17 @@ endif
 ifeq ($(SIM),nvc)
 
 # NVC executable
-NVC=nvc
+NVC:=nvc
 
 # NVC options: global, analysis, elaboration, run
-NVC_GOPTS=--std=08
-NVC_AOPTS=
-NVC_EOPTS=
-NVC_ROPTS=
-ifeq ($(SIM_VHDL_RELAXED),TRUE)
+NVC_GOPTS:=--std=08
+NVC_AOPTS:=
+NVC_EOPTS:=
+NVC_ROPTS:=$(addprefix --format=vcd --wave=,$(WAVE))
+ifeq ($(VHDL_RELAXED),TRUE)
 	NVC_AOPTS:=$(NVC_AOPTS) --relaxed
 endif
-ifeq ($(SIM_VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
+ifeq ($(VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
 	NVC_ROPTS:=$(NVC_ROPTS) --ieee-warnings=off
 endif
 
@@ -119,6 +135,12 @@ define RUN_CMD
 nvc: $1
 	$(NVC) $(NVC_GOPTS) --work=$1 -e $2 $(NVC_EOPTS) $(strip $(addprefix -g,$(subst ;, ,$3)))
 	$(NVC) $(NVC_GOPTS) --work=$1 -r $2 $(NVC_ROPTS)
+ifneq ($(WAVE_LEVELS),)
+	$(WAVE_INIT) $(WAVE) $(GTKW) $(WAVE_LEVELS)
+endif
+ifneq ($(WAVE_VIEW),)
+	gtkwave $(WAVE) $(GTKW)
+endif
 endef
 
 endif
@@ -131,27 +153,26 @@ ifneq ($(filter $(SIM),modelsim questa),)
 # default path to user compiled libraries, if not already defined
 ifeq ($(OS),Windows_NT)
 ifeq ($(HOME),)
-SIM_LIB_PATH=/c/work/.simlib
+SIM_LIB_PATH:=/c/work/.simlib
 else
-SIM_LIB_PATH=$(shell cygpath $(HOME))/.simlib
+SIM_LIB_PATH:=$(shell cygpath $(HOME))/.simlib
 endif
 else
-SIM_LIB_PATH=~/.simlib
+SIM_LIB_PATH:=~/.simlib
 endif
 
-# user compiled libraries
-ifeq ($(GHDL_LIBS),)
-GHDL_LIBS=uvvm xilinx-vivado intel
+VMAP:=vmap
+VCOM:=vcom
+VCOMOPTS:=-2008 -explicit -vopt -stats=none
+VSIM:=vsim
+VSIMTCL:=onfinish exit; run -all; exit
+ifeq ($(VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
+VSIMTCL:=set NumericStdNoWarnings 1; $(VSIMTCL)
 endif
-
-VMAP=vmap
-VCOM=vcom
-VCOMOPTS=-2008 -explicit -vopt -stats=none
-VSIM=vsim
-VSIMOPTS=-t ps -c -onfinish stop -do "onfinish exit; run -all; exit"
-ifeq ($(SIM_VHDL_SUPPRESS_IEEE_ASSERTS),TRUE)
-	VSIMOPTS:=-do "set NumericStdNoWarnings 1" $(VSIMOPTS)
+ifneq ($(WAVE),)
+VSIMTCL:=vcd file $(WAVE); vcd add -r *; $(VSIMTCL)
 endif
+VSIMOPTS:=-t ps -c -onfinish stop -do "$(VSIMTCL)"
 
 modelsim.ini: $(SIM_LIB_PATH)/uvvm/*
 	$(foreach L,$?,$(VMAP) $(notdir $L) $L;)
@@ -166,6 +187,12 @@ endef
 define RUN_CMD
 modelsim questa: $1
 	$(VSIM) -work $1 $(VSIMOPTS) $2 $(strip $(addprefix -g,$(subst ;, ,$3)))
+ifneq ($(WAVE_LEVELS),)
+	$(WAVE_INIT) $(WAVE) $(GTKW) $(WAVE_LEVELS)
+endif
+ifneq ($(WAVE_VIEW),)
+	gtkwave $(WAVE) $(GTKW)
+endif
 endef
 
 endif
@@ -176,7 +203,7 @@ endif
 # COMPILE: $1 = work library name, $2 = sources
 define COMPILE
 ifeq ($(WORK),)
-WORK=$1
+WORK:=$1
 endif
 $(eval $(call COMPILE_CMD,$1,$2))
 endef
@@ -186,7 +213,7 @@ endef
 #  MyIntVal=123;MyStrVal="hello"
 define RUN
 ifeq ($(TOP),)
-TOP=$1
+TOP:=$(RUN_DEP)
 endif
 $(eval $(call RUN_CMD,$(WORK),$1,$2))
 endef
@@ -196,7 +223,11 @@ endef
 
 # UVVM
 clean::
-	rm _*.txt
+	rm -f $(wildcard _*.txt)
+
+# waveforms
+clean::
+	rm -f $(wildcard *.vcd) $(wildcard *.gtkw)
 
 # GHDL
 clean::

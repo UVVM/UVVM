@@ -1,4 +1,4 @@
-# examples.mk - an include for makefiles for UVVM examples
+# example.mk - an include for makefiles for UVVM examples
 
 ifeq ($(REPO_ROOT),)
 REPO_ROOT=$(shell git rev-parse --show-toplevel)
@@ -15,8 +15,11 @@ SRC=\
     $(shell ls $(TB_PATH)/*th.vhd ls 2> /dev/null) \
     $(shell ls $(TB_PATH)/*tb.vhd)
 
-SIM_VHDL_RELAXED=TRUE
-#SIM_VHDL_SUPPRESS_IEEE_ASSERTS=TRUE
+VHDL_RELAXED=TRUE
+#VHDL_SUPPRESS_IEEE_ASSERTS=TRUE
+WAVE=wave.vcd
+WAVE_LEVELS=0
+WAVE_VIEW=TRUE
 
 include $(REPO_ROOT)/script/multisim.mk
 $(eval $(call COMPILE,$(WORK),$(SRC)))

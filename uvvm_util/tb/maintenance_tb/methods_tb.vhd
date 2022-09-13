@@ -2218,6 +2218,8 @@ begin
       check_value(to_string(v_slv_array, HEX), "(6, A, 9)", error, "to_string() for t_slv_array(2 downto 0)(3 downto 0) as HEX");
       check_value(to_string(v_slv_array, DEC), "(6, 10, 9)", error, "to_string() for t_slv_array(2 downto 0)(3 downto 0) as DEC");
       check_value(to_string(v_slv_array, BIN), "(0110, 1010, 1001)", error, "to_string() for t_slv_array(2 downto 0)(3 downto 0) as BIN");
+      v_slv_array(1) := (others => 'U');
+      check_value(to_string(v_slv_array, HEX_BIN_IF_INVALID), "(6, X (b""UUUU""), 9)", error, "to_string() for t_slv_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\rCheck long t_slv_array(31 downto 0)(7 downto 0)");
       for idx in 0 to v_slv_array_32'length-1 loop
@@ -2227,6 +2229,9 @@ begin
       check_value(to_string(v_slv_array_32, DEC), "(31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as BIN");
       check_value(to_string(v_slv_array_32, BIN), "(00011111, 00011110, 00011101, 00011100, 00011011, 00011010, 00011001, 00011000, 00010111, 00010110, 00010101, 00010100, 00010011, 00010010, 00010001, 00010000, 00001111, 00001110, 00001101, 00001100, 00001011, 00001010, 00001001, 00001000, 00000111, 00000110, 00000101, 00000100, 00000011, 00000010, 00000001, 00000000)", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as BIN");
                                         --    1F        1e        1d        1c        1b        1a        19        18        17        16        15        14        13        12        11        10        0f        0E        0d          0c        0b        0a        09        08        07        06        05        04        03        02        01        00
+      v_slv_array_32(v_slv_array_32'low) := (others => 'U');
+      v_slv_array_32(v_slv_array_32'high) := (others => 'U');
+      check_value(to_string(v_slv_array_32, HEX_BIN_IF_INVALID), "(XX (b""UUUUUUUU""), 1E, 1D, 1C, 1B, 1A, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 0F, 0E, 0D, 0C, 0B, 0A, 09, 08, 07, 06, 05, 04, 03, 02, 01, XX (b""UUUUUUUU""))", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 32 bit wide t_slv_array");
       -- 32 bit wide in order to trigger the message "(too wide to be converted to integer)
@@ -2235,13 +2240,18 @@ begin
       check_value(to_string(v_slv32_array, HEX), "(01234567, FEDCBA98)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as HEX");
       check_value(to_string(v_slv32_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""01234567 (too wide to be converted to integer)"", x""FEDCBA98 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as DEC");
       check_value(to_string(v_slv32_array, BIN), "(00000001001000110100010101100111, 11111110110111001011101010011000)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as BIN");
+      v_slv32_array(2) := (others => 'U');
+      check_value(to_string(v_slv32_array, HEX_BIN_IF_INVALID), "(01234567, XXXXXXXX (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 256 bit wide t_slv_array");
       v_slv256_array(1) := x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
       v_slv256_array(0) := x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210";
-      check_value(to_string(v_slv256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as HEX");
-      check_value(to_string(v_slv256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted to integer)"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as DEC");
-      check_value(to_string(v_slv256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as BIN");
+      check_value(to_string(v_slv256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_slv_array(1 downto 0)(255 downto 0) as HEX");
+      check_value(to_string(v_slv256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted to integer)"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 downto 0)(255 downto 0) as DEC");
+      check_value(to_string(v_slv256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_slv_array(1 downto 0)(255 downto 0) as BIN");
+      v_slv256_array(1) := (others => 'U');
+      v_slv256_array(0) := (others => 'U');
+      check_value(to_string(v_slv256_array, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX), "(x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""), x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_slv_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\rCheck t_signed_array(2 downto 0)(3 downto 0)");
       v_signed_array(0) := "1101";      -- -3
@@ -2250,21 +2260,28 @@ begin
       check_value(to_string(v_signed_array, HEX), "(9, 3, D)", error, "to_string() for t_signed_array(2 downto 0)(3 downto 0) as HEX");
       check_value(to_string(v_signed_array, DEC), "(-7, 3, -3)", error, "to_string() for t_signed_array(2 downto 0)(3 downto 0) as DEC");
       check_value(to_string(v_signed_array, BIN), "(1001, 0011, 1101)", error, "to_string() for t_signed_array(2 downto 0)(3 downto 0) as BIN");
+      v_signed_array(1) := (others => 'U');
+      check_value(to_string(v_signed_array, HEX_BIN_IF_INVALID), "(9, X (b""UUUU""), D)", error, "to_string() for t_signed_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 33 bit wide t_signed_array");
       -- 33 bit wide in order to trigger the message "(too wide to be converted to integer)
       v_signed33_array(1) := 33x"001234567";
       v_signed33_array(2) := 33x"1FEDCBA98";
-      check_value(to_string(v_signed33_array, HEX), "(001234567, 1FEDCBA98)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as HEX");
-      check_value(to_string(v_signed33_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""001234567"" (too wide to be converted to integer), x""1FEDCBA98"" (too wide to be converted to integer))", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as DEC");
-      check_value(to_string(v_signed33_array, BIN), "(000000001001000110100010101100111, 111111110110111001011101010011000)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as BIN");
+      check_value(to_string(v_signed33_array, HEX), "(001234567, 1FEDCBA98)", error, "to_string for t_signed_array(1 to 2)(32 downto 0) as HEX");
+      check_value(to_string(v_signed33_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""001234567"" (too wide to be converted to integer), x""1FEDCBA98"" (too wide to be converted to integer))", error, "to_string for t_signed_array(1 to 2)(32 downto 0) as DEC");
+      check_value(to_string(v_signed33_array, BIN), "(000000001001000110100010101100111, 111111110110111001011101010011000)", error, "to_string for t_signed_array(1 to 2)(32 downto 0) as BIN");
+      v_signed33_array(2) := (others => 'U');
+      check_value(to_string(v_signed33_array, HEX_BIN_IF_INVALID), "(001234567, XXXXXXXXX (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_signed_array(1 to 2)(32 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 256 bit wide t_signed_array");
       v_signed256_array(1) := x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
       v_signed256_array(0) := x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210";
-      check_value(to_string(v_signed256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as HEX");
-      check_value(to_string(v_signed256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"" (too wide to be converted to integer), x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"" (too wide to be converted to integer))", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as DEC");
-      check_value(to_string(v_signed256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as BIN");
+      check_value(to_string(v_signed256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_signed_array(1 downto 0)(255 downto 0) as HEX");
+      check_value(to_string(v_signed256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"" (too wide to be converted to integer), x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"" (too wide to be converted to integer))", error, "to_string for t_signed_array(1 downto 0)(255 downto 0) as DEC");
+      check_value(to_string(v_signed256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_signed_array(1 downto 0)(255 downto 0) as BIN");
+      v_signed256_array(1) := (others => 'U');
+      v_signed256_array(0) := (others => 'U');
+      check_value(to_string(v_signed256_array, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX), "(x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""), x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_signed_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\rCheck t_unsigned_array(2 downto 0)(3 downto 0)");
       v_unsigned_array(0) := "1101";    -- D
@@ -2273,21 +2290,28 @@ begin
       check_value(to_string(v_unsigned_array, HEX), "(9, 3, D)", error, "to_string() for t_unsigned_array(2 downto 0)(3 downto 0) as HEX");
       check_value(to_string(v_unsigned_array, DEC), "(9, 3, 13)", error, "to_string() for t_unsigned_array(2 downto 0)(3 downto 0) as DEC");
       check_value(to_string(v_unsigned_array, BIN), "(1001, 0011, 1101)", error, "to_string() for t_unsigned_array(2 downto 0)(3 downto 0) as BIN");
+      v_unsigned_array(1) := (others => 'U');    -- 3
+      check_value(to_string(v_unsigned_array, HEX_BIN_IF_INVALID), "(9, X (b""UUUU""), D)", error, "to_string() for t_unsigned_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 32 bit wide t_unsigned_array");
       -- 32 bit wide in order to trigger the message "(too wide to be converted to integer)
       v_unsigned32_array(1) := x"01234567";
       v_unsigned32_array(2) := x"FEDCBA98";
-      check_value(to_string(v_unsigned32_array, HEX), "(01234567, FEDCBA98)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as HEX");
-      check_value(to_string(v_unsigned32_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""01234567 (too wide to be converted to integer)"", x""FEDCBA98 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as DEC");
-      check_value(to_string(v_unsigned32_array, BIN), "(00000001001000110100010101100111, 11111110110111001011101010011000)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as BIN");
+      check_value(to_string(v_unsigned32_array, HEX), "(01234567, FEDCBA98)", error, "to_string for t_unsigned_array(1 to 2)(31 downto 0) as HEX");
+      check_value(to_string(v_unsigned32_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""01234567 (too wide to be converted to integer)"", x""FEDCBA98 (too wide to be converted to integer)"")", error, "to_string for t_unsigned_array(1 to 2)(31 downto 0) as DEC");
+      check_value(to_string(v_unsigned32_array, BIN), "(00000001001000110100010101100111, 11111110110111001011101010011000)", error, "to_string for t_unsigned_array(1 to 2)(31 downto 0) as BIN");
+      v_unsigned32_array(2) := (others => 'U');
+      check_value(to_string(v_unsigned32_array, HEX_BIN_IF_INVALID), "(01234567, XXXXXXXX (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_unsigned_array(1 to 2)(31 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 256 bit wide t_unsigned_array");
       v_unsigned256_array(1) := x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
       v_unsigned256_array(0) := x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210";
-      check_value(to_string(v_unsigned256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as HEX");
-      check_value(to_string(v_unsigned256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted to integer)"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as DEC");
-      check_value(to_string(v_unsigned256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as BIN");
+      check_value(to_string(v_unsigned256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_unsigned_array(1 downto 0)(255 downto 0) as HEX");
+      check_value(to_string(v_unsigned256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted to integer)"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to integer)"")", error, "to_string for t_unsigned_array(1 downto 0)(255 downto 0) as DEC");
+      check_value(to_string(v_unsigned256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_unsigned_array(1 downto 0)(255 downto 0) as BIN");
+      v_unsigned256_array(1) := (others => 'U');
+      v_unsigned256_array(0) := (others => 'U');
+      check_value(to_string(v_unsigned256_array, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX), "(x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""), x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_unsigned_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\rVerifying justify()");
       --Log pre-appended info is 80 chars long

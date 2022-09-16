@@ -1,0 +1,41 @@
+# Makefile_template
+# example of how to use multisim.mk
+
+# work library name
+WORK:=my_design
+
+# source files in compilation order
+DUT_FILES=\
+    ../src/my_pkg.vhd \
+    ../src/my_design.vhd
+TB_FILES=\
+    ../tb/my_th.vhd \
+    ../tb/my_tb.vhd
+SRC=$(DUT_FILES) $(TB_FILES)
+
+# top unit name
+TOP=my_tb
+
+# option: relaxed VHDL rules e.g. impure behaviour by pure functions
+VHDL_RELAXED=TRUE
+
+# option: suppress IEEE assertions e.g. metavalues in to_integer
+#VHDL_SUPPRESS_IEEE_ASSERTS=TRUE
+
+# option: waveform output filename
+WAVE=wave.vcd
+
+# option: create waveform save file with signals from all levels of hierarchy
+WAVE_LEVELS=0
+
+# option: launch waveform viewer after simulation
+WAVE_VIEW=TRUE
+
+# include multisim.mk here
+include $(REPO_ROOT)/script/multisim.mk
+
+# compile
+$(eval $(call COMPILE,$(WORK),$(SRC)))
+
+# simulate
+$(eval $(call RUN,$(TOP),))

@@ -101,7 +101,8 @@ begin
 
   i_axilite_slave_2 : entity bitvis_vip_axilite.axilite_slave_model
     generic map(
-      C_AXI_DATA_WIDTH => C_DATA_WIDTH_2
+      C_AXI_DATA_WIDTH => C_DATA_WIDTH_2,
+      C_MEMORY_START   => x"00000000"
     )
     port map (
       aclk                => clk,

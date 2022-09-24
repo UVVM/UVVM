@@ -1,21 +1,21 @@
 #######################################################################################################################
-Bitvis VIP SBI
+Bitvis VIP Avalon MM
 #######################################################################################################################
 
-.. _vip_sbi_bfm:
+.. _vip_avalon_mm_bfm:
 
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
 
-See `sbi_bfm_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_sbi/doc/sbi_bfm_QuickRef.pdf>`_
+See `avalon_mm_bfm_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_avalon_mm/doc/avalon_mm_bfm_QuickRef.pdf>`_
 
-.. _vip_sbi_vvc:
+.. _vip_avalon_mm_vvc:
 
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 
-See `sbi_vvc_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_sbi/doc/sbi_vvc_QuickRef.pdf>`_
+See `avalon_mm_vvc_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_avalon_mm/doc/avalon_mm_vvc_QuickRef.pdf>`_
 
 .. include:: rst_snippets/ip_disclaimer.rst

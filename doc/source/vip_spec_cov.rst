@@ -1,9 +1,9 @@
-.. _vip_hvvc_to_vvc_bridge:
+.. _vip_spec_cov:
 
 #######################################################################################################################
-Bitvis VIP HVVC-to-VVC Bridge
+Bitvis VIP Specification Coverage
 #######################################################################################################################
 
-See `HVVC_to_VVC_Bridge_Implementation_Guide.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_hvvc_to_vvc_bridge/doc/HVVC_to_VVC_Bridge_Implementation_Guide.pdf>`_
+See `Spec_Coverage_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_spec_cov/doc/Spec_Coverage_QuickRef.pdf>`_
 
 .. include:: rst_snippets/ip_disclaimer.rst

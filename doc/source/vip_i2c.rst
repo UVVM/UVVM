@@ -1,21 +1,21 @@
 #######################################################################################################################
-Bitvis VIP SBI
+Bitvis VIP I2C
 #######################################################################################################################
 
-.. _vip_sbi_bfm:
+.. _vip_i2c_bfm:
 
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
 
-See `sbi_bfm_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_sbi/doc/sbi_bfm_QuickRef.pdf>`_
+See `i2c_bfm_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_i2c/doc/i2c_bfm_QuickRef.pdf>`_
 
-.. _vip_sbi_vvc:
+.. _vip_i2c_vvc:
 
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 
-See `sbi_vvc_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_sbi/doc/sbi_vvc_QuickRef.pdf>`_
+See `i2c_vvc_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_i2c/doc/i2c_vvc_QuickRef.pdf>`_
 
 .. include:: rst_snippets/ip_disclaimer.rst

@@ -1,21 +1,21 @@
 #######################################################################################################################
-Bitvis VIP SBI
+Bitvis VIP RGMII
 #######################################################################################################################
 
-.. _vip_sbi_bfm:
+.. _vip_rgmii_bfm:
 
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
 
-See `sbi_bfm_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_sbi/doc/sbi_bfm_QuickRef.pdf>`_
+See `rgmii_bfm_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_rgmii/doc/rgmii_bfm_QuickRef.pdf>`_
 
-.. _vip_sbi_vvc:
+.. _vip_rgmii_vvc:
 
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 
-See `sbi_vvc_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_sbi/doc/sbi_vvc_QuickRef.pdf>`_
+See `rgmii_vvc_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_rgmii/doc/rgmii_vvc_QuickRef.pdf>`_
 
 .. include:: rst_snippets/ip_disclaimer.rst

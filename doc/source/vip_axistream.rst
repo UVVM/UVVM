@@ -1,21 +1,21 @@
 #######################################################################################################################
-Bitvis VIP SBI
+Bitvis VIP Axi-Stream
 #######################################################################################################################
 
-.. _vip_sbi_bfm:
+.. _vip_axistream_bfm:
 
 **********************************************************************************************************************************
 BFM
 **********************************************************************************************************************************
 
-See `sbi_bfm_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_sbi/doc/sbi_bfm_QuickRef.pdf>`_
+See `axistream_bfm_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_axistream/doc/axistream_bfm_QuickRef.pdf>`_
 
-.. _vip_sbi_vvc:
+.. _vip_axistream_vvc:
 
 **********************************************************************************************************************************
 VVC
 **********************************************************************************************************************************
 
-See `sbi_vvc_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_sbi/doc/sbi_vvc_QuickRef.pdf>`_
+See `axistream_vvc_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_axistream/doc/axistream_vvc_QuickRef.pdf>`_
 
 .. include:: rst_snippets/ip_disclaimer.rst

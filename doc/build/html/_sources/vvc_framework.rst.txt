@@ -463,7 +463,8 @@ Essential Mechanisms
 **********************************************************************************************************************************
 This section explains some of the essential mechanisms necessary for running VVC Framework, in addition to helpful and important 
 VVC status and configuration records which are accessible directly from the testbench.
-More details on the VVC Framework and the command mechanism can be found in the VVC Framework Manual. TODO: link
+More details on the VVC Framework and the command mechanism can be found in the 
+`VVC Framework Manual <https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf>`_.
 
 Libraries
 ==================================================================================================================================

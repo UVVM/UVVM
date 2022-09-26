@@ -2,7 +2,7 @@ import os
 import sys
 import shutil
 import subprocess
-from hdlunit import HDLUnit
+from hdlregression import HDLRegression
 
 
 def execute(command):

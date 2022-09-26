@@ -24,7 +24,7 @@ def get_test_file_list():
   output_folder = os.path.abspath(os.path.join(os.getcwd(), '.')) # Look in sim/
   for dirpath, dirs, files in os.walk(output_folder):
     for file in files:
-      if 'hdlunit' in dirpath and 'test' in dirpath and '.txt' in file:
+      if 'hdlregression' in dirpath and 'test' in dirpath and '.txt' in file:
         filepath = dirpath + os.sep + file
         if not 'report.txt' in file:
           filelist.append(filepath)

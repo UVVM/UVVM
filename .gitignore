@@ -18,6 +18,7 @@ vhdl_ls.toml
 .project
 .pydevproject
 .library_mapping.xml
+.settings
 
 # Emacs
 *.*~

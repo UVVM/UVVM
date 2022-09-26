@@ -37,23 +37,22 @@ use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 use work.transaction_pkg.all;
 
-
 --=================================================================================================
 entity i2c_vvc is
-  generic (
-    GC_INSTANCE_IDX                          : natural          := 1;  -- Instance index for this I2C_VVCT instance
+  generic(
+    GC_INSTANCE_IDX                          : natural          := 1; -- Instance index for this I2C_VVCT instance
     GC_MASTER_MODE                           : boolean          := true;
-    GC_I2C_CONFIG                            : t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT;  -- Behavior specification for BFM
+    GC_I2C_CONFIG                            : t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT; -- Behavior specification for BFM
     GC_CMD_QUEUE_COUNT_MAX                   : natural          := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural          := 950;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level    := warning;
     GC_RESULT_QUEUE_COUNT_MAX                : natural          := 1000;
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural          := 950;
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level    := warning
-    );
-  port (
+  );
+  port(
     i2c_vvc_if : inout t_i2c_if := init_i2c_if_signals(VOID)
-    );
+  );
 end entity i2c_vvc;
 
 --=================================================================================================
@@ -73,12 +72,12 @@ architecture behave of i2c_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config       : t_vvc_config is shared_i2c_vvc_config(GC_INSTANCE_IDX);
-  alias vvc_status       : t_vvc_status is shared_i2c_vvc_status(GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_i2c_transaction_info(GC_INSTANCE_IDX);
+  alias vvc_config                          : t_vvc_config is shared_i2c_vvc_config(GC_INSTANCE_IDX);
+  alias vvc_status                          : t_vvc_status is shared_i2c_vvc_status(GC_INSTANCE_IDX);
+  alias transaction_info                    : t_transaction_info is shared_i2c_transaction_info(GC_INSTANCE_IDX);
   -- Transaction info
-  alias vvc_transaction_info_trigger  : std_logic           is global_i2c_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias vvc_transaction_info          : t_transaction_group is shared_i2c_vvc_transaction_info(GC_INSTANCE_IDX);
+  alias vvc_transaction_info_trigger        : std_logic is global_i2c_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info                : t_transaction_group is shared_i2c_vvc_transaction_info(GC_INSTANCE_IDX);
   -- VVC Activity 
   signal entry_num_in_vvc_activity_register : integer;
 
@@ -99,58 +98,53 @@ architecture behave of i2c_vvc is
 
 begin
 
-
---===============================================================================================
--- Constructor
--- - Set up the defaults and show constructor if enabled
---===============================================================================================
+  --===============================================================================================
+  -- Constructor
+  -- - Set up the defaults and show constructor if enabled
+  --===============================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_I2C_CONFIG,
                                                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
                                                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
---===============================================================================================
+  --===============================================================================================
 
-
---===============================================================================================
--- Command interpreter
--- - Interpret, decode and acknowledge commands from the central sequencer
---===============================================================================================
+  --===============================================================================================
+  -- Command interpreter
+  -- - Interpret, decode and acknowledge commands from the central sequencer
+  --===============================================================================================
   cmd_interpreter : process
-    variable v_cmd_has_been_acked : boolean;  -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
+    variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
     variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
   begin
-
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => C_VVC_NAME,
-                                                                                         instance  => GC_INSTANCE_IDX);
+    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
+                                                                                                            instance => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
-    v_msg_id_panel := vvc_config.msg_id_panel;
+    v_msg_id_panel                                        := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
-    loop  -- basically as long as new commands are received
+    loop                                -- basically as long as new commands are received
 
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
-      v_cmd_has_been_acked                                  := false;  -- Clear flag
+      v_cmd_has_been_acked                                  := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
-      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
-
+      v_msg_id_panel                                        := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
       -------------------------------------------------------------------------
       if v_local_vvc_cmd.command_type = QUEUED then
         work.td_vvc_entity_support_pkg.put_command_on_queue(v_local_vvc_cmd, command_queue, vvc_status, queue_is_increasing);
-
 
       -- 2b. Otherwise command is intended for immediate response
       -------------------------------------------------------------------------
@@ -212,26 +206,23 @@ begin
 
     end loop;
   end process;
---===============================================================================================
+  --===============================================================================================
 
-
-
---===============================================================================================
--- Command executor
--- - Fetch and execute the commands
---===============================================================================================
+  --===============================================================================================
+  -- Command executor
+  -- - Fetch and execute the commands
+  --===============================================================================================
   cmd_executor : process
     variable v_cmd                                   : t_vvc_cmd_record;
-    variable v_read_data                             : t_vvc_result;  -- See vvc_cmd_pkg
+    variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time    := 0 ns;
     variable v_timestamp_start_of_last_bfm_access    : time    := 0 ns;
     variable v_timestamp_end_of_last_bfm_access      : time    := 0 ns;
     variable v_command_is_bfm_access                 : boolean := false;
     variable v_prev_command_was_bfm_access           : boolean := false;
     variable v_msg_id_panel                          : t_msg_id_panel;
-  
-  begin
 
+  begin
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
@@ -266,13 +257,8 @@ begin
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
-      v_prev_command_was_bfm_access := v_command_is_bfm_access;  -- save for inter_bfm_delay
-      if v_cmd.operation = MASTER_TRANSMIT or
-        v_cmd.operation = MASTER_CHECK or
-        v_cmd.operation = MASTER_RECEIVE or
-        v_cmd.operation = SLAVE_TRANSMIT or
-        v_cmd.operation = SLAVE_CHECK or
-        v_cmd.operation = SLAVE_RECEIVE then
+      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
+      if v_cmd.operation = MASTER_TRANSMIT or v_cmd.operation = MASTER_CHECK or v_cmd.operation = MASTER_RECEIVE or v_cmd.operation = SLAVE_TRANSMIT or v_cmd.operation = SLAVE_CHECK or v_cmd.operation = SLAVE_RECEIVE then
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
@@ -291,7 +277,7 @@ begin
 
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
-      case v_cmd.operation is  -- Only operations in the dedicated record are relevant
+      case v_cmd.operation is           -- Only operations in the dedicated record are relevant
 
         -- VVC dedicated operations
         --===================================
@@ -300,20 +286,20 @@ begin
             -- Set vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
-            transaction_info.data      := v_cmd.data;
-            transaction_info.num_bytes := v_cmd.num_bytes;
+            transaction_info.data                         := v_cmd.data;
+            transaction_info.num_bytes                    := v_cmd.num_bytes;
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
 
             i2c_master_transmit(addr_value                   => v_cmd.addr,
-                                data                         => v_cmd.data(0 to v_cmd.num_bytes-1),
+                                data                         => v_cmd.data(0 to v_cmd.num_bytes - 1),
                                 msg                          => format_msg(v_cmd),
                                 i2c_if                       => i2c_vvc_if,
                                 action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
                                 scope                        => C_SCOPE,
                                 msg_id_panel                 => v_msg_id_panel,
                                 config                       => vvc_config.bfm_config);
-          else  -- attempted master transmit when in slave mode
+          else                          -- attempted master transmit when in slave mode
             alert(error, "Master transmit called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -329,7 +315,7 @@ begin
             check_value(v_cmd.num_bytes <= C_VVC_CMD_DATA_MAX_LENGTH, error, "Verifying number of bytes to receive.", C_SCOPE, ID_NEVER);
 
             i2c_master_receive(addr_value                   => v_cmd.addr,
-                               data                         => v_read_data(0 to v_cmd.num_bytes-1),
+                               data                         => v_read_data(0 to v_cmd.num_bytes - 1),
                                msg                          => format_msg(v_cmd),
                                i2c_if                       => i2c_vvc_if,
                                action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -340,16 +326,16 @@ begin
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
-              for i in 0 to v_cmd.num_bytes-1 loop
+              for i in 0 to v_cmd.num_bytes - 1 loop
                 I2C_VVC_SB.check_received(GC_INSTANCE_IDX, pad_i2c_sb(v_read_data(i)));
               end loop;
-            else                            
+            else
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                           cmd_idx      => v_cmd.cmd_idx,
                                                           result       => v_read_data);
             end if;
-          else  -- attempted master receive when in slave mode
+          else                          -- attempted master receive when in slave mode
             alert(error, "Master receive called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -358,13 +344,13 @@ begin
             -- Set vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
-            transaction_info.data      := v_cmd.data;
-            transaction_info.num_bytes := v_cmd.num_bytes;
+            transaction_info.data                         := v_cmd.data;
+            transaction_info.num_bytes                    := v_cmd.num_bytes;
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
 
             i2c_master_check(addr_value                   => v_cmd.addr,
-                             data_exp                     => v_cmd.data(0 to v_cmd.num_bytes-1),
+                             data_exp                     => v_cmd.data(0 to v_cmd.num_bytes - 1),
                              msg                          => format_msg(v_cmd),
                              i2c_if                       => i2c_vvc_if,
                              action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -372,7 +358,7 @@ begin
                              scope                        => C_SCOPE,
                              msg_id_panel                 => v_msg_id_panel,
                              config                       => vvc_config.bfm_config);
-          else  -- attempted master check when in slave mode
+          else                          -- attempted master check when in slave mode
             alert(error, "Master check called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -395,7 +381,7 @@ begin
                                      scope                        => C_SCOPE,
                                      msg_id_panel                 => v_msg_id_panel,
                                      config                       => vvc_config.bfm_config);
-          else  -- attempted master quick command when in slave mode
+          else                          -- attempted master quick command when in slave mode
             alert(error, "Master quick command called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -407,16 +393,16 @@ begin
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
 
-            i2c_slave_transmit(data         => v_cmd.data(0 to v_cmd.num_bytes-1),
+            i2c_slave_transmit(data         => v_cmd.data(0 to v_cmd.num_bytes - 1),
                                msg          => format_msg(v_cmd),
                                i2c_if       => i2c_vvc_if,
                                scope        => C_SCOPE,
                                msg_id_panel => v_msg_id_panel,
                                config       => vvc_config.bfm_config);
-          else  -- attempted slave transmit when in master mode
+          else                          -- attempted slave transmit when in master mode
             alert(error, "Slave transmit called when VVC is in master mode.", C_SCOPE);
           end if;
-          
+
         when SLAVE_RECEIVE =>
           if not GC_MASTER_MODE then    -- requires slave mode
             -- Set vvc transaction info
@@ -426,20 +412,20 @@ begin
 
             check_value(v_cmd.num_bytes <= C_VVC_CMD_DATA_MAX_LENGTH, error, "Verifying number of bytes to receive.", C_SCOPE, ID_NEVER);
 
-            i2c_slave_receive(data         => v_read_data(0 to v_cmd.num_bytes-1),
+            i2c_slave_receive(data         => v_read_data(0 to v_cmd.num_bytes - 1),
                               msg          => format_msg(v_cmd),
                               i2c_if       => i2c_vvc_if,
                               scope        => C_SCOPE,
                               msg_id_panel => v_msg_id_panel,
                               config       => vvc_config.bfm_config);
 
-                                          -- Request SB check result
+            -- Request SB check result
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
-              for i in 0 to v_cmd.num_bytes-1 loop
+              for i in 0 to v_cmd.num_bytes - 1 loop
                 I2C_VVC_SB.check_received(GC_INSTANCE_IDX, pad_i2c_sb(v_read_data(i)));
               end loop;
-            else                            
+            else
               -- Store the result
               work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                           cmd_idx      => v_cmd.cmd_idx,
@@ -457,7 +443,7 @@ begin
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
 
-            i2c_slave_check(data_exp     => v_cmd.data(0 to v_cmd.num_bytes-1),
+            i2c_slave_check(data_exp     => v_cmd.data(0 to v_cmd.num_bytes - 1),
                             msg          => format_msg(v_cmd),
                             i2c_if       => i2c_vvc_if,
                             exp_rw_bit   => v_cmd.rw_bit,
@@ -465,7 +451,7 @@ begin
                             scope        => C_SCOPE,
                             msg_id_panel => v_msg_id_panel,
                             config       => vvc_config.bfm_config);
-          else  -- attempted slave check when in master mode
+          else                          -- attempted slave check when in master mode
             alert(error, "Slave check called when VVC is in master mode.", C_SCOPE);
           end if;
 
@@ -475,12 +461,10 @@ begin
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
           if v_cmd.gen_integer_array(0) = -1 then
             -- Delay specified using time
-            wait until terminate_current_cmd.is_active = '1'
-              for v_cmd.delay;
+            wait until terminate_current_cmd.is_active = '1' for v_cmd.delay;
           else
             -- Delay specified using integer
-            wait until terminate_current_cmd.is_active = '1'
-              for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.i2c_bit_time;
+            wait until terminate_current_cmd.is_active = '1' for v_cmd.gen_integer_array(0) * vvc_config.bfm_config.i2c_bit_time;
           end if;
 
         when others =>
@@ -490,10 +474,8 @@ begin
       if v_command_is_bfm_access then
         v_timestamp_end_of_last_bfm_access   := now;
         v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;
-        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and
-            ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
-          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " &
-                to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
+        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
+          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " & to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
         end if;
       end if;
 
@@ -512,15 +494,12 @@ begin
   end process;
   --===============================================================================================
 
-
---===============================================================================================
--- Command termination handler
--- - Handles the termination request record (sets and resets terminate flag on request)
---===============================================================================================
-  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd);  -- flag: is_active, set, reset
---===============================================================================================
+  --===============================================================================================
+  -- Command termination handler
+  -- - Handles the termination request record (sets and resets terminate flag on request)
+  --===============================================================================================
+  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --===============================================================================================
 
 end behave;
-
-
 

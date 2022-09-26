@@ -44,33 +44,32 @@ context bitvis_vip_sbi.vvc_context;
 
 --hdlregression:tb
 entity i2c_vvc_tb is
-  generic (
+  generic(
     GC_TESTCASE : string := "UVVM"
-    );
+  );
 end entity i2c_vvc_tb;
 
 -------------------------------------------------------------------------------
 
 architecture behav of i2c_vvc_tb is
-  constant C_SCOPE                : string := "I2C_TB";
+  constant C_SCOPE : string := "I2C_TB";
 
-  constant C_CLK_PERIOD           : time := 10 ns;  -- 100 MHz
+  constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
 
   constant C_I2C_DATA_WIDTH       : integer              := 8;
   constant C_WISHBONE_DATA_WIDTH  : integer              := 8;
   constant C_WISHBONE_ADDR_WIDTH  : integer              := 3;
   constant C_SBI_DATA_WIDTH       : integer              := 8;
   constant C_SBI_ADDR_WIDTH       : integer              := 7;
-  constant C_I2C_SLAVE_DUT_ADDR_0 : unsigned(6 downto 0) := "1010101";  -- Used as address in Slave VVC
-  constant C_I2C_SLAVE_DUT_ADDR_1 : unsigned(6 downto 0) := "0101010";  -- Used as both I2C address and SBI address for I2C slave DUT
-  constant C_I2C_SLAVE_DUT_ADDR_2 : unsigned(6 downto 0) := "1111000";  -- Used as both I2C address and SBI address for I2C slave DUT
-  constant C_I2C_SLAVE_DUT_ADDR_3 : unsigned(6 downto 0) := "0000000";  -- Used as both I2C address and SBI address for I2C slave DUT
-  constant C_I2C_SLAVE_DUT_ADDR_4 : unsigned(6 downto 0) := "1111111";  -- Used as both I2C address and SBI address for I2C slave DUT
+  constant C_I2C_SLAVE_DUT_ADDR_0 : unsigned(6 downto 0) := "1010101"; -- Used as address in Slave VVC
+  constant C_I2C_SLAVE_DUT_ADDR_1 : unsigned(6 downto 0) := "0101010"; -- Used as both I2C address and SBI address for I2C slave DUT
+  constant C_I2C_SLAVE_DUT_ADDR_2 : unsigned(6 downto 0) := "1111000"; -- Used as both I2C address and SBI address for I2C slave DUT
+  constant C_I2C_SLAVE_DUT_ADDR_3 : unsigned(6 downto 0) := "0000000"; -- Used as both I2C address and SBI address for I2C slave DUT
+  constant C_I2C_SLAVE_DUT_ADDR_4 : unsigned(6 downto 0) := "1111111"; -- Used as both I2C address and SBI address for I2C slave DUT
 
   constant C_DUMMY_SLAVE_DUT_ADDR : unsigned(6 downto 0) := "1100110";
 
   signal arst : std_logic := '0';
-
 
   constant C_I2C_BFM_CONFIG_DEFAULT : t_i2c_bfm_config := (
     enable_10_bits_addressing       => false,
@@ -81,7 +80,7 @@ architecture behav of i2c_vvc_tb is
     max_wait_scl_change_severity    => failure,
     max_wait_sda_change             => 10 ms,
     max_wait_sda_change_severity    => failure,
-    i2c_bit_time                    => 1100 ns,  -- approx. 1 MHz
+    i2c_bit_time                    => 1100 ns, -- approx. 1 MHz
     i2c_bit_time_severity           => failure,
     acknowledge_severity            => failure,
     slave_mode_address              => "000" & C_I2C_SLAVE_DUT_ADDR_0,
@@ -92,18 +91,18 @@ architecture behav of i2c_vvc_tb is
     id_for_bfm                      => ID_BFM,
     id_for_bfm_wait                 => ID_BFM_WAIT,
     id_for_bfm_poll                 => ID_BFM_POLL
-    );
+  );
 
   constant C_I2C_BFM_CONFIG_10_BIT_ADDRESSING : t_i2c_bfm_config := (
     enable_10_bits_addressing       => true,
-    master_sda_to_scl               => 400 ns,   -- used for checking
-    master_scl_to_sda               => 505 ns,   -- used for checking
+    master_sda_to_scl               => 400 ns, -- used for checking
+    master_scl_to_sda               => 505 ns, -- used for checking
     master_stop_condition_hold_time => 505 ns,
     max_wait_scl_change             => 10 ms,
     max_wait_scl_change_severity    => failure,
     max_wait_sda_change             => 10 ms,
     max_wait_sda_change_severity    => failure,
-    i2c_bit_time                    => 1100 ns,  -- approx. 1 MHz
+    i2c_bit_time                    => 1100 ns, -- approx. 1 MHz
     i2c_bit_time_severity           => failure,
     acknowledge_severity            => failure,
     slave_mode_address              => "101" & C_I2C_SLAVE_DUT_ADDR_0,
@@ -114,8 +113,7 @@ architecture behav of i2c_vvc_tb is
     id_for_bfm                      => ID_BFM,
     id_for_bfm_wait                 => ID_BFM_WAIT,
     id_for_bfm_poll                 => ID_BFM_POLL
-    );
-
+  );
 
   constant C_WISHBONE_MASTER_BFM_CONFIG_DEFAULT : t_wishbone_bfm_config := (
     max_wait_cycles          => 10,
@@ -123,13 +121,13 @@ architecture behav of i2c_vvc_tb is
     clock_period             => C_CLK_PERIOD,
     clock_period_margin      => 0 ns,
     clock_margin_severity    => TB_ERROR,
-    setup_time               => C_CLK_PERIOD/4,
-    hold_time                => C_CLK_PERIOD/4,
+    setup_time               => C_CLK_PERIOD / 4,
+    hold_time                => C_CLK_PERIOD / 4,
     match_strictness         => MATCH_EXACT,
     id_for_bfm               => ID_BFM,
     id_for_bfm_wait          => ID_BFM_WAIT,
     id_for_bfm_poll          => ID_BFM_POLL
-    );
+  );
 
   constant C_SBI_BFM_CONFIG : t_sbi_bfm_config := (
     max_wait_cycles            => 10000000,
@@ -139,19 +137,19 @@ architecture behav of i2c_vvc_tb is
     clock_period               => C_CLK_PERIOD,
     clock_period_margin        => 0 ns,
     clock_margin_severity      => TB_ERROR,
-    setup_time                 => C_CLK_PERIOD/4,
-    hold_time                  => C_CLK_PERIOD/4,
+    setup_time                 => C_CLK_PERIOD / 4,
+    hold_time                  => C_CLK_PERIOD / 4,
     bfm_sync                   => SYNC_ON_CLOCK_ONLY,
     match_strictness           => MATCH_EXACT,
     id_for_bfm                 => ID_BFM,
     id_for_bfm_wait            => ID_BFM_WAIT,
     id_for_bfm_poll            => ID_BFM_POLL,
     use_ready_signal           => true
-    );
+  );
 
   procedure config_i2c_master_dut(
     signal WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record
-    ) is
+  ) is
   begin
     -- First configurate the DUT
     -- We have a system clk of 100 MHz and desire a I2C SCL of 10 MHz.
@@ -164,10 +162,10 @@ architecture behav of i2c_vvc_tb is
   end procedure config_i2c_master_dut;
 
   procedure poll_i2c_master_dut_status_register(
-    signal WISHBONE_VVCT   : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
-    constant expected      : in    std_logic_vector(C_WISHBONE_DATA_WIDTH - 1 downto 0);
-    constant max_wait_time : in    time := 5 ms
-    ) is
+    signal   WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
+    constant expected      : in std_logic_vector(C_WISHBONE_DATA_WIDTH - 1 downto 0);
+    constant max_wait_time : in time := 5 ms
+  ) is
     variable v_cmd_idx              : natural;
     variable v_wishbone_read_result : std_logic_vector(bitvis_vip_wishbone.vvc_cmd_pkg.C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
 
@@ -210,61 +208,61 @@ architecture behav of i2c_vvc_tb is
   end procedure poll_i2c_master_dut_status_register;
 
   procedure transmit_single_byte_from_i2c_master_dut_to_vvc(
-    signal WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data        : in    std_logic_vector(C_WISHBONE_DATA_WIDTH - 1 downto 0)
-    ) is
+    signal   WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data          : in std_logic_vector(C_WISHBONE_DATA_WIDTH - 1 downto 0)
+  ) is
   begin
 
     -- We set the address here to be 0b1010101 so we need to set 0xAA in the transmit register (address 0x3) since LSB must be '0' for a write to slave.
     wishbone_write(WISHBONE_VVCT, 0, x"3", x"AA", "Setting address to be x55 and setting RW bit to 0");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
     i2c_slave_check(I2C_VVCT, 2, data, "Check data");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
-    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");  -- Polling for the RXack bit to be set and the TIP bit to be low, i.e., the I2C slave BFM has returned ACK
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
+    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-"); -- Polling for the RXack bit to be set and the TIP bit to be low, i.e., the I2C slave BFM has returned ACK
     wishbone_write(WISHBONE_VVCT, 0, x"3", data, "Writing data " & to_string(data) & " to transmit register.");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"50", "Setting STO and WR bit in command reg");
     await_completion(WISHBONE_VVCT, 0, 50 ms);
 
-    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");  -- Polling for the RXack bit to be set and the TIP bit to be low
+    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-"); -- Polling for the RXack bit to be set and the TIP bit to be low
     await_completion(WISHBONE_VVCT, 0, 50 ms);
     await_completion(I2C_VVCT, 2, 50 ms);
 
   end procedure transmit_single_byte_from_i2c_master_dut_to_vvc;
 
   procedure transmit_multi_byte_from_i2c_master_dut_to_vvc(
-    signal WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data        : in    t_byte_array
-    ) is
+    signal   WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data          : in t_byte_array
+  ) is
   begin
 
     -- We set the address here to be 0b1010101 so we need to set 0xAA in the transmit register (address 0x3) since LSB must be '0' for a write to slave.
     wishbone_write(WISHBONE_VVCT, 0, x"3", x"AA", "Setting address to be x55 and setting RW bit to 0");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
     i2c_slave_check(I2C_VVCT, 2, data, "Check data");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
-    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");  -- Polling for the RXack bit to be set and the TIP bit to be low, i.e., the I2C slave BFM has returned ACK on address
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
+    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-"); -- Polling for the RXack bit to be set and the TIP bit to be low, i.e., the I2C slave BFM has returned ACK on address
 
     for i in 0 to data'length - 1 loop
       wishbone_write(WISHBONE_VVCT, 0, x"3", data(i), "Writing data " & to_string(data(i)) & " to transmit register.");
       if i < data'length - 1 then
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"10", "Setting WR bit in command reg");
-      else  -- final byte, generate stop condition afterwards
+      else                              -- final byte, generate stop condition afterwards
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"50", "Setting STO and WR bit in command reg");
       end if;
-      await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Wait for data and RW bit to be set in I2C master DUTs
-      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");  -- Polling for the RXack bit to be set and the TIP bit to be low
+      await_completion(WISHBONE_VVCT, 0, 50 ms); -- Wait for data and RW bit to be set in I2C master DUTs
+      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-"); -- Polling for the RXack bit to be set and the TIP bit to be low
     end loop;
     await_completion(WISHBONE_VVCT, 0, 50 ms);
     await_completion(I2C_VVCT, 2, 50 ms);
   end procedure transmit_multi_byte_from_i2c_master_dut_to_vvc;
 
   procedure transmit_multi_byte_from_i2c_master_dut_to_vvc_10_bit_addressing(
-    signal WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data        : in    t_byte_array
-    ) is
+    signal   WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data          : in t_byte_array
+  ) is
   begin
     -- generate start condition
     -- first transmit "11110<abit9><abit8>0" -- write
@@ -273,40 +271,38 @@ architecture behav of i2c_vvc_tb is
     -- expect ack
     -- write data, expect ack each data
 
-    wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector'("11110") &
-                   std_logic_vector(C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address(9 downto 8)) &
-                   '0',
+    wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector'("11110") & std_logic_vector(C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address(9 downto 8)) & '0',
                    "Setting 10-bit address pattern, two MSB of address and write bit");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
     i2c_slave_check(I2C_VVCT, 6, data, "Check data");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
     -- Polling for the RXack bit to be set and the TIP bit to be low, i.e.,
     -- the I2C slave VVC has returned ACK after receiving address from master DUT
     poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");
     wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector(C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address(7 downto 0)), "Transmitting Least-significant byte of address");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"10", "Setting WR bit in command reg");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
     poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");
 
     for i in 0 to data'length - 1 loop
       wishbone_write(WISHBONE_VVCT, 0, x"3", data(i), "Writing data " & to_string(data(i)) & " to transmit register.");
       if i < data'length - 1 then
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"10", "Setting WR bit in command reg");
-      else  -- final byte, generate stop condition afterwards
+      else                              -- final byte, generate stop condition afterwards
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"50", "Setting STO and WR bit in command reg");
       end if;
-      await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Wait for data and RW bit to be set in I2C master DUTs
-      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");  -- Polling for the RXack bit to be set and the TIP bit to be low
+      await_completion(WISHBONE_VVCT, 0, 50 ms); -- Wait for data and RW bit to be set in I2C master DUTs
+      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-"); -- Polling for the RXack bit to be set and the TIP bit to be low
     end loop;
     await_completion(WISHBONE_VVCT, 0, 50 ms);
     await_completion(I2C_VVCT, 6, 50 ms);
   end procedure transmit_multi_byte_from_i2c_master_dut_to_vvc_10_bit_addressing;
 
   procedure transmit_single_byte_from_vvc_to_i2c_master_dut(
-    signal WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data        : in    std_logic_vector(C_WISHBONE_DATA_WIDTH - 1 downto 0)
-    ) is
+    signal   WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data          : in std_logic_vector(C_WISHBONE_DATA_WIDTH - 1 downto 0)
+  ) is
   begin
     -- Example:
     -- Write 1 byte of data to a slave.
@@ -324,7 +320,7 @@ architecture behav of i2c_vvc_tb is
     wishbone_write(WISHBONE_VVCT, 0, x"3", x"AB", "Setting address to be x55 and setting RW bit to Read ('1')");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
     i2c_slave_transmit(I2C_VVCT, 2, data, "Transmit data from I2C slave VVC");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
 
     -- Polling for the RXack bit to be set and the TIP bit to be low, i.e.,
     -- the I2C slave VVC has returned ACK after receiving address from master DUT
@@ -332,7 +328,7 @@ architecture behav of i2c_vvc_tb is
 
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"68", "Setting STO, RD and NACK bit in command reg");
     await_completion(WISHBONE_VVCT, 0, 50 ms);
-    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "------0-");  -- Polling for the TIP bit to be low
+    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "------0-"); -- Polling for the TIP bit to be low
 
     -- Check data
     wishbone_check(WISHBONE_VVCT, 0, x"3", data, "Checking data received from I2C VVC Slave");
@@ -343,10 +339,10 @@ architecture behav of i2c_vvc_tb is
   end procedure transmit_single_byte_from_vvc_to_i2c_master_dut;
 
   procedure transmit_multi_byte_from_vvc_to_i2c_master_dut(
-    signal WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data        : in    t_byte_array
-    ) is
+    signal   WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data          : in t_byte_array
+  ) is
   begin
 
     -- Example:
@@ -365,7 +361,7 @@ architecture behav of i2c_vvc_tb is
     wishbone_write(WISHBONE_VVCT, 0, x"3", x"AB", "Setting address to be x55 and setting RW bit to Read ('1')");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
     i2c_slave_transmit(I2C_VVCT, 2, data, "Transmit data from I2C slave VVC");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
 
     -- Polling for the RXack bit to be set and the TIP bit to be low, i.e.,
     -- the I2C slave VVC has returned ACK after receiving address from master DUT
@@ -374,13 +370,13 @@ architecture behav of i2c_vvc_tb is
     for i in 0 to data'length - 1 loop
       if i < data'length - 1 then
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"20", "Setting RD and ACK bit in command reg");
-      else  -- final byte, generate stop condition afterwards
+      else                              -- final byte, generate stop condition afterwards
         -- Nack to let slave know this was the last byte that the master will accept
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"68", "Setting STO, RD and NACK bit in command reg");
       end if;
 
       await_completion(WISHBONE_VVCT, 0, 50 ms);
-      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "------0-");  -- Polling for the TIP bit to be low
+      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "------0-"); -- Polling for the TIP bit to be low
 
       -- Check data
       wishbone_check(WISHBONE_VVCT, 0, x"3", data(i), "Checking data received from I2C VVC Slave");
@@ -391,10 +387,10 @@ architecture behav of i2c_vvc_tb is
   end procedure transmit_multi_byte_from_vvc_to_i2c_master_dut;
 
   procedure transmit_multi_byte_from_vvc_to_i2c_master_dut_10_bit_addressing(
-    signal WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data        : in    t_byte_array
-    ) is
+    signal   WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data          : in t_byte_array
+  ) is
   begin
     -- generate start condition
     -- first transmit "11110<abit9><abit8>0" -- write
@@ -407,29 +403,24 @@ architecture behav of i2c_vvc_tb is
     -- expect data, ack each data except final expected
 
     -- C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address
-    wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector'("11110") &
-                   std_logic_vector(C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address(9 downto 8)) &
-                   '0',
+    wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector'("11110") & std_logic_vector(C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address(9 downto 8)) & '0',
                    "Setting 10-bit address pattern, two MSB of address and write bit");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
     i2c_slave_transmit(I2C_VVCT, 6, data, "Transmit data from I2C slave VVC");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
     -- Polling for the RXack bit to be set and the TIP bit to be low, i.e.,
     -- the I2C slave VVC has returned ACK after receiving address from master DUT
     poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");
     wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector(C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address(7 downto 0)), "Transmitting Least-significant byte of address");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"10", "Setting WR bit in command reg");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
     poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");
 
     -- generate repeated start condition
     -- transmit first byte again, only this time with read instead of write bit
-    wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector'("11110") &
-                   std_logic_vector(C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address(9 downto 8)) &
-                   '1'
-, "Setting 10-bit address pattern, two MSB of address and write bit");
+    wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector'("11110") & std_logic_vector(C_I2C_BFM_CONFIG_10_BIT_ADDRESSING.slave_mode_address(9 downto 8)) & '1', "Setting 10-bit address pattern, two MSB of address and write bit");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
 
     -- Polling for the RXack bit to be set and the TIP bit to be low, i.e.,
     -- the I2C slave VVC has returned ACK after receiving address from master DUT
@@ -438,13 +429,13 @@ architecture behav of i2c_vvc_tb is
     for i in 0 to data'length - 1 loop
       if i < data'length - 1 then
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"20", "Setting RD and ACK bit in command reg");
-      else  -- final byte, generate stop condition afterwards
+      else                              -- final byte, generate stop condition afterwards
         -- Nack to let slave know this was the last byte that the master will accept
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"68", "Setting STO, RD and NACK bit in command reg");
       end if;
 
       await_completion(WISHBONE_VVCT, 0, 50 ms);
-      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "------0-");  -- Polling for the TIP bit to be low
+      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "------0-"); -- Polling for the TIP bit to be low
 
       -- Check data
       wishbone_check(WISHBONE_VVCT, 0, x"3", data(i), "Checking data received from I2C VVC Slave");
@@ -455,21 +446,21 @@ architecture behav of i2c_vvc_tb is
   end procedure transmit_multi_byte_from_vvc_to_i2c_master_dut_10_bit_addressing;
 
   procedure master_dut_to_vvc_read_virtual_memory_location(
-    signal WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data        : in    t_byte_array
-    ) is
+    signal   WISHBONE_VVCT : inout bitvis_vip_wishbone.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT      : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data          : in t_byte_array
+  ) is
   begin
     i2c_slave_check(I2C_VVCT, 2, std_logic_vector'(x"55"), "Check virtual memory address");
     -- We set the address here to be 0b1010101 so we need to set 0xAA in the transmit register (reg address 0x3) since LSB must be '0' for a write to slave.
     wishbone_write(WISHBONE_VVCT, 0, x"3", x"AA", "Setting address to be x55 and setting RW bit to 0");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RW bit to be set in I2C master DUT
-    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");  -- Polling for the RXack bit to be set and the TIP bit to be low, i.e., the I2C slave BFM has returned ACK on address
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RW bit to be set in I2C master DUT
+    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-"); -- Polling for the RXack bit to be set and the TIP bit to be low, i.e., the I2C slave BFM has returned ACK on address
     wishbone_write(WISHBONE_VVCT, 0, x"3", std_logic_vector'(x"55"), "Writing virtual memory address " & to_string(std_logic_vector'(x"55")) & " to transmit register.");
-    wishbone_write(WISHBONE_VVCT, 0, x"4", x"10", "Setting Wr bit in command reg");  -- write virtual address on I2C.
+    wishbone_write(WISHBONE_VVCT, 0, x"4", x"10", "Setting Wr bit in command reg"); -- write virtual address on I2C.
     await_completion(WISHBONE_VVCT, 0, 50 ms);
-    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-");  -- Polling for the RXack bit to be set and the TIP bit to be low
+    poll_i2c_master_dut_status_register(WISHBONE_VVCT, "0-----0-"); -- Polling for the RXack bit to be set and the TIP bit to be low
     await_completion(WISHBONE_VVCT, 0, 50 ms);
 
     -- Now the virtual memory address has been received.
@@ -477,7 +468,7 @@ architecture behav of i2c_vvc_tb is
     i2c_slave_transmit(I2C_VVCT, 2, data, "Transmit data from I2C slave VVC");
     wishbone_write(WISHBONE_VVCT, 0, x"3", x"AB", "Setting address to be x55 and setting RW bit to Read ('1')");
     wishbone_write(WISHBONE_VVCT, 0, x"4", x"90", "Setting STA and WR bit in command reg");
-    await_completion(WISHBONE_VVCT, 0, 50 ms);  -- Waiting for address and RD bit to be set in I2C master DUT
+    await_completion(WISHBONE_VVCT, 0, 50 ms); -- Waiting for address and RD bit to be set in I2C master DUT
 
     -- Polling for the RXack bit to be set and the TIP bit to be low, i.e.,
     -- the I2C slave VVC has returned ACK after receiving address from master DUT
@@ -486,13 +477,13 @@ architecture behav of i2c_vvc_tb is
     for i in 0 to data'length - 1 loop
       if i < data'length - 1 then
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"20", "Setting RD and ACK bit in command reg");
-      else  -- final byte, generate stop condition afterwards
+      else                              -- final byte, generate stop condition afterwards
         -- Nack to let slave know this was the last byte that the master will accept
         wishbone_write(WISHBONE_VVCT, 0, x"4", x"68", "Setting STO, RD and NACK bit in command reg");
       end if;
 
       await_completion(WISHBONE_VVCT, 0, 50 ms);
-      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "------0-");  -- Polling for the TIP bit to be low
+      poll_i2c_master_dut_status_register(WISHBONE_VVCT, "------0-"); -- Polling for the TIP bit to be low
 
       -- Check data
       wishbone_check(WISHBONE_VVCT, 0, x"3", data(i), "Checking data received from I2C VVC Slave");
@@ -502,12 +493,11 @@ architecture behav of i2c_vvc_tb is
     await_completion(I2C_VVCT, 2, 50 ms);
   end procedure master_dut_to_vvc_read_virtual_memory_location;
 
-
   procedure transmit_single_byte_from_vvc_to_i2c_slave_dut(
-    signal SBI_VVCT : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data   : in    std_logic_vector(7 downto 0)
-    ) is
+    signal   SBI_VVCT : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data     : in std_logic_vector(7 downto 0)
+  ) is
   begin
     i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, data, "Transmit data to I2C slave");
     await_completion(I2C_VVCT, 3, 50 ms);
@@ -516,10 +506,10 @@ architecture behav of i2c_vvc_tb is
   end procedure transmit_single_byte_from_vvc_to_i2c_slave_dut;
 
   procedure transmit_multi_byte_from_vvc_to_i2c_slave_dut(
-    signal SBI_VVCT     : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT     : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant byte_array : in    t_byte_array
-    ) is
+    signal   SBI_VVCT   : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT   : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant byte_array : in t_byte_array
+  ) is
   begin
     i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, byte_array, "Transmit data to I2C slave");
     for i in byte_array'range loop
@@ -530,10 +520,10 @@ architecture behav of i2c_vvc_tb is
   end procedure transmit_multi_byte_from_vvc_to_i2c_slave_dut;
 
   procedure transmit_single_byte_from_i2c_slave_dut_to_vvc(
-    signal SBI_VVCT : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant data   : in    std_logic_vector(7 downto 0)
-    ) is
+    signal   SBI_VVCT : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant data     : in std_logic_vector(7 downto 0)
+  ) is
   begin
     sbi_write(SBI_VVCT, 0, C_I2C_SLAVE_DUT_ADDR_1, data, "Writing data that shall be transmitted via I2C.");
     await_completion(SBI_VVCT, 0, 50 us);
@@ -542,10 +532,10 @@ architecture behav of i2c_vvc_tb is
   end procedure transmit_single_byte_from_i2c_slave_dut_to_vvc;
 
   procedure transmit_multi_byte_from_i2c_slave_dut_to_vvc(
-    signal SBI_VVCT     : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT     : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant byte_array : in    t_byte_array
-    ) is
+    signal   SBI_VVCT   : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT   : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant byte_array : in t_byte_array
+  ) is
   begin
     for i in byte_array'range loop
       sbi_write(SBI_VVCT, 0, C_I2C_SLAVE_DUT_ADDR_1, byte_array(i), "Writing data that shall be transmitted via I2C.");
@@ -556,11 +546,10 @@ architecture behav of i2c_vvc_tb is
     await_completion(SBI_VVCT, 0, 50 us);
   end procedure transmit_multi_byte_from_i2c_slave_dut_to_vvc;
 
-
   procedure transmit_random_data_from_vvc_master_to_multiple_slave_duts(
     signal SBI_VVCT : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
     signal I2C_VVCT : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record
-    ) is
+  ) is
     variable v_data_1 : std_logic_vector(7 downto 0);
     variable v_data_2 : std_logic_vector(7 downto 0);
     variable v_data_3 : std_logic_vector(7 downto 0);
@@ -587,7 +576,7 @@ architecture behav of i2c_vvc_tb is
   procedure transmit_random_data_from_multiple_slave_duts_to_vvc_master(
     signal SBI_VVCT : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
     signal I2C_VVCT : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record
-    ) is
+  ) is
     variable v_data_1 : std_logic_vector(7 downto 0);
     variable v_data_2 : std_logic_vector(7 downto 0);
     variable v_data_3 : std_logic_vector(7 downto 0);
@@ -614,7 +603,7 @@ architecture behav of i2c_vvc_tb is
   procedure transmit_random_data_from_vvc_master_to_multiple_slave_duts_without_stop_in_between(
     signal SBI_VVCT : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
     signal I2C_VVCT : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record
-    ) is
+  ) is
     variable v_data_1 : std_logic_vector(7 downto 0);
     variable v_data_2 : std_logic_vector(7 downto 0);
     variable v_data_3 : std_logic_vector(7 downto 0);
@@ -625,13 +614,13 @@ architecture behav of i2c_vvc_tb is
       v_data_2 := random(8);
       v_data_3 := random(8);
       v_data_4 := random(8);
-      i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, v_data_1, "Transmit data to I2C slave", HOLD_LINE_AFTER_TRANSFER);  -- No stop cond
-      i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_2, v_data_2, "Transmit data to I2C slave", HOLD_LINE_AFTER_TRANSFER);  -- No stop cond
-      i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_3, v_data_3, "Transmit data to I2C slave", HOLD_LINE_AFTER_TRANSFER);  -- No stop cond
+      i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, v_data_1, "Transmit data to I2C slave", HOLD_LINE_AFTER_TRANSFER); -- No stop cond
+      i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_2, v_data_2, "Transmit data to I2C slave", HOLD_LINE_AFTER_TRANSFER); -- No stop cond
+      i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_3, v_data_3, "Transmit data to I2C slave", HOLD_LINE_AFTER_TRANSFER); -- No stop cond
       if i < 10 then
-        i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_4, v_data_4, "Transmit data to I2C slave", HOLD_LINE_AFTER_TRANSFER);  -- No stop cond
+        i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_4, v_data_4, "Transmit data to I2C slave", HOLD_LINE_AFTER_TRANSFER); -- No stop cond
       else
-        i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_4, v_data_4, "Transmit data to I2C slave", RELEASE_LINE_AFTER_TRANSFER);  -- Stop cond
+        i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_4, v_data_4, "Transmit data to I2C slave", RELEASE_LINE_AFTER_TRANSFER); -- Stop cond
       end if;
       await_completion(I2C_VVCT, 3, 50 ms);
       sbi_check(SBI_VVCT, 0, C_I2C_SLAVE_DUT_ADDR_1, v_data_1, "Checking data that was just written via I2C");
@@ -643,10 +632,10 @@ architecture behav of i2c_vvc_tb is
   end procedure transmit_random_data_from_vvc_master_to_multiple_slave_duts_without_stop_in_between;
 
   procedure vvc_to_slave_dut_read_virtual_memory_location(
-    signal SBI_VVCT     : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
-    signal I2C_VVCT     : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
-    constant byte_array : in    t_byte_array
-    ) is
+    signal   SBI_VVCT   : inout bitvis_vip_sbi.td_target_support_pkg.t_vvc_target_record;
+    signal   I2C_VVCT   : inout bitvis_vip_i2c.td_target_support_pkg.t_vvc_target_record;
+    constant byte_array : in t_byte_array
+  ) is
   begin
     -- Read virtual memory address x55 from slave 1
     i2c_master_transmit(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, std_logic_vector'(x"55"), "Transmit virtual memory address to I2C slave", HOLD_LINE_AFTER_TRANSFER);
@@ -665,7 +654,7 @@ architecture behav of i2c_vvc_tb is
     for i in 0 to byte_array'length - 1 loop
       sbi_write(SBI_VVCT, 0, C_I2C_SLAVE_DUT_ADDR_2, byte_array(i), "Write virtual memory data that shall be transmitted via I2C");
     end loop;
-    i2c_master_check(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_2, byte_array, "Check virtual memory data from I2C slave.", RELEASE_LINE_AFTER_TRANSFER);  -- Stop cond
+    i2c_master_check(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_2, byte_array, "Check virtual memory data from I2C slave.", RELEASE_LINE_AFTER_TRANSFER); -- Stop cond
     await_completion(I2C_VVCT, 3, 50 ms);
 
     -- Read virtual memory address x55 from slave 3
@@ -685,32 +674,33 @@ architecture behav of i2c_vvc_tb is
     for i in 0 to byte_array'length - 1 loop
       sbi_write(SBI_VVCT, 0, C_I2C_SLAVE_DUT_ADDR_4, byte_array(i), "Write virtual memory data that shall be transmitted via I2C");
     end loop;
-    i2c_master_check(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_4, byte_array, "Check virtual memory data from I2C slave.", RELEASE_LINE_AFTER_TRANSFER);  -- Stop cond
+    i2c_master_check(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_4, byte_array, "Check virtual memory data from I2C slave.", RELEASE_LINE_AFTER_TRANSFER); -- Stop cond
     await_completion(I2C_VVCT, 3, 50 ms);
 
     await_completion(SBI_VVCT, 0, 50 us);
     await_completion(I2C_VVCT, 3, 50 ms);
   end procedure vvc_to_slave_dut_read_virtual_memory_location;
 
-begin  -- architecture behav
+begin                                   -- architecture behav
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.test_harness generic map(GC_CLK_PERIOD                 => C_CLK_PERIOD,
-                                                        GC_WISHBONE_DATA_WIDTH        => C_WISHBONE_DATA_WIDTH,
-                                                        GC_WISHBONE_ADDR_WIDTH        => C_WISHBONE_ADDR_WIDTH,
-                                                        GC_SBI_DATA_WIDTH             => C_SBI_DATA_WIDTH,
-                                                        GC_SBI_ADDR_WIDTH             => C_SBI_ADDR_WIDTH,
-                                                        GC_I2C_SLAVE_DUT_ADDR_1       => C_I2C_SLAVE_DUT_ADDR_1,
-                                                        GC_I2C_SLAVE_DUT_ADDR_2       => C_I2C_SLAVE_DUT_ADDR_2,
-                                                        GC_I2C_SLAVE_DUT_ADDR_3       => C_I2C_SLAVE_DUT_ADDR_3,
-                                                        GC_I2C_SLAVE_DUT_ADDR_4       => C_I2C_SLAVE_DUT_ADDR_4,
-                                                        GC_I2C_BFM_CONFIG_7_BIT_ADDR  => C_I2C_BFM_CONFIG_DEFAULT,
-                                                        GC_I2C_BFM_CONFIG_10_BIT_ADDR => C_I2C_BFM_CONFIG_10_BIT_ADDRESSING,
-                                                        GC_WISHBONE_MASTER_BFM_CONFIG => C_WISHBONE_MASTER_BFM_CONFIG_DEFAULT,
-                                                        GC_SBI_BFM_CONFIG             => C_SBI_BFM_CONFIG)
-    port map (arst => arst);
+  i_test_harness : entity work.test_harness
+    generic map(GC_CLK_PERIOD                 => C_CLK_PERIOD,
+                GC_WISHBONE_DATA_WIDTH        => C_WISHBONE_DATA_WIDTH,
+                GC_WISHBONE_ADDR_WIDTH        => C_WISHBONE_ADDR_WIDTH,
+                GC_SBI_DATA_WIDTH             => C_SBI_DATA_WIDTH,
+                GC_SBI_ADDR_WIDTH             => C_SBI_ADDR_WIDTH,
+                GC_I2C_SLAVE_DUT_ADDR_1       => C_I2C_SLAVE_DUT_ADDR_1,
+                GC_I2C_SLAVE_DUT_ADDR_2       => C_I2C_SLAVE_DUT_ADDR_2,
+                GC_I2C_SLAVE_DUT_ADDR_3       => C_I2C_SLAVE_DUT_ADDR_3,
+                GC_I2C_SLAVE_DUT_ADDR_4       => C_I2C_SLAVE_DUT_ADDR_4,
+                GC_I2C_BFM_CONFIG_7_BIT_ADDR  => C_I2C_BFM_CONFIG_DEFAULT,
+                GC_I2C_BFM_CONFIG_10_BIT_ADDR => C_I2C_BFM_CONFIG_10_BIT_ADDRESSING,
+                GC_WISHBONE_MASTER_BFM_CONFIG => C_WISHBONE_MASTER_BFM_CONFIG_DEFAULT,
+                GC_SBI_BFM_CONFIG             => C_SBI_BFM_CONFIG)
+    port map(arst => arst);
 
   i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 
@@ -719,21 +709,20 @@ begin  -- architecture behav
   ------------------------------------------------
   p_main : process
     variable v_alert_num_mismatch : boolean := false;
-    variable v_tx_byte            : std_logic_vector(C_I2C_DATA_WIDTH-1 downto 0);
-    variable v_rx_byte            : std_logic_vector(C_I2C_DATA_WIDTH-1 downto 0);
+    variable v_tx_byte            : std_logic_vector(C_I2C_DATA_WIDTH - 1 downto 0);
+    variable v_rx_byte            : std_logic_vector(C_I2C_DATA_WIDTH - 1 downto 0);
 
     variable v_byte_array            : t_byte_array(0 to 4);
     variable v_byte_array_descending : t_byte_array(4 downto 0);
 
     variable v_cmd_idx           : natural;
     variable v_fetch_is_accepted : boolean;
-    variable v_result_from_fetch : bitvis_vip_i2c.vvc_cmd_pkg.t_vvc_result;  -- t_byte_array(0 to 63);
+    variable v_result_from_fetch : bitvis_vip_i2c.vvc_cmd_pkg.t_vvc_result; -- t_byte_array(0 to 63);
 
     variable v_master_byte_array : t_byte_array(0 to 1);
     variable v_slave_byte_array  : t_byte_array(0 to 1);
 
   begin
-
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
@@ -768,7 +757,6 @@ begin  -- architecture behav
 
     enable_log_msg(WISHBONE_VVCT, 0, ID_IMMEDIATE_CMD);
 
-
     -- Print the configuration to the log
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
@@ -779,15 +767,13 @@ begin  -- architecture behav
     shared_i2c_vvc_config(1).inter_bfm_delay.delay_type    := TIME_START2START;
     shared_i2c_vvc_config(1).inter_bfm_delay.delay_in_time := C_I2C_BFM_CONFIG_DEFAULT.i2c_bit_time * 21;
 
-
-    gen_pulse(arst, C_CLK_PERIOD + C_CLK_PERIOD/4, BLOCKING, "Trigger DUT reset");
+    gen_pulse(arst, C_CLK_PERIOD + C_CLK_PERIOD / 4, BLOCKING, "Trigger DUT reset");
     wait for 1 ms;
 
     config_i2c_master_dut(WISHBONE_VVCT);
     for i in v_byte_array'range loop
       v_byte_array(i) := random(C_I2C_DATA_WIDTH);
     end loop;
-
 
     if GC_TESTCASE = "master_to_slave_VVC-to-VVC_7_bit_addressing" then
       -- Test await_any_completion (just to check that VVC handles the call)
@@ -816,7 +802,6 @@ begin  -- architecture behav
       end loop;
       await_completion(I2C_VVCT, 0, 50 ms);
       await_completion(I2C_VVCT, 1, 50 ms);
-
 
     elsif GC_TESTCASE = "slave_to_master_VVC-to-VVC_7_bit_addressing" then
       for iteration in 0 to 100 loop
@@ -964,7 +949,7 @@ begin  -- architecture behav
       check_value(v_result_from_fetch(v_byte_array'range) = v_byte_array, error, "Verifying data", C_TB_SCOPE_DEFAULT);
 
       increment_expected_alerts(tb_warning, 1);
-      fetch_result(I2C_VVCT, 0, NA, 14, v_result_from_fetch, v_fetch_is_accepted);  -- will trigger tb_warning since cmd_idx has not been executed yet
+      fetch_result(I2C_VVCT, 0, NA, 14, v_result_from_fetch, v_fetch_is_accepted); -- will trigger tb_warning since cmd_idx has not been executed yet
       check_value(not v_fetch_is_accepted, error, "Verifying fetch is not accepted", C_TB_SCOPE_DEFAULT);
 
     elsif GC_TESTCASE = "multi-byte-send-and-receive-with-restart" then
@@ -982,7 +967,7 @@ begin  -- architecture behav
       -- Set the the master will first send two bytes which will be checked by the slave
       -- The slave will then respond by sending two bytes back to the master. These bytes will be checked by the master VVC.
       i2c_slave_check(I2C_VVCT, 1, v_master_byte_array, "Master to Slave check, two bytes");
-      i2c_master_transmit(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_master_byte_array, "Master to Slave transmit, two bytes", RELEASE_LINE_AFTER_TRANSFER);  --false);
+      i2c_master_transmit(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_master_byte_array, "Master to Slave transmit, two bytes", RELEASE_LINE_AFTER_TRANSFER); --false);
       i2c_slave_transmit(I2C_VVCT, 1, v_slave_byte_array, "Slave to Master transmit, two bytes");
       i2c_master_check(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_slave_byte_array, "Slave to Master check, two bytes", HOLD_LINE_AFTER_TRANSFER);
 
@@ -1013,22 +998,22 @@ begin  -- architecture behav
       shared_i2c_vvc_config(1).inter_bfm_delay.delay_type := NO_DELAY;
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave");
       await_completion(I2C_VVCT, 3, 50 ms);
-      wait for 10*C_CLK_PERIOD;         -- let slave rest for some clock cycles
+      wait for 10 * C_CLK_PERIOD;       -- let slave rest for some clock cycles
       i2c_master_quick_command(I2C_VVCT, 3, C_DUMMY_SLAVE_DUT_ADDR, "Pinging nonexistant I2C slave", '0', false);
       await_completion(I2C_VVCT, 3, 50 ms);
-      wait for 10*C_CLK_PERIOD;         -- let slave rest for some clock cycles
+      wait for 10 * C_CLK_PERIOD;       -- let slave rest for some clock cycles
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave");
       await_completion(I2C_VVCT, 3, 50 ms);
 
       log(ID_LOG_HDR, "Checking Quick Command with restart condition", C_TB_SCOPE_DEFAULT);
-      wait for 10*C_CLK_PERIOD;         -- let slave rest for some clock cycles
+      wait for 10 * C_CLK_PERIOD;       -- let slave rest for some clock cycles
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave", '0', true, HOLD_LINE_AFTER_TRANSFER);
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave", '0', true, HOLD_LINE_AFTER_TRANSFER);
-      i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave", '0', true, RELEASE_LINE_AFTER_TRANSFER);  --false);
+      i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave", '0', true, RELEASE_LINE_AFTER_TRANSFER); --false);
       await_completion(I2C_VVCT, 3, 50 ms);
 
       log(ID_LOG_HDR, "Checking Quick Command with read bit", C_TB_SCOPE_DEFAULT);
-      wait for 10*C_CLK_PERIOD;         -- let slave rest for some clock cycles
+      wait for 10 * C_CLK_PERIOD;       -- let slave rest for some clock cycles
       i2c_master_quick_command(I2C_VVCT, 3, C_I2C_SLAVE_DUT_ADDR_1, "Pinging existing I2C slave", '1');
       await_completion(I2C_VVCT, 3, 50 ms);
 
@@ -1041,7 +1026,7 @@ begin  -- architecture behav
       shared_i2c_vvc_config(1).inter_bfm_delay.delay_in_time := C_I2C_BFM_CONFIG_DEFAULT.i2c_bit_time * 11 * (v_byte_array'length + 1);
 
       i2c_slave_transmit(I2C_VVCT, 1, v_byte_array, "Slave to Master transmit");
-      for i in 0 to v_byte_array'length-1 loop
+      for i in 0 to v_byte_array'length - 1 loop
         I2C_VVC_SB.add_expected(0, pad_i2c_sb(v_byte_array(i)));
       end loop;
       i2c_master_receive(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_byte_array'length, TO_SB, "Slave to Master check using SB");
@@ -1049,7 +1034,7 @@ begin  -- architecture behav
 
       i2c_slave_receive(I2C_VVCT, 1, v_byte_array'length, TO_SB, "Master to Slave check using SB");
       i2c_master_transmit(I2C_VVCT, 0, C_I2C_BFM_CONFIG_DEFAULT.slave_mode_address, v_byte_array, "Master to Slave transmit");
-      for i in 0 to v_byte_array'length-1 loop
+      for i in 0 to v_byte_array'length - 1 loop
         I2C_VVC_SB.add_expected(1, pad_i2c_sb(v_byte_array(i)));
       end loop;
       await_completion(I2C_VVCT, 1, 50 ms);
@@ -1066,12 +1051,11 @@ begin  -- architecture behav
 
     -- **************** Combination of 10-bit address and 7-bit address on same bus ******
 
-
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
     wait for 1000 ns;                   -- to allow some time for completion
-    report_alert_counters(FINAL);  -- Report final counters and print conclusion for simulation (Success/Fail)
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation

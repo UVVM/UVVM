@@ -24,13 +24,12 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_rgmii;
 use bitvis_vip_rgmii.rgmii_bfm_pkg.all;
 
-
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
 entity test_harness is
   generic(
-    GC_CLK_PERIOD      : time
+    GC_CLK_PERIOD : time
   );
   port(
     signal clk         : in    std_logic;
@@ -48,11 +47,10 @@ begin
   -- Delay the RX path
   rgmii_tx_if.txc    <= clk;
   rgmii_rx_if.rxc    <= clk;
-  rgmii_rx_if.rxd    <= transport rgmii_tx_if.txd after GC_CLK_PERIOD*5;
-  rgmii_rx_if.rx_ctl <= transport rgmii_tx_if.tx_ctl after GC_CLK_PERIOD*5;
+  rgmii_rx_if.rxd    <= transport rgmii_tx_if.txd after GC_CLK_PERIOD * 5;
+  rgmii_rx_if.rx_ctl <= transport rgmii_tx_if.tx_ctl after GC_CLK_PERIOD * 5;
 
 end struct_bfm;
-
 
 architecture struct_vvc of test_harness is
 begin
@@ -61,7 +59,7 @@ begin
   i_rgmii_vvc : entity work.rgmii_vvc
     generic map(
       GC_INSTANCE_IDX => 0
-      )
+    )
     port map(
       rgmii_vvc_tx_if => rgmii_tx_if,
       rgmii_vvc_rx_if => rgmii_rx_if

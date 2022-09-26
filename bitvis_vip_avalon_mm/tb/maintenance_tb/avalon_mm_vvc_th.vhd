@@ -25,7 +25,6 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_avalon_mm;
 use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
-
 entity test_harness is
   generic(
     GC_CLK_PERIOD : time
@@ -35,37 +34,37 @@ end entity test_harness;
 -- Test case architecture
 architecture func of test_harness is
 
-  constant C_ADDR_WIDTH   : integer := 32;
-  constant C_DATA_WIDTH   : integer := 32;
+  constant C_ADDR_WIDTH : integer := 32;
+  constant C_DATA_WIDTH : integer := 32;
 
   signal clk : std_logic;
 
-  signal avalon_mm_if_1     : t_avalon_mm_if(address(C_ADDR_WIDTH-1 downto 0), byte_enable((C_DATA_WIDTH/8)-1 downto 0), 
-                                           writedata(C_DATA_WIDTH-1 downto 0), readdata(C_DATA_WIDTH-1 downto 0));
-                                           
-  signal avalon_mm_if_2     : t_avalon_mm_if(address(C_ADDR_WIDTH-1 downto 0), byte_enable((C_DATA_WIDTH/8)-1 downto 0), 
-                                           writedata(C_DATA_WIDTH-1 downto 0), readdata(C_DATA_WIDTH-1 downto 0));                                            
+  signal avalon_mm_if_1 : t_avalon_mm_if(address(C_ADDR_WIDTH - 1 downto 0), byte_enable((C_DATA_WIDTH / 8) - 1 downto 0),
+                                         writedata(C_DATA_WIDTH - 1 downto 0), readdata(C_DATA_WIDTH - 1 downto 0));
+
+  signal avalon_mm_if_2 : t_avalon_mm_if(address(C_ADDR_WIDTH - 1 downto 0), byte_enable((C_DATA_WIDTH / 8) - 1 downto 0),
+                                         writedata(C_DATA_WIDTH - 1 downto 0), readdata(C_DATA_WIDTH - 1 downto 0));
 
   -- FIFO signals
   signal empty_1 : std_logic;
   signal full_1  : std_logic;
-  signal usedw_1 : std_logic_vector (3 downto 0);
-  
+  signal usedw_1 : std_logic_vector(3 downto 0);
+
   signal empty_2 : std_logic;
   signal full_2  : std_logic;
-  signal usedw_2 : std_logic_vector (3 downto 0);
+  signal usedw_2 : std_logic_vector(3 downto 0);
 
   component avalon_fifo_single_clock_fifo
-    port (
+    port(
       signal aclr  : in  std_logic;
       signal clock : in  std_logic;
-      signal data  : in  std_logic_vector (C_DATA_WIDTH-1 downto 0);
+      signal data  : in  std_logic_vector(C_DATA_WIDTH - 1 downto 0);
       signal rdreq : in  std_logic;
       signal wrreq : in  std_logic;
       signal empty : out std_logic;
       signal full  : out std_logic;
-      signal q     : out std_logic_vector (C_ADDR_WIDTH-1 downto 0);
-      signal usedw : out std_logic_vector ((C_DATA_WIDTH/8)-1 downto 0));
+      signal q     : out std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+      signal usedw : out std_logic_vector((C_DATA_WIDTH / 8) - 1 downto 0));
   end component;
 begin
 
@@ -73,7 +72,7 @@ begin
   -- Instantiate DUT
   -----------------------------------------------------------------------------
   avalon_fifo_single_clock_fifo_1 : avalon_fifo_single_clock_fifo
-    port map (
+    port map(
       aclr  => avalon_mm_if_1.reset,
       clock => clk,
       data  => avalon_mm_if_1.writedata,
@@ -84,9 +83,9 @@ begin
       q     => avalon_mm_if_1.readdata,
       usedw => usedw_1
     );
-    
+
   avalon_fifo_single_clock_fifo_2 : avalon_fifo_single_clock_fifo
-    port map (
+    port map(
       aclr  => avalon_mm_if_2.reset,
       clock => clk,
       data  => avalon_mm_if_2.writedata,
@@ -97,18 +96,18 @@ begin
       q     => avalon_mm_if_2.readdata,
       usedw => usedw_2
     );
-  
+
   -- Set default to unused interface signals
-  avalon_mm_if_1.response <= (others => '0');
-  avalon_mm_if_1.irq <= '0';
+  avalon_mm_if_1.response      <= (others => '0');
+  avalon_mm_if_1.irq           <= '0';
   avalon_mm_if_1.readdatavalid <= '0';
-  
+
   -- Set default to unused interface signals
-  avalon_mm_if_2.response <= (others => '0');
-  avalon_mm_if_2.irq <= '0';
+  avalon_mm_if_2.response      <= (others => '0');
+  avalon_mm_if_2.irq           <= '0';
   avalon_mm_if_2.readdatavalid <= '0';
 
-  p_waitrequest_1 : process (avalon_mm_if_1, full_1, empty_1)
+  p_waitrequest_1 : process(avalon_mm_if_1, full_1, empty_1)
   begin
     if avalon_mm_if_1.write and full_1 then
       avalon_mm_if_1.waitrequest <= '1';
@@ -118,8 +117,8 @@ begin
       avalon_mm_if_1.waitrequest <= '0';
     end if;
   end process p_waitrequest_1;
-  
-  p_waitrequest_2 : process (avalon_mm_if_2, full_2, empty_2)
+
+  p_waitrequest_2 : process(avalon_mm_if_2, full_2, empty_2)
   begin
     if avalon_mm_if_2.write and full_2 then
       avalon_mm_if_2.waitrequest <= '1';
@@ -130,7 +129,6 @@ begin
     end if;
   end process p_waitrequest_2;
 
-  
   -----------------------------
   -- vvc/executors
   -----------------------------
@@ -141,11 +139,10 @@ begin
       GC_INSTANCE_IDX => 1
     )
     port map(
-      clk                         => clk,
-      avalon_mm_vvc_master_if     => avalon_mm_if_1
+      clk                     => clk,
+      avalon_mm_vvc_master_if => avalon_mm_if_1
     );
-    
-    
+
   i2_avalon_mm_vvc : entity work.avalon_mm_vvc
     generic map(
       GC_ADDR_WIDTH   => C_ADDR_WIDTH,
@@ -153,11 +150,10 @@ begin
       GC_INSTANCE_IDX => 2
     )
     port map(
-      clk                         => clk,
-      avalon_mm_vvc_master_if     => avalon_mm_if_2
+      clk                     => clk,
+      avalon_mm_vvc_master_if => avalon_mm_if_2
     );
-    
-    p_clk : clock_generator(clk, GC_CLK_PERIOD);
 
+  p_clk : clock_generator(clk, GC_CLK_PERIOD);
 
 end func;

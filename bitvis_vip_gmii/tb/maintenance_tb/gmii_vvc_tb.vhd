@@ -31,7 +31,7 @@ context bitvis_vip_gmii.vvc_context;
 -- Test case entity
 entity gmii_vvc_tb is
   generic(
-    GC_TESTCASE : string  := "UVVM"
+    GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
@@ -43,13 +43,13 @@ architecture func of gmii_vvc_tb is
   constant C_CLK_PERIOD : time   := 8 ns; -- 125 MHz
   constant C_SCOPE      : string := C_TB_SCOPE_DEFAULT;
 
-  constant C_VVC_IDX    : natural := 0;
+  constant C_VVC_IDX : natural := 0;
 
   --------------------------------------------------------------------------------
   -- Signal declarations
   --------------------------------------------------------------------------------
-  signal clk         : std_logic := '0';
-  signal clock_ena   : boolean   := false;
+  signal clk       : std_logic := '0';
+  signal clock_ena : boolean   := false;
 
   signal gmii_tx_if : t_gmii_tx_if;
   signal gmii_rx_if : t_gmii_rx_if;
@@ -70,27 +70,26 @@ begin
   -- Instantiate test harness
   --------------------------------------------------------------------------------
   i_gmii_test_harness : entity bitvis_vip_gmii.test_harness(struct_vvc)
-    generic map (
+    generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     )
-    port map (
-      clk          => clk,
-      gmii_tx_if   => gmii_tx_if,
-      gmii_rx_if   => gmii_rx_if
+    port map(
+      clk        => clk,
+      gmii_tx_if => gmii_tx_if,
+      gmii_rx_if => gmii_rx_if
     );
 
   --------------------------------------------------------------------------------
   -- PROCESS: p_main
   --------------------------------------------------------------------------------
   p_main : process
-    variable v_data_array     : t_byte_array(0 to 99);
-    variable v_rx_data_array  : t_byte_array(0 to 99);
-    variable v_data_len       : natural;
-    variable v_cmd_idx        : natural;
-    variable v_result         : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
+    variable v_data_array    : t_byte_array(0 to 99);
+    variable v_rx_data_array : t_byte_array(0 to 99);
+    variable v_data_len      : natural;
+    variable v_cmd_idx       : natural;
+    variable v_result        : bitvis_vip_gmii.vvc_cmd_pkg.t_vvc_result;
 
   begin
-
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
@@ -123,8 +122,8 @@ begin
     ------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of GMII");
     ------------------------------------------------------------------------------
-    clock_ena <= true; -- start clock generator
-    wait for 10*C_CLK_PERIOD;
+    clock_ena <= true;                  -- start clock generator
+    wait for 10 * C_CLK_PERIOD;
 
     log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
     gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(2 to 6), "");
@@ -152,8 +151,8 @@ begin
       end if;
     end loop;
     gmii_expect(GMII_VVCT, C_VVC_IDX, RX, v_data_array(0 to 30), "");
-    wait for C_CLK_PERIOD*31;
-    check_stable(gmii_tx_if.txen, C_CLK_PERIOD*30, error, "Checking that TXEN was held high during the complete transfer", c_scope);
+    wait for C_CLK_PERIOD * 31;
+    check_stable(gmii_tx_if.txen, C_CLK_PERIOD * 30, error, "Checking that TXEN was held high during the complete transfer", c_scope);
     await_completion(GMII_VVCT, C_VVC_IDX, RX, 10 us);
 
     log(ID_LOG_HDR, "Testing read and fetch");
@@ -162,14 +161,14 @@ begin
     v_cmd_idx := get_last_received_cmd_idx(GMII_VVCT, C_VVC_IDX, RX);
     await_completion(GMII_VVCT, C_VVC_IDX, RX, v_cmd_idx, 10 us);
     fetch_result(GMII_VVCT, C_VVC_IDX, RX, v_cmd_idx, v_result);
-    for i in 0 to v_result.data_array_length-1 loop
+    for i in 0 to v_result.data_array_length - 1 loop
       check_value(v_result.data_array(i), v_data_array(i), ERROR, "Checking fetch result: v_data_array");
     end loop;
 
     log(ID_LOG_HDR, "Testing error case: read() valid data timeout");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
     gmii_read(GMII_VVCT, C_VVC_IDX, RX, "");
-    wait for 12*C_CLK_PERIOD; -- 10 = default max_wait_cycles
+    wait for 12 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
 
     log(ID_LOG_HDR, "Testing error case: expect() wrong data");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
@@ -186,12 +185,12 @@ begin
     log(ID_LOG_HDR, "Testing setup and hold times");
     shared_gmii_vvc_config(TX, C_VVC_IDX).bfm_config.bfm_sync     := SYNC_WITH_SETUP_AND_HOLD;
     shared_gmii_vvc_config(TX, C_VVC_IDX).bfm_config.clock_period := C_CLK_PERIOD;
-    shared_gmii_vvc_config(TX, C_VVC_IDX).bfm_config.setup_time   := C_CLK_PERIOD/4;
-    shared_gmii_vvc_config(TX, C_VVC_IDX).bfm_config.hold_time    := C_CLK_PERIOD/4;
+    shared_gmii_vvc_config(TX, C_VVC_IDX).bfm_config.setup_time   := C_CLK_PERIOD / 4;
+    shared_gmii_vvc_config(TX, C_VVC_IDX).bfm_config.hold_time    := C_CLK_PERIOD / 4;
     shared_gmii_vvc_config(RX, C_VVC_IDX).bfm_config.bfm_sync     := SYNC_WITH_SETUP_AND_HOLD;
     shared_gmii_vvc_config(RX, C_VVC_IDX).bfm_config.clock_period := C_CLK_PERIOD;
-    shared_gmii_vvc_config(RX, C_VVC_IDX).bfm_config.setup_time   := C_CLK_PERIOD/4;
-    shared_gmii_vvc_config(RX, C_VVC_IDX).bfm_config.hold_time    := C_CLK_PERIOD/4;
+    shared_gmii_vvc_config(RX, C_VVC_IDX).bfm_config.setup_time   := C_CLK_PERIOD / 4;
+    shared_gmii_vvc_config(RX, C_VVC_IDX).bfm_config.hold_time    := C_CLK_PERIOD / 4;
     for i in 0 to 10 loop
       gmii_write(GMII_VVCT, C_VVC_IDX, TX, v_data_array(0 to i), "");
       gmii_expect(GMII_VVCT, C_VVC_IDX, RX, v_data_array(0 to i), "");
@@ -218,12 +217,12 @@ begin
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;             -- Allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion (Success/Fail)
+    wait for 1000 ns;                   -- Allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
     -- Finish the simulation
     std.env.stop;
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
 

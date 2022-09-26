@@ -29,14 +29,14 @@ use bitvis_vip_axi.axi_slave_model_pkg.all;
 --=================================================================================================
 entity axi_th is
   generic(
-    GC_ADDR_WIDTH_1   : natural := 32;
-    GC_DATA_WIDTH_1   : natural := 32;
-    GC_ID_WIDTH_1     : natural := 8;
-    GC_USER_WIDTH_1   : natural := 8;
-    GC_ADDR_WIDTH_2   : natural := 32;
-    GC_DATA_WIDTH_2   : natural := 32;
-    GC_ID_WIDTH_2     : natural := 8;
-    GC_USER_WIDTH_2   : natural := 8
+    GC_ADDR_WIDTH_1 : natural := 32;
+    GC_DATA_WIDTH_1 : natural := 32;
+    GC_ID_WIDTH_1   : natural := 8;
+    GC_USER_WIDTH_1 : natural := 8;
+    GC_ADDR_WIDTH_2 : natural := 32;
+    GC_DATA_WIDTH_2 : natural := 32;
+    GC_ID_WIDTH_2   : natural := 8;
+    GC_USER_WIDTH_2 : natural := 8
   );
 end entity axi_th;
 --=================================================================================================
@@ -45,79 +45,79 @@ end entity axi_th;
 architecture struct of axi_th is
 
   constant C_AXI_CONFIG_1 : t_axi_bfm_config := (
-    max_wait_cycles             => 1000,
-    max_wait_cycles_severity    => TB_FAILURE,
-    clock_period                => 10 ns,
-    clock_period_margin         => 0 ns,
-    clock_margin_severity       => TB_ERROR,
-    setup_time                  => -1 ns,
-    hold_time                   => -1 ns,
-    bfm_sync                    => SYNC_ON_CLOCK_ONLY,
-    match_strictness            => MATCH_EXACT,
-    num_aw_pipe_stages          => 0,
-    num_w_pipe_stages           => 0,
-    num_ar_pipe_stages          => 0,
-    num_r_pipe_stages           => 0,
-    num_b_pipe_stages           => 0,
-    id_for_bfm                  => ID_BFM,
-    id_for_bfm_wait             => ID_BFM_WAIT,
-    id_for_bfm_poll             => ID_BFM_POLL
+    max_wait_cycles          => 1000,
+    max_wait_cycles_severity => TB_FAILURE,
+    clock_period             => 10 ns,
+    clock_period_margin      => 0 ns,
+    clock_margin_severity    => TB_ERROR,
+    setup_time               => -1 ns,
+    hold_time                => -1 ns,
+    bfm_sync                 => SYNC_ON_CLOCK_ONLY,
+    match_strictness         => MATCH_EXACT,
+    num_aw_pipe_stages       => 0,
+    num_w_pipe_stages        => 0,
+    num_ar_pipe_stages       => 0,
+    num_r_pipe_stages        => 0,
+    num_b_pipe_stages        => 0,
+    id_for_bfm               => ID_BFM,
+    id_for_bfm_wait          => ID_BFM_WAIT,
+    id_for_bfm_poll          => ID_BFM_POLL
   );
 
   constant C_AXI_CONFIG_2 : t_axi_bfm_config := (
-    max_wait_cycles             => 1000,
-    max_wait_cycles_severity    => TB_FAILURE,
-    clock_period                => 10 ns,
-    clock_period_margin         => 0 ns,
-    clock_margin_severity       => TB_ERROR,
-    setup_time                  => -1 ns,
-    hold_time                   => -1 ns,
-    bfm_sync                    => SYNC_ON_CLOCK_ONLY,
-    match_strictness            => MATCH_EXACT,
-    num_aw_pipe_stages          => 1,
-    num_w_pipe_stages           => 1,
-    num_ar_pipe_stages          => 1,
-    num_r_pipe_stages           => 1,
-    num_b_pipe_stages           => 1,
-    id_for_bfm                  => ID_BFM,
-    id_for_bfm_wait             => ID_BFM_WAIT,
-    id_for_bfm_poll             => ID_BFM_POLL
+    max_wait_cycles          => 1000,
+    max_wait_cycles_severity => TB_FAILURE,
+    clock_period             => 10 ns,
+    clock_period_margin      => 0 ns,
+    clock_margin_severity    => TB_ERROR,
+    setup_time               => -1 ns,
+    hold_time                => -1 ns,
+    bfm_sync                 => SYNC_ON_CLOCK_ONLY,
+    match_strictness         => MATCH_EXACT,
+    num_aw_pipe_stages       => 1,
+    num_w_pipe_stages        => 1,
+    num_ar_pipe_stages       => 1,
+    num_r_pipe_stages        => 1,
+    num_b_pipe_stages        => 1,
+    id_for_bfm               => ID_BFM,
+    id_for_bfm_wait          => ID_BFM_WAIT,
+    id_for_bfm_poll          => ID_BFM_POLL
   );
 
   constant C_CLK_PERIOD : time := 10 ns;
 
-  signal clk      : std_logic;
-  signal aresetn  : std_logic;
+  signal clk     : std_logic;
+  signal aresetn : std_logic;
 
-  signal axi_if_1 : t_axi_if( write_address_channel( awid(   GC_ID_WIDTH_1 -1 downto 0),
-                                                     awaddr( GC_ADDR_WIDTH_1-1 downto 0),
-                                                     awuser( GC_USER_WIDTH_1 -1 downto 0)),
-                              write_data_channel(    wdata(  GC_DATA_WIDTH_1-1 downto 0),
-                                                     wstrb(  GC_DATA_WIDTH_1/8 -1 downto 0),
-                                                     wuser(  GC_USER_WIDTH_1 -1 downto 0)),
-                              write_response_channel(bid(    GC_ID_WIDTH_1 -1 downto 0),
-                                                     buser(  GC_USER_WIDTH_1 -1 downto 0)),
-                              read_address_channel(  arid(   GC_ID_WIDTH_1 -1 downto 0),
-                                                     araddr( GC_ADDR_WIDTH_1-1 downto 0),
-                                                     aruser( GC_USER_WIDTH_1-1 downto 0)),
-                              read_data_channel(     rid(    GC_ID_WIDTH_1-1 downto 0),
-                                                     rdata(  GC_DATA_WIDTH_1-1 downto 0),
-                                                     ruser(  GC_USER_WIDTH_1-1 downto 0)));
+  signal axi_if_1 : t_axi_if(write_address_channel(awid(GC_ID_WIDTH_1 - 1 downto 0),
+                                                   awaddr(GC_ADDR_WIDTH_1 - 1 downto 0),
+                                                   awuser(GC_USER_WIDTH_1 - 1 downto 0)),
+                             write_data_channel(wdata(GC_DATA_WIDTH_1 - 1 downto 0),
+                                                wstrb(GC_DATA_WIDTH_1 / 8 - 1 downto 0),
+                                                wuser(GC_USER_WIDTH_1 - 1 downto 0)),
+                             write_response_channel(bid(GC_ID_WIDTH_1 - 1 downto 0),
+                                                    buser(GC_USER_WIDTH_1 - 1 downto 0)),
+                             read_address_channel(arid(GC_ID_WIDTH_1 - 1 downto 0),
+                                                  araddr(GC_ADDR_WIDTH_1 - 1 downto 0),
+                                                  aruser(GC_USER_WIDTH_1 - 1 downto 0)),
+                             read_data_channel(rid(GC_ID_WIDTH_1 - 1 downto 0),
+                                               rdata(GC_DATA_WIDTH_1 - 1 downto 0),
+                                               ruser(GC_USER_WIDTH_1 - 1 downto 0)));
 
-  signal axi_if_2 : t_axi_if( write_address_channel( awid(   GC_ID_WIDTH_2 -1 downto 0),
-                                                     awaddr( GC_ADDR_WIDTH_2-1 downto 0),
-                                                     awuser( GC_USER_WIDTH_2 -1 downto 0)),
-                              write_data_channel(    wdata(  GC_DATA_WIDTH_2-1 downto 0),
-                                                     wstrb(  GC_DATA_WIDTH_2/8 -1 downto 0),
-                                                     wuser(  GC_USER_WIDTH_2 -1 downto 0)),
-                              write_response_channel(bid(    GC_ID_WIDTH_2 -1 downto 0),
-                                                     buser(  GC_USER_WIDTH_2 -1 downto 0)),
-                              read_address_channel(  arid(   GC_ID_WIDTH_2 -1 downto 0),
-                                                     araddr( GC_ADDR_WIDTH_2-1 downto 0),
-                                                     aruser( GC_USER_WIDTH_2-1 downto 0)),
-                              read_data_channel(     rid(    GC_ID_WIDTH_2-1 downto 0),
-                                                     rdata(  GC_DATA_WIDTH_2-1 downto 0),
-                                                     ruser(  GC_USER_WIDTH_2-1 downto 0)));
+  signal axi_if_2 : t_axi_if(write_address_channel(awid(GC_ID_WIDTH_2 - 1 downto 0),
+                                                   awaddr(GC_ADDR_WIDTH_2 - 1 downto 0),
+                                                   awuser(GC_USER_WIDTH_2 - 1 downto 0)),
+                             write_data_channel(wdata(GC_DATA_WIDTH_2 - 1 downto 0),
+                                                wstrb(GC_DATA_WIDTH_2 / 8 - 1 downto 0),
+                                                wuser(GC_USER_WIDTH_2 - 1 downto 0)),
+                             write_response_channel(bid(GC_ID_WIDTH_2 - 1 downto 0),
+                                                    buser(GC_USER_WIDTH_2 - 1 downto 0)),
+                             read_address_channel(arid(GC_ID_WIDTH_2 - 1 downto 0),
+                                                  araddr(GC_ADDR_WIDTH_2 - 1 downto 0),
+                                                  aruser(GC_USER_WIDTH_2 - 1 downto 0)),
+                             read_data_channel(rid(GC_ID_WIDTH_2 - 1 downto 0),
+                                               rdata(GC_DATA_WIDTH_2 - 1 downto 0),
+                                               ruser(GC_USER_WIDTH_2 - 1 downto 0)));
 
 begin
 
@@ -125,11 +125,11 @@ begin
   -- Instantiate DUTs
   -----------------------------
   i_axi_slave_1 : entity work.axi_slave_model
-    generic map (
-      C_MEMORY_SIZE    => 4096, -- size in bytes
-      C_MEMORY_START   => x"00000000"  -- address offset to start on
+    generic map(
+      C_MEMORY_SIZE  => 4096,           -- size in bytes
+      C_MEMORY_START => x"00000000"     -- address offset to start on
     )
-    port map (
+    port map(
       aclk                => clk,
       aresetn             => aresetn,
       -- Inputs
@@ -191,11 +191,11 @@ begin
     );
 
   i_axi_slave_2 : entity work.axi_slave_model
-    generic map (
-      C_MEMORY_SIZE    => 4096, -- size in bytes
-      C_MEMORY_START   => x"00000000"  -- address offset to start on
+    generic map(
+      C_MEMORY_SIZE  => 4096,           -- size in bytes
+      C_MEMORY_START => x"00000000"     -- address offset to start on
     )
-    port map (
+    port map(
       aclk                => clk,
       aresetn             => aresetn,
       -- Inputs
@@ -261,28 +261,28 @@ begin
   -----------------------------
   i_axi_vvc_1 : entity work.axi_vvc
     generic map(
-      GC_ADDR_WIDTH                            => GC_ADDR_WIDTH_1,
-      GC_DATA_WIDTH                            => GC_DATA_WIDTH_1,
-      GC_ID_WIDTH                              => GC_ID_WIDTH_1,
-      GC_USER_WIDTH                            => GC_USER_WIDTH_1,
-      GC_INSTANCE_IDX                          => 1,
-      GC_AXI_CONFIG                            => C_AXI_CONFIG_1
+      GC_ADDR_WIDTH   => GC_ADDR_WIDTH_1,
+      GC_DATA_WIDTH   => GC_DATA_WIDTH_1,
+      GC_ID_WIDTH     => GC_ID_WIDTH_1,
+      GC_USER_WIDTH   => GC_USER_WIDTH_1,
+      GC_INSTANCE_IDX => 1,
+      GC_AXI_CONFIG   => C_AXI_CONFIG_1
     )
-    port map (
+    port map(
       clk               => clk,
       axi_vvc_master_if => axi_if_1
     );
 
   i_axi_vvc_2 : entity work.axi_vvc
     generic map(
-      GC_ADDR_WIDTH                            => GC_ADDR_WIDTH_2,
-      GC_DATA_WIDTH                            => GC_DATA_WIDTH_2,
-      GC_ID_WIDTH                              => GC_ID_WIDTH_2,
-      GC_USER_WIDTH                            => GC_USER_WIDTH_2,
-      GC_INSTANCE_IDX                          => 2,
-      GC_AXI_CONFIG                            => C_AXI_CONFIG_2
+      GC_ADDR_WIDTH   => GC_ADDR_WIDTH_2,
+      GC_DATA_WIDTH   => GC_DATA_WIDTH_2,
+      GC_ID_WIDTH     => GC_ID_WIDTH_2,
+      GC_USER_WIDTH   => GC_USER_WIDTH_2,
+      GC_INSTANCE_IDX => 2,
+      GC_AXI_CONFIG   => C_AXI_CONFIG_2
     )
-    port map (
+    port map(
       clk               => clk,
       axi_vvc_master_if => axi_if_2
     );
@@ -294,7 +294,7 @@ begin
   p_aresetn : process
   begin
     aresetn <= '0';
-    wait for C_CLK_PERIOD*3;
+    wait for C_CLK_PERIOD * 3;
     aresetn <= '1';
     wait;
   end process p_aresetn;

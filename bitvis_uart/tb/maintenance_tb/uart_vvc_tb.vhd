@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -39,9 +38,9 @@ context bitvis_vip_clock_generator.vvc_context;
 --hdlregression:tb
 -- Test bench entity
 entity uart_vvc_tb is
-  generic (
+  generic(
     GC_TESTCASE : string := "UVVM"
-    );
+  );
 end entity;
 
 -- Test bench architecture
@@ -54,14 +53,13 @@ architecture func of uart_vvc_tb is
   constant C_BIT_PERIOD : time := 16 * C_CLK_PERIOD;
 
   -- Time for one UART transmission to complete
-  constant C_TIME_OF_ONE_UART_TX : time := 11*C_BIT_PERIOD;  -- =1760 ns;
+  constant C_TIME_OF_ONE_UART_TX : time := 11 * C_BIT_PERIOD; -- =1760 ns;
 
   -- Predefined SBI addresses
   constant C_ADDR_RX_DATA       : unsigned(3 downto 0) := x"0";
   constant C_ADDR_RX_DATA_VALID : unsigned(3 downto 0) := x"1";
   constant C_ADDR_TX_DATA       : unsigned(3 downto 0) := x"2";
   constant C_ADDR_TX_READY      : unsigned(3 downto 0) := x"3";
-
 
 begin
 
@@ -70,13 +68,11 @@ begin
   -----------------------------------------------------------------------------
   i_test_harness : entity work.uart_vvc_demo_th;
 
-
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
   p_main : process
   begin
-
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
@@ -117,7 +113,6 @@ begin
     log("Wait 10 clock period for reset to be turned off");
     wait for (10 * C_CLK_PERIOD);       -- for reset to be turned off
 
-
     if GC_TESTCASE = "check_register_defaults" then
       log(ID_LOG_HDR, "Check register defaults ", C_SCOPE);
       ------------------------------------------------------------
@@ -139,7 +134,6 @@ begin
       uart_expect(UART_VVCT, 1, RX, x"55", "Expecting data on UART RX");
       await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
       wait for 200 ns;                  -- margin
-
 
     elsif GC_TESTCASE = "check_simple_receive" then
       log(ID_LOG_HDR, "Check simple receive", C_SCOPE);
@@ -174,7 +168,6 @@ begin
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"87", "RX_DATA");
       await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
 
-
     elsif GC_TESTCASE = "check_multiple_simultaneous_receive_and_read" then
       log(ID_LOG_HDR, "Check multiple simultaneous receive and read", C_SCOPE);
       ------------------------------------------------------------
@@ -193,7 +186,6 @@ begin
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"A2", "RX_DATA");
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, x"A3", "RX_DATA");
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
-
 
     elsif GC_TESTCASE = "skew_sbi_read_over_uart_receive" then
       log(ID_LOG_HDR, "Skew SBI read over UART receive ", C_SCOPE);
@@ -214,7 +206,7 @@ begin
       -- is done, the test case is complete.
       log("Setting up the UART VVC to transmit 102 samples to the DUT");
       for i in 1 to 102 loop
-        uart_transmit(UART_VVCT, 1, TX, std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i+2)));
+        uart_transmit(UART_VVCT, 1, TX, std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i + 2)));
       end loop;
 
       log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
@@ -230,12 +222,11 @@ begin
       end loop;
 
       await_completion(UART_VVCT, 1, TX, 102 * C_TIME_OF_ONE_UART_TX + C_CLK_PERIOD);
-      wait for 50 ns;  -- to assure UART RX complete internally
+      wait for 50 ns;                   -- to assure UART RX complete internally
       -- Check the last two bytes in the DUT RX buffer.
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101));
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102));
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
-
 
     elsif GC_TESTCASE = "skew_sbi_read_over_uart_receive_with_delay_functionality" then
       log(ID_LOG_HDR, "Skew SBI read over UART receive with delay functionality", C_SCOPE);
@@ -243,7 +234,7 @@ begin
       -- This test case will test the same as the test case above, but using the built in delay functionality in the SBI VVC
       log("Setting up the UART VVC to transmit 102 samples to the DUT");
       for i in 1 to 102 loop
-        uart_transmit(UART_VVCT, 1, TX, std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i+2)));
+        uart_transmit(UART_VVCT, 1, TX, std_logic_vector(to_unsigned(16#80# + i, 8)), string'("Set up new data. Now byte # " & to_string(i + 2)));
       end loop;
 
       log("Setting up the SBI VVC to read and check the DUT RX register after each completed UART TX operation");
@@ -253,7 +244,7 @@ begin
 
       log("Setting the SBI VVC to separate each BFM access with 1760 ns");
       shared_sbi_vvc_config(1).inter_bfm_delay.delay_type    := TIME_START2START;
-      shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := C_TIME_OF_ONE_UART_TX+C_CLK_PERIOD;
+      shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := C_TIME_OF_ONE_UART_TX + C_CLK_PERIOD;
 
       for i in 1 to 100 loop
         sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + i, 8)), "Reading data number " & to_string(i));
@@ -262,7 +253,7 @@ begin
       await_completion(UART_VVCT, 1, TX, 102 * C_TIME_OF_ONE_UART_TX + C_CLK_PERIOD);
       await_completion(SBI_VVCT, 1, 2 * C_TIME_OF_ONE_UART_TX);
 
-      wait for 50 ns;  -- to assure UART RX complete internally
+      wait for 50 ns;                   -- to assure UART RX complete internally
       -- Check the last two bytes in the DUT RX buffer.
       log("Setting the SBI VVC back to no delay between BFM accesses");
       shared_sbi_vvc_config(1).inter_bfm_delay.delay_type    := NO_DELAY;
@@ -270,15 +261,14 @@ begin
 
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 101, 8)), "Reading data number " & to_string(101));
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, std_logic_vector(to_unsigned(16#80# + 102, 8)), "Reading data number " & to_string(102));
-      await_completion(SBI_VVCT, 1, 2*C_TIME_OF_ONE_UART_TX);
+      await_completion(SBI_VVCT, 1, 2 * C_TIME_OF_ONE_UART_TX);
     end if;
-
 
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
     wait for 1000 ns;                   -- to allow some time for completion
-    report_alert_counters(FINAL);  -- Report final counters and print conclusion for simulation (Success/Fail)
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation

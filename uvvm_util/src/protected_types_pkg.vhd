@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -26,35 +25,31 @@ use work.string_methods_pkg.all;
 
 package protected_types_pkg is
 
-
   type t_protected_alert_attention_counters is protected
     procedure increment(
       alert_level : t_alert_level;
-      attention   : t_attention := REGARD;  -- count, expect, ignore
-      number      : natural := 1
+      attention   : t_attention := REGARD; -- count, expect, ignore
+      number      : natural     := 1
     );
     impure function get(
       alert_level : t_alert_level;
       attention   : t_attention := REGARD
     ) return natural;
     procedure to_string(
-      order  : t_order
+      order : t_order
     );
   end protected t_protected_alert_attention_counters;
-
 
   type t_protected_semaphore is protected
     impure function get_semaphore return boolean;
     procedure release_semaphore;
   end protected t_protected_semaphore;
 
-
   type t_protected_acknowledge_cmd_idx is protected
     impure function set_index(index : integer) return boolean;
     impure function get_index return integer;
     procedure release_index;
   end protected t_protected_acknowledge_cmd_idx;
-
 
   type t_protected_check_counters is protected
     procedure increment(
@@ -72,7 +67,6 @@ package protected_types_pkg is
       order : t_order
     );
   end protected t_protected_check_counters;
-
 
   type t_protected_covergroup_status is protected
     impure function add_coverpoint(constant VOID : t_void) return integer;
@@ -117,14 +111,12 @@ package protected_types_pkg is
     impure function get_total_covpts_coverage(constant cov_representation : t_coverage_representation) return real;
   end protected t_protected_covergroup_status;
 
-
 end package protected_types_pkg;
 
 --=============================================================================
 --=============================================================================
 
 package body protected_types_pkg is
-
 
   --------------------------------------------------------------------------------
   type t_protected_alert_attention_counters is protected body
@@ -133,7 +125,7 @@ package body protected_types_pkg is
     procedure increment(
       alert_level : t_alert_level;
       attention   : t_attention := REGARD;
-      number      : natural := 1
+      number      : natural     := 1
     ) is
     begin
       priv_alert_attention_counters(alert_level)(attention) := priv_alert_attention_counters(alert_level)(attention) + number;
@@ -148,7 +140,7 @@ package body protected_types_pkg is
     end;
 
     procedure to_string(
-      order  : t_order
+      order : t_order
     ) is
     begin
       to_string(priv_alert_attention_counters, order);
@@ -208,27 +200,27 @@ package body protected_types_pkg is
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   type t_protected_check_counters is protected body
-     variable priv_check_counters : t_check_counters_array;
-     variable priv_counter_limit_alert_raised : boolean := False;
+    variable priv_check_counters             : t_check_counters_array;
+    variable priv_counter_limit_alert_raised : boolean := False;
 
-     -- Helper method for alerting when the maximum
-     -- value for check_counter is reached.
-     impure function priv_check_counter_limit_reached(
+    -- Helper method for alerting when the maximum
+    -- value for check_counter is reached.
+    impure function priv_check_counter_limit_reached(
       check_type : t_check_type;
       number     : natural := 1
-      ) return boolean is
-     begin
-       if priv_check_counters(check_type) = natural'high then
-         if priv_counter_limit_alert_raised = false then
-           report "check_counter limit reached" severity warning;
-           priv_counter_limit_alert_raised := true;
-         end if;
-         return True;
-       else
-         return False;
-       end if;
-     end function priv_check_counter_limit_reached;
-                                                    
+    ) return boolean is
+    begin
+      if priv_check_counters(check_type) = natural'high then
+        if priv_counter_limit_alert_raised = false then
+          report "check_counter limit reached" severity warning;
+          priv_counter_limit_alert_raised := true;
+        end if;
+        return True;
+      else
+        return False;
+      end if;
+    end function priv_check_counter_limit_reached;
+
     procedure increment(
       check_type : t_check_type;
       number     : natural := 1
@@ -261,7 +253,7 @@ package body protected_types_pkg is
     end function get;
 
     procedure to_string(
-      order  : t_order
+      order : t_order
     ) is
     begin
       to_string(priv_check_counters, order);
@@ -274,16 +266,16 @@ package body protected_types_pkg is
     type t_coverpoint_status is record
       initialized             : boolean;
       name                    : string(1 to C_FC_MAX_NAME_LENGTH);
-      num_valid_bins          : natural;  -- Number of valid bins (not ignore or illegal) in the coverpoint
-      num_covered_bins        : natural;  -- Number of covered bins (not ignore or illegal) in the coverpoint
-      total_bin_min_hits      : natural;  -- Number of total min_hits from all the bins in the coverpoint
-      total_bin_hits          : natural;  -- Number of total hits from all the bins in the coverpoint
-      total_coverage_bin_hits : natural;  -- Number of total hits from all the bins in the coverpoint (capped at min_hits)
-      total_goal_bin_hits     : natural;  -- Number of total hits from all the bins in the coverpoint (capped at min_hits x hits_goal)
-      coverage_weight         : natural;  -- Weight of the coverpoint used in overall coverage calculation
+      num_valid_bins          : natural; -- Number of valid bins (not ignore or illegal) in the coverpoint
+      num_covered_bins        : natural; -- Number of covered bins (not ignore or illegal) in the coverpoint
+      total_bin_min_hits      : natural; -- Number of total min_hits from all the bins in the coverpoint
+      total_bin_hits          : natural; -- Number of total hits from all the bins in the coverpoint
+      total_coverage_bin_hits : natural; -- Number of total hits from all the bins in the coverpoint (capped at min_hits)
+      total_goal_bin_hits     : natural; -- Number of total hits from all the bins in the coverpoint (capped at min_hits x hits_goal)
+      coverage_weight         : natural; -- Weight of the coverpoint used in overall coverage calculation
       bins_coverage_goal      : positive; -- Bins coverage goal of the coverpoint
       hits_coverage_goal      : positive; -- Hits coverage goal of the coverpoint
-      num_tc_accumulated      : natural;  -- Number of previous testcases which have accumulated coverage for the given coverpoint
+      num_tc_accumulated      : natural; -- Number of previous testcases which have accumulated coverage for the given coverpoint
     end record;
     constant C_COVERPOINT_STATUS_DEFAULT : t_coverpoint_status := (
       initialized             => false,
@@ -301,10 +293,10 @@ package body protected_types_pkg is
     );
     type t_coverpoint_status_array is array (natural range <>) of t_coverpoint_status;
 
-    variable priv_coverpoint_status_list : t_coverpoint_status_array(0 to C_FC_MAX_NUM_COVERPOINTS-1) := (others => C_COVERPOINT_STATUS_DEFAULT);
-    variable priv_coverpoint_name_idx    : natural  := 1;
-    variable priv_covpts_coverage_goal   : positive := 100;
-    variable priv_loaded_coverpoint      : boolean  := false;
+    variable priv_coverpoint_status_list : t_coverpoint_status_array(0 to C_FC_MAX_NUM_COVERPOINTS - 1) := (others => C_COVERPOINT_STATUS_DEFAULT);
+    variable priv_coverpoint_name_idx    : natural                                                      := 1;
+    variable priv_covpts_coverage_goal   : positive                                                     := 100;
+    variable priv_loaded_coverpoint      : boolean                                                      := false;
 
     impure function add_coverpoint(
       constant VOID : t_void)
@@ -312,20 +304,20 @@ package body protected_types_pkg is
       constant C_COVERPOINT_NUM      : string  := to_string(priv_coverpoint_name_idx);
       variable v_next_coverpoint_idx : natural := 0;
     begin
-      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
-        if not(priv_coverpoint_status_list(v_next_coverpoint_idx).initialized) then
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS - 1 loop
+        if not (priv_coverpoint_status_list(v_next_coverpoint_idx).initialized) then
           exit;
         end if;
         v_next_coverpoint_idx := v_next_coverpoint_idx + 1;
       end loop;
 
       if v_next_coverpoint_idx < C_FC_MAX_NUM_COVERPOINTS then
-        priv_coverpoint_status_list(v_next_coverpoint_idx).name := "Covpt_" & C_COVERPOINT_NUM & fill_string(NUL, C_FC_MAX_NAME_LENGTH-6-C_COVERPOINT_NUM'length);
+        priv_coverpoint_status_list(v_next_coverpoint_idx).name        := "Covpt_" & C_COVERPOINT_NUM & fill_string(NUL, C_FC_MAX_NAME_LENGTH - 6 - C_COVERPOINT_NUM'length);
         priv_coverpoint_status_list(v_next_coverpoint_idx).initialized := true;
-        priv_coverpoint_name_idx := priv_coverpoint_name_idx + 1;
+        priv_coverpoint_name_idx                                       := priv_coverpoint_name_idx + 1;
         return v_next_coverpoint_idx;
       else
-        return -1; -- Error: no more space in the list
+        return -1;                      -- Error: no more space in the list
       end if;
     end function;
 
@@ -348,7 +340,7 @@ package body protected_types_pkg is
       if name'length > C_FC_MAX_NAME_LENGTH then
         priv_coverpoint_status_list(coverpoint_idx).name := name(1 to C_FC_MAX_NAME_LENGTH);
       else
-        priv_coverpoint_status_list(coverpoint_idx).name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH-name'length);
+        priv_coverpoint_status_list(coverpoint_idx).name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH - name'length);
       end if;
     end procedure;
 
@@ -572,9 +564,9 @@ package body protected_types_pkg is
       variable v_num_valid_bins   : natural := priv_coverpoint_status_list(coverpoint_idx).num_valid_bins;
       variable v_coverage         : real;
     begin
-      v_coverage := real(v_num_covered_bins)*100.0/real(v_num_valid_bins) when v_num_valid_bins > 0 else 0.0;
+      v_coverage := real(v_num_covered_bins) * 100.0 / real(v_num_valid_bins) when v_num_valid_bins > 0 else 0.0;
       if cov_representation = GOAL_CAPPED or cov_representation = GOAL_UNCAPPED then
-        v_coverage := v_coverage*100.0/real(priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal);
+        v_coverage := v_coverage * 100.0 / real(priv_coverpoint_status_list(coverpoint_idx).bins_coverage_goal);
       end if;
       if cov_representation = GOAL_CAPPED and v_coverage > 100.0 then
         v_coverage := 100.0;
@@ -591,17 +583,16 @@ package body protected_types_pkg is
       variable v_tot_goal_bin_hits     : natural := priv_coverpoint_status_list(coverpoint_idx).total_goal_bin_hits;
       variable v_tot_bin_hits          : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_hits;
       variable v_tot_bin_min_hits      : natural := priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits;
-      variable v_tot_goal_bin_min_hits : real    := real(priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits*
-                                                    priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal)/100.0;
+      variable v_tot_goal_bin_min_hits : real    := real(priv_coverpoint_status_list(coverpoint_idx).total_bin_min_hits * priv_coverpoint_status_list(coverpoint_idx).hits_coverage_goal) / 100.0;
       variable v_coverage              : real;
     begin
       if cov_representation = GOAL_CAPPED then
-        v_coverage := real(v_tot_goal_bin_hits)*100.0/v_tot_goal_bin_min_hits when v_tot_goal_bin_min_hits > 0.0 else 0.0;
+        v_coverage := real(v_tot_goal_bin_hits) * 100.0 / v_tot_goal_bin_min_hits when v_tot_goal_bin_min_hits > 0.0 else 0.0;
         v_coverage := 100.0 when v_coverage > 100.0;
       elsif cov_representation = GOAL_UNCAPPED then
-        v_coverage := real(v_tot_bin_hits)*100.0/v_tot_goal_bin_min_hits when v_tot_goal_bin_min_hits > 0.0 else 0.0;
-      else -- NO_GOAL
-        v_coverage := real(v_tot_coverage_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
+        v_coverage := real(v_tot_bin_hits) * 100.0 / v_tot_goal_bin_min_hits when v_tot_goal_bin_min_hits > 0.0 else 0.0;
+      else                              -- NO_GOAL
+        v_coverage := real(v_tot_coverage_bin_hits) * 100.0 / real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
       end if;
       return v_coverage;
     end function;
@@ -614,13 +605,13 @@ package body protected_types_pkg is
       variable v_tot_valid_bins   : natural := 0;
       variable v_coverage         : real;
     begin
-      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS - 1 loop
         if priv_coverpoint_status_list(i).initialized then
           v_tot_covered_bins := v_tot_covered_bins + priv_coverpoint_status_list(i).num_covered_bins * priv_coverpoint_status_list(i).coverage_weight;
           v_tot_valid_bins   := v_tot_valid_bins + priv_coverpoint_status_list(i).num_valid_bins * priv_coverpoint_status_list(i).coverage_weight;
         end if;
       end loop;
-      v_coverage := real(v_tot_covered_bins)*100.0/real(v_tot_valid_bins) when v_tot_valid_bins > 0 else 0.0;
+      v_coverage := real(v_tot_covered_bins) * 100.0 / real(v_tot_valid_bins) when v_tot_valid_bins > 0 else 0.0;
       return v_coverage;
     end function;
 
@@ -632,13 +623,13 @@ package body protected_types_pkg is
       variable v_tot_bin_min_hits : natural := 0;
       variable v_coverage         : real;
     begin
-      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS - 1 loop
         if priv_coverpoint_status_list(i).initialized then
           v_tot_bin_hits     := v_tot_bin_hits + priv_coverpoint_status_list(i).total_coverage_bin_hits * priv_coverpoint_status_list(i).coverage_weight;
           v_tot_bin_min_hits := v_tot_bin_min_hits + priv_coverpoint_status_list(i).total_bin_min_hits * priv_coverpoint_status_list(i).coverage_weight;
         end if;
       end loop;
-      v_coverage := real(v_tot_bin_hits)*100.0/real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
+      v_coverage := real(v_tot_bin_hits) * 100.0 / real(v_tot_bin_min_hits) when v_tot_bin_min_hits > 0 else 0.0;
       return v_coverage;
     end function;
 
@@ -650,16 +641,15 @@ package body protected_types_pkg is
       variable v_tot_covpts         : natural := 0;
       variable v_coverage           : real;
     begin
-      for i in 0 to C_FC_MAX_NUM_COVERPOINTS-1 loop
+      for i in 0 to C_FC_MAX_NUM_COVERPOINTS - 1 loop
         if priv_coverpoint_status_list(i).initialized then
-          v_tot_covered_covpts := v_tot_covered_covpts + priv_coverpoint_status_list(i).coverage_weight when
-                                  priv_coverpoint_status_list(i).total_coverage_bin_hits >= priv_coverpoint_status_list(i).total_bin_min_hits;
+          v_tot_covered_covpts := v_tot_covered_covpts + priv_coverpoint_status_list(i).coverage_weight when priv_coverpoint_status_list(i).total_coverage_bin_hits >= priv_coverpoint_status_list(i).total_bin_min_hits;
           v_tot_covpts         := v_tot_covpts + priv_coverpoint_status_list(i).coverage_weight;
         end if;
       end loop;
-      v_coverage := real(v_tot_covered_covpts)*100.0/real(v_tot_covpts) when v_tot_covpts > 0 else 0.0;
+      v_coverage := real(v_tot_covered_covpts) * 100.0 / real(v_tot_covpts) when v_tot_covpts > 0 else 0.0;
       if cov_representation = GOAL_CAPPED or cov_representation = GOAL_UNCAPPED then
-        v_coverage := v_coverage*100.0/real(priv_covpts_coverage_goal);
+        v_coverage := v_coverage * 100.0 / real(priv_covpts_coverage_goal);
       end if;
       if cov_representation = GOAL_CAPPED and v_coverage > 100.0 then
         v_coverage := 100.0;

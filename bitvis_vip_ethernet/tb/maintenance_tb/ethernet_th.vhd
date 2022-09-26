@@ -33,7 +33,6 @@ use bitvis_vip_gmii.gmii_bfm_pkg.all;
 
 library bitvis_vip_ethernet;
 
-
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
@@ -51,24 +50,23 @@ end entity ethernet_th;
 architecture struct_sbi of ethernet_th is
 
   signal clk       : std_logic;
-  signal i1_sbi_if : t_sbi_if(addr(GC_SBI_ADDR_WIDTH-1 downto 0), wdata(GC_SBI_DATA_WIDTH-1 downto 0), rdata(GC_SBI_DATA_WIDTH-1 downto 0));
-  signal i2_sbi_if : t_sbi_if(addr(GC_SBI_ADDR_WIDTH-1 downto 0), wdata(GC_SBI_DATA_WIDTH-1 downto 0), rdata(GC_SBI_DATA_WIDTH-1 downto 0));
+  signal i1_sbi_if : t_sbi_if(addr(GC_SBI_ADDR_WIDTH - 1 downto 0), wdata(GC_SBI_DATA_WIDTH - 1 downto 0), rdata(GC_SBI_DATA_WIDTH - 1 downto 0));
+  signal i2_sbi_if : t_sbi_if(addr(GC_SBI_ADDR_WIDTH - 1 downto 0), wdata(GC_SBI_DATA_WIDTH - 1 downto 0), rdata(GC_SBI_DATA_WIDTH - 1 downto 0));
 
   -- Configuration for the Ethernet MAC field addresses
-  constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 5) :=
-    (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => false, field_description => "TX Preamble and SFD"),
-                  1 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX MAC destination "),
-                  2 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX MAC source      "),
-                  3 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX payload length  "),
-                  4 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX payload         "),
-                  5 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "TX FCS             ")),
-    RECEIVE =>   (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => false, field_description => "RX Preamble and SFD"),
-                  1 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX MAC destination "),
-                  2 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX MAC source      "),
-                  3 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX payload length  "),
-                  4 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX payload         "),
-                  5 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true,  field_description => "RX FCS             "))
-    );
+  constant C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY : t_dut_if_field_config_direction_array(TRANSMIT to RECEIVE)(0 to 5) := (TRANSMIT => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => false, field_description => "TX Preamble and SFD"),
+                                                                                                                                       1 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "TX MAC destination "),
+                                                                                                                                       2 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "TX MAC source      "),
+                                                                                                                                       3 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "TX payload length  "),
+                                                                                                                                       4 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "TX payload         "),
+                                                                                                                                       5 => (dut_address => to_unsigned(C_ADDR_FIFO_PUT, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "TX FCS             ")),
+                                                                                                                          RECEIVE  => (0 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => false, field_description => "RX Preamble and SFD"),
+                                                                                                                                       1 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "RX MAC destination "),
+                                                                                                                                       2 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "RX MAC source      "),
+                                                                                                                                       3 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "RX payload length  "),
+                                                                                                                                       4 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "RX payload         "),
+                                                                                                                                       5 => (dut_address => to_unsigned(C_ADDR_FIFO_GET, 8), dut_address_increment => 0, data_width => GC_SBI_DATA_WIDTH, use_field => true, field_description => "RX FCS             "))
+                                                                                                                         );
 
 begin
 
@@ -85,7 +83,7 @@ begin
       GC_INSTANCE_IDX         => 1,
       GC_PHY_INTERFACE        => SBI,
       GC_PHY_VVC_INSTANCE_IDX => 1,
-      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*2, -- add some margin in case of SBI ready low
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD * 2, -- add some margin in case of SBI ready low
       GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
     );
 
@@ -105,7 +103,7 @@ begin
       GC_INSTANCE_IDX         => 2,
       GC_PHY_INTERFACE        => SBI,
       GC_PHY_VVC_INSTANCE_IDX => 2,
-      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*2, -- add some margin in case of SBI ready low
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD * 2, -- add some margin in case of SBI ready low
       GC_DUT_IF_FIELD_CONFIG  => C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY
     );
 
@@ -125,10 +123,10 @@ begin
   -----------------------------
   i_sbi_fifo : entity work.sbi_fifo
     generic map(
-      GC_DATA_WIDTH_1  => GC_SBI_DATA_WIDTH,
-      GC_ADDR_WIDTH_1  => GC_SBI_ADDR_WIDTH,
-      GC_DATA_WIDTH_2  => GC_SBI_DATA_WIDTH,
-      GC_ADDR_WIDTH_2  => GC_SBI_ADDR_WIDTH
+      GC_DATA_WIDTH_1 => GC_SBI_DATA_WIDTH,
+      GC_ADDR_WIDTH_1 => GC_SBI_ADDR_WIDTH,
+      GC_DATA_WIDTH_2 => GC_SBI_DATA_WIDTH,
+      GC_ADDR_WIDTH_2 => GC_SBI_ADDR_WIDTH
     )
     port map(
       clk      => clk,
@@ -137,7 +135,6 @@ begin
     );
 
 end architecture struct_sbi;
-
 
 --=================================================================================================
 -- Test harness architecture for GMII interface
@@ -165,7 +162,7 @@ begin
       GC_INSTANCE_IDX         => 1,
       GC_PHY_INTERFACE        => GMII,
       GC_PHY_VVC_INSTANCE_IDX => 1,
-      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*2 -- add some margin
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD * 2 -- add some margin
     );
 
   i1_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc
@@ -182,7 +179,7 @@ begin
       GC_INSTANCE_IDX         => 2,
       GC_PHY_INTERFACE        => GMII,
       GC_PHY_VVC_INSTANCE_IDX => 2,
-      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD*2 -- add some margin
+      GC_PHY_MAX_ACCESS_TIME  => GC_CLK_PERIOD * 2 -- add some margin
     );
 
   i2_gmii_vvc : entity bitvis_vip_gmii.gmii_vvc

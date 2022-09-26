@@ -28,7 +28,7 @@ use bitvis_vip_rgmii.rgmii_bfm_pkg.all;
 -- Test case entity
 entity rgmii_bfm_tb is
   generic(
-    GC_TESTCASE : string  := "UVVM"
+    GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
@@ -42,13 +42,13 @@ architecture func of rgmii_bfm_tb is
   --------------------------------------------------------------------------------
   -- Signal declarations
   --------------------------------------------------------------------------------
-  signal clk         : std_logic := '0';
-  signal clock_ena   : boolean   := false;
+  signal clk       : std_logic := '0';
+  signal clock_ena : boolean   := false;
 
   signal rgmii_tx_if : t_rgmii_tx_if;
   signal rgmii_rx_if : t_rgmii_rx_if;
 
-  signal data_array  : t_byte_array(0 to 99);
+  signal data_array : t_byte_array(0 to 99);
 
 begin
 
@@ -61,33 +61,32 @@ begin
   -- Instantiate test harness
   --------------------------------------------------------------------------------
   i_rgmii_test_harness : entity bitvis_vip_rgmii.test_harness(struct_bfm)
-    generic map (
+    generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     )
-    port map (
-      clk           => clk,
-      rgmii_tx_if   => rgmii_tx_if,
-      rgmii_rx_if   => rgmii_rx_if
+    port map(
+      clk         => clk,
+      rgmii_tx_if => rgmii_tx_if,
+      rgmii_rx_if => rgmii_rx_if
     );
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- PROCESS: p_main
   --------------------------------------------------------------------------------------------------------------------------------
   p_main : process
-    constant c_scope            : string := "Main seq.";
+    constant c_scope            : string             := "Main seq.";
     variable v_rgmii_bfm_config : t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
 
     --------------------------------------------
     -- Overloads for this testbench
     --------------------------------------------
-    procedure rgmii_write (
+    procedure rgmii_write(
       data_array : in t_byte_array) is
     begin
       rgmii_write(data_array, "", rgmii_tx_if, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
     end procedure;
 
   begin
-
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
@@ -105,13 +104,13 @@ begin
     end loop;
 
     -- Override default config with settings for this testbench
-    v_rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
+    v_rgmii_bfm_config.clock_period := C_CLK_PERIOD;
 
     ------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of RGMII");
     ------------------------------------------------------------------------------
-    clock_ena <= true; -- start clock generator
-    wait for 10*C_CLK_PERIOD;
+    clock_ena <= true;                  -- start clock generator
+    wait for 10 * C_CLK_PERIOD;
 
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
@@ -137,13 +136,13 @@ begin
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing error case: read() rxc timeout");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    wait for 10*C_CLK_PERIOD; -- 10 = default max_wait_cycles
+    wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
     clock_ena <= true;
 
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing error case: read() rx_ctl timeout");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    wait for 10*C_CLK_PERIOD; -- 10 = default max_wait_cycles
+    wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
 
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing error case: expect() wrong data");
@@ -158,21 +157,20 @@ begin
     ------------------------------------------------------------------------------
     -- Ending the simulation
     ------------------------------------------------------------------------------
-    wait for 1000 ns;             -- Allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion (Success/Fail)
+    wait for 1000 ns;                   -- Allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", c_scope);
     -- Finish the simulation
     std.env.stop;
-    wait; -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
-
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- PROCESS: p_slave
   --------------------------------------------------------------------------------------------------------------------------------
   p_slave : process
-    constant c_scope            : string := "Slave seq.";
+    constant c_scope            : string             := "Slave seq.";
     variable v_rgmii_bfm_config : t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
     variable v_rx_data_array    : t_byte_array(0 to 99);
     variable v_data_len         : natural;
@@ -180,24 +178,23 @@ begin
     --------------------------------------------
     -- Overloads for this testbench
     --------------------------------------------
-    procedure rgmii_read (
+    procedure rgmii_read(
       data_array : out t_byte_array;
       data_len   : out natural) is
     begin
       rgmii_read(data_array, data_len, "", rgmii_rx_if, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
     end procedure;
 
-    procedure rgmii_expect (
+    procedure rgmii_expect(
       data_exp : in t_byte_array) is
     begin
       rgmii_expect(data_exp, "", rgmii_rx_if, error, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
     end procedure;
 
   begin
-
     -- Override default config with settings for this testbench
     v_rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
-    v_rgmii_bfm_config.rx_clock_skew := C_CLK_PERIOD/4;
+    v_rgmii_bfm_config.rx_clock_skew := C_CLK_PERIOD / 4;
 
     -- Testing that BFM procedures normalize data arrays
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
@@ -216,7 +213,7 @@ begin
 
     -- Testing error case: write() txc timeout
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    wait for 10*C_CLK_PERIOD; -- 10 = default max_wait_cycles
+    wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
 
     -- Testing error case: read() rxc timeout
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
@@ -234,7 +231,7 @@ begin
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
     rgmii_expect(data_array(0 to 15));
 
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_slave;
 

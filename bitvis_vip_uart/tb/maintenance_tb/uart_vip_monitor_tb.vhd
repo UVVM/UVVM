@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -37,21 +36,18 @@ use work.monitor_cmd_pkg.all;
 --hdlregression:tb
 -- Test case entity
 entity uart_monitor_tb is
-  generic (
+  generic(
     GC_TESTCASE : string := "UVVM"
-    );
+  );
 end entity;
 
 -- Test case architecture
 architecture func of uart_monitor_tb is
 
-
-
   constant C_CLK_PERIOD : time := 10 ns;
   constant C_BIT_PERIOD : time := 16 * C_CLK_PERIOD; -- default in design and BFM
 
-  constant C_SCOPE     : string  := C_TB_SCOPE_DEFAULT;
-
+  constant C_SCOPE : string := C_TB_SCOPE_DEFAULT;
 
   constant C_ADDR_RX_DATA       : unsigned(3 downto 0) := x"0";
   constant C_ADDR_RX_DATA_VALID : unsigned(3 downto 0) := x"1";
@@ -62,19 +58,19 @@ architecture func of uart_monitor_tb is
   shared variable rx_uart_monitor_sb : work.uart_transaction_sb_pkg.t_generic_sb;
 
   procedure check_transaction(
-    constant transaction       : in t_uart_transaction;
-    constant operation         : in t_uart_operation;
-    constant data              : in std_logic_vector;
-    constant parity_bit_error  : in boolean;
-    constant stop_bit_error    : in boolean;
-    constant scope             : in string
+    constant transaction      : in t_uart_transaction;
+    constant operation        : in t_uart_operation;
+    constant data             : in std_logic_vector;
+    constant parity_bit_error : in boolean;
+    constant stop_bit_error   : in boolean;
+    constant scope            : in string
   ) is
     variable check_ok : boolean_vector(0 to 3);
   begin
-    check_ok(0) := check_value(transaction.operation = operation,                         ERROR, "Check operation");
-    check_ok(1) := check_value(transaction.data,                        data,             ERROR, "Check data");
+    check_ok(0) := check_value(transaction.operation = operation, ERROR, "Check operation");
+    check_ok(1) := check_value(transaction.data, data, ERROR, "Check data");
     check_ok(2) := check_value(transaction.error_info.parity_bit_error, parity_bit_error, ERROR, "Check parity_bit_error");
-    check_ok(3) := check_value(transaction.error_info.stop_bit_error,   stop_bit_error,   ERROR, "Check stop_bit_error");
+    check_ok(3) := check_value(transaction.error_info.stop_bit_error, stop_bit_error, ERROR, "Check stop_bit_error");
 
     if and(check_ok) then
       log(ID_SEQUENCER_SUB, "Monitor transaction read: OK", scope);
@@ -83,9 +79,7 @@ architecture func of uart_monitor_tb is
     end if;
   end procedure check_transaction;
 
-
-
-  begin
+begin
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
@@ -97,7 +91,7 @@ architecture func of uart_monitor_tb is
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
-  p_main: process
+  p_main : process
     -- Helper variables
     variable v_received_data    : bitvis_vip_uart.vvc_cmd_pkg.t_vvc_result;
     variable v_cmd_idx          : natural;
@@ -111,10 +105,10 @@ architecture func of uart_monitor_tb is
     variable v_alert_num_mismatch : boolean := false;
 
     function get_uart_transaction_info(
-      constant operation         : in t_uart_operation;
-      constant data              : in std_logic_vector(7 downto 0);
-      constant parity_bit_error  : in boolean                       := false;
-      constant stop_bit_error    : in boolean                       := false
+      constant operation        : in t_uart_operation;
+      constant data             : in std_logic_vector(7 downto 0);
+      constant parity_bit_error : in boolean := false;
+      constant stop_bit_error   : in boolean := false
     ) return t_uart_transaction is
       variable v_uart_transaction : t_uart_transaction := C_UART_TRANSACTION_INFO_SET_DEFAULT;
     begin
@@ -126,7 +120,6 @@ architecture func of uart_monitor_tb is
     end function get_uart_transaction_info;
 
   begin
-
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
@@ -147,17 +140,17 @@ architecture func of uart_monitor_tb is
     enable_log_msg(ID_SEQUENCER);
     enable_log_msg(ID_SEQUENCER_SUB);
 
-    disable_log_msg(SBI_VVCT,1,  ALL_MESSAGES);
+    disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
     --enable_log_msg(SBI_VVCT,1,  ID_BFM);
 
-    disable_log_msg(UART_VVCT,1,RX,  ALL_MESSAGES);
+    disable_log_msg(UART_VVCT, 1, RX, ALL_MESSAGES);
     --enable_log_msg(UART_VVCT,1,RX,  ID_BFM);
     --enable_log_msg(UART_VVCT,1,RX,  ID_BFM_WAIT);
     --enable_log_msg(UART_VVCT,1,RX,  ID_BFM_POLL);
     --enable_log_msg(UART_VVCT,1,RX,  ID_BFM_POLL_SUMMARY);
 
-    disable_log_msg(UART_VVCT,1,TX,  ALL_MESSAGES);
-    enable_log_msg(UART_VVCT,1,TX,  ID_BFM);
+    disable_log_msg(UART_VVCT, 1, TX, ALL_MESSAGES);
+    enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
     --enable_log_msg(UART_VVCT,1,TX,  ID_BFM_WAIT);
     --enable_log_msg(UART_VVCT,1,TX,  ID_BFM_POLL);
     --enable_log_msg(UART_VVCT,1,TX,  ID_BFM_POLL_SUMMARY);
@@ -170,15 +163,14 @@ architecture func of uart_monitor_tb is
 
     log(ID_LOG_HDR, "Configure UART VVC 1", C_SCOPE);
     ------------------------------------------------------------
-    shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
-    shared_uart_vvc_config(RX,1).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(TX, 1).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(RX, 1).bfm_config.bit_time := C_BIT_PERIOD;
 
     log(ID_LOG_HDR, "Start Test of UART VIP", C_SCOPE);
     ------------------------------------------------------------
 
-
     log("Wait 10 clock period for reset to be turned off");
-    wait for (10 * C_CLK_PERIOD); -- for reset to be turned off
+    wait for (10 * C_CLK_PERIOD);       -- for reset to be turned off
 
     log(ID_LOG_HDR, "Check register defaults ", C_SCOPE);
     ------------------------------------------------------------
@@ -187,32 +179,30 @@ architecture func of uart_monitor_tb is
     sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA_VALID, x"00", "RX_DATA_VALID default", ERROR);
     await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
 
-
     log(ID_LOG_HDR, "Sending on TX", C_SCOPE);
     ------------------------------------------------------------
     for i in 0 to 15 loop
-      v_data_tx := std_logic_vector(to_unsigned(i, 4)) & std_logic_vector(to_unsigned(i, 4));
+      v_data_tx          := std_logic_vector(to_unsigned(i, 4)) & std_logic_vector(to_unsigned(i, 4));
       v_uart_transaction := get_uart_transaction_info(TRANSMIT, v_data_tx);
       tx_uart_monitor_sb.add_expected(v_uart_transaction);
       uart_transmit(UART_VVCT, 1, TX, v_data_tx, "Sending " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
-      wait for 200 ns;  -- margin
+      wait for 200 ns;                  -- margin
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, "check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
     end loop;
 
-
     log(ID_LOG_HDR, "Sending on RX", C_SCOPE);
     ------------------------------------------------------------
     for i in 15 downto 0 loop
-      v_data_rx := std_logic_vector(to_unsigned(i, 4)) & std_logic_vector(to_unsigned(i, 4));
+      v_data_rx          := std_logic_vector(to_unsigned(i, 4)) & std_logic_vector(to_unsigned(i, 4));
       v_uart_transaction := get_uart_transaction_info(RECEIVE, v_data_rx);
       rx_uart_monitor_sb.add_expected(v_uart_transaction);
       sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data_rx, "Sending " & to_string(v_data_rx, HEX, AS_IS, INCL_RADIX));
       uart_expect(UART_VVCT, 1, RX, v_data_rx, "Expecting " & to_string(v_data_rx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
     end loop;
-    wait for 200 ns;  -- margin
+    wait for 200 ns;                    -- margin
 
     log(ID_LOG_HDR, "Disable all IDs in monitors msg_id_panel", C_SCOPE);
     ------------------------------------------------------------
@@ -222,10 +212,10 @@ architecture func of uart_monitor_tb is
     log(ID_LOG_HDR, "Sending on both TX and RX simultaneously", C_SCOPE);
     ------------------------------------------------------------
     for i in 0 to 15 loop
-      v_data_tx := std_logic_vector(to_unsigned(i, 4)) & std_logic_vector(to_unsigned(15-i, 4));
+      v_data_tx          := std_logic_vector(to_unsigned(i, 4)) & std_logic_vector(to_unsigned(15 - i, 4));
       v_uart_transaction := get_uart_transaction_info(TRANSMIT, v_data_tx);
       tx_uart_monitor_sb.add_expected(v_uart_transaction);
-      v_data_rx := std_logic_vector(to_unsigned(15-i, 4)) & std_logic_vector(to_unsigned(i, 4));
+      v_data_rx          := std_logic_vector(to_unsigned(15 - i, 4)) & std_logic_vector(to_unsigned(i, 4));
       v_uart_transaction := get_uart_transaction_info(RECEIVE, v_data_rx);
       rx_uart_monitor_sb.add_expected(v_uart_transaction);
       sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data_rx, "Sending " & to_string(v_data_rx, HEX, AS_IS, INCL_RADIX));
@@ -233,12 +223,11 @@ architecture func of uart_monitor_tb is
       uart_transmit(UART_VVCT, 1, TX, v_data_tx, "Sending " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
       await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
-      wait for 200 ns;  -- margin
-      sbi_check(SBI_VVCT,1,  C_ADDR_RX_DATA, v_data_tx, "check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
+      wait for 200 ns;                  -- margin
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, "check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
     end loop;
-    wait for 200 ns;  -- margin
-
+    wait for 200 ns;                    -- margin
 
     log(ID_LOG_HDR, "Enable ID_MONITOR and ID_FRAME_INITIATE in monitors", C_SCOPE);
     ------------------------------------------------------------
@@ -257,10 +246,10 @@ architecture func of uart_monitor_tb is
     log(ID_LOG_HDR, "Sending on both TX and RX simultaneously", C_SCOPE);
     ------------------------------------------------------------
     for i in 0 to 15 loop
-      v_data_rx := std_logic_vector(to_unsigned(15-i, 4)) & std_logic_vector(to_unsigned(i, 4));
+      v_data_rx          := std_logic_vector(to_unsigned(15 - i, 4)) & std_logic_vector(to_unsigned(i, 4));
       v_uart_transaction := get_uart_transaction_info(RECEIVE, v_data_rx, true, false);
       rx_uart_monitor_sb.add_expected(v_uart_transaction);
-      v_data_tx := std_logic_vector(to_unsigned(i, 4)) & std_logic_vector(to_unsigned(15-i, 4));
+      v_data_tx          := std_logic_vector(to_unsigned(i, 4)) & std_logic_vector(to_unsigned(15 - i, 4));
       v_uart_transaction := get_uart_transaction_info(TRANSMIT, v_data_tx, true, false);
       tx_uart_monitor_sb.add_expected(v_uart_transaction);
       sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data_rx, "Sending " & to_string(v_data_rx, HEX, AS_IS, INCL_RADIX));
@@ -268,12 +257,11 @@ architecture func of uart_monitor_tb is
       uart_transmit(UART_VVCT, 1, TX, v_data_tx, "Sending " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
       await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
-      wait for 200 ns;  -- margin
-      sbi_check(SBI_VVCT, 1,  C_ADDR_RX_DATA, v_data_tx, "check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
+      wait for 200 ns;                  -- margin
+      sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, "check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
       await_completion(SBI_VVCT, 1, 10 * C_CLK_PERIOD);
     end loop;
-    wait for 200 ns;  -- margin
-
+    wait for 200 ns;                    -- margin
 
     log(ID_LOG_HDR, "Change parity back to correct and stop bit to two for monitors, now expecting active stop bit error flag in monitors", C_SCOPE);
     ------------------------------------------------------------
@@ -299,7 +287,7 @@ architecture func of uart_monitor_tb is
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, to_string(i) & ": check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
     end loop;
 
-    wait for 500 ns;  -- margin
+    wait for 500 ns;                    -- margin
 
     log(ID_LOG_HDR, "Sending on RX", C_SCOPE);
     ------------------------------------------------------------
@@ -316,8 +304,7 @@ architecture func of uart_monitor_tb is
       uart_expect(UART_VVCT, 1, RX, v_data_rx, "Expecting " & to_string(v_data_rx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
     end loop;
-    wait for 1 us;  -- margin
-
+    wait for 1 us;                      -- margin
 
     log(ID_LOG_HDR, "Change stop bit to one and a half for monitors, expecting active stop bit error flag in monitors", C_SCOPE);
     ------------------------------------------------------------
@@ -341,7 +328,7 @@ architecture func of uart_monitor_tb is
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, to_string(i) & ": check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
     end loop;
 
-    wait for 500 ns;  -- margin
+    wait for 500 ns;                    -- margin
 
     log(ID_LOG_HDR, "Sending on RX", C_SCOPE);
     ------------------------------------------------------------
@@ -358,8 +345,7 @@ architecture func of uart_monitor_tb is
       uart_expect(UART_VVCT, 1, RX, v_data_rx, "Expecting " & to_string(v_data_rx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
     end loop;
-    wait for 200 ns;  -- margin
-
+    wait for 200 ns;                    -- margin
 
     log(ID_LOG_HDR, "Change stop bit to one for monitors, expecting no error flags in monitors", C_SCOPE);
     ------------------------------------------------------------
@@ -369,7 +355,7 @@ architecture func of uart_monitor_tb is
     log(ID_LOG_HDR, "Sending on TX", C_SCOPE);
     ------------------------------------------------------------
     for i in 0 to 15 loop
-      v_data_tx := random(8);
+      v_data_tx          := random(8);
       v_uart_transaction := get_uart_transaction_info(TRANSMIT, v_data_tx);
       tx_uart_monitor_sb.add_expected(v_uart_transaction);
       uart_transmit(UART_VVCT, 1, TX, v_data_tx, "Sending " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX));
@@ -378,21 +364,19 @@ architecture func of uart_monitor_tb is
       sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, v_data_tx, "check " & to_string(v_data_tx, HEX, AS_IS, INCL_RADIX), ERROR);
     end loop;
 
-    wait for 500 ns;  -- margin
+    wait for 500 ns;                    -- margin
 
     log(ID_LOG_HDR, "Sending on RX", C_SCOPE);
     ------------------------------------------------------------
     for i in 0 to 15 loop
-      v_data_rx := random(8);
+      v_data_rx          := random(8);
       v_uart_transaction := get_uart_transaction_info(RECEIVE, v_data_rx);
       rx_uart_monitor_sb.add_expected(v_uart_transaction);
       sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data_rx, "Sending " & to_string(v_data_rx, HEX, AS_IS, INCL_RADIX));
       uart_expect(UART_VVCT, 1, RX, v_data_rx, "Expecting " & to_string(v_data_rx, HEX, AS_IS, INCL_RADIX));
       await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
     end loop;
-    wait for 200 ns;  -- margin
-
-
+    wait for 200 ns;                    -- margin
 
     tx_uart_monitor_sb.report_counters(VOID);
     rx_uart_monitor_sb.report_counters(VOID);
@@ -400,17 +384,15 @@ architecture func of uart_monitor_tb is
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;             -- to allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
+    wait for 1000 ns;                   -- to allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation
     std.env.stop;
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
-
-
 
   --==================================================================================================
   -- Process for handeling tx monitor data
@@ -426,8 +408,6 @@ architecture func of uart_monitor_tb is
     end if;
 
   end process p_monitor_tx;
-
-
 
   --==================================================================================================
   -- Process for handeling rx monitor data

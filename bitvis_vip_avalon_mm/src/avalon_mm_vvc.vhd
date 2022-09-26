@@ -37,28 +37,28 @@ use work.transaction_pkg.all;
 
 --=================================================================================================
 entity avalon_mm_vvc is
-  generic (
-    GC_ADDR_WIDTH                           : integer range 1 to C_VVC_CMD_ADDR_MAX_LENGTH := 8;          -- Avalon MM address bus
-    GC_DATA_WIDTH                           : integer range 1 to C_VVC_CMD_DATA_MAX_LENGTH := 32;         -- Avalon MM data bus
-    GC_INSTANCE_IDX                         : natural                 := 1;                               -- Instance index for this AVALON_MM_VVCT instance
-    GC_AVALON_MM_CONFIG                     : t_avalon_mm_bfm_config  := C_AVALON_MM_BFM_CONFIG_DEFAULT;  -- Behavior specification for BFM
-    GC_CMD_QUEUE_COUNT_MAX                  : natural                 := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD            : natural                 := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY   : t_alert_level           := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := WARNING
+  generic(
+    GC_ADDR_WIDTH                            : integer range 1 to C_VVC_CMD_ADDR_MAX_LENGTH := 8; -- Avalon MM address bus
+    GC_DATA_WIDTH                            : integer range 1 to C_VVC_CMD_DATA_MAX_LENGTH := 32; -- Avalon MM data bus
+    GC_INSTANCE_IDX                          : natural                                      := 1; -- Instance index for this AVALON_MM_VVCT instance
+    GC_AVALON_MM_CONFIG                      : t_avalon_mm_bfm_config                       := C_AVALON_MM_BFM_CONFIG_DEFAULT; -- Behavior specification for BFM
+    GC_CMD_QUEUE_COUNT_MAX                   : natural                                      := 1000;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                                      := 950;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                                := WARNING;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural                                      := 1000;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                                      := 950;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                                := WARNING
   );
-  port (
-    clk                           : in std_logic;
-    avalon_mm_vvc_master_if       : inout t_avalon_mm_if := init_avalon_mm_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH)
+  port(
+    clk                     : in    std_logic;
+    avalon_mm_vvc_master_if : inout t_avalon_mm_if := init_avalon_mm_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH)
   );
-  begin
-      -- Check the interface widths to assure that the interface was correctly set up
-    assert (avalon_mm_vvc_master_if.address'length = GC_ADDR_WIDTH) report "avalon_mm_vvc_master_if.address'length /= GC_ADDR_WIDTH" severity failure;
-    assert (avalon_mm_vvc_master_if.writedata'length = GC_DATA_WIDTH) report "avalon_mm_vvc_master_if.writedata'length /= GC_DATA_WIDTH" severity failure;
-    assert (avalon_mm_vvc_master_if.readdata'length = GC_DATA_WIDTH) report "avalon_mm_vvc_master_if.readdata'length /= GC_DATA_WIDTH" severity failure;
-    assert (avalon_mm_vvc_master_if.byte_enable'length = GC_DATA_WIDTH/8) report "avalon_mm_vvc_master_if.byte_enable'length /= GC_DATA_WIDTH/8" severity failure;
+begin
+  -- Check the interface widths to assure that the interface was correctly set up
+  assert (avalon_mm_vvc_master_if.address'length = GC_ADDR_WIDTH) report "avalon_mm_vvc_master_if.address'length /= GC_ADDR_WIDTH" severity failure;
+  assert (avalon_mm_vvc_master_if.writedata'length = GC_DATA_WIDTH) report "avalon_mm_vvc_master_if.writedata'length /= GC_DATA_WIDTH" severity failure;
+  assert (avalon_mm_vvc_master_if.readdata'length = GC_DATA_WIDTH) report "avalon_mm_vvc_master_if.readdata'length /= GC_DATA_WIDTH" severity failure;
+  assert (avalon_mm_vvc_master_if.byte_enable'length = GC_DATA_WIDTH / 8) report "avalon_mm_vvc_master_if.byte_enable'length /= GC_DATA_WIDTH/8" severity failure;
 end entity avalon_mm_vvc;
 
 --=================================================================================================
@@ -66,37 +66,37 @@ end entity avalon_mm_vvc;
 
 architecture behave of avalon_mm_vvc is
 
-  constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
-  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
+  constant C_SCOPE      : string       := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
+  constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal vvc_is_active                    : boolean := false;
-  signal executor_is_busy                 : boolean := false;
-  signal queue_is_increasing              : boolean := false;
-  signal read_response_is_busy            : boolean := false;
-  signal response_queue_is_increasing     : boolean := false;
-  signal last_cmd_idx_executed            : natural := 0;
-  signal last_read_response_idx_executed  : natural := 0;
-  signal terminate_current_cmd            : t_flag_record;
+  signal vvc_is_active                   : boolean := false;
+  signal executor_is_busy                : boolean := false;
+  signal queue_is_increasing             : boolean := false;
+  signal read_response_is_busy           : boolean := false;
+  signal response_queue_is_increasing    : boolean := false;
+  signal last_cmd_idx_executed           : natural := 0;
+  signal last_read_response_idx_executed : natural := 0;
+  signal terminate_current_cmd           : t_flag_record;
 
   -- Instantiation of element dedicated Queues
-  shared variable command_queue           : work.td_cmd_queue_pkg.t_generic_queue;
-  shared variable command_response_queue  : work.td_cmd_queue_pkg.t_generic_queue;
-  shared variable result_queue            : work.td_result_queue_pkg.t_generic_queue;
+  shared variable command_queue          : work.td_cmd_queue_pkg.t_generic_queue;
+  shared variable command_response_queue : work.td_cmd_queue_pkg.t_generic_queue;
+  shared variable result_queue           : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config                    : t_vvc_config is shared_avalon_mm_vvc_config(GC_INSTANCE_IDX);
-  alias vvc_status                    : t_vvc_status is shared_avalon_mm_vvc_status(GC_INSTANCE_IDX);
-  alias transaction_info              : t_transaction_info is shared_avalon_mm_transaction_info(GC_INSTANCE_IDX);
+  alias vvc_config                          : t_vvc_config is shared_avalon_mm_vvc_config(GC_INSTANCE_IDX);
+  alias vvc_status                          : t_vvc_status is shared_avalon_mm_vvc_status(GC_INSTANCE_IDX);
+  alias transaction_info                    : t_transaction_info is shared_avalon_mm_transaction_info(GC_INSTANCE_IDX);
   -- Transaction info
-  alias vvc_transaction_info_trigger  : std_logic           is global_avalon_mm_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias vvc_transaction_info          : t_transaction_group is shared_avalon_mm_vvc_transaction_info(GC_INSTANCE_IDX);
+  alias vvc_transaction_info_trigger        : std_logic is global_avalon_mm_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info                : t_transaction_group is shared_avalon_mm_vvc_transaction_info(GC_INSTANCE_IDX);
   -- VVC Activity
   signal entry_num_in_vvc_activity_register : integer;
 
   -- Propagation delayed interface signal used when reading data from the slave in the read_response process.
-  signal avalon_mm_vvc_master_if_pd   : t_avalon_mm_if(address(GC_ADDR_WIDTH-1 downto 0),
-                                                      byte_enable((GC_DATA_WIDTH/8)-1 downto 0),
-                                                      writedata(GC_DATA_WIDTH-1 downto 0),
-                                                      readdata(GC_DATA_WIDTH-1 downto 0)) := avalon_mm_vvc_master_if;
+  signal avalon_mm_vvc_master_if_pd : t_avalon_mm_if(address(GC_ADDR_WIDTH - 1 downto 0),
+                                                     byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0),
+                                                     writedata(GC_DATA_WIDTH - 1 downto 0),
+                                                     readdata(GC_DATA_WIDTH - 1 downto 0)) := avalon_mm_vvc_master_if;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
@@ -115,61 +115,57 @@ architecture behave of avalon_mm_vvc is
 
 begin
 
-
---===============================================================================================
--- Constructor
--- - Set up the defaults and show constructor if enabled
---===============================================================================================
+  --===============================================================================================
+  -- Constructor
+  -- - Set up the defaults and show constructor if enabled
+  --===============================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_AVALON_MM_CONFIG,
-                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
-                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
---===============================================================================================
+                                                 GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
+                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
+  --===============================================================================================
 
-
---===============================================================================================
--- Command interpreter
--- - Interpret, decode and acknowledge commands from the central sequencer
---===============================================================================================
+  --===============================================================================================
+  -- Command interpreter
+  -- - Interpret, decode and acknowledge commands from the central sequencer
+  --===============================================================================================
   cmd_interpreter : process
-     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
-     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
-     variable v_msg_id_panel       : t_msg_id_panel;
-     variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
+    variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
+    variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+    variable v_msg_id_panel       : t_msg_id_panel;
+    variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
   begin
-
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc( name      => C_VVC_NAME,
-                                                                                          instance  => GC_INSTANCE_IDX);
+    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
+                                                                                                            instance => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
-    v_msg_id_panel := vvc_config.msg_id_panel;
+    v_msg_id_panel                                        := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
-    loop  -- basically as long as new commands are received
+    loop                                -- basically as long as new commands are received
 
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
-      v_cmd_has_been_acked := false; -- Clear flag
+      v_cmd_has_been_acked                                  := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
-      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
+      v_msg_id_panel                                        := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
       -------------------------------------------------------------------------
       if v_local_vvc_cmd.command_type = QUEUED then
         work.td_vvc_entity_support_pkg.put_command_on_queue(v_local_vvc_cmd, command_queue, vvc_status, queue_is_increasing);
 
-
       -- 2b. Otherwise command is intended for immediate response
       -------------------------------------------------------------------------
-      elsif  v_local_vvc_cmd.command_type = IMMEDIATE then
+      elsif v_local_vvc_cmd.command_type = IMMEDIATE then
 
         --UVVM: temporary fix for HVVC, remove two lines below in v3.0
         if v_local_vvc_cmd.operation /= DISABLE_LOG_MSG and v_local_vvc_cmd.operation /= ENABLE_LOG_MSG then
@@ -181,15 +177,15 @@ begin
 
           when AWAIT_COMPLETION =>
             -- Await completion of all commands in the cmd_executor queue
-            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed,ID_IMMEDIATE_CMD_WAIT,ID_NEVER);
+            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, ID_IMMEDIATE_CMD_WAIT, ID_NEVER);
             -- Await completion of all commands in the read_response queue
             work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_response_queue, vvc_config, read_response_is_busy, C_VVC_LABELS, last_read_response_idx_executed, ID_NEVER, ID_IMMEDIATE_CMD);
 
           when AWAIT_ANY_COMPLETION =>
             if not v_local_vvc_cmd.gen_boolean then
-               -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
-               work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
-               v_cmd_has_been_acked := true;
+              -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
+              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
+              v_cmd_has_been_acked := true;
             end if;
             work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
 
@@ -225,36 +221,33 @@ begin
       -- 3. Acknowledge command after runing or queuing the command
       -------------------------------------------------------------------------
       if not v_cmd_has_been_acked then
-        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
+        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
       end if;
 
     end loop;
   end process;
---===============================================================================================
+  --===============================================================================================
 
-
-
---===============================================================================================
--- Command executor
--- - Fetch and execute the commands.
--- - Note that the read response is handled in the read_response process.
---===============================================================================================
+  --===============================================================================================
+  -- Command executor
+  -- - Fetch and execute the commands.
+  -- - Note that the read response is handled in the read_response process.
+  --===============================================================================================
   cmd_executor : process
-    variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_read_data                              : t_vvc_result; -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
-    variable v_command_is_bfm_access                  : boolean := false;
-    variable v_prev_command_was_bfm_access            : boolean := false;
-    variable v_msg_id_panel                           : t_msg_id_panel;
-    variable v_normalised_addr                        : unsigned(GC_ADDR_WIDTH-1 downto 0)              := (others => '0');
-    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH-1 downto 0)      := (others => '0');
-    variable v_normalised_byte_ena                    : std_logic_vector((GC_DATA_WIDTH/8)-1 downto 0)  := (others => '0');
-    variable v_cmd_queues_are_empty                   : boolean;
-      
-  begin
+    variable v_cmd                                   : t_vvc_cmd_record;
+    variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_timestamp_start_of_current_bfm_access : time                                               := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access    : time                                               := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access      : time                                               := 0 ns;
+    variable v_command_is_bfm_access                 : boolean                                            := false;
+    variable v_prev_command_was_bfm_access           : boolean                                            := false;
+    variable v_msg_id_panel                          : t_msg_id_panel;
+    variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH - 1 downto 0)               := (others => '0');
+    variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH - 1 downto 0)       := (others => '0');
+    variable v_normalised_byte_ena                   : std_logic_vector((GC_DATA_WIDTH / 8) - 1 downto 0) := (others => '0');
+    variable v_cmd_queues_are_empty                  : boolean;
 
+  begin
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     initialize_executor(terminate_current_cmd);
@@ -271,7 +264,7 @@ begin
 
       -- update vvc activity
       v_cmd_queues_are_empty := (command_queue.is_empty(VOID) and command_response_queue.is_empty(VOID));
-      if not(read_response_is_busy) and v_cmd_queues_are_empty then
+      if not (read_response_is_busy) and v_cmd_queues_are_empty then
         update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
       end if;
 
@@ -301,12 +294,12 @@ begin
       end if;
 
       -- Insert delay if needed
-      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config               => vvc_config,
-                                                               command_is_bfm_access              => v_prev_command_was_bfm_access,
-                                                               timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
-                                                               timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
-                                                               msg_id_panel                       => v_msg_id_panel,
-                                                               scope                              => C_SCOPE);
+      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
+                                                                         command_is_bfm_access              => v_prev_command_was_bfm_access,
+                                                                         timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
+                                                                         timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
+                                                                         msg_id_panel                       => v_msg_id_panel,
+                                                                         scope                              => C_SCOPE);
 
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;
@@ -314,7 +307,7 @@ begin
 
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
-      case v_cmd.operation is  -- Only operations in the dedicated record are relevant
+      case v_cmd.operation is           -- Only operations in the dedicated record are relevant
 
         -- VVC dedicated operations
         --===================================
@@ -323,27 +316,27 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise address and data
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_write() called with to wide address. " & v_cmd.msg);
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_write() called with to wide data. " & v_cmd.msg);
-          if (v_cmd.byte_enable = (0 to v_cmd.byte_enable'length-1 => '1')) then
+          v_normalised_addr                                              := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_write() called with to wide address. " & v_cmd.msg);
+          v_normalised_data                                              := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_write() called with to wide data. " & v_cmd.msg);
+          if (v_cmd.byte_enable = (0 to v_cmd.byte_enable'length - 1 => '1')) then
             v_normalised_byte_ena := (others => '1');
           else
             v_normalised_byte_ena := normalize_and_check(v_cmd.byte_enable, v_normalised_byte_ena, ALLOW_WIDER_NARROWER, "v_cmd.byte_enable", "v_normalised_byte_ena", "avalon_mm_write() called with to wide byte_enable. " & v_cmd.msg);
           end if;
-          transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
-          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
-          transaction_info.byte_enable((GC_DATA_WIDTH/8) - 1 downto 0) := v_cmd.byte_enable((GC_DATA_WIDTH/8) - 1 downto 0);
+          transaction_info.data(GC_DATA_WIDTH - 1 downto 0)              := v_normalised_data;
+          transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0)              := v_normalised_addr;
+          transaction_info.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0) := v_cmd.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0);
 
           -- Call the corresponding procedure in the BFM package.
-          avalon_mm_write(addr_value          => v_normalised_addr,
-                          data_value          => v_normalised_data,
-                          msg                 => format_msg(v_cmd),
-                          clk                 => clk,
-                          avalon_mm_if        => avalon_mm_vvc_master_if,
-                          byte_enable         => v_cmd.byte_enable((GC_DATA_WIDTH/8)-1 downto 0),
-                          scope               => C_SCOPE,
-                          msg_id_panel        => v_msg_id_panel,
-                          config              => vvc_config.bfm_config);
+          avalon_mm_write(addr_value   => v_normalised_addr,
+                          data_value   => v_normalised_data,
+                          msg          => format_msg(v_cmd),
+                          clk          => clk,
+                          avalon_mm_if => avalon_mm_vvc_master_if,
+                          byte_enable  => v_cmd.byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0),
+                          scope        => C_SCOPE,
+                          msg_id_panel => v_msg_id_panel,
+                          config       => vvc_config.bfm_config);
 
         when READ =>
           -- Set vvc transaction info
@@ -360,35 +353,35 @@ begin
             while command_response_queue.get_count(VOID) > vvc_config.num_pipeline_stages loop
               wait for vvc_config.bfm_config.clock_period;
             end loop;
-            avalon_mm_read_request( addr_value          => v_normalised_addr,
-                                    msg                 => format_msg(v_cmd),
-                                    clk                 => clk,
-                                    avalon_mm_if        => avalon_mm_vvc_master_if,
-                                    scope               => C_SCOPE,
-                                    msg_id_panel        => v_msg_id_panel,
-                                    config              => vvc_config.bfm_config);
+            avalon_mm_read_request(addr_value   => v_normalised_addr,
+                                   msg          => format_msg(v_cmd),
+                                   clk          => clk,
+                                   avalon_mm_if => avalon_mm_vvc_master_if,
+                                   scope        => C_SCOPE,
+                                   msg_id_panel => v_msg_id_panel,
+                                   config       => vvc_config.bfm_config);
             work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
 
           else
 
-            avalon_mm_read( addr_value          => v_normalised_addr,
-                            data_value          => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                            msg                 => format_msg(v_cmd),
-                            clk                 => clk,
-                            avalon_mm_if        => avalon_mm_vvc_master_if,
-                            scope               => C_SCOPE,
-                            msg_id_panel        => v_msg_id_panel,
-                            config              => vvc_config.bfm_config);
+            avalon_mm_read(addr_value   => v_normalised_addr,
+                           data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
+                           msg          => format_msg(v_cmd),
+                           clk          => clk,
+                           avalon_mm_if => avalon_mm_vvc_master_if,
+                           scope        => C_SCOPE,
+                           msg_id_panel => v_msg_id_panel,
+                           config       => vvc_config.bfm_config);
 
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
               -- call SB check_received
-              AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH-1 downto 0)));
-            else                            
+              AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+            else
               -- Store the result
-              work.td_vvc_entity_support_pkg.store_result( result_queue => result_queue,
-                                                           cmd_idx      => v_cmd.cmd_idx,
-                                                           result       => v_read_data );
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_read_data);
             end if;
           end if;
 
@@ -409,26 +402,26 @@ begin
               wait for vvc_config.bfm_config.clock_period;
             end loop;
 
-            avalon_mm_read_request( addr_value          => v_normalised_addr,
-                                    msg                 => format_msg(v_cmd),
-                                    clk                 => clk,
-                                    avalon_mm_if        => avalon_mm_vvc_master_if,
-                                    scope               => C_SCOPE,
-                                    msg_id_panel        => v_msg_id_panel,
-                                    config              => vvc_config.bfm_config,
-                                    ext_proc_call       => "avalon_mm_check(A:" & to_string(v_normalised_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(v_normalised_data, HEX, AS_IS, INCL_RADIX) & ")"
+            avalon_mm_read_request(addr_value    => v_normalised_addr,
+                                   msg           => format_msg(v_cmd),
+                                   clk           => clk,
+                                   avalon_mm_if  => avalon_mm_vvc_master_if,
+                                   scope         => C_SCOPE,
+                                   msg_id_panel  => v_msg_id_panel,
+                                   config        => vvc_config.bfm_config,
+                                   ext_proc_call => "avalon_mm_check(A:" & to_string(v_normalised_addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(v_normalised_data, HEX, AS_IS, INCL_RADIX) & ")"
                                   );
             work.td_vvc_entity_support_pkg.put_command_on_queue(v_cmd, command_response_queue, vvc_status, response_queue_is_increasing);
           else
-            avalon_mm_check(addr_value          => v_normalised_addr,
-                            data_exp            => v_normalised_data,
-                            msg                 => format_msg(v_cmd),
-                            clk                 => clk,
-                            avalon_mm_if        => avalon_mm_vvc_master_if,
-                            alert_level         => v_cmd.alert_level,
-                            scope               => C_SCOPE,
-                            msg_id_panel        => v_msg_id_panel,
-                            config              => vvc_config.bfm_config);
+            avalon_mm_check(addr_value   => v_normalised_addr,
+                            data_exp     => v_normalised_data,
+                            msg          => format_msg(v_cmd),
+                            clk          => clk,
+                            avalon_mm_if => avalon_mm_vvc_master_if,
+                            alert_level  => v_cmd.alert_level,
+                            scope        => C_SCOPE,
+                            msg_id_panel => v_msg_id_panel,
+                            config       => vvc_config.bfm_config);
           end if;
 
         when RESET =>
@@ -436,35 +429,35 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
-          avalon_mm_reset(clk                 => clk,
-                          avalon_mm_if        => avalon_mm_vvc_master_if,
-                          num_rst_cycles      => v_cmd.gen_integer_array(0),
-                          msg                 => format_msg(v_cmd),
-                          scope               => C_SCOPE,
-                          msg_id_panel        => v_msg_id_panel,
-                          config              => vvc_config.bfm_config);
+          avalon_mm_reset(clk            => clk,
+                          avalon_mm_if   => avalon_mm_vvc_master_if,
+                          num_rst_cycles => v_cmd.gen_integer_array(0),
+                          msg            => format_msg(v_cmd),
+                          scope          => C_SCOPE,
+                          msg_id_panel   => v_msg_id_panel,
+                          config         => vvc_config.bfm_config);
 
         when LOCK =>
           -- Set vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
-          avalon_mm_lock( avalon_mm_if        => avalon_mm_vvc_master_if,
-                          msg                 => format_msg(v_cmd),
-                          scope               => C_SCOPE,
-                          msg_id_panel        => v_msg_id_panel,
-                          config              => vvc_config.bfm_config);
+          avalon_mm_lock(avalon_mm_if => avalon_mm_vvc_master_if,
+                         msg          => format_msg(v_cmd),
+                         scope        => C_SCOPE,
+                         msg_id_panel => v_msg_id_panel,
+                         config       => vvc_config.bfm_config);
 
         when UNLOCK =>
           -- Set vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Call the corresponding procedure in the BFM package.
-          avalon_mm_unlock( avalon_mm_if      => avalon_mm_vvc_master_if,
-                          msg                 => format_msg(v_cmd),
-                          scope               => C_SCOPE,
-                          msg_id_panel        => v_msg_id_panel,
-                          config              => vvc_config.bfm_config);
+          avalon_mm_unlock(avalon_mm_if => avalon_mm_vvc_master_if,
+                           msg          => format_msg(v_cmd),
+                           scope        => C_SCOPE,
+                           msg_id_panel => v_msg_id_panel,
+                           config       => vvc_config.bfm_config);
 
         -- UVVM common operations
         --===================================
@@ -485,12 +478,10 @@ begin
       end case;
 
       if v_command_is_bfm_access then
-        v_timestamp_end_of_last_bfm_access := now;
+        v_timestamp_end_of_last_bfm_access   := now;
         v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;
-        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and
-           ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
-          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " &
-                to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
+        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
+          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " & to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
         end if;
       end if;
 
@@ -502,15 +493,12 @@ begin
 
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
-      transaction_info   := C_TRANSACTION_INFO_DEFAULT;
+      transaction_info      := C_TRANSACTION_INFO_DEFAULT;
       -- Set VVC Transaction Info back to default values
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
   --===============================================================================================
-
-
-
 
   --===============================================================================================
   -- Add a delta cycle to the read response interface signals to avoid reading wrong data.
@@ -524,13 +512,13 @@ begin
   -- - Note the use of propagation delayed avalon_mm_vv_master_if signal
   --===============================================================================================
   read_response : process
-    variable v_cmd                    : t_vvc_cmd_record;
-    variable v_msg_id_panel           : t_msg_id_panel;
-    variable v_read_data              : t_vvc_result; -- See vvc_cmd_pkg
-    variable v_normalised_addr        : unsigned(GC_ADDR_WIDTH-1 downto 0)          := (others => '0');
-    variable v_normalised_data        : std_logic_vector(GC_DATA_WIDTH-1 downto 0)  := (others => '0');
+    variable v_cmd                  : t_vvc_cmd_record;
+    variable v_msg_id_panel         : t_msg_id_panel;
+    variable v_read_data            : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_normalised_addr      : unsigned(GC_ADDR_WIDTH - 1 downto 0)         := (others => '0');
+    variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
     -- check if command_queue and command_response_queue is empty
-    variable v_cmd_queues_are_empty   : boolean;
+    variable v_cmd_queues_are_empty : boolean;
 
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -545,11 +533,10 @@ begin
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
-
     loop
       -- update vvc activity
       v_cmd_queues_are_empty := command_queue.is_empty(VOID) and command_response_queue.is_empty(VOID);
-      if not(executor_is_busy) and v_cmd_queues_are_empty then
+      if not (executor_is_busy) and v_cmd_queues_are_empty then
         update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
       end if;
 
@@ -574,23 +561,23 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Initiate read response
-          avalon_mm_read_response(addr_value          => v_normalised_addr,
-                                  data_value          => v_read_data(GC_DATA_WIDTH-1 downto 0),
-                                  msg                 => format_msg(v_cmd),
-                                  clk                 => clk,
-                                  avalon_mm_if        => avalon_mm_vvc_master_if_pd,
-                                  scope               => C_SCOPE,
-                                  msg_id_panel        => v_msg_id_panel,
-                                  config              => vvc_config.bfm_config);
+          avalon_mm_read_response(addr_value   => v_normalised_addr,
+                                  data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
+                                  msg          => format_msg(v_cmd),
+                                  clk          => clk,
+                                  avalon_mm_if => avalon_mm_vvc_master_if_pd,
+                                  scope        => C_SCOPE,
+                                  msg_id_panel => v_msg_id_panel,
+                                  config       => vvc_config.bfm_config);
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- call SB check_received
-            AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH-1 downto 0)));
-          else          
+            AVALON_MM_VVC_SB.check_received(GC_INSTANCE_IDX, pad_avalon_mm_sb(v_read_data(GC_DATA_WIDTH - 1 downto 0)));
+          else
             -- Store the result
-            work.td_vvc_entity_support_pkg.store_result( result_queue                 => result_queue,
-                                                         cmd_idx                      => v_cmd.cmd_idx,
-                                                         result                       => v_read_data);
+            work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                        cmd_idx      => v_cmd.cmd_idx,
+                                                        result       => v_read_data);
           end if;
 
         when CHECK =>
@@ -598,15 +585,15 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Initiate check response
-          avalon_mm_check_response( addr_value          => v_normalised_addr,
-                                    data_exp            => v_normalised_data,
-                                    msg                 => format_msg(v_cmd),
-                                    clk                 => clk,
-                                    avalon_mm_if        => avalon_mm_vvc_master_if_pd,
-                                    alert_level         => v_cmd.alert_level,
-                                    scope               => C_SCOPE,
-                                    msg_id_panel        => v_msg_id_panel,
-                                    config              => vvc_config.bfm_config);
+          avalon_mm_check_response(addr_value   => v_normalised_addr,
+                                   data_exp     => v_normalised_data,
+                                   msg          => format_msg(v_cmd),
+                                   clk          => clk,
+                                   avalon_mm_if => avalon_mm_vvc_master_if_pd,
+                                   alert_level  => v_cmd.alert_level,
+                                   scope        => C_SCOPE,
+                                   msg_id_panel => v_msg_id_panel,
+                                   config       => vvc_config.bfm_config);
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_SCOPE);
 
@@ -621,14 +608,12 @@ begin
   end process;
   --===============================================================================================
 
---===============================================================================================
--- Command termination handler
--- - Handles the termination request record (sets and resets terminate flag on request)
---===============================================================================================
-  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd);  -- flag: is_active, set, reset
---===============================================================================================
+  --===============================================================================================
+  -- Command termination handler
+  -- - Handles the termination request record (sets and resets terminate flag on request)
+  --===============================================================================================
+  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --===============================================================================================
 
 end behave;
-
-
 

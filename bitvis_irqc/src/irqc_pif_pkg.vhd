@@ -16,7 +16,6 @@
 -- Description   : See dedicated powerpoint presentation and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -24,7 +23,7 @@ use ieee.numeric_std.all;
 package irqc_pif_pkg is
 
   -- Change this to a generic when generic in packages is allowed (VHDL 2008)
-  constant C_NUM_SOURCES : integer := 6;  --  1 <= C_NUM_SOURCES <= Data width
+  constant C_NUM_SOURCES : integer := 6; --  1 <= C_NUM_SOURCES <= Data width
 
   -- Notation for regs: (Included in constant name as info to SW)
   -- - RW: Readable and writable reg.
@@ -47,18 +46,18 @@ package irqc_pif_pkg is
 
   -- Signals from pif to core
   type t_p2c is record
-    rw_ier               : std_logic_vector(C_NUM_SOURCES-1 downto 0);
-    awt_itr              : std_logic_vector(C_NUM_SOURCES-1 downto 0);
-    awt_icr              : std_logic_vector(C_NUM_SOURCES-1 downto 0);
-    awt_irq2cpu_ena      : std_logic;
-    awt_irq2cpu_disable  : std_logic;
+    rw_ier              : std_logic_vector(C_NUM_SOURCES - 1 downto 0);
+    awt_itr             : std_logic_vector(C_NUM_SOURCES - 1 downto 0);
+    awt_icr             : std_logic_vector(C_NUM_SOURCES - 1 downto 0);
+    awt_irq2cpu_ena     : std_logic;
+    awt_irq2cpu_disable : std_logic;
   end record t_p2c;
 
   -- Signals from core to PIF
   type t_c2p is record
-    aro_irr              : std_logic_vector(C_NUM_SOURCES-1 downto 0);
-    aro_ipr              : std_logic_vector(C_NUM_SOURCES-1 downto 0);
-    aro_irq2cpu_allowed  : std_logic;
+    aro_irr             : std_logic_vector(C_NUM_SOURCES - 1 downto 0);
+    aro_ipr             : std_logic_vector(C_NUM_SOURCES - 1 downto 0);
+    aro_irq2cpu_allowed : std_logic;
   end record t_c2p;
 
 end package irqc_pif_pkg;

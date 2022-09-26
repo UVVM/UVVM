@@ -33,15 +33,14 @@ package vvc_cmd_pkg is
 
   alias t_operation is work.transaction_pkg.t_operation;
 
-
   --===============================================================================================
   -- t_vvc_cmd_record
   -- - Record type used for communication with the VVC
   --===============================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
-    data                         : t_slv_array(C_VVC_CMD_MAX_WORDS-1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    data_exp                     : t_slv_array(C_VVC_CMD_MAX_WORDS-1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    data                         : t_slv_array(C_VVC_CMD_MAX_WORDS - 1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    data_exp                     : t_slv_array(C_VVC_CMD_MAX_WORDS - 1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
     num_words                    : natural;
     word_length                  : natural;
     when_to_start_transfer       : t_when_to_start_transfer;
@@ -53,10 +52,10 @@ package vvc_cmd_pkg is
     msg                          : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     data_routing                 : t_data_routing;
     cmd_idx                      : natural;
-    command_type                 : t_immediate_or_queued;  -- QUEUED/IMMEDIATE
+    command_type                 : t_immediate_or_queued; -- QUEUED/IMMEDIATE
     msg_id                       : t_msg_id;
-    gen_integer_array            : t_integer_array(0 to 1);  -- Increase array length if needed
-    gen_boolean                  : boolean;                -- Generic boolean
+    gen_integer_array            : t_integer_array(0 to 1); -- Increase array length if needed
+    gen_boolean                  : boolean; -- Generic boolean
     timeout                      : time;
     alert_level                  : t_alert_level;
     delay                        : time;
@@ -87,7 +86,7 @@ package vvc_cmd_pkg is
     delay                        => 0 ns,
     quietness                    => NON_QUIET,
     parent_msg_id_panel          => C_UNUSED_MSG_ID_PANEL
-    );
+  );
 
   --===============================================================================================
   -- shared_vvc_cmd
@@ -105,7 +104,7 @@ package vvc_cmd_pkg is
   -- - t_vvc_result includes the return value of the procedure in the BFM.
   --   It can also be defined as a record if multiple values shall be transported from the BFM
   --===============================================================================================
-  subtype t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+  subtype t_vvc_result is std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
 
   type t_vvc_result_queue_element is record
     cmd_idx : natural;                  -- from UVVM handshake mechanism
@@ -130,18 +129,14 @@ package vvc_cmd_pkg is
   -- shared_vvc_last_received_cmd_idx
   --  - Shared variable used to get last queued index from vvc to sequencer
   --===============================================================================================
-  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => -1));
+  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => -1));
 
 end package vvc_cmd_pkg;
 
-
 --=================================================================================================
 --=================================================================================================
-
 
 package body vvc_cmd_pkg is
 
-
 end package body vvc_cmd_pkg;
-
 

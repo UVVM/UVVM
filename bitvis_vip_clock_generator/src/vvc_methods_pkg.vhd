@@ -13,7 +13,6 @@
 -- This VVC was generated with Bitvis VVC Generator
 --========================================================================================================================
 
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -27,7 +26,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 
-
 --========================================================================================================================
 --========================================================================================================================
 package vvc_methods_pkg is
@@ -35,29 +33,29 @@ package vvc_methods_pkg is
   --========================================================================================================================
   -- Types and constants for the CLOCK_GENERATOR VVC
   --========================================================================================================================
-  constant C_VVC_NAME     : string := "CLOCK_GENERATOR_VVC";
+  constant C_VVC_NAME : string := "CLOCK_GENERATOR_VVC";
 
-  signal CLOCK_GENERATOR_VVCT: t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
-  alias  THIS_VVCT           : t_vvc_target_record is CLOCK_GENERATOR_VVCT;
-  alias  t_bfm_config is t_void_bfm_config;
+  signal CLOCK_GENERATOR_VVCT : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
+  alias THIS_VVCT             : t_vvc_target_record is CLOCK_GENERATOR_VVCT;
+  alias t_bfm_config is t_void_bfm_config;
 
   -- Type found in UVVM-Util types_pkg
   constant C_CLOCK_GENERATOR_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
-    delay_type                          => NO_DELAY,
-    delay_in_time                       => 0 ns,
-    inter_bfm_delay_violation_severity  => WARNING
+    delay_type                         => NO_DELAY,
+    delay_in_time                      => 0 ns,
+    inter_bfm_delay_violation_severity => WARNING
   );
 
   type t_vvc_config is record
-    inter_bfm_delay                       : t_inter_bfm_delay;-- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
-    cmd_queue_count_max                   : natural;          -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
-    cmd_queue_count_threshold             : natural;          -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
-    cmd_queue_count_threshold_severity    : t_alert_level;    -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
+    inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.
+    cmd_queue_count_max                   : natural; -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
+    cmd_queue_count_threshold             : natural; -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
+    cmd_queue_count_threshold_severity    : t_alert_level; -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold
     result_queue_count_max                : natural;
     result_queue_count_threshold_severity : t_alert_level;
     result_queue_count_threshold          : natural;
     bfm_config                            : t_bfm_config;
-    msg_id_panel                          : t_msg_id_panel;   -- VVC dedicated message ID panel
+    msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel
     clock_name                            : string(1 to 30);
     clock_period                          : time;
     clock_high_time                       : time;
@@ -81,23 +79,23 @@ package vvc_methods_pkg is
   );
 
   type t_vvc_status is record
-    current_cmd_idx       : natural;
-    previous_cmd_idx      : natural;
-    pending_cmd_cnt       : natural;
+    current_cmd_idx  : natural;
+    previous_cmd_idx : natural;
+    pending_cmd_cnt  : natural;
   end record;
 
   type t_vvc_status_array is array (natural range <>) of t_vvc_status;
 
   constant C_VVC_STATUS_DEFAULT : t_vvc_status := (
-    current_cmd_idx      => 0,
-    previous_cmd_idx     => 0,
-    pending_cmd_cnt      => 0
+    current_cmd_idx  => 0,
+    previous_cmd_idx => 0,
+    pending_cmd_cnt  => 0
   );
 
   -- Transaction information to include in the wave view during simulation
   type t_transaction_info is record
-    operation       : t_operation;
-    msg             : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
+    operation : t_operation;
+    msg       : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
     --<USER_INPUT> Fields that could be useful to track in the waveview can be placed in this record.
     -- Example:
     -- addr            : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
@@ -112,15 +110,13 @@ package vvc_methods_pkg is
     -- Example:
     -- addr                => (others => '0'),
     -- data                => (others => '0'),
-    operation           =>  NO_OPERATION,
-    msg                 => (others => ' ')
+    operation => NO_OPERATION,
+    msg       => (others => ' ')
   );
 
-
-  shared variable shared_clock_generator_vvc_config : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_CLOCK_GENERATOR_VVC_CONFIG_DEFAULT);
-  shared variable shared_clock_generator_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);
-  shared variable shared_clock_generator_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_INFO_DEFAULT);
-
+  shared variable shared_clock_generator_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_CLOCK_GENERATOR_VVC_CONFIG_DEFAULT);
+  shared variable shared_clock_generator_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
+  shared variable shared_clock_generator_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   --==========================================================================================
   -- Methods dedicated to this VVC
@@ -132,95 +128,92 @@ package vvc_methods_pkg is
   --==========================================================================================
 
   procedure start_clock(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant msg                : in string;
-    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure stop_clock(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant msg                : in string;
-    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure set_clock_period(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant clock_period       : in time;
-    constant msg                : in string;
-    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant clock_period     : in time;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure set_clock_high_time(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant clock_high_time    : in time;
-    constant msg                : in string;
-    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant clock_high_time  : in time;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
-
 
   --==============================================================================
   -- VVC Activity
   --==============================================================================
-  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
-                                          variable vvc_status                         : inout t_vvc_status;
-                                          constant activity                           : in    t_activity;
-                                          constant entry_num_in_vvc_activity_register : in    integer;
-                                          constant last_cmd_idx_executed              : in    natural;
-                                          constant command_queue_is_empty             : in    boolean;
-                                          constant scope                              : in    string := C_VVC_NAME);
-                                                  
+  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
+                                         variable vvc_status                           : inout t_vvc_status;
+                                         constant activity                             : in t_activity;
+                                         constant entry_num_in_vvc_activity_register   : in integer;
+                                         constant last_cmd_idx_executed                : in natural;
+                                         constant command_queue_is_empty               : in boolean;
+                                         constant scope                                : in string := C_VVC_NAME);
+
 end package vvc_methods_pkg;
 
-
 package body vvc_methods_pkg is
-
 
   --========================================================================================================================
   -- Methods dedicated to this VVC
   --========================================================================================================================
 
   procedure start_clock(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant msg                : in string;
-    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "start_clock";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-             & ")";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                   & ")";
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, START_CLOCK);
     send_command_to_vvc(VVCT, scope => scope);
   end procedure start_clock;
 
   procedure stop_clock(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant msg                : in string;
-    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "stop_clock";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-             & ")";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                   & ")";
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, STOP_CLOCK);
     send_command_to_vvc(VVCT, scope => scope);
   end procedure stop_clock;
 
   procedure set_clock_period(
-    signal   VVCT               : inout t_vvc_target_record;
-    constant vvc_instance_idx   : in integer;
-    constant clock_period       : in time;
-    constant msg                : in string;
-    constant scope              : in string := C_VVC_CMD_SCOPE_DEFAULT
+    signal   VVCT             : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant clock_period     : in time;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "set_clock_period";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-             & ", " & to_string(clock_period) & ")";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                   & ", " & to_string(clock_period) & ")";
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SET_CLOCK_PERIOD);
     shared_vvc_cmd.clock_period := clock_period;
@@ -235,34 +228,33 @@ package body vvc_methods_pkg is
     constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "set_clock_high_time";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx)  -- First part common for all
-             & ", " & to_string(clock_high_time) & ")";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                   & ", " & to_string(clock_high_time) & ")";
   begin
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, SET_CLOCK_HIGH_TIME);
     shared_vvc_cmd.clock_high_time := clock_high_time;
     send_command_to_vvc(VVCT, scope => scope);
   end procedure set_clock_high_time;
 
-
   --==============================================================================
   -- VVC Activity
   --==============================================================================
-  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
-                                          variable vvc_status                         : inout t_vvc_status;
-                                          constant activity                           : in    t_activity;
-                                          constant entry_num_in_vvc_activity_register : in    integer;
-                                          constant last_cmd_idx_executed              : in    natural;
-                                          constant command_queue_is_empty             : in    boolean;
-                                          constant scope                              : in    string := C_VVC_NAME) is
-    variable v_activity   : t_activity := activity;
+  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
+                                         variable vvc_status                           : inout t_vvc_status;
+                                         constant activity                             : in t_activity;
+                                         constant entry_num_in_vvc_activity_register   : in integer;
+                                         constant last_cmd_idx_executed                : in natural;
+                                         constant command_queue_is_empty               : in boolean;
+                                         constant scope                                : in string := C_VVC_NAME) is
+    variable v_activity : t_activity := activity;
   begin
     -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
     if activity = INACTIVE then
       vvc_status.previous_cmd_idx := last_cmd_idx_executed;
-      vvc_status.current_cmd_idx  := 0;  
+      vvc_status.current_cmd_idx  := 0;
     end if;
 
-    if v_activity = INACTIVE and not(command_queue_is_empty) then
+    if v_activity = INACTIVE and not (command_queue_is_empty) then
       v_activity := ACTIVE;
     end if;
     shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
@@ -270,9 +262,8 @@ package body vvc_methods_pkg is
                                                           last_cmd_idx_executed => last_cmd_idx_executed);
     if global_trigger_vvc_activity_register /= 'L' then
       wait until global_trigger_vvc_activity_register = 'L';
-    end if;                                                              
+    end if;
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
-
 
 end package body vvc_methods_pkg;

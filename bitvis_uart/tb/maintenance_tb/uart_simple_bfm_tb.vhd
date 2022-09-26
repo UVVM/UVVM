@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -33,56 +32,55 @@ use work.uart_pif_pkg.all;
 --hdlregression:tb
 -- Test case entity
 entity uart_simple_bfm_tb is
-  generic (
+  generic(
     GC_TESTCASE : string := "UVVM"
-    );
+  );
 end entity;
 
 -- Test case architecture
 architecture func of uart_simple_bfm_tb is
 
   -- DSP interface and general control signals
-  signal clk           : std_logic  := '0';
-  signal arst          : std_logic  := '0';
+  signal clk            : std_logic                    := '0';
+  signal arst           : std_logic                    := '0';
   -- CPU interface
-  signal cs            : std_logic  := '0';
-  signal addr          : unsigned(2 downto 0)         := (others => '0');
-  signal wr            : std_logic  := '0';
-  signal rd            : std_logic  := '0';
-  signal wdata           : std_logic_vector(7 downto 0) := (others => '0');            --
+  signal cs             : std_logic                    := '0';
+  signal addr           : unsigned(2 downto 0)         := (others => '0');
+  signal wr             : std_logic                    := '0';
+  signal rd             : std_logic                    := '0';
+  signal wdata          : std_logic_vector(7 downto 0) := (others => '0'); --
   signal rdata          : std_logic_vector(7 downto 0) := (others => '0');
-  signal ready           : std_logic  := '1'; -- Always ready in the same clock cycle
+  signal ready          : std_logic                    := '1'; -- Always ready in the same clock cycle
   -- UART related signals
-  signal rx     : std_logic := '1';
-  signal tx     : std_logic := '1';
-  signal terminate_loop : std_logic := '0';
+  signal rx             : std_logic                    := '1';
+  signal tx             : std_logic                    := '1';
+  signal terminate_loop : std_logic                    := '0';
 
-
-  signal clock_ena  : boolean := false;
+  signal clock_ena : boolean := false;
 
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
 
   constant C_UART_BFM_CONFIG_0 : t_uart_bfm_config := (
-    bit_time                                  => 160 ns,
-    num_data_bits                             => 8,
-    idle_state                                => '1',
-    num_stop_bits                             => STOP_BITS_ONE,
-    parity                                    => PARITY_ODD,
-    timeout                                   => 0 ns,
-    timeout_severity                          => error,
-    match_strictness                          => MATCH_EXACT,
-    num_bytes_to_log_before_expected_data     => 10,
-    id_for_bfm                                => ID_BFM,
-    id_for_bfm_wait                           => ID_BFM_WAIT,
-    id_for_bfm_poll                           => ID_BFM_POLL,
-    id_for_bfm_poll_summary                   => ID_BFM_POLL_SUMMARY,
-    error_injection                           => C_BFM_ERROR_INJECTION_INACTIVE
+    bit_time                              => 160 ns,
+    num_data_bits                         => 8,
+    idle_state                            => '1',
+    num_stop_bits                         => STOP_BITS_ONE,
+    parity                                => PARITY_ODD,
+    timeout                               => 0 ns,
+    timeout_severity                      => error,
+    match_strictness                      => MATCH_EXACT,
+    num_bytes_to_log_before_expected_data => 10,
+    id_for_bfm                            => ID_BFM,
+    id_for_bfm_wait                       => ID_BFM_WAIT,
+    id_for_bfm_poll                       => ID_BFM_POLL,
+    id_for_bfm_poll_summary               => ID_BFM_POLL_SUMMARY,
+    error_injection                       => C_BFM_ERROR_INJECTION_INACTIVE
   );
 
   procedure clock_gen(
-    signal   clock_signal  : inout std_logic;
-    signal   clock_ena     : in    boolean;
-    constant clock_period  : in    time
+    signal   clock_signal : inout std_logic;
+    signal   clock_ena    : in boolean;
+    constant clock_period : in time
   ) is
     variable v_first_half_clk_period : time := C_CLK_PERIOD / 2;
   begin
@@ -102,23 +100,22 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate DUT
   -----------------------------------------------------------------------------
-  i_uart: entity work.uart
-    port map (
-    -- DSP interface and general control signals
-        clk             => clk,            --
-        arst            => arst,           --
-    -- CPU interface
-        cs              => cs,             --
-        addr            => addr,           --
-        wr              => wr,             --
-        rd              => rd,             --
-        wdata             => wdata,            --
-        rdata            => rdata,           --
-    -- Interrupt related signals
-        rx_a            => rx,
-        tx              => tx
-        );
-
+  i_uart : entity work.uart
+    port map(
+      -- DSP interface and general control signals
+      clk   => clk,                     --
+      arst  => arst,                    --
+      -- CPU interface
+      cs    => cs,                      --
+      addr  => addr,                    --
+      wr    => wr,                      --
+      rd    => rd,                      --
+      wdata => wdata,                   --
+      rdata => rdata,                   --
+      -- Interrupt related signals
+      rx_a  => rx,
+      tx    => tx
+    );
 
   -- Set upt clock generator
   clock_gen(clk, clock_ena, 10 ns);
@@ -126,41 +123,40 @@ begin
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
-  p_main: process
-    constant C_SCOPE     : string  := C_TB_SCOPE_DEFAULT;
+  p_main : process
+    constant C_SCOPE         : string := C_TB_SCOPE_DEFAULT;
     -- Helper variables
     variable v_received_data : std_logic_vector(7 downto 0);
 
-
     procedure pulse(
-      signal   target          : inout std_logic;
-      signal   clock_signal    : in    std_logic;
-      constant num_periods     : in    natural;
-      constant msg             : in    string
+      signal   target       : inout std_logic;
+      signal   clock_signal : in std_logic;
+      constant num_periods  : in natural;
+      constant msg          : in string
     ) is
     begin
       -- Add checks etc. later.
       if num_periods > 0 then
         wait until falling_edge(clock_signal);
-        target  <= '1';
+        target <= '1';
         for i in 1 to num_periods loop
           wait until falling_edge(clock_signal);
         end loop;
       else
-        target  <= '1';
-        wait for 0 ns;  -- Delta cycle only
+        target <= '1';
+        wait for 0 ns;                  -- Delta cycle only
       end if;
-      target  <= '0';
+      target <= '0';
       log(ID_SEQUENCER_SUB, msg, C_SCOPE);
     end;
 
     -- To do: Combine with above procedure
     procedure pulse(
-      signal   target        : inout  std_logic_vector;
-      constant pulse_value   : in     std_logic_vector;
-      signal   clock_signal  : in     std_logic;
-      constant num_periods   : in     natural;
-      constant msg           : in     string) is
+      signal   target       : inout std_logic_vector;
+      constant pulse_value  : in std_logic_vector;
+      signal   clock_signal : in std_logic;
+      constant num_periods  : in natural;
+      constant msg          : in string) is
     begin
       -- Add checks etc. later.
       if num_periods > 0 then
@@ -171,28 +167,27 @@ begin
         end loop;
       else
         target <= pulse_value;
-        wait for 0 ns;  -- Delta cycle only
+        wait for 0 ns;                  -- Delta cycle only
       end if;
       target(target'range) <= (others => '0');
       log(ID_SEQUENCER_SUB, "Pulsed to " & to_string(pulse_value, HEX, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), C_SCOPE);
     end;
 
-
     -- Overloads for PIF BFMs for SBI (Simple Bus Interface)
     procedure sbi_write(
-      constant addr_value   : in natural;
-      constant data_value   : in std_logic_vector;
-      constant msg          : in string) is
+      constant addr_value : in natural;
+      constant data_value : in std_logic_vector;
+      constant msg        : in string) is
     begin
       sbi_write(to_unsigned(addr_value, addr'length), data_value, msg,
-            clk, cs, addr, rd, wr, ready, wdata, C_SCOPE);
+                clk, cs, addr, rd, wr, ready, wdata, C_SCOPE);
     end;
 
     procedure sbi_check(
-      constant addr_value   : in natural;
-      constant data_exp     : in std_logic_vector;
-      constant alert_level  : in t_alert_level;
-      constant msg          : in string) is
+      constant addr_value  : in natural;
+      constant data_exp    : in std_logic_vector;
+      constant alert_level : in t_alert_level;
+      constant msg         : in string) is
     begin
       sbi_check(addr_value  => to_unsigned(addr_value, addr'length),
                 data_exp    => data_exp,
@@ -209,21 +204,20 @@ begin
     end;
 
     procedure sbi_await_value(
-      constant addr_value    : in natural;
-      constant data_exp      : in std_logic_vector;
+      constant addr_value        : in natural;
+      constant data_exp          : in std_logic_vector;
       constant num_read_attempts : in integer;
-      constant alert_level   : in t_alert_level := ERROR;
-      constant msg           : in string;
-      constant scope         : in string := C_SCOPE;
-      constant msg_id_panel  : in t_msg_id_panel  := shared_msg_id_panel;
-      constant config        : in t_sbi_bfm_config    := C_SBI_BFM_CONFIG_DEFAULT
+      constant alert_level       : in t_alert_level    := ERROR;
+      constant msg               : in string;
+      constant scope             : in string           := C_SCOPE;
+      constant msg_id_panel      : in t_msg_id_panel   := shared_msg_id_panel;
+      constant config            : in t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT
     ) is
-      constant proc_name     : string := "sbi_await_value";
-      constant proc_call     : string := "sbi_await_value(A:" & to_string(to_unsigned(addr_value, addr'length), HEX, AS_IS, INCL_RADIX) &
-                                          ", "  & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
+      constant proc_name       : string  := "sbi_await_value";
+      constant proc_call       : string  := "sbi_await_value(A:" & to_string(to_unsigned(addr_value, addr'length), HEX, AS_IS, INCL_RADIX) & ", " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
       -- Helper variables
-      variable v_data_value : std_logic_vector(rdata'length - 1 downto 0);
-      variable v_check_ok : boolean;
+      variable v_data_value    : std_logic_vector(rdata'length - 1 downto 0);
+      variable v_check_ok      : boolean;
       variable v_read_attempts : integer := 0;
     begin
       sbi_read(to_unsigned(addr_value, addr'length), v_data_value, msg, clk, cs, addr, rd, wr, ready, rdata, scope, msg_id_panel, config, proc_name);
@@ -240,14 +234,14 @@ begin
 
     -- Overloads for BFMs for UART
     procedure uart_transmit(
-      constant data_value : in  std_logic_vector(7 downto 0)
+      constant data_value : in std_logic_vector(7 downto 0)
     ) is
     begin
       uart_transmit(data_value, "", rx, C_UART_BFM_CONFIG_0, C_SCOPE);
     end;
 
     procedure uart_receive(
-      variable data_value              : out  std_logic_vector(7 downto 0)
+      variable data_value : out std_logic_vector(7 downto 0)
     ) is
       constant msg : string := "";
     begin
@@ -255,22 +249,21 @@ begin
     end;
 
     procedure uart_expect(
-      constant data_exp             : in  std_logic_vector(7 downto 0)
+      constant data_exp : in std_logic_vector(7 downto 0)
     ) is
     begin
-      uart_expect(data_exp, "", tx, terminate_loop, 1 ,0 ns, ERROR, C_UART_BFM_CONFIG_0, C_SCOPE);
+      uart_expect(data_exp, "", tx, terminate_loop, 1, 0 ns, ERROR, C_UART_BFM_CONFIG_0, C_SCOPE);
     end;
 
-
     procedure set_inputs_passive(
-      dummy   : t_void) is
+      dummy : t_void) is
     begin
-      cs           <= '0';
-      addr         <= (others => '0');
-      wr           <= '0';
-      rd           <= '0';
-      wdata          <= (others => '0');
-      rx           <= '1';
+      cs    <= '0';
+      addr  <= (others => '0');
+      wr    <= '0';
+      rd    <= '0';
+      wdata <= (others => '0');
+      rx    <= '1';
       log(ID_SEQUENCER_SUB, "All inputs set passive", C_SCOPE);
     end;
 
@@ -292,14 +285,13 @@ begin
     ------------------------------------------------------------
 
     set_inputs_passive(VOID);
-    clock_ena <= true;   -- to start clock generator
+    clock_ena <= true;                  -- to start clock generator
     pulse(arst, clk, 10, "Pulsed reset-signal - active for 10T");
 
     log(ID_LOG_HDR, "Check defaults on output ports", C_SCOPE);
     ------------------------------------------------------------
     check_value(tx, '1', ERROR, "UART TX port must be default '1'", C_SCOPE);
     check_value(rdata, x"00", ERROR, "Register data bus output must be default passive");
-
 
     log(ID_LOG_HDR, "Check register defaults and access (transmit + receive)", C_SCOPE);
     ------------------------------------------------------------
@@ -324,17 +316,16 @@ begin
     sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY active");
     sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
     uart_receive(v_received_data);
-    check_value(v_received_data, x"55",ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
+    check_value(v_received_data, x"55", ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
     sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
     sbi_write(C_ADDR_TX_DATA, x"AA", "TX_DATA");
     uart_receive(v_received_data);
-    check_value(v_received_data, x"AA",ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
+    check_value(v_received_data, x"AA", ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
     sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
     sbi_write(C_ADDR_TX_DATA, x"00", "TX_DATA");
     uart_receive(v_received_data);
-    check_value(v_received_data, x"00",ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
+    check_value(v_received_data, x"00", ERROR, "", C_SCOPE, HEX_BIN_IF_INVALID, SKIP_LEADING_0, ID_NEVER, shared_msg_id_panel);
     sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
-
 
     log("\nChecking two consecutive UART DUT transmissions (BFM uart_expect)");
     sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
@@ -400,7 +391,6 @@ begin
     sbi_check(C_ADDR_RX_DATA, x"DD", ERROR, "");
     sbi_check(C_ADDR_RX_DATA_VALID, x"00", ERROR, "");
 
-
     log(ID_LOG_HDR, "Check Reset", C_SCOPE);
     ------------------------------------------------------------
     log("\nChecking tx output");
@@ -420,16 +410,16 @@ begin
     sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY default");
     check_value(tx, '1', ERROR, "UART TX port must be default '1'", C_SCOPE);
 
-  -----------------------------------------------------------------------------
-  -- Ending the simulation
-  -----------------------------------------------------------------------------
-  wait for 1000 ns;                     -- to allow some time for completion
-  report_alert_counters(FINAL);  -- Report final counters and print conclusion for simulation (Success/Fail)
-  log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
+    -----------------------------------------------------------------------------
+    -- Ending the simulation
+    -----------------------------------------------------------------------------
+    wait for 1000 ns;                   -- to allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
+    log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
-  -- Finish the simulation
-  std.env.stop;
-  wait;                                 -- to stop completely
+    -- Finish the simulation
+    std.env.stop;
+    wait;                               -- to stop completely
 
   end process p_main;
 

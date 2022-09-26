@@ -30,23 +30,21 @@ context bitvis_vip_clock_generator.vvc_context;
 --hdlregression:tb
 -- Test case entity
 entity clock_generator_tb is
-  generic (
+  generic(
     GC_TESTCASE : string := "UVVM"
-    );
+  );
 end entity;
 
 -- Test case architecture
 architecture func of clock_generator_tb is
 
-  constant C_SCOPE              : string  := "CLOCK_GENERATOR_VVC_TB";
-  constant C_CLK_1_PERIOD       : time    := 10 ns;
-  constant C_CLK_2_PERIOD       : time    := 20 ns;
-  constant C_CLK_3_PERIOD       : time    := 40 ns;
-  constant C_CLK_1_HIGH_PERIOD  : time    := 5 ns;
-  constant C_CLK_2_HIGH_PERIOD  : time    := 12 ns;
-  constant C_CLK_3_HIGH_PERIOD  : time    := 12 ns;
-
-
+  constant C_SCOPE             : string := "CLOCK_GENERATOR_VVC_TB";
+  constant C_CLK_1_PERIOD      : time   := 10 ns;
+  constant C_CLK_2_PERIOD      : time   := 20 ns;
+  constant C_CLK_3_PERIOD      : time   := 40 ns;
+  constant C_CLK_1_HIGH_PERIOD : time   := 5 ns;
+  constant C_CLK_2_HIGH_PERIOD : time   := 12 ns;
+  constant C_CLK_3_HIGH_PERIOD : time   := 12 ns;
 
 begin
 
@@ -55,22 +53,20 @@ begin
   -----------------------------------------------------------------------------
   i_test_harness : entity work.test_harness
     generic map(
-      GC_CLOCK_1_PERIOD       => C_CLK_1_PERIOD,
-      GC_CLOCK_1_HIGH_PERIOD  => C_CLK_1_HIGH_PERIOD,      
-      GC_CLOCK_2_PERIOD       => C_CLK_2_PERIOD,
-      GC_CLOCK_2_HIGH_PERIOD  => C_CLK_2_HIGH_PERIOD,
-      GC_CLOCK_3_PERIOD       => C_CLK_3_PERIOD,
-      GC_CLOCK_3_HIGH_PERIOD  => C_CLK_3_HIGH_PERIOD
+      GC_CLOCK_1_PERIOD      => C_CLK_1_PERIOD,
+      GC_CLOCK_1_HIGH_PERIOD => C_CLK_1_HIGH_PERIOD,
+      GC_CLOCK_2_PERIOD      => C_CLK_2_PERIOD,
+      GC_CLOCK_2_HIGH_PERIOD => C_CLK_2_HIGH_PERIOD,
+      GC_CLOCK_3_PERIOD      => C_CLK_3_PERIOD,
+      GC_CLOCK_3_HIGH_PERIOD => C_CLK_3_HIGH_PERIOD
     );
 
-  i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
-
+  i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
-  p_main: process
-
+  p_main : process
     variable v_is_ok              : boolean := false;
     variable v_timestamp          : time;
     variable v_alert_num_mismatch : boolean := false;
@@ -79,29 +75,29 @@ begin
     alias clk_2 is << signal i_test_harness.clk_2 : std_logic >>;
     alias clk_3 is << signal i_test_harness.clk_3 : std_logic >>;
 
-      -- Check clock periods in clock_generator
+    -- Check clock periods in clock_generator
     procedure check_clock_period_and_high_time(
-      signal   clock               : std_logic;
-      constant clk_period          : time;
-      constant clk_high_time       : time;
-      constant num_of_cycles       : positive
-      ) is
+      signal   clock           : std_logic;
+      constant clk_period    : time;
+      constant clk_high_time : time;
+      constant num_of_cycles : positive
+    ) is
       variable v_timestamp : time;
     begin
       -- Align with clock
-      await_value(clock, '0', 0 ns, 20*clk_period, error, "Clock check, await falling edge", C_SCOPE, ID_NEVER);
-      await_value(clock, '1', 0 ns, 20*clk_period, error, "Clock check, await rising edge", C_SCOPE, ID_NEVER);
+      await_value(clock, '0', 0 ns, 20 * clk_period, error, "Clock check, await falling edge", C_SCOPE, ID_NEVER);
+      await_value(clock, '1', 0 ns, 20 * clk_period, error, "Clock check, await rising edge", C_SCOPE, ID_NEVER);
       -- Check clock period (high and low duration)
-      for i in 0 to num_of_cycles-1 loop
+      for i in 0 to num_of_cycles - 1 loop
         v_timestamp := now;
         wait for clk_high_time;
-        check_stable(clock, now-v_timestamp, error, "Clock check, check stable high time", C_SCOPE, ID_NEVER);
+        check_stable(clock, now - v_timestamp, error, "Clock check, check stable high time", C_SCOPE, ID_NEVER);
         await_value(clock, '0', 0 ns, clk_period, error, "Clock check, await falling edge", C_SCOPE, ID_NEVER);
-        check_value(now-v_timestamp, clk_high_time, error, "Clock check, check clock high time", C_SCOPE, ID_NEVER);
+        check_value(now - v_timestamp, clk_high_time, error, "Clock check, check clock high time", C_SCOPE, ID_NEVER);
         wait for clk_period - clk_high_time;
         check_stable(clock, clk_period - clk_high_time, error, "Clock check, check stable low time", C_SCOPE, ID_NEVER);
         await_value(clock, '1', 0 ns, clk_period, error, "Clock check, await rising edge", C_SCOPE, ID_NEVER);
-        check_value(now-v_timestamp, clk_period, error, "Clock check, check clock period", C_SCOPE, ID_NEVER);
+        check_value(now - v_timestamp, clk_period, error, "Clock check, check clock period", C_SCOPE, ID_NEVER);
       end loop;
       log(ID_SEQUENCER, "Check of clock period and clock high time PASSED.", C_SCOPE);
     end procedure;
@@ -114,14 +110,12 @@ begin
     begin
       v_timestamp := now;
       check_value(clock, '0', error, "Clock not runnig check, check that clock line is low", C_SCOPE, ID_NEVER);
-      wait for clk_period*10;
-      check_stable(clock, now-v_timestamp, error, "Clock not runnig check, check that clock line is not active", C_SCOPE, ID_NEVER);
+      wait for clk_period * 10;
+      check_stable(clock, now - v_timestamp, error, "Clock not runnig check, check that clock line is not active", C_SCOPE, ID_NEVER);
       log(ID_SEQUENCER, "Check of clock of clock not running PASSED.", C_SCOPE);
     end procedure;
 
-
   begin
-
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
@@ -129,7 +123,7 @@ begin
 
     await_uvvm_initialization(VOID);
 
-    set_alert_stop_limit(TB_ERROR,4);
+    set_alert_stop_limit(TB_ERROR, 4);
 
     --disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ALL_MESSAGES);
@@ -257,17 +251,16 @@ begin
     wait for C_CLK_3_PERIOD;
     check_clock_period_and_high_time(clk_3, C_CLK_3_PERIOD, C_CLK_3_HIGH_PERIOD, 5);
 
-
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;             -- to allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
+    wait for 1000 ns;                   -- to allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation
     std.env.stop;
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
 

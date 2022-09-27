@@ -233,7 +233,7 @@ begin
       variable v_byte_word  : std_logic_vector(7 downto 0);
     begin
       increment_expected_alerts(warning, 1);
-      axistream_transmit(AXISTREAM_VVCT, 2, data_array, user_array, "transmit, data wrogn. bytes in word=" & to_string(data_array(0)'length / 8));
+      axistream_transmit(AXISTREAM_VVCT, 2, data_array, user_array, "transmit, data wrong. bytes in word=" & to_string(data_array(0)'length / 8));
       v_idx                                                         := random(0, data_array'length - 1); -- pick index
       v_byte                                                        := random(1, data_array(0)'length / 8); -- pick byte
       v_data_array(v_idx)((v_byte * 8) - 1 downto (v_byte * 8) - 8) := not v_data_array(v_idx)((v_byte * 8) - 1 downto (v_byte * 8) - 8); -- invert byte
@@ -252,7 +252,7 @@ begin
       variable v_user_array : t_user_array(0 to user_array'length - 1) := user_array;
     begin
       increment_expected_alerts(warning, 1);
-      axistream_transmit(AXISTREAM_VVCT, 2, data_array, v_user_array, strb_array, id_array, dest_array, "transmit, tuser wrogn.");
+      axistream_transmit(AXISTREAM_VVCT, 2, data_array, v_user_array, strb_array, id_array, dest_array, "transmit, tuser wrong.");
       v_idx               := random(0, v_user_array'length - 1);
       v_user_array(v_idx) := not user_array(v_idx); -- Provoke alert in axistream_expect()
       axistream_expect(AXISTREAM_VVCT, 3, data_array, v_user_array, strb_array, id_array, dest_array, "expect, tuser wrong.", warning);
@@ -270,7 +270,7 @@ begin
       variable v_strb_array : t_strb_array(0 to user_array'length - 1) := strb_array;
     begin
       increment_expected_alerts(warning, 1);
-      axistream_transmit(AXISTREAM_VVCT, 2, data_array, user_array, v_strb_array, id_array, dest_array, "transmit, tstrb wrogn.");
+      axistream_transmit(AXISTREAM_VVCT, 2, data_array, user_array, v_strb_array, id_array, dest_array, "transmit, tstrb wrong.");
       v_idx               := random(0, v_strb_array'length - 1);
       v_strb_array(v_idx) := not v_strb_array(v_idx); -- Provoke alert in axistream_expect()
       axistream_expect(AXISTREAM_VVCT, 3, data_array, user_array, v_strb_array, id_array, dest_array, "expect, tstrb wrong.", warning);
@@ -288,7 +288,7 @@ begin
       variable v_id_array : t_id_array(0 to user_array'length - 1) := id_array;
     begin
       increment_expected_alerts(warning, 1);
-      axistream_transmit(AXISTREAM_VVCT, 2, data_array, user_array, strb_array, v_id_array, dest_array, "transmit, tid wrogn.");
+      axistream_transmit(AXISTREAM_VVCT, 2, data_array, user_array, strb_array, v_id_array, dest_array, "transmit, tid wrong.");
       v_idx             := random(0, v_id_array'length - 1);
       v_id_array(v_idx) := not v_id_array(v_idx); -- Provoke alert in axistream_expect()
       axistream_expect(AXISTREAM_VVCT, 3, data_array, user_array, strb_array, v_id_array, dest_array, "expect, tid wrong.", warning);
@@ -307,7 +307,7 @@ begin
       variable v_id_array   : t_id_array(0 to user_array'length - 1)   := id_array;
     begin
       increment_expected_alerts(warning, 1);
-      axistream_transmit(AXISTREAM_VVCT, 2, data_array, user_array, strb_array, id_array, dest_array, "transmit, tdest wrogn.");
+      axistream_transmit(AXISTREAM_VVCT, 2, data_array, user_array, strb_array, id_array, dest_array, "transmit, tdest wrong.");
       v_idx               := random(0, v_dest_array'length - 1);
       v_dest_array(v_idx) := not v_dest_array(v_idx); -- Provoke alert in axistream_expect()
       v_id_array          := (others => (others => '-')); -- also test the use of don't care
@@ -373,7 +373,7 @@ begin
 
         -- verify alert if the data is not what is expected
         increment_expected_alerts(warning, 1);
-        axistream_transmit(AXISTREAM_VVCT, 0, data_array, v_user_array, "transmit, data wrogn ,i=" & to_string(i));
+        axistream_transmit(AXISTREAM_VVCT, 0, data_array, v_user_array, "transmit, data wrong ,i=" & to_string(i));
         v_idx                       := random(0, v_numBytes - 1);
         v_data_array_as_byte        := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
         v_data_array_as_byte(v_idx) := not v_data_array_as_byte(v_idx);
@@ -381,7 +381,7 @@ begin
 
         -- verify alert if the tuser is not what is expected
         increment_expected_alerts(warning, 1);
-        axistream_transmit(AXISTREAM_VVCT, 0, data_array, v_user_array, "transmit, tuser wrogn ,i=" & to_string(i));
+        axistream_transmit(AXISTREAM_VVCT, 0, data_array, v_user_array, "transmit, tuser wrong ,i=" & to_string(i));
         v_idx               := random(0, v_numWords - 1);
         v_user_array(v_idx) := not v_user_array(v_idx);
         axistream_expect_bytes(AXISTREAM_VVCT, 1, convert_slv_array_to_byte_array(data_array, v_byte_endianness), v_user_array, "expect, tuser wrong ,i=" & to_string(i), warning);
@@ -401,15 +401,14 @@ begin
       variable v_numBytes : integer := numBytes;
     begin
       await_completion(AXISTREAM_VVCT, 1, 1 ms);
-      axistream_transmit(AXISTREAM_VVCT, 0, data_array, user_array, "transmit, tlast wrogn,i=" & to_string(i));
+      axistream_transmit(AXISTREAM_VVCT, 0, data_array, user_array, "transmit, tlast wrong,i=" & to_string(i));
       increment_expected_alerts(warning, 1);
       shared_axistream_vvc_config(1).bfm_config.protocol_error_severity := warning;
 
       v_numBytes := v_numBytes - 1;
       axistream_expect(AXISTREAM_VVCT, 1, data_array(0 to v_numBytes - 1), user_array, "expect, tlast wrong ,i=" & to_string(i), NO_ALERT);
       -- due to the premature tlast, make an extra call to read the remaining (corrupt) packet
-      increment_expected_alerts(warning, 1);
-      axistream_expect(AXISTREAM_VVCT, 1, data_array(0 to v_numBytes - 1), user_array, "expect, tlast wrong ,i=" & to_string(i), NO_ALERT);
+      axistream_expect(AXISTREAM_VVCT, 1, data_array(0 to v_numBytes - 1), user_array, "expect, remaining data ,i=" & to_string(i), NO_ALERT);
       await_completion(AXISTREAM_VVCT, 1, 1 ms);
 
       -- Cleanup after test case

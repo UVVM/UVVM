@@ -254,6 +254,7 @@ begin
         initialize_req_cov("TC_10", GC_REQ_FILE, "pc_15.csv");
 
         log(ID_SEQUENCER, "Call disable_cond_tick_off_req_cov(REQ_10) and expect warning for second call.", C_SCOPE);
+        increment_expected_alerts(TB_WARNING, 1);
         disable_cond_tick_off_req_cov("REQ_10");
         disable_cond_tick_off_req_cov("REQ_10"); -- expect tb_warning for this call
 
@@ -350,11 +351,11 @@ begin
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
       log(ID_LOG_HDR, "Testing omitted sub-requirement: UART_REQ_OMIT.", C_SCOPE);
-      if GC_REQ_OMIT_MAP = "" then
+      if GC_SUB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_REQ_OMIT_MAP, "pc_16.csv");
+        initialize_req_cov("TC_SUB_REQ_OMIT", GC_SUB_REQ_FILE, "pc_16.csv");
         tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
@@ -368,11 +369,11 @@ begin
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
       log(ID_LOG_HDR, "Testing omitted sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
-      if GC_REQ_OMIT_MAP = "" then
+      if GC_SUB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_REQ_OMIT_MAP, "pc_17.csv");
+        initialize_req_cov("TC_SUB_REQ_OMIT", GC_SUB_REQ_FILE, "pc_17.csv");
         tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
@@ -387,11 +388,11 @@ begin
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
       log(ID_LOG_HDR, "Testing omitted sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
-      if GC_REQ_OMIT_MAP = "" then
+      if GC_SUB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_REQ_OMIT_MAP, "pc_18.csv");
+        initialize_req_cov("TC_SUB_REQ_OMIT", GC_SUB_REQ_FILE, "pc_18.csv");
         tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);

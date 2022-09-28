@@ -46,7 +46,6 @@ hr.add_files("../../tb/*.vhd", "bitvis_vip_spec_cov")
 hr.add_generics(entity="spec_cov_tb",
                      generics=["GC_REQ_FILE", ("../../tb/maintenance_tb/req_file.csv", "PATH"),
                                "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
-                               "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
                                "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
 
 hr.start(regression_mode=True, gui_mode=False)

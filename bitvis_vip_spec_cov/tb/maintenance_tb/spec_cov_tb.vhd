@@ -378,7 +378,11 @@ begin
         tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_EVEN", PASS, "ticking off UART_REQ_EVEN", LIST_EVERY_TICKOFF, C_SCOPE);
+
+        -- Expecting 1 TB_WARNING for omitted requirement UART_REQ_OMIT in this testcase
+        increment_expected_alerts(TB_WARNING, 1);
         tick_off_req_cov("UART_REQ_OMIT", PASS, "ticking off UART_REQ_OMIT", LIST_EVERY_TICKOFF, C_SCOPE);
+        
         -- End testcase
         finalize_req_cov(VOID);
       end if;
@@ -397,7 +401,11 @@ begin
         tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_EVEN", PASS, "ticking off UART_REQ_EVEN", LIST_EVERY_TICKOFF, C_SCOPE);
+        
+        -- Expecting 1 TB_WARNING for omitted requirement UART_REQ_OMIT in this testcase
+        increment_expected_alerts(TB_WARNING, 1);        
         tick_off_req_cov("UART_REQ_OMIT", FAIL, "ticking off UART_REQ_OMIT", LIST_EVERY_TICKOFF, C_SCOPE);
+        
         -- End testcase
         finalize_req_cov(VOID);
       end if;

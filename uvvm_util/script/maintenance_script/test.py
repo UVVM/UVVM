@@ -4,7 +4,6 @@ import shutil
 from itertools import product
 import platform
 
-
 try:
     from hdlregression import HDLRegression
 except:
@@ -23,6 +22,7 @@ def cleanup(msg='Cleaning up...'):
             shutil.rmtree(path)
         except:
             os.remove(path)
+
 
 def os_adjust_path(path) -> str:
     if platform.system().lower() == "windows":
@@ -61,15 +61,16 @@ hr.add_generics(entity='func_cov_tb',
 hr.start(regression_mode=True, gui_mode=False)
 
 # Run coverage accumulation script
-hr.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_verbose.txt -r")
-hr.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_non_verbose.txt -r -nv")
-hr.run_command("py ../script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_holes.txt -r -hl -im")
+hr.run_command("py ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_verbose.txt -r")
+hr.run_command("py ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_non_verbose.txt -r -nv")
+hr.run_command("py ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_holes.txt -r -hl -im")
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()
 
-# Check with golden reference
-(ret_txt, ret_code) = hr.run_command("py ../script/maintenance_script/verify_with_golden.py -modelsim")
+# Check with golden reference, args: 1=modelsim simulator, 2=path to uvvm_util
+path_to_uvvm_util_sim = "./../../uvvm_util/sim"
+(ret_txt, ret_code) = hr.run_command("py ../../uvvm_util/script/maintenance_script/verify_with_golden.py -modelsim %s" % (path_to_uvvm_util_sim))
 print(ret_txt.replace('\\', '/'))
 
 # Golden compare ok?
@@ -81,8 +82,8 @@ if num_passing_tests == 0:
     sys.exit(1)
 
 # Remove output only if OK
-if hr.check_run_results(exp_fail=0) is True:
-    cleanup('Removing simulation output')
+# if hr.check_run_results(exp_fail=0) is True:
+#     cleanup('Removing simulation output')
 
 # Return number of failing tests
 sys.exit(num_failing_tests)

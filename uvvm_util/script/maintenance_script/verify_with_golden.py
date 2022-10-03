@@ -4,11 +4,18 @@ import sys
 import ntpath
 
 
-def get_golden_file_list(simulator='modelsim'):
+def get_golden_file_list(simulator='modelsim', path=None):
   filelist = []
 
+  if path is None:
+      path = os.getcwd()
+      
   golden_dir = 'golden_modelsim' if simulator == 'modelsim' else 'golden_riviera_pro'
-  golden_folder = os.path.abspath(os.path.join(os.getcwd(), '../script/maintenance_script/' + golden_dir))
+  path = os.path.join(path, '../../uvvm_util/script/maintenance_script/' + golden_dir)
+
+  golden_folder = os.path.abspath(path)
+  
+  print('golden path: %s' % (golden_folder))
 
   for subdir, dirs, files in os.walk(golden_folder):
     for file in files:
@@ -18,10 +25,16 @@ def get_golden_file_list(simulator='modelsim'):
   return filelist
 
 
-def get_test_file_list():
+def get_test_file_list(path=None):
   filelist = []
 
-  output_folder = os.path.abspath(os.path.join(os.getcwd(), '.')) # Look in sim/
+  if path is None:
+      path = os.path.join(os.getcwd(), '.')
+
+  output_folder = os.path.abspath(path) # Look in sim/
+  
+  print('output folder: %s' % (output_folder))
+
   for dirpath, dirs, files in os.walk(output_folder):
     for file in files:
       if 'hdlregression' in dirpath and 'test' in dirpath and '.txt' in file:
@@ -44,15 +57,15 @@ def compare_lines(golden_lines, verify_lines):
     return True
 
 
-def compare(modelsim=False, riviera=False):
+def compare(modelsim=False, riviera=False, path = None):
   # Get file lists
-  test_run_file_list = get_test_file_list()
+  test_run_file_list = get_test_file_list(path)
   num_test_run_files = len(test_run_file_list)
 
   if modelsim:
-    golden_file_list = get_golden_file_list(simulator='modelsim')
+    golden_file_list = get_golden_file_list(simulator='modelsim', path = path)
   if riviera:
-    golden_file_list = get_golden_file_list(simulator='riviera')
+    golden_file_list = get_golden_file_list(simulator='riviera', path = path)
 
   failing_verify_file = []
   missing_test_run_file = []
@@ -133,6 +146,10 @@ def compare(modelsim=False, riviera=False):
   num_errors = len(failing_verify_file) + num_missing_files
   if num_errors != 0:
       print("Golden failed with %d error(s)." %(num_errors))
+      
+  if len(golden_file_list) == 0 or num_test_run_files == 0:
+      print('Missig files for comparing with golden! Returning fail!')
+      sys.exit(1 + num_errors)
 
   sys.exit(num_errors)
 
@@ -140,16 +157,20 @@ def compare(modelsim=False, riviera=False):
 def main(argv):
   args = [arg.lower() for arg in argv]
 
+  path = None
+  if len(args) > 2:
+      path = args[2]
+
   for arg in args:
     if ("modelsim" in arg) or ("vsim" in arg):
       print("Verify golden modelsim files : ")
       print("--------------------------------------")
-      compare(modelsim = True)
+      compare(modelsim = True, path = path)
 
     elif ("vcom" in arg) or ("riviera" in arg) or ("rivierapro" in arg) or ("aldec" in arg):
       print("Verify golden riviera pro files : ")
       print("--------------------------------------")
-      compare(riviera = True)
+      compare(riviera = True, path = path)
 
     else:
       print("Please specify simulator as argument: modelsim or riviera")

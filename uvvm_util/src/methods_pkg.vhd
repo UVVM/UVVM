@@ -1763,9 +1763,7 @@ package methods_pkg is
     );
 
 
-  -- Check stable procedures with expected value
-
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : boolean;
     constant expected     : boolean;
     constant stable_req   : time;
@@ -1773,11 +1771,11 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "boolean"
     );
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : std_logic_vector;
     constant expected     : std_logic_vector;
     constant stable_req   : time;
@@ -1785,11 +1783,11 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "slv"
     );
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : unsigned;
     constant expected     : unsigned;
     constant stable_req   : time;
@@ -1797,11 +1795,11 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "unsigned"
     );
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : signed;
     constant expected     : signed;
     constant stable_req   : time;
@@ -1809,11 +1807,11 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "signed"
     );
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : std_logic;
     constant expected     : std_logic;
     constant stable_req   : time;
@@ -1821,11 +1819,11 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "std_logic"
     );
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : integer;
     constant expected     : integer;
     constant stable_req   : time;
@@ -1833,11 +1831,11 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "integer"
     );
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : real;
     constant expected     : real;
     constant stable_req   : time;
@@ -1845,7 +1843,7 @@ package methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "real"
     );
 
@@ -6635,8 +6633,7 @@ package body methods_pkg is
   end;
 
 
-  -- Check stable procedures with expected value
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : boolean;
     constant expected     : boolean;
     constant stable_req   : time;
@@ -6644,7 +6641,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "boolean"
     ) is
   begin
@@ -6654,7 +6651,7 @@ package body methods_pkg is
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : std_logic_vector;
     constant expected     : std_logic_vector;
     constant stable_req   : time;
@@ -6662,7 +6659,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "slv"
     ) is
   begin
@@ -6672,7 +6669,7 @@ package body methods_pkg is
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : unsigned;
     constant expected     : unsigned;
     constant stable_req   : time;
@@ -6680,7 +6677,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "unsigned"
     ) is
   begin
@@ -6690,7 +6687,7 @@ package body methods_pkg is
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : signed;
     constant expected     : signed;
     constant stable_req   : time;
@@ -6698,7 +6695,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "signed"
     ) is
   begin
@@ -6708,7 +6705,7 @@ package body methods_pkg is
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : std_logic;
     constant expected     : std_logic;
     constant stable_req   : time;
@@ -6716,7 +6713,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "std_logic"
     ) is
   begin
@@ -6726,7 +6723,7 @@ package body methods_pkg is
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : integer;
     constant expected     : integer;
     constant stable_req   : time;
@@ -6734,7 +6731,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "integer"
     ) is
   begin
@@ -6744,7 +6741,7 @@ package body methods_pkg is
     check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
-  procedure check_stable(
+  procedure await_stable_value(
     signal target         : real;
     constant expected     : real;
     constant stable_req   : time;
@@ -6752,7 +6749,7 @@ package body methods_pkg is
     constant scope        : string         := C_TB_SCOPE_DEFAULT;
     constant msg_id       : t_msg_id       := ID_POS_ACK;
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-    constant caller_name  : string         := "check_stable()";
+    constant caller_name  : string         := "await_stable_value()";
     constant value_type   : string         := "real"
     ) is
   begin

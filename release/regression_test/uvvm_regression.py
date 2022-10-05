@@ -352,13 +352,21 @@ def test_bitvis_vip_axistream():
     # Create testbench configuration with TB generics
     def create_config(data_widths, user_widths, id_widths, dest_widths, include_tuser=False, use_setup_and_hold=False):
         config = []
-        if any(include_tuser): include_tuser = 1
-        else: include_tuser = 0
-        if any(use_setup_and_hold): use_setup_and_hold = 1
-        else: use_setup_and_hold = 0
+        # Need to convert boolean to int - and handle lists
+        if isinstance(include_tuser, list):
+            for idx, item in enumerate(include_tuser):
+                include_tuser[idx] = 1 if item is True else 0
+        else:
+            include_tuser = 1 if include_tuser is True else 0
+        # Need to convert boolean to int - and handle lists
+        if isinstance(use_setup_and_hold, list):
+            for idx, item in enumerate(use_setup_and_hold):
+                use_setup_and_hold[idx] = 1 if item is True else 0
+        else:
+            use_setup_and_hold = 1 if use_setup_and_hold is True else 0
 
-        for data_width, user_width, id_width, dest_width in product(data_widths, user_widths, id_widths, dest_widths):
-          config.append([str(data_width), str(user_width), str(id_width), str(dest_width), str(include_tuser), str(use_setup_and_hold)])
+        for data_width, user_width, id_width, dest_width, tuser, setup_and_hold in product(data_widths, user_widths, id_widths, dest_widths, include_tuser, use_setup_and_hold):
+          config.append([str(data_width), str(user_width), str(id_width), str(dest_width), str(tuser), str(setup_and_hold)])
         return config
 
     clear_sim_folder()
@@ -400,7 +408,7 @@ def test_bitvis_vip_axistream():
 
     configs = create_config(data_widths=[32], user_widths=[8], id_widths=[7], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[False, True])
     for config in configs:
-        hr.add_generics(entity="axistream_bfm_slv_array_tb",
+        hr.add_generics(entity="axistream_vvc_slv_array_tb",
                              generics=["GC_DATA_WIDTH", config[0],"GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
         created_testcases += 1
 
@@ -412,19 +420,6 @@ def test_bitvis_vip_axistream():
                          generics=["GC_DATA_WIDTH", 32, "GC_USER_WIDTH", 8, "GC_ID_WIDTH", 7, "GC_DEST_WIDTH", 4, "GC_INCLUDE_TUSER", True, "GC_USE_SETUP_AND_HOLD", False])
     created_testcases += 1
 
-
-    # testcases in VIP:
-    # ------------------
-    # 1. axistream_simple_tb (run with generic configs)
-    # 2. axistream_bfm_slv_array_tb (run with generic configs)
-    # 3. axistream_multiple_vvc_tb (run with generic configs)
-    # 4. axistream_vvc_slv_array_tb (run with defaults)
-    # 5. axistream_vvc_simple_tb (run with generic configs)
-
-
-    # Add test: axistream_vvc_slv_array_tb
-    total_testcases = created_testcases + 1
-
     # Add Avalon AXI VIP
     hr.add_files("../../bitvis_vip_axistream/src/*.vhd", "bitvis_vip_axistream")
     hr.add_files("../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_axistream")
@@ -432,7 +427,7 @@ def test_bitvis_vip_axistream():
     hr.add_files("../../bitvis_vip_axistream/tb/maintenance_tb/*.vhd", "bitvis_vip_axistream")
     hr.start(sim_options=sim_options)
 
-    check_result(exp_pass=total_testcases, exp_fail=0, exp_minor=0, hr=hr)
+    check_result(exp_pass=created_testcases, exp_fail=0, exp_minor=0, hr=hr)
 
 
 def test_bitvis_vip_clock_generator():

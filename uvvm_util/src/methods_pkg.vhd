@@ -1753,6 +1753,90 @@ package methods_pkg is
     constant value_type   : string         := "real"
   );
 
+  procedure await_stable_value(
+    signal   target       : boolean;
+    constant expected     : boolean;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "boolean"
+  );
+
+  procedure await_stable_value(
+    signal   target       : std_logic_vector;
+    constant expected     : std_logic_vector;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "slv"
+  );
+
+  procedure await_stable_value(
+    signal   target       : unsigned;
+    constant expected     : unsigned;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "unsigned"
+  );
+
+  procedure await_stable_value(
+    signal   target       : signed;
+    constant expected     : signed;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "signed"
+  );
+
+  procedure await_stable_value(
+    signal   target       : std_logic;
+    constant expected     : std_logic;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "std_logic"
+  );
+
+  procedure await_stable_value(
+    signal   target       : integer;
+    constant expected     : integer;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "integer"
+  );
+
+  procedure await_stable_value(
+    signal   target       : real;
+    constant expected     : real;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "real"
+  );
+
   impure function random(
     constant length : integer
   ) return std_logic_vector;
@@ -6470,6 +6554,132 @@ package body methods_pkg is
   ) is
   begin
     check_stable(target, stable_req, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure await_stable_value(
+    signal   target       : boolean;
+    constant expected     : boolean;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "boolean"
+  ) is
+  begin
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    wait for stable_req;
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure await_stable_value(
+    signal   target       : std_logic_vector;
+    constant expected     : std_logic_vector;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "slv"
+  ) is
+  begin
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    wait for stable_req;
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure await_stable_value(
+    signal   target       : unsigned;
+    constant expected     : unsigned;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "unsigned"
+  ) is
+  begin
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    wait for stable_req;
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure await_stable_value(
+    signal   target       : signed;
+    constant expected     : signed;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "signed"
+  ) is
+  begin
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    wait for stable_req;
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, msg_id, msg_id_panel, caller_name);
+    check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure await_stable_value(
+    signal   target       : std_logic;
+    constant expected     : std_logic;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "std_logic"
+  ) is
+  begin
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    wait for stable_req;
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure await_stable_value(
+    signal   target       : integer;
+    constant expected     : integer;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "integer"
+  ) is
+  begin
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    wait for stable_req;
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+  end;
+
+  procedure await_stable_value(
+    signal   target       : real;
+    constant expected     : real;
+    constant stable_req   : time;
+    constant msg          : string;
+    constant scope        : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id       : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    constant caller_name  : string         := "await_stable_value()";
+    constant value_type   : string         := "real"
+  ) is
+  begin
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => initial value was incorrect" & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    wait for stable_req;
+    check_value(target, expected, error, caller_name & " (" & value_type & ") => value was incorrect after " & to_string(stable_req) & "." & LF & msg, scope, msg_id, msg_id_panel, caller_name);
+    check_stable(target, stable_req, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
   end;
 
   ----------------------------------------------------------------------------

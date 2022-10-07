@@ -22,4 +22,3 @@ This project uses the following versions:
   bitvis_vip_ethernet, version v0.2.2
   bitvis_vip_axi, version v0.2.1
   bitvis_vip_wishbone, version v0.1.1 BETA
-  

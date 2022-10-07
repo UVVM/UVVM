@@ -37,14 +37,14 @@ begin
   begin
     -- shared_uvvm_state is initialized to IDLE. Hence it will stay in IDLE if this procedure is not included in the TB
     shared_uvvm_state := PHASE_A;
-    wait for 0 ns;  -- A single delta cycle
-    wait for 0 ns;  -- A single delta cycle
+    wait for 0 ns;                      -- A single delta cycle
+    wait for 0 ns;                      -- A single delta cycle
     if (shared_uvvm_state = PHASE_B) then
       tb_failure("ti_uvvm_engine seems to have been instantiated more than once in this testbench system", C_SCOPE);
     end if;
     shared_uvvm_state := PHASE_B;
-    wait for 0 ns;  -- A single delta cycle
-    wait for 0 ns;  -- A single delta cycle
+    wait for 0 ns;                      -- A single delta cycle
+    wait for 0 ns;                      -- A single delta cycle
     shared_uvvm_state := INIT_COMPLETED;
     wait;
   end process p_initialize_uvvm;

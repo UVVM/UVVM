@@ -50,7 +50,6 @@ package transaction_pkg is
   constant C_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
-
   --==========================================================================================
   --
   -- Transaction info types, constants and global signal
@@ -71,22 +70,22 @@ package transaction_pkg is
   constant C_VVC_META_DEFAULT : t_vvc_meta := (
     msg     => (others => ' '),
     cmd_idx => -1
-    );
+  );
 
   -- Base transaction
   type t_base_transaction is record
-    operation           : t_operation;
-    data_array          : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    data_array         : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record;
 
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
-    operation           => NO_OPERATION,
-    data_array          => (others => (others => '0')),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
-    );
+    operation          => NO_OPERATION,
+    data_array         => (others => (others => '0')),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+  );
 
   -- Transaction group
   type t_transaction_group is record
@@ -95,18 +94,16 @@ package transaction_pkg is
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt => C_BASE_TRANSACTION_SET_DEFAULT
-    );
+  );
 
   subtype t_sub_channel is t_channel range RX to TX;
 
   -- Global transaction info trigger signal
   type t_rgmii_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;
-  signal global_rgmii_vvc_transaction_trigger : t_rgmii_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                              (others => (others => '0'));
+  signal global_rgmii_vvc_transaction_trigger : t_rgmii_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => '0'));
 
   -- Shared transaction info variable
   type t_rgmii_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;
-  shared variable shared_rgmii_vvc_transaction_info : t_rgmii_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                    (others => (others => C_TRANSACTION_GROUP_DEFAULT));
+  shared variable shared_rgmii_vvc_transaction_info : t_rgmii_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
 end package transaction_pkg;

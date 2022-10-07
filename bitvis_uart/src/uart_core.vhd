@@ -26,7 +26,7 @@ use work.uart_pif_pkg.all;
 use work.uart_pkg.all;
 
 entity uart_core is
-  generic (
+  generic(
     GC_START_BIT                 : std_logic := '0';
     GC_STOP_BIT                  : std_logic := '1';
     GC_CLOCKS_PER_BIT            : integer   := 16;
@@ -41,43 +41,43 @@ entity uart_core is
     -- Interrupt related signals
     rx_a : in  std_logic;
     tx   : out std_logic
-    );
+  );
 end entity uart_core;
 
 architecture rtl of uart_core is
   type t_slv_array is array (3 downto 0) of std_logic_vector(7 downto 0);
 
   -- tx signals
-  signal tx_data         : t_slv_array:= (others => (others => '0'));
-  signal tx_buffer    : std_logic_vector(7 downto 0) := (others => '0');
+  signal tx_data       : t_slv_array                  := (others => (others => '0'));
+  signal tx_buffer     : std_logic_vector(7 downto 0) := (others => '0');
   signal tx_data_valid : std_logic                    := '0';
 
-  signal tx_ready       : std_logic                                      := '0';
-  signal tx_active      : std_logic                                      := '0';
-  signal tx_clk_counter : unsigned(f_log2(GC_CLOCKS_PER_BIT)-1 downto 0) := (others => '0');
+  signal tx_ready       : std_logic                                        := '0';
+  signal tx_active      : std_logic                                        := '0';
+  signal tx_clk_counter : unsigned(f_log2(GC_CLOCKS_PER_BIT) - 1 downto 0) := (others => '0');
   -- count through the bits (12 total)
-  signal tx_bit_counter : unsigned(3 downto 0)                           := (others => '0');
+  signal tx_bit_counter : unsigned(3 downto 0)                             := (others => '0');
 
   -- receive signals
-  signal rx_buffer      : std_logic_vector(7 downto 0) := (others => '0');
-  signal rx_active      : std_logic                                      := '0';
-  signal rx_clk_counter : unsigned(f_log2(GC_CLOCKS_PER_BIT)-1 downto 0) := (others => '0');
+  signal rx_buffer      : std_logic_vector(7 downto 0)                     := (others => '0');
+  signal rx_active      : std_logic                                        := '0';
+  signal rx_clk_counter : unsigned(f_log2(GC_CLOCKS_PER_BIT) - 1 downto 0) := (others => '0');
   -- count through the bits (12 total)
-  signal rx_bit_counter : unsigned(3 downto 0)                           := (others => '0');
-  signal rx_bit_samples : std_logic_vector(GC_CLOCKS_PER_BIT-1 downto 0) := (others => '0');
+  signal rx_bit_counter : unsigned(3 downto 0)                             := (others => '0');
+  signal rx_bit_samples : std_logic_vector(GC_CLOCKS_PER_BIT - 1 downto 0) := (others => '0');
 
-  signal rx_data       : t_slv_array                  := (others => (others => '0'));
-  signal rx_data_valid : std_logic                    := '0';
-  signal rx_data_full : std_logic := '0';
+  signal rx_data       : t_slv_array := (others => (others => '0'));
+  signal rx_data_valid : std_logic   := '0';
+  signal rx_data_full  : std_logic   := '0';
 
   -- rx synced to clk
-  signal rx_s : std_logic_vector(1 downto 0) := (others => '1');  -- synchronized serial data input
+  signal rx_s : std_logic_vector(1 downto 0) := (others => '1'); -- synchronized serial data input
 
-  signal rx_just_active : boolean;  -- helper signal when we start receiving
+  signal rx_just_active : boolean;      -- helper signal when we start receiving
 
-  signal parity_err    : std_logic := '0';  -- parity error detected
-  signal stop_err      : std_logic := '0';  -- stop error detected
-  signal transient_err : std_logic := '0';  -- data value is transient
+  signal parity_err    : std_logic := '0'; -- parity error detected
+  signal stop_err      : std_logic := '0'; -- stop error detected
+  signal transient_err : std_logic := '0'; -- data value is transient
 
   signal c2p_i : t_c2p;                 -- Internal version of output
 begin
@@ -110,34 +110,34 @@ begin
   -- received via SBI, and decremented when a new byte is loaded into
   -- tx_buffer.
   ---------------------------------------------------------------------------
-  uart_tx : process (clk, arst) is
+  uart_tx : process(clk, arst) is
     variable vr_tx_data_idx : unsigned(2 downto 0) := (others => '0');
-  begin  -- process uart_tx
+  begin                                 -- process uart_tx
     if arst = '1' then                  -- asynchronous reset (active high)
-      tx_data         <= (others => (others => '0'));
-      tx_buffer       <= (others => '0');
-      tx_data_valid <= '0';
-      tx_ready        <= '1';
-      tx_active       <= '0';
-      tx_bit_counter  <= (others => '0');
-      tx_clk_counter  <= (others => '0');
-      tx              <= '1';
-      vr_tx_data_idx  := (others => '0');
+      tx_data        <= (others => (others => '0'));
+      tx_buffer      <= (others => '0');
+      tx_data_valid  <= '0';
+      tx_ready       <= '1';
+      tx_active      <= '0';
+      tx_bit_counter <= (others => '0');
+      tx_clk_counter <= (others => '0');
+      tx             <= '1';
+      vr_tx_data_idx := (others => '0');
     elsif rising_edge(clk) then         -- rising clock edge
 
       -- There is valid data in tx_data.
       -- Load the tx_buffer and activate TX operation.
       -- Decrement vr_tx_data_idx.
       if tx_data_valid = '1' and tx_active = '0' then
-        tx_active    <= '1';
+        tx_active <= '1';
         tx_buffer <= tx_data(0);
-        tx_data <= x"00" & tx_data(3 downto 1);
+        tx_data   <= x"00" & tx_data(3 downto 1);
 
         if vr_tx_data_idx > 0 then
           -- Decrement idx
           if vr_tx_data_idx < 3 then
             vr_tx_data_idx := vr_tx_data_idx - 1;
-          else -- vr_tx_data_idx = 3
+          else                          -- vr_tx_data_idx = 3
 
             -- Special case for idx=3 (max).
             -- When tx_data is full (tx_ready = '0'), we do not wish to
@@ -165,12 +165,12 @@ begin
       if tx_ready = '1' then
         if p2c.awo_tx_data_we = '1' then
           tx_data(to_integer(vr_tx_data_idx)) <= p2c.awo_tx_data;
-          tx_data_valid <= '1';
+          tx_data_valid                       <= '1';
 
           -- Increment idx if tx_data not full.
           if vr_tx_data_idx < 3 then
             vr_tx_data_idx := vr_tx_data_idx + 1;
-          else -- tx_data full
+          else                          -- tx_data full
             tx_ready <= '0';
           end if;
         end if;
@@ -198,7 +198,7 @@ begin
             tx <= GC_START_BIT;
           when 1 to 8 =>
             -- mux out the correct tx bit
-            tx <= tx_buffer(to_integer(tx_bit_counter)-1);
+            tx <= tx_buffer(to_integer(tx_bit_counter) - 1);
           when 9 =>
             tx <= odd_parity(tx_buffer);
           when 10 =>
@@ -217,60 +217,59 @@ begin
   ---------------------------------------------------------------------------
   -- Receive process
   ---------------------------------------------------------------------------
-  uart_rx : process (clk, arst) is
+  uart_rx : process(clk, arst) is
     variable vr_rx_data_idx   : unsigned(2 downto 0) := (others => '0');
-    variable v_error_detected : boolean := false;
-  begin  -- process uart_tx
+    variable v_error_detected : boolean              := false;
+  begin                                 -- process uart_tx
     if arst = '1' then                  -- asynchronous reset (active high)
-      rx_active         <= '0';
-      rx_just_active    <= false;
-      rx_data           <= (others => (others => '0'));
-      rx_data_valid     <= '0';
-      rx_bit_samples    <= (others => '1');
-      rx_buffer         <= (others => '0');
-      rx_clk_counter    <= (others => '0');
-      rx_bit_counter    <= (others => '0');
-      stop_err          <= '0';
-      parity_err        <= '0';
-      transient_err     <= '0';
-      vr_rx_data_idx    := (others => '0');
-      rx_data_full      <= '1';
-      v_error_detected  := false;
+      rx_active        <= '0';
+      rx_just_active   <= false;
+      rx_data          <= (others => (others => '0'));
+      rx_data_valid    <= '0';
+      rx_bit_samples   <= (others => '1');
+      rx_buffer        <= (others => '0');
+      rx_clk_counter   <= (others => '0');
+      rx_bit_counter   <= (others => '0');
+      stop_err         <= '0';
+      parity_err       <= '0';
+      transient_err    <= '0';
+      vr_rx_data_idx   := (others => '0');
+      rx_data_full     <= '1';
+      v_error_detected := false;
     elsif rising_edge(clk) then         -- rising clock edge
 
       -- Perform read.
       -- When there is data available in rx_data,
       -- output the data when read enable detected.
       if p2c.aro_rx_data_re = '1' and rx_data_valid = '1' then
-        rx_data <= x"00" & rx_data(3 downto 1);
+        rx_data      <= x"00" & rx_data(3 downto 1);
         rx_data_full <= '0';
 
         if vr_rx_data_idx > 0 then
           vr_rx_data_idx := vr_rx_data_idx - 1;
-          if vr_rx_data_idx = 0 then -- rx_data empty
-           rx_data_valid     <= '0';
+          if vr_rx_data_idx = 0 then    -- rx_data empty
+            rx_data_valid <= '0';
           end if;
         end if;
       end if;
 
       -- always shift in new synchronized serial data
-      rx_bit_samples <= rx_bit_samples(GC_CLOCKS_PER_BIT-2 downto 0) & rx_s(1);
-    
+      rx_bit_samples <= rx_bit_samples(GC_CLOCKS_PER_BIT - 2 downto 0) & rx_s(1);
+
       -- look for enough GC_START_BITs in rx_bit_samples vector
-      if rx_active = '0' and
-         (find_num_hits(rx_bit_samples, GC_START_BIT) >= GC_CLOCKS_PER_BIT-1) then
-          rx_active      <= '1';
-          rx_just_active <= true;
+      if rx_active = '0' and (find_num_hits(rx_bit_samples, GC_START_BIT) >= GC_CLOCKS_PER_BIT - 1) then
+        rx_active      <= '1';
+        rx_just_active <= true;
       end if;
 
       if rx_active = '0' then
         -- defaults
-        stop_err          <= '0';
-        parity_err        <= '0';
-        transient_err     <= '0';
-        rx_clk_counter    <= (others => '0');
-        rx_bit_counter    <= (others => '0');
-        v_error_detected  := false;
+        stop_err         <= '0';
+        parity_err       <= '0';
+        transient_err    <= '0';
+        rx_clk_counter   <= (others => '0');
+        rx_bit_counter   <= (others => '0');
+        v_error_detected := false;
       else
         -- We could check when we first enter whether we find the full number
         -- of start samples and adjust the time we start rx_clk_counter by a
@@ -291,12 +290,12 @@ begin
         end if;
 
         -- shift in data, check for consistency and forward
-        if rx_clk_counter >= GC_CLOCKS_PER_BIT - 1 then         
+        if rx_clk_counter >= GC_CLOCKS_PER_BIT - 1 then
           rx_bit_counter <= rx_bit_counter + 1;
 
           if transient_error(rx_bit_samples, GC_MIN_EQUAL_SAMPLES_PER_BIT) then
-            transient_err     <= '1';
-            v_error_detected  := true;
+            transient_err    <= '1';
+            v_error_detected := true;
           end if;
 
           -- are we done? not counting the start bit
@@ -311,16 +310,16 @@ begin
             when 8 =>
               -- check parity
               if (odd_parity(rx_buffer) /= find_most_repeated_bit(rx_bit_samples)) then
-                parity_err        <= '1';
-                v_error_detected  := true;
+                parity_err       <= '1';
+                v_error_detected := true;
               end if;
             when 9 =>
               rx_data_valid <= '1';     -- ready for higher level protocol
 
               -- check stop bit, and end byte receive
               if find_most_repeated_bit(rx_bit_samples) /= GC_STOP_BIT then
-                stop_err          <= '1';
-                v_error_detected  := true;
+                stop_err         <= '1';
+                v_error_detected := true;
               end if;
 
               -- Data not valid on error
@@ -337,7 +336,7 @@ begin
               end if;
 
             when others =>
-              rx_active <= '0';
+              rx_active      <= '0';
               rx_bit_samples <= (others => '1');
 
           end case;
@@ -350,21 +349,21 @@ begin
   begin
     if rising_edge(clk) then
       assert not (p2c.awo_tx_data_we = '1' and tx_ready = '0')
-        report "Trying to transmit new UART data while transmitter is busy"
-        severity error;
+      report "Trying to transmit new UART data while transmitter is busy"
+      severity error;
     end if;
   end process;
 
   assert stop_err /= '1'
-    report "Stop bit error detected!"
-    severity error;
+  report "Stop bit error detected!"
+  severity error;
 
   assert parity_err /= '1'
-    report "Parity error detected!"
-    severity error;
+  report "Parity error detected!"
+  severity error;
 
   assert transient_err /= '1'
-    report "Transient error detected!"
-    severity error;
+  report "Transient error detected!"
+  severity error;
 
 end architecture rtl;

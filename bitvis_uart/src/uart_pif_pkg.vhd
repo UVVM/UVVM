@@ -30,23 +30,23 @@ package uart_pif_pkg is
   -- a preceeding 'a' (e.g. awo) means the register is auxiliary to the PIF.
   -- This means no flop in the PIF, but in the core. (Or just a dummy-register with no flop)
 
-  constant C_ADDR_RX_DATA    : integer := 0;
+  constant C_ADDR_RX_DATA       : integer := 0;
   constant C_ADDR_RX_DATA_VALID : integer := 1;
-  constant C_ADDR_TX_DATA    : integer := 2;
-  constant C_ADDR_TX_READY   : integer := 3;
+  constant C_ADDR_TX_DATA       : integer := 2;
+  constant C_ADDR_TX_READY      : integer := 3;
 
   -- Signals from pif to core
   type t_p2c is record
-    awo_tx_data     : std_logic_vector(7 downto 0);
+    awo_tx_data    : std_logic_vector(7 downto 0);
     awo_tx_data_we : std_logic;
     aro_rx_data_re : std_logic;
   end record t_p2c;
 
   -- Signals from core to PIF
   type t_c2p is record
-    aro_rx_data  : std_logic_vector(7 downto 0);
+    aro_rx_data       : std_logic_vector(7 downto 0);
     aro_rx_data_valid : std_logic;
-    aro_tx_ready : std_logic;
+    aro_tx_ready      : std_logic;
   end record t_c2p;
 
 end package uart_pif_pkg;

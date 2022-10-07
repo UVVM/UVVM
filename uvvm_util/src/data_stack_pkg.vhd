@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -24,7 +23,6 @@ use work.adaptations_pkg.all;
 use work.methods_pkg.all;
 use work.string_methods_pkg.all;
 use work.data_queue_pkg.all;
-
 
 package data_stack_pkg is
 
@@ -43,7 +41,7 @@ package data_stack_pkg is
   --             Returns 0 on error.
   --
   impure function uvvm_stack_init(
-    buffer_size_in_bits   : natural
+    buffer_size_in_bits : natural
   ) return natural;
 
   ------------------------------------------
@@ -57,8 +55,8 @@ package data_stack_pkg is
   --        - buffer_size_in_bits (natural) - The size of the stack
   --
   procedure uvvm_stack_init(
-    buffer_index          : natural;
-    buffer_size_in_bits   : natural
+    buffer_index        : natural;
+    buffer_size_in_bits : natural
   );
 
   ------------------------------------------
@@ -77,8 +75,8 @@ package data_stack_pkg is
   --        - data       - The data that shall be pushed (slv)
   --
   procedure uvvm_stack_push(
-    buffer_index          : natural;
-    data                  : std_logic_vector
+    buffer_index : natural;
+    data         : std_logic_vector
   );
 
   ------------------------------------------
@@ -101,8 +99,8 @@ package data_stack_pkg is
   --             
   --
   impure function uvvm_stack_pop(
-    buffer_index          : natural;
-    entry_size_in_bits    : natural
+    buffer_index       : natural;
+    entry_size_in_bits : natural
   ) return std_logic_vector;
 
   ------------------------------------------
@@ -116,7 +114,7 @@ package data_stack_pkg is
   --                       that shall be flushed.
   --
   procedure uvvm_stack_flush(
-    buffer_index          : natural
+    buffer_index : natural
   );
 
   ------------------------------------------
@@ -139,8 +137,8 @@ package data_stack_pkg is
   --             
   --
   impure function uvvm_stack_peek(
-    buffer_index          : natural;
-    entry_size_in_bits    : natural
+    buffer_index       : natural;
+    entry_size_in_bits : natural
   ) return std_logic_vector;
 
   ------------------------------------------
@@ -156,7 +154,7 @@ package data_stack_pkg is
   --             
   --
   impure function uvvm_stack_get_count(
-    buffer_idx            : natural
+    buffer_idx : natural
   ) return natural;
 
   ------------------------------------------
@@ -173,7 +171,7 @@ package data_stack_pkg is
   --             
   --
   impure function uvvm_stack_get_max_count(
-    buffer_index          : natural
+    buffer_index : natural
   ) return natural;
 
 end package data_stack_pkg;
@@ -181,26 +179,26 @@ end package data_stack_pkg;
 package body data_stack_pkg is
 
   impure function uvvm_stack_init(
-    buffer_size_in_bits   : natural
+    buffer_size_in_bits : natural
   ) return natural is
   begin
     return shared_data_stack.init_queue(buffer_size_in_bits, "UVVM_STACK");
   end function;
 
   procedure uvvm_stack_init(
-    buffer_index          : natural;
-    buffer_size_in_bits   : natural
-  ) is 
+    buffer_index        : natural;
+    buffer_size_in_bits : natural
+  ) is
   begin
     shared_data_stack.init_queue(buffer_index, buffer_size_in_bits, "UVVM_STACK");
   end procedure;
 
   procedure uvvm_stack_push(
-    buffer_index      : natural;
-    data              : std_logic_vector
-  ) is 
+    buffer_index : natural;
+    data         : std_logic_vector
+  ) is
   begin
-    shared_data_stack.push_back(buffer_index,data);
+    shared_data_stack.push_back(buffer_index, data);
   end procedure;
 
   impure function uvvm_stack_pop(
@@ -212,8 +210,8 @@ package body data_stack_pkg is
   end function;
 
   procedure uvvm_stack_flush(
-    buffer_index      : natural
-  ) is 
+    buffer_index : natural
+  ) is
   begin
     shared_data_stack.flush(buffer_index);
   end procedure;
@@ -227,19 +225,18 @@ package body data_stack_pkg is
   end function;
 
   impure function uvvm_stack_get_count(
-    buffer_idx     : natural
+    buffer_idx : natural
   ) return natural is
   begin
     return shared_data_stack.get_count(buffer_idx);
   end function;
 
   impure function uvvm_stack_get_max_count(
-    buffer_index      : natural
+    buffer_index : natural
   ) return natural is
   begin
     return shared_data_stack.get_queue_count_max(buffer_index);
   end function;
-
 
 end package body data_stack_pkg;
 

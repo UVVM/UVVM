@@ -25,8 +25,8 @@ use uvvm_util.generic_queue_pkg;
 use work.vvc_cmd_pkg.all;
 
 package td_cmd_queue_pkg is new uvvm_util.generic_queue_pkg
-  generic map (t_generic_element => t_vvc_cmd_record);
-    
+  generic map(t_generic_element => t_vvc_cmd_record);
+
 --===============================================================================================
 -- td_result_queue_pkg
 --  - Target dependent result queue package
@@ -38,5 +38,5 @@ use uvvm_util.generic_queue_pkg;
 use work.vvc_cmd_pkg.all;
 
 package td_result_queue_pkg is new uvvm_util.generic_queue_pkg
-  generic map (t_generic_element => t_vvc_result_queue_element);
-  
+  generic map(t_generic_element => t_vvc_result_queue_element);
+

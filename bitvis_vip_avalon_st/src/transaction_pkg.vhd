@@ -55,7 +55,6 @@ package transaction_pkg is
   constant C_VVC_CMD_DATA_MAX_WORDS    : natural := C_AVALON_ST_DATA_MAX_WORDS;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
-
   --==========================================================================================
   --
   --  Trsansaction info types, constants and global signal
@@ -76,24 +75,24 @@ package transaction_pkg is
   constant C_VVC_META_DEFAULT : t_vvc_meta := (
     msg     => (others => ' '),
     cmd_idx => -1
-    );
+  );
 
   -- Base transaction
   type t_base_transaction is record
-    operation           : t_operation;
-    channel_value       : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH-1 downto 0);
-    data_array          : t_slv_array(0 to C_VVC_CMD_DATA_MAX_WORDS-1)(C_VVC_CMD_WORD_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    channel_value      : std_logic_vector(C_VVC_CMD_CHAN_MAX_LENGTH - 1 downto 0);
+    data_array         : t_slv_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1)(C_VVC_CMD_WORD_MAX_LENGTH - 1 downto 0);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record;
 
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
-    operation           => NO_OPERATION,
-    channel_value       => (others => '0'),
-    data_array          => (others => (others => '0')),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
-    );
+    operation          => NO_OPERATION,
+    channel_value      => (others => '0'),
+    data_array         => (others => (others => '0')),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+  );
 
   -- Transaction group
   type t_transaction_group is record
@@ -102,17 +101,15 @@ package transaction_pkg is
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt => C_BASE_TRANSACTION_SET_DEFAULT
-    );
+  );
 
   -- Global transaction info trigger signal
   type t_avalon_st_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := 
-                                                    (others => '0');
+  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_avalon_st_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM-1) := 
-                                                          (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

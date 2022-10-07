@@ -46,11 +46,9 @@ package transaction_pkg is
     SLAVE_TRANSMIT, SLAVE_RECEIVE, SLAVE_CHECK,
     MASTER_QUICK_CMD);
 
-
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
   constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 64;
   constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 10;
-
 
   --==========================================================================================
   --
@@ -72,13 +70,13 @@ package transaction_pkg is
   constant C_VVC_META_DEFAULT : t_vvc_meta := (
     msg     => (others => ' '),
     cmd_idx => -1
-    );
+  );
 
   -- Base transaction
   type t_base_transaction is record
     operation                    : t_operation;
-    addr                         : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
-    data                         : t_byte_array(0 to C_VVC_CMD_DATA_MAX_LENGTH-1);
+    addr                         : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);
+    data                         : t_byte_array(0 to C_VVC_CMD_DATA_MAX_LENGTH - 1);
     num_bytes                    : natural;
     action_when_transfer_is_done : t_action_when_transfer_is_done;
     exp_ack                      : boolean;
@@ -97,7 +95,7 @@ package transaction_pkg is
     rw_bit                       => '0',
     vvc_meta                     => C_VVC_META_DEFAULT,
     transaction_status           => C_TRANSACTION_STATUS_DEFAULT
-    );
+  );
 
   -- Transaction group
   type t_transaction_group is record
@@ -106,18 +104,15 @@ package transaction_pkg is
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt => C_BASE_TRANSACTION_SET_DEFAULT
-    );
+  );
 
   -- Global transaction info trigger signal
   type t_i2c_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_i2c_vvc_transaction_trigger : t_i2c_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                              (others => '0');
+  signal global_i2c_vvc_transaction_trigger : t_i2c_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_i2c_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_i2c_vvc_transaction_info : t_i2c_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                    (others => C_TRANSACTION_GROUP_DEFAULT);
-
+  shared variable shared_i2c_vvc_transaction_info : t_i2c_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

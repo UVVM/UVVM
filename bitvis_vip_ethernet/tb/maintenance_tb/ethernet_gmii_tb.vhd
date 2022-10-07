@@ -33,7 +33,7 @@ context bitvis_vip_ethernet.vvc_context;
 --hdlregression:tb
 -- Test case entity
 entity ethernet_gmii_tb is
-  generic (
+  generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity ethernet_gmii_tb;
@@ -46,14 +46,14 @@ architecture func of ethernet_gmii_tb is
   constant C_CLK_PERIOD : time   := 8 ns;
   constant C_SCOPE      : string := C_TB_SCOPE_DEFAULT;
 
-  alias clk           is << signal .ethernet_gmii_tb.i_test_harness.clk : std_logic >>;
+  alias clk is << signal .ethernet_gmii_tb.i_test_harness.clk : std_logic >>;
   alias i1_gmii_tx_if is << signal .ethernet_gmii_tb.i_test_harness.i1_gmii_tx_if : t_gmii_tx_if >>;
 begin
 
   -----------------------------------------------------------------------------
   -- Instantiate the concurrent procedure that initializes UVVM
   -----------------------------------------------------------------------------
-  i_ti_uvvm_engine  : entity uvvm_vvc_framework.ti_uvvm_engine;
+  i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
@@ -66,9 +66,9 @@ begin
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
-  p_main: process
+  p_main : process
     variable v_payload_len    : integer := 0;
-    variable v_payload_data   : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
+    variable v_payload_data   : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH - 1);
     variable v_cmd_idx        : natural;
     variable v_receive_data   : bitvis_vip_ethernet.vvc_cmd_pkg.t_vvc_result;
     variable v_expected_frame : t_ethernet_frame;
@@ -79,34 +79,33 @@ begin
       constant mac_source      : in unsigned(47 downto 0);
       constant payload         : in t_byte_array
     ) return t_ethernet_frame is
-      variable v_frame          : t_ethernet_frame := C_ETHERNET_FRAME_DEFAULT;
-      variable v_packet         : t_byte_array(0 to C_MAX_PACKET_LENGTH-1) := (others => (others => '0'));
-      variable v_payload_length : positive := payload'length;
+      variable v_frame          : t_ethernet_frame                           := C_ETHERNET_FRAME_DEFAULT;
+      variable v_packet         : t_byte_array(0 to C_MAX_PACKET_LENGTH - 1) := (others => (others => '0'));
+      variable v_payload_length : positive                                   := payload'length;
     begin
       -- MAC destination
-      v_frame.mac_destination := mac_destination;
-      v_packet(0 to 5)        := convert_slv_to_byte_array(std_logic_vector(v_frame.mac_destination), LOWER_BYTE_LEFT);
+      v_frame.mac_destination                    := mac_destination;
+      v_packet(0 to 5)                           := convert_slv_to_byte_array(std_logic_vector(v_frame.mac_destination), LOWER_BYTE_LEFT);
       -- MAC source
-      v_frame.mac_source      := mac_source;
-      v_packet(6 to 11)       := convert_slv_to_byte_array(std_logic_vector(v_frame.mac_source), LOWER_BYTE_LEFT);
+      v_frame.mac_source                         := mac_source;
+      v_packet(6 to 11)                          := convert_slv_to_byte_array(std_logic_vector(v_frame.mac_source), LOWER_BYTE_LEFT);
       -- Payload length
-      v_frame.payload_length  := v_payload_length;
-      v_packet(12 to 13)      := convert_slv_to_byte_array(std_logic_vector(to_unsigned(v_frame.payload_length, 16)), LOWER_BYTE_LEFT);
+      v_frame.payload_length                     := v_payload_length;
+      v_packet(12 to 13)                         := convert_slv_to_byte_array(std_logic_vector(to_unsigned(v_frame.payload_length, 16)), LOWER_BYTE_LEFT);
       -- Payload
-      v_frame.payload(0 to v_payload_length-1) := payload;
-      v_packet(14 to 14+v_payload_length-1)    := payload;
+      v_frame.payload(0 to v_payload_length - 1) := payload;
+      v_packet(14 to 14 + v_payload_length - 1)  := payload;
       -- Add padding if needed
       if v_payload_length < C_MIN_PAYLOAD_LENGTH then
-       v_payload_length := C_MIN_PAYLOAD_LENGTH;
+        v_payload_length := C_MIN_PAYLOAD_LENGTH;
       end if;
       -- FCS
-      v_frame.fcs := not generate_crc_32(v_packet(0 to 14+v_payload_length-1));
+      v_frame.fcs                                := not generate_crc_32(v_packet(0 to 14 + v_payload_length - 1));
 
       return v_frame;
     end function make_ethernet_frame;
 
   begin
-
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
@@ -133,63 +132,63 @@ begin
     ---------------------------------------------------------------------------
     for length in 1 to 10 loop
       v_payload_len := length;
-      for i in 0 to v_payload_len-1 loop
+      for i in 0 to v_payload_len - 1 loop
         v_payload_data(i) := random(8);
       end loop;
       log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i1 to i2 (need padding)");
-      ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
-      ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
+      ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from instance 1.");
+      ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len - 1), "Expect a frame at instance 2.");
       await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
       await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
     end loop;
 
     v_payload_len := C_MIN_PAYLOAD_LENGTH;
-    for i in 0 to v_payload_len-1 loop
+    for i in 0 to v_payload_len - 1 loop
       v_payload_data(i) := random(8);
     end loop;
     log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i1 to i2 (minimum size)");
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
-    ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from instance 1.");
+    ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len - 1), "Expect a frame at instance 2.");
     await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     v_payload_len := C_MAX_PAYLOAD_LENGTH;
-    for i in 0 to v_payload_len-1 loop
+    for i in 0 to v_payload_len - 1 loop
       v_payload_data(i) := random(8);
     end loop;
     log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i1 to i2 (maximum size)");
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
-    ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from instance 1.");
+    ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len - 1), "Expect a frame at instance 2.");
     await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     v_payload_len := 50;
-    for i in 0 to v_payload_len-1 loop
+    for i in 0 to v_payload_len - 1 loop
       v_payload_data(i) := random(8);
     end loop;
     log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i2 to i1");
-    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from instance 2.");
     ethernet_receive(ETHERNET_VVCT, 1, RX, "Receive a frame at instance 1.");
-    v_cmd_idx := get_last_received_cmd_idx(ETHERNET_VVCT, 1, RX);
+    v_cmd_idx     := get_last_received_cmd_idx(ETHERNET_VVCT, 1, RX);
     await_completion(ETHERNET_VVCT, 2, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 1, RX, 1 ms, "Wait for receive to finish.");
     log(ID_LOG_HDR, "Fetch data from i1 and check");
     fetch_result(ETHERNET_VVCT, 1, RX, v_cmd_idx, v_receive_data, "Fetching received data.");
     check_value(v_receive_data.ethernet_frame.mac_destination = x"00_00_00_00_00_01", ERROR, "Verify MAC destination.");
-    check_value(v_receive_data.ethernet_frame.mac_source      = x"00_00_00_00_00_02", ERROR, "Verify MAC source.");
+    check_value(v_receive_data.ethernet_frame.mac_source = x"00_00_00_00_00_02", ERROR, "Verify MAC source.");
     check_value(v_receive_data.ethernet_frame_status.fcs_error, false, ERROR, "Verify FCS.");
-    for i in 0 to v_payload_len-1 loop
+    for i in 0 to v_payload_len - 1 loop
       check_value(v_receive_data.ethernet_frame.payload(i), v_payload_data(i), ERROR, "Verify payload, byte " & to_string(i) & ".");
     end loop;
 
     for payload in 44 to 48 loop
-      v_payload_len := payload;
-      for i in 0 to v_payload_len-1 loop
+      v_payload_len    := payload;
+      for i in 0 to v_payload_len - 1 loop
         v_payload_data(i) := random(8);
       end loop;
       log(ID_LOG_HDR, "Transmit " & to_string(v_payload_len) & " bytes of data from i2 to i1 (use scoreboard)");
-      ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 2.");
-      v_expected_frame := make_ethernet_frame(x"00_00_00_00_00_01", x"00_00_00_00_00_02", v_payload_data(0 to v_payload_len-1));
+      ethernet_transmit(ETHERNET_VVCT, 2, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from instance 2.");
+      v_expected_frame := make_ethernet_frame(x"00_00_00_00_00_01", x"00_00_00_00_00_02", v_payload_data(0 to v_payload_len - 1));
       ETHERNET_VVC_SB.add_expected(1, v_expected_frame);
       ethernet_receive(ETHERNET_VVCT, 1, RX, TO_SB, "Receive a frame at instance 1 and put it in the Scoreboard.");
       await_completion(ETHERNET_VVCT, 2, TX, 1 ms, "Wait for transmit to finish.");
@@ -201,35 +200,35 @@ begin
     await_change(clk, 0 ns, 6 ns, ERROR, "Sync to clock.");
     await_value(clk, '1', 0 ns, 6 ns, ERROR, "Sync to clock.");
     insert_delay(ETHERNET_VVCT, 1, TX, 1 us, "Insert delay in instance 1.");
-    v_time_stamp := now;
+    v_time_stamp                                             := now;
     ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to 46), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to 46), "Expect a frame at instance 2.");
     await_value(i1_gmii_tx_if.txen, '1', 0 ns, 1.1 us, ERROR, "Await ethernet transfer.");
-    check_value_in_range(now-v_time_stamp, 1 us, 1.01 us, ERROR, "Verify inserted delay.");
+    check_value_in_range(now - v_time_stamp, 1 us, 1.01 us, ERROR, "Verify inserted delay.");
     await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     v_payload_len := C_MIN_PAYLOAD_LENGTH;
-    for i in 0 to v_payload_len-1 loop
+    for i in 0 to v_payload_len - 1 loop
       v_payload_data(i) := random(8);
     end loop;
     log(ID_LOG_HDR, "Transmit a frame with the wrong MAC destination address");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, x"00_00_00_00_00_02", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
-    ethernet_expect(ETHERNET_VVCT, 2, RX, x"00_00_00_00_00_F2", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, x"00_00_00_00_00_02", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len - 1), "Transmit a frame from instance 1.");
+    ethernet_expect(ETHERNET_VVCT, 2, RX, x"00_00_00_00_00_F2", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len - 1), "Expect a frame at instance 2.");
     await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     log(ID_LOG_HDR, "Transmit a frame with the wrong MAC source address");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, x"00_00_00_00_00_02", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
-    ethernet_expect(ETHERNET_VVCT, 2, RX, x"00_00_00_00_00_02", x"00_00_00_00_00_F1", v_payload_data(0 to v_payload_len-1), "Expect a frame at instance 2.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, x"00_00_00_00_00_02", x"00_00_00_00_00_01", v_payload_data(0 to v_payload_len - 1), "Transmit a frame from instance 1.");
+    ethernet_expect(ETHERNET_VVCT, 2, RX, x"00_00_00_00_00_02", x"00_00_00_00_00_F1", v_payload_data(0 to v_payload_len - 1), "Expect a frame at instance 2.");
     await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
 
     log(ID_LOG_HDR, "Transmit a frame with the wrong payload length");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len-1), "Transmit a frame from instance 1.");
+    ethernet_transmit(ETHERNET_VVCT, 1, TX, v_payload_data(0 to v_payload_len - 1), "Transmit a frame from instance 1.");
     ethernet_expect(ETHERNET_VVCT, 2, RX, v_payload_data(0 to v_payload_len), "Expect a frame at instance 2.");
     await_completion(ETHERNET_VVCT, 1, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, 2, RX, 1 ms, "Wait for expect to finish.");
@@ -244,13 +243,13 @@ begin
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;             -- Allow some time for completion
+    wait for 1000 ns;                   -- Allow some time for completion
     ETHERNET_VVC_SB.report_counters(ALL_INSTANCES);
-    report_alert_counters(FINAL); -- Report final counters and print conclusion (Success/Fail)
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
     -- Finish the simulation
     std.env.stop;
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
 

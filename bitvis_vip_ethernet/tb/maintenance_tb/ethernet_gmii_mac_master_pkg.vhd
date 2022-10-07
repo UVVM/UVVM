@@ -30,12 +30,12 @@ package ethernet_gmii_mac_master_pkg is
   end record;
 
   type t_if_out is record
-    clk                : std_logic;
-    tx_reset_o         : std_ulogic;
-    tx_full_o          : std_ulogic;
-    rx_reset_o         : std_ulogic;
-    rx_empty_o         : std_ulogic;
-    rx_data_o          : t_ethernet_data;
+    clk        : std_logic;
+    tx_reset_o : std_ulogic;
+    tx_full_o  : std_ulogic;
+    rx_reset_o : std_ulogic;
+    rx_empty_o : std_ulogic;
+    rx_data_o  : t_ethernet_data;
   end record;
 
 end package ethernet_gmii_mac_master_pkg;

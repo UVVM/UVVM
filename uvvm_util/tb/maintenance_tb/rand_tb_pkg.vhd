@@ -26,13 +26,13 @@ context uvvm_util.uvvm_util_context;
 package rand_tb_pkg is
 
   type t_unsigned_vector is array (natural range <>) of unsigned;
-  type t_signed_vector   is array (natural range <>) of signed;
-  type t_range_int_vec   is array (natural range <>) of integer_vector;
-  type t_range_real_vec  is array (natural range <>) of real_vector;
-  type t_range_time_vec  is array (natural range <>) of time_vector;
-  type t_range_uns_vec   is array (natural range <>) of t_unsigned_vector;
-  type t_range_sig_vec   is array (natural range <>) of t_signed_vector;
-  type t_integer_cnt     is array (integer range <>) of integer;
+  type t_signed_vector is array (natural range <>) of signed;
+  type t_range_int_vec is array (natural range <>) of integer_vector;
+  type t_range_real_vec is array (natural range <>) of real_vector;
+  type t_range_time_vec is array (natural range <>) of time_vector;
+  type t_range_uns_vec is array (natural range <>) of t_unsigned_vector;
+  type t_range_sig_vec is array (natural range <>) of t_signed_vector;
+  type t_integer_cnt is array (integer range <>) of integer;
   type t_weight_dist_vec is array (natural range <>) of integer_vector;
 
   ------------------------------------------------------------
@@ -40,81 +40,81 @@ package rand_tb_pkg is
   ------------------------------------------------------------
   -- Base function (integer)
   function check_rand_value(
-    constant value       : integer;
-    constant range_vec   : t_range_int_vec)
+    constant value     : integer;
+    constant range_vec : t_range_int_vec)
   return boolean;
 
   -- Base function (real)
   function check_rand_value(
-    constant value       : real;
-    constant range_vec   : t_range_real_vec)
+    constant value     : real;
+    constant range_vec : t_range_real_vec)
   return boolean;
 
   -- Base function (time)
   function check_rand_value(
-    constant value       : time;
-    constant range_vec   : t_range_time_vec)
+    constant value     : time;
+    constant range_vec : t_range_time_vec)
   return boolean;
 
   -- Overload (integer)
   procedure check_rand_value(
-    constant value       : in integer;
-    constant range_vec   : in t_range_int_vec);
+    constant value     : in integer;
+    constant range_vec : in t_range_int_vec);
 
   -- Overload (real)
   procedure check_rand_value(
-    constant value       : in real;
-    constant range_vec   : in t_range_real_vec);
+    constant value     : in real;
+    constant range_vec : in t_range_real_vec);
 
   -- Overload (time)
   procedure check_rand_value(
-    constant value       : in time;
-    constant range_vec   : in t_range_time_vec);
+    constant value     : in time;
+    constant range_vec : in t_range_time_vec);
 
   -- Overload (integer_vector)
   procedure check_rand_value(
-    constant values      : in integer_vector;
-    constant range_vec   : in t_range_int_vec);
+    constant values    : in integer_vector;
+    constant range_vec : in t_range_int_vec);
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant values      : in real_vector;
-    constant range_vec   : in t_range_real_vec);
+    constant values    : in real_vector;
+    constant range_vec : in t_range_real_vec);
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant values      : in time_vector;
-    constant range_vec   : in t_range_time_vec);
+    constant values    : in time_vector;
+    constant range_vec : in t_range_time_vec);
 
   -- Overload (unsigned)
   procedure check_rand_value(
-    constant value       : in unsigned;
-    constant range_vec   : in t_range_int_vec);
+    constant value     : in unsigned;
+    constant range_vec : in t_range_int_vec);
 
   -- Overload (signed)
   procedure check_rand_value(
-    constant value       : in signed;
-    constant range_vec   : in t_range_int_vec);
+    constant value     : in signed;
+    constant range_vec : in t_range_int_vec);
 
   -- Overload (std_logic_vector)
   procedure check_rand_value(
-    constant value       : in std_logic_vector;
-    constant range_vec   : in t_range_int_vec);
+    constant value     : in std_logic_vector;
+    constant range_vec : in t_range_int_vec);
 
   -- Overload (unsigned)
   procedure check_rand_value_long(
-    constant value       : in unsigned;
-    constant range_vec   : in t_range_uns_vec);
+    constant value     : in unsigned;
+    constant range_vec : in t_range_uns_vec);
 
   -- Overload (signed)
   procedure check_rand_value_long(
-    constant value       : in signed;
-    constant range_vec   : in t_range_sig_vec);
+    constant value     : in signed;
+    constant range_vec : in t_range_sig_vec);
 
   -- Overload (std_logic_vector)
   procedure check_rand_value_long(
-    constant value       : in std_logic_vector;
-    constant range_vec   : in t_range_uns_vec);
+    constant value     : in std_logic_vector;
+    constant range_vec : in t_range_uns_vec);
 
   ------------------------------------------------------------
   -- Check value within set of values
@@ -400,39 +400,39 @@ package rand_tb_pkg is
   ------------------------------------------------------------
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    integer);
+    constant value     : in integer);
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant values    : in    integer_vector);
+    constant values    : in integer_vector);
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    real);
+    constant value     : in real);
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant values    : in    real_vector);
+    constant values    : in real_vector);
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    time);
+    constant value     : in time);
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant values    : in    time_vector);
+    constant values    : in time_vector);
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    unsigned);
+    constant value     : in unsigned);
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    signed);
+    constant value     : in signed);
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    std_logic_vector);
+    constant value     : in std_logic_vector);
 
   ------------------------------------------------------------
   -- Check uniqueness
@@ -453,14 +453,14 @@ package rand_tb_pkg is
   procedure generate_gaussian_distribution(
     variable rand_gen           : inout t_rand;
     variable value_cnt          : inout t_integer_cnt;
-    constant value_type         : in    string;
-    constant num_values         : in    natural;
-    constant min_value          : in    integer;
-    constant max_value          : in    integer;
-    constant use_default_config : in    boolean := true;
-    constant mean               : in    real := 0.0;
-    constant std_deviation      : in    real := 0.0;
-    constant multi_method       : in    boolean := false);
+    constant value_type         : in string;
+    constant num_values         : in natural;
+    constant min_value          : in integer;
+    constant max_value          : in integer;
+    constant use_default_config : in boolean := true;
+    constant mean               : in real    := 0.0;
+    constant std_deviation      : in real    := 0.0;
+    constant multi_method       : in boolean := false);
 
   ------------------------------------------------------------
   -- Check distributions
@@ -468,19 +468,19 @@ package rand_tb_pkg is
   -- Checks that each value has been generated at least once
   procedure check_uniform_distribution(
     variable value_cnt        : inout t_integer_cnt;
-    constant num_values       : in    natural;
-    constant match_num_values : in    boolean := true);
+    constant num_values       : in natural;
+    constant match_num_values : in boolean := true);
 
   -- Prints the weighted distribution results (value/range, weight percentage, count).
   -- Checks that the counters are within expected margins according to their weight percentage. Also resets the counters.
   procedure check_weight_distribution(
     variable value_cnt   : inout t_integer_cnt;
-    constant weight_dist : in    t_weight_dist_vec);
+    constant weight_dist : in t_weight_dist_vec);
 
   -- Checks that each value has been generated only once
   procedure check_cyclic_distribution(
     variable value_cnt  : inout t_integer_cnt;
-    constant num_values : in    natural);
+    constant num_values : in natural);
 
 end package rand_tb_pkg;
 
@@ -491,8 +491,8 @@ package body rand_tb_pkg is
   ------------------------------------------------------------
   -- Base function (integer)
   function check_rand_value(
-    constant value       : integer;
-    constant range_vec   : t_range_int_vec)
+    constant value     : integer;
+    constant range_vec : t_range_int_vec)
   return boolean is
   begin
     for i in range_vec'range loop
@@ -505,8 +505,8 @@ package body rand_tb_pkg is
 
   -- Base function (real)
   function check_rand_value(
-    constant value       : real;
-    constant range_vec   : t_range_real_vec)
+    constant value     : real;
+    constant range_vec : t_range_real_vec)
   return boolean is
   begin
     for i in range_vec'range loop
@@ -519,8 +519,8 @@ package body rand_tb_pkg is
 
   -- Base function (time)
   function check_rand_value(
-    constant value       : time;
-    constant range_vec   : t_range_time_vec)
+    constant value     : time;
+    constant range_vec : t_range_time_vec)
   return boolean is
   begin
     for i in range_vec'range loop
@@ -533,8 +533,8 @@ package body rand_tb_pkg is
 
   -- Base function (unsigned)
   function check_rand_value(
-    constant value       : unsigned;
-    constant range_vec   : t_range_uns_vec)
+    constant value     : unsigned;
+    constant range_vec : t_range_uns_vec)
   return boolean is
   begin
     for i in range_vec'range loop
@@ -547,8 +547,8 @@ package body rand_tb_pkg is
 
   -- Base function (signed)
   function check_rand_value(
-    constant value       : signed;
-    constant range_vec   : t_range_sig_vec)
+    constant value     : signed;
+    constant range_vec : t_range_sig_vec)
   return boolean is
   begin
     for i in range_vec'range loop
@@ -561,8 +561,8 @@ package body rand_tb_pkg is
 
   -- Overload (integer)
   procedure check_rand_value(
-    constant value       : in integer;
-    constant range_vec   : in t_range_int_vec) is
+    constant value     : in integer;
+    constant range_vec : in t_range_int_vec) is
   begin
     if check_rand_value(value, range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
@@ -573,8 +573,8 @@ package body rand_tb_pkg is
 
   -- Overload (real)
   procedure check_rand_value(
-    constant value       : in real;
-    constant range_vec   : in t_range_real_vec) is
+    constant value     : in real;
+    constant range_vec : in t_range_real_vec) is
   begin
     if check_rand_value(value, range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
@@ -585,8 +585,8 @@ package body rand_tb_pkg is
 
   -- Overload (time)
   procedure check_rand_value(
-    constant value       : in time;
-    constant range_vec   : in t_range_time_vec) is
+    constant value     : in time;
+    constant range_vec : in t_range_time_vec) is
   begin
     if check_rand_value(value, range_vec) then
       log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
@@ -599,7 +599,7 @@ package body rand_tb_pkg is
   procedure check_rand_value(
     constant values    : in integer_vector;
     constant range_vec : in t_range_int_vec) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec);
@@ -613,9 +613,9 @@ package body rand_tb_pkg is
 
   -- Overload (real_vector)
   procedure check_rand_value(
-    constant values      : in real_vector;
-    constant range_vec   : in t_range_real_vec) is
-    variable v_check_ok  : boolean := true;
+    constant values    : in real_vector;
+    constant range_vec : in t_range_real_vec) is
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec);
@@ -629,9 +629,9 @@ package body rand_tb_pkg is
 
   -- Overload (time_vector)
   procedure check_rand_value(
-    constant values      : in time_vector;
-    constant range_vec   : in t_range_time_vec) is
-    variable v_check_ok  : boolean := true;
+    constant values    : in time_vector;
+    constant range_vec : in t_range_time_vec) is
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec);
@@ -799,7 +799,7 @@ package body rand_tb_pkg is
     constant values        : in integer_vector;
     constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     for i in values'range loop
@@ -817,7 +817,7 @@ package body rand_tb_pkg is
     constant values        : in real_vector;
     constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     for i in values'range loop
@@ -835,7 +835,7 @@ package body rand_tb_pkg is
     constant values        : in time_vector;
     constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     for i in values'range loop
@@ -878,9 +878,9 @@ package body rand_tb_pkg is
 
   -- Overload (std_logic_vector)
   procedure check_rand_value(
-    constant value          : in std_logic_vector;
-    constant specifier      : in t_value_specifier;
-    constant set_of_values  : in t_natural_vector) is
+    constant value         : in std_logic_vector;
+    constant specifier     : in t_value_specifier;
+    constant set_of_values : in t_natural_vector) is
   begin
     check_rand_value(unsigned(value), specifier, set_of_values);
   end procedure;
@@ -903,7 +903,7 @@ package body rand_tb_pkg is
       end if;
     -- Check in range except a set of values
     elsif specifier = EXCL then
-      if check_rand_value(value, range_vec) and not(check_rand_value(value, set_of_values)) then
+      if check_rand_value(value, range_vec) and not (check_rand_value(value, set_of_values)) then
         return true;
       end if;
     end if;
@@ -925,7 +925,7 @@ package body rand_tb_pkg is
       end if;
     -- Check in range except a set of values
     elsif specifier = EXCL then
-      if check_rand_value(value, range_vec) and not(check_rand_value(value, set_of_values)) then
+      if check_rand_value(value, range_vec) and not (check_rand_value(value, set_of_values)) then
         return true;
       end if;
     end if;
@@ -947,7 +947,7 @@ package body rand_tb_pkg is
       end if;
     -- Check in range except a set of values
     elsif specifier = EXCL then
-      if check_rand_value(value, range_vec) and not(check_rand_value(value, set_of_values)) then
+      if check_rand_value(value, range_vec) and not (check_rand_value(value, set_of_values)) then
         return true;
       end if;
     end if;
@@ -1002,7 +1002,7 @@ package body rand_tb_pkg is
     constant range_vec     : in t_range_int_vec;
     constant specifier     : in t_value_specifier;
     constant set_of_values : in integer_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier, set_of_values);
@@ -1020,7 +1020,7 @@ package body rand_tb_pkg is
     constant range_vec     : in t_range_real_vec;
     constant specifier     : in t_value_specifier;
     constant set_of_values : in real_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier, set_of_values);
@@ -1038,7 +1038,7 @@ package body rand_tb_pkg is
     constant range_vec     : in t_range_time_vec;
     constant specifier     : in t_value_specifier;
     constant set_of_values : in time_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier, set_of_values);
@@ -1104,11 +1104,11 @@ package body rand_tb_pkg is
   begin
     check_value(specifier1 /= specifier2, TB_ERROR, "Specifiers must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if specifier1 = ADD then
-      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not(check_rand_value(value, set_of_values2)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not (check_rand_value(value, set_of_values2)) then
         return true;
       end if;
     elsif specifier1 = EXCL then
-      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not(check_rand_value(value, set_of_values1)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not (check_rand_value(value, set_of_values1)) then
         return true;
       end if;
     end if;
@@ -1128,11 +1128,11 @@ package body rand_tb_pkg is
   begin
     check_value(specifier1 /= specifier2, TB_ERROR, "Specifiers must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if specifier1 = ADD then
-      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not(check_rand_value(value, set_of_values2)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not (check_rand_value(value, set_of_values2)) then
         return true;
       end if;
     elsif specifier1 = EXCL then
-      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not(check_rand_value(value, set_of_values1)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not (check_rand_value(value, set_of_values1)) then
         return true;
       end if;
     end if;
@@ -1152,11 +1152,11 @@ package body rand_tb_pkg is
   begin
     check_value(specifier1 /= specifier2, TB_ERROR, "Specifiers must be different", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     if specifier1 = ADD then
-      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not(check_rand_value(value, set_of_values2)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values1)) and not (check_rand_value(value, set_of_values2)) then
         return true;
       end if;
     elsif specifier1 = EXCL then
-      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not(check_rand_value(value, set_of_values1)) then
+      if (check_rand_value(value, range_vec) or check_rand_value(value, set_of_values2)) and not (check_rand_value(value, set_of_values1)) then
         return true;
       end if;
     end if;
@@ -1219,7 +1219,7 @@ package body rand_tb_pkg is
     constant set_of_values1 : in integer_vector;
     constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in integer_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier1, set_of_values1, specifier2, set_of_values2);
@@ -1239,7 +1239,7 @@ package body rand_tb_pkg is
     constant set_of_values1 : in real_vector;
     constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in real_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier1, set_of_values1, specifier2, set_of_values2);
@@ -1259,7 +1259,7 @@ package body rand_tb_pkg is
     constant set_of_values1 : in time_vector;
     constant specifier2     : in t_value_specifier;
     constant set_of_values2 : in time_vector) is
-    variable v_check_ok  : boolean := true;
+    variable v_check_ok : boolean := true;
   begin
     for i in values'range loop
       v_check_ok := v_check_ok and check_rand_value(values(i), range_vec, specifier1, set_of_values1, specifier2, set_of_values2);
@@ -1320,14 +1320,14 @@ package body rand_tb_pkg is
   ------------------------------------------------------------
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    integer) is
+    constant value     : in integer) is
   begin
     value_cnt(value) := value_cnt(value) + 1;
   end procedure;
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant values    : in    integer_vector) is
+    constant values    : in integer_vector) is
   begin
     for i in values'range loop
       value_cnt(values(i)) := value_cnt(values(i)) + 1;
@@ -1336,14 +1336,14 @@ package body rand_tb_pkg is
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    real) is
+    constant value     : in real) is
   begin
     value_cnt(integer(value)) := value_cnt(integer(value)) + 1;
   end procedure;
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant values    : in    real_vector) is
+    constant values    : in real_vector) is
   begin
     for i in values'range loop
       value_cnt(integer(values(i))) := value_cnt(integer(values(i))) + 1;
@@ -1352,37 +1352,37 @@ package body rand_tb_pkg is
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    time) is
+    constant value     : in time) is
   begin
-    value_cnt(value/1 ps) := value_cnt(value/1 ps) + 1;
+    value_cnt(value / 1 ps) := value_cnt(value / 1 ps) + 1;
   end procedure;
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant values    : in    time_vector) is
+    constant values    : in time_vector) is
   begin
     for i in values'range loop
-      value_cnt(values(i)/1 ps) := value_cnt(values(i)/1 ps) + 1;
+      value_cnt(values(i) / 1 ps) := value_cnt(values(i) / 1 ps) + 1;
     end loop;
   end procedure;
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    unsigned) is
+    constant value     : in unsigned) is
   begin
     value_cnt(to_integer(value)) := value_cnt(to_integer(value)) + 1;
   end procedure;
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    signed) is
+    constant value     : in signed) is
   begin
     value_cnt(to_integer(value)) := value_cnt(to_integer(value)) + 1;
   end procedure;
 
   procedure count_rand_value(
     variable value_cnt : inout t_integer_cnt;
-    constant value     : in    std_logic_vector) is
+    constant value     : in std_logic_vector) is
   begin
     value_cnt(to_integer(unsigned(value))) := value_cnt(to_integer(unsigned(value))) + 1;
   end procedure;
@@ -1392,12 +1392,12 @@ package body rand_tb_pkg is
   ------------------------------------------------------------
   procedure check_uniqueness(
     constant vector : in integer_vector) is
-    constant C_PROC_NAME : string := "check_uniqueness";
+    constant C_PROC_NAME : string  := "check_uniqueness";
     variable v_unique    : boolean := true;
   begin
     -- Check that values in the vector are not repeated
-    for i in 0 to vector'length-2 loop
-      for j in i+1 to vector'length-1 loop
+    for i in 0 to vector'length - 2 loop
+      for j in i + 1 to vector'length - 1 loop
         if vector(i) = vector(j) then
           v_unique := false;
         end if;
@@ -1414,12 +1414,12 @@ package body rand_tb_pkg is
   -- Overload (real_vector)
   procedure check_uniqueness(
     constant vector : in real_vector) is
-    constant C_PROC_NAME : string := "check_uniqueness";
+    constant C_PROC_NAME : string  := "check_uniqueness";
     variable v_unique    : boolean := true;
   begin
     -- Check that values in the vector are not repeated
-    for i in 0 to vector'length-2 loop
-      for j in i+1 to vector'length-1 loop
+    for i in 0 to vector'length - 2 loop
+      for j in i + 1 to vector'length - 1 loop
         if vector(i) = vector(j) then
           v_unique := false;
         end if;
@@ -1436,12 +1436,12 @@ package body rand_tb_pkg is
   -- Overload (time_vector)
   procedure check_uniqueness(
     constant vector : in time_vector) is
-    constant C_PROC_NAME : string := "check_uniqueness";
+    constant C_PROC_NAME : string  := "check_uniqueness";
     variable v_unique    : boolean := true;
   begin
     -- Check that values in the vector are not repeated
-    for i in 0 to vector'length-2 loop
-      for j in i+1 to vector'length-1 loop
+    for i in 0 to vector'length - 2 loop
+      for j in i + 1 to vector'length - 1 loop
         if vector(i) = vector(j) then
           v_unique := false;
         end if;
@@ -1462,14 +1462,14 @@ package body rand_tb_pkg is
   procedure generate_gaussian_distribution(
     variable rand_gen           : inout t_rand;
     variable value_cnt          : inout t_integer_cnt;
-    constant value_type         : in    string;
-    constant num_values         : in    natural;
-    constant min_value          : in    integer;
-    constant max_value          : in    integer;
-    constant use_default_config : in    boolean := true;
-    constant mean               : in    real := 0.0;
-    constant std_deviation      : in    real := 0.0;
-    constant multi_method       : in    boolean := false) is
+    constant value_type         : in string;
+    constant num_values         : in natural;
+    constant min_value          : in integer;
+    constant max_value          : in integer;
+    constant use_default_config : in boolean := true;
+    constant mean               : in real    := 0.0;
+    constant std_deviation      : in real    := 0.0;
+    constant multi_method       : in boolean := false) is
     constant C_PROC_NAME : string := "generate_gaussian_distribution";
     variable v_int       : integer;
     variable v_int_vec   : integer_vector(0 to 0);
@@ -1480,11 +1480,9 @@ package body rand_tb_pkg is
     variable v_slv       : std_logic_vector(4 downto 0);
   begin
     if use_default_config then
-      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value) &
-        ", max: " & to_string(max_value) & ", default mean & std_deviation");
+      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value) & ", max: " & to_string(max_value) & ", default mean & std_deviation");
     else
-      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value) &
-        ", max: " & to_string(max_value) & ", mean: " & to_string(mean,2) & ", std_deviation: " & to_string(std_deviation,2));
+      log(ID_SEQUENCER, "Generating " & to_string(num_values) & " " & value_type & " values with min: " & to_string(min_value) & ", max: " & to_string(max_value) & ", mean: " & to_string(mean, 2) & ", std_deviation: " & to_string(std_deviation, 2));
       rand_gen.set_rand_dist_mean(mean);
       check_value(mean, rand_gen.get_rand_dist_mean(VOID), ERROR, "Checking mean");
       rand_gen.set_rand_dist_std_deviation(std_deviation);
@@ -1524,7 +1522,7 @@ package body rand_tb_pkg is
         else
           v_real := rand_gen.rand(real(min_value), real(max_value));
         end if;
-        v_int  := integer(round(v_real));
+        v_int            := integer(round(v_real));
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
@@ -1534,7 +1532,7 @@ package body rand_tb_pkg is
         else
           v_real_vec := rand_gen.rand(v_real_vec'length, real(min_value), real(max_value));
         end if;
-        v_int      := integer(round(v_real_vec(0)));
+        v_int            := integer(round(v_real_vec(0)));
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
@@ -1544,7 +1542,7 @@ package body rand_tb_pkg is
         else
           v_uns := rand_gen.rand(v_uns'length, min_value, max_value);
         end if;
-        v_int := to_integer(v_uns);
+        v_int            := to_integer(v_uns);
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
@@ -1554,7 +1552,7 @@ package body rand_tb_pkg is
         else
           v_uns := rand_gen.rand(v_uns'length);
         end if;
-        v_int := to_integer(v_uns);
+        v_int            := to_integer(v_uns);
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
@@ -1564,7 +1562,7 @@ package body rand_tb_pkg is
         else
           v_sig := rand_gen.rand(v_sig'length, min_value, max_value);
         end if;
-        v_int := to_integer(v_sig);
+        v_int            := to_integer(v_sig);
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
@@ -1574,7 +1572,7 @@ package body rand_tb_pkg is
         else
           v_sig := rand_gen.rand(v_sig'length);
         end if;
-        v_int := to_integer(v_sig);
+        v_int            := to_integer(v_sig);
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
@@ -1584,7 +1582,7 @@ package body rand_tb_pkg is
         else
           v_slv := rand_gen.rand(v_slv'length, min_value, max_value);
         end if;
-        v_int := to_integer(unsigned(v_slv));
+        v_int            := to_integer(unsigned(v_slv));
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
@@ -1594,7 +1592,7 @@ package body rand_tb_pkg is
         else
           v_slv := rand_gen.rand(v_slv'length);
         end if;
-        v_int := to_integer(unsigned(v_slv));
+        v_int            := to_integer(unsigned(v_slv));
         check_rand_value(v_int, (0 => (min_value, max_value)));
         value_cnt(v_int) := value_cnt(v_int) + 1;
 
@@ -1616,9 +1614,9 @@ package body rand_tb_pkg is
   -- Checks that each value has been generated at least once
   procedure check_uniform_distribution(
     variable value_cnt        : inout t_integer_cnt;
-    constant num_values       : in    natural;
-    constant match_num_values : in    boolean := true) is
-    constant C_PROC_NAME : string := "check_uniform_distribution";
+    constant num_values       : in natural;
+    constant match_num_values : in boolean := true) is
+    constant C_PROC_NAME : string  := "check_uniform_distribution";
     variable v_cnt       : natural := 0;
   begin
     -- Check that the values have been generated at least once
@@ -1630,10 +1628,10 @@ package body rand_tb_pkg is
       value_cnt(i) := 0;
     end loop;
 
-    if (match_num_values and v_cnt = num_values) or (not(match_num_values) and v_cnt >= num_values) then
+    if (match_num_values and v_cnt = num_values) or (not (match_num_values) and v_cnt >= num_values) then
       log(ID_POS_ACK, C_PROC_NAME & " => OK.");
     else
-      alert(ERROR, C_PROC_NAME & " => Failed, " & to_string(num_values-v_cnt) & " values were not generated.");
+      alert(ERROR, C_PROC_NAME & " => Failed, " & to_string(num_values - v_cnt) & " values were not generated.");
     end if;
   end procedure;
 
@@ -1645,18 +1643,18 @@ package body rand_tb_pkg is
   --   element is used for real and time values where we need to check the range as a whole.
   procedure check_weight_distribution(
     variable value_cnt   : inout t_integer_cnt;
-    constant weight_dist : in    t_weight_dist_vec) is
-    constant C_PROC_NAME      : string := "check_weight_distribution";
-    constant C_PREFIX         : string := C_LOG_PREFIX & fill_string(' ', C_LOG_MSG_ID_WIDTH+C_LOG_TIME_WIDTH+C_LOG_SCOPE_WIDTH+4);
-    constant C_COL_WIDTH      : natural := 7;
-    constant C_WEIGHT_IDX     : natural := (weight_dist(weight_dist'low)'right);
-    constant C_MARGIN         : natural := 40; -- Considering there's a total of 1000 samples (C_NUM_DIST_REPETITIONS).
-    variable v_line           : line;
-    variable v_tot_weight     : natural := 0;
-    variable v_val_size       : natural := 0;
-    variable v_percentage     : natural := 0;
-    variable v_count          : natural := 0;
-    variable v_count_vec      : integer_vector(0 to weight_dist'length-1);
+    constant weight_dist : in t_weight_dist_vec) is
+    constant C_PROC_NAME  : string  := "check_weight_distribution";
+    constant C_PREFIX     : string  := C_LOG_PREFIX & fill_string(' ', C_LOG_MSG_ID_WIDTH + C_LOG_TIME_WIDTH + C_LOG_SCOPE_WIDTH + 4);
+    constant C_COL_WIDTH  : natural := 7;
+    constant C_WEIGHT_IDX : natural := (weight_dist(weight_dist'low)'right);
+    constant C_MARGIN     : natural := 40; -- Considering there's a total of 1000 samples (C_NUM_DIST_REPETITIONS).
+    variable v_line       : line;
+    variable v_tot_weight : natural := 0;
+    variable v_val_size   : natural := 0;
+    variable v_percentage : natural := 0;
+    variable v_count      : natural := 0;
+    variable v_count_vec  : integer_vector(0 to weight_dist'length - 1);
   begin
     check_value_in_range(weight_dist(weight_dist'low)'length, 2, 3, TB_ERROR, "Elements of weight_dist must have 2 or 3 values.", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
 
@@ -1686,26 +1684,26 @@ package body rand_tb_pkg is
         when 1 =>
           write(v_line, string'("weight:"));
           for i in weight_dist'range loop
-            v_percentage := weight_dist(i)(C_WEIGHT_IDX)*100/v_tot_weight;
-            v_val_size := integer'image(v_percentage)'length + 1;
+            v_percentage := weight_dist(i)(C_WEIGHT_IDX) * 100 / v_tot_weight;
+            v_val_size   := integer'image(v_percentage)'length + 1;
             write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_percentage) & "%");
           end loop;
         when 2 =>
           write(v_line, string'("count: "));
           for i in weight_dist'range loop
             if weight_dist(i)'length = 2 then
-              v_count := value_cnt(weight_dist(i)(0));
+              v_count                      := value_cnt(weight_dist(i)(0));
               value_cnt(weight_dist(i)(0)) := 0; -- Reset counter
             else
               for idx in weight_dist(i)(0) to weight_dist(i)(1) loop
-                v_count := v_count + value_cnt(idx);
-                value_cnt(idx) := 0; -- Reset counter
+                v_count        := v_count + value_cnt(idx);
+                value_cnt(idx) := 0;    -- Reset counter
               end loop;
             end if;
-            v_val_size := integer'image(v_count)'length;
+            v_val_size     := integer'image(v_count)'length;
             write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_count));
             v_count_vec(i) := v_count;
-            v_count := 0;
+            v_count        := 0;
           end loop;
       end case;
       write(v_line, LF);
@@ -1713,7 +1711,7 @@ package body rand_tb_pkg is
     -- Print bottom line
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)));
 
-    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH-C_PREFIX'length);
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
     prefix_lines(v_line, C_PREFIX);
 
     -- Write the info string to transcript
@@ -1730,17 +1728,17 @@ package body rand_tb_pkg is
 
     -- Check the weight counts are within margin
     for i in v_count_vec'range loop
-      v_percentage := (weight_dist(i)(C_WEIGHT_IDX)*100/v_tot_weight)*10; -- Multiply by 10 since there are 1000 samples
-      check_value_in_range(v_count_vec(i), v_percentage-C_MARGIN, v_percentage+C_MARGIN, WARNING, "Counter is outside expected margin.",
-        C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
+      v_percentage := (weight_dist(i)(C_WEIGHT_IDX) * 100 / v_tot_weight) * 10; -- Multiply by 10 since there are 1000 samples
+      check_value_in_range(v_count_vec(i), v_percentage - C_MARGIN, v_percentage + C_MARGIN, WARNING, "Counter is outside expected margin.",
+                           C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
     end loop;
   end procedure;
 
   -- Checks that each value has been generated only once
   procedure check_cyclic_distribution(
     variable value_cnt  : inout t_integer_cnt;
-    constant num_values : in    natural) is
-    constant C_PROC_NAME : string := "check_cyclic_distribution";
+    constant num_values : in natural) is
+    constant C_PROC_NAME : string  := "check_cyclic_distribution";
     variable v_cnt       : natural := 0;
   begin
     -- Count the values that have been generated only once

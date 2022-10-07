@@ -10,13 +10,11 @@
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
 
-
 ------------------------------------------------------------------------------------------
 -- VHDL unit     : UVVM Utility Library : methods_tb
 --
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
-
 
 library IEEE;
 use IEEE.std_logic_1164.all;
@@ -31,16 +29,14 @@ context uvvm_util.uvvm_util_context;
 
 --hdlregression:tb
 entity methods_tb is
-  generic (
+  generic(
     GC_TESTCASE : string := "UVVM"
-    );
+  );
 end entity;
-
 
 architecture func of methods_tb is
   type testing_array is array (0 to 3) of integer;
   signal test_array : testing_array := (0, 1, 2, 3);
-
 
   signal bol         : boolean                        := false;
   signal slv8        : std_logic_vector(7 downto 0)   := (others => '0');
@@ -94,7 +90,7 @@ architecture func of methods_tb is
 
   constant C_RANDOM_MIN_VALUE : integer     := 10;
   constant C_RANDOM_MAX_VALUE : integer     := 13;
-  type t_int_array is array(C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE) of integer;
+  type t_int_array is array (C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE) of integer;
   -- For counting results of random functions
   signal ctr                  : t_int_array := (others => 0);
 
@@ -130,7 +126,7 @@ begin
   ------------------------------------------------
   -- Process: clock generator
   ------------------------------------------------
-  clock_generator(clk50M, C_CLK50M_PERIOD);  -- Always enabled
+  clock_generator(clk50M, C_CLK50M_PERIOD); -- Always enabled
   clock_generator(clk500M, clk500M_cnt, C_CLK500M_PERIOD);
 
   -- Overloaded version with enable signal as argument
@@ -238,8 +234,8 @@ begin
     variable v_byte_desc_array        : t_byte_array(9 downto 0);
     variable v_slv_desc_array_as_byte : t_slv_array(9 downto 0)(7 downto 0);
     -- convert slv to/from t_byte_array
-    variable v_slv                    : std_logic_vector(8*v_byte_array'length-1 downto 0);
-    variable v_slv_not_byte_multiple  : std_logic_vector(8*v_byte_array'length-5 downto 0);
+    variable v_slv                    : std_logic_vector(8 * v_byte_array'length - 1 downto 0);
+    variable v_slv_not_byte_multiple  : std_logic_vector(8 * v_byte_array'length - 5 downto 0);
 
     --alias uvvm_status is shared_uvvm_status.simulation_successful;
     alias found_unexpected_simulation_warnings_or_worse is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
@@ -257,15 +253,13 @@ begin
     variable v_exp_unsigned_array   : t_unsigned_array(0 to 1)(0 to 3);
     variable v_value_unsigned_array : t_unsigned_array(2 to 3)(0 to 3);
 
-
-
     -- Check clock periods in clock_generator
     procedure test_clock_period(
-      signal clock                 : std_logic;
+      signal   clock               : std_logic;
       constant clk_period          : time;
       constant clk_high_percentage : natural range 1 to 99 := 50
-      ) is
-      variable v_first_half_clk_period : time := clk_period * clk_high_percentage/100;
+    ) is
+      variable v_first_half_clk_period : time := clk_period * clk_high_percentage / 100;
     begin
       -- Check clock period (high and low duration)
       await_value(clock, '1', 0 ns, clk_period, error, "Clock generator, check that clock started", C_SCOPE);
@@ -281,10 +275,10 @@ begin
 
     -- Check clock duty cycle in clock_generator
     procedure test_clock_duty_cycle(
-      signal clock           : std_logic;
+      signal   clock         : std_logic;
       constant clk_period    : time;
       constant clk_high_time : time
-      ) is
+    ) is
     begin
       check_value(clk_high_time < clk_period, TB_ERROR, "test_clock_duty_cycle: parameter clk_high_time must be lower than parameter clk_period!", C_TB_SCOPE_DEFAULT, ID_NEVER);
       -- Check clock period (high and low duration)
@@ -301,15 +295,15 @@ begin
 
     --  Check the clock enable and clock period in clock_generator
     procedure test_clock_enable_and_period(
-      signal clock        :       std_logic;
-      signal clock_ena    : inout boolean;
-      constant clk_period :       time
-      ) is
+      signal   clock      : std_logic;
+      signal   clock_ena  : inout boolean;
+      constant clk_period : time
+    ) is
     begin
       -- Check that it is quiet when disabled
       clock_ena <= false;
-      wait for 10*clk_period;
-      check_stable(clock, 9*clk_period, error, "Check that clock is quiet when disabled", C_SCOPE);
+      wait for 10 * clk_period;
+      check_stable(clock, 9 * clk_period, error, "Check that clock is quiet when disabled", C_SCOPE);
 
       -- While the clock is enabled, test the clk period
       clock_ena <= true;
@@ -322,11 +316,11 @@ begin
     end procedure;
 
     procedure test_adjustable_clock_error_handling(
-      signal adj_clock                   :       std_logic;
-      signal adj_clk100M_high_percentage : inout natural range 0 to 100;
-      signal adj_clk100M_ena             : inout boolean;
-      constant adj_clk_period            :       time
-      ) is
+      signal   adj_clock                   : std_logic;
+      signal   adj_clk100M_high_percentage : inout natural range 0 to 100;
+      signal   adj_clk100M_ena             : inout boolean;
+      constant adj_clk_period              : time
+    ) is
     begin
       -- Set high_percentage to illegal value 0
       adj_clk100M_ena             <= false;
@@ -354,26 +348,25 @@ begin
 
     end procedure;
 
-
     procedure test_adjustable_clock_enable_and_period(
-      signal adj_clock                   :       std_logic;
-      signal adj_clk100M_high_percentage : inout natural range 0 to 100;
-      signal adj_clk100M_ena             : inout boolean;
-      constant adj_clk_period            :       time
-      ) is
+      signal   adj_clock                   : std_logic;
+      signal   adj_clk100M_high_percentage : inout natural range 0 to 100;
+      signal   adj_clk100M_ena             : inout boolean;
+      constant adj_clk_period              : time
+    ) is
       variable v_high_period : time;
       variable v_low_period  : time;
     begin
       -- Check that clock is quiet when disabled
       adj_clk100M_ena <= false;
-      wait for 10*adj_clk_period;
-      check_stable(adj_clock, 9*adj_clk_period, error, "Check that adjustable clock is quiet when disabled", C_SCOPE);
+      wait for 10 * adj_clk_period;
+      check_stable(adj_clock, 9 * adj_clk_period, error, "Check that adjustable clock is quiet when disabled", C_SCOPE);
 
       -- Set 50/50 duty cycle, test the clk period
       adj_clk100M_high_percentage <= 50;
       adj_clk100M_ena             <= true;
-      v_high_period               := adj_clk_period/2;  -- 50% high duration
-      v_low_period                := adj_clk_period - v_high_period;  -- 50% low duration
+      v_high_period               := adj_clk_period / 2; -- 50% high duration
+      v_low_period                := adj_clk_period - v_high_period; -- 50% low duration
       wait for v_high_period;
       check_value(adj_clock'last_event, v_high_period, error, "Checking rising edge.", C_SCOPE);
       check_value(adj_clock, '1', error, "Check that adjustable clock is set to high during the period.", C_SCOPE);
@@ -384,13 +377,13 @@ begin
       check_stable(adj_clock, v_low_period, error, "Check adjustable clock is stable during low period.", C_SCOPE);
 
       adj_clk100M_ena <= false;
-      wait for 2*adj_clk_period;
+      wait for 2 * adj_clk_period;
 
       -- Set 25/75 duty cycle, test the clk period
       adj_clk100M_high_percentage <= 25;
       adj_clk100M_ena             <= true;
-      v_high_period               := 25*adj_clk_period/100;  -- 25% high duration
-      v_low_period                := adj_clk_period - v_high_period;  -- 75% low duration
+      v_high_period               := 25 * adj_clk_period / 100; -- 25% high duration
+      v_low_period                := adj_clk_period - v_high_period; -- 75% low duration
       wait for v_high_period;
       check_value(adj_clock'last_event, v_high_period, error, "Checking rising edge.", C_SCOPE);
       check_value(adj_clock, '1', error, "Check that adjustable clock is set to high during the period.", C_SCOPE);
@@ -401,13 +394,13 @@ begin
       check_stable(adj_clock, v_low_period, error, "Check adjustable clock is stable during low period.", C_SCOPE);
 
       adj_clk100M_ena <= false;
-      wait for 2*adj_clk_period;
+      wait for 2 * adj_clk_period;
 
       -- Set 99/1 duty cycle, test the clk period
       adj_clk100M_high_percentage <= 99;
       adj_clk100M_ena             <= true;
-      v_high_period               := 99*adj_clk_period/100;  -- 99% high duration
-      v_low_period                := adj_clk_period - v_high_period;  -- 1% low duration
+      v_high_period               := 99 * adj_clk_period / 100; -- 99% high duration
+      v_low_period                := adj_clk_period - v_high_period; -- 1% low duration
       wait for v_high_period;
       check_value(adj_clock'last_event, v_high_period, error, "Checking rising edge.", C_SCOPE);
       check_value(adj_clock, '1', error, "Check that adjustable clock is set to high during the period, high: " & to_string(v_high_period) & ", low: " & to_string(v_low_period), C_SCOPE);
@@ -420,12 +413,10 @@ begin
       adj_clk100M_ena <= false;
     end procedure;
 
-
-
     -- Check the simulation_success update behavior
     procedure test_uvvm_status_simulation_successful(
       constant test_alert_type : t_alert_level
-      ) is
+    ) is
       constant C_FAIL_STATUS_STRING        : string := "Expected that shared_uvvm_status indicate fail.";
       constant C_SUCCESS_STATUS_STRING     : string := "Expected that shared_uvvm_status indicate success.";
       constant C_MISMATCH_STATUS_STRING    : string := "Expected that shared_uvvm_status indicate mismatch.";
@@ -552,9 +543,7 @@ begin
       check_value(mismatch_on_expected_simulation_errors_or_worse, 0, error, C_NO_MISMATCH_STATUS_STRING);
     end procedure;
 
-
   begin
-
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
@@ -568,7 +557,6 @@ begin
     set_alert_stop_limit(warning, 0);
     set_alert_stop_limit(error, 0);     -- 0 = Never stop
     wait for 1 ns;
-
 
     if GC_TESTCASE = "basic_log_alert" then
       --------------------------------------------------------------------------------------
@@ -605,12 +593,10 @@ begin
       check_value(found_unexpected_simulation_warnings_or_worse, 0, error, "Alert check shared_uvvm_status.found_unexpected_simulation_warnings_or_worse correctly updated");
       check_value(found_unexpected_simulation_errors_or_worse, 0, error, "Alert check shared_uvvm_status.found_unexpected_simulation_errors_or_worse correctly updated");
 
-
       -- Check all alert level types
       for test_alert in uvvm_util.types_pkg.t_alert_level loop
         test_uvvm_status_simulation_successful(test_alert);
       end loop;
-
 
     elsif GC_TESTCASE = "enable_disable_log_msg" then
       --------------------------------------------------------------------------------------
@@ -636,7 +622,6 @@ begin
       log("Verifying that attempting to enable ID_NEVER triggers an alert.");
       increment_expected_alerts(TB_WARNING, 1);
       enable_log_msg(ID_NEVER, "This shall trigger a TB_WARNING.");
-
 
       log("Testing ID_LOG_MSG_CTRL and ALL_MESSAGES");
       disable_log_msg(ALL_MESSAGES);
@@ -895,7 +880,7 @@ begin
       --
 
       -- FROM_NOW, FROM_NOW
-      bol <= transport bol after 30 ns;  -- No 'Event
+      bol <= transport bol after 30 ns; -- No 'Event
       await_stable(bol, 50 ns, FROM_NOW, 51 ns, FROM_NOW, error, "bol: No 'event, Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
 
       bol <= transport not bol after 30 ns;
@@ -909,7 +894,6 @@ begin
       increment_expected_alerts(error, 1);
 
       await_stable(bol, 0 ns, FROM_NOW, 0 ns, FROM_NOW, error, "bol: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_NOW
       bol <= not bol;
@@ -942,7 +926,6 @@ begin
       wait for 100 ns;
       bol <= transport not bol after 10 ns;
       await_stable(bol, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, error, "bol: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       bol <= not bol;
@@ -977,7 +960,6 @@ begin
 
       await_stable(sl, 0 ns, FROM_NOW, 0 ns, FROM_NOW, error, "sl: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_NOW
       sl <= not sl;
       wait for 10 ns;
@@ -1009,7 +991,6 @@ begin
       wait for 100 ns;
       sl <= transport not sl after 10 ns;
       await_stable(sl, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, error, "sl: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       sl <= not sl;
@@ -1044,7 +1025,6 @@ begin
 
       await_stable(slv8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, error, "slv8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_NOW
       slv8 <= not slv8;
       wait for 10 ns;
@@ -1077,7 +1057,6 @@ begin
       slv8 <= transport not slv8 after 10 ns;
       await_stable(slv8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, error, "slv8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       slv8 <= not slv8;
       wait for 10 ns;
@@ -1091,7 +1070,6 @@ begin
       wait for 10 ns;
       await_stable(slv8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, error, "slv8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
-
 
       --
       -- await_stable(unsigned)
@@ -1111,7 +1089,6 @@ begin
       increment_expected_alerts(error, 1);
 
       await_stable(u8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, error, "u8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_NOW
       u8 <= not u8;
@@ -1145,7 +1122,6 @@ begin
       u8 <= transport not u8 after 10 ns;
       await_stable(u8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, error, "u8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       u8 <= not u8;
       wait for 10 ns;
@@ -1159,7 +1135,6 @@ begin
       wait for 10 ns;
       await_stable(u8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, error, "u8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
-
 
       --
       -- await_stable(signed)
@@ -1179,7 +1154,6 @@ begin
       increment_expected_alerts(error, 1);
 
       await_stable(s8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, error, "s8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_NOW
       s8 <= not s8;
@@ -1213,7 +1187,6 @@ begin
       s8 <= transport not s8 after 10 ns;
       await_stable(s8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, error, "s8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       s8 <= not s8;
       wait for 10 ns;
@@ -1228,7 +1201,6 @@ begin
       await_stable(s8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, error, "s8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
-
       --
       -- await_stable(integer)
       --
@@ -1236,10 +1208,10 @@ begin
       -- FROM_NOW, FROM_NOW
       await_stable(i, 50 ns, FROM_NOW, 100 ns, FROM_NOW, error, "i: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
 
-      i <= transport i+1 after 30 ns;
+      i <= transport i + 1 after 30 ns;
       await_stable(i, 50 ns, FROM_NOW, 100 ns, FROM_NOW, error, "i: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
 
-      i <= transport i+1 after 30 ns;
+      i <= transport i + 1 after 30 ns;
       await_stable(i, 50 ns, FROM_NOW, 60 ns, FROM_NOW, error, "i: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
@@ -1248,50 +1220,48 @@ begin
 
       await_stable(i, 0 ns, FROM_NOW, 0 ns, FROM_NOW, error, "i: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_NOW
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, error, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
 
       wait for 50 ns;
-      i <= i+1;
+      i <= i + 1;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, error, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 11 ns;
-      i <= transport i+1 after 10 ns;
+      i <= transport i + 1 after 10 ns;
       await_stable(i, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, error, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
-      i <= transport i+1 after 10 ns;
+      i <= transport i + 1 after 10 ns;
       await_stable(i, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, error, "i: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
       -- FROM_NOW, FROM_LAST_EVENT
-      i <= i+1;
+      i <= i + 1;
       wait for 100 ns;
-      i <= transport i+1 after 10 ns;
+      i <= transport i + 1 after 10 ns;
       await_stable(i, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, error, "i: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
       increment_expected_alerts(error, 1);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 100 ns;
-      i <= transport i+1 after 10 ns;
+      i <= transport i + 1 after 10 ns;
       await_stable(i, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, error, "i: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, error, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, error, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, error, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
@@ -1303,10 +1273,10 @@ begin
       -- FROM_NOW, FROM_NOW
       await_stable(r, 50 ns, FROM_NOW, 100 ns, FROM_NOW, error, "r: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
 
-      r <= transport r+1.0 after 30 ns;
+      r <= transport r + 1.0 after 30 ns;
       await_stable(r, 50 ns, FROM_NOW, 100 ns, FROM_NOW, error, "r: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
 
-      r <= transport r+1.0 after 30 ns;
+      r <= transport r + 1.0 after 30 ns;
       await_stable(r, 50 ns, FROM_NOW, 60 ns, FROM_NOW, error, "r: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
@@ -1315,54 +1285,51 @@ begin
 
       await_stable(r, 0 ns, FROM_NOW, 0 ns, FROM_NOW, error, "r: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_NOW
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, error, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
 
       wait for 50 ns;
-      r <= r+1.0;
+      r <= r + 1.0;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, error, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 11 ns;
-      r <= transport r+1.0 after 10 ns;
+      r <= transport r + 1.0 after 10 ns;
       await_stable(r, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, error, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
-      r <= transport r+1.0 after 10 ns;
+      r <= transport r + 1.0 after 10 ns;
       await_stable(r, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, error, "r: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
       -- FROM_NOW, FROM_LAST_EVENT
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 100 ns;
-      r <= transport r+1.0 after 10 ns;
+      r <= transport r + 1.0 after 10 ns;
       await_stable(r, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, error, "r: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
       increment_expected_alerts(error, 1);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 100 ns;
-      r <= transport r+1.0 after 10 ns;
+      r <= transport r + 1.0 after 10 ns;
       await_stable(r, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, error, "r: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, error, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, error, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, error, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
-
 
     elsif GC_TESTCASE = "await_change" then
       --------------------------------------------------------------------------------------
@@ -1371,11 +1338,11 @@ begin
       log(ID_LOG_HDR, "Verifying await_change");
       bol <= transport false after 2 ns;
       await_change(bol, 3 ns, 5 ns, error, "Change too soon, Fail", C_SCOPE);
-      bol <= transport true  after 3 ns;
+      bol <= transport true after 3 ns;
       await_change(bol, 3 ns, 5 ns, error, "Change within time window 1, OK", C_SCOPE);
       bol <= transport false after 4 ns;
       await_change(bol, 3 ns, 5 ns, error, "Change within time window 2, OK", C_SCOPE);
-      bol <= transport true  after 5 ns;
+      bol <= transport true after 5 ns;
       await_change(bol, 3 ns, 5 ns, error, "Change within time window 3, OK", C_SCOPE);
       await_change(bol, 3 ns, 5 ns, error, "Change too late, Fail", C_SCOPE);
       increment_expected_alerts(error, 2);
@@ -1452,17 +1419,17 @@ begin
       await_change(r, 3 ns, 5 ns, error, "Change too late, Fail", C_SCOPE);
       increment_expected_alerts(error, 2);
 
-      --------------------------------------------------------------------------------------
-      -- Verifying await_stable
-      --------------------------------------------------------------------------------------
-      -- log(ID_LOG_HDR, "Verifying await_stable");
-      -- sl <= '0';
-      -- wait for 10 ns;
-      -- await_stable(sl, 20 ns, 11 ns, ERROR, "Stable, OK", C_SCOPE);
-      -- sl <= '0';
-      -- wait for 10 ns;
-      -- await_stable(sl, 20 ns, 9 ns, ERROR, "Stable timeout, Fail", C_SCOPE);
-      -- increment_expected_alerts(ERROR);
+    --------------------------------------------------------------------------------------
+    -- Verifying await_stable
+    --------------------------------------------------------------------------------------
+    -- log(ID_LOG_HDR, "Verifying await_stable");
+    -- sl <= '0';
+    -- wait for 10 ns;
+    -- await_stable(sl, 20 ns, 11 ns, ERROR, "Stable, OK", C_SCOPE);
+    -- sl <= '0';
+    -- wait for 10 ns;
+    -- await_stable(sl, 20 ns, 9 ns, ERROR, "Stable timeout, Fail", C_SCOPE);
+    -- increment_expected_alerts(ERROR);
 
     elsif GC_TESTCASE = "await_value" then
       --------------------------------------------------------------------------------------
@@ -1555,12 +1522,12 @@ begin
 
       -- await_value : boolean
       bol <= false;
-      bol <= transport true  after 2 ns;
+      bol <= transport true after 2 ns;
       await_value(bol, true, 3 ns, 5 ns, error, "Change too soon, Fail", C_SCOPE);
       wait for 10 ns;
       bol <= transport false after 3 ns;
       await_value(bol, false, 3 ns, 5 ns, error, "Change within time window, OK", C_SCOPE);
-      bol <= transport true  after 6 ns;
+      bol <= transport true after 6 ns;
       await_value(bol, true, 3 ns, 5 ns, error, "Change too late, Fail", C_SCOPE);
       wait for 10 ns;
       bol <= transport false after 0 ns;
@@ -1610,10 +1577,10 @@ begin
       sl <= '1';
       wait for 1 ns;
       sl <= transport 'Z' after 3 ns;
-      await_value(sl, 'Z', MATCH_STD_INCL_Z , 3 ns, 5 ns, error, "Change within time window, STD match including Z, OK", C_SCOPE);
+      await_value(sl, 'Z', MATCH_STD_INCL_Z, 3 ns, 5 ns, error, "Change within time window, STD match including Z, OK", C_SCOPE);
       wait for 10 ns;
       sl <= transport '1' after 3 ns;
-      await_value(sl, 'Z', MATCH_STD_INCL_Z , 3 ns, 5 ns, error, "Different values, STD match including Z, Fail", C_SCOPE);
+      await_value(sl, 'Z', MATCH_STD_INCL_Z, 3 ns, 5 ns, error, "Different values, STD match including Z, Fail", C_SCOPE);
 
       -- MATCH_STD_INCL_ZXUW
       wait for 1 ns;
@@ -1656,11 +1623,11 @@ begin
 
       -- await_value : integer
       i <= 0;
-      i <= transport 1  after 2 ns;
+      i <= transport 1 after 2 ns;
       await_value(i, 1, 3 ns, 5 ns, error, "Change too soon, Fail", C_SCOPE);
-      i <= transport 2  after 3 ns;
+      i <= transport 2 after 3 ns;
       await_value(i, 2, 3 ns, 5 ns, error, "Change within time window, OK", C_SCOPE);
-      i <= transport 3  after 6 ns;
+      i <= transport 3 after 6 ns;
       await_value(i, 3, 3 ns, 5 ns, error, "Change too late, Fail", C_SCOPE);
       wait for 10 ns;
       i <= transport 15 after 0 ns;
@@ -1675,11 +1642,11 @@ begin
 
       -- await_value : real
       r <= 0.0;
-      r <= transport 1.0  after 2 ns;
+      r <= transport 1.0 after 2 ns;
       await_value(r, 1.0, 3 ns, 5 ns, error, "Change too soon, Fail", C_SCOPE);
-      r <= transport 2.0  after 3 ns;
+      r <= transport 2.0 after 3 ns;
       await_value(r, 2.0, 3 ns, 5 ns, error, "Change within time window, OK", C_SCOPE);
-      r <= transport 3.0  after 6 ns;
+      r <= transport 3.0 after 6 ns;
       await_value(r, 3.0, 3 ns, 5 ns, error, "Change too late, Fail", C_SCOPE);
       wait for 10 ns;
       r <= transport 15.0 after 0 ns;
@@ -1692,8 +1659,6 @@ begin
       await_value(r, 17.0, 1 ns, 2 ns, error, "Val=exp already, Min_time>0ns, Fail. ", C_SCOPE);
       increment_expected_alerts(error, 3);
 
-      
-
     elsif GC_TESTCASE = "byte_and_slv_arrays" then
       -------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Testing and verifying convert_byte_array_to_slv_array");
@@ -1703,33 +1668,33 @@ begin
       v_slv_array_as_byte := (others => (others => '0'));
       -- build 10x1 bytes
       for idx in 1 to 10 loop
-        v_byte_array(idx-1) := std_logic_vector(to_unsigned(idx, v_byte_array(idx-1)'length));
+        v_byte_array(idx - 1) := std_logic_vector(to_unsigned(idx, v_byte_array(idx - 1)'length));
       end loop;
       -- convert
-      v_slv_array_as_byte := convert_byte_array_to_slv_array(v_byte_array, 1);  -- LOWER_BYTE_LEFT
+      v_slv_array_as_byte := convert_byte_array_to_slv_array(v_byte_array, 1); -- LOWER_BYTE_LEFT
       -- check result
       for idx in 1 to 10 loop
-        v_byte := v_slv_array_as_byte(idx-1);
-        check_value(v_byte = v_byte_array(idx-1), error, "Checking convert_byte_array_to_slv_array() result, byte #" & to_string(idx-1));
+        v_byte := v_slv_array_as_byte(idx - 1);
+        check_value(v_byte = v_byte_array(idx - 1), error, "Checking convert_byte_array_to_slv_array() result, byte #" & to_string(idx - 1));
       end loop;
 
       log(ID_SEQUENCER, "Byte-to-3xbyte testing, LOWER_BYTE_LEFT");
-      v_slv_array_as_3_byte := (others => (others => '0'));
+      v_slv_array_as_3_byte         := (others => (others => '0'));
       -- build 3x3 bytes
       for idx in 1 to 9 loop
-        v_byte_array(idx-1) := random(v_byte_array(idx-1)'length);
+        v_byte_array(idx - 1) := random(v_byte_array(idx - 1)'length);
       end loop;
       -- convert
       v_slv_array_as_3_byte(0 to 2) := convert_byte_array_to_slv_array(v_byte_array, 3, LOWER_BYTE_LEFT);
       --check result
       v_idx                         := 0;
       for idx in 1 to 3 loop
-        v_byte := v_slv_array_as_3_byte(idx-1)(23 downto 16);
+        v_byte := v_slv_array_as_3_byte(idx - 1)(23 downto 16);
         check_value(v_byte = v_byte_array(v_idx), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx));
-        v_byte := v_slv_array_as_3_byte(idx-1)(15 downto 8);
-        check_value(v_byte = v_byte_array(v_idx+1), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx+1));
-        v_byte := v_slv_array_as_3_byte(idx-1)(7 downto 0);
-        check_value(v_byte = v_byte_array(v_idx+2), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx+2));
+        v_byte := v_slv_array_as_3_byte(idx - 1)(15 downto 8);
+        check_value(v_byte = v_byte_array(v_idx + 1), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx + 1));
+        v_byte := v_slv_array_as_3_byte(idx - 1)(7 downto 0);
+        check_value(v_byte = v_byte_array(v_idx + 2), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx + 2));
         v_idx  := v_idx + 3;
       end loop;
 
@@ -1740,15 +1705,14 @@ begin
       -- check result
       v_idx                         := 0;
       for idx in 1 to 3 loop
-        v_byte := v_slv_array_as_3_byte(idx-1)(7 downto 0);
+        v_byte := v_slv_array_as_3_byte(idx - 1)(7 downto 0);
         check_value(v_byte = v_byte_array(v_idx), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx));
-        v_byte := v_slv_array_as_3_byte(idx-1)(15 downto 8);
-        check_value(v_byte = v_byte_array(v_idx+1), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx+1));
-        v_byte := v_slv_array_as_3_byte(idx-1)(23 downto 16);
-        check_value(v_byte = v_byte_array(v_idx+2), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx+2));
+        v_byte := v_slv_array_as_3_byte(idx - 1)(15 downto 8);
+        check_value(v_byte = v_byte_array(v_idx + 1), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx + 1));
+        v_byte := v_slv_array_as_3_byte(idx - 1)(23 downto 16);
+        check_value(v_byte = v_byte_array(v_idx + 2), error, "Checking convert_byte_array_to_slv_array(), byte #" & to_string(v_idx + 2));
         v_idx  := v_idx + 3;
       end loop;
-
 
       -------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Testing and verifying convert_slv_array_to_byte_array");
@@ -1758,28 +1722,28 @@ begin
       v_byte_array := (others => (others => '0'));
       -- build 10x1 bytes
       for idx in 1 to 10 loop
-        v_slv_array_as_byte(idx-1) := std_logic_vector(to_unsigned(idx, v_slv_array_as_byte(idx-1)'length));
+        v_slv_array_as_byte(idx - 1) := std_logic_vector(to_unsigned(idx, v_slv_array_as_byte(idx - 1)'length));
       end loop;
       -- convert
       v_byte_array := convert_slv_array_to_byte_array(v_slv_array_as_byte, LOWER_BYTE_LEFT);
       -- check result
       for idx in 1 to 10 loop
-        v_byte := v_slv_array_as_byte(idx-1);
-        check_value(v_byte = v_byte_array(idx-1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(idx-1));
+        v_byte := v_slv_array_as_byte(idx - 1);
+        check_value(v_byte = v_byte_array(idx - 1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(idx - 1));
       end loop;
 
       log(ID_SEQUENCER, "Byte to byte testing, default byte position, descending t_byte_array");
       v_byte_desc_array := (others => (others => '0'));
       -- build 10x1 bytes
       for idx in 1 to 10 loop
-        v_slv_desc_array_as_byte(idx-1) := std_logic_vector(to_unsigned(idx, v_slv_desc_array_as_byte(idx-1)'length));
+        v_slv_desc_array_as_byte(idx - 1) := std_logic_vector(to_unsigned(idx, v_slv_desc_array_as_byte(idx - 1)'length));
       end loop;
       -- convert
       v_byte_desc_array := convert_slv_array_to_byte_array(v_slv_desc_array_as_byte, LOWER_BYTE_LEFT);
       -- check result
       for idx in 1 to 10 loop
-        v_byte := v_slv_desc_array_as_byte(idx-1);
-        check_value(v_byte = v_byte_desc_array(idx-1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(idx-1));
+        v_byte := v_slv_desc_array_as_byte(idx - 1);
+        check_value(v_byte = v_byte_desc_array(idx - 1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(idx - 1));
       end loop;
 
       log(ID_SEQUENCER, "Byte to byte testing, ascending byte vector, ascending t_byte_array");
@@ -1791,22 +1755,22 @@ begin
       check_value(8x"A1" = v_byte_array(1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(1));
 
       log(ID_SEQUENCER, "3xbyte to byte testing, LOWER_BYTE_LEFT, ascending t_byte_array");
-      v_byte_array := (others => (others => '0'));
+      v_byte_array         := (others => (others => '0'));
       -- build 3x3 bytes
       for idx in 1 to 3 loop
-        v_slv_array_as_3_byte(idx-1) := random(v_slv_array_as_3_byte(idx-1)'length);
+        v_slv_array_as_3_byte(idx - 1) := random(v_slv_array_as_3_byte(idx - 1)'length);
       end loop;
       -- convert
       v_byte_array(0 to 8) := convert_slv_array_to_byte_array(v_slv_array_as_3_byte(0 to 2), LOWER_BYTE_LEFT);
       -- check result
       v_idx                := 0;
       for idx in 1 to 3 loop
-        v_byte := v_slv_array_as_3_byte(idx-1)(23 downto 16);
+        v_byte := v_slv_array_as_3_byte(idx - 1)(23 downto 16);
         check_value(v_byte = v_byte_array(v_idx), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx));
-        v_byte := v_slv_array_as_3_byte(idx-1)(15 downto 8);
-        check_value(v_byte = v_byte_array(v_idx+1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx+1));
-        v_byte := v_slv_array_as_3_byte(idx-1)(7 downto 0);
-        check_value(v_byte = v_byte_array(v_idx+2), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx+2));
+        v_byte := v_slv_array_as_3_byte(idx - 1)(15 downto 8);
+        check_value(v_byte = v_byte_array(v_idx + 1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx + 1));
+        v_byte := v_slv_array_as_3_byte(idx - 1)(7 downto 0);
+        check_value(v_byte = v_byte_array(v_idx + 2), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx + 2));
         v_idx  := v_idx + 3;
       end loop;
 
@@ -1816,12 +1780,12 @@ begin
       -- check result
       v_idx                := 0;
       for idx in 1 to 3 loop
-        v_byte := v_slv_array_as_3_byte(idx-1)(7 downto 0);
+        v_byte := v_slv_array_as_3_byte(idx - 1)(7 downto 0);
         check_value(v_byte = v_byte_array(v_idx), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx));
-        v_byte := v_slv_array_as_3_byte(idx-1)(15 downto 8);
-        check_value(v_byte = v_byte_array(v_idx+1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx+1));
-        v_byte := v_slv_array_as_3_byte(idx-1)(23 downto 16);
-        check_value(v_byte = v_byte_array(v_idx+2), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx+2));
+        v_byte := v_slv_array_as_3_byte(idx - 1)(15 downto 8);
+        check_value(v_byte = v_byte_array(v_idx + 1), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx + 1));
+        v_byte := v_slv_array_as_3_byte(idx - 1)(23 downto 16);
+        check_value(v_byte = v_byte_array(v_idx + 2), error, "Checking convert_slv_array_to_byte_array(), byte #" & to_string(v_idx + 2));
         v_idx  := v_idx + 3;
       end loop;
 
@@ -1839,7 +1803,7 @@ begin
       v_slv := convert_byte_array_to_slv(v_byte_array, LOWER_BYTE_LEFT);
       -- check result
       for idx in 0 to 9 loop
-        v_byte := v_slv(8*(10-idx)-1 downto 8*(9-idx));
+        v_byte := v_slv(8 * (10 - idx) - 1 downto 8 * (9 - idx));
         check_value(v_byte = v_byte_array(idx), error, "Checking convert_byte_array_to_slv() result, byte #" & to_string(idx));
       end loop;
 
@@ -1853,7 +1817,7 @@ begin
       v_slv := convert_byte_array_to_slv(v_byte_array, LOWER_BYTE_RIGHT);
       -- check result
       for idx in 0 to 9 loop
-        v_byte := v_slv(8*(idx+1)-1 downto 8*idx);
+        v_byte := v_slv(8 * (idx + 1) - 1 downto 8 * idx);
         check_value(v_byte = v_byte_array(idx), error, "Checking convert_byte_array_to_slv() result, byte #" & to_string(idx));
       end loop;
 
@@ -1865,22 +1829,22 @@ begin
       v_byte_array := (others => (others => '0'));
       -- fill slv
       for idx in 0 to 9 loop
-        v_slv(8*(10-idx)-1 downto 8*(9-idx)) := std_logic_vector(to_unsigned(idx, 8));
+        v_slv(8 * (10 - idx) - 1 downto 8 * (9 - idx)) := std_logic_vector(to_unsigned(idx, 8));
       end loop;
       -- convert
       v_byte_array := convert_slv_to_byte_array(v_slv, LOWER_BYTE_LEFT);
       -- check result
       for idx in 0 to 9 loop
-        v_byte := v_slv(8*(10-idx)-1 downto 8*(9-idx));
+        v_byte := v_slv(8 * (10 - idx) - 1 downto 8 * (9 - idx));
         check_value(v_byte = v_byte_array(idx), error, "Checking convert_slv_to_byte_array() result, byte #" & to_string(idx));
       end loop;
 
       log(ID_SEQUENCER, "Byte endianness: LOWER_BYTE_LEFT - Check padding when std_logic_vector not multiple of byte");
-      v_byte_array := (others => (others => '0'));
+      v_byte_array            := (others => (others => '0'));
       -- fill slv
       v_slv_not_byte_multiple := (others => '1');
       -- convert
-      v_byte_array := convert_slv_to_byte_array(v_slv_not_byte_multiple, LOWER_BYTE_LEFT);
+      v_byte_array            := convert_slv_to_byte_array(v_slv_not_byte_multiple, LOWER_BYTE_LEFT);
       -- check result
       for idx in 0 to 9 loop
         v_byte := (others => '1') when idx < 9 else "1111ZZZZ";
@@ -1891,22 +1855,22 @@ begin
       v_byte_array := (others => (others => '0'));
       -- fill slv
       for idx in 0 to 9 loop
-        v_slv(8*(idx+1)-1 downto 8*idx) := std_logic_vector(to_unsigned(idx, 8));
+        v_slv(8 * (idx + 1) - 1 downto 8 * idx) := std_logic_vector(to_unsigned(idx, 8));
       end loop;
       -- convert
       v_byte_array := convert_slv_to_byte_array(v_slv, LOWER_BYTE_RIGHT);
       -- check result
       for idx in 0 to 9 loop
-        v_byte := v_slv(8*(idx+1)-1 downto 8*idx);
+        v_byte := v_slv(8 * (idx + 1) - 1 downto 8 * idx);
         check_value(v_byte = v_byte_array(idx), error, "Checking convert_slv_to_byte_array() result, byte #" & to_string(idx));
       end loop;
 
       log(ID_SEQUENCER, "Byte endianness: LOWER_BYTE_RIGHT - Check padding when std_logic_vector not multiple of byte");
-      v_byte_array := (others => (others => '0'));
+      v_byte_array            := (others => (others => '0'));
       -- fill slv
       v_slv_not_byte_multiple := (others => '1');
       -- convert
-      v_byte_array := convert_slv_to_byte_array(v_slv_not_byte_multiple, LOWER_BYTE_RIGHT);
+      v_byte_array            := convert_slv_to_byte_array(v_slv_not_byte_multiple, LOWER_BYTE_RIGHT);
       -- check result
       for idx in 0 to 9 loop
         v_byte := (others => '1') when idx < 9 else "1111ZZZZ";
@@ -1950,7 +1914,7 @@ begin
         v_ia      := random(C_RANDOM_MIN_VALUE, C_RANDOM_MAX_VALUE);
         -- Check that the number is in the requested range
         check_value_in_range(v_ia, C_RANDOM_MIN_VALUE, C_RANDOM_MAX_VALUE, error, "Random integer function in range, OK", C_SCOPE, ID_NEVER);
-        ctr(v_ia) <= ctr(v_ia) + 1;  -- Keep track of how many times the random value got this value
+        ctr(v_ia) <= ctr(v_ia) + 1;     -- Keep track of how many times the random value got this value
         wait for 0 ns;
       end loop;
       -- Print statistics over the random values
@@ -1964,7 +1928,7 @@ begin
       for iteration in 1 to 100 loop
         random(C_RANDOM_MIN_VALUE, C_RANDOM_MAX_VALUE, v_seed1, v_seed2, v_i);
         check_value_in_range(v_i, C_RANDOM_MIN_VALUE, C_RANDOM_MAX_VALUE, error, "Random integer procedure in range, OK", C_SCOPE, ID_NEVER);
-        ctr(v_i) <= ctr(v_i) + 1;  -- Keep track of how many times the random value got this value
+        ctr(v_i) <= ctr(v_i) + 1;       -- Keep track of how many times the random value got this value
       end loop;
       -- Print statistics over the random values
       for iteration in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
@@ -1998,10 +1962,10 @@ begin
 
       -- Test the random time function
       for iteration in 1 to 100 loop
-        v_t           := random(1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE);
+        v_t             := random(1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE);
         -- Check that the number is in the requested range
         check_value_in_range(v_t, 1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE, error, "Random time function in range, OK", C_SCOPE, ID_NEVER);
-        ctr(v_t/1 ns) <= ctr(v_t/1 ns) + 1;  -- Keep track of how many times the random value got this value
+        ctr(v_t / 1 ns) <= ctr(v_t / 1 ns) + 1; -- Keep track of how many times the random value got this value
         wait for 0 ns;
       end loop;
       -- Print statistics over the random values
@@ -2013,8 +1977,9 @@ begin
 
       -- Test the random time procedure
       for iteration in 1 to 100 loop
-        random(1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE, v_seed1, v_seed2, v_t); check_value_in_range(v_t, 1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE, error, "Random time procedure in range, OK", C_SCOPE, ID_NEVER);
-        ctr(v_t/1 ns) <= ctr(v_t/1 ns) + 1;  -- Keep track of how many times the random value got this value
+        random(1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE, v_seed1, v_seed2, v_t);
+        check_value_in_range(v_t, 1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE, error, "Random time procedure in range, OK", C_SCOPE, ID_NEVER);
+        ctr(v_t / 1 ns) <= ctr(v_t / 1 ns) + 1; -- Keep track of how many times the random value got this value
       end loop;
       -- Print statistics over the random values
       for iteration in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
@@ -2022,7 +1987,6 @@ begin
         -- Reset counter
         ctr(iteration) <= 0;
       end loop;
-
 
     elsif GC_TESTCASE = "check_value_in_range" then
       --------------------------------------------------------------------------
@@ -2052,7 +2016,6 @@ begin
       check_value_in_range(v_s32, x"80000002", x"00000001", error, "Check -2147483647 between -2147483646 and 1, Fail", C_SCOPE);
       increment_expected_alerts(error, 1);
 
-
       -- check_value_in_range : time
       v_t := 3 ns;
       check_value_in_range(v_t, 2 ns, 5 ns, error, "Check time in range, OK", C_SCOPE);
@@ -2063,7 +2026,7 @@ begin
       increment_expected_alerts(error);
 
       report_check_counters(VOID);
-      
+
     elsif GC_TESTCASE = "string_methods" then
       --------------------------------------------------------------------------
       -- Checking some details of string_methods
@@ -2109,7 +2072,6 @@ begin
                   "to_string b""0x010111"", HEX, AS_IS, INCL_RADIX", C_SCOPE);
       check_value(to_string(v_s8, BIN, AS_IS, INCL_RADIX), "b""00010111""", error,
                   "to_string b""00010111"", BIN, AS_IS, INCL_RADIX", C_SCOPE);
-
 
       log("Signed , negative ");
       v_s8 := x"97";                    -- -105 decimal
@@ -2158,7 +2120,7 @@ begin
       v_string(3)  := ascii_to_char(67);
       v_string(4)  := ascii_to_char(73);
       v_string(5)  := ascii_to_char(73);
-      v_string(6)  := ascii_to_char(32);  -- Space
+      v_string(6)  := ascii_to_char(32); -- Space
       v_string(7)  := ascii_to_char(116);
       v_string(8)  := ascii_to_char(101);
       v_string(9)  := ascii_to_char(115);
@@ -2182,7 +2144,6 @@ begin
       check_value(remove_initial_chars("abcdef", 1), "bcdef", error, "remove_initial_chars() case 1");
       check_value(remove_initial_chars("abcdef", 0), "abcdef", error, "remove_initial_chars() case 1");
       check_value(remove_initial_chars("abcdef", 6), "", error, "remove_initial_chars() case 1");
-
 
       log("\rCheck functions pos_of_*() and get_string_between_delimiters()");
       check_value(pos_of_leftmost('c', "abc", 5), 3, error, "leftmost c in abc");
@@ -2218,15 +2179,20 @@ begin
       check_value(to_string(v_slv_array, HEX), "(6, A, 9)", error, "to_string() for t_slv_array(2 downto 0)(3 downto 0) as HEX");
       check_value(to_string(v_slv_array, DEC), "(6, 10, 9)", error, "to_string() for t_slv_array(2 downto 0)(3 downto 0) as DEC");
       check_value(to_string(v_slv_array, BIN), "(0110, 1010, 1001)", error, "to_string() for t_slv_array(2 downto 0)(3 downto 0) as BIN");
+      v_slv_array(1) := (others => 'U');
+      check_value(to_string(v_slv_array, HEX_BIN_IF_INVALID), "(6, X (b""UUUU""), 9)", error, "to_string() for t_slv_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\rCheck long t_slv_array(31 downto 0)(7 downto 0)");
-      for idx in 0 to v_slv_array_32'length-1 loop
+      for idx in 0 to v_slv_array_32'length - 1 loop
         v_slv_array_32(idx) := std_logic_vector(to_unsigned(idx, v_slv_array_32(0)'length));
       end loop;
       check_value(to_string(v_slv_array_32, HEX), "(1F, 1E, 1D, 1C, 1B, 1A, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 0F, 0E, 0D, 0C, 0B, 0A, 09, 08, 07, 06, 05, 04, 03, 02, 01, 00)", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as HEX");
       check_value(to_string(v_slv_array_32, DEC), "(31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as BIN");
       check_value(to_string(v_slv_array_32, BIN), "(00011111, 00011110, 00011101, 00011100, 00011011, 00011010, 00011001, 00011000, 00010111, 00010110, 00010101, 00010100, 00010011, 00010010, 00010001, 00010000, 00001111, 00001110, 00001101, 00001100, 00001011, 00001010, 00001001, 00001000, 00000111, 00000110, 00000101, 00000100, 00000011, 00000010, 00000001, 00000000)", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as BIN");
-                                        --    1F        1e        1d        1c        1b        1a        19        18        17        16        15        14        13        12        11        10        0f        0E        0d          0c        0b        0a        09        08        07        06        05        04        03        02        01        00
+      --    1F        1e        1d        1c        1b        1a        19        18        17        16        15        14        13        12        11        10        0f        0E        0d          0c        0b        0a        09        08        07        06        05        04        03        02        01        00
+      v_slv_array_32(v_slv_array_32'low)  := (others => 'U');
+      v_slv_array_32(v_slv_array_32'high) := (others => 'U');
+      check_value(to_string(v_slv_array_32, HEX_BIN_IF_INVALID), "(XX (b""UUUUUUUU""), 1E, 1D, 1C, 1B, 1A, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 0F, 0E, 0D, 0C, 0B, 0A, 09, 08, 07, 06, 05, 04, 03, 02, 01, XX (b""UUUUUUUU""))", error, "to_string() for t_slv_array(31 downto 0)(7 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 32 bit wide t_slv_array");
       -- 32 bit wide in order to trigger the message "(too wide to be converted to integer)
@@ -2235,13 +2201,18 @@ begin
       check_value(to_string(v_slv32_array, HEX), "(01234567, FEDCBA98)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as HEX");
       check_value(to_string(v_slv32_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""01234567 (too wide to be converted to integer)"", x""FEDCBA98 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as DEC");
       check_value(to_string(v_slv32_array, BIN), "(00000001001000110100010101100111, 11111110110111001011101010011000)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as BIN");
+      v_slv32_array(2) := (others => 'U');
+      check_value(to_string(v_slv32_array, HEX_BIN_IF_INVALID), "(01234567, XXXXXXXX (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 256 bit wide t_slv_array");
       v_slv256_array(1) := x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
       v_slv256_array(0) := x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210";
-      check_value(to_string(v_slv256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as HEX");
-      check_value(to_string(v_slv256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted to integer)"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as DEC");
-      check_value(to_string(v_slv256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as BIN");
+      check_value(to_string(v_slv256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_slv_array(1 downto 0)(255 downto 0) as HEX");
+      check_value(to_string(v_slv256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted to integer)"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 downto 0)(255 downto 0) as DEC");
+      check_value(to_string(v_slv256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_slv_array(1 downto 0)(255 downto 0) as BIN");
+      v_slv256_array(1) := (others => 'U');
+      v_slv256_array(0) := (others => 'U');
+      check_value(to_string(v_slv256_array, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX), "(x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""), x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_slv_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\rCheck t_signed_array(2 downto 0)(3 downto 0)");
       v_signed_array(0) := "1101";      -- -3
@@ -2250,21 +2221,28 @@ begin
       check_value(to_string(v_signed_array, HEX), "(9, 3, D)", error, "to_string() for t_signed_array(2 downto 0)(3 downto 0) as HEX");
       check_value(to_string(v_signed_array, DEC), "(-7, 3, -3)", error, "to_string() for t_signed_array(2 downto 0)(3 downto 0) as DEC");
       check_value(to_string(v_signed_array, BIN), "(1001, 0011, 1101)", error, "to_string() for t_signed_array(2 downto 0)(3 downto 0) as BIN");
+      v_signed_array(1) := (others => 'U');
+      check_value(to_string(v_signed_array, HEX_BIN_IF_INVALID), "(9, X (b""UUUU""), D)", error, "to_string() for t_signed_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 33 bit wide t_signed_array");
       -- 33 bit wide in order to trigger the message "(too wide to be converted to integer)
       v_signed33_array(1) := 33x"001234567";
       v_signed33_array(2) := 33x"1FEDCBA98";
-      check_value(to_string(v_signed33_array, HEX), "(001234567, 1FEDCBA98)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as HEX");
-      check_value(to_string(v_signed33_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""001234567"" (too wide to be converted to integer), x""1FEDCBA98"" (too wide to be converted to integer))", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as DEC");
-      check_value(to_string(v_signed33_array, BIN), "(000000001001000110100010101100111, 111111110110111001011101010011000)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as BIN");
+      check_value(to_string(v_signed33_array, HEX), "(001234567, 1FEDCBA98)", error, "to_string for t_signed_array(1 to 2)(32 downto 0) as HEX");
+      check_value(to_string(v_signed33_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""001234567"" (too wide to be converted to integer), x""1FEDCBA98"" (too wide to be converted to integer))", error, "to_string for t_signed_array(1 to 2)(32 downto 0) as DEC");
+      check_value(to_string(v_signed33_array, BIN), "(000000001001000110100010101100111, 111111110110111001011101010011000)", error, "to_string for t_signed_array(1 to 2)(32 downto 0) as BIN");
+      v_signed33_array(2) := (others => 'U');
+      check_value(to_string(v_signed33_array, HEX_BIN_IF_INVALID), "(001234567, XXXXXXXXX (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_signed_array(1 to 2)(32 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 256 bit wide t_signed_array");
       v_signed256_array(1) := x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
       v_signed256_array(0) := x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210";
-      check_value(to_string(v_signed256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as HEX");
-      check_value(to_string(v_signed256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"" (too wide to be converted to integer), x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"" (too wide to be converted to integer))", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as DEC");
-      check_value(to_string(v_signed256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as BIN");
+      check_value(to_string(v_signed256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_signed_array(1 downto 0)(255 downto 0) as HEX");
+      check_value(to_string(v_signed256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"" (too wide to be converted to integer), x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"" (too wide to be converted to integer))", error, "to_string for t_signed_array(1 downto 0)(255 downto 0) as DEC");
+      check_value(to_string(v_signed256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_signed_array(1 downto 0)(255 downto 0) as BIN");
+      v_signed256_array(1) := (others => 'U');
+      v_signed256_array(0) := (others => 'U');
+      check_value(to_string(v_signed256_array, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX), "(x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""), x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_signed_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\rCheck t_unsigned_array(2 downto 0)(3 downto 0)");
       v_unsigned_array(0) := "1101";    -- D
@@ -2273,30 +2251,37 @@ begin
       check_value(to_string(v_unsigned_array, HEX), "(9, 3, D)", error, "to_string() for t_unsigned_array(2 downto 0)(3 downto 0) as HEX");
       check_value(to_string(v_unsigned_array, DEC), "(9, 3, 13)", error, "to_string() for t_unsigned_array(2 downto 0)(3 downto 0) as DEC");
       check_value(to_string(v_unsigned_array, BIN), "(1001, 0011, 1101)", error, "to_string() for t_unsigned_array(2 downto 0)(3 downto 0) as BIN");
+      v_unsigned_array(1) := (others => 'U'); -- 3
+      check_value(to_string(v_unsigned_array, HEX_BIN_IF_INVALID), "(9, X (b""UUUU""), D)", error, "to_string() for t_unsigned_array(2 downto 0)(3 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 32 bit wide t_unsigned_array");
       -- 32 bit wide in order to trigger the message "(too wide to be converted to integer)
       v_unsigned32_array(1) := x"01234567";
       v_unsigned32_array(2) := x"FEDCBA98";
-      check_value(to_string(v_unsigned32_array, HEX), "(01234567, FEDCBA98)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as HEX");
-      check_value(to_string(v_unsigned32_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""01234567 (too wide to be converted to integer)"", x""FEDCBA98 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as DEC");
-      check_value(to_string(v_unsigned32_array, BIN), "(00000001001000110100010101100111, 11111110110111001011101010011000)", error, "to_string for t_slv_array(1 to 2)(31 downto 0) as BIN");
+      check_value(to_string(v_unsigned32_array, HEX), "(01234567, FEDCBA98)", error, "to_string for t_unsigned_array(1 to 2)(31 downto 0) as HEX");
+      check_value(to_string(v_unsigned32_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""01234567 (too wide to be converted to integer)"", x""FEDCBA98 (too wide to be converted to integer)"")", error, "to_string for t_unsigned_array(1 to 2)(31 downto 0) as DEC");
+      check_value(to_string(v_unsigned32_array, BIN), "(00000001001000110100010101100111, 11111110110111001011101010011000)", error, "to_string for t_unsigned_array(1 to 2)(31 downto 0) as BIN");
+      v_unsigned32_array(2) := (others => 'U');
+      check_value(to_string(v_unsigned32_array, HEX_BIN_IF_INVALID), "(01234567, XXXXXXXX (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_unsigned_array(1 to 2)(31 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\nCheck 256 bit wide t_unsigned_array");
       v_unsigned256_array(1) := x"0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
       v_unsigned256_array(0) := x"FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210";
-      check_value(to_string(v_unsigned256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as HEX");
-      check_value(to_string(v_unsigned256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted to integer)"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to integer)"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as DEC");
-      check_value(to_string(v_unsigned256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_slv_array(1 to 2)(63 downto 0) as BIN");
+      check_value(to_string(v_unsigned256_array, HEX, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210"")", error, "to_string for t_unsigned_array(1 downto 0)(255 downto 0) as HEX");
+      check_value(to_string(v_unsigned256_array, DEC, KEEP_LEADING_0, INCL_RADIX), "(x""0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF (too wide to be converted to integer)"", x""FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210 (too wide to be converted to integer)"")", error, "to_string for t_unsigned_array(1 downto 0)(255 downto 0) as DEC");
+      check_value(to_string(v_unsigned256_array, BIN, KEEP_LEADING_0, INCL_RADIX), "(b""0000000100100011010001010110011110001001101010111100110111101111000000010010001101000101011001111000100110101011110011011110111100000001001000110100010101100111100010011010101111001101111011110000000100100011010001010110011110001001101010111100110111101111"", b""1111111011011100101110101001100001110110010101000011001000010000111111101101110010111010100110000111011001010100001100100001000011111110110111001011101010011000011101100101010000110010000100001111111011011100101110101001100001110110010101000011001000010000"")", error, "to_string for t_unsigned_array(1 downto 0)(255 downto 0) as BIN");
+      v_unsigned256_array(1) := (others => 'U');
+      v_unsigned256_array(0) := (others => 'U');
+      check_value(to_string(v_unsigned256_array, HEX_BIN_IF_INVALID, KEEP_LEADING_0, INCL_RADIX), "(x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""), x""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"" (b""UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU""))", error, "to_string for t_unsigned_array(1 downto 0)(255 downto 0) as HEX_BIN_IF_INVALID");
 
       log("\rVerifying justify()");
       --Log pre-appended info is 80 chars long
-      log(ID_SEQUENCER, justify("    Left", left, C_LOG_LINE_WIDTH-80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
-      log(ID_SEQUENCER, justify("    Left", left, C_LOG_LINE_WIDTH-80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
-      log(ID_SEQUENCER, justify("    Center", center, C_LOG_LINE_WIDTH-80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
-      log(ID_SEQUENCER, justify("    Center", center, C_LOG_LINE_WIDTH-80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
-      log(ID_SEQUENCER, justify("    Right", right, C_LOG_LINE_WIDTH-80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
-      log(ID_SEQUENCER, justify("    Right", right, C_LOG_LINE_WIDTH-80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
+      log(ID_SEQUENCER, justify("    Left", left, C_LOG_LINE_WIDTH - 80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
+      log(ID_SEQUENCER, justify("    Left", left, C_LOG_LINE_WIDTH - 80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
+      log(ID_SEQUENCER, justify("    Center", center, C_LOG_LINE_WIDTH - 80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
+      log(ID_SEQUENCER, justify("    Center", center, C_LOG_LINE_WIDTH - 80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
+      log(ID_SEQUENCER, justify("    Right", right, C_LOG_LINE_WIDTH - 80, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
+      log(ID_SEQUENCER, justify("    Right", right, C_LOG_LINE_WIDTH - 80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
       log(ID_SEQUENCER, justify("Truncate last word", left, 13, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
       log(ID_SEQUENCER, justify("Truncate last word", left, 13, KEEP_LEADING_SPACE, ALLOW_TRUNCATE));
 
@@ -2313,9 +2298,9 @@ begin
 
       log(ID_LOG_HDR, "Verify CLK50M");
       -- Wait until clock transitions, then verify periods
-      await_value(clk50M, '1', 0 ns, 1 ns + C_CLK50M_PERIOD/2, error, "Wait until Clk50M goes high", C_SCOPE);
-      await_value(clk50M, '0', 0 ns, 1 ns + C_CLK50M_PERIOD/2, error, "Wait until Clk50M goes low", C_SCOPE);
-      wait for C_CLK50M_PERIOD/2;       -- Wait until Clk50M goes high
+      await_value(clk50M, '1', 0 ns, 1 ns + C_CLK50M_PERIOD / 2, error, "Wait until Clk50M goes high", C_SCOPE);
+      await_value(clk50M, '0', 0 ns, 1 ns + C_CLK50M_PERIOD / 2, error, "Wait until Clk50M goes low", C_SCOPE);
+      wait for C_CLK50M_PERIOD / 2;     -- Wait until Clk50M goes high
       test_clock_period(clk50M, C_CLK50M_PERIOD);
 
       log(ID_LOG_HDR, "Verify Duty Cycles");
@@ -2344,10 +2329,8 @@ begin
       increment_expected_alerts(TB_ERROR, 2);
       test_adjustable_clock_error_handling(adj_clk100M, adj_clk100M_high_percentage, adj_clk100M_ena, C_ADJ_CLK100M_PERIOD);
 
-
-
       clk10M_ena <= false;              -- Must synchronize clk10M
-      wait for 10*C_CLK10M_PERIOD;
+      wait for 10 * C_CLK10M_PERIOD;
       clk10M_ena <= true;
       test_clock_period(clk10M_percentage_99_1, C_CLK10M_PERIOD, 99);
       test_clock_period(clk10M_percentage_1_99, C_CLK10M_PERIOD, 1);
@@ -2362,7 +2345,7 @@ begin
       wait for 10 ns;
       gen_pulse(sl, 50 ns, BLOCKING, "test pulse 50 ns, blocking");
       wait for 0 ns;                    -- Wait for signal to be updated
-      wait for 0 ns;  -- Wait for signal to be updated, needs some delta cycles
+      wait for 0 ns;                    -- Wait for signal to be updated, needs some delta cycles
       check_value(sl, '0', error, "pulse generator, blocking mode, pulse done", C_SCOPE);
       wait for 100 ns;
 
@@ -2395,7 +2378,7 @@ begin
       sl          <= '0';
       wait for 0 ns;                    -- Wait for signal to update
       gen_pulse(sl, clk100M, 10, "Test pulse 10 clk periods");
-      check_value(sl'delayed(0 ns)'last_event, 10*C_CLK100M_PERIOD, error, "Check start of pulse");
+      check_value(sl'delayed(0 ns)'last_event, 10 * C_CLK100M_PERIOD, error, "Check start of pulse");
       wait for 0 ns;                    -- Wait for signal to be updated
       check_value(sl, '0', error, "pulse for 10 clk periods, pulse done", C_SCOPE);
       check_value(sl'last_event, 0 ns, error, "pulse for 10 clk periods. Check that it actually pulsed for a delta cycle", C_SCOPE);
@@ -2421,7 +2404,7 @@ begin
       slv8_to <= (others => '0');
       wait for 0 ns;                    -- Wait for signal to update
       gen_pulse(slv8_to, x"AB", clk100M, 2, "Test pulse slv defined as 'to' for 2 clks");
-      check_value(slv8_to'delayed(0 ns)'last_event, 2*C_CLK100M_PERIOD, error, "Check start of pulse");
+      check_value(slv8_to'delayed(0 ns)'last_event, 2 * C_CLK100M_PERIOD, error, "Check start of pulse");
       wait for 0 ns;
       check_value(slv8_to'last_event, 0 ns, error, "Check pulse is just done");
       check_value(slv8_to'last_value, x"AB", error, "Check what the value was during the pulse");
@@ -2431,7 +2414,7 @@ begin
       slv8 <= (others => '0');
       wait for 0 ns;                    -- Wait for signal to update
       gen_pulse(slv8, x"AB", clk100M, 2, "Test pulse slv defined as 'downto' for 2 clks");
-      check_value(slv8'delayed(0 ns)'last_event, 2*C_CLK100M_PERIOD, error, "Check start of pulse");
+      check_value(slv8'delayed(0 ns)'last_event, 2 * C_CLK100M_PERIOD, error, "Check start of pulse");
       wait for 0 ns;
       check_value(slv8'last_event, 0 ns, error, "Check pulse is just done");
       check_value(slv8'last_value, x"AB", error, "Check what the value was during the pulse");
@@ -2441,7 +2424,7 @@ begin
       slv8_to <= (others => '1');
       wait for 0 ns;                    -- Wait for signal to update
       gen_pulse(slv8_to, x"-6", clk100M, 2, "Test pulse slv defined as 'to' with don't care for 2 clks");
-      check_value(slv8_to'delayed(0 ns)'last_event, 2*C_CLK100M_PERIOD, error, "Check start of pulse");
+      check_value(slv8_to'delayed(0 ns)'last_event, 2 * C_CLK100M_PERIOD, error, "Check start of pulse");
       wait for 0 ns;
       check_value(slv8_to'last_event, 0 ns, error, "Check pulse is just done");
       check_value(slv8_to'last_value, x"F6", error, "Check what the value was during the pulse");
@@ -2451,7 +2434,7 @@ begin
       slv8 <= "11001100";
       wait for 0 ns;                    -- Wait for signal to update
       gen_pulse(slv8, "-0-1-0-1", clk100M, 2, "Test pulse slv defined as 'downto' with don't care for 2 clks");
-      check_value(slv8'delayed(0 ns)'last_event, 2*C_CLK100M_PERIOD, error, "Check start of pulse");
+      check_value(slv8'delayed(0 ns)'last_event, 2 * C_CLK100M_PERIOD, error, "Check start of pulse");
       wait for 0 ns;
       check_value(slv8'last_event, 0 ns, error, "Check pulse is just done");
       check_value(slv8'last_value, "10011001", error, "Check what the value was during the pulse");
@@ -2461,7 +2444,7 @@ begin
       slv8_to <= "11111111";
       wait for 0 ns;                    -- Wait for signal to update
       gen_pulse(slv8_to, "0-0-0-0-", clk100M, 2, "Test pulse slv defined as 'to' for 2 clks");
-      check_value(slv8_to'delayed(0 ns)'last_event, 2*C_CLK100M_PERIOD, error, "Check start of pulse");
+      check_value(slv8_to'delayed(0 ns)'last_event, 2 * C_CLK100M_PERIOD, error, "Check start of pulse");
       wait for 0 ns;
       check_value(slv8_to'last_event, 0 ns, error, "Check pulse is just done");
       check_value(slv8_to'last_value, x"55", error, "Check what the value was during the pulse");
@@ -2471,7 +2454,7 @@ begin
       slv8_to <= x"23";
       wait for 0 ns;                    -- Wait for signal to update
       gen_pulse(slv8_to, clk100M, 2, "Test pulse slv defined as 'to' for 2 clks");
-      check_value(slv8_to'delayed(0 ns)'last_event, 2*C_CLK100M_PERIOD, error, "Check start of pulse");
+      check_value(slv8_to'delayed(0 ns)'last_event, 2 * C_CLK100M_PERIOD, error, "Check start of pulse");
       wait for 0 ns;
       check_value(slv8_to'last_event, 0 ns, error, "Check pulse is just done");
       check_value(slv8_to'last_value, x"FF", error, "Check what the value was during the pulse");
@@ -2481,7 +2464,7 @@ begin
       slv8 <= x"23";
       wait for 0 ns;                    -- Wait for signal to update
       gen_pulse(slv8, clk100M, 2, "Test pulse slv for 2 clks");
-      check_value(slv8'delayed(0 ns)'last_event, 2*C_CLK100M_PERIOD, error, "Check start of pulse");
+      check_value(slv8'delayed(0 ns)'last_event, 2 * C_CLK100M_PERIOD, error, "Check start of pulse");
       wait for 0 ns;
       check_value(slv8'last_event, 0 ns, error, "Check pulse is just done");
       check_value(slv8'last_value, x"FF", error, "Check what the value was during the pulse");
@@ -2490,9 +2473,9 @@ begin
 
       -- Pulse a slv to a value it was already with check of signal value
       sl <= '1';
-      wait for 0 ns;                           -- wait for signal to update
+      wait for 0 ns;                    -- wait for signal to update
       set_alert_stop_limit(TB_ERROR, get_alert_stop_limit(TB_ERROR) + 1);
-      increment_expected_alerts(TB_ERROR, 1);  -- expect TB_ERROR
+      increment_expected_alerts(TB_ERROR, 1); -- expect TB_ERROR
       gen_pulse(sl, '1', 10 ns, "Test pulse sl to a value it was already.");
       check_value(sl, '1', error, "Check what the value was during the pulse.");
       wait for 0 ns;
@@ -2503,7 +2486,7 @@ begin
       sl <= '0';
       wait for 0 ns;
       set_alert_stop_limit(TB_ERROR, get_alert_stop_limit(TB_ERROR) + 1);
-      increment_expected_alerts(TB_ERROR, 1);  -- expect TB_ERROR
+      increment_expected_alerts(TB_ERROR, 1); -- expect TB_ERROR
       gen_pulse(sl, '1', 0 ns, NON_BLOCKING, "NON_BLOCKING pulse for a delta cycle (0 ns)");
       wait for 0 ns;
       check_value(sl, '0', error, "pulse for 0 ns, blocking mode, pulse done", C_SCOPE);
@@ -2511,18 +2494,18 @@ begin
       check_value(sl'last_value, '1', error, "pulse for 0 ns, check that it actually pulsed for a delta cycle", C_SCOPE);
       wait for 100 ns;
 
-      -- Verify that clock_counter wraps when reaching natural'right.
-      --wait until clk500M = '1';
-      --p_clk_cnt_ena <= false;
-      --clk500M_cnt   <= force in (natural'right-8);  -- Force output from clock_generator to a value that is almost natural'right
-      --wait until clk500M = '0';
-      --wait until clk500M = '1';
-      --clk500M_cnt   <= release in;
-      --wait until clk500M_cnt = natural'right;
-      --wait for C_CLK500M_PERIOD + 1 ns;
-      --check_value(clk500M_cnt, 0, error, "Verifying cnt wrap");
-      --wait for C_CLK500M_PERIOD + 1 ns;
-      --check_value(clk500M_cnt, 1, error, "Verifying increment after wrap");
+    -- Verify that clock_counter wraps when reaching natural'right.
+    --wait until clk500M = '1';
+    --p_clk_cnt_ena <= false;
+    --clk500M_cnt   <= force in (natural'right-8);  -- Force output from clock_generator to a value that is almost natural'right
+    --wait until clk500M = '0';
+    --wait until clk500M = '1';
+    --clk500M_cnt   <= release in;
+    --wait until clk500M_cnt = natural'right;
+    --wait for C_CLK500M_PERIOD + 1 ns;
+    --check_value(clk500M_cnt, 0, error, "Verifying cnt wrap");
+    --wait for C_CLK500M_PERIOD + 1 ns;
+    --check_value(clk500M_cnt, 1, error, "Verifying increment after wrap");
 
     elsif GC_TESTCASE = "normalise" then
       --==================================================================================================
@@ -2692,33 +2675,31 @@ begin
       increment_expected_alerts(TB_ERROR);
       v_s5b(-1 downto 0) := normalise(v_s8, v_s5a(-1 downto 0), ALLOW_WIDER_NARROWER, "v_s5a", "v_s8", "");
 
-
       log("\rCheck normalise and check_value for t_slv_array");
-      v_slv_array_32  := (others => (others => '0'));
+      v_slv_array_32 := (others => (others => '0'));
       v_slv_array(0) := "1001";
       v_slv_array(1) := "0110";
       v_slv_array(2) := "1010";
-      v_slv_array_32  := normalise(v_slv_array, v_slv_array_32, ALLOW_NARROWER, "v_slv_array", "v_slv_array_32", "");
+      v_slv_array_32 := normalise(v_slv_array, v_slv_array_32, ALLOW_NARROWER, "v_slv_array", "v_slv_array_32", "");
       check_value(v_slv_array_32(2 downto 0), v_slv_array, error, "", C_SCOPE);
 
       log("\rCheck normalise and check_value for t_signed_array");
-      v_signed_array_32  := (others => (others => '0'));
+      v_signed_array_32 := (others => (others => '0'));
       v_signed_array(0) := "1001";
       v_signed_array(1) := "0110";
       v_signed_array(2) := "1010";
-      v_signed_array_32  := normalise(v_signed_array, v_signed_array_32, ALLOW_NARROWER, "v_signed_array", "v_signed_array_32", "");
-      for idx in 0 to v_slv_array'length-1 loop
+      v_signed_array_32 := normalise(v_signed_array, v_signed_array_32, ALLOW_NARROWER, "v_signed_array", "v_signed_array_32", "");
+      for idx in 0 to v_slv_array'length - 1 loop
         check_value(to_integer(unsigned(v_slv_array_32(idx))), to_integer(unsigned(v_slv_array(idx))), error, "", C_SCOPE);
       end loop;
 
       log("\rCheck normalise and check_value for t_unsigned_array");
-      v_unsigned_array_32  := (others => (others => '0'));
+      v_unsigned_array_32 := (others => (others => '0'));
       v_unsigned_array(0) := "1001";
       v_unsigned_array(1) := "0110";
       v_unsigned_array(2) := "1010";
-      v_unsigned_array_32  := normalise(v_unsigned_array, v_unsigned_array_32, ALLOW_NARROWER, "v_unsigned_array", "v_unsigned_array_32", "");
+      v_unsigned_array_32 := normalise(v_unsigned_array, v_unsigned_array_32, ALLOW_NARROWER, "v_unsigned_array", "v_unsigned_array_32", "");
       check_value(v_unsigned_array_32(2 downto 0), v_unsigned_array, error, "", C_SCOPE);
-
 
     elsif GC_TESTCASE = "normalize_and_check" then
       log(ID_LOG_HDR, "Verifying normalize_and_check", "");
@@ -2887,55 +2868,49 @@ begin
     elsif GC_TESTCASE = "log_text_block" then
       log(ID_LOG_HDR, "Verifying log with text block input", "");
       -- Setting up a preformated string
-      write(v_line, "TEST OF MULTILINE LOG without formatting" & LF & "First line " & LF & "Second line " & LF &
-            "Third line" & LF & "Fourth line" & LF & "END OF LOG");
+      write(v_line, "TEST OF MULTILINE LOG without formatting" & LF & "First line " & LF & "Second line " & LF & "Third line" & LF & "Fourth line" & LF & "END OF LOG");
       log("Logging data without formatting");
       log_text_block(ID_SEQUENCER, v_line, UNFORMATTED);
 
-      write(v_line, "TEST OF MULTILINE LOG with formatting" & LF & "First line " & LF & "Second line " & LF &
-            "Third line" & LF & "Fourth line" & LF & "END OF LOG");
+      write(v_line, "TEST OF MULTILINE LOG with formatting" & LF & "First line " & LF & "Second line " & LF & "Third line" & LF & "Fourth line" & LF & "END OF LOG");
       log("Logging data with formatting");
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "Logging data with Bitvis formatting");
-
 
       log("Logging data with empty text block");
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "This header should be printed", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY);
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "This header should be printed, with notification", C_SCOPE, shared_msg_id_panel, NOTIFY_IF_BLOCK_EMPTY);
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "This header should not be not printed", C_SCOPE, shared_msg_id_panel, SKIP_LOG_IF_BLOCK_EMPTY);
 
-
       log("Logging with unformatted text to specified file");
       -- Logging to file with unformatted text
       -- Logging to a specified file (primary.txt)
-      write(v_line, "This block should be logged to primary.txt only (unformatted)" &LF& "Second line" &LF& "Third line"&LF);
+      write(v_line, "This block should be logged to primary.txt only (unformatted)" & LF & "Second line" & LF & "Third line" & LF);
       log_text_block(ID_SEQUENCER, v_line, UNFORMATTED, ".", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY, LOG_ONLY, "primary.txt", write_mode);
-      write(v_line, "This block should be logged to primary.txt and console (unformatted)" &LF& "Second line" &LF& "Third line"&LF);
+      write(v_line, "This block should be logged to primary.txt and console (unformatted)" & LF & "Second line" & LF & "Third line" & LF);
       log_text_block(ID_SEQUENCER, v_line, UNFORMATTED, ".", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY, CONSOLE_AND_LOG, "primary.txt", append_mode);
 
       -- Logging to another specified file (secondary.txt)
-      write(v_line, "This block should be logged to secondary.txt only (unformatted)" &LF& "Second line" &LF& "Third line"&LF);
+      write(v_line, "This block should be logged to secondary.txt only (unformatted)" & LF & "Second line" & LF & "Third line" & LF);
       log_text_block(ID_SEQUENCER, v_line, UNFORMATTED, ".", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY, LOG_ONLY, "secondary.txt", write_mode);
-
 
       log("Logging with formatted text");
       -- Logging to file with formatted text
       -- Logging to a specified file (primary.txt)
-      write(v_line, "This block should be logged to primary.txt only (formatted)" &LF& "Second line" &LF& "Third line"&LF);
+      write(v_line, "This block should be logged to primary.txt only (formatted)" & LF & "Second line" & LF & "Third line" & LF);
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "header", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY, LOG_ONLY, "primary.txt", append_mode);
-      write(v_line, "This block should be logged to primary.txt and console (formatted)" &LF& "Second line" &LF& "Third line"&LF);
+      write(v_line, "This block should be logged to primary.txt and console (formatted)" & LF & "Second line" & LF & "Third line" & LF);
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "header", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY, CONSOLE_AND_LOG, "primary.txt", append_mode);
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "the content of this block is empty", C_SCOPE, shared_msg_id_panel, NOTIFY_IF_BLOCK_EMPTY, CONSOLE_AND_LOG, "primary.txt", append_mode);
 
       log("Logging to secondary file");
       -- Logging to another specified file (secondary.txt)
-      write(v_line, "This block should be logged to secondary.txt only (formatted)" &LF& "Second line" &LF& "Third line"&LF);
+      write(v_line, "This block should be logged to secondary.txt only (formatted)" & LF & "Second line" & LF & "Third line" & LF);
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "header", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY, LOG_ONLY, "secondary.txt", append_mode);
 
       log("Logging to console only");
       -- Logging to another specified file (secondary.txt)
-      write(v_line, "LOGGING" &LF& "TO" &LF& "CONSOLE" &LF& "ONLY");
+      write(v_line, "LOGGING" & LF & "TO" & LF & "CONSOLE" & LF & "ONLY");
       log_text_block(ID_SEQUENCER, v_line, FORMATTED, "header", C_SCOPE, shared_msg_id_panel, WRITE_HDR_IF_BLOCK_EMPTY, CONSOLE_ONLY);
-
 
     elsif GC_TESTCASE = "log_to_file" then
       log(ID_LOG_HDR, "Test of log with specified destination");
@@ -2962,7 +2937,6 @@ begin
       log(ID_SEQUENCER, "log with error", C_SCOPE, shared_msg_id_panel, LOG_ONLY, "");
       increment_expected_alerts(TB_ERROR, 2);
 
-
     elsif GC_TESTCASE = "log_header_formatting" then
       -- Test of log headers
       log(ID_SEQUENCER, "Normal line");
@@ -2976,7 +2950,6 @@ begin
       log(ID_LOG_HDR_XL, "This is an extra large header (ID_LOG_HDR_XL)");
       log(ID_SEQUENCER, "Normal line");
       log(ID_SEQUENCER, "Normal line");
-
 
     elsif GC_TESTCASE = "alert_summary_report" then
       -- NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK
@@ -3014,7 +2987,6 @@ begin
 
       log("Testing final summeray, all OK");
 
-
     elsif GC_TESTCASE = "ignored_alerts" then
       -- Test of ignored alert
       log(ID_LOG_HDR, "Testing alert_level NO_ALERT and related functions");
@@ -3033,7 +3005,7 @@ begin
       v_alert_stop_limit := get_alert_stop_limit(TB_FAILURE);
       v_alert_count      := get_alert_counter(TB_FAILURE);
       increment_expected_alerts_and_stop_limit(TB_FAILURE);
-      check_value(get_alert_stop_limit(TB_FAILURE) = (v_alert_stop_limit+1), TB_ERROR, "Verifying that TB_WARNING alert stop limit was incremented", C_SCOPE);
+      check_value(get_alert_stop_limit(TB_FAILURE) = (v_alert_stop_limit + 1), TB_ERROR, "Verifying that TB_WARNING alert stop limit was incremented", C_SCOPE);
       check_value(true = false, TB_FAILURE, "Cause TB_FAILURE trigger", C_SCOPE);
 
     elsif GC_TESTCASE = "hierarchical_alerts_report" then
@@ -3056,8 +3028,6 @@ begin
       check_value(v_local_hierarchy_tree.get_parent_scope((justify("fourth_node", left, C_HIERARCHY_NODE_NAME_LENGTH))) = justify("third_node", left, C_HIERARCHY_NODE_NAME_LENGTH), error, "Verifying parent scope!");
 
       v_local_hierarchy_tree.print_hierarchical_log;
-      
-
 
       log("Enabling all alert levels in entire hierarchy. Minor alerts for alle nodes triggered.");
       v_local_hierarchy_tree.enable_all_alert_levels("TB seq");
@@ -3097,7 +3067,6 @@ begin
       log("Expecting no major or minor alerts");
       v_local_hierarchy_tree.print_hierarchical_log;
 
-
     elsif GC_TESTCASE = "hierarchical_alerts" then
       -- Hierarchy linked list pkg
       --------------------------------------------------------------------------------------
@@ -3122,15 +3091,15 @@ begin
         check_value(v_local_hierarchy_tree.contains_scope(justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH)), error, "Verifying scope is in tree");
         v_local_hierarchy_tree.contains_scope_return_data(justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH), v_b, v_dummy_hierarchy_node);
         check_value(v_b, error, "Verifying that scope was found");
-        check_value(v_dummy_hierarchy_node = (justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH), (others       => (others => 0)), (others => 0), (others => true)), error, "Verifying that node is identical with what was inserted");
+        check_value(v_dummy_hierarchy_node = (justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH), (others => (others => 0)), (others => 0), (others => true)), error, "Verifying that node is identical with what was inserted");
         if i > 1 then
-          for j in 1 to i-1 loop
+          for j in 1 to i - 1 loop
             v_local_hierarchy_tree.insert_in_tree((justify(integer'image(j), left, C_HIERARCHY_NODE_NAME_LENGTH), (others => (others => 0)), (others => 0), (others => true)), justify(C_SCOPE, left, C_HIERARCHY_NODE_NAME_LENGTH));
-            check_value(v_local_hierarchy_tree.get_size, j+1, error, "Verifying size!");
+            check_value(v_local_hierarchy_tree.get_size, j + 1, error, "Verifying size!");
             check_value(v_local_hierarchy_tree.contains_scope(justify(integer'image(j), left, C_HIERARCHY_NODE_NAME_LENGTH)), error, "Verifying scope is in tree");
             v_local_hierarchy_tree.contains_scope_return_data(justify(integer'image(j), left, C_HIERARCHY_NODE_NAME_LENGTH), v_b, v_dummy_hierarchy_node);
             check_value(v_b, error, "Verifying that scope was found");
-            check_value(v_dummy_hierarchy_node = (justify(integer'image(j), left, C_HIERARCHY_NODE_NAME_LENGTH), (others  => (others => 0)), (others => 0), (others => true)), error, "Verifying that node is identical with what was inserted");
+            check_value(v_dummy_hierarchy_node = (justify(integer'image(j), left, C_HIERARCHY_NODE_NAME_LENGTH), (others => (others => 0)), (others => 0), (others => true)), error, "Verifying that node is identical with what was inserted");
           end loop;
         end if;
 
@@ -3163,13 +3132,11 @@ begin
 
       v_local_hierarchy_tree.print_hierarchical_log;
 
-
       -- This test case is commented out because it will trigger a failure (intentionally)
       -- The test case is that we try to assign a new parent to first_node, but the new parent is a child of first_node
       -- v_local_hierarchy_tree.change_parent(justify("first_node", C_HIERARCHY_NODE_NAME_LENGTH, LEFT), justify("third_node", C_HIERARCHY_NODE_NAME_LENGTH, LEFT));
       -- check_value(v_local_hierarchy_tree.get_parent_scope((justify("first_node", C_HIERARCHY_NODE_NAME_LENGTH, LEFT))) = justify("third_node", C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope!");
       -- v_local_hierarchy_tree.print_hierarchical_log;
-
 
       --  Alert related
       log("Verifying that expected alerts propagate correctly.");
@@ -3190,7 +3157,6 @@ begin
       check_value(v_local_hierarchy_tree.get_expected_alerts("TB seq", note), 15, error, "Verifying expected alerts!");
       check_value(v_local_hierarchy_tree.get_expected_alerts("second_node", note), 0, error, "Verifying expected alerts!");
       v_local_hierarchy_tree.print_hierarchical_log;
-
 
       v_local_hierarchy_tree.set_expected_alerts("fourth_node", note, 0);
       v_local_hierarchy_tree.set_expected_alerts("third_node", note, 0);
@@ -3216,12 +3182,11 @@ begin
         v_local_hierarchy_tree.increment_expected_alerts("third_node", alert_level);
         v_local_hierarchy_tree.increment_expected_alerts("second_node", alert_level);
         v_local_hierarchy_tree.increment_expected_alerts("first_node", alert_level);
-        v_local_hierarchy_tree.increment_expected_alerts("first_node", alert_level);  -- Two here since there are two separate branches of children that can cause alerts.
+        v_local_hierarchy_tree.increment_expected_alerts("first_node", alert_level); -- Two here since there are two separate branches of children that can cause alerts.
         v_local_hierarchy_tree.increment_expected_alerts("TB seq", alert_level);
       end loop;
 
       v_local_hierarchy_tree.print_hierarchical_log;
-
 
       log("Verifying hierarchical stop limits");
 
@@ -3298,7 +3263,6 @@ begin
       v_local_hierarchy_tree.alert("TB seq", TB_ERROR);
       log("Are there any alert messages between this message and the previous one? If so it is CORRECT.");
 
-
       -- Then disable specific alert level from third_node
       -- Verify that all alerts from nodes other than third_node and fourth_node are printed
       log("Disabling TB_ERROR alert level for third_node and downwards (fourth_node). No alerts for these nodes at this alert level between this log message and the next. All others shall have alerts printed.");
@@ -3318,260 +3282,253 @@ begin
 
       v_local_hierarchy_tree.clear;
 
+    --==================================================================================================
+    -- Alert hierarchy pkg
+    --------------------------------------------------------------------------------------
 
+    -- To properly verify this you need to enable hierarchical alerts by setting the following
+    -- in adaptations:
 
-      --==================================================================================================
-      -- Alert hierarchy pkg
-      --------------------------------------------------------------------------------------
+    -- constant C_DEFAULT_STOP_LIMIT : t_alert_counters := (note to manual_check => 0,
+    -- -- others               => 0);
+    -- constant C_ENABLE_HIERARCHICAL_ALERTS : boolean := true;
 
-      -- To properly verify this you need to enable hierarchical alerts by setting the following
-      -- in adaptations:
+    --log(ID_LOG_HDR, "Verifying alert hierarchy pkg", "");
+    --clear_hierarchy(VOID);
+    --initialize_hierarchy;
+    --add_to_alert_hierarchy("test_hier_0", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_1", "test_hier_0", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_2", "test_hier_1", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_3", "test_hier_1", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_4", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_5", "test_hier_4", C_DEFAULT_STOP_LIMIT);
 
-      -- constant C_DEFAULT_STOP_LIMIT : t_alert_counters := (note to manual_check => 0,
-      -- -- others               => 0);
-      -- constant C_ENABLE_HIERARCHICAL_ALERTS : boolean := true;
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_1", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_2", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_3", C_DEFAULT_ALERT_ATTENTION(WARNING));
 
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --print_hierarchical_log(INTERMEDIATE);
 
-      --log(ID_LOG_HDR, "Verifying alert hierarchy pkg", "");
-      --clear_hierarchy(VOID);
-      --initialize_hierarchy;
-      --add_to_alert_hierarchy("test_hier_0", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_1", "test_hier_0", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_2", "test_hier_1", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_3", "test_hier_1", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_4", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_5", "test_hier_4", C_DEFAULT_STOP_LIMIT);
+    ---- Set expected alerts to 5 ERRORs, stop limit to 6 ERRORs, then give 5 ERRORs.
+    --set_expected_alerts("test_hier_5", ERROR, 5);
+    --set_stop_limit("test_hier_5", ERROR, 6);
+    --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
 
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_1", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_2", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_3", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    ---- Increment expected and stop limit. Then give another error.
+    --increment_expected_alerts("test_hier_5", ERROR);
+    --increment_stop_limit("test_hier_5", ERROR);
+    --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
 
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --print_hierarchical_log(INTERMEDIATE);
+    ---- Trigger an alert with a non-registered scope to verify that the automatic
+    ---- registration works.
+    --hierarchical_alert(WARNING, "this is a test", "auto_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
 
-      ---- Set expected alerts to 5 ERRORs, stop limit to 6 ERRORs, then give 5 ERRORs.
-      --set_expected_alerts("test_hier_5", ERROR, 5);
-      --set_stop_limit("test_hier_5", ERROR, 6);
-      --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --print_hierarchical_log(FINAL);
 
-      ---- Increment expected and stop limit. Then give another error.
-      --increment_expected_alerts("test_hier_5", ERROR);
-      --increment_stop_limit("test_hier_5", ERROR);
-      --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --clear_hierarchy(VOID);
 
-      ---- Trigger an alert with a non-registered scope to verify that the automatic
-      ---- registration works.
-      --hierarchical_alert(WARNING, "this is a test", "auto_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    ---- Verify that global and hierarchical alert counters match.
+    --initialize_hierarchy;
+    --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, NOTE);
+    --hierarchical_alert(NOTE, "this is a test", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(NOTE));
 
-      --print_hierarchical_log(FINAL);
+    --for i in 1 to 5 loop
+    --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, WARNING);
+    --hierarchical_alert(WARNING, "this is a test : " & integer'image(i), C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --end loop;
 
-      --clear_hierarchy(VOID);
+    --for i in 1 to 3 loop
+    --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, TB_WARNING);
+    --hierarchical_alert(TB_WARNING, "this is a test : " & integer'image(i), C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(TB_WARNING));
+    --end loop;
 
+    ---- Problem here is that if one sets the limit to zero and then starts to increment,
+    ---- the limit will be 1, and the test will fail.
+    --set_stop_limit(C_BASE_HIERARCHY_LEVEL, ERROR, 87);
 
-      ---- Verify that global and hierarchical alert counters match.
-      --initialize_hierarchy;
-      --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, NOTE);
-      --hierarchical_alert(NOTE, "this is a test", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(NOTE));
+    --for i in 1 to 86 loop
+    --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, ERROR);
+    --hierarchical_alert(ERROR, "this is a test : " & integer'image(i), C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(ERROR));
+    --end loop;
 
-      --for i in 1 to 5 loop
-      --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, WARNING);
-      --hierarchical_alert(WARNING, "this is a test : " & integer'image(i), C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --end loop;
+    --set_stop_limit(C_BASE_HIERARCHY_LEVEL, TB_ERROR, 53);
+    --for i in 1 to 52 loop
+    --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, TB_ERROR);
+    --hierarchical_alert(TB_ERROR, "this is a test : " & integer'image(i), C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(TB_ERROR));
+    --end loop;
 
-      --for i in 1 to 3 loop
-      --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, TB_WARNING);
-      --hierarchical_alert(TB_WARNING, "this is a test : " & integer'image(i), C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(TB_WARNING));
-      --end loop;
+    --print_hierarchical_log(FINAL);
+    --clear_hierarchy(VOID);
 
-      ---- Problem here is that if one sets the limit to zero and then starts to increment,
-      ---- the limit will be 1, and the test will fail.
-      --set_stop_limit(C_BASE_HIERARCHY_LEVEL, ERROR, 87);
+    ---- Verify that sorting the hierarchy tree works.
+    --initialize_hierarchy;
+    --add_to_alert_hierarchy("test_hier_0", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_1", "test_hier_0", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_2", "test_hier_1", C_DEFAULT_STOP_LIMIT);
+    --hierarchical_alert(WARNING, "this is a test", "auto_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --add_to_alert_hierarchy("test_hier_3", "test_hier_1", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_4", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_6", "test_hier_3", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_5", "test_hier_4", C_DEFAULT_STOP_LIMIT);
 
-      --for i in 1 to 86 loop
-      --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, ERROR);
-      --hierarchical_alert(ERROR, "this is a test : " & integer'image(i), C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(ERROR));
-      --end loop;
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_1", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_2", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_3", C_DEFAULT_ALERT_ATTENTION(WARNING));
 
-      --set_stop_limit(C_BASE_HIERARCHY_LEVEL, TB_ERROR, 53);
-      --for i in 1 to 52 loop
-      --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, TB_ERROR);
-      --hierarchical_alert(TB_ERROR, "this is a test : " & integer'image(i), C_BASE_HIERARCHY_LEVEL, C_DEFAULT_ALERT_ATTENTION(TB_ERROR));
-      --end loop;
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
 
-      --print_hierarchical_log(FINAL);
-      --clear_hierarchy(VOID);
+    --global_hierarchy_tree.print_hierarchical_log(INTERMEDIATE);
 
+    ---- global_sorted_hierarchy_tree.clear;
+    --clear_hierarchy(VOID);
 
-      ---- Verify that sorting the hierarchy tree works.
-      --initialize_hierarchy;
-      --add_to_alert_hierarchy("test_hier_0", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_1", "test_hier_0", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_2", "test_hier_1", C_DEFAULT_STOP_LIMIT);
-      --hierarchical_alert(WARNING, "this is a test", "auto_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --add_to_alert_hierarchy("test_hier_3", "test_hier_1", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_4", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_6", "test_hier_3", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_5", "test_hier_4", C_DEFAULT_STOP_LIMIT);
+    ---- Verify that parent registration overrides child's own registration.
+    --initialize_hierarchy;
+    --add_to_alert_hierarchy("child", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
+    --check_value(global_hierarchy_tree.get_parent_scope(justify("child", C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), justify(C_BASE_HIERARCHY_LEVEL, C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope");
+    --add_to_alert_hierarchy("parent", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
+    --check_value(global_hierarchy_tree.get_parent_scope(justify("parent", C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), justify(C_BASE_HIERARCHY_LEVEL, C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope");
+    --add_to_alert_hierarchy("child", "parent", C_DEFAULT_STOP_LIMIT);
+    --check_value(global_hierarchy_tree.get_parent_scope(justify("child", C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), justify("parent", C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope");
+    --add_to_alert_hierarchy("child", "test0", C_DEFAULT_STOP_LIMIT);
+    --check_value(global_hierarchy_tree.get_parent_scope(justify("child", C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), justify("parent", C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope");
+    --clear_hierarchy(VOID);
 
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_1", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_2", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_3", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    ---- initialize_hierarchy;
+    ---- if C_ENABLE_HIERARCHICAL_ALERTS then -- Need this if-statement to avoid errors when hierarchical alerts not enabled.
+    ---- increment_expected_alerts(ERROR);
+    ---- check_value(false, ERROR, "adding to hierarchy", C_SCOPE);
+    ---- check_value(global_hierarchy_tree.contains_scope(justify(C_SCOPE, C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), ERROR, "Verifying that scope was added to hierarchy", C_SCOPE);
+    ---- end if;
+    ---- hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    ---- global_hierarchy_tree.print_hierarchical_log(INTERMEDIATE);
+    ---- -- sort_hierarchy_tree(0);
+    ---- -- global_sorted_hierarchy_tree.print_hierarchical_log(REGARD);
+    ---- clear_hierarchy(VOID);
 
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    ---- if C_ENABLE_HIERARCHICAL_ALERTS then
+    ----   -- To let simulation pass when hierarchical alerts not enabled
+    ----   -- Problem is that the expected alerts are only incremented on top,
+    ----   -- not in the individual scopes. Doing this afterwards.
+    ----   -- A better solution would be to increment these instead of
+    ----   -- calling the non-hierarchical increment_expected_alerts,
+    ----   -- but doing this for simplicity.
+    ----   increment_expected_alerts("my_scope", note, 1);
+    ----   increment_expected_alerts("my_scope", error, 1);
+    ----   increment_expected_alerts("TB seq", warning, 5);
+    ----   increment_expected_alerts("TB seq", error, 81);
+    ----   increment_expected_alerts("TB seq.", TB_WARNING, 3);
+    ----   increment_expected_alerts("TB seq.", MANUAL_CHECK, 1);
+    ----   increment_expected_alerts("TB seq.", error, 4);
+    ----   increment_expected_alerts("TB seq.", TB_ERROR, 2);
+    ----   increment_expected_alerts("bfm_common", TB_ERROR, 50);
+    ---- end if;
 
-      --global_hierarchy_tree.print_hierarchical_log(INTERMEDIATE);
+    --log(ID_LOG_HDR, "Verifying uvvm simulation status with alert hierarchy pkg", "");
+    --clear_hierarchy(VOID);
+    --initialize_hierarchy;
+    --add_to_alert_hierarchy("test_hier_0", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_1", "test_hier_0", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_2", "test_hier_1", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_3", "test_hier_1", C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_4", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
+    --add_to_alert_hierarchy("test_hier_5", "test_hier_4", C_DEFAULT_STOP_LIMIT);
 
-      ---- global_sorted_hierarchy_tree.clear;
-      --clear_hierarchy(VOID);
+    ---- Initial expectation of simulation status
+    --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
-      ---- Verify that parent registration overrides child's own registration.
-      --initialize_hierarchy;
-      --add_to_alert_hierarchy("child", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
-      --check_value(global_hierarchy_tree.get_parent_scope(justify("child", C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), justify(C_BASE_HIERARCHY_LEVEL, C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope");
-      --add_to_alert_hierarchy("parent", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
-      --check_value(global_hierarchy_tree.get_parent_scope(justify("parent", C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), justify(C_BASE_HIERARCHY_LEVEL, C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope");
-      --add_to_alert_hierarchy("child", "parent", C_DEFAULT_STOP_LIMIT);
-      --check_value(global_hierarchy_tree.get_parent_scope(justify("child", C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), justify("parent", C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope");
-      --add_to_alert_hierarchy("child", "test0", C_DEFAULT_STOP_LIMIT);
-      --check_value(global_hierarchy_tree.get_parent_scope(justify("child", C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), justify("parent", C_HIERARCHY_NODE_NAME_LENGTH, LEFT), ERROR, "Verifying parent scope");
-      --clear_hierarchy(VOID);
+    --set_expected_alerts("test_hier_0", WARNING, 4);
+    --set_expected_alerts("test_hier_1", WARNING, 3);
+    --set_expected_alerts("test_hier_2", WARNING, 1);
+    --set_expected_alerts("test_hier_3", WARNING, 1);
 
-      ---- initialize_hierarchy;
-      ---- if C_ENABLE_HIERARCHICAL_ALERTS then -- Need this if-statement to avoid errors when hierarchical alerts not enabled.
-      ---- increment_expected_alerts(ERROR);
-      ---- check_value(false, ERROR, "adding to hierarchy", C_SCOPE);
-      ---- check_value(global_hierarchy_tree.contains_scope(justify(C_SCOPE, C_HIERARCHY_NODE_NAME_LENGTH, LEFT)), ERROR, "Verifying that scope was added to hierarchy", C_SCOPE);
-      ---- end if;
-      ---- hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      ---- global_hierarchy_tree.print_hierarchical_log(INTERMEDIATE);
-      ---- -- sort_hierarchy_tree(0);
-      ---- -- global_sorted_hierarchy_tree.print_hierarchical_log(REGARD);
-      ---- clear_hierarchy(VOID);
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_1", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_2", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_3", C_DEFAULT_ALERT_ATTENTION(WARNING));
 
+    ---- regarded = expected
+    --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
+    --global_hierarchy_tree.print_hierarchical_log(INTERMEDIATE);
 
-      ---- if C_ENABLE_HIERARCHICAL_ALERTS then
-      ----   -- To let simulation pass when hierarchical alerts not enabled
-      ----   -- Problem is that the expected alerts are only incremented on top,
-      ----   -- not in the individual scopes. Doing this afterwards.
-      ----   -- A better solution would be to increment these instead of
-      ----   -- calling the non-hierarchical increment_expected_alerts,
-      ----   -- but doing this for simplicity.
-      ----   increment_expected_alerts("my_scope", note, 1);
-      ----   increment_expected_alerts("my_scope", error, 1);
-      ----   increment_expected_alerts("TB seq", warning, 5);
-      ----   increment_expected_alerts("TB seq", error, 81);
-      ----   increment_expected_alerts("TB seq.", TB_WARNING, 3);
-      ----   increment_expected_alerts("TB seq.", MANUAL_CHECK, 1);
-      ----   increment_expected_alerts("TB seq.", error, 4);
-      ----   increment_expected_alerts("TB seq.", TB_ERROR, 2);
-      ----   increment_expected_alerts("bfm_common", TB_ERROR, 50);
-      ---- end if;
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
 
-      --log(ID_LOG_HDR, "Verifying uvvm simulation status with alert hierarchy pkg", "");
-      --clear_hierarchy(VOID);
-      --initialize_hierarchy;
-      --add_to_alert_hierarchy("test_hier_0", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_1", "test_hier_0", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_2", "test_hier_1", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_3", "test_hier_1", C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_4", C_BASE_HIERARCHY_LEVEL, C_DEFAULT_STOP_LIMIT);
-      --add_to_alert_hierarchy("test_hier_5", "test_hier_4", C_DEFAULT_STOP_LIMIT);
+    ---- regarded > expected warnings
+    --check_value(found_unexpected_simulation_warnings_or_worse,     1, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
+    --global_hierarchy_tree.print_hierarchical_log(INTERMEDIATE);
 
-      ---- Initial expectation of simulation status
-      --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
+    ---- regarded = expected
+    --increment_expected_alerts("test_hier_5", WARNING);
+    --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, WARNING);
+    --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
-      --set_expected_alerts("test_hier_0", WARNING, 4);
-      --set_expected_alerts("test_hier_1", WARNING, 3);
-      --set_expected_alerts("test_hier_2", WARNING, 1);
-      --set_expected_alerts("test_hier_3", WARNING, 1);
+    ---- regarded > expected errors
+    --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(ERROR));
+    --check_value(found_unexpected_simulation_warnings_or_worse,     1, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       1, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_0", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_1", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_2", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_3", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    ---- regarded = expected
+    --increment_expected_alerts("test_hier_5", ERROR);
+    --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
-      ---- regarded = expected
-      --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
-      --global_hierarchy_tree.print_hierarchical_log(INTERMEDIATE);
+    ---- regarded < expected warnings
+    --increment_expected_alerts("test_hier_5", WARNING);
+    --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, WARNING);
+    --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
+    ---- regarded < expected errors
+    --increment_expected_alerts("test_hier_5", ERROR);
+    --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    ---- regarded < expected warnings
+    --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(ERROR));
+    --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
-      ---- regarded > expected warnings
-      --check_value(found_unexpected_simulation_warnings_or_worse,     1, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
-      --global_hierarchy_tree.print_hierarchical_log(INTERMEDIATE);
-
-      ---- regarded = expected
-      --increment_expected_alerts("test_hier_5", WARNING);
-      --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, WARNING);
-      --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
-
-      ---- regarded > expected errors
-      --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(ERROR));
-      --check_value(found_unexpected_simulation_warnings_or_worse,     1, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       1, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
-
-      ---- regarded = expected
-      --increment_expected_alerts("test_hier_5", ERROR);
-      --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
-
-      ---- regarded < expected warnings
-      --increment_expected_alerts("test_hier_5", WARNING);
-      --increment_expected_alerts(C_BASE_HIERARCHY_LEVEL, WARNING);
-      --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
-
-      ---- regarded < expected errors
-      --increment_expected_alerts("test_hier_5", ERROR);
-      --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
-
-      ---- regarded < expected warnings
-      --hierarchical_alert(ERROR, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(ERROR));
-      --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 1, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
-
-      ---- regarded = expected
-      --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
-      --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
-      --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
-      --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
-      --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
+    ---- regarded = expected
+    --hierarchical_alert(WARNING, "this is a test", "test_hier_5", C_DEFAULT_ALERT_ATTENTION(WARNING));
+    --check_value(found_unexpected_simulation_warnings_or_worse,     0, ERROR, "Verifying simulation status found_unexpected_simulation_warnings_or_worse");
+    --check_value(found_unexpected_simulation_errors_or_worse,       0, ERROR, "Verifying simulation status found_unexpected_simulation_errors_or_worse");
+    --check_value(mismatch_on_expected_simulation_warnings_or_worse, 0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_warnings_or_worse");
+    --check_value(mismatch_on_expected_simulation_errors_or_worse,   0, ERROR, "Verifying simulation status mismatch_on_expected_simulation_errors_or_worse");
 
     elsif GC_TESTCASE = "setting_output_file_name" then
       log(ID_LOG_HDR, "Testing runtime setting of output file", C_SCOPE);
@@ -3597,7 +3554,7 @@ begin
       --set_alert_file_name(join(output_path(runner_cfg), "alertLog3.txt"), ID_SEQUENCER);
 
       set_log_file_name(GC_TESTCASE & "_Log.txt");
-      set_alert_file_name(GC_TESTCASE & "_Alert.txt"); 
+      set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     elsif GC_TESTCASE = "synchronization_methods" then
       log(ID_LOG_HDR, "Testing await_unblock_flag with KEEP_UNBLOCKED.", C_SCOPE);
@@ -3625,7 +3582,7 @@ begin
       log(ID_LOG_HDR, "Registering maximum number of flags.", C_SCOPE);
       set_alert_stop_limit(TB_ERROR, 2);
       increment_expected_alerts(TB_ERROR);
-      for i in 1 to C_NUM_SYNC_FLAGS-1 loop
+      for i in 1 to C_NUM_SYNC_FLAGS - 1 loop
         block_flag("FLAG_" & to_string(i), "");
       end loop;
 
@@ -3670,163 +3627,163 @@ begin
       increment_expected_alerts(error);
       wait for 1 ns;
     elsif GC_TESTCASE = "optional_alert_level" then
-        -- This GC_TESTCASE contains duplicates of the testcases for:
-        --      GC_TESTCASE = check_value
-        --      GC_TESTCASE = check_value_in_range 
-        --      GC_TESTCASE = check_stable 
-        --      GC_TESTCASE = await_change 
-        --      GC_TESTCASE = await_value 
-        --      GC_TESTCASE = await_stable 
-        -- with all testcases called without alert_level parameter. 
-        -- Update date (20/03/20). 
+      -- This GC_TESTCASE contains duplicates of the testcases for:
+      --      GC_TESTCASE = check_value
+      --      GC_TESTCASE = check_value_in_range 
+      --      GC_TESTCASE = check_stable 
+      --      GC_TESTCASE = await_change 
+      --      GC_TESTCASE = await_value 
+      --      GC_TESTCASE = await_stable 
+      -- with all testcases called without alert_level parameter. 
+      -- Update date (20/03/20). 
 
---------------------------------------------------------------------------------------
--- CHECK_VALUE(): Verifying check_value overloads without alert_level
---------------------------------------------------------------------------------------
+      --------------------------------------------------------------------------------------
+      -- CHECK_VALUE(): Verifying check_value overloads without alert_level
+      --------------------------------------------------------------------------------------
 
       log(ID_LOG_HDR, "Verifying check_value() overloads without alert_level", "C_SCOPE");
       -- Boolean
-      v_b     := check_value(14 > 6,"A must be higher than B, OK", C_SCOPE);
-      check_value(v_b,"check_value with return value shall return true when OK", C_SCOPE);
+      v_b     := check_value(14 > 6, "A must be higher than B, OK", C_SCOPE);
+      check_value(v_b, "check_value with return value shall return true when OK", C_SCOPE);
       -- SLV
       v_slv5a := "01111";
       v_slv5b := "01111";
-      check_value(v_slv5a, v_slv5b,"My msg1, OK", C_SCOPE);
+      check_value(v_slv5a, v_slv5b, "My msg1, OK", C_SCOPE);
       v_slv5b := "01110";
-      check_value(v_slv5a, v_slv5b,"My msg2, Fail", C_SCOPE);
-      check_value(std_logic_vector'("100101"), "10010-","My msg3a, OK", C_SCOPE);
-      check_value(std_logic_vector'("100101"), "100101","My msg3b, OK", C_SCOPE);
-      v_b     := check_value(std_logic_vector'("100101"), "100100","My msg3c, Fail", C_SCOPE);
-      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
-      check_value(std_logic_vector'("10010"), "10010","My msg (none), OK", C_SCOPE);
-      check_value(std_logic_vector'("10010"), "10010","My msg HEX, OK", C_SCOPE, HEX);
-      check_value(std_logic_vector'("10010"), "10010","My msg BIN, OK", C_SCOPE, BIN);
-      check_value(std_logic_vector'("110010"), "111010","My msg (none), Fail", C_SCOPE);
-      check_value(std_logic_vector'("110010"), "111010","My msg HEX, Fail", C_SCOPE, HEX);
-      check_value(std_logic_vector'("110010"), "111010","My msg BIN, Fail", C_SCOPE, BIN);
-      check_value(std_logic_vector'("110010"), "10010","My msg (none), Fail", C_SCOPE);
-      check_value(std_logic_vector'("10010"), "110010","My msg HEX, Fail", C_SCOPE, HEX);
-      check_value(std_logic_vector'("10010"), "0010010","My msg BIN, OK", C_SCOPE, BIN);
-      check_value(std_logic_vector'("0010010"), "010010","My msg BIN, OK", C_SCOPE, BIN);
+      check_value(v_slv5a, v_slv5b, "My msg2, Fail", C_SCOPE);
+      check_value(std_logic_vector'("100101"), "10010-", "My msg3a, OK", C_SCOPE);
+      check_value(std_logic_vector'("100101"), "100101", "My msg3b, OK", C_SCOPE);
+      v_b     := check_value(std_logic_vector'("100101"), "100100", "My msg3c, Fail", C_SCOPE);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
+      check_value(std_logic_vector'("10010"), "10010", "My msg (none), OK", C_SCOPE);
+      check_value(std_logic_vector'("10010"), "10010", "My msg HEX, OK", C_SCOPE, HEX);
+      check_value(std_logic_vector'("10010"), "10010", "My msg BIN, OK", C_SCOPE, BIN);
+      check_value(std_logic_vector'("110010"), "111010", "My msg (none), Fail", C_SCOPE);
+      check_value(std_logic_vector'("110010"), "111010", "My msg HEX, Fail", C_SCOPE, HEX);
+      check_value(std_logic_vector'("110010"), "111010", "My msg BIN, Fail", C_SCOPE, BIN);
+      check_value(std_logic_vector'("110010"), "10010", "My msg (none), Fail", C_SCOPE);
+      check_value(std_logic_vector'("10010"), "110010", "My msg HEX, Fail", C_SCOPE, HEX);
+      check_value(std_logic_vector'("10010"), "0010010", "My msg BIN, OK", C_SCOPE, BIN);
+      check_value(std_logic_vector'("0010010"), "010010", "My msg BIN, OK", C_SCOPE, BIN);
 
-      check_value(std_logic_vector'("0000010010"), "000010010","My msg BIN, OK", C_SCOPE, BIN);
-      check_value(std_logic_vector'("0000010010"), "000010010","My msg HEX, OK", C_SCOPE, HEX);
-      check_value(std_logic_vector'("0000010010"), "000010-10","My msg HEX, OK", C_SCOPE, HEX);
+      check_value(std_logic_vector'("0000010010"), "000010010", "My msg BIN, OK", C_SCOPE, BIN);
+      check_value(std_logic_vector'("0000010010"), "000010010", "My msg HEX, OK", C_SCOPE, HEX);
+      check_value(std_logic_vector'("0000010010"), "000010-10", "My msg HEX, OK", C_SCOPE, HEX);
 
-      check_value(std_logic_vector'("0000010010"), "000010010","My msg BIN, AS_IS, OK", C_SCOPE, BIN, AS_IS);
-      check_value(std_logic_vector'("0000010010"), "000010010","My msg HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
-      check_value(std_logic_vector'("0000010010"), "000010-10","My msg HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
-      check_value(std_logic_vector'("0000010010"), "00--10-10","My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
-      check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_STD,"My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
-      check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_EXACT,"My msg dontcare-in-extended-width HEX, AS_IS, Fail", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "000010010", "My msg BIN, AS_IS, OK", C_SCOPE, BIN, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "000010010", "My msg HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "000010-10", "My msg HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "00--10-10", "My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_STD, "My msg dontcare-in-extended-width HEX, AS_IS, OK", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0000010010"), "00--10-10", MATCH_EXACT, "My msg dontcare-in-extended-width HEX, AS_IS, Fail", C_SCOPE, HEX, AS_IS);
 
       -- MATCH_STD_INCL_Z
-      check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_Z,"Check MATCH_STD_INCL_Z", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_Z, "Check MATCH_STD_INCL_Z", C_SCOPE, HEX, AS_IS);
 
       -- MATCH_STD_INCL_ZXUW
-      check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
-      check_value(std_logic_vector'("000X0X00X0"), "000X0X00X0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
-      check_value(std_logic_vector'("000U0U00U0"), "000U0U00U0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
-      check_value(std_logic_vector'("000W0W00W0"), "000W0W00W0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
-      check_value(std_logic_vector'("0Z0X0U00W0"), "0Z0X0U00W0", MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000Z0Z00Z0"), "000Z0Z00Z0", MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000X0X00X0"), "000X0X00X0", MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000U0U00U0"), "000U0U00U0", MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("000W0W00W0"), "000W0W00W0", MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
+      check_value(std_logic_vector'("0Z0X0U00W0"), "0Z0X0U00W0", MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE, HEX, AS_IS);
 
-      check_value(std_logic_vector'("0000010010"), "0000010010","My msg HEX_BIN_IF_INVALID, OK", C_SCOPE, HEX_BIN_IF_INVALID);
-      check_value(std_logic_vector'("0000011111"), "0000010010","My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
-      check_value(std_logic_vector'("00000U00U0"), "0000010010","My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
+      check_value(std_logic_vector'("0000010010"), "0000010010", "My msg HEX_BIN_IF_INVALID, OK", C_SCOPE, HEX_BIN_IF_INVALID);
+      check_value(std_logic_vector'("0000011111"), "0000010010", "My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
+      check_value(std_logic_vector'("00000U00U0"), "0000010010", "My msg HEX_BIN_IF_INVALID, Fail", C_SCOPE, HEX_BIN_IF_INVALID);
       increment_expected_alerts(error, 2);
 
       -- wide vector
-      check_value(slv128, slv128,"Test wide vector, HEX, OK", C_SCOPE, HEX, AS_IS);
-      check_value(slv128, slv128,"Test wide vector, DEC, OK", C_SCOPE, DEC, AS_IS);
+      check_value(slv128, slv128, "Test wide vector, HEX, OK", C_SCOPE, HEX, AS_IS);
+      check_value(slv128, slv128, "Test wide vector, DEC, OK", C_SCOPE, DEC, AS_IS);
 
       -- boolean
       -- As function
-      v_b := check_value(true, true,"Boolean check true vs true, OK");
-      check_value(v_b,"check_value should return true");
-      v_b := check_value(true, false,"Boolean check true vs false, Fail");
-      check_value(not v_b,"check_value should return false");
-      v_b := check_value(false, true,"Boolean check false vs true, Fail");
-      check_value(not v_b,"check_value should return false");
-      v_b := check_value(false, false,"Boolean check false vs false, OK");
-      check_value(v_b,"check_value should return true");
+      v_b := check_value(true, true, "Boolean check true vs true, OK");
+      check_value(v_b, "check_value should return true");
+      v_b := check_value(true, false, "Boolean check true vs false, Fail");
+      check_value(not v_b, "check_value should return false");
+      v_b := check_value(false, true, "Boolean check false vs true, Fail");
+      check_value(not v_b, "check_value should return false");
+      v_b := check_value(false, false, "Boolean check false vs false, OK");
+      check_value(v_b, "check_value should return true");
       increment_expected_alerts(error, 2);
 
       -- As procedure
-      check_value(true, true,"Boolean check true vs true, OK");
-      check_value(true, false,"Boolean check true vs false, Fail");
-      check_value(false, true,"Boolean check false vs true, Fail");
-      check_value(false, false,"Boolean check false vs false, OK");
+      check_value(true, true, "Boolean check true vs true, OK");
+      check_value(true, false, "Boolean check true vs false, Fail");
+      check_value(false, true, "Boolean check false vs true, Fail");
+      check_value(false, false, "Boolean check false vs false, OK");
       increment_expected_alerts(error, 2);
 
       -- Unsigned
       v_u5a := "01100";
       v_u5b := "11100";
       v_u6  := "101100";
-      check_value(v_u5a, v_u5a,"My msg U, BIN, AS_IS, OK", C_SCOPE, BIN);
-      check_value(v_u5a, v_u5b,"My msg U, BIN, AS_IS, Fail", C_SCOPE, BIN);
-      v_b   := check_value(v_u5a, v_u6,"My msg U, BIN, AS_IS, Fail", C_SCOPE, BIN);
-      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+      check_value(v_u5a, v_u5a, "My msg U, BIN, AS_IS, OK", C_SCOPE, BIN);
+      check_value(v_u5a, v_u5b, "My msg U, BIN, AS_IS, Fail", C_SCOPE, BIN);
+      v_b   := check_value(v_u5a, v_u6, "My msg U, BIN, AS_IS, Fail", C_SCOPE, BIN);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
 
       -- signed
       v_s8 := "10101100";
-      check_value(v_s8, v_s8,"My msg S, BIN, AS_IS, OK", C_SCOPE, BIN);
-      v_b  := check_value(v_s8, "10101101","My msg S, BIN, AS_IS, Fail", C_SCOPE, BIN);
-      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+      check_value(v_s8, v_s8, "My msg S, BIN, AS_IS, OK", C_SCOPE, BIN);
+      v_b  := check_value(v_s8, "10101101", "My msg S, BIN, AS_IS, Fail", C_SCOPE, BIN);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
 
       -- Integer
       v_ia := 5;
       v_ib := 23456;
-      check_value(v_ia, 5,"My msg I, OK", C_SCOPE);
-      check_value(v_ia, 12345,"My msg I, Fail", C_SCOPE);
-      v_b  := check_value(v_ia, v_ib,"My msg I, Fail", C_SCOPE);
-      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+      check_value(v_ia, 5, "My msg I, OK", C_SCOPE);
+      check_value(v_ia, 12345, "My msg I, Fail", C_SCOPE);
+      v_b  := check_value(v_ia, v_ib, "My msg I, Fail", C_SCOPE);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
 
       -- Real
       v_r := 5222.01;
-      check_value(v_r, 5222.01,"My msg I, OK", C_SCOPE);
-      v_b := check_value(v_r, 1421.02,"My msg I, Fail", C_SCOPE);
-      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
+      check_value(v_r, 5222.01, "My msg I, OK", C_SCOPE);
+      v_b := check_value(v_r, 1421.02, "My msg I, Fail", C_SCOPE);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
 
       -- Std_logic
-      v_b := check_value('1', '1',"My msg SL, OK", C_SCOPE);
-      check_value(v_b,"check_value with return value shall return true when OK", C_SCOPE);
-      v_b := check_value('1', '0',"My msg SL, Fail", C_SCOPE);
-      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
-      check_value('0', '-',"My msg SL, OK, use default match_strictness", C_SCOPE);
-      check_value('1', '-', MATCH_STD,"My msg SL, OK", C_SCOPE);
-      check_value('L', '0', MATCH_STD,"My msg SL, OK", C_SCOPE);
-      check_value('1', 'H', MATCH_EXACT,"My msg SL, Fail", C_SCOPE);
-      check_value('-', '1', MATCH_EXACT,"My msg SL, Fail", C_SCOPE);
+      v_b := check_value('1', '1', "My msg SL, OK", C_SCOPE);
+      check_value(v_b, "check_value with return value shall return true when OK", C_SCOPE);
+      v_b := check_value('1', '0', "My msg SL, Fail", C_SCOPE);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
+      check_value('0', '-', "My msg SL, OK, use default match_strictness", C_SCOPE);
+      check_value('1', '-', MATCH_STD, "My msg SL, OK", C_SCOPE);
+      check_value('L', '0', MATCH_STD, "My msg SL, OK", C_SCOPE);
+      check_value('1', 'H', MATCH_EXACT, "My msg SL, Fail", C_SCOPE);
+      check_value('-', '1', MATCH_EXACT, "My msg SL, Fail", C_SCOPE);
       -- MATCH_STD_INCL_Z
-      check_value('Z', 'Z', MATCH_STD_INCL_Z,"Check MATCH_STD_INCL_Z", C_SCOPE);
+      check_value('Z', 'Z', MATCH_STD_INCL_Z, "Check MATCH_STD_INCL_Z", C_SCOPE);
       -- MATCH_STD_INCL_ZXUW
-      check_value('Z', 'Z', MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE);
-      check_value('X', 'X', MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE);
-      check_value('U', 'U', MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE);
-      check_value('W', 'W', MATCH_STD_INCL_ZXUW,"Check MATCH_STD_INCL_ZXUW", C_SCOPE);
-      
+      check_value('Z', 'Z', MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('X', 'X', MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('U', 'U', MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+      check_value('W', 'W', MATCH_STD_INCL_ZXUW, "Check MATCH_STD_INCL_ZXUW", C_SCOPE);
+
       -- time
       v_t := 15 ns;
-      v_b := check_value(15 ns, 74 ps,"My msg I, Fail", C_SCOPE);
-      check_value(not v_b,"check_value with return value shall return false when Fail", C_SCOPE);
-      check_value(15 ns, 14 ns,"My msg I, Fail", C_SCOPE);
-      check_value(v_t, 15 ns,"My msg I, OK", C_SCOPE);
-      check_value(v_t, 15.0 ns,"My msg I, OK", C_SCOPE);
-      check_value(v_t, 15000 ps,"My msg I, OK", C_SCOPE);
-      check_value(v_t, 74 ps,"My msg I, Fail", C_SCOPE);
+      v_b := check_value(15 ns, 74 ps, "My msg I, Fail", C_SCOPE);
+      check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
+      check_value(15 ns, 14 ns, "My msg I, Fail", C_SCOPE);
+      check_value(v_t, 15 ns, "My msg I, OK", C_SCOPE);
+      check_value(v_t, 15.0 ns, "My msg I, OK", C_SCOPE);
+      check_value(v_t, 15000 ps, "My msg I, OK", C_SCOPE);
+      check_value(v_t, 74 ps, "My msg I, Fail", C_SCOPE);
 
       increment_expected_alerts(error, 12);
       increment_expected_alerts(error, 8);
 
       -- Check UVVM successful status
-      check_value(found_unexpected_simulation_warnings_or_worse, 0,"Check shared_uvvm_status.found_unexpected_simulation_warnings_or_worse correctly updated");
-      check_value(found_unexpected_simulation_errors_or_worse, 0,"Check shared_uvvm_status.found_unexpected_simulation_errors_or_worse correctly updated");
+      check_value(found_unexpected_simulation_warnings_or_worse, 0, "Check shared_uvvm_status.found_unexpected_simulation_warnings_or_worse correctly updated");
+      check_value(found_unexpected_simulation_errors_or_worse, 0, "Check shared_uvvm_status.found_unexpected_simulation_errors_or_worse correctly updated");
 
       -- Check value reporting with padding of short SLV
-      increment_expected_alerts(error,3);
-      check_value(std_logic_vector'("00110010"), std_logic_vector'("0010"),"Check padding of different check_value SLV lengths (actual>expected)");
-      check_value(std_logic_vector'("1010"), std_logic_vector'("00110010"),"Check padding of different check_value SLV lengths (actual<expected)");
-      check_value(std_logic_vector'("00001010"), std_logic_vector'("00110010"),"Check padding of different check_value SLV lengths (actual=expected)");
+      increment_expected_alerts(error, 3);
+      check_value(std_logic_vector'("00110010"), std_logic_vector'("0010"), "Check padding of different check_value SLV lengths (actual>expected)");
+      check_value(std_logic_vector'("1010"), std_logic_vector'("00110010"), "Check padding of different check_value SLV lengths (actual<expected)");
+      check_value(std_logic_vector'("00001010"), std_logic_vector'("00110010"), "Check padding of different check_value SLV lengths (actual=expected)");
 
       -- Check value with unequal array indexes for t_slv/signed/unsigned_array
       -- Verify check_value array index conversion
@@ -3834,28 +3791,28 @@ begin
       v_exp_slv_array(1)   := x"B";
       v_value_slv_array(2) := x"A";
       v_value_slv_array(3) := x"B";
-      check_value(v_value_slv_array, v_exp_slv_array,"check_value with t_slv_array of different array indexes");
+      check_value(v_value_slv_array, v_exp_slv_array, "check_value with t_slv_array of different array indexes");
 
       v_exp_signed_array(0)   := x"C";
       v_exp_signed_array(1)   := x"D";
       v_value_signed_array(2) := x"C";
       v_value_signed_array(3) := x"D";
-      check_value(v_value_signed_array, v_exp_signed_array,"check_value with t_signed_array of different array indexes");
+      check_value(v_value_signed_array, v_exp_signed_array, "check_value with t_signed_array of different array indexes");
 
       v_exp_unsigned_array(0)   := x"E";
       v_exp_unsigned_array(1)   := x"F";
       v_value_unsigned_array(2) := x"E";
       v_value_unsigned_array(3) := x"F";
-      check_value(v_value_unsigned_array, v_exp_unsigned_array,"check_value with t_unsigned_array of different array indexes");
+      check_value(v_value_unsigned_array, v_exp_unsigned_array, "check_value with t_unsigned_array of different array indexes");
 
       -- Verify check_value with array conversion catch errors
-      increment_expected_alerts(error,3);
+      increment_expected_alerts(error, 3);
       v_exp_slv_array(1)      := x"C";
       v_exp_signed_array(1)   := x"A";
       v_exp_unsigned_array(1) := x"D";
-      check_value(v_value_slv_array, v_exp_slv_array,"check_value with t_slv_array of different array indexes");
-      check_value(v_value_signed_array, v_exp_signed_array,"check_value with t_signed_array of different array indexes");
-      check_value(v_value_unsigned_array, v_exp_unsigned_array,"check_value with t_unsigned_array of different array indexes");
+      check_value(v_value_slv_array, v_exp_slv_array, "check_value with t_slv_array of different array indexes");
+      check_value(v_value_signed_array, v_exp_signed_array, "check_value with t_signed_array of different array indexes");
+      check_value(v_value_unsigned_array, v_exp_unsigned_array, "check_value with t_unsigned_array of different array indexes");
 
       -- verify warning with arrays of different directions and unequal lengths
       v_exp_slv_array        := (others => "1010");
@@ -3863,13 +3820,13 @@ begin
       v_exp_slv_array_revers := (others => "1010");
       set_alert_stop_limit(tb_error, 2);
       increment_expected_alerts(tb_error, 1);
-      check_value(v_exp_slv_array, v_exp_slv_array_4,"check_value with different array lenghts");
+      check_value(v_exp_slv_array, v_exp_slv_array_4, "check_value with different array lenghts");
       increment_expected_alerts(tb_warning, 1);
-      check_value(v_exp_slv_array, v_exp_slv_array_revers,"check_value with different array directions");
+      check_value(v_exp_slv_array, v_exp_slv_array_revers, "check_value with different array directions");
 
---------------------------------------------------------------------------
--- CHECK_VALUE_IN_RANGE(): Check_value_in_range without alert_level
---------------------------------------------------------------------------
+      --------------------------------------------------------------------------
+      -- CHECK_VALUE_IN_RANGE(): Check_value_in_range without alert_level
+      --------------------------------------------------------------------------
       log(ID_LOG_HDR, "Verifying check_value_in_range() overloads without alert_level", "C_SCOPE");
 
       -- check_value_in_range : integer
@@ -3896,7 +3853,6 @@ begin
       check_value_in_range(v_s32, x"80000002", x"00000001", "Check -2147483647 between -2147483646 and 1, Fail", C_SCOPE);
       increment_expected_alerts(error, 1);
 
-
       -- check_value_in_range : time
       v_t := 3 ns;
       check_value_in_range(v_t, 2 ns, 5 ns, "Check time in range, OK", C_SCOPE);
@@ -3906,9 +3862,9 @@ begin
       check_value(not v_b, "check_value with return value shall return false when Fail", C_SCOPE);
       increment_expected_alerts(error);
 
---------------------------------------------------------------------------------------
--- CHECK_STABLE():  Verifying check_stable without alert level
---------------------------------------------------------------------------------------
+      --------------------------------------------------------------------------------------
+      -- CHECK_STABLE():  Verifying check_stable without alert level
+      --------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Verifying check_stable overloads without alert level", C_SCOPE);
       bol  <= true;
       slv8 <= (others => '1');
@@ -3941,17 +3897,17 @@ begin
       check_stable(slv8, 30 ns, "Stable slv OK", C_SCOPE);
       increment_expected_alerts(error, 7);
 
---------------------------------------------------------------------------------------
--- AWAIT_CHANGE(): Verifying await_change without alert_level
---------------------------------------------------------------------------------------
+      --------------------------------------------------------------------------------------
+      -- AWAIT_CHANGE(): Verifying await_change without alert_level
+      --------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Verifying await_change overloads without alert_level");
       bol <= transport false after 2 ns;
       await_change(bol, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
-      bol <= transport true  after 3 ns;
+      bol <= transport true after 3 ns;
       await_change(bol, 3 ns, 5 ns, "Change within time window 1, OK", C_SCOPE);
       bol <= transport false after 4 ns;
       await_change(bol, 3 ns, 5 ns, "Change within time window 2, OK", C_SCOPE);
-      bol <= transport true  after 5 ns;
+      bol <= transport true after 5 ns;
       await_change(bol, 3 ns, 5 ns, "Change within time window 3, OK", C_SCOPE);
       await_change(bol, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
       increment_expected_alerts(error, 2);
@@ -4026,11 +3982,11 @@ begin
       await_change(r, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
       r <= transport 5.0 after 6 ns;
       await_change(r, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
-      increment_expected_alerts(error, 2);      
-  
---------------------------------------------------------------------------------------
--- AWAIT_VALUE(): Verifying await_value without alert_level
---------------------------------------------------------------------------------------
+      increment_expected_alerts(error, 2);
+
+      --------------------------------------------------------------------------------------
+      -- AWAIT_VALUE(): Verifying await_value without alert_level
+      --------------------------------------------------------------------------------------
       -- await_value : SLV
       log(ID_LOG_HDR, "Verifying await_value overloads without alert_level");
       slv8 <= "00000000";
@@ -4102,12 +4058,12 @@ begin
 
       -- await_value : boolean
       bol <= false;
-      bol <= transport true  after 2 ns;
+      bol <= transport true after 2 ns;
       await_value(bol, true, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
       wait for 10 ns;
       bol <= transport false after 3 ns;
       await_value(bol, false, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
-      bol <= transport true  after 6 ns;
+      bol <= transport true after 6 ns;
       await_value(bol, true, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
       wait for 10 ns;
       bol <= transport false after 0 ns;
@@ -4156,11 +4112,11 @@ begin
 
       -- await_value : integer
       i <= 0;
-      i <= transport 1  after 2 ns;
+      i <= transport 1 after 2 ns;
       await_value(i, 1, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
-      i <= transport 2  after 3 ns;
+      i <= transport 2 after 3 ns;
       await_value(i, 2, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
-      i <= transport 3  after 6 ns;
+      i <= transport 3 after 6 ns;
       await_value(i, 3, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
       wait for 10 ns;
       i <= transport 15 after 0 ns;
@@ -4175,11 +4131,11 @@ begin
 
       -- await_value : real
       r <= 0.0;
-      r <= transport 1.0  after 2 ns;
+      r <= transport 1.0 after 2 ns;
       await_value(r, 1.0, 3 ns, 5 ns, "Change too soon, Fail", C_SCOPE);
-      r <= transport 2.0  after 3 ns;
+      r <= transport 2.0 after 3 ns;
       await_value(r, 2.0, 3 ns, 5 ns, "Change within time window, OK", C_SCOPE);
-      r <= transport 3.0  after 6 ns;
+      r <= transport 3.0 after 6 ns;
       await_value(r, 3.0, 3 ns, 5 ns, "Change too late, Fail", C_SCOPE);
       wait for 10 ns;
       r <= transport 15.0 after 0 ns;
@@ -4192,9 +4148,9 @@ begin
       await_value(r, 17.0, 1 ns, 2 ns, "Val=exp already, Min_time>0ns, Fail. ", C_SCOPE);
       increment_expected_alerts(error, 3);
 
---------------------------------------------------------------------------------------
--- AWAIT_STABLE(): Verifying await_value without alert_level
---------------------------------------------------------------------------------------
+      --------------------------------------------------------------------------------------
+      -- AWAIT_STABLE(): Verifying await_value without alert_level
+      --------------------------------------------------------------------------------------
       --------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Verifying await_stable overloads without alert_level");
       --------------------------------------------------------------------------------------
@@ -4204,7 +4160,7 @@ begin
       --
 
       -- FROM_NOW, FROM_NOW
-      bol <= transport bol after 30 ns;  -- No 'Event
+      bol <= transport bol after 30 ns; -- No 'Event
       await_stable(bol, 50 ns, FROM_NOW, 51 ns, FROM_NOW, "bol: No 'event, Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
 
       bol <= transport not bol after 30 ns;
@@ -4218,7 +4174,6 @@ begin
       increment_expected_alerts(error, 1);
 
       await_stable(bol, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "bol: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_NOW
       bol <= not bol;
@@ -4251,7 +4206,6 @@ begin
       wait for 100 ns;
       bol <= transport not bol after 10 ns;
       await_stable(bol, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "bol: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       bol <= not bol;
@@ -4286,7 +4240,6 @@ begin
 
       await_stable(sl, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "sl: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_NOW
       sl <= not sl;
       wait for 10 ns;
@@ -4318,7 +4271,6 @@ begin
       wait for 100 ns;
       sl <= transport not sl after 10 ns;
       await_stable(sl, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "sl: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       sl <= not sl;
@@ -4353,7 +4305,6 @@ begin
 
       await_stable(slv8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "slv8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_NOW
       slv8 <= not slv8;
       wait for 10 ns;
@@ -4386,7 +4337,6 @@ begin
       slv8 <= transport not slv8 after 10 ns;
       await_stable(slv8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "slv8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       slv8 <= not slv8;
       wait for 10 ns;
@@ -4400,7 +4350,6 @@ begin
       wait for 10 ns;
       await_stable(slv8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "slv8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
-
 
       --
       -- await_stable(unsigned)
@@ -4420,7 +4369,6 @@ begin
       increment_expected_alerts(error, 1);
 
       await_stable(u8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "u8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_NOW
       u8 <= not u8;
@@ -4454,7 +4402,6 @@ begin
       u8 <= transport not u8 after 10 ns;
       await_stable(u8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "u8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       u8 <= not u8;
       wait for 10 ns;
@@ -4468,7 +4415,6 @@ begin
       wait for 10 ns;
       await_stable(u8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "u8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
-
 
       --
       -- await_stable(signed)
@@ -4488,7 +4434,6 @@ begin
       increment_expected_alerts(error, 1);
 
       await_stable(s8, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "s8: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
-
 
       -- FROM_LAST_EVENT, FROM_NOW
       s8 <= not s8;
@@ -4522,7 +4467,6 @@ begin
       s8 <= transport not s8 after 10 ns;
       await_stable(s8, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "s8: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
       s8 <= not s8;
       wait for 10 ns;
@@ -4537,7 +4481,6 @@ begin
       await_stable(s8, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "s8: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
-
       --
       -- await_stable(integer)
       --
@@ -4545,10 +4488,10 @@ begin
       -- FROM_NOW, FROM_NOW
       await_stable(i, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "i: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
 
-      i <= transport i+1 after 30 ns;
+      i <= transport i + 1 after 30 ns;
       await_stable(i, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "i: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
 
-      i <= transport i+1 after 30 ns;
+      i <= transport i + 1 after 30 ns;
       await_stable(i, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "i: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
@@ -4557,50 +4500,48 @@ begin
 
       await_stable(i, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "i: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_NOW
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
 
       wait for 50 ns;
-      i <= i+1;
+      i <= i + 1;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 11 ns;
-      i <= transport i+1 after 10 ns;
+      i <= transport i + 1 after 10 ns;
       await_stable(i, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "i: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
-      i <= transport i+1 after 10 ns;
+      i <= transport i + 1 after 10 ns;
       await_stable(i, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "i: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
       -- FROM_NOW, FROM_LAST_EVENT
-      i <= i+1;
+      i <= i + 1;
       wait for 100 ns;
-      i <= transport i+1 after 10 ns;
+      i <= transport i + 1 after 10 ns;
       await_stable(i, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "i: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
       increment_expected_alerts(error, 1);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 100 ns;
-      i <= transport i+1 after 10 ns;
+      i <= transport i + 1 after 10 ns;
       await_stable(i, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "i: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
 
-      i <= i+1;
+      i <= i + 1;
       wait for 10 ns;
       await_stable(i, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "i: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
@@ -4612,10 +4553,10 @@ begin
       -- FROM_NOW, FROM_NOW
       await_stable(r, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "r: Stable FROM_NOW, FROM_NOW, OK after 50 ns", C_SCOPE);
 
-      r <= transport r+1.0 after 30 ns;
+      r <= transport r + 1.0 after 30 ns;
       await_stable(r, 50 ns, FROM_NOW, 100 ns, FROM_NOW, "r: Stable FROM_NOW, FROM_NOW, OK after 80 ns", C_SCOPE);
 
-      r <= transport r+1.0 after 30 ns;
+      r <= transport r + 1.0 after 30 ns;
       await_stable(r, 50 ns, FROM_NOW, 60 ns, FROM_NOW, "r: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
@@ -4624,50 +4565,48 @@ begin
 
       await_stable(r, 0 ns, FROM_NOW, 0 ns, FROM_NOW, "r: stable for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_NOW
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns", C_SCOPE);
 
       wait for 50 ns;
-      r <= r+1.0;
+      r <= r + 1.0;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)", C_SCOPE);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 11 ns;
-      r <= transport r+1.0 after 10 ns;
+      r <= transport r + 1.0 after 10 ns;
       await_stable(r, 20 ns, FROM_LAST_EVENT, 11 ns, FROM_NOW, "r: Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns", C_SCOPE);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
-      r <= transport r+1.0 after 10 ns;
+      r <= transport r + 1.0 after 10 ns;
       await_stable(r, 21 ns, FROM_LAST_EVENT, 20 ns, FROM_NOW, "r: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
 
       -- FROM_NOW, FROM_LAST_EVENT
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 100 ns;
-      r <= transport r+1.0 after 10 ns;
+      r <= transport r + 1.0 after 10 ns;
       await_stable(r, 40 ns, FROM_NOW, 100 ns, FROM_LAST_EVENT, "r: FROM_NOW, FROM_LAST_EVENT, Fail immediately", C_SCOPE);
       increment_expected_alerts(error, 1);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 100 ns;
-      r <= transport r+1.0 after 10 ns;
+      r <= transport r + 1.0 after 10 ns;
       await_stable(r, 40 ns, FROM_NOW, 150 ns, FROM_LAST_EVENT, "r: FROM_NOW, FROM_LAST_EVENT, OK after 50 ns", C_SCOPE);
 
-
       -- FROM_LAST_EVENT, FROM_LAST_EVENT
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 100 ns, FROM_LAST_EVENT, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 50 ns, FROM_LAST_EVENT, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns", C_SCOPE);
 
-      r <= r+1.0;
+      r <= r + 1.0;
       wait for 10 ns;
       await_stable(r, 50 ns, FROM_LAST_EVENT, 49 ns, FROM_LAST_EVENT, "r: Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns", C_SCOPE);
       increment_expected_alerts(error, 1);
@@ -4679,13 +4618,12 @@ begin
     wait for 1000 ns;                   -- to allow some time for completion
     --report_alert_counters(FINAL);  -- Report final counters and print conclusion for simulation (Success/Fail)
     report_alert_counters(INTERMEDIATE);
-    report_alert_counters(FINAL);    
+    report_alert_counters(FINAL);
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation
     std.env.stop;
     wait;                               -- to stop completely
-
 
   end process p_main;
 

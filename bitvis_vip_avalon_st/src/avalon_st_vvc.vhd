@@ -38,25 +38,25 @@ use work.transaction_pkg.all;
 
 --================================================================================================================================
 entity avalon_st_vvc is
-  generic (
+  generic(
     -- When true: This VVC is an Avalon-Stream master. Data is output from BFM.
     -- When false: This VVC is an Avalon-Stream slave. Data is input to BFM.
     GC_VVC_IS_MASTER                         : boolean;
-    GC_CHANNEL_WIDTH                         : integer := 1;
+    GC_CHANNEL_WIDTH                         : integer                := 1;
     GC_DATA_WIDTH                            : integer;
-    GC_DATA_ERROR_WIDTH                      : integer := 1;
-    GC_EMPTY_WIDTH                           : integer := 1;
+    GC_DATA_ERROR_WIDTH                      : integer                := 1;
+    GC_EMPTY_WIDTH                           : integer                := 1;
     GC_INSTANCE_IDX                          : natural;
-    GC_AVALON_ST_BFM_CONFIG                  : t_avalon_st_bfm_config    := C_AVALON_ST_BFM_CONFIG_DEFAULT;
+    GC_AVALON_ST_BFM_CONFIG                  : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     -- Common VVC fields
-    GC_CMD_QUEUE_COUNT_MAX                   : natural                   := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                   := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level             := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                   := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                   := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level             := WARNING
+    GC_CMD_QUEUE_COUNT_MAX                   : natural                := 1000;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                := 950;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level          := WARNING;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural                := 1000;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := 950;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := WARNING
   );
-  port (
+  port(
     clk              : in    std_logic;
     avalon_st_vvc_if : inout t_avalon_st_if := init_avalon_st_if_signals(GC_VVC_IS_MASTER, GC_CHANNEL_WIDTH, GC_DATA_WIDTH, GC_DATA_ERROR_WIDTH, GC_EMPTY_WIDTH)
   );
@@ -66,23 +66,23 @@ end entity avalon_st_vvc;
 --================================================================================================================================
 architecture behave of avalon_st_vvc is
 
-  constant C_SCOPE      : string        := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
-  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
+  constant C_SCOPE      : string       := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
+  constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal executor_is_busy       : boolean := false;
-  signal queue_is_increasing    : boolean := false;
-  signal last_cmd_idx_executed  : natural := 0;
-  signal terminate_current_cmd  : t_flag_record;
+  signal executor_is_busy      : boolean := false;
+  signal queue_is_increasing   : boolean := false;
+  signal last_cmd_idx_executed : natural := 0;
+  signal terminate_current_cmd : t_flag_record;
 
   -- Instantiation of the element dedicated executor
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config : t_vvc_config is shared_avalon_st_vvc_config(GC_INSTANCE_IDX);
-  alias vvc_status : t_vvc_status is shared_avalon_st_vvc_status(GC_INSTANCE_IDX);
-    -- Transaction info
-  alias vvc_transaction_info_trigger : std_logic           is global_avalon_st_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias vvc_transaction_info         : t_transaction_group is shared_avalon_st_vvc_transaction_info(GC_INSTANCE_IDX);
+  alias vvc_config                          : t_vvc_config is shared_avalon_st_vvc_config(GC_INSTANCE_IDX);
+  alias vvc_status                          : t_vvc_status is shared_avalon_st_vvc_status(GC_INSTANCE_IDX);
+  -- Transaction info
+  alias vvc_transaction_info_trigger        : std_logic is global_avalon_st_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info                : t_transaction_group is shared_avalon_st_vvc_transaction_info(GC_INSTANCE_IDX);
   -- VVC Activity 
   signal entry_num_in_vvc_activity_register : integer;
 
@@ -103,51 +103,48 @@ architecture behave of avalon_st_vvc is
 
 begin
 
-
---==========================================================================================
--- Constructor
--- - Set up the defaults and show constructor if enabled
---==========================================================================================
+  --==========================================================================================
+  -- Constructor
+  -- - Set up the defaults and show constructor if enabled
+  --==========================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_AVALON_ST_BFM_CONFIG,
-                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
-                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
---==========================================================================================
+                                                 GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
+                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
+  --==========================================================================================
 
-
---==========================================================================================
--- Command interpreter
--- - Interpret, decode and acknowledge commands from the central sequencer
---==========================================================================================
+  --==========================================================================================
+  -- Command interpreter
+  -- - Interpret, decode and acknowledge commands from the central sequencer
+  --==========================================================================================
   cmd_interpreter : process
-     variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
-     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
-     variable v_msg_id_panel       : t_msg_id_panel;
-     variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
+    variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
+    variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+    variable v_msg_id_panel       : t_msg_id_panel;
+    variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
   begin
-
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc( name      => C_VVC_NAME,
-                                                                                          instance  => GC_INSTANCE_IDX);
+    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
+                                                                                                            instance => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
-    v_msg_id_panel := vvc_config.msg_id_panel;
+    v_msg_id_panel                                        := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
-    loop  -- basically as long as new commands are received
+    loop                                -- basically as long as new commands are received
 
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
-      v_cmd_has_been_acked := false; -- Clear flag
+      v_cmd_has_been_acked                                  := false; -- Clear flag
       -- Update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
-      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
+      v_msg_id_panel                                        := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the executor if intended for the executor
       -------------------------------------------------------------------------
@@ -173,7 +170,7 @@ begin
           when AWAIT_ANY_COMPLETION =>
             if not v_local_vvc_cmd.gen_boolean then
               -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
-              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
+              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
               v_cmd_has_been_acked := true;
             end if;
             work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
@@ -210,32 +207,29 @@ begin
       -- 3. Acknowledge command after runing or queuing the command
       -------------------------------------------------------------------------
       if not v_cmd_has_been_acked then
-        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack,v_local_vvc_cmd.cmd_idx);
+        work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
       end if;
 
     end loop;
   end process;
---==========================================================================================
+  --==========================================================================================
 
-
-
---==========================================================================================
--- Command executor
--- - Fetch and execute the commands
---==========================================================================================
+  --==========================================================================================
+  -- Command executor
+  -- - Fetch and execute the commands
+  --==========================================================================================
   cmd_executor : process
-    variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_result                                 : t_vvc_result; -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access     : time := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access       : time := 0 ns;
-    variable v_command_is_bfm_access                  : boolean := false;
-    variable v_prev_command_was_bfm_access            : boolean := false;
-    variable v_data_array_ptr                         : t_slv_array_ptr;
-    variable v_msg_id_panel                           : t_msg_id_panel;
+    variable v_cmd                                   : t_vvc_cmd_record;
+    variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_timestamp_start_of_current_bfm_access : time    := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access    : time    := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access      : time    := 0 ns;
+    variable v_command_is_bfm_access                 : boolean := false;
+    variable v_prev_command_was_bfm_access           : boolean := false;
+    variable v_data_array_ptr                        : t_slv_array_ptr;
+    variable v_msg_id_panel                          : t_msg_id_panel;
 
   begin
-
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
@@ -281,7 +275,7 @@ begin
 
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
-      case v_cmd.operation is  -- Only operations in the dedicated record are relevant
+      case v_cmd.operation is           -- Only operations in the dedicated record are relevant
 
         -- VVC dedicated operations
         --===================================
@@ -292,10 +286,10 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
-            for i in 0 to v_cmd.data_array_length-1 loop
-              v_data_array_ptr(i) := v_cmd.data_array(i)(v_cmd.data_array_word_size-1 downto 0);
+            for i in 0 to v_cmd.data_array_length - 1 loop
+              v_data_array_ptr(i) := v_cmd.data_array(i)(v_cmd.data_array_word_size - 1 downto 0);
             end loop;
-            avalon_st_transmit(channel_value => v_cmd.channel_value(GC_CHANNEL_WIDTH-1 downto 0),
+            avalon_st_transmit(channel_value => v_cmd.channel_value(GC_CHANNEL_WIDTH - 1 downto 0),
                                data_array    => v_data_array_ptr.all,
                                msg           => format_msg(v_cmd),
                                clk           => clk,
@@ -314,8 +308,8 @@ begin
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             -- Call the corresponding procedure in the BFM package.
-            v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
-            avalon_st_receive(channel_value => v_result.channel_value(GC_CHANNEL_WIDTH-1 downto 0),
+            v_data_array_ptr              := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
+            avalon_st_receive(channel_value => v_result.channel_value(GC_CHANNEL_WIDTH - 1 downto 0),
                               data_array    => v_data_array_ptr.all,
                               msg           => format_msg(v_cmd),
                               clk           => clk,
@@ -323,8 +317,8 @@ begin
                               scope         => C_SCOPE,
                               msg_id_panel  => v_msg_id_panel,
                               config        => vvc_config.bfm_config);
-            for i in 0 to v_cmd.data_array_length-1 loop
-              v_result.data_array(i)(v_cmd.data_array_word_size-1 downto 0) := v_data_array_ptr(i);
+            for i in 0 to v_cmd.data_array_length - 1 loop
+              v_result.data_array(i)(v_cmd.data_array_word_size - 1 downto 0) := v_data_array_ptr(i);
             end loop;
             v_result.data_array_length    := v_cmd.data_array_length;
             v_result.data_array_word_size := v_cmd.data_array_word_size;
@@ -336,9 +330,9 @@ begin
               alert(tb_warning, "Scoreboard type for Avalon-Stream RECEIVE data not implemented");
             else
               -- Store the result
-              work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,
-                                                          cmd_idx       => v_cmd.cmd_idx,
-                                                          result        => v_result);
+              work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
+                                                          cmd_idx      => v_cmd.cmd_idx,
+                                                          result       => v_result);
             end if;
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
@@ -351,10 +345,10 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             v_data_array_ptr := new t_slv_array(0 to v_cmd.data_array_length-1)(v_cmd.data_array_word_size-1 downto 0);
-            for i in 0 to v_cmd.data_array_length-1 loop
-              v_data_array_ptr(i) := v_cmd.data_array(i)(v_cmd.data_array_word_size-1 downto 0);
+            for i in 0 to v_cmd.data_array_length - 1 loop
+              v_data_array_ptr(i) := v_cmd.data_array(i)(v_cmd.data_array_word_size - 1 downto 0);
             end loop;
-            avalon_st_expect(channel_exp  => v_cmd.channel_value(GC_CHANNEL_WIDTH-1 downto 0),
+            avalon_st_expect(channel_exp  => v_cmd.channel_value(GC_CHANNEL_WIDTH - 1 downto 0),
                              data_exp     => v_data_array_ptr.all,
                              msg          => format_msg(v_cmd),
                              clk          => clk,
@@ -387,12 +381,10 @@ begin
       end case;
 
       if v_command_is_bfm_access then
-        v_timestamp_end_of_last_bfm_access := now;
+        v_timestamp_end_of_last_bfm_access   := now;
         v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;
-        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and 
-           ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
-          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " & 
-                to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
+        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
+          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " & to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
         end if;
       end if;
 
@@ -407,16 +399,13 @@ begin
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
---==========================================================================================
+  --==========================================================================================
 
-
-
---==========================================================================================
--- Command termination handler
--- - Handles the termination request record (sets and resets terminate flag on request)
---==========================================================================================
-  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd);  -- flag: is_active, set, reset
---==========================================================================================
-
+  --==========================================================================================
+  -- Command termination handler
+  -- - Handles the termination request record (sets and resets terminate flag on request)
+  --==========================================================================================
+  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --==========================================================================================
 
 end behave;

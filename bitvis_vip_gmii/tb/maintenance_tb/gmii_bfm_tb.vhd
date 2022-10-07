@@ -28,7 +28,7 @@ use bitvis_vip_gmii.gmii_bfm_pkg.all;
 -- Test case entity
 entity gmii_bfm_tb is
   generic(
-    GC_TESTCASE : string  := "UVVM"
+    GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
@@ -42,13 +42,13 @@ architecture func of gmii_bfm_tb is
   --------------------------------------------------------------------------------
   -- Signal declarations
   --------------------------------------------------------------------------------
-  signal clk         : std_logic := '0';
-  signal clock_ena   : boolean   := false;
+  signal clk       : std_logic := '0';
+  signal clock_ena : boolean   := false;
 
-  signal gmii_tx_if  : t_gmii_tx_if;
-  signal gmii_rx_if  : t_gmii_rx_if;
+  signal gmii_tx_if : t_gmii_tx_if;
+  signal gmii_rx_if : t_gmii_rx_if;
 
-  signal data_array  : t_byte_array(0 to 99);
+  signal data_array : t_byte_array(0 to 99);
 
 begin
 
@@ -61,32 +61,32 @@ begin
   -- Instantiate test harness
   --------------------------------------------------------------------------------
   i_gmii_test_harness : entity bitvis_vip_gmii.test_harness(struct_bfm)
-    generic map (
+    generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     )
-    port map (
-      clk           => clk,
-      gmii_tx_if    => gmii_tx_if,
-      gmii_rx_if    => gmii_rx_if
+    port map(
+      clk        => clk,
+      gmii_tx_if => gmii_tx_if,
+      gmii_rx_if => gmii_rx_if
     );
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- PROCESS: p_main
   --------------------------------------------------------------------------------------------------------------------------------
   p_main : process
-    constant c_scope           : string := "Main seq.";
+    constant c_scope           : string            := "Main seq.";
     variable v_gmii_bfm_config : t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
 
     --------------------------------------------
     -- Overloads for this testbench
     --------------------------------------------
-    procedure gmii_write (
+    procedure gmii_write(
       data_array : in t_byte_array) is
     begin
       gmii_write(data_array, "", gmii_tx_if, c_scope, shared_msg_id_panel, v_gmii_bfm_config);
     end procedure;
 
-    procedure gmii_write_multiple (
+    procedure gmii_write_multiple(
       data_array                   : in t_byte_array;
       action_when_transfer_is_done : in t_action_when_transfer_is_done) is
     begin
@@ -94,7 +94,6 @@ begin
     end procedure;
 
   begin
-
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
@@ -114,8 +113,8 @@ begin
     ------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of GMII");
     ------------------------------------------------------------------------------
-    clock_ena <= true; -- start clock generator
-    wait for 10*C_CLK_PERIOD;
+    clock_ena <= true;                  -- start clock generator
+    wait for 10 * C_CLK_PERIOD;
 
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
@@ -141,12 +140,12 @@ begin
         gmii_write_multiple(data_array(i to i), RELEASE_LINE_AFTER_TRANSFER);
       end if;
     end loop;
-    check_stable(gmii_tx_if.txen, C_CLK_PERIOD*30, error, "Checking that TXEN was held high during the complete transfer", c_scope);
+    check_stable(gmii_tx_if.txen, C_CLK_PERIOD * 30, error, "Checking that TXEN was held high during the complete transfer", c_scope);
 
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing error case: read() valid data timeout");
     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    wait for 10*C_CLK_PERIOD; -- 10 = default max_wait_cycles
+    wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
 
     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
     log(ID_LOG_HDR, "Testing error case: expect() wrong data");
@@ -162,8 +161,8 @@ begin
     log(ID_LOG_HDR, "Testing setup and hold times");
     v_gmii_bfm_config.bfm_sync     := SYNC_WITH_SETUP_AND_HOLD;
     v_gmii_bfm_config.clock_period := C_CLK_PERIOD;
-    v_gmii_bfm_config.setup_time   := C_CLK_PERIOD/4;
-    v_gmii_bfm_config.hold_time    := C_CLK_PERIOD/4;
+    v_gmii_bfm_config.setup_time   := C_CLK_PERIOD / 4;
+    v_gmii_bfm_config.hold_time    := C_CLK_PERIOD / 4;
     for i in 0 to 10 loop
       gmii_write(data_array(0 to i));
     end loop;
@@ -171,21 +170,20 @@ begin
     ------------------------------------------------------------------------------
     -- Ending the simulation
     ------------------------------------------------------------------------------
-    wait for 1000 ns;             -- Allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion (Success/Fail)
+    wait for 1000 ns;                   -- Allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", c_scope);
     -- Finish the simulation
     std.env.stop;
-    wait; -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
-
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- PROCESS: p_slave
   --------------------------------------------------------------------------------------------------------------------------------
   p_slave : process
-    constant c_scope           : string := "Slave seq.";
+    constant c_scope           : string            := "Slave seq.";
     variable v_gmii_bfm_config : t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
     variable v_rx_data_array   : t_byte_array(0 to 99);
     variable v_data_len        : natural;
@@ -193,21 +191,20 @@ begin
     --------------------------------------------
     -- Overloads for this testbench
     --------------------------------------------
-    procedure gmii_read (
+    procedure gmii_read(
       data_array : out t_byte_array;
       data_len   : out natural) is
     begin
       gmii_read(data_array, data_len, "", gmii_rx_if, c_scope, shared_msg_id_panel, v_gmii_bfm_config);
     end procedure;
 
-    procedure gmii_expect (
+    procedure gmii_expect(
       data_exp : in t_byte_array) is
     begin
       gmii_expect(data_exp, "", gmii_rx_if, error, c_scope, shared_msg_id_panel, v_gmii_bfm_config);
     end procedure;
 
   begin
-
     -- Testing that BFM procedures normalize data arrays
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
     gmii_read(v_rx_data_array(2 to 6), v_data_len);
@@ -243,13 +240,13 @@ begin
     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
     v_gmii_bfm_config.bfm_sync     := SYNC_WITH_SETUP_AND_HOLD;
     v_gmii_bfm_config.clock_period := C_CLK_PERIOD;
-    v_gmii_bfm_config.setup_time   := C_CLK_PERIOD/4;
-    v_gmii_bfm_config.hold_time    := C_CLK_PERIOD/4;
+    v_gmii_bfm_config.setup_time   := C_CLK_PERIOD / 4;
+    v_gmii_bfm_config.hold_time    := C_CLK_PERIOD / 4;
     for i in 0 to 10 loop
       gmii_expect(data_array(0 to i));
     end loop;
 
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_slave;
 

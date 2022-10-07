@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -24,7 +23,6 @@ context uvvm_util.uvvm_util_context;
 
 use work.transaction_pkg.all;
 use work.vvc_cmd_pkg.all;
-
 
 package local_pkg is
   function uart_transaction_to_string(
@@ -42,10 +40,7 @@ package body local_pkg is
     constant value : in t_base_transaction
   ) return string is
   begin
-    return "operation: "           & to_string(value.operation) &
-           "; data: "              & to_string(value.data, HEX, KEEP_LEADING_0, INCL_RADIX) &
-           "; parity_bit_error: "  & to_string(value.error_info.parity_bit_error) &
-           "; stop_bit_error: "    & to_string(value.error_info.stop_bit_error);
+    return "operation: " & to_string(value.operation) & "; data: " & to_string(value.data, HEX, KEEP_LEADING_0, INCL_RADIX) & "; parity_bit_error: " & to_string(value.error_info.parity_bit_error) & "; stop_bit_error: " & to_string(value.error_info.stop_bit_error);
   end function uart_transaction_to_string;
 
   function uart_transaction_match(
@@ -53,10 +48,7 @@ package body local_pkg is
     constant expected : in t_base_transaction
   ) return boolean is
   begin
-    return (value.operation                   = expected.operation)                   and
-           (value.data                        = expected.data)                        and
-           (value.error_info.parity_bit_error = expected.error_info.parity_bit_error) and
-           (value.error_info.stop_bit_error   = expected.error_info.stop_bit_error);
+    return (value.operation = expected.operation) and (value.data = expected.data) and (value.error_info.parity_bit_error = expected.error_info.parity_bit_error) and (value.error_info.stop_bit_error = expected.error_info.stop_bit_error);
   end function uart_transaction_match;
 end package body local_pkg;
 
@@ -86,6 +78,6 @@ use work.transaction_pkg.all;
 --
 ------------------------------------------------------------------------------------------
 package uart_transaction_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map ( t_element         => t_base_transaction,
-                element_match     => uart_transaction_match,
-                to_string_element => uart_transaction_to_string);
+  generic map(t_element         => t_base_transaction,
+              element_match     => uart_transaction_match,
+              to_string_element => uart_transaction_to_string);

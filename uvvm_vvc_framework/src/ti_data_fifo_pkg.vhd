@@ -44,7 +44,7 @@ package ti_data_fifo_pkg is
   --             Returns 0 on error.
   --
   impure function uvvm_fifo_init(
-    buffer_size_in_bits   : natural
+    buffer_size_in_bits : natural
   ) return natural;
 
   ------------------------------------------
@@ -58,8 +58,8 @@ package ti_data_fifo_pkg is
   --        - buffer_size_in_bits (natural) - The size of the FIFO
   --
   procedure uvvm_fifo_init(
-    buffer_idx            : natural;
-    buffer_size_in_bits   : natural
+    buffer_idx          : natural;
+    buffer_size_in_bits : natural
   );
 
   ------------------------------------------
@@ -78,8 +78,8 @@ package ti_data_fifo_pkg is
   --        - data       - The data that shall be pushed (slv)
   --
   procedure uvvm_fifo_put(
-    buffer_idx        : natural;
-    data              : std_logic_vector
+    buffer_idx : natural;
+    data       : std_logic_vector
   );
 
   ------------------------------------------
@@ -102,8 +102,8 @@ package ti_data_fifo_pkg is
   --
   --
   impure function uvvm_fifo_get(
-    buffer_idx            : natural;
-    entry_size_in_bits    : natural
+    buffer_idx         : natural;
+    entry_size_in_bits : natural
   ) return std_logic_vector;
 
   ------------------------------------------
@@ -117,7 +117,7 @@ package ti_data_fifo_pkg is
   --                       that shall be flushed.
   --
   procedure uvvm_fifo_flush(
-    buffer_idx            : natural
+    buffer_idx : natural
   );
 
   ------------------------------------------
@@ -140,8 +140,8 @@ package ti_data_fifo_pkg is
   --
   --
   impure function uvvm_fifo_peek(
-    buffer_idx            : natural;
-    entry_size_in_bits    : natural
+    buffer_idx         : natural;
+    entry_size_in_bits : natural
   ) return std_logic_vector;
 
   ------------------------------------------
@@ -157,7 +157,7 @@ package ti_data_fifo_pkg is
   --
   --
   impure function uvvm_fifo_get_count(
-    buffer_idx            : natural
+    buffer_idx : natural
   ) return natural;
 
   ------------------------------------------
@@ -174,7 +174,7 @@ package ti_data_fifo_pkg is
   --
   --
   impure function uvvm_fifo_get_max_count(
-    buffer_idx            : natural
+    buffer_idx : natural
   ) return natural;
 
   ------------------------------------------
@@ -190,7 +190,7 @@ package ti_data_fifo_pkg is
   --
   --
   impure function uvvm_fifo_is_full(
-    buffer_idx      : natural
+    buffer_idx : natural
   ) return boolean;
 
   ------------------------------------------
@@ -205,27 +205,26 @@ package ti_data_fifo_pkg is
 
 end package ti_data_fifo_pkg;
 
-
 package body ti_data_fifo_pkg is
 
   impure function uvvm_fifo_init(
-    buffer_size_in_bits   : natural
+    buffer_size_in_bits : natural
   ) return natural is
   begin
     return shared_data_fifo.init_queue(buffer_size_in_bits, "UVVM_FIFO");
   end function;
 
   procedure uvvm_fifo_init(
-    buffer_idx            : natural;
-    buffer_size_in_bits   : natural
+    buffer_idx          : natural;
+    buffer_size_in_bits : natural
   ) is
   begin
     shared_data_fifo.init_queue(buffer_idx, buffer_size_in_bits, "UVVM_FIFO");
   end procedure;
 
   procedure uvvm_fifo_put(
-    buffer_idx        : natural;
-    data              : std_logic_vector
+    buffer_idx : natural;
+    data       : std_logic_vector
   ) is
   begin
     shared_data_fifo.push_back(buffer_idx, data);
@@ -240,7 +239,7 @@ package body ti_data_fifo_pkg is
   end function;
 
   procedure uvvm_fifo_flush(
-    buffer_idx         : natural
+    buffer_idx : natural
   ) is
   begin
     shared_data_fifo.flush(buffer_idx);
@@ -255,21 +254,21 @@ package body ti_data_fifo_pkg is
   end function;
 
   impure function uvvm_fifo_get_count(
-    buffer_idx  : natural
+    buffer_idx : natural
   ) return natural is
   begin
     return shared_data_fifo.get_count(buffer_idx);
   end function;
 
   impure function uvvm_fifo_get_max_count(
-    buffer_idx      : natural
+    buffer_idx : natural
   ) return natural is
   begin
     return shared_data_fifo.get_queue_count_max(buffer_idx);
   end function;
 
   impure function uvvm_fifo_is_full(
-    buffer_idx      : natural
+    buffer_idx : natural
   ) return boolean is
   begin
     return shared_data_fifo.get_queue_is_full(buffer_idx);

@@ -43,7 +43,7 @@ architecture func of avalon_st_bfm_tb is
   constant C_CLK_PERIOD   : time    := 10 ns;
   constant C_SCOPE        : string  := C_TB_SCOPE_DEFAULT;
   constant C_SYMBOL_WIDTH : natural := 8;
-  constant C_EMPTY_WIDTH  : natural := maximum(log2(GC_DATA_WIDTH/C_SYMBOL_WIDTH),1);
+  constant C_EMPTY_WIDTH  : natural := maximum(log2(GC_DATA_WIDTH / C_SYMBOL_WIDTH), 1);
   constant C_MAX_CHANNEL  : natural := 64;
 
   --------------------------------------------------------------------------------
@@ -53,14 +53,14 @@ architecture func of avalon_st_bfm_tb is
   signal areset    : std_logic := '0';
   signal clock_ena : boolean   := false;
 
-  signal avalon_st_master_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH-1 downto 0),
-                                              data(GC_DATA_WIDTH-1 downto 0),
-                                              data_error(GC_ERROR_WIDTH-1 downto 0),
-                                              empty(C_EMPTY_WIDTH-1 downto 0));
-  signal avalon_st_slave_if  : t_avalon_st_if(channel(GC_CHANNEL_WIDTH-1 downto 0),
-                                              data(GC_DATA_WIDTH-1 downto 0),
-                                              data_error(GC_ERROR_WIDTH-1 downto 0),
-                                              empty(C_EMPTY_WIDTH-1 downto 0));
+  signal avalon_st_master_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
+                                              data(GC_DATA_WIDTH - 1 downto 0),
+                                              data_error(GC_ERROR_WIDTH - 1 downto 0),
+                                              empty(C_EMPTY_WIDTH - 1 downto 0));
+  signal avalon_st_slave_if  : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
+                                              data(GC_DATA_WIDTH - 1 downto 0),
+                                              data_error(GC_ERROR_WIDTH - 1 downto 0),
+                                              empty(C_EMPTY_WIDTH - 1 downto 0));
 
 begin
 
@@ -73,14 +73,14 @@ begin
   -- Instantiate test harness
   --------------------------------------------------------------------------------
   i_avalon_st_test_harness : entity bitvis_vip_avalon_st.test_harness(struct_bfm)
-    generic map (
+    generic map(
       GC_DATA_WIDTH    => GC_DATA_WIDTH,
       GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
       GC_ERROR_WIDTH   => GC_ERROR_WIDTH,
       GC_SYMBOL_WIDTH  => C_SYMBOL_WIDTH,
       GC_EMPTY_WIDTH   => C_EMPTY_WIDTH
     )
-    port map (
+    port map(
       clk                 => clk,
       areset              => areset,
       avalon_st_master_if => avalon_st_master_if,
@@ -92,10 +92,10 @@ begin
   --------------------------------------------------------------------------------
   p_main : process
     variable v_avl_st_bfm_config : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
-    variable v_data_packet       : t_slv_array(0 to 99)(C_SYMBOL_WIDTH-1 downto 0);
-    variable v_data_stream       : t_slv_array(0 to 99)(GC_DATA_WIDTH-1 downto 0);
+    variable v_data_packet       : t_slv_array(0 to 99)(C_SYMBOL_WIDTH - 1 downto 0);
+    variable v_data_stream       : t_slv_array(0 to 99)(GC_DATA_WIDTH - 1 downto 0);
 
-    procedure new_random_data (
+    procedure new_random_data(
       data_array : inout t_slv_array) is
     begin
       for i in data_array'range loop
@@ -106,51 +106,50 @@ begin
     --------------------------------------------
     -- Overloads for this testbench
     --------------------------------------------
-    procedure avalon_st_transmit (
+    procedure avalon_st_transmit(
       data_array : in t_slv_array;
       channel    : in natural) is
     begin
       avalon_st_transmit(std_logic_vector(to_unsigned(channel, GC_CHANNEL_WIDTH)), data_array, "", clk, avalon_st_master_if, C_SCOPE,
-        shared_msg_id_panel, v_avl_st_bfm_config);
+                         shared_msg_id_panel, v_avl_st_bfm_config);
     end procedure;
 
-    procedure avalon_st_transmit (
+    procedure avalon_st_transmit(
       data_array : in t_slv_array) is
     begin
       avalon_st_transmit(data_array, "", clk, avalon_st_master_if, C_SCOPE, shared_msg_id_panel, v_avl_st_bfm_config);
     end procedure;
 
-    procedure avalon_st_receive (
+    procedure avalon_st_receive(
       data_array : out t_slv_array;
       channel    : out natural) is
-      variable v_channel : std_logic_vector(GC_CHANNEL_WIDTH-1 downto 0);
+      variable v_channel : std_logic_vector(GC_CHANNEL_WIDTH - 1 downto 0);
     begin
       avalon_st_receive(v_channel, data_array, "", clk, avalon_st_slave_if, C_SCOPE, shared_msg_id_panel, v_avl_st_bfm_config);
       channel := to_integer(unsigned(v_channel));
     end procedure;
 
-    procedure avalon_st_receive (
+    procedure avalon_st_receive(
       data_array : out t_slv_array) is
     begin
       avalon_st_receive(data_array, "", clk, avalon_st_slave_if, C_SCOPE, shared_msg_id_panel, v_avl_st_bfm_config);
     end procedure;
 
-    procedure avalon_st_expect (
+    procedure avalon_st_expect(
       exp_array : in t_slv_array;
       channel   : in natural) is
     begin
       avalon_st_expect(std_logic_vector(to_unsigned(channel, GC_CHANNEL_WIDTH)), exp_array, "", clk, avalon_st_slave_if, error, C_SCOPE,
-        shared_msg_id_panel, v_avl_st_bfm_config);
+                       shared_msg_id_panel, v_avl_st_bfm_config);
     end procedure;
 
-    procedure avalon_st_expect (
+    procedure avalon_st_expect(
       exp_array : in t_slv_array) is
     begin
       avalon_st_expect(exp_array, "", clk, avalon_st_slave_if, error, C_SCOPE, shared_msg_id_panel, v_avl_st_bfm_config);
     end procedure;
 
   begin
-
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
@@ -170,17 +169,16 @@ begin
     --------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Avalon-ST");
     --------------------------------------------------------------------------------
-    clock_ena <= true; -- start clock generator
-    gen_pulse(areset, 10*C_CLK_PERIOD, "Pulsing reset for 10 clock periods");
-    wait for 10*C_CLK_PERIOD;
-
+    clock_ena <= true;                  -- start clock generator
+    gen_pulse(areset, 10 * C_CLK_PERIOD, "Pulsing reset for 10 clock periods");
+    wait for 10 * C_CLK_PERIOD;
 
     if GC_TESTCASE = "test_packet_data" then
       ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR_LARGE, "Simulating packet-based data");
       ----------------------------------------------------------------------------------------------------------------------------
       v_avl_st_bfm_config.use_packet_transfer := true;
-      new_random_data(v_data_packet); -- Generate random data
+      new_random_data(v_data_packet);   -- Generate random data
 
       log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
       v_avl_st_bfm_config.first_symbol_in_msb := true;
@@ -231,13 +229,13 @@ begin
       avalon_st_transmit(v_data_packet);
       avalon_st_receive(v_data_packet);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
-      wait for 0 ns; -- Riviera Pro needs a delta cycle to use the force command again on the same signal
+      wait for 0 ns;                    -- Riviera Pro needs a delta cycle to use the force command again on the same signal
 
       log(ID_LOG_HDR, "Testing error case: receive() with start of packet in wrong position");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '1';
-      avalon_st_transmit(v_data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
-      avalon_st_receive(v_data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
+      avalon_st_transmit(v_data_packet(0 to 2 * GC_DATA_WIDTH / C_SYMBOL_WIDTH - 1));
+      avalon_st_receive(v_data_packet(0 to 2 * GC_DATA_WIDTH / C_SYMBOL_WIDTH - 1));
       << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
 
       log(ID_LOG_HDR, "Testing error case: receive() with missing end of packet");
@@ -249,23 +247,23 @@ begin
 
       log(ID_LOG_HDR, "Testing error case: receive() with end of packet in wrong position");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      avalon_st_transmit(v_data_packet(0 to 1*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
-      avalon_st_receive(v_data_packet(0 to 2*GC_DATA_WIDTH/C_SYMBOL_WIDTH-1));
-      new_random_data(v_data_packet); -- Overwrite invalid data array after receive error
+      avalon_st_transmit(v_data_packet(0 to 1 * GC_DATA_WIDTH / C_SYMBOL_WIDTH - 1));
+      avalon_st_receive(v_data_packet(0 to 2 * GC_DATA_WIDTH / C_SYMBOL_WIDTH - 1));
+      new_random_data(v_data_packet);   -- Overwrite invalid data array after receive error
 
       if GC_DATA_WIDTH > C_SYMBOL_WIDTH then
         log(ID_LOG_HDR, "Testing error case: receive() with missing empty symbols");
         increment_expected_alerts_and_stop_limit(ERROR, 1);
-        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH-1 downto 0) >> <= force (others => '0');
+        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH - 1 downto 0) >> <= force (others => '0');
         avalon_st_transmit(v_data_packet(0 to 10));
         avalon_st_receive(v_data_packet(0 to 10));
-        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH-1 downto 0) >> <= release;
+        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH - 1 downto 0) >> <= release;
       end if;
 
       log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       avalon_st_receive(v_data_packet);
-      new_random_data(v_data_packet); -- Overwrite invalid data array after receive error
+      new_random_data(v_data_packet);   -- Overwrite invalid data array after receive error
 
       log(ID_LOG_HDR, "Testing error case: expect() wrong data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
@@ -282,7 +280,7 @@ begin
       log(ID_LOG_HDR_LARGE, "Simulating data stream (non-packet)");
       ----------------------------------------------------------------------------------------------------------------------------
       v_avl_st_bfm_config.use_packet_transfer := false;
-      new_random_data(v_data_stream); -- Generate random data
+      new_random_data(v_data_stream);   -- Generate random data
 
       log(ID_LOG_HDR, "Testing symbol ordering: first symbol in high order bits");
       v_avl_st_bfm_config.first_symbol_in_msb := true;
@@ -329,13 +327,13 @@ begin
       log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       avalon_st_receive(v_data_stream);
-      new_random_data(v_data_stream); -- Overwrite invalid data array after error
+      new_random_data(v_data_stream);   -- Overwrite invalid data array after error
 
       log(ID_LOG_HDR, "Testing error case: receive() timeout - not enough data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
       avalon_st_transmit(v_data_stream(0 to 1));
       avalon_st_receive(v_data_stream);
-      new_random_data(v_data_stream); -- Overwrite invalid data array after error
+      new_random_data(v_data_stream);   -- Overwrite invalid data array after error
 
       log(ID_LOG_HDR, "Testing error case: expect() wrong data");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
@@ -349,11 +347,11 @@ begin
 
     elsif GC_TESTCASE = "test_setup_and_hold_times" then
       v_avl_st_bfm_config.clock_period        := C_CLK_PERIOD;
-      v_avl_st_bfm_config.setup_time          := C_CLK_PERIOD/4;
-      v_avl_st_bfm_config.hold_time           := C_CLK_PERIOD/4;
+      v_avl_st_bfm_config.setup_time          := C_CLK_PERIOD / 4;
+      v_avl_st_bfm_config.hold_time           := C_CLK_PERIOD / 4;
       v_avl_st_bfm_config.bfm_sync            := SYNC_WITH_SETUP_AND_HOLD;
       v_avl_st_bfm_config.use_packet_transfer := true;
-      new_random_data(v_data_packet); -- Generate random data
+      new_random_data(v_data_packet);   -- Generate random data
 
       log(ID_LOG_HDR, "Testing setup and hold times");
       for i in 0 to 3 loop
@@ -376,12 +374,12 @@ begin
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;             -- Allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion (Success/Fail)
+    wait for 1000 ns;                   -- Allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
     -- Finish the simulation
     std.env.stop;
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
 

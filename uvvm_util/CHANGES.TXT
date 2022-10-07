@@ -3,6 +3,11 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.1
+----------
+Released: 2022-10-07
+- Fixed to_string() function not calculating the max size correctly.
+
 v2.19.0
 ----------
 Released: 2022-05-05

@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 ------------------------------------------------------------------------------------------
 -- Local package
 ------------------------------------------------------------------------------------------
@@ -44,29 +43,25 @@ package body local_pkg is
   function result_to_string(
     constant value : in t_vvc_result
   ) return string is
-    variable v_line : line;
+    variable v_line          : line;
     variable v_return_string : string(1 to 1000);
     variable v_string_length : integer;
   begin
     -- Limiting output to the first four elements in the result queue
     write(v_line, LF & "RID: " & to_string(value.rid, HEX, SKIP_LEADING_0, INCL_RADIX));
     for i in 0 to minimum(value.len, 3) loop
-      write(v_line, LF &
-          "RDATA(" & to_string(i) & "): " & to_string(value.rdata(i), HEX, SKIP_LEADING_0, INCL_RADIX) & 
-          ", RRESP(" & to_string(i) & "): " & t_xresp'image(value.rresp(i)) & 
-          ", RUSER(" & to_string(i) & "): " & to_string(value.ruser(i), HEX, SKIP_LEADING_0, INCL_RADIX));
+      write(v_line, LF & "RDATA(" & to_string(i) & "): " & to_string(value.rdata(i), HEX, SKIP_LEADING_0, INCL_RADIX) & ", RRESP(" & to_string(i) & "): " & t_xresp'image(value.rresp(i)) & ", RUSER(" & to_string(i) & "): " & to_string(value.ruser(i), HEX, SKIP_LEADING_0, INCL_RADIX));
     end loop;
     write(v_line, LF);
     if value.len > 3 then
       write(v_line, LF & "Truncated remaining result..");
     end if;
-    v_string_length := v_line.all'length;
+    v_string_length                       := v_line.all'length;
     v_return_string(1 to v_string_length) := v_line.all;
     deallocate(v_line);
     return v_return_string(1 to v_string_length);
   end function;
 end package body local_pkg;
-
 
 ------------------------------------------------------------------------------------------
 --  axi_sb_pkg
@@ -84,6 +79,6 @@ use work.local_pkg.all;
 library bitvis_vip_scoreboard;
 
 package axi_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-  generic map (t_element         => t_vvc_result,
-               element_match     => "=",
-               to_string_element => result_to_string);
+  generic map(t_element         => t_vvc_result,
+              element_match     => "=",
+              to_string_element => result_to_string);

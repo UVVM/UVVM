@@ -53,13 +53,13 @@
 ---- from http://www.opencores.org/lgpl.shtml                     ---- 
 ----                                                              ---- 
 ----------------------------------------------------------------------
- 
+
 library ieee;
 use ieee.std_logic_1164.all;
 --use ieee.std_logic_arith.all;
 --use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
- 
+
 ------------------------------------------------------------------------------
 -- Entity section
 ------------------------------------------------------------------------------
@@ -90,205 +90,205 @@ use ieee.numeric_std.all;
 --   S_AXI_BVALID                 -- AXI4LITE slave: Resonse valid
 --   S_AXI_AWREADY                -- AXI4LITE slave: Wrte address ready
 ------------------------------------------------------------------------------
- 
+
 entity msec_ipcore_axilite is
   generic(
     -- Multiplier parameters
-    C_NR_BITS_TOTAL   : integer := 1536;
-    C_NR_STAGES_TOTAL : integer := 96;
-    C_NR_STAGES_LOW   : integer := 32;
-    C_SPLIT_PIPELINE  : boolean := true;
-    C_FIFO_AW         : integer := 7;
-    C_MEM_STYLE       : string  := "asym"; -- xil_prim, generic, asym are valid options
-    C_FPGA_MAN        : string  := "xilinx";    -- xilinx, altera are valid options
+    C_NR_BITS_TOTAL    : integer          := 1536;
+    C_NR_STAGES_TOTAL  : integer          := 96;
+    C_NR_STAGES_LOW    : integer          := 32;
+    C_SPLIT_PIPELINE   : boolean          := true;
+    C_FIFO_AW          : integer          := 7;
+    C_MEM_STYLE        : string           := "asym"; -- xil_prim, generic, asym are valid options
+    C_FPGA_MAN         : string           := "xilinx"; -- xilinx, altera are valid options
     -- Bus protocol parameters
-    C_S_AXI_DATA_WIDTH             : integer              := 32;
-    C_S_AXI_ADDR_WIDTH             : integer              := 32;
-    C_BASEADDR                     : std_logic_vector     := X"FFFFFFFF";
-    C_HIGHADDR                     : std_logic_vector     := X"00000000"
+    C_S_AXI_DATA_WIDTH : integer          := 32;
+    C_S_AXI_ADDR_WIDTH : integer          := 32;
+    C_BASEADDR         : std_logic_vector := X"FFFFFFFF";
+    C_HIGHADDR         : std_logic_vector := X"00000000"
   );
   port(
     --USER ports
-    core_clk                      : in std_logic;
-    calc_time                     : out std_logic;
-    IntrEvent                     : out std_logic;
+    core_clk      : in  std_logic;
+    calc_time     : out std_logic;
+    IntrEvent     : out std_logic;
     -------------------------
     -- AXI4lite interface
     -------------------------
     --- Global signals
-    S_AXI_ACLK                     : in  std_logic;
-    S_AXI_ARESETN                  : in  std_logic;
+    S_AXI_ACLK    : in  std_logic;
+    S_AXI_ARESETN : in  std_logic;
     --- Write address channel
-    S_AXI_AWADDR                   : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-    S_AXI_AWVALID                  : in  std_logic;
-    S_AXI_AWREADY                  : out std_logic;
+    S_AXI_AWADDR  : in  std_logic_vector(C_S_AXI_ADDR_WIDTH - 1 downto 0);
+    S_AXI_AWVALID : in  std_logic;
+    S_AXI_AWREADY : out std_logic;
     --- Write data channel
-    S_AXI_WDATA                    : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-    S_AXI_WVALID                   : in  std_logic;
-    S_AXI_WREADY                   : out std_logic;
-    S_AXI_WSTRB                    : in  std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
+    S_AXI_WDATA   : in  std_logic_vector(C_S_AXI_DATA_WIDTH - 1 downto 0);
+    S_AXI_WVALID  : in  std_logic;
+    S_AXI_WREADY  : out std_logic;
+    S_AXI_WSTRB   : in  std_logic_vector((C_S_AXI_DATA_WIDTH / 8) - 1 downto 0);
     --- Write response channel
-    S_AXI_BVALID                   : out std_logic;
-    S_AXI_BREADY                   : in  std_logic;
-    S_AXI_BRESP                    : out std_logic_vector(1 downto 0);
+    S_AXI_BVALID  : out std_logic;
+    S_AXI_BREADY  : in  std_logic;
+    S_AXI_BRESP   : out std_logic_vector(1 downto 0);
     --- Read address channel
-    S_AXI_ARADDR                   : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-    S_AXI_ARVALID                  : in  std_logic;
-    S_AXI_ARREADY                  : out std_logic; 
+    S_AXI_ARADDR  : in  std_logic_vector(C_S_AXI_ADDR_WIDTH - 1 downto 0);
+    S_AXI_ARVALID : in  std_logic;
+    S_AXI_ARREADY : out std_logic;
     --- Read data channel
-    S_AXI_RDATA                    : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-    S_AXI_RVALID                   : out std_logic;
-    S_AXI_RREADY                   : in  std_logic;
-    S_AXI_RRESP                    : out std_logic_vector(1 downto 0)
+    S_AXI_RDATA   : out std_logic_vector(C_S_AXI_DATA_WIDTH - 1 downto 0);
+    S_AXI_RVALID  : out std_logic;
+    S_AXI_RREADY  : in  std_logic;
+    S_AXI_RRESP   : out std_logic_vector(1 downto 0)
   );
- 
+
   attribute MAX_FANOUT : string;
   attribute SIGIS      : string;
-  attribute MAX_FANOUT of S_AXI_ACLK    : signal is "10000";
+  attribute MAX_FANOUT of S_AXI_ACLK : signal is "10000";
   attribute MAX_FANOUT of S_AXI_ARESETN : signal is "10000";
-  attribute SIGIS of S_AXI_ACLK         : signal is "Clk";
-  attribute SIGIS of S_AXI_ARESETN      : signal is "Rst";
+  attribute SIGIS of S_AXI_ACLK : signal is "Clk";
+  attribute SIGIS of S_AXI_ARESETN : signal is "Rst";
 end entity msec_ipcore_axilite;
- 
+
 ------------------------------------------------------------------------------
 -- Architecture section
 ------------------------------------------------------------------------------
- 
+
 architecture IMP of msec_ipcore_axilite is
   type axi_states is (addr_wait, read_state, write_state, response_state);
   signal state : axi_states;
- 
-  signal address : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-  signal reset : std_logic;
- 
+
+  signal address : std_logic_vector(C_S_AXI_ADDR_WIDTH - 1 downto 0);
+  signal reset   : std_logic;
+
   signal S_AXI_BVALID_i : std_logic;
- 
+
   -- selection signals
-  signal cs_array           : std_logic_vector(6 downto 0);
+  signal cs_array         : std_logic_vector(6 downto 0);
   signal slv_reg_selected : std_logic;
-  signal op_mem_selected    : std_logic;
-  signal op_sel             : std_logic_vector(1 downto 0);
-  signal MNO_sel            : std_logic;
- 
+  signal op_mem_selected  : std_logic;
+  signal op_sel           : std_logic_vector(1 downto 0);
+  signal MNO_sel          : std_logic;
+
   -- slave register signals
-  signal slv_reg : std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+  signal slv_reg              : std_logic_vector(C_S_AXI_DATA_WIDTH - 1 downto 0);
   signal slv_reg_write_enable : std_logic;
-  signal load_flags : std_logic;
- 
+  signal load_flags           : std_logic;
+
   -- core interface signeals
-  signal write_enable : std_logic;
+  signal write_enable      : std_logic;
   signal core_write_enable : std_logic;
-  signal core_fifo_push : std_logic;
-  signal core_data_out : std_logic_vector(31 downto 0);
-  signal core_rw_address : std_logic_vector(8 downto 0);
- 
+  signal core_fifo_push    : std_logic;
+  signal core_data_out     : std_logic_vector(31 downto 0);
+  signal core_rw_address   : std_logic_vector(8 downto 0);
+
   ------------------------------------------------------------------
   -- Signals for multiplier core interrupt
   ------------------------------------------------------------------
-  signal core_interrupt                 : std_logic;
-  signal core_fifo_full                 : std_logic;
-  signal core_fifo_nopush               : std_logic;
-  signal core_ready                     : std_logic;
-  signal core_mem_collision             : std_logic;
- 
+  signal core_interrupt     : std_logic;
+  signal core_fifo_full     : std_logic;
+  signal core_fifo_nopush   : std_logic;
+  signal core_ready         : std_logic;
+  signal core_mem_collision : std_logic;
+
   ------------------------------------------------------------------
   -- Signals for multiplier core control
   ------------------------------------------------------------------
-  signal core_start                     : std_logic;
-  signal core_start_bit                 : std_logic;
-  signal core_start_bit_d               : std_logic;
-  signal core_exp_m                     : std_logic;
-  signal core_p_sel                     : std_logic_vector(1 downto 0);
-  signal core_dest_op_single            : std_logic_vector(1 downto 0);
-  signal core_x_sel_single              : std_logic_vector(1 downto 0);
-  signal core_y_sel_single              : std_logic_vector(1 downto 0);
-  signal core_flags                     : std_logic_vector(15 downto 0);
-  signal core_modulus_sel               : std_logic;
- 
+  signal core_start          : std_logic;
+  signal core_start_bit      : std_logic;
+  signal core_start_bit_d    : std_logic;
+  signal core_exp_m          : std_logic;
+  signal core_p_sel          : std_logic_vector(1 downto 0);
+  signal core_dest_op_single : std_logic_vector(1 downto 0);
+  signal core_x_sel_single   : std_logic_vector(1 downto 0);
+  signal core_y_sel_single   : std_logic_vector(1 downto 0);
+  signal core_flags          : std_logic_vector(15 downto 0);
+  signal core_modulus_sel    : std_logic;
+
 begin
   -- unused signals
   S_AXI_BRESP <= "00";
   S_AXI_RRESP <= "00";
- 
+
   -- axi-lite slave state machine
-  axi_slave_states : process (S_AXI_ACLK)
+  axi_slave_states : process(S_AXI_ACLK)
   begin
     if rising_edge(S_AXI_ACLK) then
-      if S_AXI_ARESETN='0' then -- slave reset state
-        S_AXI_RVALID <= '0';
+      if S_AXI_ARESETN = '0' then       -- slave reset state
+        S_AXI_RVALID   <= '0';
         S_AXI_BVALID_i <= '0';
-        S_AXI_ARREADY <= '0';
-        S_AXI_WREADY <= '0';
-        S_AXI_AWREADY <= '0';
-        state <= addr_wait;
-        address <= (others=>'0');
-        write_enable <= '0';
+        S_AXI_ARREADY  <= '0';
+        S_AXI_WREADY   <= '0';
+        S_AXI_AWREADY  <= '0';
+        state          <= addr_wait;
+        address        <= (others => '0');
+        write_enable   <= '0';
       else
         case state is
-          when addr_wait => 
-          -- wait for a read or write address and latch it in
+          when addr_wait =>
+            -- wait for a read or write address and latch it in
             if S_AXI_ARVALID = '1' then -- read
-              state <= read_state;
-              address <= S_AXI_ARADDR;
+              state         <= read_state;
+              address       <= S_AXI_ARADDR;
               S_AXI_ARREADY <= '1';
             elsif (S_AXI_AWVALID = '1' and S_AXI_WVALID = '1') then -- write
-              state <= write_state;
+              state   <= write_state;
               address <= S_AXI_AWADDR;
             else
               state <= addr_wait;
             end if;
- 
+
           when read_state =>
-          -- place correct data on bus and generate valid pulse
+            -- place correct data on bus and generate valid pulse
             S_AXI_ARREADY <= '0';
-            S_AXI_RVALID <= '1';
-            state <= response_state;
- 
+            S_AXI_RVALID  <= '1';
+            state         <= response_state;
+
           when write_state =>
-          -- generate a write pulse
+            -- generate a write pulse
             S_AXI_AWREADY <= '1';
-            write_enable <= '1';
-            S_AXI_WREADY <= '1';
-            state <= response_state;
- 
+            write_enable  <= '1';
+            S_AXI_WREADY  <= '1';
+            state         <= response_state;
+
           when response_state =>
-            write_enable <= '0';
-            S_AXI_AWREADY <= '0';
-            S_AXI_WREADY <= '0';
+            write_enable   <= '0';
+            S_AXI_AWREADY  <= '0';
+            S_AXI_WREADY   <= '0';
             S_AXI_BVALID_i <= '1';
-          -- wait for response from master
+            -- wait for response from master
             if (S_AXI_RREADY = '1') or (S_AXI_BVALID_i = '1' and S_AXI_BREADY = '1') then
-              S_AXI_RVALID <= '0';
+              S_AXI_RVALID   <= '0';
               S_AXI_BVALID_i <= '0';
-              state <= addr_wait;
+              state          <= addr_wait;
             else
               state <= response_state;
             end if;
- 
+
         end case;
       end if;
     end if;
   end process;
-  S_AXI_BVALID <= S_AXI_BVALID_i;  
- 
+  S_AXI_BVALID <= S_AXI_BVALID_i;
+
   -- place correct data on the read bus
-  S_AXI_RDATA <=  slv_reg when (slv_reg_selected='1') else
-                  core_data_out;
- 
+  S_AXI_RDATA <= slv_reg when (slv_reg_selected = '1') else
+                 core_data_out;
+
   -- SLAVE REG MAPPING
   -- core control signals
-  core_p_sel <= slv_reg(31 downto 30);
+  core_p_sel          <= slv_reg(31 downto 30);
   core_dest_op_single <= slv_reg(29 downto 28);
-  core_x_sel_single <= slv_reg(27 downto 26);
-  core_y_sel_single <= slv_reg(25 downto 24);
-  core_start_bit <= slv_reg(23);
-  core_exp_m <= slv_reg(22);
-  core_modulus_sel <= slv_reg(21);
-  reset <= (not S_AXI_ARESETN);
- 
+  core_x_sel_single   <= slv_reg(27 downto 26);
+  core_y_sel_single   <= slv_reg(25 downto 24);
+  core_start_bit      <= slv_reg(23);
+  core_exp_m          <= slv_reg(22);
+  core_modulus_sel    <= slv_reg(21);
+  reset               <= (not S_AXI_ARESETN);
+
   -- implement slave register
-  SLAVE_REG_WRITE_PROC : process( S_AXI_ACLK ) is
-    variable slv_reg_to_be_written    : std_logic_vector(slv_reg'length-1 downto 0) := (others => '0');
+  SLAVE_REG_WRITE_PROC : process(S_AXI_ACLK) is
+    variable slv_reg_to_be_written : std_logic_vector(slv_reg'length - 1 downto 0) := (others => '0');
   begin
     if rising_edge(S_AXI_ACLK) then
       if reset = '1' then
@@ -296,20 +296,20 @@ begin
       elsif load_flags = '1' then
         slv_reg <= slv_reg(31 downto 16) & core_flags;
       else
-        if (slv_reg_write_enable='1') then
-          for i in 0 to S_AXI_WSTRB'length-1 loop
-          if S_AXI_WSTRB(i) = '1' then
-              slv_reg_to_be_written((8*i)+7 downto (8*i)) := S_AXI_WDATA((8*i)+7 downto (8*i));
-          else
-              slv_reg_to_be_written((8*i)+7 downto (8*i)) := (others => '0');
-          end if;
+        if (slv_reg_write_enable = '1') then
+          for i in 0 to S_AXI_WSTRB'length - 1 loop
+            if S_AXI_WSTRB(i) = '1' then
+              slv_reg_to_be_written((8 * i) + 7 downto (8 * i)) := S_AXI_WDATA((8 * i) + 7 downto (8 * i));
+            else
+              slv_reg_to_be_written((8 * i) + 7 downto (8 * i)) := (others => '0');
+            end if;
           end loop;
           slv_reg <= slv_reg_to_be_written;
         end if;
       end if;
     end if;
   end process SLAVE_REG_WRITE_PROC;
- 
+
   -- create start pulse of 1 clk wide
   START_PULSE : process(S_AXI_ACLK)
   begin
@@ -318,18 +318,18 @@ begin
     end if;
   end process;
   core_start <= core_start_bit and not core_start_bit_d;
- 
+
   -- interrupt and flags
   --core_interrupt <= core_ready or core_mem_collision or core_fifo_full or core_fifo_nopush;
-  core_interrupt <= '0'; -- not used in this example
- 
+  core_interrupt <= '0';                -- not used in this example
+
   FLAGS_CNTRL_PROC : process(S_AXI_ACLK, reset) is
   begin
     if reset = '1' then
       core_flags <= (others => '0');
       load_flags <= '0';
     elsif rising_edge(S_AXI_ACLK) then
-      if core_start = '1' then  -- flags get resetted when core starts new operation
+      if core_start = '1' then          -- flags get resetted when core starts new operation
         core_flags <= (others => '0');
       else
         if core_ready = '1' then
@@ -356,43 +356,41 @@ begin
       load_flags <= core_interrupt;
     end if;
   end process FLAGS_CNTRL_PROC;
- 
+
   IntrEvent <= core_flags(15) or core_flags(14) or core_flags(13) or core_flags(12);
- 
+
   -- adress decoder
-  with address(14 downto 12) select
-    cs_array <= "0000001" when "000", -- M
-                "0000010" when "001", -- OP0
-                "0000100" when "010", -- OP1
-                "0001000" when "011", -- OP2
-                "0010000" when "100", -- OP3
-                "0100000" when "101", -- FIFO
-                "1000000" when "110", -- user reg space
-                "0000000" when others;
- 
-  slv_reg_selected <= cs_array(6);
+  with address(14 downto 12) select cs_array <=
+    "0000001" when "000",               -- M
+    "0000010" when "001",               -- OP0
+    "0000100" when "010",               -- OP1
+    "0001000" when "011",               -- OP2
+    "0010000" when "100",               -- OP3
+    "0100000" when "101",               -- FIFO
+    "1000000" when "110",               -- user reg space
+    "0000000" when others;
+
+  slv_reg_selected     <= cs_array(6);
   slv_reg_write_enable <= write_enable and slv_reg_selected;
- 
+
   -- high if memory space is selected
   op_mem_selected <= cs_array(0) or cs_array(1) or cs_array(2) or cs_array(3) or cs_array(4);
- 
+
   -- operand memory singals
   MNO_sel <= cs_array(0);
- 
-  with cs_array(4 downto 1) select
-    op_sel <=   "00" when "0001",
-                "01" when "0010",
-                "10" when "0100",
-                "11" when "1000",
-                "00" when others;
- 
+
+  with cs_array(4 downto 1) select op_sel <=
+    "00" when "0001",
+    "01" when "0010",
+    "10" when "0100",
+    "11" when "1000",
+    "00" when others;
+
   core_rw_address <= MNO_sel & op_sel & address(7 downto 2);
- 
+
   core_write_enable <= write_enable and op_mem_selected;
- 
- 
+
   -- FIFO signals
   core_fifo_push <= write_enable and cs_array(5);
 
- 
 end IMP;

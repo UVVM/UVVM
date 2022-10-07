@@ -17,12 +17,11 @@
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-
 package record_queue_pkg is new work.generic_queue_pkg
-  generic map (
-        t_generic_element => t_sync_flag_record,
-        GC_QUEUE_COUNT_MAX => 1000,
-        GC_QUEUE_COUNT_THRESHOLD => 0);
+  generic map(
+    t_generic_element        => t_sync_flag_record,
+    GC_QUEUE_COUNT_MAX       => 1000,
+    GC_QUEUE_COUNT_THRESHOLD => 0);
 
 library IEEE;
 use IEEE.std_logic_1164.all;
@@ -35,9 +34,9 @@ context uvvm_util.uvvm_util_context;
 --hdlregression:tb
 -- Test case entity
 entity generic_queue_record_tb is
-  generic (
+  generic(
     GC_TESTCASE : string := "UVVM"
-    );
+  );
 end entity;
 
 -- Test case architecture
@@ -46,38 +45,36 @@ architecture func of generic_queue_record_tb is
   use work.record_queue_pkg.all;
   shared variable queue_under_test : t_generic_queue;
 
-  constant C_SCOPE        : string  := "test_bench";
-  constant C_QUEUE_SCOPE  : string  := "queue_scope";
+  constant C_SCOPE       : string := "test_bench";
+  constant C_QUEUE_SCOPE : string := "queue_scope";
 
-  begin
+begin
 
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
-  p_main: process
-
+  p_main : process
     --------------------------------------------------------------------------------------
     -- String compare with error logging
     --------------------------------------------------------------------------------------
-    procedure string_compare (
-      constant received   : string;
-      constant expected   : string;
-      constant msg        : string
+    procedure string_compare(
+      constant received : string;
+      constant expected : string;
+      constant msg      : string
     ) is
     begin
       if (received = expected) then
         log(msg & " is OK => received " & received);
       else
-        alert(ERROR, msg & " failed. Expected " & expected & ", but received " & received & ". ",C_SCOPE);
+        alert(ERROR, msg & " failed. Expected " & expected & ", but received " & received & ". ", C_SCOPE);
       end if;
     end procedure;
-
 
     --------------------------------------------------------------------------------------
     -- Setup of queue, and test of scope and size functions
     --------------------------------------------------------------------------------------
     procedure setup_and_initial_check_of_queue(
-      constant dummy    : t_void
+      constant dummy : t_void
     ) is
     begin
       log(ID_LOG_HDR, "Setting up generic queue and verifying scope and size", C_SCOPE);
@@ -95,24 +92,24 @@ architecture func of generic_queue_record_tb is
     -- Test of insert
     --------------------------------------------------------------------------------------
     procedure test_of_insert(
-      constant dummy    : t_void
+      constant dummy : t_void
     ) is
-      variable v_num_entries     : natural := 10; -- Originally add v_num_entries to the queue.
+      variable v_num_entries : natural := 10; -- Originally add v_num_entries to the queue.
 
       -- Regarding element to be inserted
-      variable v_element : t_sync_flag_record := C_SYNC_FLAG_DEFAULT;
-      variable v_position        : natural := 2;
+      variable v_element  : t_sync_flag_record := C_SYNC_FLAG_DEFAULT;
+      variable v_position : natural            := 2;
     begin
       log(ID_LOG_HDR, "Test of insert", C_SCOPE);
 
       queue_under_test.set_queue_count_threshold(950);
       queue_under_test.set_queue_count_threshold_severity(TB_WARNING);
 
-      check_value (v_num_entries <= queue_under_test.get_queue_count_max(VOID), ERROR, "Check if the queue is big enough for the planned test", C_SCOPE);
+      check_value(v_num_entries <= queue_under_test.get_queue_count_max(VOID), ERROR, "Check if the queue is big enough for the planned test", C_SCOPE);
 
-      log("Filling up the queue with " & to_string(v_num_entries-1) & " entries = C_SYNC_FLAG_DEFAULT. "  );
+      log("Filling up the queue with " & to_string(v_num_entries - 1) & " entries = C_SYNC_FLAG_DEFAULT. ");
 
-      for i in 0 to v_num_entries-1 loop
+      for i in 0 to v_num_entries - 1 loop
         queue_under_test.put(C_SYNC_FLAG_DEFAULT);
       end loop;
 
@@ -122,12 +119,12 @@ architecture func of generic_queue_record_tb is
       v_element.flag_name(1) := 'A';
       check_value(queue_under_test.get_count(VOID), v_num_entries, ERROR, "Pre insert test: Checking if queue initially has " & to_string(v_num_entries) & " entries", C_SCOPE);
       check_value(not queue_under_test.exists(v_element), ERROR, "Pre insert test: Check that Element doens't exists yet", C_SCOPE);
-      check_value(queue_under_test.find_position(v_element), -1, ERROR, "Pre insert test: Check that element = " & to_string(0) & " is not found yet" , C_SCOPE);
+      check_value(queue_under_test.find_position(v_element), -1, ERROR, "Pre insert test: Check that element = " & to_string(0) & " is not found yet", C_SCOPE);
 
       -----------------------------
       -- Insert
       -----------------------------
-      log(ID_SEQUENCER_SUB, "Insert element = integer = " & to_string(0) & " after POSITION " & to_string(v_position) , C_SCOPE);
+      log(ID_SEQUENCER_SUB, "Insert element = integer = " & to_string(0) & " after POSITION " & to_string(v_position), C_SCOPE);
       queue_under_test.insert(POSITION, v_position, v_element);
       v_num_entries := v_num_entries + 1;
 
@@ -137,20 +134,15 @@ architecture func of generic_queue_record_tb is
       -- Check if v_elementis in position v_position+1 (i.e. AT v_position)
       check_value(queue_under_test.find_position(v_element), v_position, ERROR, "Check that the new element =  TRUE  is at POSITION " & to_string(v_position), C_SCOPE);
 
-
-
       -----------------------------
       -- Reset the queue by calling flush.
       queue_under_test.flush(VOID);
       queue_under_test.set_queue_count_threshold(0);
     end procedure;
 
-
-
     --------------------------------------------------------------------------------------
     -- Test of read and write within size limit
     --------------------------------------------------------------------------------------
-
 
   begin
     -- To avoid that log files from different test cases (run in separate
@@ -161,7 +153,7 @@ architecture func of generic_queue_record_tb is
     -- Print the configuration to the log
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
-    set_alert_stop_limit(TB_ERROR, 0);    -- 0 = Never stop
+    set_alert_stop_limit(TB_ERROR, 0);  -- 0 = Never stop
 
     enable_log_msg(ALL_MESSAGES);
     -- disable_log_msg(ID_POS_ACK);
@@ -176,13 +168,13 @@ architecture func of generic_queue_record_tb is
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;             -- to allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
+    wait for 1000 ns;                   -- to allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation
     std.env.stop;
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
 

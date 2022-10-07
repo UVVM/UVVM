@@ -12,7 +12,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 package axilite_slave_model_pkg is
-  
+
   -- AXI-Lite  Configuration
   type t_axilite_slave_model_cfg is record
     wr_resp_delay : natural;
@@ -23,9 +23,9 @@ package axilite_slave_model_pkg is
   constant C_AXILITE_SLAVE_MODEL_CFG_DEFAULT : t_axilite_slave_model_cfg := (
     wr_resp_delay => 0,
     rd_resp_delay => 0
-    );
-  signal axilite_slave_model_cfg : t_axilite_slave_model_cfg := C_AXILITE_SLAVE_MODEL_CFG_DEFAULT;
-  
+  );
+  signal axilite_slave_model_cfg             : t_axilite_slave_model_cfg := C_AXILITE_SLAVE_MODEL_CFG_DEFAULT;
+
   -- AXI-Lite Interface signals
   type t_axilite_wr_slave_in_if is record
     -- Write Address Channel
@@ -38,7 +38,7 @@ package axilite_slave_model_pkg is
     -- Write Response Channel
     bready  : std_logic;
   end record;
-  
+
   type t_axilite_wr_slave_out_if is record
     -- Write Address Channel
     awready : std_logic;
@@ -56,7 +56,7 @@ package axilite_slave_model_pkg is
     -- Read Data Channel
     rready  : std_logic;
   end record;
-  
+
   type t_axilite_rd_slave_out_if is record
     -- Read Address Channel
     arready : std_logic;

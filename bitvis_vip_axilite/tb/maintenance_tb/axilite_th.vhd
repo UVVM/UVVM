@@ -26,25 +26,24 @@ use bitvis_vip_axilite.axilite_slave_model_pkg.all;
 --=================================================================================================
 entity test_harness is
   generic(
-    constant C_ADDR_WIDTH_1   : natural := 32;
-    constant C_DATA_WIDTH_1   : natural := 32;
-    constant C_ADDR_WIDTH_2   : natural := 32;
-    constant C_DATA_WIDTH_2   : natural := 32
+    constant C_ADDR_WIDTH_1 : natural := 32;
+    constant C_DATA_WIDTH_1 : natural := 32;
+    constant C_ADDR_WIDTH_2 : natural := 32;
+    constant C_DATA_WIDTH_2 : natural := 32
   );
   port(
-    signal clk          : in std_logic;
-    signal areset       : in std_logic;
-    signal axilite_if_1 : inout t_axilite_if( write_address_channel(  awaddr( C_ADDR_WIDTH_1    -1 downto 0)), 
-                                              write_data_channel(     wdata(  C_DATA_WIDTH_1    -1 downto 0),
-                                                                      wstrb(( C_DATA_WIDTH_1/8) -1 downto 0)),
-                                              read_address_channel(   araddr( C_ADDR_WIDTH_1    -1 downto 0)),
-                                              read_data_channel(      rdata(  C_DATA_WIDTH_1    -1 downto 0)));
-
-    signal axilite_if_2 : inout t_axilite_if( write_address_channel(  awaddr( C_ADDR_WIDTH_2    -1 downto 0)), 
-                                              write_data_channel(     wdata(  C_DATA_WIDTH_2    -1 downto 0),
-                                                                      wstrb(( C_DATA_WIDTH_2/8) -1 downto 0)),
-                                              read_address_channel(   araddr( C_ADDR_WIDTH_2    -1 downto 0)),
-                                              read_data_channel(      rdata(  C_DATA_WIDTH_2    -1 downto 0))));
+    signal clk          : in    std_logic;
+    signal areset       : in    std_logic;
+    signal axilite_if_1 : inout t_axilite_if(write_address_channel(awaddr(C_ADDR_WIDTH_1 - 1 downto 0)),
+                                             write_data_channel(wdata(C_DATA_WIDTH_1 - 1 downto 0),
+                                                                wstrb((C_DATA_WIDTH_1 / 8) - 1 downto 0)),
+                                             read_address_channel(araddr(C_ADDR_WIDTH_1 - 1 downto 0)),
+                                             read_data_channel(rdata(C_DATA_WIDTH_1 - 1 downto 0)));
+    signal axilite_if_2 : inout t_axilite_if(write_address_channel(awaddr(C_ADDR_WIDTH_2 - 1 downto 0)),
+                                             write_data_channel(wdata(C_DATA_WIDTH_2 - 1 downto 0),
+                                                                wstrb((C_DATA_WIDTH_2 / 8) - 1 downto 0)),
+                                             read_address_channel(araddr(C_ADDR_WIDTH_2 - 1 downto 0)),
+                                             read_data_channel(rdata(C_DATA_WIDTH_2 - 1 downto 0))));
 
 end entity test_harness;
 --=================================================================================================
@@ -61,7 +60,7 @@ begin
       C_S_AXI_DATA_WIDTH => C_DATA_WIDTH_1,
       C_S_AXI_ADDR_WIDTH => C_ADDR_WIDTH_1
     )
-    port map (
+    port map(
       core_clk      => clk,
       calc_time     => open,
       IntrEvent     => open,
@@ -70,10 +69,10 @@ begin
       S_AXI_AWADDR  => axilite_if_1.write_address_channel.awaddr,
       S_AXI_AWVALID => axilite_if_1.write_address_channel.awvalid,
       S_AXI_AWREADY => axilite_if_1.write_address_channel.awready,
-      S_AXI_WDATA   => axilite_if_1.write_data_channel.wdata, 
+      S_AXI_WDATA   => axilite_if_1.write_data_channel.wdata,
       S_AXI_WVALID  => axilite_if_1.write_data_channel.wvalid,
       S_AXI_WREADY  => axilite_if_1.write_data_channel.wready,
-      S_AXI_WSTRB   => axilite_if_1.write_data_channel.wstrb, 
+      S_AXI_WSTRB   => axilite_if_1.write_data_channel.wstrb,
       S_AXI_BVALID  => axilite_if_1.write_response_channel.bvalid,
       S_AXI_BREADY  => axilite_if_1.write_response_channel.bready,
       S_AXI_BRESP   => axilite_if_1.write_response_channel.bresp,
@@ -98,36 +97,32 @@ begin
   axilite_if_1.read_address_channel.arprot   <= (others => 'Z');
   axilite_if_1.read_data_channel.rready      <= 'Z';
 
-
   i_axilite_slave_2 : entity bitvis_vip_axilite.axilite_slave_model
     generic map(
-      C_AXI_DATA_WIDTH => C_DATA_WIDTH_2
+      C_AXI_DATA_WIDTH => C_DATA_WIDTH_2,
+      C_MEMORY_START   => x"00000000"
     )
-    port map (
+    port map(
       aclk                => clk,
       aresetn             => not areset,
-
-      wr_port_in.awaddr   =>  axilite_if_2.write_address_channel.awaddr,
-      wr_port_in.awvalid  =>  axilite_if_2.write_address_channel.awvalid,
-      wr_port_in.wdata    =>  axilite_if_2.write_data_channel.wdata,
-      wr_port_in.wstrb    =>  axilite_if_2.write_data_channel.wstrb,
-      wr_port_in.wvalid   =>  axilite_if_2.write_data_channel.wvalid,
-      wr_port_in.bready   =>  axilite_if_2.write_response_channel.bready,
-      
-      wr_port_out.awready =>  axilite_if_2.write_address_channel.awready,
-      wr_port_out.wready  =>  axilite_if_2.write_data_channel.wready,
-      wr_port_out.bresp   =>  axilite_if_2.write_response_channel.bresp,
-      wr_port_out.bvalid  =>  axilite_if_2.write_response_channel.bvalid,
-      
-      rd_port_in.araddr   =>  axilite_if_2.read_address_channel.araddr,
-      rd_port_in.arvalid  =>  axilite_if_2.read_address_channel.arvalid,
-      rd_port_in.rready   =>  axilite_if_2.read_data_channel.rready,
-      
-      rd_port_out.arready =>  axilite_if_2.read_address_channel.arready,
-      rd_port_out.rdata   =>  axilite_if_2.read_data_channel.rdata,
-      rd_port_out.rresp   =>  axilite_if_2.read_data_channel.rresp,
-      rd_port_out.rvalid  =>  axilite_if_2.read_data_channel.rvalid
-      );
+      wr_port_in.awaddr   => axilite_if_2.write_address_channel.awaddr,
+      wr_port_in.awvalid  => axilite_if_2.write_address_channel.awvalid,
+      wr_port_in.wdata    => axilite_if_2.write_data_channel.wdata,
+      wr_port_in.wstrb    => axilite_if_2.write_data_channel.wstrb,
+      wr_port_in.wvalid   => axilite_if_2.write_data_channel.wvalid,
+      wr_port_in.bready   => axilite_if_2.write_response_channel.bready,
+      wr_port_out.awready => axilite_if_2.write_address_channel.awready,
+      wr_port_out.wready  => axilite_if_2.write_data_channel.wready,
+      wr_port_out.bresp   => axilite_if_2.write_response_channel.bresp,
+      wr_port_out.bvalid  => axilite_if_2.write_response_channel.bvalid,
+      rd_port_in.araddr   => axilite_if_2.read_address_channel.araddr,
+      rd_port_in.arvalid  => axilite_if_2.read_address_channel.arvalid,
+      rd_port_in.rready   => axilite_if_2.read_data_channel.rready,
+      rd_port_out.arready => axilite_if_2.read_address_channel.arready,
+      rd_port_out.rdata   => axilite_if_2.read_data_channel.rdata,
+      rd_port_out.rresp   => axilite_if_2.read_data_channel.rresp,
+      rd_port_out.rvalid  => axilite_if_2.read_data_channel.rvalid
+    );
 
   --Undriven from DUT_2 side (Innputs on inout record):
   axilite_if_2.write_address_channel.awaddr  <= (others => 'Z');
@@ -154,7 +149,7 @@ begin
       C_S_AXI_DATA_WIDTH => C_DATA_WIDTH_1,
       C_S_AXI_ADDR_WIDTH => C_ADDR_WIDTH_1
     )
-    port map (
+    port map(
       core_clk      => clk,
       calc_time     => open,
       IntrEvent     => open,
@@ -163,10 +158,10 @@ begin
       S_AXI_AWADDR  => axilite_if_1.write_address_channel.awaddr,
       S_AXI_AWVALID => axilite_if_1.write_address_channel.awvalid,
       S_AXI_AWREADY => axilite_if_1.write_address_channel.awready,
-      S_AXI_WDATA   => axilite_if_1.write_data_channel.wdata, 
+      S_AXI_WDATA   => axilite_if_1.write_data_channel.wdata,
       S_AXI_WVALID  => axilite_if_1.write_data_channel.wvalid,
       S_AXI_WREADY  => axilite_if_1.write_data_channel.wready,
-      S_AXI_WSTRB   => axilite_if_1.write_data_channel.wstrb, 
+      S_AXI_WSTRB   => axilite_if_1.write_data_channel.wstrb,
       S_AXI_BVALID  => axilite_if_1.write_response_channel.bvalid,
       S_AXI_BREADY  => axilite_if_1.write_response_channel.bready,
       S_AXI_BRESP   => axilite_if_1.write_response_channel.bresp,
@@ -191,37 +186,33 @@ begin
   axilite_if_1.read_address_channel.arprot   <= (others => 'Z');
   axilite_if_1.read_data_channel.rready      <= 'Z';
 
-
   i_axilite_slave_2 : entity bitvis_vip_axilite.axilite_slave_model
     generic map(
       C_AXI_ADDR_WIDTH => C_ADDR_WIDTH_2,
-      C_AXI_DATA_WIDTH => C_DATA_WIDTH_2
+      C_AXI_DATA_WIDTH => C_DATA_WIDTH_2,
+      C_MEMORY_START   => x"00000000"
     )
-    port map (
+    port map(
       aclk                => clk,
       aresetn             => not areset,
-
-      wr_port_in.awaddr   =>  axilite_if_2.write_address_channel.awaddr,
-      wr_port_in.awvalid  =>  axilite_if_2.write_address_channel.awvalid,
-      wr_port_in.wdata    =>  axilite_if_2.write_data_channel.wdata,
-      wr_port_in.wstrb    =>  axilite_if_2.write_data_channel.wstrb,
-      wr_port_in.wvalid   =>  axilite_if_2.write_data_channel.wvalid,
-      wr_port_in.bready   =>  axilite_if_2.write_response_channel.bready,
-      
-      wr_port_out.awready =>  axilite_if_2.write_address_channel.awready,
-      wr_port_out.wready  =>  axilite_if_2.write_data_channel.wready,
-      wr_port_out.bresp   =>  axilite_if_2.write_response_channel.bresp,
-      wr_port_out.bvalid  =>  axilite_if_2.write_response_channel.bvalid,
-      
-      rd_port_in.araddr   =>  axilite_if_2.read_address_channel.araddr,
-      rd_port_in.arvalid  =>  axilite_if_2.read_address_channel.arvalid,
-      rd_port_in.rready   =>  axilite_if_2.read_data_channel.rready,
-      
-      rd_port_out.arready =>  axilite_if_2.read_address_channel.arready,
-      rd_port_out.rdata   =>  axilite_if_2.read_data_channel.rdata,
-      rd_port_out.rresp   =>  axilite_if_2.read_data_channel.rresp,
-      rd_port_out.rvalid  =>  axilite_if_2.read_data_channel.rvalid
-      );
+      wr_port_in.awaddr   => axilite_if_2.write_address_channel.awaddr,
+      wr_port_in.awvalid  => axilite_if_2.write_address_channel.awvalid,
+      wr_port_in.wdata    => axilite_if_2.write_data_channel.wdata,
+      wr_port_in.wstrb    => axilite_if_2.write_data_channel.wstrb,
+      wr_port_in.wvalid   => axilite_if_2.write_data_channel.wvalid,
+      wr_port_in.bready   => axilite_if_2.write_response_channel.bready,
+      wr_port_out.awready => axilite_if_2.write_address_channel.awready,
+      wr_port_out.wready  => axilite_if_2.write_data_channel.wready,
+      wr_port_out.bresp   => axilite_if_2.write_response_channel.bresp,
+      wr_port_out.bvalid  => axilite_if_2.write_response_channel.bvalid,
+      rd_port_in.araddr   => axilite_if_2.read_address_channel.araddr,
+      rd_port_in.arvalid  => axilite_if_2.read_address_channel.arvalid,
+      rd_port_in.rready   => axilite_if_2.read_data_channel.rready,
+      rd_port_out.arready => axilite_if_2.read_address_channel.arready,
+      rd_port_out.rdata   => axilite_if_2.read_data_channel.rdata,
+      rd_port_out.rresp   => axilite_if_2.read_data_channel.rresp,
+      rd_port_out.rvalid  => axilite_if_2.read_data_channel.rvalid
+    );
 
   --Undriven from DUT_2 side (Inputs on inout record):
   axilite_if_2.write_address_channel.awaddr  <= (others => 'Z');
@@ -235,9 +226,7 @@ begin
   axilite_if_2.read_address_channel.arvalid  <= 'Z';
   axilite_if_2.read_address_channel.arprot   <= (others => 'Z');
   axilite_if_2.read_data_channel.rready      <= 'Z';
-  
-  
-  
+
   -----------------------------
   -- vvc/executors
   -----------------------------
@@ -246,22 +235,21 @@ begin
       GC_ADDR_WIDTH   => C_ADDR_WIDTH_1,
       GC_DATA_WIDTH   => C_DATA_WIDTH_1,
       GC_INSTANCE_IDX => 1
-      )
+    )
     port map(
-      clk                    => clk, 
-      axilite_vvc_master_if  => axilite_if_1
-      );
+      clk                   => clk,
+      axilite_vvc_master_if => axilite_if_1
+    );
 
   i2_axilite_vvc : entity work.axilite_vvc
     generic map(
       GC_ADDR_WIDTH   => C_ADDR_WIDTH_2,
       GC_DATA_WIDTH   => C_DATA_WIDTH_2,
       GC_INSTANCE_IDX => 2
-      )
+    )
     port map(
       clk                   => clk,
       axilite_vvc_master_if => axilite_if_2
     );
-
 
 end struct_vvc;

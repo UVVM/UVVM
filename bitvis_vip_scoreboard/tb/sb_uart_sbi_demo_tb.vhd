@@ -14,7 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -48,20 +47,20 @@ architecture func of sb_uart_sbi_demo_tb is
   constant C_DATA_WIDTH : integer := 8;
 
   -- DSP interface and general control signals
-  signal clk        : std_logic := '0';
-  signal clk_ena    : boolean   := false;
-  signal arst       : std_logic := '0';
+  signal clk     : std_logic := '0';
+  signal clk_ena : boolean   := false;
+  signal arst    : std_logic := '0';
 
   -- SBI signals
-  signal sbi_if : t_sbi_if(addr(C_ADDR_WIDTH-1 downto 0),
-                           wdata(C_DATA_WIDTH-1 downto 0),
-                           rdata(C_DATA_WIDTH-1 downto 0)) := init_sbi_if_signals(addr_width => C_ADDR_WIDTH,
-                                                                                  data_width => C_DATA_WIDTH);
-  signal terminate_loop : std_logic := '0';
+  signal sbi_if         : t_sbi_if(addr(C_ADDR_WIDTH - 1 downto 0),
+                                   wdata(C_DATA_WIDTH - 1 downto 0),
+                                   rdata(C_DATA_WIDTH - 1 downto 0)) := init_sbi_if_signals(addr_width => C_ADDR_WIDTH,
+                                                                   data_width => C_DATA_WIDTH);
+  signal terminate_loop : std_logic                       := '0';
 
   -- UART signals
-  signal uart_rx    : std_logic := '1';
-  signal uart_tx    : std_logic := '1';
+  signal uart_rx : std_logic := '1';
+  signal uart_tx : std_logic := '1';
 
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
 
@@ -74,33 +73,33 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate DUT
   -----------------------------------------------------------------------------
-  i_uart: entity bitvis_uart.uart
-    port map (
+  i_uart : entity bitvis_uart.uart
+    port map(
       -- DSP interface and general control signals
-      clk             => clk,
-      arst            => arst,
+      clk   => clk,
+      arst  => arst,
       -- CPU interface
-      cs              => sbi_if.cs,
-      addr            => sbi_if.addr,
-      wr              => sbi_if.wena,
-      rd              => sbi_if.rena,
-      wdata           => sbi_if.wdata,
-      rdata           => sbi_if.rdata,
+      cs    => sbi_if.cs,
+      addr  => sbi_if.addr,
+      wr    => sbi_if.wena,
+      rd    => sbi_if.rena,
+      wdata => sbi_if.wdata,
+      rdata => sbi_if.rdata,
       -- UART signals
-      rx_a            => uart_tx,
-      tx              => uart_rx
-  );
+      rx_a  => uart_tx,
+      tx    => uart_rx
+    );
 
   -----------------------------------------------------------------------------
   -- Clock generator
   -----------------------------------------------------------------------------
-  p_clk: clock_generator(clk, clk_ena, C_CLK_PERIOD, "tb clock");
+  p_clk : clock_generator(clk, clk_ena, C_CLK_PERIOD, "tb clock");
 
   -- Static '1' ready signal for the SBI VVC
   sbi_if.ready <= '1';
 
   -- Toggle the reset after 5 clock periods
-  p_arst: arst <= '1', '0' after 5 *C_CLK_PERIOD;
+  p_arst : arst <= '1', '0' after 5 * C_CLK_PERIOD;
 
   -----------------------------------------------------------------------------
   -- Sequencer
@@ -109,7 +108,6 @@ begin
     variable v_data        : std_logic_vector(7 downto 0);
     variable v_uart_config : t_uart_bfm_config;
   begin
-
     set_log_file_name("sb_uart_sbi_demo_log.txt");
     set_alert_file_name("sb_uart_sbi_demo_alert.txt");
 
@@ -125,7 +123,7 @@ begin
     ------------------------------------------------------------
     clk_ena <= true;
     wait for 1 ns;
-    await_value(arst, '0', 0 ns, 6*C_CLK_PERIOD, TB_ERROR, "await deassertion of arst", C_SCOPE);
+    await_value(arst, '0', 0 ns, 6 * C_CLK_PERIOD, TB_ERROR, "await deassertion of arst", C_SCOPE);
     wait for C_CLK_PERIOD;
 
     ------------------------------------------------------------
@@ -133,11 +131,11 @@ begin
     ------------------------------------------------------------
     -- Set scope of SBs
     v_uart_sb.set_scope("SB UART");
-    v_sbi_sb.set_scope( "SB SBI");
+    v_sbi_sb.set_scope("SB SBI");
 
     log(ID_LOG_HDR, "Set configuration", C_SCOPE);
     v_uart_sb.config(C_SB_CONFIG_DEFAULT, "Set config for SB UART");
-    v_sbi_sb.config( C_SB_CONFIG_DEFAULT, "Set config for SB SBI");
+    v_sbi_sb.config(C_SB_CONFIG_DEFAULT, "Set config for SB SBI");
 
     log(ID_LOG_HDR, "Enable SBs", C_SCOPE);
     v_uart_sb.enable(VOID);
@@ -145,10 +143,10 @@ begin
 
     -- Enable log msg for data
     v_uart_sb.enable_log_msg(ID_DATA);
-    v_sbi_sb.enable_log_msg( ID_DATA);
+    v_sbi_sb.enable_log_msg(ID_DATA);
 
-    v_uart_config := C_UART_BFM_CONFIG_DEFAULT;
-    v_uart_config.bit_time := C_CLK_PERIOD*16;
+    v_uart_config          := C_UART_BFM_CONFIG_DEFAULT;
+    v_uart_config.bit_time := C_CLK_PERIOD * 16;
 
     ------------------------------------------------------------
     -- UART --> SBI
@@ -192,8 +190,8 @@ begin
     --==================================================================================================
     -- Ending the simulation
     --------------------------------------------------------------------------------------
-    wait for 1000 ns;             -- to allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
+    wait for 1000 ns;                   -- to allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
     std.env.stop;
     wait;

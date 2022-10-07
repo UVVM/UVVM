@@ -37,7 +37,7 @@ use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 
 entity uart_rx_vvc is
-  generic (
+  generic(
     GC_DATA_WIDTH                            : natural           := 8;
     GC_INSTANCE_IDX                          : natural           := 1;
     GC_CHANNEL                               : t_channel         := RX;
@@ -48,12 +48,11 @@ entity uart_rx_vvc is
     GC_RESULT_QUEUE_COUNT_MAX                : natural           := 1000;
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural           := 950;
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := warning
-    );
-  port (
+  );
+  port(
     uart_vvc_rx : in std_logic
-    );
+  );
 end entity uart_rx_vvc;
-
 
 architecture behave of uart_rx_vvc is
 
@@ -69,12 +68,12 @@ architecture behave of uart_rx_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config              : t_vvc_config        is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);
-  alias vvc_status              : t_vvc_status        is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
-  alias transaction_info        : t_transaction_info  is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
+  alias vvc_config                          : t_vvc_config is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);
+  alias vvc_status                          : t_vvc_status is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
+  alias transaction_info                    : t_transaction_info is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
   -- Transaction info
-  alias vvc_transaction_info_trigger : std_logic           is global_uart_vvc_transaction_trigger(RX, GC_INSTANCE_IDX);
-  alias vvc_transaction_info         : t_transaction_group is shared_uart_vvc_transaction_info(RX, GC_INSTANCE_IDX);
+  alias vvc_transaction_info_trigger        : std_logic is global_uart_vvc_transaction_trigger(RX, GC_INSTANCE_IDX);
+  alias vvc_transaction_info                : t_transaction_group is shared_uart_vvc_transaction_info(RX, GC_INSTANCE_IDX);
   -- VVC Activity 
   signal entry_num_in_vvc_activity_register : integer;
 
@@ -95,60 +94,57 @@ architecture behave of uart_rx_vvc is
 
 begin
 
---===============================================================================================
--- Constructor
--- - Set up the defaults and show constructor if enabled
---===============================================================================================
+  --===============================================================================================
+  -- Constructor
+  -- - Set up the defaults and show constructor if enabled
+  --===============================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_UART_CONFIG,
                                                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
                                                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
---===============================================================================================
+  --===============================================================================================
 
-
---===============================================================================================
--- Command interpreter
--- - Interpret, decode and acknowledge commands from the central sequencer
---===============================================================================================
+  --===============================================================================================
+  -- Command interpreter
+  -- - Interpret, decode and acknowledge commands from the central sequencer
+  --===============================================================================================
   cmd_interpreter : process
-    variable v_cmd_has_been_acked   : boolean;  -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
-    variable v_local_vvc_cmd        : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
-    variable v_msg_id_panel         : t_msg_id_panel;
-    variable v_temp_msg_id_panel    : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
+    variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
+    variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
+    variable v_msg_id_panel       : t_msg_id_panel;
+    variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
   begin
-
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(RX, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => C_VVC_NAME,
-                                                                                         instance  => GC_INSTANCE_IDX,
-                                                                                         channel   => GC_CHANNEL);
+    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
+                                                                                                            instance => GC_INSTANCE_IDX,
+                                                                                                            channel  => GC_CHANNEL);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
-    v_msg_id_panel := vvc_config.msg_id_panel;
+    v_msg_id_panel                                        := vvc_config.msg_id_panel;
 
     -- Update BFM config num_data_bits with GC_DATA_WIDTH
     vvc_config.bfm_config.num_data_bits := GC_DATA_WIDTH;
 
     -- Then for every single command from the sequencer
-    loop  -- basically as long as new commands are received
+    loop                                -- basically as long as new commands are received
 
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
-      v_cmd_has_been_acked := false; -- Clear flag
+      v_cmd_has_been_acked                                  := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
       shared_vvc_last_received_cmd_idx(RX, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
-      v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
+      v_msg_id_panel                                        := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
       -- 2a. Put command on the queue if intended for the executor
       -------------------------------------------------------------------------
       if v_local_vvc_cmd.command_type = QUEUED then
         work.td_vvc_entity_support_pkg.put_command_on_queue(v_local_vvc_cmd, command_queue, vvc_status, queue_is_increasing);
-
 
       -- 2b. Otherwise command is intended for immediate response
       -------------------------------------------------------------------------
@@ -210,42 +206,36 @@ begin
 
     end loop;
   end process;
---===============================================================================================
+  --===============================================================================================
 
-
-
---===============================================================================================
--- Command executor
--- - Fetch and execute the commands
---===============================================================================================
+  --===============================================================================================
+  -- Command executor
+  -- - Fetch and execute the commands
+  --===============================================================================================
   cmd_executor : process
     variable v_cmd                                   : t_vvc_cmd_record;
-    variable v_read_data                             : t_vvc_result;  -- See vvc_cmd_pkg
-    variable v_timestamp_start_of_current_bfm_access : time                                       := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access    : time                                       := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access      : time                                       := 0 ns;
-    variable v_command_is_bfm_access                 : boolean                                    := false;
-    variable v_prev_command_was_bfm_access           : boolean                                    := false;
-    variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH-1 downto 0)  := (others => '0');
+    variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
+    variable v_timestamp_start_of_current_bfm_access : time                                         := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access    : time                                         := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access      : time                                         := 0 ns;
+    variable v_command_is_bfm_access                 : boolean                                      := false;
+    variable v_prev_command_was_bfm_access           : boolean                                      := false;
+    variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
     variable v_msg_id_panel                          : t_msg_id_panel;
-    variable v_num_data_bits                         : natural                                    := vvc_config.bfm_config.num_data_bits;
+    variable v_num_data_bits                         : natural                                      := vvc_config.bfm_config.num_data_bits;
 
-    
   begin
-
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
-
     -- Setup UART scoreboard
     UART_VVC_SB.set_scope("UART_VVC_SB");
     UART_VVC_SB.enable(GC_INSTANCE_IDX, "UART VVC SB Enabled");
     UART_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
     UART_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
-
 
     loop
 
@@ -269,7 +259,7 @@ begin
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Check if command is a BFM access
-      v_prev_command_was_bfm_access := v_command_is_bfm_access;  -- save for inter_bfm_delay
+      v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
       if v_cmd.operation = RECEIVE or v_cmd.operation = EXPECT then
         v_command_is_bfm_access := true;
       else
@@ -277,35 +267,34 @@ begin
       end if;
 
       -- Insert delay if needed
-      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config               => vvc_config,
-                                                               command_is_bfm_access              => v_prev_command_was_bfm_access,
-                                                               timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
-                                                               timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
-                                                               msg_id_panel                       => v_msg_id_panel,
-                                                               scope                              => C_SCOPE);
+      work.td_vvc_entity_support_pkg.insert_inter_bfm_delay_if_requested(vvc_config                         => vvc_config,
+                                                                         command_is_bfm_access              => v_prev_command_was_bfm_access,
+                                                                         timestamp_start_of_last_bfm_access => v_timestamp_start_of_last_bfm_access,
+                                                                         timestamp_end_of_last_bfm_access   => v_timestamp_end_of_last_bfm_access,
+                                                                         msg_id_panel                       => v_msg_id_panel,
+                                                                         scope                              => C_SCOPE);
 
       if v_command_is_bfm_access then
         v_timestamp_start_of_current_bfm_access := now;
       end if;
 
-
       -- 2. Execute the fetched command
       -------------------------------------------------------------------------
-      case v_cmd.operation is  -- Only operations in the dedicated record are relevant
+      case v_cmd.operation is           -- Only operations in the dedicated record are relevant
         when RECEIVE =>
           -- Set transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
-           
+
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
           -- Call the corresponding procedure in the BFM package.
-          uart_receive( data_value            => v_read_data(v_num_data_bits-1 downto 0),
-                        msg                   => format_msg(v_cmd),
-                        rx                    => uart_vvc_rx,
-                        terminate_loop        => terminate_current_cmd.is_active,
-                        config                => vvc_config.bfm_config,
-                        scope                 => C_SCOPE,
-                        msg_id_panel          => v_msg_id_panel);
-                
+          uart_receive(data_value     => v_read_data(v_num_data_bits - 1 downto 0),
+                       msg            => format_msg(v_cmd),
+                       rx             => uart_vvc_rx,
+                       terminate_loop => terminate_current_cmd.is_active,
+                       config         => vvc_config.bfm_config,
+                       scope          => C_SCOPE,
+                       msg_id_panel   => v_msg_id_panel);
+
           -- Request SB check result
           if v_cmd.data_routing = TO_SB then
             -- pad 8th bit as don't care if rx is 7 bits
@@ -316,8 +305,8 @@ begin
             UART_VVC_SB.check_received(GC_INSTANCE_IDX, v_read_data);
           else
             work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
-                                                         cmd_idx     => v_cmd.cmd_idx,
-                                                         result      => v_read_data);
+                                                        cmd_idx      => v_cmd.cmd_idx,
+                                                        result       => v_read_data);
           end if;
 
         when EXPECT =>
@@ -325,19 +314,19 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
           -- Normalise address and data
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
+          v_normalised_data                                 := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           -- Call the corresponding procedure in the BFM package.
-          uart_expect(data_exp              => v_normalised_data(v_num_data_bits-1 downto 0),
-                      msg                   => format_msg(v_cmd),
-                      rx                    => uart_vvc_rx,
-                      terminate_loop        => terminate_current_cmd.is_active,
-                      max_receptions        => v_cmd.max_receptions,
-                      timeout               => v_cmd.timeout,
-                      alert_level           => v_cmd.alert_level,
-                      config                => vvc_config.bfm_config,
-                      scope                 => C_SCOPE,
-                      msg_id_panel          => v_msg_id_panel);
+          uart_expect(data_exp       => v_normalised_data(v_num_data_bits - 1 downto 0),
+                      msg            => format_msg(v_cmd),
+                      rx             => uart_vvc_rx,
+                      terminate_loop => terminate_current_cmd.is_active,
+                      max_receptions => v_cmd.max_receptions,
+                      timeout        => v_cmd.timeout,
+                      alert_level    => v_cmd.alert_level,
+                      config         => vvc_config.bfm_config,
+                      scope          => C_SCOPE,
+                      msg_id_panel   => v_msg_id_panel);
 
         when INSERT_DELAY =>
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);
@@ -356,10 +345,8 @@ begin
       if v_command_is_bfm_access then
         v_timestamp_end_of_last_bfm_access   := now;
         v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;
-        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and
-            ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
-          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " &
-                to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
+        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
+          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " & to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
         end if;
       end if;
 
@@ -376,20 +363,17 @@ begin
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
---===============================================================================================
+  --===============================================================================================
 
+  --===============================================================================================
+  -- Command termination handler
+  -- - Handles the termination request record (sets and resets terminate flag on request)
+  --===============================================================================================
+  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --===============================================================================================
 
---===============================================================================================
--- Command termination handler
--- - Handles the termination request record (sets and resets terminate flag on request)
---===============================================================================================
-  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd);  -- flag: is_active, set, reset
---===============================================================================================
-
-
-
- p_checker : process
-    variable v_edge_time          : time := - vvc_config.bit_rate_checker.min_period;
+  p_checker : process
+    variable v_edge_time          : time := -vvc_config.bit_rate_checker.min_period;
     variable v_previous_edge_time : time := 0 ns;
     variable v_edge2edge_time     : time;
   begin
@@ -404,9 +388,8 @@ begin
       check_value(v_edge2edge_time >= vvc_config.bit_rate_checker.min_period - 1 ps, vvc_config.bit_rate_checker.alert_level, "Checking bit_rate minimum period: " & to_string(vvc_config.bit_rate_checker.min_period), C_SCOPE, ID_NEVER);
     end if;
 
-    wait for 0 ns;  -- I delta cycle delay to get away from the uart_vvc_rx'event
+    wait for 0 ns;                      -- I delta cycle delay to get away from the uart_vvc_rx'event
   end process p_checker;
 
 end behave;
-
 

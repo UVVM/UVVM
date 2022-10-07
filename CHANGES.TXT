@@ -10,9 +10,14 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
-v2 2022.XX.XX
+v2 2022.10.07
 --------------------
+Released: 2022-10-07
 - Fixed to_string() function not calculating the max size correctly.
+- Added PR from @m-kru fixing miso direction in one of spi_master_transmit_and_receive procedures.
+- Added PR from @amb5l adding Make support to UART and IRQC DUTs, in addition to template files.
+- Added PR from @andrefi-eml adding a new await_stable function for specifying the target value.
+- Added more RST documentation. 
 
 
 v2 2022.05.25

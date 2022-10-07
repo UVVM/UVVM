@@ -39,22 +39,22 @@ use work.transaction_pkg.all;
 
 --=================================================================================================
 entity spi_vvc is
-  generic (
+  generic(
     GC_DATA_WIDTH                            : natural          := 8;
     GC_DATA_ARRAY_WIDTH                      : natural          := C_SPI_VVC_DATA_ARRAY_WIDTH;
-    GC_INSTANCE_IDX                          : natural          := 1;  -- Instance index for this SPI_VVCT instance
+    GC_INSTANCE_IDX                          : natural          := 1; -- Instance index for this SPI_VVCT instance
     GC_MASTER_MODE                           : boolean          := true;
-    GC_SPI_CONFIG                            : t_spi_bfm_config := C_SPI_BFM_CONFIG_DEFAULT;  -- Behavior specification for BFM
+    GC_SPI_CONFIG                            : t_spi_bfm_config := C_SPI_BFM_CONFIG_DEFAULT; -- Behavior specification for BFM
     GC_CMD_QUEUE_COUNT_MAX                   : natural          := 1000;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural          := 950;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level    := warning;
     GC_RESULT_QUEUE_COUNT_MAX                : natural          := 1000;
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural          := 950;
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level    := warning
-    );
-  port (
+  );
+  port(
     spi_vvc_if : inout t_spi_if := init_spi_if_signals(GC_SPI_CONFIG, GC_MASTER_MODE)
-    );
+  );
 end entity spi_vvc;
 
 --=================================================================================================
@@ -74,12 +74,12 @@ architecture behave of spi_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config       : t_vvc_config is shared_spi_vvc_config(GC_INSTANCE_IDX);
-  alias vvc_status       : t_vvc_status is shared_spi_vvc_status(GC_INSTANCE_IDX);
-  alias transaction_info : t_transaction_info is shared_spi_transaction_info(GC_INSTANCE_IDX);
+  alias vvc_config                          : t_vvc_config is shared_spi_vvc_config(GC_INSTANCE_IDX);
+  alias vvc_status                          : t_vvc_status is shared_spi_vvc_status(GC_INSTANCE_IDX);
+  alias transaction_info                    : t_transaction_info is shared_spi_transaction_info(GC_INSTANCE_IDX);
   -- Transaction info
-  alias vvc_transaction_info_trigger  : std_logic           is global_spi_vvc_transaction_trigger(GC_INSTANCE_IDX);
-  alias vvc_transaction_info          : t_transaction_group is shared_spi_vvc_transaction_info(GC_INSTANCE_IDX);
+  alias vvc_transaction_info_trigger        : std_logic is global_spi_vvc_transaction_trigger(GC_INSTANCE_IDX);
+  alias vvc_transaction_info                : t_transaction_group is shared_spi_vvc_transaction_info(GC_INSTANCE_IDX);
   -- VVC Activity 
   signal entry_num_in_vvc_activity_register : integer;
 
@@ -100,41 +100,38 @@ architecture behave of spi_vvc is
 
 begin
 
-
---===============================================================================================
--- Constructor
--- - Set up the defaults and show constructor if enabled
---===============================================================================================
+  --===============================================================================================
+  -- Constructor
+  -- - Set up the defaults and show constructor if enabled
+  --===============================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_SPI_CONFIG,
                                                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
                                                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
---===============================================================================================
+  --===============================================================================================
 
-
---===============================================================================================
--- Command interpreter
--- - Interpret, decode and acknowledge commands from the central sequencer
---===============================================================================================
+  --===============================================================================================
+  -- Command interpreter
+  -- - Interpret, decode and acknowledge commands from the central sequencer
+  --===============================================================================================
   cmd_interpreter : process
-    variable v_cmd_has_been_acked : boolean;  -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
+    variable v_cmd_has_been_acked : boolean; -- Indicates if acknowledge_cmd() has been called for the current shared_vvc_cmd
     variable v_local_vvc_cmd      : t_vvc_cmd_record := C_VVC_CMD_DEFAULT;
     variable v_msg_id_panel       : t_msg_id_panel;
     variable v_temp_msg_id_panel  : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
   begin
-
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
 
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => C_VVC_NAME,
-                                                                                         instance  => GC_INSTANCE_IDX);
+    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
+                                                                                                            instance => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
-    v_msg_id_panel := vvc_config.msg_id_panel;
+    v_msg_id_panel                                        := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
-    loop  -- basically as long as new commands are received
+    loop                                -- basically as long as new commands are received
 
       -- 1. wait until command targeted at this VVC. Must match VVC name, instance and channel (if applicable)
       --    releases global semaphore
@@ -149,12 +146,10 @@ begin
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
 
-
       -- 2a. Put command on the queue if intended for the executor
       -------------------------------------------------------------------------
       if v_local_vvc_cmd.command_type = QUEUED then
         work.td_vvc_entity_support_pkg.put_command_on_queue(v_local_vvc_cmd, command_queue, vvc_status, queue_is_increasing);
-
 
       -- 2b. Otherwise command is intended for immediate response
       -------------------------------------------------------------------------
@@ -217,30 +212,28 @@ begin
 
     end loop;
   end process;
---===============================================================================================
+  --===============================================================================================
 
-
-
---===============================================================================================
--- Command executor
--- - Fetch and execute the commands
---===============================================================================================
+  --===============================================================================================
+  -- Command executor
+  -- - Fetch and execute the commands
+  --===============================================================================================
   cmd_executor : process
-    variable v_cmd                                    : t_vvc_cmd_record;
-    variable v_result                                 : t_slv_array(C_VVC_CMD_MAX_WORDS-1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    variable v_timestamp_start_of_current_bfm_access  : time                                                                  := 0 ns;
-    variable v_timestamp_start_of_last_bfm_access     : time                                                                  := 0 ns;
-    variable v_timestamp_end_of_last_bfm_access       : time                                                                  := 0 ns;
-    variable v_command_is_bfm_access                  : boolean := false;
-    variable v_prev_command_was_bfm_access            : boolean := false;
-    variable v_msg_id_panel                           : t_msg_id_panel;
+    variable v_cmd                                   : t_vvc_cmd_record;
+    variable v_result                                : t_slv_array(C_VVC_CMD_MAX_WORDS - 1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    variable v_timestamp_start_of_current_bfm_access : time                                                                      := 0 ns;
+    variable v_timestamp_start_of_last_bfm_access    : time                                                                      := 0 ns;
+    variable v_timestamp_end_of_last_bfm_access      : time                                                                      := 0 ns;
+    variable v_command_is_bfm_access                 : boolean                                                                   := false;
+    variable v_prev_command_was_bfm_access           : boolean                                                                   := false;
+    variable v_msg_id_panel                          : t_msg_id_panel;
     -- bus size
-    variable v_num_words                              : natural                                                               := 0;
+    variable v_num_words                             : natural                                                                   := 0;
     -- normalized data to bus width
-    variable v_normalized_data                        : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0) := (others => (others => '0'));
-    variable v_normalized_data_exp                    : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0) := (others => (others => '0'));
-    variable v_data_receive                           : t_slv_array(GC_DATA_ARRAY_WIDTH-1 downto 0)(GC_DATA_WIDTH-1 downto 0) := (others => (others => '0'));
-  
+    variable v_normalized_data                       : t_slv_array(GC_DATA_ARRAY_WIDTH - 1 downto 0)(GC_DATA_WIDTH - 1 downto 0) := (others => (others => '0'));
+    variable v_normalized_data_exp                   : t_slv_array(GC_DATA_ARRAY_WIDTH - 1 downto 0)(GC_DATA_WIDTH - 1 downto 0) := (others => (others => '0'));
+    variable v_data_receive                          : t_slv_array(GC_DATA_ARRAY_WIDTH - 1 downto 0)(GC_DATA_WIDTH - 1 downto 0) := (others => (others => '0'));
+
   begin
     -- 0. Initialize the process prior to first command
     -------------------------------------------------------------------------
@@ -258,7 +251,7 @@ begin
 
       -- update vvc activity
       update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
-      
+
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
@@ -277,17 +270,7 @@ begin
 
       -- Check if command is a BFM access
       v_prev_command_was_bfm_access := v_command_is_bfm_access; -- save for inter_bfm_delay
-      if v_cmd.operation = MASTER_TRANSMIT_AND_RECEIVE or
-        v_cmd.operation = MASTER_TRANSMIT_AND_CHECK or
-        v_cmd.operation = MASTER_TRANSMIT_ONLY or
-        v_cmd.operation = MASTER_RECEIVE_ONLY or
-        v_cmd.operation = MASTER_CHECK_ONLY or
-        v_cmd.operation = SLAVE_TRANSMIT_AND_RECEIVE or
-        v_cmd.operation = SLAVE_TRANSMIT_AND_CHECK or
-        v_cmd.operation = SLAVE_TRANSMIT_ONLY or
-        v_cmd.operation = SLAVE_RECEIVE_ONLY or
-        v_cmd.operation = SLAVE_CHECK_ONLY
-      then
+      if v_cmd.operation = MASTER_TRANSMIT_AND_RECEIVE or v_cmd.operation = MASTER_TRANSMIT_AND_CHECK or v_cmd.operation = MASTER_TRANSMIT_ONLY or v_cmd.operation = MASTER_RECEIVE_ONLY or v_cmd.operation = MASTER_CHECK_ONLY or v_cmd.operation = SLAVE_TRANSMIT_AND_RECEIVE or v_cmd.operation = SLAVE_TRANSMIT_AND_CHECK or v_cmd.operation = SLAVE_TRANSMIT_ONLY or v_cmd.operation = SLAVE_RECEIVE_ONLY or v_cmd.operation = SLAVE_CHECK_ONLY then
         v_command_is_bfm_access := true;
       else
         v_command_is_bfm_access := false;
@@ -310,7 +293,7 @@ begin
       transaction_info.num_words   := v_cmd.num_words;
       transaction_info.word_length := GC_DATA_WIDTH;
 
-      case v_cmd.operation is  -- Only operations in the dedicated record are relevant
+      case v_cmd.operation is           -- Only operations in the dedicated record are relevant
 
         -- VVC dedicated operations
         --===================================
@@ -323,8 +306,8 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_transmit_and_receive(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
-                                              rx_data                      => v_result(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_master_transmit_and_receive(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH - 1 downto 0),
+                                              rx_data                      => v_result(0)(GC_DATA_WIDTH - 1 downto 0),
                                               msg                          => format_msg(v_cmd),
                                               spi_if                       => spi_vvc_if,
                                               action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -334,8 +317,8 @@ begin
             else
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
-              spi_master_transmit_and_receive(tx_data                      => v_normalized_data(v_num_words-1 downto 0),
-                                              rx_data                      => v_data_receive(v_num_words-1 downto 0),
+              spi_master_transmit_and_receive(tx_data                      => v_normalized_data(v_num_words - 1 downto 0),
+                                              rx_data                      => v_data_receive(v_num_words - 1 downto 0),
                                               msg                          => format_msg(v_cmd),
                                               spi_if                       => spi_vvc_if,
                                               action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -343,22 +326,22 @@ begin
                                               scope                        => C_SCOPE,
                                               msg_id_panel                 => v_msg_id_panel,
                                               config                       => vvc_config.bfm_config);
-              v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
+              v_result          := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
 
             -- Store the result
-            for i in 0 to v_num_words-1 loop
+            for i in 0 to v_num_words - 1 loop
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_spi_sb(v_result(i)(GC_DATA_WIDTH-1 downto 0)));
-              else                            
+                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_spi_sb(v_result(i)(GC_DATA_WIDTH - 1 downto 0)));
+              else
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
                                                             result       => v_result(i));
               end if;
             end loop;
-          else  -- attempted master transmit and receive when in slave mode
+          else                          -- attempted master transmit and receive when in slave mode
             alert(error, "Master transmit and receive called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -370,8 +353,8 @@ begin
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_transmit_and_check(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
-                                            data_exp                     => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_master_transmit_and_check(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH - 1 downto 0),
+                                            data_exp                     => v_cmd.data_exp(0)(GC_DATA_WIDTH - 1 downto 0),
                                             msg                          => format_msg(v_cmd),
                                             spi_if                       => spi_vvc_if,
                                             action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -380,11 +363,11 @@ begin
                                             config                       => vvc_config.bfm_config);
             else
               -- normalize
-              v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
+              v_normalized_data     := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
 
-              spi_master_transmit_and_check(tx_data                      => v_normalized_data(v_num_words-1 downto 0),
-                                            data_exp                     => v_normalized_data_exp(v_num_words-1 downto 0),
+              spi_master_transmit_and_check(tx_data                      => v_normalized_data(v_num_words - 1 downto 0),
+                                            data_exp                     => v_normalized_data_exp(v_num_words - 1 downto 0),
                                             msg                          => format_msg(v_cmd),
                                             spi_if                       => spi_vvc_if,
                                             action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -394,7 +377,7 @@ begin
                                             config                       => vvc_config.bfm_config);
             end if;
 
-          else  -- attempted master transmit and receive when in slave mode
+          else                          -- attempted master transmit and receive when in slave mode
             alert(error, "Master transmit and check called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -406,7 +389,7 @@ begin
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_transmit(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_master_transmit(tx_data                      => v_cmd.data(0)(GC_DATA_WIDTH - 1 downto 0),
                                   msg                          => format_msg(v_cmd),
                                   spi_if                       => spi_vvc_if,
                                   action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -417,7 +400,7 @@ begin
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
 
-              spi_master_transmit(tx_data                      => v_normalized_data(v_num_words-1 downto 0),
+              spi_master_transmit(tx_data                      => v_normalized_data(v_num_words - 1 downto 0),
                                   msg                          => format_msg(v_cmd),
                                   spi_if                       => spi_vvc_if,
                                   action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -427,7 +410,7 @@ begin
                                   config                       => vvc_config.bfm_config);
 
             end if;
-          else  -- attempted master transmit when in slave mode
+          else                          -- attempted master transmit when in slave mode
             alert(error, "Master transmit called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -438,7 +421,7 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_receive(rx_data                      => v_result(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_master_receive(rx_data                      => v_result(0)(GC_DATA_WIDTH - 1 downto 0),
                                  msg                          => format_msg(v_cmd),
                                  spi_if                       => spi_vvc_if,
                                  action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -446,7 +429,7 @@ begin
                                  msg_id_panel                 => v_msg_id_panel,
                                  config                       => vvc_config.bfm_config);
             else
-              spi_master_receive(rx_data                      => v_data_receive(v_num_words-1 downto 0),
+              spi_master_receive(rx_data                      => v_data_receive(v_num_words - 1 downto 0),
                                  msg                          => format_msg(v_cmd),
                                  spi_if                       => spi_vvc_if,
                                  action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
@@ -457,19 +440,19 @@ begin
               v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
-            for i in 0 to v_num_words-1 loop
+            for i in 0 to v_num_words - 1 loop
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_spi_sb(v_result(i)(GC_DATA_WIDTH-1 downto 0)));
-              else                            
+                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_spi_sb(v_result(i)(GC_DATA_WIDTH - 1 downto 0)));
+              else
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
                                                             result       => v_result(i));
               end if;
             end loop;
 
-          else  -- attempted master receive when in slave mode
+          else                          -- attempted master receive when in slave mode
             alert(error, "Master receive called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -480,7 +463,7 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_master_check(data_exp                     => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_master_check(data_exp                     => v_cmd.data_exp(0)(GC_DATA_WIDTH - 1 downto 0),
                                msg                          => format_msg(v_cmd),
                                spi_if                       => spi_vvc_if,
                                alert_level                  => v_cmd.alert_level,
@@ -492,7 +475,7 @@ begin
               -- normalize
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
 
-              spi_master_check(data_exp                     => v_normalized_data_exp(v_num_words-1 downto 0),
+              spi_master_check(data_exp                     => v_normalized_data_exp(v_num_words - 1 downto 0),
                                msg                          => format_msg(v_cmd),
                                spi_if                       => spi_vvc_if,
                                alert_level                  => v_cmd.alert_level,
@@ -502,7 +485,7 @@ begin
                                msg_id_panel                 => v_msg_id_panel,
                                config                       => vvc_config.bfm_config);
             end if;
-          else  -- attempted master check when in slave mode
+          else                          -- attempted master check when in slave mode
             alert(error, "Master check called when VVC is in slave mode.", C_SCOPE);
           end if;
 
@@ -514,8 +497,8 @@ begin
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_transmit_and_receive(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
-                                             rx_data                => v_result(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_slave_transmit_and_receive(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH - 1 downto 0),
+                                             rx_data                => v_result(0)(GC_DATA_WIDTH - 1 downto 0),
                                              msg                    => format_msg(v_cmd),
                                              spi_if                 => spi_vvc_if,
                                              when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -526,8 +509,8 @@ begin
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
 
-              spi_slave_transmit_and_receive(tx_data                => v_normalized_data(v_num_words-1 downto 0),
-                                             rx_data                => v_data_receive(v_num_words-1 downto 0),
+              spi_slave_transmit_and_receive(tx_data                => v_normalized_data(v_num_words - 1 downto 0),
+                                             rx_data                => v_data_receive(v_num_words - 1 downto 0),
                                              msg                    => format_msg(v_cmd),
                                              spi_if                 => spi_vvc_if,
                                              when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -537,18 +520,18 @@ begin
               v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
-            for i in 0 to v_num_words-1 loop
+            for i in 0 to v_num_words - 1 loop
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_spi_sb(v_result(i)(GC_DATA_WIDTH-1 downto 0)));
-              else                            
+                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_spi_sb(v_result(i)(GC_DATA_WIDTH - 1 downto 0)));
+              else
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
                                                             result       => v_result(i));
               end if;
             end loop;
-          else  -- attempted slave transmit when in master mode
+          else                          -- attempted slave transmit when in master mode
             alert(note, "Slave transmit and receive called when VVC is in master mode.", C_SCOPE);
           end if;
 
@@ -559,8 +542,8 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_transmit_and_check(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
-                                           data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_slave_transmit_and_check(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH - 1 downto 0),
+                                           data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH - 1 downto 0),
                                            msg                    => format_msg(v_cmd),
                                            spi_if                 => spi_vvc_if,
                                            alert_level            => v_cmd.alert_level,
@@ -570,11 +553,11 @@ begin
                                            config                 => vvc_config.bfm_config);
             else
               -- normalize
-              v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
+              v_normalized_data     := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
 
-              spi_slave_transmit_and_check(tx_data                => v_normalized_data(v_num_words-1 downto 0),
-                                           data_exp               => v_normalized_data_exp(v_num_words-1 downto 0),
+              spi_slave_transmit_and_check(tx_data                => v_normalized_data(v_num_words - 1 downto 0),
+                                           data_exp               => v_normalized_data_exp(v_num_words - 1 downto 0),
                                            msg                    => format_msg(v_cmd),
                                            spi_if                 => spi_vvc_if,
                                            alert_level            => v_cmd.alert_level,
@@ -584,7 +567,7 @@ begin
                                            config                 => vvc_config.bfm_config);
             end if;
 
-          else  -- attempted slave transmit when in master mode
+          else                          -- attempted slave transmit when in master mode
             alert(error, "Slave transmit and check called when VVC is in master mode.", C_SCOPE);
           end if;
 
@@ -595,7 +578,7 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_transmit(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_slave_transmit(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH - 1 downto 0),
                                  msg                    => format_msg(v_cmd),
                                  spi_if                 => spi_vvc_if,
                                  when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -606,7 +589,7 @@ begin
               -- normalize
               v_normalized_data := normalize_and_check(v_cmd.data, v_normalized_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalized_data", "normalizing data to BFM");
 
-              spi_slave_transmit(tx_data                => v_normalized_data(v_num_words-1 downto 0),
+              spi_slave_transmit(tx_data                => v_normalized_data(v_num_words - 1 downto 0),
                                  msg                    => format_msg(v_cmd),
                                  spi_if                 => spi_vvc_if,
                                  when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -614,7 +597,7 @@ begin
                                  msg_id_panel           => v_msg_id_panel,
                                  config                 => vvc_config.bfm_config);
             end if;
-          else  -- attempted slave transmit when in master mode
+          else                          -- attempted slave transmit when in master mode
             alert(error, "Slave transmit called when VVC is in master mode.", C_SCOPE);
           end if;
 
@@ -625,7 +608,7 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_receive(rx_data                => v_result(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_slave_receive(rx_data                => v_result(0)(GC_DATA_WIDTH - 1 downto 0),
                                 msg                    => format_msg(v_cmd),
                                 spi_if                 => spi_vvc_if,
                                 when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -633,7 +616,7 @@ begin
                                 msg_id_panel           => v_msg_id_panel,
                                 config                 => vvc_config.bfm_config);
             else
-              spi_slave_receive(rx_data                => v_data_receive(v_num_words-1 downto 0),
+              spi_slave_receive(rx_data                => v_data_receive(v_num_words - 1 downto 0),
                                 msg                    => format_msg(v_cmd),
                                 spi_if                 => spi_vvc_if,
                                 when_to_start_transfer => v_cmd.when_to_start_transfer,
@@ -643,19 +626,19 @@ begin
               v_result := normalize_and_check(v_data_receive, v_result, ALLOW_WIDER_NARROWER, "v_data_receive", "v_result", "normalizing data to result");
             end if;
             -- Store the result
-            for i in 0 to v_num_words-1 loop
+            for i in 0 to v_num_words - 1 loop
               -- Request SB check result
               if v_cmd.data_routing = TO_SB then
                 -- call SB check_received
-                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_spi_sb(v_result(i)(GC_DATA_WIDTH-1 downto 0)));
-              else                            
+                SPI_VVC_SB.check_received(GC_INSTANCE_IDX, pad_spi_sb(v_result(i)(GC_DATA_WIDTH - 1 downto 0)));
+              else
                 work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,
                                                             cmd_idx      => v_cmd.cmd_idx,
                                                             result       => v_result(i));
               end if;
             end loop;
 
-          else  -- attempted slave receive when in master mode
+          else                          -- attempted slave receive when in master mode
             alert(error, "Slave receive called when VVC is in master mode.", C_SCOPE);
           end if;
 
@@ -666,7 +649,7 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
-              spi_slave_check(data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH-1 downto 0),
+              spi_slave_check(data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH - 1 downto 0),
                               msg                    => format_msg(v_cmd),
                               spi_if                 => spi_vvc_if,
                               alert_level            => v_cmd.alert_level,
@@ -678,7 +661,7 @@ begin
               -- normalize
               v_normalized_data_exp := normalize_and_check(v_cmd.data_exp, v_normalized_data_exp, ALLOW_WIDER_NARROWER, "v_cmd.data_exp", "v_normalized_data_exp", "normalizing data_exp to BFM");
 
-              spi_slave_check(data_exp               => v_normalized_data_exp(v_num_words-1 downto 0),
+              spi_slave_check(data_exp               => v_normalized_data_exp(v_num_words - 1 downto 0),
                               msg                    => format_msg(v_cmd),
                               spi_if                 => spi_vvc_if,
                               alert_level            => v_cmd.alert_level,
@@ -687,7 +670,7 @@ begin
                               msg_id_panel           => v_msg_id_panel,
                               config                 => vvc_config.bfm_config);
             end if;
-          else  -- attempted slave check when in master mode
+          else                          -- attempted slave check when in master mode
             alert(error, "Slave check called when VVC is in master mode.", C_SCOPE);
           end if;
 
@@ -709,10 +692,8 @@ begin
       if v_command_is_bfm_access then
         v_timestamp_end_of_last_bfm_access   := now;
         v_timestamp_start_of_last_bfm_access := v_timestamp_start_of_current_bfm_access;
-        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and
-            ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
-          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " &
-                to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
+        if ((vvc_config.inter_bfm_delay.delay_type = TIME_START2START) and ((now - v_timestamp_start_of_current_bfm_access) > vvc_config.inter_bfm_delay.delay_in_time)) then
+          alert(vvc_config.inter_bfm_delay.inter_bfm_delay_violation_severity, "BFM access exceeded specified start-to-start inter-bfm delay, " & to_string(vvc_config.inter_bfm_delay.delay_in_time) & ".", C_SCOPE);
         end if;
       end if;
 
@@ -729,16 +710,14 @@ begin
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
   end process;
---========================================================================================================================
+  --========================================================================================================================
 
-
-
---===============================================================================================
--- Command termination handler
--- - Handles the termination request record (sets and resets terminate flag on request)
---===============================================================================================
-  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd);  -- flag: is_active, set, reset
---===============================================================================================
+  --===============================================================================================
+  -- Command termination handler
+  -- - Handles the termination request record (sets and resets terminate flag on request)
+  --===============================================================================================
+  cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --===============================================================================================
 
 end behave;
 

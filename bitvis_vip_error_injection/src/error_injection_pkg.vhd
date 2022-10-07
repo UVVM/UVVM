@@ -14,8 +14,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
-
 library ieee;
 use ieee.std_logic_1164.all;
 
@@ -43,7 +41,7 @@ package error_injection_pkg is
     width_min           : time;
     width_max           : time;
     interval            : positive;
-    base_value          : std_logic; -- SL only
+    base_value          : std_logic;    -- SL only
     randomization_seed1 : positive;
     randomization_seed2 : positive;
   end record;
@@ -64,11 +62,9 @@ package error_injection_pkg is
 
   constant C_MAX_EI_INSTANCE_NUM : natural := 100;
 
-  type t_error_injection_config_array is array(natural range <>) of t_error_injection_config;
+  type t_error_injection_config_array is array (natural range <>) of t_error_injection_config;
 
   shared variable shared_ei_config : t_error_injection_config_array(0 to C_MAX_EI_INSTANCE_NUM) := (others => C_EI_CONFIG_DEFAULT);
 
-
 end package error_injection_pkg;
-
 

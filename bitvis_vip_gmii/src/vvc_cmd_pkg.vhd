@@ -38,7 +38,7 @@ package vvc_cmd_pkg is
   --==========================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
-    data_array                   : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1)(7 downto 0);
+    data_array                   : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1)(7 downto 0);
     data_array_length            : natural;
     action_when_transfer_is_done : t_action_when_transfer_is_done;
     num_bytes_read               : natural;
@@ -97,19 +97,19 @@ package vvc_cmd_pkg is
   --   be defined as a record if multiple values shall be transported from the BFM
   --==========================================================================================
   type t_vvc_result is record
-    data_array           : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES-1)(7 downto 0);
-    data_array_length    : natural;
+    data_array        : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1)(7 downto 0);
+    data_array_length : natural;
   end record;
 
   type t_vvc_result_queue_element is record
-    cmd_idx       : natural;   -- from UVVM handshake mechanism
-    result        : t_vvc_result;
+    cmd_idx : natural;                  -- from UVVM handshake mechanism
+    result  : t_vvc_result;
   end record;
 
   type t_vvc_response is record
-    fetch_is_accepted    : boolean;
-    transaction_result   : t_transaction_result;
-    result               : t_vvc_result;
+    fetch_is_accepted  : boolean;
+    transaction_result : t_transaction_result;
+    result             : t_vvc_result;
   end record;
 
   shared variable shared_vvc_response : t_vvc_response;
@@ -118,13 +118,13 @@ package vvc_cmd_pkg is
   -- t_last_received_cmd_idx : 
   -- - Used to store the last queued cmd in VVC interpreter.
   --==========================================================================================
-  type t_last_received_cmd_idx is array (t_channel range <>,natural range <>) of integer;
+  type t_last_received_cmd_idx is array (t_channel range <>, natural range <>) of integer;
 
   --==========================================================================================
   -- shared_vvc_last_received_cmd_idx
   --  - Shared variable used to get last queued index from VVC to sequencer
   --==========================================================================================
-  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => -1));
+  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => -1));
 
   --==========================================================================================
   -- Procedures
@@ -133,20 +133,16 @@ package vvc_cmd_pkg is
     result : t_vvc_result
   ) return string;
 
-
   function to_string(
-    bytes  : t_slv_array
+    bytes : t_slv_array
   ) return string;
-
 
   function gmii_match(
     constant actual   : in t_slv_array;
     constant expected : in t_slv_array
   ) return boolean;
 
-
 end package vvc_cmd_pkg;
-
 
 package body vvc_cmd_pkg is
 
@@ -159,13 +155,11 @@ package body vvc_cmd_pkg is
   end;
 
   function to_string(
-    bytes  : t_slv_array
+    bytes : t_slv_array
   ) return string is
   begin
     return to_string(bytes'length) & " Bytes";
   end function to_string;
-
-
 
   -- Compares two GMII byte arrays and returns true if they are equal (used in scoreboard)
   function gmii_match(
@@ -175,6 +169,5 @@ package body vvc_cmd_pkg is
   begin
     return (actual = expected);
   end function gmii_match;
-
 
 end package body vvc_cmd_pkg;

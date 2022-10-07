@@ -46,11 +46,11 @@ package vvc_methods_pkg is
   --==========================================================================================
   -- Types and constants for the ETHERNET VVC
   --==========================================================================================
-  constant C_VVC_NAME     : string := "ETHERNET_VVC";
+  constant C_VVC_NAME : string := "ETHERNET_VVC";
 
-  signal ETHERNET_VVCT    : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
-  alias  THIS_VVCT        : t_vvc_target_record is ETHERNET_VVCT;
-  alias  t_bfm_config is t_ethernet_protocol_config;
+  signal ETHERNET_VVCT : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
+  alias THIS_VVCT      : t_vvc_target_record is ETHERNET_VVCT;
+  alias t_bfm_config is t_ethernet_protocol_config;
 
   -- Type found in UVVM-Util types_pkg
   constant C_ETHERNET_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
@@ -72,15 +72,15 @@ package vvc_methods_pkg is
   );
 
   type t_vvc_config is record
-    inter_bfm_delay                       : t_inter_bfm_delay;          -- Minimum delay between protocol accesses from the VVC. If parameter delay_type is set to NO_DELAY, protocol accesses will be back to back, i.e. no delay.
-    cmd_queue_count_max                   : natural;                    -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
-    cmd_queue_count_threshold             : natural;                    -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
-    cmd_queue_count_threshold_severity    : t_alert_level;              -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold.
+    inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between protocol accesses from the VVC. If parameter delay_type is set to NO_DELAY, protocol accesses will be back to back, i.e. no delay.
+    cmd_queue_count_max                   : natural; -- Maximum pending number in command executor before executor is full. Adding additional commands will result in an ERROR.
+    cmd_queue_count_threshold             : natural; -- An alert with severity 'cmd_queue_count_threshold_severity' will be issued if command executor exceeds this count. Used for early warning if command executor is almost full. Will be ignored if set to 0.
+    cmd_queue_count_threshold_severity    : t_alert_level; -- Severity of alert to be initiated if exceeding cmd_queue_count_threshold.
     result_queue_count_max                : natural;
     result_queue_count_threshold          : natural;
     result_queue_count_threshold_severity : t_alert_level;
     bfm_config                            : t_ethernet_protocol_config; -- Configuration for the VVC protocol. See VVC quick reference.
-    msg_id_panel                          : t_msg_id_panel;             -- VVC dedicated message ID panel.
+    msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel.
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -111,21 +111,16 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
-
-  shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
-  shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
+  shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
 
   -- Scoreboard
   package ethernet_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map (t_element         => t_ethernet_frame,
-                 element_match     => ethernet_match,
-                 to_string_element => to_string);
+    generic map(t_element         => t_ethernet_frame,
+                element_match     => ethernet_match,
+                to_string_element => to_string);
   use ethernet_sb_pkg.all;
-  shared variable ETHERNET_VVC_SB  : ethernet_sb_pkg.t_generic_sb;
-
-
-
-
+  shared variable ETHERNET_VVC_SB : ethernet_sb_pkg.t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC
@@ -136,82 +131,82 @@ package vvc_methods_pkg is
   --==========================================================================================
   procedure ethernet_transmit(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant mac_destination  : in    unsigned(47 downto 0);
-    constant mac_source       : in    unsigned(47 downto 0);
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant mac_destination  : in unsigned(47 downto 0);
+    constant mac_source       : in unsigned(47 downto 0);
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_transmit(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant mac_destination  : in    unsigned(47 downto 0);
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant mac_destination  : in unsigned(47 downto 0);
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_transmit(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_receive(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data_routing     : in    t_data_routing;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant data_routing     : in t_data_routing;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_receive(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_expect(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant mac_destination  : in    unsigned(47 downto 0);
-    constant mac_source       : in    unsigned(47 downto 0);
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := ERROR;
-    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant mac_destination  : in unsigned(47 downto 0);
+    constant mac_source       : in unsigned(47 downto 0);
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant alert_level      : in t_alert_level := ERROR;
+    constant scope            : in string        := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_expect(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant mac_destination  : in    unsigned(47 downto 0);
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := ERROR;
-    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant mac_destination  : in unsigned(47 downto 0);
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant alert_level      : in t_alert_level := ERROR;
+    constant scope            : in string        := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   procedure ethernet_expect(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := ERROR;
-    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant alert_level      : in t_alert_level := ERROR;
+    constant scope            : in string        := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   --==========================================================================================
@@ -221,50 +216,50 @@ package vvc_methods_pkg is
   --   execute the data transactions.
   --==========================================================================================
   procedure priv_ethernet_transmit_to_bridge(
-    constant interpacket_gap_time : in    time;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
-    constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
-    signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
+    constant interpacket_gap_time : in time;
+    constant vvc_cmd              : in t_vvc_cmd_record;
+    constant dut_if_field_config  : in t_dut_if_field_config_array;
+    signal   hvvc_to_bridge       : inout t_hvvc_to_bridge;
+    signal   bridge_to_hvvc       : in t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
-    constant scope                : in    string;
-    constant msg_id_panel         : in    t_msg_id_panel
+    constant scope                : in string;
+    constant msg_id_panel         : in t_msg_id_panel
   );
 
   procedure priv_ethernet_receive_from_bridge(
-    variable received_frame       : out   t_ethernet_frame;
-    variable fcs_error            : out   boolean;
-    constant fcs_error_severity   : in    t_alert_level;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
-    constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
-    signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
+    variable received_frame       : out t_ethernet_frame;
+    variable fcs_error            : out boolean;
+    constant fcs_error_severity   : in t_alert_level;
+    constant vvc_cmd              : in t_vvc_cmd_record;
+    constant dut_if_field_config  : in t_dut_if_field_config_array;
+    signal   hvvc_to_bridge       : inout t_hvvc_to_bridge;
+    signal   bridge_to_hvvc       : in t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
-    constant scope                : in    string;
-    constant msg_id_panel         : in    t_msg_id_panel;
-    constant ext_proc_call        : in    string := "" -- External proc_call. Overwrite if called from another procedure
+    constant scope                : in string;
+    constant msg_id_panel         : in t_msg_id_panel;
+    constant ext_proc_call        : in string := "" -- External proc_call. Overwrite if called from another procedure
   );
 
   procedure priv_ethernet_expect_from_bridge(
-    constant fcs_error_severity   : in    t_alert_level;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
-    constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
-    signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
+    constant fcs_error_severity   : in t_alert_level;
+    constant vvc_cmd              : in t_vvc_cmd_record;
+    constant dut_if_field_config  : in t_dut_if_field_config_array;
+    signal   hvvc_to_bridge       : inout t_hvvc_to_bridge;
+    signal   bridge_to_hvvc       : in t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
-    constant scope                : in    string;
-    constant msg_id_panel         : in    t_msg_id_panel
+    constant scope                : in string;
+    constant msg_id_panel         : in t_msg_id_panel
   );
 
   --==============================================================================
   -- Transaction info methods
   --==============================================================================
   procedure set_global_vvc_transaction_info(
-    signal vvc_transaction_info_trigger : inout std_logic;
-    variable vvc_transaction_info_group : inout t_transaction_group;
-    constant vvc_cmd                    : in t_vvc_cmd_record;
-    constant vvc_config                 : in t_vvc_config;
-    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT);
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_config                   : in t_vvc_config;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
   procedure reset_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group;
@@ -273,16 +268,15 @@ package vvc_methods_pkg is
   --==============================================================================
   -- VVC Activity
   --==============================================================================
-  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
-                                          variable vvc_status                         : inout t_vvc_status;
-                                          constant activity                           : in    t_activity;
-                                          constant entry_num_in_vvc_activity_register : in    integer;
-                                          constant last_cmd_idx_executed              : in    natural;
-                                          constant command_queue_is_empty             : in    boolean;
-                                          constant scope                              : in    string := C_VVC_NAME);
+  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
+                                         variable vvc_status                           : inout t_vvc_status;
+                                         constant activity                             : in t_activity;
+                                         constant entry_num_in_vvc_activity_register   : in integer;
+                                         constant last_cmd_idx_executed                : in natural;
+                                         constant command_queue_is_empty               : in boolean;
+                                         constant scope                                : in string := C_VVC_NAME);
 
 end package vvc_methods_pkg;
-
 
 package body vvc_methods_pkg is
 
@@ -291,65 +285,63 @@ package body vvc_methods_pkg is
   --==========================================================================================
   procedure ethernet_transmit(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant mac_destination  : in    unsigned(47 downto 0);
-    constant mac_source       : in    unsigned(47 downto 0);
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant mac_destination  : in unsigned(47 downto 0);
+    constant mac_source       : in unsigned(47 downto 0);
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "ethernet_transmit";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
-        & ", MAC dest: " & to_string(mac_destination, HEX, AS_IS, INCL_RADIX)
-        & ", MAC src: " & to_string(mac_source, HEX, AS_IS, INCL_RADIX)
-        & ", payload length: " & to_string(payload'length) & ")";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                   & ", MAC dest: " & to_string(mac_destination, HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(mac_source, HEX, AS_IS, INCL_RADIX) & ", payload length: " & to_string(payload'length) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, TRANSMIT);
-    shared_vvc_cmd.mac_destination                := mac_destination;
-    shared_vvc_cmd.mac_source                     := mac_source;
-    shared_vvc_cmd.payload_length                 := payload'length;
-    shared_vvc_cmd.payload(0 to payload'length-1) := payload;
+    shared_vvc_cmd.mac_destination                  := mac_destination;
+    shared_vvc_cmd.mac_source                       := mac_source;
+    shared_vvc_cmd.payload_length                   := payload'length;
+    shared_vvc_cmd.payload(0 to payload'length - 1) := payload;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, shared_msg_id_panel);
   end procedure ethernet_transmit;
 
   procedure ethernet_transmit(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant mac_destination  : in    unsigned(47 downto 0);
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant mac_destination  : in unsigned(47 downto 0);
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_transmit(VVCT, vvc_instance_idx, channel, mac_destination,
-      shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_source, payload, msg, scope);
+                      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope);
   end procedure ethernet_transmit;
 
   procedure ethernet_transmit(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_transmit(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination,
-      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope);
+                      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source, payload, msg, scope);
   end procedure ethernet_transmit;
 
   procedure ethernet_receive(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant data_routing     : in    t_data_routing;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant data_routing     : in t_data_routing;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "ethernet_receive";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ")";
@@ -364,10 +356,10 @@ package body vvc_methods_pkg is
 
   procedure ethernet_receive(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant msg              : in    string;
-    constant scope            : in    string := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant msg              : in string;
+    constant scope            : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_receive(VVCT, vvc_instance_idx, channel, NA, msg, scope);
@@ -375,81 +367,76 @@ package body vvc_methods_pkg is
 
   procedure ethernet_expect(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant mac_destination  : in    unsigned(47 downto 0);
-    constant mac_source       : in    unsigned(47 downto 0);
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := ERROR;
-    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant mac_destination  : in unsigned(47 downto 0);
+    constant mac_source       : in unsigned(47 downto 0);
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant alert_level      : in t_alert_level := ERROR;
+    constant scope            : in string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name : string := "ethernet_expect";
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel)  -- First part common for all
-        & ", MAC dest: " & to_string(mac_destination, HEX, AS_IS, INCL_RADIX)
-        & ", MAC src: " & to_string(mac_source, HEX, AS_IS, INCL_RADIX)
-        & ", payload length: " & to_string(payload'length) & ")";
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) -- First part common for all
+                                   & ", MAC dest: " & to_string(mac_destination, HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(mac_source, HEX, AS_IS, INCL_RADIX) & ", payload length: " & to_string(payload'length) & ")";
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, EXPECT);
-    shared_vvc_cmd.mac_destination                := mac_destination;
-    shared_vvc_cmd.mac_source                     := mac_source;
-    shared_vvc_cmd.payload_length                 := payload'length;
-    shared_vvc_cmd.payload(0 to payload'length-1) := payload;
-    shared_vvc_cmd.alert_level                    := alert_level;
+    shared_vvc_cmd.mac_destination                  := mac_destination;
+    shared_vvc_cmd.mac_source                       := mac_source;
+    shared_vvc_cmd.payload_length                   := payload'length;
+    shared_vvc_cmd.payload(0 to payload'length - 1) := payload;
+    shared_vvc_cmd.alert_level                      := alert_level;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, shared_msg_id_panel);
   end procedure ethernet_expect;
 
   procedure ethernet_expect(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant mac_destination  : in    unsigned(47 downto 0);
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := ERROR;
-    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant mac_destination  : in unsigned(47 downto 0);
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant alert_level      : in t_alert_level := ERROR;
+    constant scope            : in string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_expect(VVCT, vvc_instance_idx, channel, mac_destination,
-      shared_ethernet_vvc_config(channel,vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope);
+                    shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope);
   end procedure ethernet_expect;
 
   procedure ethernet_expect(
     signal   VVCT             : inout t_vvc_target_record;
-    constant vvc_instance_idx : in    integer;
-    constant channel          : in    t_channel;
-    constant payload          : in    t_byte_array;
-    constant msg              : in    string;
-    constant alert_level      : in    t_alert_level := ERROR;
-    constant scope            : in    string        := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_instance_idx : in integer;
+    constant channel          : in t_channel;
+    constant payload          : in t_byte_array;
+    constant msg              : in string;
+    constant alert_level      : in t_alert_level := ERROR;
+    constant scope            : in string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
     ethernet_expect(VVCT, vvc_instance_idx, channel, shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_source,
-      shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope);
+                    shared_ethernet_vvc_config(channel, vvc_instance_idx).bfm_config.mac_destination, payload, msg, alert_level, scope);
   end procedure ethernet_expect;
 
   --==========================================================================================
   -- Methods calling the HVVC-to-VVC bridge (for internal HVVC use)
   --==========================================================================================
   procedure priv_ethernet_transmit_to_bridge(
-    constant interpacket_gap_time  : in    time;
-    constant vvc_cmd               : in    t_vvc_cmd_record;
-    constant dut_if_field_config   : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge        : inout   t_hvvc_to_bridge;
-    signal   bridge_to_hvvc        : in    t_bridge_to_hvvc;
-    variable vvc_transaction_info  : inout t_transaction_group;
-    constant scope                 : in    string;
-    constant msg_id_panel          : in    t_msg_id_panel
+    constant interpacket_gap_time : in time;
+    constant vvc_cmd              : in t_vvc_cmd_record;
+    constant dut_if_field_config  : in t_dut_if_field_config_array;
+    signal   hvvc_to_bridge       : inout t_hvvc_to_bridge;
+    signal   bridge_to_hvvc       : in t_bridge_to_hvvc;
+    variable vvc_transaction_info : inout t_transaction_group;
+    constant scope                : in string;
+    constant msg_id_panel         : in t_msg_id_panel
   ) is
-    constant proc_name : string := "ethernet_transmit";
-    constant proc_call : string := proc_name
-        & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
-        & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
-        & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
-    variable v_packet               : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    constant proc_name              : string           := "ethernet_transmit";
+    constant proc_call              : string           := proc_name & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX) & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
+    variable v_packet               : t_byte_array(0 to C_MAX_PACKET_LENGTH - 1);
     variable v_frame                : t_ethernet_frame;
     variable v_payload_length       : natural;
     variable v_crc_32               : std_logic_vector(31 downto 0);
@@ -468,9 +455,9 @@ package body vvc_methods_pkg is
 
   begin
     -- Preamble (LSb first)
-    v_packet(0 to 6)        := convert_slv_to_byte_array(C_PREAMBLE, LOWER_BYTE_LEFT);
+    v_packet(0 to 6) := convert_slv_to_byte_array(C_PREAMBLE, LOWER_BYTE_LEFT);
     -- SFD (LSb first)
-    v_packet(7)             := C_SFD;
+    v_packet(7)      := C_SFD;
 
     -- MAC destination (LSb first)
     v_packet(8 to 13)       := convert_slv_to_byte_array(std_logic_vector(vvc_cmd.mac_destination), LOWER_BYTE_LEFT);
@@ -488,21 +475,21 @@ package body vvc_methods_pkg is
     end if;
 
     -- Payload (LSb first)
-    v_packet(22 to 22+vvc_cmd.payload_length-1) := vvc_cmd.payload(0 to vvc_cmd.payload_length-1);
-    v_frame.payload         := vvc_cmd.payload;
+    v_packet(22 to 22 + vvc_cmd.payload_length - 1) := vvc_cmd.payload(0 to vvc_cmd.payload_length - 1);
+    v_frame.payload                                 := vvc_cmd.payload;
     -- Add padding bytes if payload length is less than C_MIN_PAYLOAD_LENGTH
     if vvc_cmd.payload_length < C_MIN_PAYLOAD_LENGTH then
-      v_payload_length := C_MIN_PAYLOAD_LENGTH;
-      v_packet(22+vvc_cmd.payload_length to 22+v_payload_length-1) := (others => (others => '0'));
+      v_payload_length                                                   := C_MIN_PAYLOAD_LENGTH;
+      v_packet(22 + vvc_cmd.payload_length to 22 + v_payload_length - 1) := (others => (others => '0'));
     end if;
 
     -- Calculate the FCS with the MAC addresses, payload length and payload data
-    v_crc_32 := generate_crc_32(v_packet(8 to 22+v_payload_length-1));
+    v_crc_32                                                         := generate_crc_32(v_packet(8 to 22 + v_payload_length - 1));
     -- Post complement the CRC according to Ethernet standard
-    v_crc_32 := not(v_crc_32);
+    v_crc_32                                                         := not (v_crc_32);
     -- FCS (MSb first). Convert slv to byte_array with MSB first and then reverse the bits in each byte so MSb is transmitted first
-    v_packet(22+v_payload_length to 22+v_payload_length+4-1) := reverse_vectors_in_array(convert_slv_to_byte_array(v_crc_32, LOWER_BYTE_LEFT));
-    v_frame.fcs := v_crc_32;
+    v_packet(22 + v_payload_length to 22 + v_payload_length + 4 - 1) := reverse_vectors_in_array(convert_slv_to_byte_array(v_crc_32, LOWER_BYTE_LEFT));
+    v_frame.fcs                                                      := v_crc_32;
 
     -- Add info to the vvc_transaction_info
     vvc_transaction_info.bt.ethernet_frame.fcs := v_crc_32;
@@ -529,110 +516,103 @@ package body vvc_methods_pkg is
     if v_use_preamble_and_sfd then
       v_pos_preamble_and_sfd := FIRST;
     elsif v_use_mac_dest then
-      v_pos_mac_dest         := FIRST;
+      v_pos_mac_dest := FIRST;
     elsif v_use_mac_source then
-      v_pos_mac_source       := FIRST;
+      v_pos_mac_source := FIRST;
     elsif v_use_payload_length then
-      v_pos_payload_length   := FIRST;
+      v_pos_payload_length := FIRST;
     elsif v_use_payload then
-      v_pos_payload          := FIRST;
+      v_pos_payload := FIRST;
     elsif v_use_fcs then
-      v_pos_fcs              := FIRST;
+      v_pos_fcs := FIRST;
     end if;
     if v_use_fcs then
-      v_pos_fcs              := LAST when v_pos_fcs /= FIRST else FIRST_AND_LAST;
+      v_pos_fcs := LAST when v_pos_fcs /= FIRST else FIRST_AND_LAST;
     elsif v_use_payload then
-      v_pos_payload          := LAST when v_pos_payload /= FIRST else FIRST_AND_LAST;
+      v_pos_payload := LAST when v_pos_payload /= FIRST else FIRST_AND_LAST;
     elsif v_use_payload_length then
-      v_pos_payload_length   := LAST when v_pos_payload_length /= FIRST else FIRST_AND_LAST;
+      v_pos_payload_length := LAST when v_pos_payload_length /= FIRST else FIRST_AND_LAST;
     elsif v_use_mac_source then
-      v_pos_mac_source       := LAST when v_pos_mac_source /= FIRST else FIRST_AND_LAST;
+      v_pos_mac_source := LAST when v_pos_mac_source /= FIRST else FIRST_AND_LAST;
     elsif v_use_mac_dest then
-      v_pos_mac_dest         := LAST when v_pos_mac_dest /= FIRST else FIRST_AND_LAST;
+      v_pos_mac_dest := LAST when v_pos_mac_dest /= FIRST else FIRST_AND_LAST;
     elsif v_use_preamble_and_sfd then
       v_pos_preamble_and_sfd := LAST when v_pos_preamble_and_sfd /= FIRST else FIRST_AND_LAST;
     end if;
 
-    log(ID_PACKET_INITIATE, proc_call & ". Start transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_INITIATE, proc_call & ". Start transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Send only configured fields to the bridge
     if v_use_preamble_and_sfd then
-      log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+      log(ID_PACKET_PREAMBLE, proc_call & ". Transmitting preamble. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(0 to 7), C_FIELD_IDX_PREAMBLE_AND_SFD,
-        v_pos_preamble_and_sfd, scope, msg_id_panel);
+                              v_pos_preamble_and_sfd, scope, msg_id_panel);
     end if;
     if v_use_mac_dest or v_use_mac_source or v_use_payload_length then
-      log(ID_PACKET_HDR, proc_call & ". Transmitting header. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, HEADER), scope, msg_id_panel);
+      log(ID_PACKET_HDR, proc_call & ". Transmitting header. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, HEADER), scope, msg_id_panel);
     end if;
     if v_use_mac_dest then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(8 to 13), C_FIELD_IDX_MAC_DESTINATION,
-        v_pos_mac_dest, scope, msg_id_panel);
+                              v_pos_mac_dest, scope, msg_id_panel);
     end if;
     if v_use_mac_source then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(14 to 19), C_FIELD_IDX_MAC_SOURCE,
-        v_pos_mac_source, scope, msg_id_panel);
+                              v_pos_mac_source, scope, msg_id_panel);
     end if;
     if v_use_payload_length then
       blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(20 to 21), C_FIELD_IDX_PAYLOAD_LENGTH,
-        v_pos_payload_length, scope, msg_id_panel);
+                              v_pos_payload_length, scope, msg_id_panel);
     end if;
     if v_use_payload then
-      log(ID_PACKET_DATA, proc_call & ". Transmitting payload. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 to 22+v_payload_length-1), C_FIELD_IDX_PAYLOAD,
-        v_pos_payload, scope, msg_id_panel);
+      log(ID_PACKET_DATA, proc_call & ". Transmitting payload. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, PAYLOAD), scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 to 22 + v_payload_length - 1), C_FIELD_IDX_PAYLOAD,
+                              v_pos_payload, scope, msg_id_panel);
     end if;
     if v_use_fcs then
-      log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
-      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22+v_payload_length to 22+v_payload_length+4-1), C_FIELD_IDX_FCS,
-        v_pos_fcs, scope, msg_id_panel);
+      log(ID_PACKET_CHECKSUM, proc_call & ". Transmitting FCS. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(v_frame, CHECKSUM), scope, msg_id_panel);
+      blocking_send_to_bridge(hvvc_to_bridge, bridge_to_hvvc, v_packet(22 + v_payload_length to 22 + v_payload_length + 4 - 1), C_FIELD_IDX_FCS,
+                              v_pos_fcs, scope, msg_id_panel);
     end if;
 
-    log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_COMPLETE, proc_call & ". Finished transmitting packet. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Interpacket gap
-    log(ID_PACKET_GAP, "Waiting for the interpacket gap. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_GAP, "Waiting for the interpacket gap. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     wait for interpacket_gap_time;
   end procedure priv_ethernet_transmit_to_bridge;
 
   procedure priv_ethernet_receive_from_bridge(
-    variable received_frame       : out   t_ethernet_frame;
-    variable fcs_error            : out   boolean;
-    constant fcs_error_severity   : in    t_alert_level;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
-    constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
-    signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
+    variable received_frame       : out t_ethernet_frame;
+    variable fcs_error            : out boolean;
+    constant fcs_error_severity   : in t_alert_level;
+    constant vvc_cmd              : in t_vvc_cmd_record;
+    constant dut_if_field_config  : in t_dut_if_field_config_array;
+    signal   hvvc_to_bridge       : inout t_hvvc_to_bridge;
+    signal   bridge_to_hvvc       : in t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
-    constant scope                : in    string;
-    constant msg_id_panel         : in    t_msg_id_panel;
-    constant ext_proc_call        : in    string := "" -- External proc_call. Overwrite if called from another procedure
+    constant scope                : in string;
+    constant msg_id_panel         : in t_msg_id_panel;
+    constant ext_proc_call        : in string := "" -- External proc_call. Overwrite if called from another procedure
   ) is
-    constant local_proc_name : string := "ethernet_receive";
-    constant local_proc_call : string := local_proc_name & "()";
-    variable v_preamble_and_sfd     : std_logic_vector(63 downto 0) := (others => '0');
-    variable v_packet               : t_byte_array(0 to C_MAX_PACKET_LENGTH-1);
+    constant local_proc_name          : string                        := "ethernet_receive";
+    constant local_proc_call          : string                        := local_proc_name & "()";
+    variable v_preamble_and_sfd       : std_logic_vector(63 downto 0) := (others => '0');
+    variable v_packet                 : t_byte_array(0 to C_MAX_PACKET_LENGTH - 1);
     alias a_bridge_to_hvvc_data_words : t_byte_array(0 to C_MAX_PACKET_LENGTH-1) is bridge_to_hvvc.data_words; -- Temporary fix to bug in Questa Sim 2022.1
-    variable v_payload_length       : integer;
-    variable v_proc_call            : line; -- Current proc_call, external or local
-    variable v_use_preamble_and_sfd : boolean;
-    variable v_use_mac_dest         : boolean;
-    variable v_use_mac_source       : boolean;
-    variable v_use_payload_length   : boolean;
-    variable v_use_payload          : boolean;
-    variable v_use_fcs              : boolean;
-    variable v_pos_preamble_and_sfd : t_field_position := MIDDLE;
-    variable v_pos_mac_dest         : t_field_position := MIDDLE;
-    variable v_pos_mac_source       : t_field_position := MIDDLE;
-    variable v_pos_payload_length   : t_field_position := MIDDLE;
-    variable v_pos_payload          : t_field_position := MIDDLE;
-    variable v_pos_fcs              : t_field_position := MIDDLE;
+    variable v_payload_length         : integer;
+    variable v_proc_call              : line; -- Current proc_call, external or local
+    variable v_use_preamble_and_sfd   : boolean;
+    variable v_use_mac_dest           : boolean;
+    variable v_use_mac_source         : boolean;
+    variable v_use_payload_length     : boolean;
+    variable v_use_payload            : boolean;
+    variable v_use_fcs                : boolean;
+    variable v_pos_preamble_and_sfd   : t_field_position              := MIDDLE;
+    variable v_pos_mac_dest           : t_field_position              := MIDDLE;
+    variable v_pos_mac_source         : t_field_position              := MIDDLE;
+    variable v_pos_payload_length     : t_field_position              := MIDDLE;
+    variable v_pos_payload            : t_field_position              := MIDDLE;
+    variable v_pos_fcs                : t_field_position              := MIDDLE;
   begin
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'ethernet_receive...'
@@ -666,55 +646,53 @@ package body vvc_methods_pkg is
     if v_use_preamble_and_sfd then
       v_pos_preamble_and_sfd := FIRST;
     elsif v_use_mac_dest then
-      v_pos_mac_dest         := FIRST;
+      v_pos_mac_dest := FIRST;
     elsif v_use_mac_source then
-      v_pos_mac_source       := FIRST;
+      v_pos_mac_source := FIRST;
     elsif v_use_payload_length then
-      v_pos_payload_length   := FIRST;
+      v_pos_payload_length := FIRST;
     elsif v_use_payload then
-      v_pos_payload          := FIRST;
+      v_pos_payload := FIRST;
     elsif v_use_fcs then
-      v_pos_fcs              := FIRST;
+      v_pos_fcs := FIRST;
     end if;
     if v_use_fcs then
-      v_pos_fcs              := LAST when v_pos_fcs /= FIRST else FIRST_AND_LAST;
+      v_pos_fcs := LAST when v_pos_fcs /= FIRST else FIRST_AND_LAST;
     elsif v_use_payload then
-      v_pos_payload          := LAST when v_pos_payload /= FIRST else FIRST_AND_LAST;
+      v_pos_payload := LAST when v_pos_payload /= FIRST else FIRST_AND_LAST;
     elsif v_use_payload_length then
-      v_pos_payload_length   := LAST when v_pos_payload_length /= FIRST else FIRST_AND_LAST;
+      v_pos_payload_length := LAST when v_pos_payload_length /= FIRST else FIRST_AND_LAST;
     elsif v_use_mac_source then
-      v_pos_mac_source       := LAST when v_pos_mac_source /= FIRST else FIRST_AND_LAST;
+      v_pos_mac_source := LAST when v_pos_mac_source /= FIRST else FIRST_AND_LAST;
     elsif v_use_mac_dest then
-      v_pos_mac_dest         := LAST when v_pos_mac_dest /= FIRST else FIRST_AND_LAST;
+      v_pos_mac_dest := LAST when v_pos_mac_dest /= FIRST else FIRST_AND_LAST;
     elsif v_use_preamble_and_sfd then
       v_pos_preamble_and_sfd := LAST when v_pos_preamble_and_sfd /= FIRST else FIRST_AND_LAST;
     end if;
 
-    log(ID_PACKET_INITIATE, v_proc_call.all & ". Waiting for packet. " & add_msg_delimiter(vvc_cmd.msg) &
-      format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+    log(ID_PACKET_INITIATE, v_proc_call.all & ". Waiting for packet. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
 
     -- Await preamble and SFD (if configured)
     if v_use_preamble_and_sfd then
       loop
         -- Fetch one byte at the time until SFD is found
         blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 1, C_FIELD_IDX_PREAMBLE_AND_SFD, v_pos_preamble_and_sfd, scope, msg_id_panel);
-        v_preamble_and_sfd := v_preamble_and_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
+        v_preamble_and_sfd     := v_preamble_and_sfd(55 downto 0) & bridge_to_hvvc.data_words(0);
         if v_preamble_and_sfd = C_PREAMBLE & C_SFD then
           exit;
         end if;
         v_pos_preamble_and_sfd := MIDDLE; -- Avoid repeating the first field log for each byte
       end loop;
       v_packet(0 to 7) := convert_slv_to_byte_array(v_preamble_and_sfd, LOWER_BYTE_LEFT);
-      log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+      log(ID_PACKET_PREAMBLE, v_proc_call.all & ". Preamble received. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     end if;
 
     -- Read MAC destination from bridge (if configured)
     if v_use_mac_dest then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_DESTINATION, v_pos_mac_dest, scope, msg_id_panel);
       --v_packet(8 to 13)              := bridge_to_hvvc.data_words(0 to 5);
-      v_packet(8 to 13)              := a_bridge_to_hvvc_data_words(0 to 5); -- Temporary fix for bug in Questa Sim 2022.1
-      received_frame.mac_destination := unsigned(convert_byte_array_to_slv(v_packet(8 to 13), LOWER_BYTE_LEFT));
+      v_packet(8 to 13)                                      := a_bridge_to_hvvc_data_words(0 to 5); -- Temporary fix for bug in Questa Sim 2022.1
+      received_frame.mac_destination                         := unsigned(convert_byte_array_to_slv(v_packet(8 to 13), LOWER_BYTE_LEFT));
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.mac_destination := received_frame.mac_destination;
     end if;
@@ -723,8 +701,8 @@ package body vvc_methods_pkg is
     if v_use_mac_source then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 6, C_FIELD_IDX_MAC_SOURCE, v_pos_mac_source, scope, msg_id_panel);
       --v_packet(14 to 19)        := bridge_to_hvvc.data_words(0 to 5);
-      v_packet(14 to 19)        := a_bridge_to_hvvc_data_words(0 to 5); -- Temporary fix for bug in Questa Sim 2022.1
-      received_frame.mac_source := unsigned(convert_byte_array_to_slv(v_packet(14 to 19), LOWER_BYTE_LEFT));
+      v_packet(14 to 19)                                := a_bridge_to_hvvc_data_words(0 to 5); -- Temporary fix for bug in Questa Sim 2022.1
+      received_frame.mac_source                         := unsigned(convert_byte_array_to_slv(v_packet(14 to 19), LOWER_BYTE_LEFT));
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.mac_source := received_frame.mac_source;
     end if;
@@ -733,15 +711,14 @@ package body vvc_methods_pkg is
     if v_use_payload_length then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 2, C_FIELD_IDX_PAYLOAD_LENGTH, v_pos_payload_length, scope, msg_id_panel);
       --v_packet(20 to 21)            := bridge_to_hvvc.data_words(0 to 1);
-      v_packet(20 to 21)            := a_bridge_to_hvvc_data_words(0 to 1); -- Temporary fix for bug in Questa Sim 2022.1
-      received_frame.payload_length := to_integer(unsigned(convert_byte_array_to_slv(v_packet(20 to 21), LOWER_BYTE_LEFT)));
-      v_payload_length              := received_frame.payload_length;
+      v_packet(20 to 21)                                    := a_bridge_to_hvvc_data_words(0 to 1); -- Temporary fix for bug in Questa Sim 2022.1
+      received_frame.payload_length                         := to_integer(unsigned(convert_byte_array_to_slv(v_packet(20 to 21), LOWER_BYTE_LEFT)));
+      v_payload_length                                      := received_frame.payload_length;
       -- Add info to the vvc_transaction_info
       vvc_transaction_info.bt.ethernet_frame.payload_length := received_frame.payload_length;
     end if;
     if v_use_mac_dest or v_use_mac_source or v_use_payload_length then
-      log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, HEADER), scope, msg_id_panel);
+      log(ID_PACKET_HDR, v_proc_call.all & ". Header received. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, HEADER), scope, msg_id_panel);
     end if;
     -- Check payload length is within limits
     if v_payload_length > C_MAX_PAYLOAD_LENGTH then
@@ -754,59 +731,53 @@ package body vvc_methods_pkg is
         v_payload_length := C_MIN_PAYLOAD_LENGTH;
       end if;
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, v_payload_length, C_FIELD_IDX_PAYLOAD, v_pos_payload, scope, msg_id_panel);
-      v_packet(22 to 22+v_payload_length-1) := bridge_to_hvvc.data_words(0 to v_payload_length-1);
-      received_frame.payload(0 to received_frame.payload_length-1) := v_packet(22 to 22+received_frame.payload_length-1); -- Discard padding bytes
+      v_packet(22 to 22 + v_payload_length - 1)                      := bridge_to_hvvc.data_words(0 to v_payload_length - 1);
+      received_frame.payload(0 to received_frame.payload_length - 1) := v_packet(22 to 22 + received_frame.payload_length - 1); -- Discard padding bytes
       -- Add info to the vvc_transaction_info
-      vvc_transaction_info.bt.ethernet_frame.payload := received_frame.payload;
-      log(ID_PACKET_DATA, v_proc_call.all & ". Payload received. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, PAYLOAD), scope, msg_id_panel);
+      vvc_transaction_info.bt.ethernet_frame.payload                 := received_frame.payload;
+      log(ID_PACKET_DATA, v_proc_call.all & ". Payload received. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, PAYLOAD), scope, msg_id_panel);
     end if;
 
     -- Read FCS from bridge (if configured)
     if v_use_fcs then
       blocking_request_from_bridge(hvvc_to_bridge, bridge_to_hvvc, 4, C_FIELD_IDX_FCS, v_pos_fcs, scope, msg_id_panel);
       --v_packet(22+v_payload_length to 22+v_payload_length+4-1) := bridge_to_hvvc.data_words(0 to 3);
-      v_packet(22+v_payload_length to 22+v_payload_length+4-1) := a_bridge_to_hvvc_data_words(0 to 3); -- Temporary fix for bug in Questa Sim 2022.1
+      v_packet(22 + v_payload_length to 22 + v_payload_length + 4 - 1) := a_bridge_to_hvvc_data_words(0 to 3); -- Temporary fix for bug in Questa Sim 2022.1
       -- For the FCS the MSb is received first, so we need to reverse the bits in each byte
-      received_frame.fcs := convert_byte_array_to_slv(reverse_vectors_in_array(v_packet(22+v_payload_length to 22+v_payload_length+4-1)), LOWER_BYTE_LEFT);
+      received_frame.fcs                                               := convert_byte_array_to_slv(reverse_vectors_in_array(v_packet(22 + v_payload_length to 22 + v_payload_length + 4 - 1)), LOWER_BYTE_LEFT);
       -- Add info to the vvc_transaction_info
-      vvc_transaction_info.bt.ethernet_frame.fcs := received_frame.fcs;
-      log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, CHECKSUM), scope, msg_id_panel);
+      vvc_transaction_info.bt.ethernet_frame.fcs                       := received_frame.fcs;
+      log(ID_PACKET_CHECKSUM, v_proc_call.all & ". FCS received. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx) & to_string(received_frame, CHECKSUM), scope, msg_id_panel);
       -- Check the CRC of the received frame
-      fcs_error := not check_crc_32(v_packet(8 to 22+v_payload_length+4-1));
+      fcs_error                                                        := not check_crc_32(v_packet(8 to 22 + v_payload_length + 4 - 1));
       check_value(fcs_error, false, fcs_error_severity, "Check FCS value", scope, ID_NEVER, msg_id_panel);
     end if;
 
     if ext_proc_call = "" then
-      log(ID_PACKET_COMPLETE, v_proc_call.all & ". Finished receiving packet. " & add_msg_delimiter(vvc_cmd.msg) &
-        format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
+      log(ID_PACKET_COMPLETE, v_proc_call.all & ". Finished receiving packet. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, msg_id_panel);
     else
-      -- Log will be handled by calling procedure (e.g. ethernet_expect)
+    -- Log will be handled by calling procedure (e.g. ethernet_expect)
     end if;
 
     DEALLOCATE(v_proc_call);
   end procedure priv_ethernet_receive_from_bridge;
 
   procedure priv_ethernet_expect_from_bridge(
-    constant fcs_error_severity   : in    t_alert_level;
-    constant vvc_cmd              : in    t_vvc_cmd_record;
-    constant dut_if_field_config  : in    t_dut_if_field_config_array;
-    signal   hvvc_to_bridge       : inout   t_hvvc_to_bridge;
-    signal   bridge_to_hvvc       : in    t_bridge_to_hvvc;
+    constant fcs_error_severity   : in t_alert_level;
+    constant vvc_cmd              : in t_vvc_cmd_record;
+    constant dut_if_field_config  : in t_dut_if_field_config_array;
+    signal   hvvc_to_bridge       : inout t_hvvc_to_bridge;
+    signal   bridge_to_hvvc       : in t_bridge_to_hvvc;
     variable vvc_transaction_info : inout t_transaction_group;
-    constant scope                : in    string;
-    constant msg_id_panel         : in    t_msg_id_panel
+    constant scope                : in string;
+    constant msg_id_panel         : in t_msg_id_panel
   ) is
-    constant proc_name : string := "ethernet_expect";
-    constant proc_call : string := proc_name
-        & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX)
-        & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX)
-        & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
+    constant proc_name        : string           := "ethernet_expect";
+    constant proc_call        : string           := proc_name & "(MAC dest: " & to_string(vvc_cmd.mac_destination, HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(vvc_cmd.mac_source, HEX, AS_IS, INCL_RADIX) & ", payload length: " & to_string(vvc_cmd.payload_length) & ")";
     variable v_expected_frame : t_ethernet_frame := C_ETHERNET_FRAME_DEFAULT;
     variable v_received_frame : t_ethernet_frame;
     variable v_fcs_error      : boolean;
-    variable v_frame_passed   : boolean := true;
+    variable v_frame_passed   : boolean          := true;
   begin
     v_expected_frame.mac_destination := vvc_cmd.mac_destination;
     v_expected_frame.mac_source      := vvc_cmd.mac_source;
@@ -827,21 +798,17 @@ package body vvc_methods_pkg is
                                       ext_proc_call        => proc_call);
 
     -- Check received frame against expected frame
-    if not check_value(v_received_frame.mac_destination, v_expected_frame.mac_destination, vvc_cmd.alert_level, "Verify MAC destination. " &
-      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+    if not check_value(v_received_frame.mac_destination, v_expected_frame.mac_destination, vvc_cmd.alert_level, "Verify MAC destination. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
       v_frame_passed := false;
     end if;
-    if not check_value(v_received_frame.mac_source, v_expected_frame.mac_source, vvc_cmd.alert_level, "Verify MAC source. " &
-      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+    if not check_value(v_received_frame.mac_source, v_expected_frame.mac_source, vvc_cmd.alert_level, "Verify MAC source. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
       v_frame_passed := false;
     end if;
-    if not check_value(v_received_frame.payload_length, v_expected_frame.payload_length, vvc_cmd.alert_level, "Verify payload length. " &
-      add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, ID_NEVER, msg_id_panel, proc_call) then
+    if not check_value(v_received_frame.payload_length, v_expected_frame.payload_length, vvc_cmd.alert_level, "Verify payload length. " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, ID_NEVER, msg_id_panel, proc_call) then
       v_frame_passed := false;
     end if;
-    for i in 0 to v_received_frame.payload_length-1 loop
-      if not check_value(v_received_frame.payload(i), v_expected_frame.payload(i), vvc_cmd.alert_level, "Verify payload byte " & to_string(i) & ". " &
-        add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
+    for i in 0 to v_received_frame.payload_length - 1 loop
+      if not check_value(v_received_frame.payload(i), v_expected_frame.payload(i), vvc_cmd.alert_level, "Verify payload byte " & to_string(i) & ". " & add_msg_delimiter(vvc_cmd.msg) & format_command_idx(vvc_cmd.cmd_idx), scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call) then
         v_frame_passed := false;
       end if;
     end loop;
@@ -858,22 +825,22 @@ package body vvc_methods_pkg is
   -- Transaction info methods
   --==============================================================================
   procedure set_global_vvc_transaction_info(
-    signal vvc_transaction_info_trigger : inout std_logic;
-    variable vvc_transaction_info_group : inout t_transaction_group;
-    constant vvc_cmd                    : in t_vvc_cmd_record;
-    constant vvc_config                 : in t_vvc_config;
-    constant scope                      : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_config                   : in t_vvc_config;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
-        vvc_transaction_info_group.bt.operation                              := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.ethernet_frame.mac_destination         := vvc_cmd.mac_destination;
-        vvc_transaction_info_group.bt.ethernet_frame.mac_source              := vvc_cmd.mac_source;
-        vvc_transaction_info_group.bt.ethernet_frame.payload_length          := vvc_cmd.payload_length;
-        vvc_transaction_info_group.bt.ethernet_frame.payload                 := vvc_cmd.payload;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)  := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                       := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                     := IN_PROGRESS;
+        vvc_transaction_info_group.bt.operation                             := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.ethernet_frame.mac_destination        := vvc_cmd.mac_destination;
+        vvc_transaction_info_group.bt.ethernet_frame.mac_source             := vvc_cmd.mac_source;
+        vvc_transaction_info_group.bt.ethernet_frame.payload_length         := vvc_cmd.payload_length;
+        vvc_transaction_info_group.bt.ethernet_frame.payload                := vvc_cmd.payload;
+        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status                    := IN_PROGRESS;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
@@ -899,14 +866,14 @@ package body vvc_methods_pkg is
   --==============================================================================
   -- VVC Activity
   --==============================================================================
-  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;
-                                          variable vvc_status                         : inout t_vvc_status;
-                                          constant activity                           : in    t_activity;
-                                          constant entry_num_in_vvc_activity_register : in    integer;
-                                          constant last_cmd_idx_executed              : in    natural;
-                                          constant command_queue_is_empty             : in    boolean;
-                                          constant scope                              : in    string := C_VVC_NAME) is
-    variable v_activity   : t_activity := activity;
+  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
+                                         variable vvc_status                           : inout t_vvc_status;
+                                         constant activity                             : in t_activity;
+                                         constant entry_num_in_vvc_activity_register   : in integer;
+                                         constant last_cmd_idx_executed                : in natural;
+                                         constant command_queue_is_empty               : in boolean;
+                                         constant scope                                : in string := C_VVC_NAME) is
+    variable v_activity : t_activity := activity;
   begin
     -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
     if activity = INACTIVE then
@@ -914,7 +881,7 @@ package body vvc_methods_pkg is
       vvc_status.current_cmd_idx  := 0;
     end if;
 
-    if v_activity = INACTIVE and not(command_queue_is_empty) then
+    if v_activity = INACTIVE and not (command_queue_is_empty) then
       v_activity := ACTIVE;
     end if;
     shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,

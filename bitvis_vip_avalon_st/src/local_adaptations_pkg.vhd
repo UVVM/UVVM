@@ -27,11 +27,11 @@ package local_adaptations_pkg is
   -- Constants for this VIP
   -------------------------------------------------------------------------------
   -- This constant can be smaller than C_MAX_VVC_INSTANCE_NUM but not bigger.
-  constant C_AVALON_ST_MAX_VVC_INSTANCE_NUM   : natural := C_MAX_VVC_INSTANCE_NUM;
+  constant C_AVALON_ST_MAX_VVC_INSTANCE_NUM : natural := C_MAX_VVC_INSTANCE_NUM;
 
-  constant C_AVALON_ST_CHANNEL_MAX_LENGTH     : natural := 8;
-  constant C_AVALON_ST_WORD_MAX_LENGTH        : natural := 512;
-  constant C_AVALON_ST_DATA_MAX_WORDS         : natural := 1024;
+  constant C_AVALON_ST_CHANNEL_MAX_LENGTH : natural := 8;
+  constant C_AVALON_ST_WORD_MAX_LENGTH    : natural := 512;
+  constant C_AVALON_ST_DATA_MAX_WORDS     : natural := 1024;
 
 end package local_adaptations_pkg;
 

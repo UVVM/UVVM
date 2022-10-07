@@ -14,11 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
-
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -36,7 +34,6 @@ use bitvis_vip_uart.monitor_cmd_pkg.all;
 library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
-
 --hdlregression:tb
 -- Test bench entity
 entity uvvm_demo_tb is
@@ -45,12 +42,12 @@ end entity uvvm_demo_tb;
 -- Test bench architecture
 architecture func of uvvm_demo_tb is
 
-  constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
-  constant C_MONITOR_SCOPE      : string := "UART Monitor";
+  constant C_SCOPE         : string := C_TB_SCOPE_DEFAULT;
+  constant C_MONITOR_SCOPE : string := "UART Monitor";
 
   -- Clock and bit period settings
-  constant C_CLK_PERIOD         : time := 10 ns;
-  constant C_BIT_PERIOD         : time := 16 * C_CLK_PERIOD;
+  constant C_CLK_PERIOD : time := 10 ns;
+  constant C_BIT_PERIOD : time := 16 * C_CLK_PERIOD;
 
   -- Predefined SBI addresses
   constant C_ADDR_RX_DATA       : unsigned(2 downto 0) := "000";
@@ -68,7 +65,6 @@ architecture func of uvvm_demo_tb is
   signal watchdog_ctrl_extend         : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
   signal watchdog_ctrl_reinit         : t_watchdog_ctrl := C_WATCHDOG_CTRL_DEFAULT;
 
-
 begin
 
   ------------------------------------------------
@@ -77,35 +73,31 @@ begin
   -- Note: these timers should have a minimum timeout that
   -- covers all the tests in this testbench or else it will fail.
   watchdog_timer(watchdog_ctrl_terminate, C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog A");
-  watchdog_timer(watchdog_ctrl_init,      C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog B");
-  watchdog_timer(watchdog_ctrl_extend,    C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog C");
-  watchdog_timer(watchdog_ctrl_reinit,    C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog D");
-
+  watchdog_timer(watchdog_ctrl_init, C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog B");
+  watchdog_timer(watchdog_ctrl_extend, C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog C");
+  watchdog_timer(watchdog_ctrl_reinit, C_GENERAL_WATCHDOG_TIMEOUT, ERROR, "Watchdog D");
 
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   --
   --   Map timing constants and DUT addresses for VIPs and Model
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.uvvm_demo_th generic map(
-    GC_CLK_PERIOD                 => C_CLK_PERIOD,
-    GC_BIT_PERIOD                 => C_BIT_PERIOD,
-    GC_ADDR_RX_DATA               => C_ADDR_RX_DATA,
-    GC_ADDR_RX_DATA_VALID         => C_ADDR_RX_DATA_VALID,
-    GC_ADDR_TX_DATA               => C_ADDR_TX_DATA,
-    GC_ADDR_TX_READY              => C_ADDR_TX_READY,
-    GC_ACTIVITY_WATCHDOG_TIMEOUT  => C_ACTIVITY_WATCHDOG_TIMEOUT
-  );
-
+  i_test_harness : entity work.uvvm_demo_th
+    generic map(
+      GC_CLK_PERIOD                => C_CLK_PERIOD,
+      GC_BIT_PERIOD                => C_BIT_PERIOD,
+      GC_ADDR_RX_DATA              => C_ADDR_RX_DATA,
+      GC_ADDR_RX_DATA_VALID        => C_ADDR_RX_DATA_VALID,
+      GC_ADDR_TX_DATA              => C_ADDR_TX_DATA,
+      GC_ADDR_TX_READY             => C_ADDR_TX_READY,
+      GC_ACTIVITY_WATCHDOG_TIMEOUT => C_ACTIVITY_WATCHDOG_TIMEOUT
+    );
 
   ------------------------------------------------
   -- PROCESS: p_main
   ------------------------------------------------
-  p_main: process
-    variable v_data       : std_logic_vector(7 downto 0);
-
-
-
+  p_main : process
+    variable v_data : std_logic_vector(7 downto 0);
 
     -- Description:
     --
@@ -121,20 +113,16 @@ begin
     procedure test_error_injection(void : t_void) is
       variable v_prob : real;
     begin
-      log(ID_LOG_HDR_XL, "Test error injection.\n\n"&
-                         "UART TX VVC is used to randomly send error injected data to DUT.\n"&
-                         "The UART Monitor will report any transfer errors detected.", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test error injection.\n\n" & "UART TX VVC is used to randomly send error injected data to DUT.\n" & "The UART Monitor will report any transfer errors detected.", C_SCOPE);
 
       -- Print info
       log(ID_SEQUENCER, "Note: SBI_READ() is requested by Model.\nResults are checked in Scoreboard.\n", C_SCOPE);
 
-
       -- Set UART TX VVC error injection probability to 0%.
       -- Note that error injection is set to C_VVC_ERROR_INJECTION_INACTIVE in vvc_methods_pkg
       -- when the VVCs are initialized.
-      shared_uart_vvc_config(TX,1).error_injection.parity_bit_error_prob := 0.0;
-      shared_uart_vvc_config(TX,1).error_injection.stop_bit_error_prob   := 0.0;
-
+      shared_uart_vvc_config(TX, 1).error_injection.parity_bit_error_prob := 0.0;
+      shared_uart_vvc_config(TX, 1).error_injection.stop_bit_error_prob   := 0.0;
 
       log(ID_LOG_HDR, "Performing 10x SBI Write and UART Reveive with random parity bit error injection", C_SCOPE);
       -- This test will use UART TX VVC to write data to DUT, with randomly inserted parity bit error injection.
@@ -147,21 +135,19 @@ begin
 
         -- Configure the parity bit error injection probability
         log(ID_SEQUENCER, "\nSetting parity error probability to " & to_string(v_prob) & "%", C_SCOPE);
-        shared_uart_vvc_config(TX,1).error_injection.parity_bit_error_prob := v_prob;
+        shared_uart_vvc_config(TX, 1).error_injection.parity_bit_error_prob := v_prob;
 
         -- Request UART TX VVC write
-        uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
-        await_completion(UART_VVCT,1,TX,  16 * C_BIT_PERIOD);
-        wait for 200 ns;  -- margin
+        uart_transmit(UART_VVCT, 1, TX, v_data, "UART TX");
+        await_completion(UART_VVCT, 1, TX, 16 * C_BIT_PERIOD);
+        wait for 200 ns;                -- margin
         -- Add delay for DUT to prepare for next transaction
         insert_delay(UART_VVCT, 1, TX, C_BIT_PERIOD, "Insert delay before next UART TX");
       end loop;
 
       -- Set UART TX VVC parity bit error injection probability to 0%, i.e. off.
       log(ID_SEQUENCER, "\nSetting parity error probability to 0%", C_SCOPE);
-      shared_uart_vvc_config(TX,1).error_injection.parity_bit_error_prob    := 0.0;
-
-
+      shared_uart_vvc_config(TX, 1).error_injection.parity_bit_error_prob := 0.0;
 
       log(ID_LOG_HDR, "Performing 10x SBI Write and UART Reveive with random stop bit error injection", C_SCOPE);
       -- This test will use UART TX VVC to write data to DUT, with randomly inserted stop bit error injection.
@@ -174,20 +160,19 @@ begin
 
         -- Configure the parity bit error injection probability
         log(ID_SEQUENCER, "\nSetting stop error probability to " & to_string(v_prob) & "%", C_SCOPE);
-        shared_uart_vvc_config(TX,1).error_injection.stop_bit_error_prob := v_prob;
+        shared_uart_vvc_config(TX, 1).error_injection.stop_bit_error_prob := v_prob;
 
         -- Request UART TX VVC write
-        uart_transmit(UART_VVCT,1,TX,  v_data, "UART TX");
-        await_completion(UART_VVCT,1,TX,  16 * C_BIT_PERIOD);
-        wait for 200 ns;  -- margin
+        uart_transmit(UART_VVCT, 1, TX, v_data, "UART TX");
+        await_completion(UART_VVCT, 1, TX, 16 * C_BIT_PERIOD);
+        wait for 200 ns;                -- margin
         -- Add delay for DUT to prepare for next transaction
         insert_delay(UART_VVCT, 1, TX, C_BIT_PERIOD, "Insert delay before next UART TX");
       end loop;
 
-
       -- Set UART TX VVC stop bit error injection probability to 0%, i.e. off.
       log(ID_SEQUENCER, "\nSetting stop error probability to 0%", C_SCOPE);
-      shared_uart_vvc_config(TX,1).error_injection.stop_bit_error_prob    := 0.0;
+      shared_uart_vvc_config(TX, 1).error_injection.stop_bit_error_prob := 0.0;
 
       -- Print report of Scoreboard counters
       SBI_VVC_SB.report_counters(VOID);
@@ -198,7 +183,6 @@ begin
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_error_injection;
-
 
     -- Description:
     --
@@ -211,8 +195,7 @@ begin
     --
     procedure test_randomise(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test randomise data.\n\n"&
-                         "UART TX VVC is used to send randomised data to DUT.", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test randomise data.\n\n" & "UART TX VVC is used to send randomised data to DUT.", C_SCOPE);
 
       -- Print info
       log(ID_SEQUENCER, "Note: SBI_READ() is requested by Model.\nResults are checked in Scoreboard.\n", C_SCOPE);
@@ -224,16 +207,14 @@ begin
       uart_transmit(UART_VVCT, 1, TX, 1, RANDOM, "UART TX RANDOM");
       await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
       -- Add a delay for DUT to prepare for next transaction
-      insert_delay(UART_VVCT, 1, TX, 20*C_CLK_PERIOD, "Insert delay before next UART TX");
-
+      insert_delay(UART_VVCT, 1, TX, 20 * C_CLK_PERIOD, "Insert delay before next UART TX");
 
       log(ID_LOG_HDR, "Check 3 byte random transmit", C_SCOPE);
       -- This test will request the UART TX VVC to send 3 random bytes to the DUT.
       -- SBI_READ() is requested by Model and the randomised data is checked in SB.
 
       uart_transmit(UART_VVCT, 1, TX, 3, RANDOM, "UART TX RANDOM");
-      await_completion(UART_VVCT,1,TX,  3 * 13 * C_BIT_PERIOD);
-
+      await_completion(UART_VVCT, 1, TX, 3 * 13 * C_BIT_PERIOD);
 
       -- Wait for final SBI READ to finish and update SB
       await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
@@ -248,7 +229,6 @@ begin
       wait for 3 * C_BIT_PERIOD;
     end procedure test_randomise;
 
-
     -- Description:
     --
     --  1. UART RX VVC is configured with control of a protocol checker (bit rate).
@@ -261,9 +241,7 @@ begin
     --
     procedure test_protocol_checker(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test protocol checker.\n\n"&
-                          "UART RX VVC is configured to control the bit rate checker,\n"&
-                          "which is will monitor the bit periods.", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test protocol checker.\n\n" & "UART RX VVC is configured to control the bit rate checker,\n" & "which is will monitor the bit periods.", C_SCOPE);
 
       -- Print info
       log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
@@ -279,20 +257,20 @@ begin
       -- Note that protocol checker (bit rate checker) is set to C_BIT_RATE_CHECKER_DEFAULT in vvc_methods_pkg
       -- when the VVCs are initilized.
       log(ID_SEQUENCER, "\nEnable and configure bit rate checker.");
-      shared_uart_vvc_config(RX, 1).bit_rate_checker.enable     := true;          -- enable checker
-      shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD;  -- set minimum alowed period
+      shared_uart_vvc_config(RX, 1).bit_rate_checker.enable     := true; -- enable checker
+      shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD; -- set minimum alowed period
 
       -- Use SBI VVC to transmit 6 random bytes.
       -- The bit rate checker settings are changed during the 6 bytes to test various settings.
       log(ID_SEQUENCER, "\nSBI Write 6 bytes to DUT, UART Receive bytes from DUT. Changing protocol checker min_period during sequence.\n", C_SCOPE);
       for idx in 1 to 6 loop
-        v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
+        v_data := std_logic_vector(to_unsigned(idx + 16#50#, 8)); -- + x50 to get more edges
 
         if idx = 3 then
-          log(ID_SEQUENCER, "\nSetting bit rate checker min_period="&to_string(C_BIT_PERIOD * 0.95)&" (bit period="&to_string(C_BIT_PERIOD)&").", C_SCOPE);
+          log(ID_SEQUENCER, "\nSetting bit rate checker min_period=" & to_string(C_BIT_PERIOD * 0.95) & " (bit period=" & to_string(C_BIT_PERIOD) & ").", C_SCOPE);
           shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 0.95;
         elsif idx = 4 then
-          log(ID_SEQUENCER, "\nSetting bit rate checker min_period="&to_string(C_BIT_PERIOD * 1.05)&" (bit period="&to_string(C_BIT_PERIOD)&").", C_SCOPE);
+          log(ID_SEQUENCER, "\nSetting bit rate checker min_period=" & to_string(C_BIT_PERIOD * 1.05) & " (bit period=" & to_string(C_BIT_PERIOD) & ").", C_SCOPE);
           shared_uart_vvc_config(RX, 1).bit_rate_checker.min_period := C_BIT_PERIOD * 1.05;
         elsif idx = 5 then
           log(ID_SEQUENCER, "\nDisable bit rate checker.", C_SCOPE);
@@ -300,7 +278,7 @@ begin
         end if;
 
         -- Request SBI Write and UART Receive
-        sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "SBI WRITE");
+        sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "SBI WRITE");
         uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
         await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
       end loop;
@@ -314,7 +292,6 @@ begin
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
     end procedure test_protocol_checker;
-
 
     -- Description:
     --
@@ -330,10 +307,7 @@ begin
     --
     procedure test_activity_watchdog(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test activity watchdog.\n\n"&
-                          "SBI VVC will transmit 3 bytes and UART RX VVC will receive 3 bytes,\n"&
-                          "before a pause of TB sequencer will make the activity watchdog\n"&
-                          "timeout and alert. Then a new 3 bytes transmit and receive sequence is performed.", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test activity watchdog.\n\n" & "SBI VVC will transmit 3 bytes and UART RX VVC will receive 3 bytes,\n" & "before a pause of TB sequencer will make the activity watchdog\n" & "timeout and alert. Then a new 3 bytes transmit and receive sequence is performed.", C_SCOPE);
 
       -- Print info
       log(ID_SEQUENCER, "Note: results are checked in Scoreboard.\n", C_SCOPE);
@@ -345,13 +319,12 @@ begin
       -- To prevent activity watchdog from stopping the TB, increase the stop limit.
       set_alert_stop_limit(TB_ERROR, 2);
 
-
       log(ID_SEQUENCER, "\nSBI Write 3 bytes to DUT, UART Receive 5 bytes from DUT. No activity watchdog timeout.\n", C_SCOPE);
       -- Activate VVCs with write and receive activity.
       for idx in 1 to 3 loop
-        v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
+        v_data := std_logic_vector(to_unsigned(idx + 16#50#, 8)); -- + x50 to get more edges
 
-        sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
+        sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
         uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
         await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
       end loop;
@@ -364,9 +337,9 @@ begin
       log(ID_SEQUENCER, "\nSBI Write 3 bytes to DUT, UART Receive 5 bytes from DUT. No activity watchdog timeout.\n", C_SCOPE);
       -- Activate VVCs with write and receive activity.
       for idx in 1 to 3 loop
-        v_data := std_logic_vector(to_unsigned(idx+16#50#, 8));  -- + x50 to get more edges
+        v_data := std_logic_vector(to_unsigned(idx + 16#50#, 8)); -- + x50 to get more edges
 
-        sbi_write(SBI_VVCT,1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
+        sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, v_data, "DUT TX DATA");
         uart_receive(UART_VVCT, 1, RX, TO_SB, "UART TX");
         await_completion(UART_VVCT, 1, RX, 20 * C_BIT_PERIOD);
       end loop;
@@ -379,33 +352,30 @@ begin
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
-  end procedure test_activity_watchdog;
+    end procedure test_activity_watchdog;
 
-
-  -- Description:
-  --
-  --   1. Watchdog A-D is reconfigured with a smaller timeout value.
-  --   2. Terminating of watchdog A is tested.
-  --   3. Timeout of watchdog B is tested.
-  --   4. Extending watchdog C timeout is tested, and timeout is tested.
-  --   5. Reinitialization of watchdog D is tested, and timeout is tested.
-  --
-  procedure test_general_watchdog(void : t_void) is
-  begin
-      log(ID_LOG_HDR_XL, "Test general watchdog.\n\n"&
-                          "This test demonstrate configuration and usage of the general watchdog.", C_SCOPE);
+    -- Description:
+    --
+    --   1. Watchdog A-D is reconfigured with a smaller timeout value.
+    --   2. Terminating of watchdog A is tested.
+    --   3. Timeout of watchdog B is tested.
+    --   4. Extending watchdog C timeout is tested, and timeout is tested.
+    --   5. Reinitialization of watchdog D is tested, and timeout is tested.
+    --
+    procedure test_general_watchdog(void : t_void) is
+    begin
+      log(ID_LOG_HDR_XL, "Test general watchdog.\n\n" & "This test demonstrate configuration and usage of the general watchdog.", C_SCOPE);
 
       log(ID_SEQUENCER, "Incrementing UVVM stop limit\n", C_SCOPE);
       -- To prevent the 4 general watchdogs from stopping the TB, increase the stop limit.
-      set_alert_stop_limit(ERROR, 6); -- Note: stop limit was set to 2 in test_activity_watchdog()
-
+      set_alert_stop_limit(ERROR, 6);   -- Note: stop limit was set to 2 in test_activity_watchdog()
 
       log(ID_SEQUENCER, "Reconfigure general watchdogs for test\n", C_SCOPE);
       -- Reinitialize the watchdogs with short timeout
-      reinitialize_watchdog(watchdog_ctrl_terminate,  110 ns); -- wd A
-      reinitialize_watchdog(watchdog_ctrl_init,       120 ns); -- wd B
-      reinitialize_watchdog(watchdog_ctrl_extend,     130 ns); -- wd C
-      reinitialize_watchdog(watchdog_ctrl_reinit,    2000 ns); -- wd D
+      reinitialize_watchdog(watchdog_ctrl_terminate, 110 ns); -- wd A
+      reinitialize_watchdog(watchdog_ctrl_init, 120 ns); -- wd B
+      reinitialize_watchdog(watchdog_ctrl_extend, 130 ns); -- wd C
+      reinitialize_watchdog(watchdog_ctrl_reinit, 2000 ns); -- wd D
 
       -- Wait until watchdog A almost has timeout, then terminate it.
       wait for 100 ns;
@@ -417,7 +387,7 @@ begin
       wait for 19 ns;
       log(ID_SEQUENCER, "General watchdog B still running - waiting for timeout", C_SCOPE);
       increment_expected_alerts(ERROR);
-      wait for 1 ns; -- general watchdog B has timeout
+      wait for 1 ns;                    -- general watchdog B has timeout
 
       -- Extend watchdog C timeout with 100 ns, new timeout will be 230 ns.
       log(ID_LOG_HDR, "Testing general watchdog timer C (130 ns) - extend command with input value", C_SCOPE);
@@ -444,25 +414,20 @@ begin
       wait for 300 ns;
       log(ID_SEQUENCER, "General watchdog C still running - waiting for timeout", C_SCOPE);
       increment_expected_alerts(ERROR); -- 1480
-      wait for 1 ns; -- general wathdog C has timeout
+      wait for 1 ns;                    -- general wathdog C has timeout
 
       log(ID_LOG_HDR, "Testing general watchdog timer D (5000 ns) - reinitialize command (100 ns)", C_SCOPE);
       reinitialize_watchdog(watchdog_ctrl_reinit, 100 ns);
       wait for 99 ns;
       log(ID_SEQUENCER, "General watchdog D still running - waiting for timeout", C_SCOPE);
       increment_expected_alerts(ERROR);
-      wait for 1 ns; -- genral watchdog D has timeout
+      wait for 1 ns;                    -- genral watchdog D has timeout
 
       -- Add small delay before next test
       wait for 3 * C_BIT_PERIOD;
-  end procedure test_general_watchdog;
-
-
-
-
+    end procedure test_general_watchdog;
 
   begin
-
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
 
@@ -489,11 +454,9 @@ begin
     disable_log_msg(UART_VVCT, 1, TX, ALL_MESSAGES);
     --enable_log_msg(UART_VVCT, 1, TX, ID_BFM);
 
-
     -- Print the configuration to the log
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
-
 
     log(ID_LOG_HDR, "Configure UART Monitor", C_SCOPE);
     --============================================================================================================
@@ -501,25 +464,21 @@ begin
     shared_uart_monitor_config(TX, 1).scope_name(1 to C_MONITOR_SCOPE'length) := C_MONITOR_SCOPE;
     shared_uart_monitor_config(RX, 1).scope_name(1 to C_MONITOR_SCOPE'length) := C_MONITOR_SCOPE;
 
-
-
     log(ID_LOG_HDR, "Starting simulation of UVVM DEMO TB using SBI and UART VVCs", C_SCOPE);
     --============================================================================================================
     log("Wait 10 clock period for reset to be turned off");
     wait for (10 * C_CLK_PERIOD);
 
-
     log(ID_LOG_HDR, "Configure UART VVC 1", C_SCOPE);
     --============================================================================================================
-    shared_uart_vvc_config(RX,1).bfm_config.bit_time := C_BIT_PERIOD;
-    shared_uart_vvc_config(TX,1).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(RX, 1).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(TX, 1).bfm_config.bit_time := C_BIT_PERIOD;
 
-    shared_uart_vvc_config(RX,1).bfm_config.num_stop_bits := STOP_BITS_ONE;
-    shared_uart_vvc_config(TX,1).bfm_config.num_stop_bits := STOP_BITS_ONE;
+    shared_uart_vvc_config(RX, 1).bfm_config.num_stop_bits := STOP_BITS_ONE;
+    shared_uart_vvc_config(TX, 1).bfm_config.num_stop_bits := STOP_BITS_ONE;
 
-    shared_uart_vvc_config(RX,1).bfm_config.parity := PARITY_ODD;
-    shared_uart_vvc_config(TX,1).bfm_config.parity := PARITY_ODD;
-
+    shared_uart_vvc_config(RX, 1).bfm_config.parity := PARITY_ODD;
+    shared_uart_vvc_config(TX, 1).bfm_config.parity := PARITY_ODD;
 
     -----------------------------------------------------------------------------
     -- Tests
@@ -534,13 +493,13 @@ begin
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;             -- to allow some time for completion
-    report_alert_counters(FINAL); -- Report final counters and print conclusion for simulation (Success/Fail)
+    wait for 1000 ns;                   -- to allow some time for completion
+    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation
     std.env.stop;
-    wait;  -- to stop completely
+    wait;                               -- to stop completely
 
   end process p_main;
 

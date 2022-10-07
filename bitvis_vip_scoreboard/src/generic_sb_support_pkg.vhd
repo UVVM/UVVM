@@ -15,7 +15,6 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -25,12 +24,10 @@ context uvvm_util.uvvm_util_context;
 
 package generic_sb_support_pkg is
 
-
   function pad_sb_slv(
-    constant pad_data   : std_logic_vector;
-    constant pad_width  : positive := C_SB_SLV_WIDTH
+    constant pad_data  : std_logic_vector;
+    constant pad_width : positive := C_SB_SLV_WIDTH
   ) return std_logic_vector;
-
 
   type t_sb_config is record
     mismatch_alert_level      : t_alert_level;
@@ -41,7 +38,7 @@ package generic_sb_support_pkg is
     ignore_initial_garbage    : boolean;
   end record;
 
-  type t_sb_config_array is array(integer range <>) of t_sb_config;
+  type t_sb_config_array is array (integer range <>) of t_sb_config;
 
   constant C_SB_CONFIG_DEFAULT : t_sb_config := (mismatch_alert_level      => ERROR,
                                                  allow_lossy               => false,
@@ -52,20 +49,18 @@ package generic_sb_support_pkg is
 
 end package generic_sb_support_pkg;
 
-
 package body generic_sb_support_pkg is
-
 
   -- Return a descending std_logic_vector with zeros padded on the left side
   function pad_sb_slv(
-    constant pad_data   : std_logic_vector;
-    constant pad_width  : positive := C_SB_SLV_WIDTH
+    constant pad_data  : std_logic_vector;
+    constant pad_width : positive := C_SB_SLV_WIDTH
   ) return std_logic_vector is
-    variable v_padded_slv : std_logic_vector(pad_width-1 downto 0) := (others => '0');
+    variable v_padded_slv : std_logic_vector(pad_width - 1 downto 0) := (others => '0');
   begin
     check_value(pad_data'length <= pad_width, TB_WARNING, "check: pad_data width exceed pad_width");
 
-    v_padded_slv(pad_data'length-1 downto 0) := pad_data;
+    v_padded_slv(pad_data'length - 1 downto 0) := pad_data;
     return v_padded_slv;
   end function pad_sb_slv;
 

@@ -14,7 +14,6 @@
 -- Description : See library quick reference (under 'doc') and README-file(s)
 ---------------------------------------------------------------------------------------------
 
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -31,8 +30,8 @@ package support_pkg is
   -- Types and constants
   --========================================================================================================================
   -- The preamble & SFD sequence is represented with the LSb transmitted first
-  constant C_PREAMBLE           : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
-  constant C_SFD                : std_logic_vector( 7 downto 0) := x"D5";
+  constant C_PREAMBLE : std_logic_vector(55 downto 0) := x"55_55_55_55_55_55_55";
+  constant C_SFD      : std_logic_vector(7 downto 0)  := x"D5";
 
   -- Sizes in bytes
   constant C_MIN_PAYLOAD_LENGTH : natural := 46;
@@ -52,7 +51,7 @@ package support_pkg is
     mac_destination : unsigned(47 downto 0);
     mac_source      : unsigned(47 downto 0);
     payload_length  : integer;
-    payload         : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH-1);
+    payload         : t_byte_array(0 to C_MAX_PAYLOAD_LENGTH - 1);
     fcs             : std_logic_vector(31 downto 0);
   end record t_ethernet_frame;
 
@@ -79,9 +78,8 @@ package support_pkg is
     mac_destination      => (others => '0'),
     mac_source           => (others => '0'),
     fcs_error_severity   => ERROR,
-    interpacket_gap_time => 96 ns -- Standard minimum interpacket gap (Gigabith Ethernet)
+    interpacket_gap_time => 96 ns       -- Standard minimum interpacket gap (Gigabith Ethernet)
   );
-
 
   --========================================================================================================================
   -- Functions and procedures
@@ -124,7 +122,6 @@ package support_pkg is
 
 end package support_pkg;
 
-
 --========================================================================================================================
 --========================================================================================================================
 
@@ -164,24 +161,22 @@ package body support_pkg is
     constant ethernet_frame : in t_ethernet_frame;
     constant frame_field    : in t_frame_field
   ) return string is
-    variable payload_string : string(1 to 14*ethernet_frame.payload_length); --[1500]:x"00",
+    variable payload_string : string(1 to 14 * ethernet_frame.payload_length); --[1500]:x"00",
     variable v_line         : line;
     variable v_line_width   : natural;
   begin
     case frame_field is
       when HEADER =>
-        return LF & "    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) &
-               LF & "    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) &
-               LF & "    payload length:  " & to_string(ethernet_frame.payload_length);
+        return LF & "    MAC destination: " & to_string(ethernet_frame.mac_destination, HEX, KEEP_LEADING_0, INCL_RADIX) & LF & "    MAC source:      " & to_string(ethernet_frame.mac_source, HEX, KEEP_LEADING_0, INCL_RADIX) & LF & "    payload length:  " & to_string(ethernet_frame.payload_length);
 
       when PAYLOAD =>
         write(v_line, string'("[" & to_string(0) & "]:" & to_string(ethernet_frame.payload(0), HEX, AS_IS, INCL_RADIX)));
         if ethernet_frame.payload_length > 1 then
-          for i in 1 to ethernet_frame.payload_length-1 loop
+          for i in 1 to ethernet_frame.payload_length - 1 loop
             write(v_line, string'(", [" & to_string(i) & "]:" & to_string(ethernet_frame.payload(i), HEX, AS_IS, INCL_RADIX)));
           end loop;
         end if;
-        v_line_width := v_line'length;
+        v_line_width                      := v_line'length;
         payload_string(1 to v_line_width) := v_line.all;
         deallocate(v_line);
         return LF & payload_string(1 to v_line_width);
@@ -199,9 +194,7 @@ package body support_pkg is
     constant ethernet_frame : in t_ethernet_frame
   ) return string is
   begin
-    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) &
-           ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) &
-           ", payload length: " & to_string(ethernet_frame.payload_length);
+    return "MAC dest: " & to_string(ethernet_frame.mac_destination, HEX, AS_IS, INCL_RADIX) & ", MAC src: " & to_string(ethernet_frame.mac_source, HEX, AS_IS, INCL_RADIX) & ", payload length: " & to_string(ethernet_frame.payload_length);
   end function to_string;
 
   -- Compares two ethernet frames
@@ -220,7 +213,7 @@ package body support_pkg is
     v_check_ok := v_check_ok and check_value(actual.mac_destination, expected.mac_destination, alert_level, "Verify MAC destination" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
     v_check_ok := v_check_ok and check_value(actual.mac_source, expected.mac_source, alert_level, "Verify MAC source" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
     v_check_ok := v_check_ok and check_value(actual.payload_length, expected.payload_length, alert_level, "Verify payload length" & LF & msg, scope, ID_NEVER, msg_id_panel, proc_call);
-    for i in 0 to actual.payload_length-1 loop
+    for i in 0 to actual.payload_length - 1 loop
       v_check_ok := v_check_ok and check_value(actual.payload(i), expected.payload(i), alert_level, "Verify payload byte " & to_string(i) & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
     end loop;
     v_check_ok := v_check_ok and check_value(actual.fcs, expected.fcs, alert_level, "Verify FCS" & LF & msg, scope, HEX, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
@@ -238,11 +231,7 @@ package body support_pkg is
     constant expected : in t_ethernet_frame
   ) return boolean is
   begin
-    return actual.mac_destination = expected.mac_destination and
-           actual.mac_source      = expected.mac_source      and
-           actual.payload_length  = expected.payload_length  and
-           actual.payload(0 to actual.payload_length-1) = expected.payload(0 to expected.payload_length-1) and
-           actual.fcs             = expected.fcs;
+    return actual.mac_destination = expected.mac_destination and actual.mac_source = expected.mac_source and actual.payload_length = expected.payload_length and actual.payload(0 to actual.payload_length - 1) = expected.payload(0 to expected.payload_length - 1) and actual.fcs = expected.fcs;
   end function ethernet_match;
 
 end package body support_pkg;

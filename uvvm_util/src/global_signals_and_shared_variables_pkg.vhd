@@ -24,13 +24,13 @@ use work.protected_types_pkg.all;
 
 package global_signals_and_shared_variables_pkg is
   -- Shared variables
-  shared variable shared_initialised_util        : boolean  := false;
-  shared variable shared_msg_id_panel            : t_msg_id_panel   := C_MSG_ID_PANEL_DEFAULT;
-  shared variable shared_log_file_name_is_set    : boolean  := false;
-  shared variable shared_alert_file_name_is_set  : boolean  := false;
-  shared variable shared_warned_time_stamp_trunc : boolean  := false;
-  shared variable shared_alert_attention         : t_alert_attention:= C_DEFAULT_ALERT_ATTENTION;
-  shared variable shared_stop_limit              : t_alert_counters := C_DEFAULT_STOP_LIMIT;
+  shared variable shared_initialised_util        : boolean                                         := false;
+  shared variable shared_msg_id_panel            : t_msg_id_panel                                  := C_MSG_ID_PANEL_DEFAULT;
+  shared variable shared_log_file_name_is_set    : boolean                                         := false;
+  shared variable shared_alert_file_name_is_set  : boolean                                         := false;
+  shared variable shared_warned_time_stamp_trunc : boolean                                         := false;
+  shared variable shared_alert_attention         : t_alert_attention                               := C_DEFAULT_ALERT_ATTENTION;
+  shared variable shared_stop_limit              : t_alert_counters                                := C_DEFAULT_STOP_LIMIT;
   shared variable shared_log_hdr_for_waveview    : string(1 to C_LOG_HDR_FOR_WAVEVIEW_WIDTH);
   shared variable shared_current_log_hdr         : t_current_log_hdr;
   shared variable shared_seed1                   : positive;
@@ -39,7 +39,7 @@ package global_signals_and_shared_variables_pkg is
   shared variable protected_semaphore            : t_protected_semaphore;
   shared variable protected_broadcast_semaphore  : t_protected_semaphore;
   shared variable protected_response_semaphore   : t_protected_semaphore;
-  shared variable shared_uvvm_status             : t_uvvm_status := C_UVVM_STATUS_DEFAULT;
+  shared variable shared_uvvm_status             : t_uvvm_status                                   := C_UVVM_STATUS_DEFAULT;
   shared variable protected_covergroup_status    : t_protected_covergroup_status;
 
   -- Global signals

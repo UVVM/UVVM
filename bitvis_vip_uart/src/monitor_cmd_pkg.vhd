@@ -43,17 +43,17 @@ package monitor_cmd_pkg is
   -- - Record type which holds the configurations of the UART interface
   --===============================================================================================
   type t_uart_interface_config is record
-    bit_time         : time;
-    num_data_bits    : positive range 7 to 8;
-    parity           : t_parity;
-    num_stop_bits    : t_stop_bits;
+    bit_time      : time;
+    num_data_bits : positive range 7 to 8;
+    parity        : t_parity;
+    num_stop_bits : t_stop_bits;
   end record t_uart_interface_config;
 
   constant C_UART_MONITOR_INTERFACE_CONFIG_DEFAULT : t_uart_interface_config := (
-    bit_time         => 0 ns,
-    num_data_bits    => 8,
-    parity           => PARITY_ODD,
-    num_stop_bits    => STOP_BITS_ONE
+    bit_time      => 0 ns,
+    num_data_bits => 8,
+    parity        => PARITY_ODD,
+    num_stop_bits => STOP_BITS_ONE
   );
 
   --===============================================================================================
@@ -77,20 +77,19 @@ package monitor_cmd_pkg is
   );
 
   procedure monitor_constructor(
-    constant monitor_config        : in  t_uart_monitor_config;
+    constant monitor_config        : in t_uart_monitor_config;
     variable shared_monitor_config : out t_uart_monitor_config
   );
 
   -- Monitor
-  shared variable shared_uart_monitor_config : t_uart_monitor_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) 
-                  := (others => (others => C_UART_MONITOR_CONFIG_DEFAULT));
+  shared variable shared_uart_monitor_config : t_uart_monitor_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_UART_MONITOR_CONFIG_DEFAULT));
 
 end package monitor_cmd_pkg;
 
 package body monitor_cmd_pkg is
 
   procedure monitor_constructor(
-    constant monitor_config        : in  t_uart_monitor_config;
+    constant monitor_config        : in t_uart_monitor_config;
     variable shared_monitor_config : out t_uart_monitor_config
   ) is
   begin

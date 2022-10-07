@@ -47,14 +47,14 @@ package transaction_pkg is
     -- VVC local
     WRITE, READ, CHECK);
 
-  constant C_VVC_CMD_MAX_BURST_WORDS          : natural := 256;
-  
-  constant C_VVC_CMD_DATA_MAX_LENGTH          : natural := 256;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH          : natural := 32;
-  constant C_VVC_CMD_ID_MAX_LENGTH            : natural := 32;
-  constant C_VVC_CMD_USER_MAX_LENGTH          : natural := 128;
-  constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH   : natural := C_VVC_CMD_DATA_MAX_LENGTH/8;
-  constant C_VVC_CMD_STRING_MAX_LENGTH        : natural := 300;
+  constant C_VVC_CMD_MAX_BURST_WORDS : natural := 256;
+
+  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := 256;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := 32;
+  constant C_VVC_CMD_ID_MAX_LENGTH          : natural := 32;
+  constant C_VVC_CMD_USER_MAX_LENGTH        : natural := 128;
+  constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := C_VVC_CMD_DATA_MAX_LENGTH / 8;
+  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := 300;
 
   --==========================================================================================
   --
@@ -76,109 +76,109 @@ package transaction_pkg is
   constant C_VVC_META_DEFAULT : t_vvc_meta := (
     msg     => (others => ' '),
     cmd_idx => -1
-    );
+  );
 
   -- Base transaction
   type t_base_transaction is record
-    operation           : t_operation;
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record;
 
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
-    operation           => NO_OPERATION,
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
-    );
+    operation          => NO_OPERATION,
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+  );
 
   type t_arw_transaction is record
-    operation           : t_operation;
-    arwid               : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH-1 downto 0);
-    arwaddr             : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0);
-    arwlen              : unsigned(7 downto 0);
-    arwsize             : integer range 1 to 128;
-    arwburst            : t_axburst;
-    arwlock             : t_axlock;
-    arwcache            : std_logic_vector(3 downto 0);
-    arwprot             : t_axprot;
-    arwqos              : std_logic_vector(3 downto 0);
-    arwregion           : std_logic_vector(3 downto 0);
-    arwuser             : std_logic_vector(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    arwid              : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH - 1 downto 0);
+    arwaddr            : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH - 1 downto 0);
+    arwlen             : unsigned(7 downto 0);
+    arwsize            : integer range 1 to 128;
+    arwburst           : t_axburst;
+    arwlock            : t_axlock;
+    arwcache           : std_logic_vector(3 downto 0);
+    arwprot            : t_axprot;
+    arwqos             : std_logic_vector(3 downto 0);
+    arwregion          : std_logic_vector(3 downto 0);
+    arwuser            : std_logic_vector(C_VVC_CMD_USER_MAX_LENGTH - 1 downto 0);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record t_arw_transaction;
 
   constant C_ARW_TRANSACTION_DEFAULT : t_arw_transaction := (
-    operation           => NO_OPERATION,
-    arwid               => (others=>'0'),
-    arwaddr             => (others=>'0'),
-    arwlen              => (others=>'0'),
-    arwsize             => 4,
-    arwburst            => INCR,
-    arwlock             => NORMAL,
-    arwcache            => (others=>'0'),
-    arwprot             => UNPRIVILEGED_NONSECURE_DATA,
-    arwqos              => (others=>'0'),
-    arwregion           => (others=>'0'),
-    arwuser             => (others=>'0'),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+    operation          => NO_OPERATION,
+    arwid              => (others => '0'),
+    arwaddr            => (others => '0'),
+    arwlen             => (others => '0'),
+    arwsize            => 4,
+    arwburst           => INCR,
+    arwlock            => NORMAL,
+    arwcache           => (others => '0'),
+    arwprot            => UNPRIVILEGED_NONSECURE_DATA,
+    arwqos             => (others => '0'),
+    arwregion          => (others => '0'),
+    arwuser            => (others => '0'),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => C_TRANSACTION_STATUS_DEFAULT
   );
 
   type t_w_transaction is record
-    operation           : t_operation;
-    wdata               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    wstrb               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH-1 downto 0);
-    wuser               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    wdata              : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS - 1)(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    wstrb              : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS - 1)(C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH - 1 downto 0);
+    wuser              : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS - 1)(C_VVC_CMD_USER_MAX_LENGTH - 1 downto 0);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record t_w_transaction;
 
   constant C_W_TRANSACTION_DEFAULT : t_w_transaction := (
-    operation           => NO_OPERATION,
-    wdata               => (others=>(others=>'0')),
-    wstrb               => (others=>(others=>'0')),
-    wuser               => (others=>(others=>'0')),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+    operation          => NO_OPERATION,
+    wdata              => (others => (others => '0')),
+    wstrb              => (others => (others => '0')),
+    wuser              => (others => (others => '0')),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => C_TRANSACTION_STATUS_DEFAULT
   );
 
   type t_b_transaction is record
-    operation           : t_operation;
-    bid                 : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH-1 downto 0);
-    bresp               : t_xresp;
-    buser               : std_logic_vector(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    bid                : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH - 1 downto 0);
+    bresp              : t_xresp;
+    buser              : std_logic_vector(C_VVC_CMD_USER_MAX_LENGTH - 1 downto 0);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record t_b_transaction;
 
   constant C_B_TRANSACTION_DEFAULT : t_b_transaction := (
-    operation           => NO_OPERATION,
-    bid                 => (others=>'0'),
-    bresp               => OKAY,
-    buser               => (others=>'0'),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+    operation          => NO_OPERATION,
+    bid                => (others => '0'),
+    bresp              => OKAY,
+    buser              => (others => '0'),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => C_TRANSACTION_STATUS_DEFAULT
   );
 
   type t_r_transaction is record
-    operation           : t_operation;
-    rid                 : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH-1 downto 0);
-    rdata               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    rresp               : t_xresp_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1);
-    ruser               : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS-1)(C_VVC_CMD_USER_MAX_LENGTH-1 downto 0);
-    vvc_meta            : t_vvc_meta;
-    transaction_status  : t_transaction_status;
+    operation          : t_operation;
+    rid                : std_logic_vector(C_VVC_CMD_ID_MAX_LENGTH - 1 downto 0);
+    rdata              : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS - 1)(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    rresp              : t_xresp_array(0 to C_VVC_CMD_MAX_BURST_WORDS - 1);
+    ruser              : t_slv_array(0 to C_VVC_CMD_MAX_BURST_WORDS - 1)(C_VVC_CMD_USER_MAX_LENGTH - 1 downto 0);
+    vvc_meta           : t_vvc_meta;
+    transaction_status : t_transaction_status;
   end record t_r_transaction;
 
   constant C_R_TRANSACTION_DEFAULT : t_r_transaction := (
-    operation           => NO_OPERATION,
-    rid                 => (others=>'0'),
-    rdata               => (others=>(others=>'0')),
-    rresp               => (others=>OKAY),
-    ruser               => (others=>(others=>'0')),
-    vvc_meta            => C_VVC_META_DEFAULT,
-    transaction_status  => C_TRANSACTION_STATUS_DEFAULT
+    operation          => NO_OPERATION,
+    rid                => (others => '0'),
+    rdata              => (others => (others => '0')),
+    rresp              => (others => OKAY),
+    ruser              => (others => (others => '0')),
+    vvc_meta           => C_VVC_META_DEFAULT,
+    transaction_status => C_TRANSACTION_STATUS_DEFAULT
   );
 
   -- Transaction group
@@ -204,13 +204,11 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_axi_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_axi_vvc_transaction_trigger : t_axi_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                  (others => '0');
-  
+  signal global_axi_vvc_transaction_trigger : t_axi_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
+
   -- Type is defined as array to coincide with channel based VVCs
   type t_axi_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_axi_vvc_transaction_info : t_axi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                        (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_axi_vvc_transaction_info : t_axi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

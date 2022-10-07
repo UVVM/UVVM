@@ -45,7 +45,6 @@ package transaction_pkg is
     MASTER_TRANSMIT_AND_RECEIVE, MASTER_TRANSMIT_AND_CHECK, MASTER_TRANSMIT_ONLY, MASTER_RECEIVE_ONLY, MASTER_CHECK_ONLY,
     SLAVE_TRANSMIT_AND_RECEIVE, SLAVE_TRANSMIT_AND_CHECK, SLAVE_TRANSMIT_ONLY, SLAVE_RECEIVE_ONLY, SLAVE_CHECK_ONLY);
 
-
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
   constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
   constant C_VVC_CMD_MAX_WORDS         : natural := C_SPI_VVC_DATA_ARRAY_WIDTH;
@@ -70,14 +69,13 @@ package transaction_pkg is
   constant C_VVC_META_DEFAULT : t_vvc_meta := (
     msg     => (others => ' '),
     cmd_idx => -1
-    );
-
+  );
 
   -- Base transaction
   type t_base_transaction is record
     operation                    : t_operation;
-    data                         : t_slv_array(C_VVC_CMD_MAX_WORDS-1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
-    data_exp                     : t_slv_array(C_VVC_CMD_MAX_WORDS-1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0);
+    data                         : t_slv_array(C_VVC_CMD_MAX_WORDS - 1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    data_exp                     : t_slv_array(C_VVC_CMD_MAX_WORDS - 1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
     num_words                    : natural;
     word_length                  : natural;
     when_to_start_transfer       : t_when_to_start_transfer;
@@ -98,7 +96,7 @@ package transaction_pkg is
     action_between_words         => HOLD_LINE_BETWEEN_WORDS,
     vvc_meta                     => C_VVC_META_DEFAULT,
     transaction_status           => C_TRANSACTION_STATUS_DEFAULT
-    );
+  );
 
   -- Transaction group
   type t_transaction_group is record
@@ -107,17 +105,15 @@ package transaction_pkg is
 
   constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (
     bt => C_BASE_TRANSACTION_SET_DEFAULT
-    );
+  );
 
   -- Global transaction info trigger signal
   type t_spi_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_spi_vvc_transaction_trigger       : t_spi_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := 
-                                                    (others => '0');
+  signal global_spi_vvc_transaction_trigger : t_spi_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_spi_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_spi_vvc_transaction_info : t_spi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) :=
-                                                    (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_spi_vvc_transaction_info : t_spi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

@@ -3,6 +3,12 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.2
+----------
+Released: 2022-XX-XX
+- Fixed compilation warnings on rand_pkg regarding a truncated value.
+- Fixed compilation warnings on string_methods_pkg regarding using an attribute on a function call.
+
 v2.19.1
 ----------
 Released: 2022-10-07

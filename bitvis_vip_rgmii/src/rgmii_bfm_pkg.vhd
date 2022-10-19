@@ -177,15 +177,14 @@ package body rgmii_bfm_pkg is
       rgmii_tx_if.tx_ctl <= '1';
       -- Send 4 data bits on each clock edge
       for i in data_array'range loop
+        rgmii_tx_if.txd <= data_array(i)(3 downto 0);
+        wait until falling_edge(rgmii_tx_if.txc);
+
         if config.data_valid_on_both_clock_edges then
           -- 1 Gbps
-          rgmii_tx_if.txd <= data_array(i)(3 downto 0);
-          wait until falling_edge(rgmii_tx_if.txc);
           rgmii_tx_if.txd <= data_array(i)(7 downto 4);
         else -- not config.data_valid_on_both_clock_edges
           -- 10/100 Mbps
-          rgmii_tx_if.txd <= data_array(i)(3 downto 0);
-          wait until falling_edge(rgmii_tx_if.txc);
           wait until rising_edge(rgmii_tx_if.txc);
           rgmii_tx_if.txd <= data_array(i)(7 downto 4);
           wait until falling_edge(rgmii_tx_if.txc);

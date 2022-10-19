@@ -1783,7 +1783,7 @@ package body axistream_bfm_pkg is
         -- Check is OK
         else
           -- Received byte does not match the expected byte
-          --log(config.id_for_bfm, proc_call & "=> NOK, checked " & to_string(v_rx_data_array(byte), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_data_array(byte), HEX, AS_IS, INCL_RADIX) & msg, scope, msg_id_panel);
+          --log(ID_PACKET_DATA, proc_call & "=> NOK, checked " & to_string(v_rx_data_array(byte), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_data_array(byte), HEX, AS_IS, INCL_RADIX) & msg, scope, msg_id_panel);
           v_data_error_cnt     := v_data_error_cnt + 1;
           v_first_errored_byte := byte;
         end if;
@@ -1873,7 +1873,7 @@ package body axistream_bfm_pkg is
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_dest_array(v_first_errored_byte), exp_dest_array(v_first_errored_byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       alert(alert_level, proc_call & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_byte) & ". Was " & to_string(v_rx_dest_array(v_first_errored_byte)(c_num_dest_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_dest_array(v_first_errored_byte)(c_num_dest_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
-      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "Bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(ID_PACKET_COMPLETE, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "Bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
   end procedure axistream_expect_bytes;

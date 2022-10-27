@@ -7,8 +7,11 @@ This is just a simple test vehicle that can be used to
 demonstrate the functionality of the UVVM VVC Framework.
 
 Modelsim compile scripts are part of this release, see
-the script folder. For other simulators, see compile order
-in sim/compile_order.txt.
+the script folder. For other simulators, the compile order
+is provided in scripts/compile_order.txt. See also the
+following shell scripts:
+  compile_all_and_simulate.sh
+  ghdl_compile_all_and_simulate.sh
 
 -----------------------------------------------------------
 -- Directory structure                                   -- 
@@ -17,7 +20,5 @@ in sim/compile_order.txt.
 - bitvis_uart     : An example Design Under Test (DUT) delivered with UVVM in order to illustrate usage and debugging support provided by the library.
   - doc           : Documentation
   - script        : UART compile scripts
-  - sim           : Simulation directory with a Modelsim project file. Simulation log files will be generated in this directory during simulation.  
   - src           : UART source code
   - tb            : UART Test bench
-

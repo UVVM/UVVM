@@ -30,7 +30,7 @@ cleanup('Removing any previous runs.')
 hr = HDLRegression()
 
 # Set testcase detection string
-hr.set_testcase_id("GC_TESTCASE")
+hr.set_testcase_identifier_name("GC_TESTCASE")
 
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")

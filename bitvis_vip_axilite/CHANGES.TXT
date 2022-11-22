@@ -2,6 +2,11 @@ Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
 
+v2.9.2
+----------
+Released: 2022-xx-xx
+- Added one delta cycle delay in the setup for read and write process in VVC.
+
 v2.9.1
 ----------
 Released: 2022-05-05

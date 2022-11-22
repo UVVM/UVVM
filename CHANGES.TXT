@@ -18,6 +18,7 @@ Released: 2022-XX.XX
 - Fixed compilation warning on avalon_mm_vvc regarding the initial value of a signal depending on a port signal value.
 - Updated bfm_config record example in vvc_generator.py.
 - Fixed wrong log msg_id used in BFM axistream_expect() procedure.
+- Added one delta cycle delay in the setup for read and write process for AXI, AXILite and Avalon MM VVCs.
 
 
 v2 2022.10.07

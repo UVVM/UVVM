@@ -157,7 +157,7 @@ begin
     check_value(v_data(C_DATA_WIDTH_1 - 1 downto 0), x"54321", error, "verifying read data on interface 1.");
 
     -- Write to VVC 2
-    axilite_write(AXILITE_VVCT, 2, x"0000", x"5555", to_string("Test of axilite write"));
+    axilite_write(AXILITE_VVCT, 2, x"0000", x"5555", "Test of axilite write");
     axilite_write(AXILITE_VVCT, 2, x"0010", x"befbeef", "Write"); -- op0
     axilite_write(AXILITE_VVCT, 2, x"0020", x"efbeef", "Write"); -- op1
     axilite_write(AXILITE_VVCT, 2, x"0030", x"beef", "Write"); -- op2
@@ -214,7 +214,7 @@ begin
     await_completion(AXILITE_VVCT, 1, 1000 ns);
 
     -- Write to VVC 2
-    axilite_write(AXILITE_VVCT, 2, x"0000", x"5555", to_string("Test of axilite write"));
+    axilite_write(AXILITE_VVCT, 2, x"0000", x"5555", "Test of axilite write");
     axilite_write(AXILITE_VVCT, 2, x"0010", x"befbeef", "Write"); -- op0
     axilite_write(AXILITE_VVCT, 2, x"0020", x"efbeef", "Write"); -- op1
     axilite_write(AXILITE_VVCT, 2, x"0030", x"beef", "Write"); -- op2
@@ -333,7 +333,7 @@ begin
     check_value(v_data(C_DATA_WIDTH_1 - 1 downto 0), x"54321", error, "verifying read data on interface 1.");
 
     -- Write to VVC 2
-    axilite_write(AXILITE_VVCT, 2, x"0000", x"5555", to_string("Test of axilite write"));
+    axilite_write(AXILITE_VVCT, 2, x"0000", x"5555", "Test of axilite write");
     axilite_write(AXILITE_VVCT, 2, x"0010", x"befbeef", "Write"); -- op0
     axilite_write(AXILITE_VVCT, 2, x"0020", x"efbeef", "Write"); -- op1
     axilite_write(AXILITE_VVCT, 2, x"0030", x"beef", "Write"); -- op2

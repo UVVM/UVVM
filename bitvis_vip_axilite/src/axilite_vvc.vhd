@@ -430,6 +430,7 @@ begin
     constant C_CHANNEL_SCOPE        : string                               := C_VVC_NAME & "_AR" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                         := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
+    wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     read_address_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
     read_address_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
@@ -486,6 +487,7 @@ begin
     constant C_CHANNEL_SCOPE        : string                                       := C_VVC_NAME & "_R" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                                 := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
+    wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     read_data_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
     read_data_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
@@ -568,6 +570,7 @@ begin
     constant C_CHANNEL_SCOPE        : string                               := C_VVC_NAME & "_AW" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                         := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
+    wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_address_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
     write_address_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
@@ -617,6 +620,7 @@ begin
     constant C_CHANNEL_SCOPE        : string                                       := C_VVC_NAME & "_W" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                                 := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
+    wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_data_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
     write_data_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
@@ -667,6 +671,7 @@ begin
     constant C_CHANNEL_SCOPE        : string                                       := C_VVC_NAME & "_B" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                                 := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
+    wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_response_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
     write_response_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);

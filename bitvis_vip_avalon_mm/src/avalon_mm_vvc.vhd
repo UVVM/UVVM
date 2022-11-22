@@ -521,6 +521,7 @@ begin
     variable v_cmd_queues_are_empty : boolean;
 
   begin
+    wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     command_response_queue.set_scope(C_SCOPE & ":RQ");
     command_response_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);

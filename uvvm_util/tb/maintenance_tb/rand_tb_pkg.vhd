@@ -1655,6 +1655,13 @@ package body rand_tb_pkg is
     variable v_percentage : natural := 0;
     variable v_count      : natural := 0;
     variable v_count_vec  : integer_vector(0 to weight_dist'length - 1);
+
+    function integer_string_length(constant value : integer) return integer is
+      constant C_VALUE_STRING : string := to_string(value);
+    begin
+      return C_VALUE_STRING'length;
+    end function integer_string_length;
+
   begin
     check_value_in_range(weight_dist(weight_dist'low)'length, 2, 3, TB_ERROR, "Elements of weight_dist must have 2 or 3 values.", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, C_PROC_NAME);
 
@@ -1673,11 +1680,11 @@ package body rand_tb_pkg is
           for i in weight_dist'range loop
             -- Single
             if weight_dist(i)'length = 2 or weight_dist(i)(0) = weight_dist(i)(1) then
-              v_val_size := integer'image(weight_dist(i)(0))'length;
+              v_val_size := integer_string_length(weight_dist(i)(0));
               write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(weight_dist(i)(0)));
             -- Min:Max
             else
-              v_val_size := integer'image(weight_dist(i)(0))'length + 1 + integer'image(weight_dist(i)(1))'length;
+              v_val_size := integer_string_length(weight_dist(i)(0)) + 1 + integer_string_length(weight_dist(i)(1));
               write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(weight_dist(i)(0)) & ":" & to_string(weight_dist(i)(1)));
             end if;
           end loop;
@@ -1685,7 +1692,7 @@ package body rand_tb_pkg is
           write(v_line, string'("weight:"));
           for i in weight_dist'range loop
             v_percentage := weight_dist(i)(C_WEIGHT_IDX) * 100 / v_tot_weight;
-            v_val_size   := integer'image(v_percentage)'length + 1;
+            v_val_size   := integer_string_length(v_percentage) + 1;
             write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_percentage) & "%");
           end loop;
         when 2 =>
@@ -1700,7 +1707,7 @@ package body rand_tb_pkg is
                 value_cnt(idx) := 0;    -- Reset counter
               end loop;
             end if;
-            v_val_size     := integer'image(v_count)'length;
+            v_val_size     := integer_string_length(v_count);
             write(v_line, fill_string(' ', (C_COL_WIDTH - v_val_size)) & to_string(v_count));
             v_count_vec(i) := v_count;
             v_count        := 0;

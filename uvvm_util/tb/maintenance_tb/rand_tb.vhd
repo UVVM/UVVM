@@ -76,6 +76,7 @@ begin
     variable v_std_deviation : real;
     variable v_found         : boolean                        := false;
     variable v_incr_list     : integer_vector(1 to 256);
+    variable v_range_uns_vec : t_range_uns_vec(0 to 0)(0 to 1)(127 downto 0);
 
   begin
     -- To avoid that log files from different test cases (run in separate
@@ -1326,7 +1327,8 @@ begin
       v_slv_long_max := x"0F000000000000000000000000000008";
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_slv_long := v_rand.rand(v_slv_long'length, v_slv_long_min, v_slv_long_max);
-        check_rand_value_long(unsigned(v_slv_long), (0 => (unsigned(v_slv_long_min), unsigned(v_slv_long_max))));
+        v_range_uns_vec(0) := (unsigned(v_slv_long_min), unsigned(v_slv_long_max));
+        check_rand_value_long(unsigned(v_slv_long), v_range_uns_vec);
         count_rand_value(v_value_cnt, unsigned(v_slv_long) - unsigned(v_slv_long_min));
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1336,7 +1338,8 @@ begin
       v_slv_long_max := x"00F00000000000000000000000000003";
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_slv_long := v_rand.rand(v_slv_long_min, v_slv_long_max);
-        check_rand_value_long(unsigned(v_slv_long), (0 => (unsigned(v_slv_long_min), unsigned(v_slv_long_max))));
+        v_range_uns_vec(0) := (unsigned(v_slv_long_min), unsigned(v_slv_long_max));
+        check_rand_value_long(unsigned(v_slv_long), v_range_uns_vec);        
         count_rand_value(v_value_cnt, unsigned(v_slv_long) - unsigned(v_slv_long_min));
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);

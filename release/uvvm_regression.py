@@ -31,7 +31,6 @@ num_minor = 0
 failing_tests_list = []
 num_tests_run = 0
 
-
 class TestcaseError(Exception):
     def __init__(self, expected, actual):
         self.exp = expected
@@ -80,16 +79,11 @@ def passing():
 
 def passing_with_minor():
     print('''
-██████╗  █████╗ ███████╗███████╗    ██╗    ██╗    ██╗███╗   ███╗██╗███╗   ██╗ ██████╗ 
-██████╗ 
-██╔══██╗██╔══██╗██╔════╝██╔════╝    ██║    ██║   ██╔╝████╗ ████║██║████╗  
-██║██╔═══██╗██╔══██╗
-██████╔╝███████║███████╗███████╗    ██║ █╗ ██║  ██╔╝ ██╔████╔██║██║██╔██╗ ██║██║   
-██║██████╔╝
-██╔═══╝ ██╔══██║╚════██║╚════██║    ██║███╗██║ ██╔╝  ██║╚██╔╝██║██║██║╚██╗██║██║   
-██║██╔══██╗
-██║     ██║  ██║███████║███████║    ╚███╔███╔╝██╔╝   ██║ ╚═╝ ██║██║██║ 
-╚████║╚██████╔╝██║  ██║
+██████╗  █████╗ ███████╗███████╗    ██╗    ██╗    ██╗███╗   ███╗██╗███╗   ██╗ ██████╗ ██████╗ 
+██╔══██╗██╔══██╗██╔════╝██╔════╝    ██║    ██║   ██╔╝████╗ ████║██║████╗  ██║██╔═══██╗██╔══██╗
+██████╔╝███████║███████╗███████╗    ██║ █╗ ██║  ██╔╝ ██╔████╔██║██║██╔██╗ ██║██║   ██║██████╔╝
+██╔═══╝ ██╔══██║╚════██║╚════██║    ██║███╗██║ ██╔╝  ██║╚██╔╝██║██║██║╚██╗██║██║   ██║██╔══██╗
+██║     ██║  ██║███████║███████║    ╚███╔███╔╝██╔╝   ██║ ╚═╝ ██║██║██║ ╚████║╚██████╔╝██║  ██║
 ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝     ╚══╝╚══╝ ╚═╝    ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  
 ╚═╝''')
 
@@ -481,7 +475,7 @@ def test_bitvis_vip_error_injection():
     hr.add_files("../bitvis_vip_error_injection/tb/maintenance_tb/*.vhd", "bitvis_vip_error_injection")
     hr.add_files("../bitvis_vip_error_injection/tb/*.vhd", "bitvis_vip_error_injection")
     sim_options = "-t ns"
-    hr.start(sim_options=get_sim_options(hr))
+    hr.start(sim_options='-t ns')
 
     check_result(exp_pass=2, exp_fail=0, exp_minor=0, hr=hr)
 
@@ -810,7 +804,7 @@ def test_uvvm_vvc_framework():
     hr.add_files("../uvvm_vvc_framework/tb/maintenance_tb/reference_vvcs/src/*uart*.vhd", "bitvis_vip_uart")
     hr.add_files("../uvvm_vvc_framework/tb/maintenance_tb/*.vhd", "testbench_lib")
     sim_options = "-t ns"
-    hr.start(sim_options=get_sim_options(hr))
+    hr.start(sim_options='-t ns')
 
     check_result(exp_pass=11, exp_fail=0, exp_minor=0, hr=hr)
 

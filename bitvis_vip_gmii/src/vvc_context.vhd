@@ -19,8 +19,5 @@ context vvc_context is
   use bitvis_vip_gmii.transaction_pkg.all;
   use bitvis_vip_gmii.vvc_methods_pkg.all;
   use bitvis_vip_gmii.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_gmii.gmii_bfm_pkg.t_gmii_tx_if;
-  use bitvis_vip_gmii.gmii_bfm_pkg.t_gmii_rx_if;
-  use bitvis_vip_gmii.gmii_bfm_pkg.t_gmii_bfm_config;
-  use bitvis_vip_gmii.gmii_bfm_pkg.C_GMII_BFM_CONFIG_DEFAULT;
+  use bitvis_vip_gmii.gmii_bfm_pkg.all;
 end context;

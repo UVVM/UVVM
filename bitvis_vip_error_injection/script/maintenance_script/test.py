@@ -41,7 +41,7 @@ hr.add_files("../../src/*.vhd", "bitvis_vip_error_injection")
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_error_injection")
 hr.add_files("../../tb/*.vhd", "bitvis_vip_error_injection")
 
-hr.start(regression_mode=True, gui_mode=False)
+hr.start(regression_mode=True, gui_mode=False, sim_options='-t ns')
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()

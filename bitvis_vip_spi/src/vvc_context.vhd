@@ -19,7 +19,5 @@ context vvc_context is
   use bitvis_vip_spi.transaction_pkg.all;
   use bitvis_vip_spi.vvc_methods_pkg.all;
   use bitvis_vip_spi.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_spi.spi_bfm_pkg.t_spi_if;
-  use bitvis_vip_spi.spi_bfm_pkg.t_spi_bfm_config;
-  use bitvis_vip_spi.spi_bfm_pkg.C_SPI_BFM_CONFIG_DEFAULT;
+  use bitvis_vip_spi.spi_bfm_pkg.all;
 end context;

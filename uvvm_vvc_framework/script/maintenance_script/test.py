@@ -50,7 +50,7 @@ hr.add_files("../../tb/maintenance_tb/reference_vvcs/src/*sbi*.vhd", "bitvis_vip
 hr.add_files("../../tb/maintenance_tb/reference_vvcs/src/*uart*.vhd", "bitvis_vip_uart")
 hr.add_files("../../tb/maintenance_tb/*.vhd", "testbench_lib")
 
-hr.start(regression_mode=True, gui_mode=False)
+hr.start(regression_mode=True, gui_mode=False, sim_options="-t ns")
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()

@@ -134,14 +134,16 @@ begin
       if GC_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
-        -- Provoking tb_error and incrementing expected alert and stop limit
-        increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+        -- Provoking tb_error and incrementing alert stop limit
+        set_alert_stop_limit(TB_ERROR, 2);
         provoke_uvvm_status_error(TB_ERROR);
         -- Run testcase
         initialize_req_cov("TC_5", GC_REQ_FILE, "pc_5.csv");
         tick_off_req_cov("REQ_5");
         -- End testcase
         finalize_req_cov(VOID);
+        -- Increment expected alerts so test will pass with provoked UVVM TB_ERROR
+        increment_expected_alerts(TB_ERROR, 1);
       end if;
 
     elsif GC_TESTCASE = "test_uvvm_status_error_after_log" then
@@ -155,11 +157,13 @@ begin
         -- Run testcase
         initialize_req_cov("TC_6", GC_REQ_FILE, "pc_6.csv");
         tick_off_req_cov("REQ_6", PASS);
-        -- Provoking tb_error and incrementing expected alert and stop limit
-        increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+        -- Provoking tb_error and incrementing alert stop limit
+        set_alert_stop_limit(TB_ERROR, 2);
         provoke_uvvm_status_error(TB_ERROR);
         -- End testcase
         finalize_req_cov(VOID);
+        -- Increment expected alerts so test will pass with provoked UVVM TB_ERROR
+        increment_expected_alerts(TB_ERROR, 1);
       end if;
 
     elsif GC_TESTCASE = "test_open_no_existing_req_file" then

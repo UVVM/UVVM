@@ -44,9 +44,10 @@ hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_spec_cov")
 hr.add_files("../../tb/*.vhd", "bitvis_vip_spec_cov")
 
 hr.add_generics(entity="spec_cov_tb",
-                     generics=["GC_REQ_FILE", ("../../tb/maintenance_tb/req_file.csv", "PATH"),
-                               "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
-                               "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
+                     generics=["GC_REQ_FILE",       ("../../tb/maintenance_tb/req_file.csv", "PATH"),
+                               "GC_REQ_FILE_EMPTY", ("../../tb/maintenance_tb/req_file_empty.csv", "PATH"),
+                               "GC_SUB_REQ_FILE",   ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
+                               "GC_REQ_OMIT_MAP",   ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
 
 hr.start(regression_mode=True, gui_mode=False)
 
@@ -57,7 +58,7 @@ num_passing_tests = hr.get_num_pass_tests()
 if num_passing_tests == 0:
     sys.exit(1)
 # Remove output only if OK
-if hr.check_run_results(exp_fail=0) is True:
+if hr.check_run_results(exp_fail=1) is True:
     cleanup('Removing simulation output')
 # Return number of failing tests
 sys.exit(num_failing_tests)

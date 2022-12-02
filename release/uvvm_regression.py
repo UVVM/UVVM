@@ -617,14 +617,14 @@ def test_bitvis_vip_spec_cov():
     hr.add_files("../bitvis_vip_spec_cov/tb/*.vhd", "bitvis_vip_spec_cov")
 
     hr.add_generics(entity="spec_cov_tb",
-                         generics=["GC_REQ_FILE",     ("../bitvis_vip_spec_cov/tb/maintenance_tb/req_file.csv", "PATH"),
-                                   "GC_SUB_REQ_FILE", ("../bitvis_vip_spec_cov/tb/maintenance_tb/sub_req_file.csv", "PATH"),
-                                   "GC_SUB_REQ_FILE", ("../bitvis_vip_spec_cov/tb/maintenance_tb/sub_req_file.csv", "PATH"),
-                                   "GC_REQ_OMIT_MAP", ("../bitvis_vip_spec_cov/tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
+                         generics=["GC_REQ_FILE",       ("../bitvis_vip_spec_cov/tb/maintenance_tb/req_file.csv", "PATH"),
+                                   "GC_REQ_FILE_EMPTY", ("../bitvis_vip_spec_cov/tb/maintenance_tb/req_file_empty.csv", "PATH"),
+                                   "GC_SUB_REQ_FILE",   ("../bitvis_vip_spec_cov/tb/maintenance_tb/sub_req_file.csv", "PATH"),
+                                   "GC_REQ_OMIT_MAP",   ("../bitvis_vip_spec_cov/tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
 
     hr.start(sim_options=get_sim_options(hr))
 
-    check_result(exp_pass=18, exp_fail=1, exp_minor=0, hr=hr)
+    check_result(exp_pass=20, exp_fail=1, exp_minor=0, hr=hr)
 
 
 def test_bitvis_vip_spi():

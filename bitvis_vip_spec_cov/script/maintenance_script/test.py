@@ -31,7 +31,6 @@ hr = HDLRegression(simulator='modelsim')
 
 # Remove output files prior to sim
 hr.run_command("rm *.txt")
-# hr.run_command("py ../script/maintenance_script/sim.py")
 
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
@@ -53,6 +52,13 @@ hr.start(regression_mode=True, gui_mode=False)
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()
+
+# Check with golden reference
+(ret_txt, ret_code) = hr.run_command("python ../script/maintenance_script/maintenance_run_spec_cov.py")
+
+if ret_code != 0:
+    print(ret_txt)
+    num_failing_tests += 1
 
 # No tests run error
 if num_passing_tests == 0:

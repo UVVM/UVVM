@@ -271,7 +271,7 @@ package spi_bfm_pkg is
     signal   ss_n                   : inout std_logic;
     signal   mosi                   : inout std_logic;
     signal   miso                   : inout std_logic;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -290,7 +290,7 @@ package spi_bfm_pkg is
     variable rx_data                : out std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -304,7 +304,7 @@ package spi_bfm_pkg is
     variable rx_data                : out t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -322,7 +322,7 @@ package spi_bfm_pkg is
     constant data_exp               : in std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
@@ -336,7 +336,7 @@ package spi_bfm_pkg is
     constant data_exp               : in t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
@@ -353,7 +353,7 @@ package spi_bfm_pkg is
     constant tx_data                : in std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -365,7 +365,7 @@ package spi_bfm_pkg is
     constant tx_data                : in t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -381,7 +381,7 @@ package spi_bfm_pkg is
     variable rx_data                : out std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -393,7 +393,7 @@ package spi_bfm_pkg is
     variable rx_data                : out t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -412,7 +412,7 @@ package spi_bfm_pkg is
     constant data_exp               : in std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
@@ -425,7 +425,7 @@ package spi_bfm_pkg is
     constant data_exp               : in t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
@@ -943,7 +943,7 @@ package body spi_bfm_pkg is
     signal   ss_n                   : inout std_logic;
     signal   mosi                   : inout std_logic;
     signal   miso                   : inout std_logic;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -976,19 +976,19 @@ package body spi_bfm_pkg is
 
     -- Await for master to drive SS_N and SCLK
     if (ss_n /= '0') then               -- master not acvtive
-      wait until (ss_n = '0') or (terminate_loop = '1');
+      wait until (ss_n = '0') or (terminate_access = '1');
     elsif (ss_n = '0') then             -- master active
       case when_to_start_transfer is
         when START_TRANSFER_ON_NEXT_SS =>
           if (ss_n = '0') and (ss_n'last_active > 0 ns) then
-            wait until ((ss_n = '0') and (ss_n'last_active <= 0 ns)) or (terminate_loop = '1');
+            wait until ((ss_n = '0') and (ss_n'last_active <= 0 ns)) or (terminate_access = '1');
           end if;
         when others =>                  -- START_TRANSFER_IMMEDIATE
           null;
       end case;
     end if;
 
-    if terminate_loop = '1' then
+    if terminate_access = '1' then
       if ext_proc_call = "" then
         log(ID_TERMINATE_CMD, v_proc_call.all & "=> terminated." & add_msg_delimiter(msg), scope, msg_id_panel);
       else
@@ -1006,10 +1006,10 @@ package body spi_bfm_pkg is
 
       -- Await first clock edge
       if sclk = config.CPOL then
-        wait until (sclk = not (config.CPOL)) or (terminate_loop = '1');
+        wait until (sclk = not (config.CPOL)) or (terminate_access = '1');
       end if;
 
-      if terminate_loop = '1' then
+      if terminate_access = '1' then
         if ext_proc_call = "" then
           log(ID_TERMINATE_CMD, v_proc_call.all & "=> terminated." & add_msg_delimiter(msg), scope, msg_id_panel);
         else
@@ -1023,15 +1023,15 @@ package body spi_bfm_pkg is
 
         if not config.CPHA then
           v_rx_data(C_ACCESS_SIZE - v_rx_count) := mosi;
-          wait until (sclk'event and sclk = config.CPOL) or (terminate_loop = '1');
+          wait until (sclk'event and sclk = config.CPOL) or (terminate_access = '1');
           miso                                  <= bfm_tx_data(C_ACCESS_SIZE - v_tx_count - 1);
         else                            -- config.CPHA
           miso                                  <= bfm_tx_data(C_ACCESS_SIZE - v_tx_count - 1);
-          wait until (sclk'event and sclk = config.CPOL) or (terminate_loop = '1');
+          wait until (sclk'event and sclk = config.CPOL) or (terminate_access = '1');
           v_rx_data(C_ACCESS_SIZE - v_rx_count) := mosi;
         end if;
 
-        if terminate_loop = '1' then
+        if terminate_access = '1' then
           if ext_proc_call = "" then
             log(ID_TERMINATE_CMD, v_proc_call.all & "=> terminated." & add_msg_delimiter(msg), scope, msg_id_panel);
           else
@@ -1039,19 +1039,19 @@ package body spi_bfm_pkg is
           end if;
           v_terminated := true;
 
-        else --terminate_loop = '0'
+        else --terminate_access = '0'
 
           if (v_tx_count < (C_ACCESS_SIZE - 1)) and (v_rx_count < C_ACCESS_SIZE) then
-            wait until (sclk'event and sclk = not (config.CPOL)) or (terminate_loop = '1');
+            wait until (sclk'event and sclk = not (config.CPOL)) or (terminate_access = '1');
           v_tx_count := v_tx_count + 1;
           v_rx_count := v_rx_count + 1;
         else
 
           if not config.CPHA then
-              wait until (sclk'event and sclk = not (config.CPOL)) or (terminate_loop = '1');
+              wait until (sclk'event and sclk = not (config.CPOL)) or (terminate_access = '1');
           end if;
 
-            if terminate_loop = '1' then
+            if terminate_access = '1' then
               if ext_proc_call = "" then
                 log(ID_TERMINATE_CMD, v_proc_call.all & "=> terminated." & add_msg_delimiter(msg), scope, msg_id_panel);
               else
@@ -1072,10 +1072,10 @@ package body spi_bfm_pkg is
     if (config.CPHA = '0') and not (v_terminated) then
       v_rx_count                            := v_rx_count + 1;
       v_rx_data(C_ACCESS_SIZE - v_rx_count) := mosi;
-      wait until (sclk'event and sclk = config.CPOL) or (terminate_loop = '1');
+      wait until (sclk'event and sclk = config.CPOL) or (terminate_access = '1');
     end if;
 
-    if terminate_loop = '1' then
+    if terminate_access = '1' then
       if ext_proc_call = "" then
         log(ID_TERMINATE_CMD, v_proc_call.all & "=> terminated." & add_msg_delimiter(msg), scope, msg_id_panel);
       else
@@ -1116,7 +1116,7 @@ package body spi_bfm_pkg is
     variable rx_data                : out std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -1125,7 +1125,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_transmit_and_receive(tx_data, rx_data, msg,
-                                   spi_if.sclk, spi_if.ss_n, spi_if.mosi, spi_if.miso, terminate_loop,
+                                   spi_if.sclk, spi_if.ss_n, spi_if.mosi, spi_if.miso, terminate_access,
                                    when_to_start_transfer, scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
@@ -1135,7 +1135,7 @@ package body spi_bfm_pkg is
     variable rx_data                : out t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -1148,8 +1148,8 @@ package body spi_bfm_pkg is
       alert(error, ext_proc_call & "tx_data and rx_data have different sizes.");
     end if;
     for idx in 0 to (tx_data'length - 1) loop
-      exit when (terminate_loop = '1');
-      spi_slave_transmit_and_receive(tx_data(idx), rx_data(idx), msg, spi_if, terminate_loop, when_to_start_transfer, scope, msg_id_panel, config, ext_proc_call);
+      exit when (terminate_access = '1');
+      spi_slave_transmit_and_receive(tx_data(idx), rx_data(idx), msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, ext_proc_call);
     end loop;
   end procedure;
 
@@ -1161,7 +1161,7 @@ package body spi_bfm_pkg is
     constant data_exp               : in std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
@@ -1175,9 +1175,9 @@ package body spi_bfm_pkg is
     variable v_check_ok      : boolean := true;
     variable v_alert_radix   : t_radix;
   begin
-    spi_slave_transmit_and_receive(tx_data, v_rx_data, msg, spi_if, terminate_loop, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
+    spi_slave_transmit_and_receive(tx_data, v_rx_data, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
 
-    if terminate_loop = '0' then
+    if terminate_access = '0' then
       for i in data_exp'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
         if data_exp(i) = '-' or check_value(v_rx_data(i), data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
@@ -1206,7 +1206,7 @@ package body spi_bfm_pkg is
     constant data_exp               : in t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
@@ -1220,12 +1220,12 @@ package body spi_bfm_pkg is
       alert(error, loc_proc_call & " tx_data and data_exp have different sizes.");
     end if;
     for idx in 0 to (tx_data'length - 1) loop
-      exit when (terminate_loop = '1');
+      exit when (terminate_access = '1');
       -- call single-word procedure - will handle error checking
-      spi_slave_transmit_and_check(tx_data(idx), data_exp(idx), msg, spi_if, terminate_loop, alert_level, when_to_start_transfer, scope, msg_id_panel, config);
+      spi_slave_transmit_and_check(tx_data(idx), data_exp(idx), msg, spi_if, terminate_access, alert_level, when_to_start_transfer, scope, msg_id_panel, config);
     end loop;
 
-    if terminate_loop = '1' then
+    if terminate_access = '1' then
       alert(warning, loc_proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
     end if;
   end;
@@ -1237,7 +1237,7 @@ package body spi_bfm_pkg is
     constant tx_data                : in std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -1248,7 +1248,7 @@ package body spi_bfm_pkg is
     -- Helper variables
     variable v_rx_data       : std_logic_vector(tx_data'length - 1 downto 0); -- := (others => '0');
   begin
-    spi_slave_transmit_and_receive(tx_data, v_rx_data, msg, spi_if, terminate_loop, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
+    spi_slave_transmit_and_receive(tx_data, v_rx_data, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
   end procedure;
 
   -- Multi-word
@@ -1256,7 +1256,7 @@ package body spi_bfm_pkg is
     constant tx_data                : in t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal  terminate_loop          : in std_logic;
+    signal  terminate_access        : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -1268,7 +1268,7 @@ package body spi_bfm_pkg is
     variable v_tx_data       : t_slv_array(tx_data'length - 1 downto 0)(tx_data(0)'length - 1 downto 0) := (others => (others => '0'));
   begin
     -- call multi-word procedure
-    spi_slave_transmit_and_receive(tx_data, v_tx_data, msg, spi_if, terminate_loop, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
+    spi_slave_transmit_and_receive(tx_data, v_tx_data, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
   end procedure;
 
   ---------------------------------------------------------------------------------
@@ -1278,7 +1278,7 @@ package body spi_bfm_pkg is
     variable rx_data                : out std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -1289,7 +1289,7 @@ package body spi_bfm_pkg is
     -- Helper variables
     variable v_tx_data       : std_logic_vector(rx_data'length - 1 downto 0) := (others => '0');
   begin
-    spi_slave_transmit_and_receive(v_tx_data, rx_data, msg, spi_if, terminate_loop, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
+    spi_slave_transmit_and_receive(v_tx_data, rx_data, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
   end;
 
   -- Multi-word
@@ -1297,7 +1297,7 @@ package body spi_bfm_pkg is
     variable rx_data                : out t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -1309,7 +1309,7 @@ package body spi_bfm_pkg is
     variable v_rx_data       : t_slv_array(rx_data'length - 1 downto 0)(rx_data(0)'length - 1 downto 0) := (others => (others => '0'));
   begin
     -- call multi-word procedure
-    spi_slave_transmit_and_receive(v_rx_data, rx_data, msg, spi_if, terminate_loop, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
+    spi_slave_transmit_and_receive(v_rx_data, rx_data, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
   end;
 
   ---------------------------------------------------------------------------------
@@ -1319,7 +1319,7 @@ package body spi_bfm_pkg is
     constant data_exp               : in std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
@@ -1334,9 +1334,9 @@ package body spi_bfm_pkg is
     variable v_check_ok      : boolean                                        := true;
     variable v_alert_radix   : t_radix;
   begin
-    spi_slave_transmit_and_receive(v_tx_data, v_rx_data, msg, spi_if, terminate_loop, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
+    spi_slave_transmit_and_receive(v_tx_data, v_rx_data, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
 
-    if terminate_loop = '0' then
+    if terminate_access = '0' then
 
       for i in data_exp'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
@@ -1365,7 +1365,7 @@ package body spi_bfm_pkg is
     constant data_exp               : in t_slv_array;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
-    signal   terminate_loop         : in std_logic;
+    signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_SCOPE;
@@ -1376,12 +1376,12 @@ package body spi_bfm_pkg is
     constant local_proc_call : string := local_proc_name & "(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
   begin
     for idx in 0 to (data_exp'length - 1) loop
-      exit when (terminate_loop = '1');
+      exit when (terminate_access = '1');
       -- call singl-word procedure - will handle error check
-      spi_slave_check(data_exp(idx), msg, spi_if, terminate_loop, alert_level, when_to_start_transfer, scope, msg_id_panel, config);
+      spi_slave_check(data_exp(idx), msg, spi_if, terminate_access, alert_level, when_to_start_transfer, scope, msg_id_panel, config);
     end loop;
 
-    if terminate_loop = '1' then
+    if terminate_access = '1' then
       alert(warning, local_proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
     end if;
   end procedure;

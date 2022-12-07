@@ -1196,7 +1196,7 @@ package body spi_bfm_pkg is
         log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     else
-      alert(warning, local_proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
+      alert(warning, local_proc_call & "=> Failed. Terminate access received. " & add_msg_delimiter(msg), scope);
     end if;
   end;
 
@@ -1226,7 +1226,7 @@ package body spi_bfm_pkg is
     end loop;
 
     if terminate_access = '1' then
-      alert(warning, loc_proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
+      alert(warning, loc_proc_call & "=> Failed. Terminate access received. " & add_msg_delimiter(msg), scope);
     end if;
   end;
 
@@ -1356,7 +1356,7 @@ package body spi_bfm_pkg is
         log(config.id_for_bfm, local_proc_call & "=> OK, read data = " & to_string(v_rx_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       end if;
     else
-      alert(warning, local_proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
+      alert(warning, local_proc_call & "=> Failed. Terminate access received. " & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 
@@ -1382,7 +1382,7 @@ package body spi_bfm_pkg is
     end loop;
 
     if terminate_access = '1' then
-      alert(warning, local_proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);
+      alert(warning, local_proc_call & "=> Failed. Terminate access received. " & add_msg_delimiter(msg), scope);
     end if;
   end procedure;
 

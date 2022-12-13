@@ -255,8 +255,8 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP Axi-Lite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP Axi-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI-Stream</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
@@ -1987,7 +1987,7 @@ at the end</p></td>
 <span class="kt">std_logic_vector</span> <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
 <span class="kt">integer</span>          <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="n">min_value</span><span class="p">(</span><span class="n">int</span><span class="p">),</span> <span class="n">max_value</span><span class="p">(</span><span class="n">int</span><span class="p">))</span>
 <span class="n">real</span>             <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="n">min_value</span><span class="p">(</span><span class="n">real</span><span class="p">),</span> <span class="n">max_value</span><span class="p">(</span><span class="n">real</span><span class="p">))</span>
-<span class="kt">time</span>             <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="n">min_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span> <span class="n">max_value</span><span class="p">(</span><span class="kt">time</span><span class="p">))</span>
+<span class="kt">time</span>             <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="n">min_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span> <span class="n">max_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span> <span class="p">[</span><span class="n">time_resolution</span><span class="p">(</span><span class="kt">time</span><span class="p">)])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -2031,6 +2031,15 @@ at the end</p></td>
 <td><p><em>see overloads</em></p></td>
 <td><p>Maximum value in the range to generate the random number</p></td>
 </tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between
+min_value and max_value. If the given resolution is too
+small for the range, a TB_WARNING will be printed once.
+Default value is the simulator time resolution.</p></td>
+</tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
@@ -2038,7 +2047,8 @@ at the end</p></td>
 <span class="n">v_slv</span>  <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="n">v_slv</span><span class="na">&#39;length</span><span class="p">);</span>
 <span class="n">v_int</span>  <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
 <span class="n">v_real</span> <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span><span class="p">,</span> <span class="mi">0</span><span class="p">.</span><span class="mi">03</span><span class="p">);</span>
-<span class="n">v_time</span> <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="mi">25</span> <span class="n">us</span><span class="p">,</span> <span class="mi">50</span> <span class="n">us</span><span class="p">);</span>
+<span class="n">v_time</span> <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="mi">25</span> <span class="n">us</span><span class="p">,</span> <span class="mi">50</span> <span class="n">us</span><span class="p">);</span>     <span class="c1">-- Generates random values with the default resolution of the simulator</span>
+<span class="n">v_time</span> <span class="o">:=</span> <span class="n">random</span><span class="p">(</span><span class="mi">25</span> <span class="n">us</span><span class="p">,</span> <span class="mi">50</span> <span class="n">us</span><span class="p">,</span> <span class="n">us</span><span class="p">);</span> <span class="c1">-- Generates random values with a resolution of 1 us</span>
 </pre></div>
 </div>
 </div>
@@ -2049,7 +2059,7 @@ at the end</p></td>
 <span class="n">random</span><span class="p">(</span><span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_target</span><span class="p">(</span><span class="n">slv</span><span class="p">))</span>
 <span class="n">random</span><span class="p">(</span><span class="n">min_value</span><span class="p">(</span><span class="n">int</span><span class="p">),</span> <span class="n">max_value</span><span class="p">(</span><span class="n">int</span><span class="p">),</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_target</span><span class="p">(</span><span class="n">int</span><span class="p">))</span>
 <span class="n">random</span><span class="p">(</span><span class="n">min_value</span><span class="p">(</span><span class="n">real</span><span class="p">),</span> <span class="n">max_value</span><span class="p">(</span><span class="n">real</span><span class="p">),</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_target</span><span class="p">(</span><span class="n">real</span><span class="p">))</span>
-<span class="n">random</span><span class="p">(</span><span class="n">min_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span> <span class="n">max_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_target</span><span class="p">(</span><span class="kt">time</span><span class="p">))</span>
+<span class="n">random</span><span class="p">(</span><span class="n">min_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span> <span class="n">max_value</span><span class="p">(</span><span class="kt">time</span><span class="p">),</span> <span class="p">[</span><span class="n">time_resolution</span><span class="p">(</span><span class="kt">time</span><span class="p">)],</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_target</span><span class="p">(</span><span class="kt">time</span><span class="p">))</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -2081,19 +2091,28 @@ at the end</p></td>
 <td><p><em>see overloads</em></p></td>
 <td><p>Maximum value in the range to generate the random number</p></td>
 </tr>
-<tr class="row-even"><td><p>variable</p></td>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between
+min_value and max_value. If the given resolution is too
+small for the range, a TB_WARNING will be printed once.
+Default value is the simulator time resolution.</p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
 <td><p>v_seed1</p></td>
 <td><p>inout</p></td>
 <td><p>positive</p></td>
 <td><p>Randomization seed 1</p></td>
 </tr>
-<tr class="row-odd"><td><p>variable</p></td>
+<tr class="row-even"><td><p>variable</p></td>
 <td><p>v_seed2</p></td>
 <td><p>inout</p></td>
 <td><p>positive</p></td>
 <td><p>Randomization seed 2</p></td>
 </tr>
-<tr class="row-even"><td><p>variable</p></td>
+<tr class="row-odd"><td><p>variable</p></td>
 <td><p>v_target</p></td>
 <td><p>inout</p></td>
 <td><p><em>see overloads</em></p></td>
@@ -2106,7 +2125,8 @@ at the end</p></td>
 <span class="n">random</span><span class="p">(</span><span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_slv</span><span class="p">);</span>
 <span class="n">random</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_int</span><span class="p">);</span>
 <span class="n">random</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span><span class="p">,</span> <span class="mi">0</span><span class="p">.</span><span class="mi">03</span><span class="p">,</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_real</span><span class="p">);</span>
-<span class="n">random</span><span class="p">(</span><span class="mi">25</span> <span class="n">us</span><span class="p">,</span> <span class="mi">50</span> <span class="n">us</span><span class="p">,</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_time</span><span class="p">);</span>
+<span class="n">random</span><span class="p">(</span><span class="mi">25</span> <span class="n">us</span><span class="p">,</span> <span class="mi">50</span> <span class="n">us</span><span class="p">,</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_time</span><span class="p">);</span>     <span class="c1">-- Generates random values with the default resolution of the simulator</span>
+<span class="n">random</span><span class="p">(</span><span class="mi">25</span> <span class="n">us</span><span class="p">,</span> <span class="mi">50</span> <span class="n">us</span><span class="p">,</span> <span class="n">us</span><span class="p">,</span> <span class="n">v_seed1</span><span class="p">,</span> <span class="n">v_seed2</span><span class="p">,</span> <span class="n">v_time</span><span class="p">);</span> <span class="c1">-- Generates random values with a resolution of 1 us</span>
 </pre></div>
 </div>
 </div>

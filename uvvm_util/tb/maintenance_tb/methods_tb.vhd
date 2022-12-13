@@ -1879,37 +1879,39 @@ begin
 
     elsif GC_TESTCASE = "random_functions" then
       --------------------------------------------------------------------------
-      -- Random functions
+      log(ID_LOG_HDR_LARGE, "Random functions", C_SCOPE);
       --------------------------------------------------------------------------
-      -- Test the random SLV function
-      -- (Not self checking)
+      ----------------------------------------------------------------
+      log(ID_LOG_HDR, "std_logic_vector / std_logic", C_SCOPE);
+      ----------------------------------------------------------------
+      log(ID_SEQUENCER, "-- Test the random SLV function (not self checking)", C_SCOPE);
       for iteration in 1 to 5 loop
         v_slv8 := random(v_slv8'length);
         log(ID_SEQUENCER, "Random function slv8 = " & to_string(v_slv8), C_SCOPE);
       end loop;
 
-      -- Test the random SLV procedure
-      -- (not self checking)
+      log(ID_SEQUENCER, "-- Test the random SLV procedure (not self checking)", C_SCOPE);
       for iteration in 1 to 5 loop
         random(v_seed1, v_seed2, v_slv8);
         log(ID_SEQUENCER, "Random procedure slv8 = " & to_string(v_slv8), C_SCOPE);
       end loop;
 
-      -- Test the random SL function
-      -- (Not self checking)
+      log(ID_SEQUENCER, "-- Test the random SL function (not self checking)", C_SCOPE);
       for iteration in 1 to 10 loop
         v_sl := random(VOID);
         log(ID_SEQUENCER, "Random function sl = " & to_string(v_sl), C_SCOPE);
       end loop;
 
-      -- Test the random SL procedure
-      -- (not self checking)
+      log(ID_SEQUENCER, "-- Test the random SL procedure (not self checking)", C_SCOPE);
       for iteration in 1 to 10 loop
         random(v_seed1, v_seed2, v_sl);
         log(ID_SEQUENCER, "Random procedure sl = " & to_string(v_sl), C_SCOPE);
       end loop;
 
-      -- Test the random integer function
+      ----------------------------------------------------------------
+      log(ID_LOG_HDR, "Integer", C_SCOPE);
+      ----------------------------------------------------------------
+      log(ID_SEQUENCER, "-- Test the random integer function", C_SCOPE);
       for iteration in 1 to 100 loop
         v_ia      := random(C_RANDOM_MIN_VALUE, C_RANDOM_MAX_VALUE);
         -- Check that the number is in the requested range
@@ -1924,7 +1926,7 @@ begin
         ctr(iteration) <= 0;
       end loop;
 
-      -- Test the random integer procedure
+      log(ID_SEQUENCER, "-- Test the random integer procedure", C_SCOPE);
       for iteration in 1 to 100 loop
         random(C_RANDOM_MIN_VALUE, C_RANDOM_MAX_VALUE, v_seed1, v_seed2, v_i);
         check_value_in_range(v_i, C_RANDOM_MIN_VALUE, C_RANDOM_MAX_VALUE, error, "Random integer procedure in range, OK", C_SCOPE, ID_NEVER);
@@ -1936,31 +1938,40 @@ begin
         -- Reset counter
         ctr(iteration) <= 0;
       end loop;
-      -- Test the max limit
+
+      log(ID_SEQUENCER, "-- Test the max limit", C_SCOPE);
       for iteration in 1 to 10 loop
         random(0, integer'right, v_seed1, v_seed2, v_i);
         check_value_in_range(v_i, 0, integer'right, error, "Random integer function in range, OK", C_SCOPE, ID_NEVER);
       end loop;
-      -- Test the min & max limits (not self checking)
+
+      log(ID_SEQUENCER, "-- Test the min & max limits (not self checking)", C_SCOPE);
       for iteration in 1 to 10 loop
         random(integer'left, integer'right, v_seed1, v_seed2, v_i);
         log(ID_SEQUENCER, "Random int procedure = " & to_string(v_i), C_SCOPE);
       end loop;
 
-      -- Test the random real function
+      ----------------------------------------------------------------
+      log(ID_LOG_HDR, "Real", C_SCOPE);
+      ----------------------------------------------------------------
+      log(ID_SEQUENCER, "-- Test the random real function", C_SCOPE);
       for iteration in 1 to 5 loop
         v_r := random(0.01, 0.03);
         log(ID_SEQUENCER, "Random real function = " & to_string(v_r, "%f"), C_SCOPE);
         check_value_in_range(v_r, 0.01, 0.03, error, "Random real function in range, OK", C_SCOPE, ID_NEVER);
       end loop;
-      -- Test the random real procedure
+
+      log(ID_SEQUENCER, "-- Test the random real procedure", C_SCOPE);
       for iteration in 1 to 5 loop
         random(0.01, 0.03, v_seed1, v_seed2, v_r);
         log(ID_SEQUENCER, "Random real procedure = " & to_string(v_r, "%f"), C_SCOPE);
         check_value_in_range(v_r, 0.01, 0.03, error, "Random real procedure in range, OK", C_SCOPE, ID_NEVER);
       end loop;
 
-      -- Test the random time function
+      ----------------------------------------------------------------
+      log(ID_LOG_HDR, "Time", C_SCOPE);
+      ----------------------------------------------------------------
+      log(ID_SEQUENCER, "-- Test the random time function", C_SCOPE);
       for iteration in 1 to 100 loop
         v_t             := random(1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE);
         -- Check that the number is in the requested range
@@ -1975,7 +1986,39 @@ begin
         ctr(iteration) <= 0;
       end loop;
 
-      -- Test the random time procedure
+      log(ID_SEQUENCER, "-- Test the random time function with default time resolution", C_SCOPE);
+      for iteration in 1 to 100 loop
+        v_t             := random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE);
+        -- Check that the number is in the requested range
+        check_value_in_range(v_t, 1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, error, "Random time function in range, OK", C_SCOPE, ID_NEVER);
+        ctr(v_t / 1 ms) <= ctr(v_t / 1 ms) + 1; -- Keep track of how many times the random value got this value
+        wait for 0 ns;
+      end loop;
+      -- Print statistics over the random values
+      for iteration in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
+        log(ID_SEQUENCER, "time function (ms) : ctr(" & to_string(iteration, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(ctr(iteration), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
+        -- Reset counter
+        ctr(iteration) <= 0;
+      end loop;
+
+      log(ID_SEQUENCER, "-- Test the random time function with explicit time resolution", C_SCOPE);
+      increment_expected_alerts(TB_WARNING, 1);
+      for iteration in 1 to 100 loop
+        v_t             := random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, ps);
+        -- Check that the number is in the requested range
+        check_value_in_range(v_t, 1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, error, "Random time function in range, OK", C_SCOPE, ID_NEVER);
+        ctr(v_t / 1 ms) <= ctr(v_t / 1 ms) + 1; -- Keep track of how many times the random value got this value
+        wait for 0 ns;
+      end loop;
+      -- Print statistics over the random values
+      for iteration in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
+        log(ID_SEQUENCER, "time function (ms) : ctr(" & to_string(iteration, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(ctr(iteration), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
+        -- Reset counter
+        ctr(iteration) <= 0;
+      end loop;
+      shared_warned_rand_time_res := false; -- Reset to test warning in procedure call
+
+      log(ID_SEQUENCER, "-- Test the random time procedure", C_SCOPE);
       for iteration in 1 to 100 loop
         random(1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE, v_seed1, v_seed2, v_t);
         check_value_in_range(v_t, 1 ns * C_RANDOM_MIN_VALUE, 1 ns * C_RANDOM_MAX_VALUE, error, "Random time procedure in range, OK", C_SCOPE, ID_NEVER);
@@ -1984,6 +2027,33 @@ begin
       -- Print statistics over the random values
       for iteration in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
         log(ID_SEQUENCER, "time procedure (ns) : ctr(" & to_string(iteration, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(ctr(iteration), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
+        -- Reset counter
+        ctr(iteration) <= 0;
+      end loop;
+
+      log(ID_SEQUENCER, "-- Test the random time procedure with default time resolution", C_SCOPE);
+      for iteration in 1 to 100 loop
+        random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, v_seed1, v_seed2, v_t);
+        check_value_in_range(v_t, 1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, error, "Random time procedure in range, OK", C_SCOPE, ID_NEVER);
+        ctr(v_t / 1 ms) <= ctr(v_t / 1 ms) + 1; -- Keep track of how many times the random value got this value
+      end loop;
+      -- Print statistics over the random values
+      for iteration in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
+        log(ID_SEQUENCER, "time procedure (ms) : ctr(" & to_string(iteration, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(ctr(iteration), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
+        -- Reset counter
+        ctr(iteration) <= 0;
+      end loop;
+
+      log(ID_SEQUENCER, "-- Test the random time procedure with explicit time resolution", C_SCOPE);
+      increment_expected_alerts(TB_WARNING, 1);
+      for iteration in 1 to 100 loop
+        random(1 sec * C_RANDOM_MIN_VALUE, 1 sec * C_RANDOM_MAX_VALUE, ps, v_seed1, v_seed2, v_t);
+        check_value_in_range(v_t, 1 sec * C_RANDOM_MIN_VALUE, 1 sec * C_RANDOM_MAX_VALUE, error, "Random time procedure in range, OK", C_SCOPE, ID_NEVER);
+        ctr(v_t / 1 sec) <= ctr(v_t / 1 sec) + 1; -- Keep track of how many times the random value got this value
+      end loop;
+      -- Print statistics over the random values
+      for iteration in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
+        log(ID_SEQUENCER, "time procedure (sec) : ctr(" & to_string(iteration, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(ctr(iteration), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
         -- Reset counter
         ctr(iteration) <= 0;
       end loop;

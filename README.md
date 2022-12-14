@@ -7,20 +7,20 @@ UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle 
 UVVM consists currently of the following elements:
 - [Utility Library](./uvvm_util/README.md)
 - [VVC (VHDL Verification Component) Framework](./uvvm_vvc_framework/README.md)  - Including Utility Library
-- BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces from Bitvis)
+- BFMs (Bus Functional Models) to be used with any part of UVVM (See below for currently supported interfaces for UVVM)
 - VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)
 - Scoreboards to ber used as supplementary functionality at any level
 - Enhanced randomisation - Included under the Utility library, automatically available when compiling Utility Library
 - Functional Coverage - Included under the Utility library, automatically available when compiling Utility Library
 - Specification Coverage - Aka Requirement Coverage og Requirement tracking - Includes a Requirements Traceability Matrix
 - Error Injector
-more to come...
+- more to come...
 
 ## For starters
 Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the Utility library and BFMs for simple usage - and as a basis for more advanced testbenches.
 Novice users are strongly recommended to first use UVVM Utility library and BFMs. This has a *very* low user threshold and you will be up and running in an hour. Please see [Utility Library](./uvvm_util/README.md) for an introduction. 
 The VVC framework is slightly more complex, but it has been simplified as far as possible to allow efficient development of good quality testbenches.
-As a starter you may also want to include Enhanced randomisation, Functional Coverage or Sepcification coverage
+As a starter you may also want to include Enhanced Randomisation, Functional Coverage or Specification coverage
 
 Note that a dedicated repository (UVVM_Light)](https://github.com/UVVM/UVVM_Light) has been provided to simplify getting started using Utility Library and BFMs. Here all the code and documentation have been collected in a single directory, and only a single VHDL library is used. The documentation and code are 100% the same as for the full UVVM. 
 
@@ -38,15 +38,7 @@ This yields an excellent control over your testbench and VVCs.
 For debugging you can select logging of a command when it is issued from the sequencer, when it is received by the VVC, when it is initiated by the VVC and/or when it has been executed towards the DUT. This allows full overview of all actions in your complete testbench.
 
 UVVM is free and open source and has standardised the way to build good testbench architectures and VVCs so that reuse is dead simple, and allows the FPGA community to share VVCs that will work together in a well-structured test harness.
-
 You may of course combine UVVM with any other legacy or 3rd party testbenches or verification models.
-The following posts may give you some more info on why you should use this library.
-*   [By far the most free interface models available](https://www.linkedin.com/pulse/far-most-free-interface-models-available-espen-tallaksen/) 
-*   [Specification Coverage - as Open Source](https://www.linkedin.com/pulse/specification-coverage-open-source-espen-tallaksen/) 
-*   [Open source Ethernet VHDL verification model](https://www.linkedin.com/pulse/open-source-ethernet-vhdl-verification-model-espen-tallaksen/) 
-*   [Check out the new features launched in UVVM](https://www.linkedin.com/pulse/check-out-new-features-launched-uvvm-espen-tallaksen/) 
-*   [Optimised randomisation - Explained](https://www.linkedin.com/pulse/optimised-randomisation-explained-espen-tallaksen/) 
-
 
 
 ## Main Features
@@ -63,7 +55,7 @@ The following posts may give you some more info on why you should use this libra
 *	A logging and alert system that supports full verbosity control of functionality and hierarchy
 *	A logging system that lets you easily see how your commands propagate from your central test sequencer to your VVCs - through the execution queue - until it is executed and completed towards the DUT
 *	Includes randomisation and functional coverage to be included in the central test sequencer - or even better - inside the VVCs in the local sequencers for better control and encapsulation
-*	Simple integration with regression test tools like Jenkins
+*	Simple integration with regression test tools like Jenkins and [HDLRegression](https://github.com/HDLUtils/hdlregression)
 *	Quick references are available for UVVM Utility Library, VVC Framework and all the BFMs/VVCs/VIP
 *   May insert delay between commands – from sequencer, - and thus the only system to target cycle related corner cases
 *   Simple handling of split transactions and out of order protocols
@@ -111,7 +103,7 @@ Python is required **if** you want to execute the VVC generation scripts
 
 
 ## Introduction to VVC Framework - including manuals
-All documents including powerpoint presentations are available in the *uvvm_vvc_framework/doc* directory on GitHub.
+All documents including powerpoint presentations are available in the *doc* (and *uvvm_vvc_framework/doc*) directory on GitHub.
 These are just fast access links to some interesting info:
 - *['The critically missing VHDL testbench feature - Finally a structured approach'* - A brief introduction](./uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
 - *['VVC Framework Manual'*  - The user manual](./uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf)
@@ -119,16 +111,14 @@ These are just fast access links to some interesting info:
 
 ## License
 
-Copyright 2023 UVVM Authors and Contributors   
+Copyright 2022 UVVM Authors and Contributors List   
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 
 ## UVVM Maintainers
-The UVVM steering group (currently Inventas and EmLogic, Norway) has released UVVM as open source and both EmLogic and Invesntas are committed to develop this system further.
+The UVVM steering group (currently Inventas and EmLogic, Norway) has released UVVM as open source and both EmLogic and Inventas are committed to develop this system further.
 We do however appreciate contributions and suggestions from users.
 
-Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch and handle any required verification and documentation.
-
-Please note the new repository for external UVVM compatible community VIP (Verification IP): [UVVM_Community_VIPs](https://github.com/UVVM/UVVM_Community_VIPs). 
+Please use Pull requests for contributions and we will evaluate them for inclusion in our release on the master branch.

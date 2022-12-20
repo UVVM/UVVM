@@ -263,7 +263,8 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 <p class="admonition-title">Important</p>
 <ul class="simple">
 <li><p>To use the vvc_list, the package <code class="docutils literal notranslate"><span class="pre">uvvm_vvc_framework.ti_protected_types_pkg.all</span></code> must be included in the testbench.</p></li>
-<li><p>The command with the vvc_list requires VVCs supporting the VVC activity register introduced in UVVM release v2020.05.19</p></li>
+<li><p>The command with the vvc_list requires VVCs supporting the VVC activity register introduced in UVVM release v2020.05.19.</p></li>
+<li><p>Combining old VVCs not supporting VVC activity regiser and new VVCs is not supported by await_completion().</p></li>
 </ul>
 </div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">await_completion</span><span class="p">(</span><span class="n">vvc_target</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">vvc_channel</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">wanted_idx</span><span class="p">],</span><span class="w"> </span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span><span class="w"></span>

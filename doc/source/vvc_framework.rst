@@ -26,7 +26,8 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 .. important::
 
     * To use the vvc_list, the package ``uvvm_vvc_framework.ti_protected_types_pkg.all`` must be included in the testbench.
-    * The command with the vvc_list requires VVCs supporting the VVC activity register introduced in UVVM release v2020.05.19
+    * The command with the vvc_list requires VVCs supporting the VVC activity register introduced in UVVM release v2020.05.19.
+    * Combining old VVCs not supporting VVC activity regiser and new VVCs is not supported by await_completion().
 
 .. code-block::
 

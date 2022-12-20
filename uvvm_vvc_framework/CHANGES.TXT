@@ -6,6 +6,9 @@ v2.12.4
 ----------
 Released: 2022-XX-XX
 - Updated bfm_config record example in vvc_generator.py.
+- Added clear_list(VOID) argument to protected type t_prot_vvc_list.
+- Added add_to_vvc_list() method to VVCs for use with await_completion().
+- Added ti_vvc_framework_context.vhd
 
 v2.12.3
 ----------

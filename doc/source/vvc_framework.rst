@@ -18,14 +18,15 @@ Tells the VVC to await the completion of either all pending commands or a specif
 and at the end of the wait. The procedure will report an alert if not all commands have completed within the specified timeout. 
 The severity of this alert will be TB_ERROR. It is also possible to :ref:`broadcast and multicast <vvc_framework_broadcasting>`.
 
-To await the completion of one out of several VVCs in a group use the overload with the vvc_info_list. The vvc_info_list of type 
-:ref:`t_vvc_info_list` (protected type) is a local variable that needs to be declared in the sequencer. This overload will block 
+To await the completion of one out of several VVCs in a group use the overload with the vvc_list. The vvc_list of type 
+:ref:`t_prot_vvc_list` (protected type) is a local variable that needs to be declared in the sequencer. This overload will block 
 the sequencer while waiting, but not the VVCs, so they can continue to receive commands from other sequencers.
 
 .. important::
 
-    * To use the vvc_info_list, the package ``uvvm_vvc_framework.ti_protected_types_pkg.all`` must be included in the testbench.
-    * The command with the vvc_info_list requires VVCs supporting the VVC activity register introduced in UVVM release v2020.05.19
+    * To use the vvc_list, the package ``uvvm_vvc_framework.ti_protected_types_pkg.all`` must be included in the testbench.
+    * The command with the vvc_list requires VVCs supporting the VVC activity register introduced in UVVM release v2020.05.19
+    * Old and new VVCs can not be combined in then call to await_completion().
 
 .. code-block::
 
@@ -34,7 +35,7 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
     await_completion(VVC_BROADCAST, timeout, [msg, [scope]])
 
     -- New method
-    await_completion(vvc_select, [vvc_info_list], timeout, [list_action, [msg, [scope]]])
+    await_completion(vvc_select, [vvc_list], timeout, [list_action, [msg, [scope]]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
@@ -50,11 +51,11 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 |          |                    |        |                              | list, all of the VVCs in the list or all the registered |
 |          |                    |        |                              | VVCs in the testbench (broadcast)                       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | vvc_info_list      | in     | :ref:`t_vvc_info_list`       | A list of protected type containing one or several VVC  |
+| constant | vvc_list           | in     | :ref:`t_prot_vvc_list`       | A list of protected type containing one or several VVC  |
 |          |                    |        |                              | IDs (name, instance, channel) & command index. VVC IDs  |
 |          |                    |        |                              | and corresponding command index can be added to the list|
 |          |                    |        |                              | by using the procedure add() from the                   |
-|          |                    |        |                              | :ref:`t_vvc_info_list`                                  |
+|          |                    |        |                              | :ref:`t_prot_vvc_list`                                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | timeout            | in     | time                         | The maximum time to await completion of a specified     |
 |          |                    |        |                              | command, or all pending commands. An alert of severity  |
@@ -88,12 +89,12 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
     await_completion(VVC_BROADCAST, 1 ms, "Wait for all the VVCs to finish", C_SCOPE)
 
     -- Examples (new method):
-    variable my_vvc_info_list : t_vvc_info_list;
+    variable my_vvc_list : t_prot_vvc_list;
     ...
-    my_vvc_info_list.add("SBI_VVC", 1);
-    my_vvc_info_list.add("AXISTREAM_VVC", 3, v_cmd_idx);
-    my_vvc_info_list.add("UART_VVC", ALL_INSTANCES, ALL_CHANNELS);
-    await_completion(ANY_OF, my_vvc_info_list, 1 ms, KEEP_LIST, "Wait for any VVC in the list to finish", C_SCOPE);
+    my_vvc_list.add("SBI_VVC", 1);
+    my_vvc_list.add("AXISTREAM_VVC", 3, v_cmd_idx);
+    my_vvc_list.add("UART_VVC", ALL_INSTANCES, ALL_CHANNELS);
+    await_completion(ANY_OF, my_vvc_list, 1 ms, KEEP_LIST, "Wait for any VVC in the list to finish", C_SCOPE);
 
     -- Broadcast:
     await_completion(ALL_VVCS, 1 ms, CLEAR_LIST, "Wait for all the VVCs to finish", C_SCOPE);
@@ -101,7 +102,7 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 
 await_any_completion()
 ==================================================================================================================================
-Replaced by ``await_completion(ANY_OF, vvc_info_list, timeout, list_action, msg, scope)`` above to allow VVCs to accept commands 
+Replaced by ``await_completion(ANY_OF, vvc_list, timeout, list_action, msg, scope)`` above to allow VVCs to accept commands 
 while waiting for completion. This command still works as previously, but with less functionality than the new 
 ``await_completion()``. ::
 

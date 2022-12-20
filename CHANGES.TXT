@@ -19,7 +19,9 @@ Released: 2022-XX.XX
 - Updated bfm_config record example in vvc_generator.py.
 - Fixed wrong log msg_id used in BFM axistream_expect() procedure.
 - Added one delta cycle delay in the setup for read and write process for AXI, AXILite and Avalon MM VVCs.
-
+- Added clear_list(VOID) argument to protected type t_prot_vvc_list.
+- Added add_to_vvc_list() method to VVCs for use with await_completion().
+- Added ti_vvc_framework_context.vhd
 
 v2 2022.10.07
 --------------------

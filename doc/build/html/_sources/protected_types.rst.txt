@@ -4,9 +4,9 @@
 Protected types
 ##################################################################################################################################
 
-.. _t_vvc_info_list:
+.. _t_prot_vvc_list:
 
-t_vvc_info_list
+t_prot_vvc_list
 ----------------------------------------------------------------------------------------------------------------------------------
 Protected type to gather VVC's info in a list. ::
 
@@ -27,8 +27,8 @@ Protected type to gather VVC's info in a list. ::
 .. code-block::
 
     -- Examples:
-    variable v_vvc_info_list : t_vvc_info_list;
-    v_vvc_info_list.add("SBI_VVC", 1);
-    v_vvc_info_list.add("AXISTREAM_VVC", 3, v_cmd_idx);
-    v_vvc_info_list.add("UART_VVC", ALL_INSTANCES, ALL_CHANNELS);
+    variable v_vvc_list : t_prot_vvc_list;
+    v_vvc_list.add("SBI_VVC", 1);
+    v_vvc_list.add("AXISTREAM_VVC", 3, v_cmd_idx);
+    v_vvc_list.add("UART_VVC", ALL_INSTANCES, ALL_CHANNELS);
 

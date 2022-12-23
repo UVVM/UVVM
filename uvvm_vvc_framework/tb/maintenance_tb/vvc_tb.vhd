@@ -928,9 +928,9 @@ begin
   -- TEST: Testing_await_any_completion_from_different_sequencers
   --------------------------------------------------------------------------------------------------
   p_main_i1 : process
-    constant C_SCOPE_I1      : string := C_TB_SCOPE_DEFAULT & " I1";
-    variable v_cmd_idx       : natural;
-    variable v_vvc_info_list : t_vvc_info_list;
+    constant C_SCOPE_I1 : string := C_TB_SCOPE_DEFAULT & " I1";
+    variable v_cmd_idx  : natural;
+    variable v_vvc_list : t_prot_vvc_list;
   begin
     await_unblock_flag(C_FLAG_I, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_I1);
 
@@ -976,8 +976,7 @@ begin
     v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
-    v_vvc_info_list.add("SBI_VVC", 3, v_cmd_idx);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    await_completion(SBI_VVCT, 3, v_cmd_idx, 100 ns, scope => C_SCOPE_I1);
     wait for 6 * C_FRAME_PERIOD;
     await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 5", scope => C_SCOPE_I1);
 
@@ -986,101 +985,96 @@ begin
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"AA", "TX_DATA", C_SCOPE_I1);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_I1);
     wait for 6 * C_FRAME_PERIOD;
     await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 6", scope => C_SCOPE_I1);
 
     log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_I1);
     wait for 6 * C_FRAME_PERIOD;
     await_barrier(barrier_i_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 7", scope => C_SCOPE_I1);
 
     log(ID_LOG_HDR, "Use await_completion for one VVC", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_I1);
     wait for 6 * C_FRAME_PERIOD;
 
     log(ID_LOG_HDR, "Use await_completion for one of several VVCs and keep the list", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
-    v_vvc_info_list.add("UART_VVC", 3, TX);
-    v_vvc_info_list.add("UART_VVC", 3, RX);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, KEEP_LIST, scope => C_SCOPE_I1);
+    add_to_vvc_list(UART_VVCT, 3, TX, v_vvc_list);
+    add_to_vvc_list(UART_VVCT, 3, RX, v_vvc_list);
+    add_to_vvc_list(SBI_VVCT, 3, v_vvc_list);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, KEEP_LIST, scope => C_SCOPE_I1);
     wait for 6 * C_FRAME_PERIOD;
 
     log(ID_LOG_HDR, "Use await_completion for one of several VVCs and clear the list", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
     increment_expected_alerts(TB_WARNING, 3, scope => C_SCOPE_I1);
-    v_vvc_info_list.add("UART_VVC", 3, TX);
-    v_vvc_info_list.add("UART_VVC", 3, RX);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, CLEAR_LIST, scope => C_SCOPE_I1);
+    add_to_vvc_list(UART_VVCT, 3, TX, v_vvc_list);
+    add_to_vvc_list(UART_VVCT, 3, RX, v_vvc_list);
+    add_to_vvc_list(SBI_VVCT, 3, v_vvc_list);
+    await_completion(ANY_OF, v_vvc_list, 100 ns, CLEAR_LIST, scope => C_SCOPE_I1);
+    v_vvc_list.clear_list(VOID);
     wait for 6 * C_FRAME_PERIOD;
 
     log(ID_LOG_HDR, "Use await_completion with an empty list", C_SCOPE_I1);
-    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1); -- not supported error
+    increment_expected_alerts(TB_WARNING, 1, scope => C_SCOPE_I1); -- no match warning
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
 
     log(ID_LOG_HDR, "Use await_completion with some unsupported VVCs", C_SCOPE_I1);
-    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
-    v_vvc_info_list.add("UART_VVC", 3, TX);
-    v_vvc_info_list.add("UART_VVC", 3, RX);
-    v_vvc_info_list.add("UART_VVC", 4, TX);
-    v_vvc_info_list.add("UART_VVC", 4, RX);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1); -- not supported error
+    add_to_vvc_list(UART_VVCT, 3, TX, v_vvc_list);
+    add_to_vvc_list(UART_VVCT, 3, RX, v_vvc_list);
+    add_to_vvc_list(UART_VVCT, 4, TX, v_vvc_list); -- not supported
+    add_to_vvc_list(UART_VVCT, 4, RX, v_vvc_list); -- not supported
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
 
     log(ID_LOG_HDR, "Use await_completion and check that it timeouts", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
     increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ANY_OF, v_vvc_info_list, 10 ns, scope => C_SCOPE_I1);
+    await_completion(SBI_VVCT, 3, 10 ns, scope => C_SCOPE_I1);
     wait for 6 * C_FRAME_PERIOD;
 
     log(ID_LOG_HDR, "Use await_completion with ALL_INSTANCES and/or ALL_CHANNELS of a VVC", C_SCOPE_I1);
-    v_vvc_info_list.add("SBI_VVC", ALL_INSTANCES);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
 
-    v_vvc_info_list.add("UART_VVC", ALL_INSTANCES, RX);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    log(ID_SEQUENCER, "\nTest: await_completion() SBI VVC : ALL_INSTANCES", C_SCOPE_I1);
+    await_completion(SBI_VVCT, ALL_INSTANCES, 100 ns, scope => C_SCOPE_I1); -- trigger alert for instance 4
 
-    v_vvc_info_list.add("UART_VVC", 3, ALL_CHANNELS);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    log(ID_SEQUENCER, "\nTest: await_completion() UART VVC : ALL_INSTANCES, RX", C_SCOPE_I1);
+    await_completion(UART_VVCT, ALL_INSTANCES, RX, 100 ns, scope => C_SCOPE_I1); -- trigger alert for instance 4
 
-    v_vvc_info_list.add("UART_VVC", ALL_INSTANCES, ALL_CHANNELS);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    log(ID_SEQUENCER, "\nTest: await_completion() UART VVC : 3, ALL_CHANNELS", C_SCOPE_I1);
+    await_completion(UART_VVCT, 3, ALL_CHANNELS, 100 ns, scope => C_SCOPE_I1);
 
-    v_vvc_info_list.add("UART_VVC", 3, ALL_CHANNELS);
-    v_vvc_info_list.add("UART_VVC", 2, RX);
-    v_vvc_info_list.add("UART_VVC", 1, ALL_CHANNELS);
-    v_vvc_info_list.add("SBI_VVC", ALL_INSTANCES);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    log(ID_SEQUENCER, "\nTest: await_completion() UART VVC : ALL_INSTANCES, ALL_CHANNELS", C_SCOPE_I1);
+    await_completion(UART_VVCT, ALL_INSTANCES, ALL_CHANNELS, 100 ns, scope => C_SCOPE_I1); -- trigger alert for instance 4 RX and TX
 
-    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
-    v_vvc_info_list.add("UART_VVC", 3, ALL_CHANNELS);
-    v_vvc_info_list.add("UART_VVC", 4, RX);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    log(ID_SEQUENCER, "\nTest: await_completion() VVC list : UART, SBI", C_SCOPE_I1);
+    add_to_vvc_list(UART_VVCT, 3, ALL_CHANNELS, v_vvc_list);
+    add_to_vvc_list(UART_VVCT, 2, RX, v_vvc_list);
+    add_to_vvc_list(UART_VVCT, 1, ALL_CHANNELS, v_vvc_list);
+    add_to_vvc_list(SBI_VVCT, ALL_INSTANCES, v_vvc_list); -- trigger alert for instance 4
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
 
-    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1);
-    v_vvc_info_list.add("UART_VVC", 4, RX);
-    v_vvc_info_list.add("UART_VVC", 3, ALL_CHANNELS);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    log(ID_SEQUENCER, "\nTest: await_completion() VVC list : UART", C_SCOPE_I1);
+    increment_expected_alerts(TB_ERROR, 1, scope => C_SCOPE_I1); -- not supported error (4)
+    add_to_vvc_list(UART_VVCT, 3, ALL_CHANNELS, v_vvc_list);
+    add_to_vvc_list(UART_VVCT, 4, RX, v_vvc_list); -- trigger alert for instance 4
+    await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
 
     log(ID_LOG_HDR, "Use await_completion for a command idx with ALL_INSTANCES of a VVC", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
     v_cmd_idx := get_last_received_cmd_idx(SBI_VVCT, 3);
-    v_vvc_info_list.add("SBI_VVC", ALL_INSTANCES, v_cmd_idx);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    await_completion(SBI_VVCT, ALL_INSTANCES, 100 ns, scope => C_SCOPE_I1); -- trigger alert for instance 4
     wait for 6 * C_FRAME_PERIOD;
 
     log(ID_LOG_HDR, "Use await_completion for several VVCs", C_SCOPE_I1);
     sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, 5, RANDOM, "TX_DATA", C_SCOPE_I1);
-    v_vvc_info_list.add("UART_VVC", 3, ALL_CHANNELS);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ALL_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    add_to_vvc_list(UART_VVCT, 3, ALL_CHANNELS, v_vvc_list);
+    add_to_vvc_list(SBI_VVCT, 3, v_vvc_list);
+    await_completion(ALL_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
     wait for 6 * C_FRAME_PERIOD;
 
     log(ID_LOG_HDR, "Use await_completion for any or all VVCs of a list without a list", C_SCOPE_I1);
@@ -1095,8 +1089,8 @@ begin
 
     log(ID_LOG_HDR, "Use await_completion with broadcast to all VVCs using a list", C_SCOPE_I1);
     increment_expected_alerts(TB_WARNING, 1, scope => C_SCOPE_I1);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ALL_VVCS, v_vvc_info_list, 100 ns, scope => C_SCOPE_I1);
+    add_to_vvc_list(SBI_VVCT, 3, v_vvc_list);
+    await_completion(ALL_VVCS, v_vvc_list, 100 ns, scope => C_SCOPE_I1);
 
     -- Ending the simulation in sequencer 1
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_I1);
@@ -1105,8 +1099,8 @@ begin
   end process p_main_i1;
 
   p_main_i2 : process
-    constant C_SCOPE_I2      : string := C_TB_SCOPE_DEFAULT & " I2";
-    variable v_vvc_info_list : t_vvc_info_list;
+    constant C_SCOPE_I2 : string := C_TB_SCOPE_DEFAULT & " I2";
+    variable v_vvc_list : t_prot_vvc_list;
   begin
     await_unblock_flag(C_FLAG_I, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_I2);
 
@@ -1157,8 +1151,9 @@ begin
 
     wait for 1 ns;
     log(ID_LOG_HDR, "Use await_completion for all pending commands in a VVC from two different sequencers", C_SCOPE_I2);
-    v_vvc_info_list.add("SBI_VVC", 3);
-    await_completion(ANY_OF, v_vvc_info_list, 100 ns, scope => C_SCOPE_I2);
+    --v_vvc_list.add("SBI_VVC", 3);
+    --await_completion(ANY_OF, v_vvc_list, 100 ns, scope => C_SCOPE_I2);
+    await_completion(SBI_VVCT, 3, 100 ns, scope => C_SCOPE_I2);
     await_barrier(barrier_i_helper, 100 us, "SEQUENCER 2: synchronising both sequencers point 7", scope => C_SCOPE_I2);
 
     -- Ending the simulation in sequencer 2

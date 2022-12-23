@@ -36,3 +36,11 @@ __pycache__/
 # rst
 *.doctree
 *.pickle
+
+release/hdlregression/
+
+releasedb_coverpoint.txt
+
+releasedb_cross_max.txt
+
+releasedb_cross.txt

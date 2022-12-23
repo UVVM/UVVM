@@ -1,6 +1,12 @@
 Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
+v0.5.3
+----------
+Released: 2022-XX-XX
+- Fixed crash when opening an empty requirement file or non existing partial
+  coverage directory.
+
 v0.5.2
 ----------
 Released: 2022-05-05

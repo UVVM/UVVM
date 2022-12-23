@@ -28,10 +28,11 @@ use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 --hdlregression:tb
 entity spec_cov_tb is
   generic(
-    GC_TESTCASE     : string := "UVVM";
-    GC_REQ_FILE     : string := "";     -- "../tb/maintenance_tb/req_file.csv";
-    GC_SUB_REQ_FILE : string := "";     -- "../tb/maintenance_tb/sub_req_file.csv";
-    GC_REQ_OMIT_MAP : string := ""      -- "../tb/maintenance_tb/sub_req_omit_map_file.csv"
+    GC_TESTCASE       : string := "UVVM";
+    GC_REQ_FILE       : string := "";     -- "../tb/maintenance_tb/req_file.csv";
+    GC_REQ_FILE_EMPTY : string := "";     -- "../tb/maintenance_tb/req_file_empty.csv"
+    GC_SUB_REQ_FILE   : string := "";     -- "../tb/maintenance_tb/sub_req_file.csv";
+    GC_REQ_OMIT_MAP   : string := ""      -- "../tb/maintenance_tb/sub_req_omit_map_file.csv"
   );
 end entity spec_cov_tb;
 
@@ -59,7 +60,6 @@ begin
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     shared_spec_cov_config := C_SPEC_COV_CONFIG_DEFAULT;
-    set_alert_stop_limit(TB_ERROR, 2);
 
     if GC_TESTCASE = "test_init_with_no_requirement_file" then
       --
@@ -135,6 +135,7 @@ begin
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Provoking tb_error and incrementing alert stop limit
+        set_alert_stop_limit(TB_ERROR, 2);
         provoke_uvvm_status_error(TB_ERROR);
         -- Run testcase
         initialize_req_cov("TC_5", GC_REQ_FILE, "pc_5.csv");
@@ -157,6 +158,7 @@ begin
         initialize_req_cov("TC_6", GC_REQ_FILE, "pc_6.csv");
         tick_off_req_cov("REQ_6", PASS);
         -- Provoking tb_error and incrementing alert stop limit
+        set_alert_stop_limit(TB_ERROR, 2);
         provoke_uvvm_status_error(TB_ERROR);
         -- End testcase
         finalize_req_cov(VOID);
@@ -169,7 +171,7 @@ begin
       -- This test will test Spec Cov with an non-existing requirement file.
       --
       log(ID_LOG_HDR, "Testing initialize_req_cov() with non-existing requirement file.", C_SCOPE);
-      increment_expected_alerts(TB_ERROR, 1);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       -- Run testcase
       initialize_req_cov("TC_7", "../tb/maintenance_tb/non_existing_req_file.csv", "pc_7.csv");
       -- End testcase
@@ -279,6 +281,38 @@ begin
         -- expecting tick off
         cond_tick_off_req_cov("REQ_10", PASS, "tick_off_req_cov(), with conditional disabled REQ_10 tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
 
+        -- End testcase
+        finalize_req_cov(VOID);
+      end if;
+
+    elsif GC_TESTCASE = "test_open_empty_requirement_file" then
+      --
+      -- This test will test Spec Cov with an empty requirement file.
+      --
+      log(ID_LOG_HDR, "Testing initialize_req_cov() with an empty requirement file.", C_SCOPE);
+
+      if GC_REQ_FILE_EMPTY = "" then
+        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
+      else
+        increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+        -- Run testcase
+        initialize_req_cov("TC_11", GC_REQ_FILE_EMPTY, "pc_20.csv");
+        -- End testcase
+        finalize_req_cov(VOID);
+      end if;
+
+    elsif GC_TESTCASE = "test_no_existing_partial_cov_dir" then
+      --
+      -- This test will test Spec Cov with a non-existing partial coverage directory.
+      --
+      log(ID_LOG_HDR, "Testing initialize_req_cov() with non-existing partial coverage directory.", C_SCOPE);
+
+      if GC_REQ_FILE = "" then
+        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
+      else
+        increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
+        -- Run testcase
+        initialize_req_cov("TC_12", GC_REQ_FILE, "/missing_dir/pc_21.csv");
         -- End testcase
         finalize_req_cov(VOID);
       end if;
@@ -421,9 +455,8 @@ begin
         -- Run testcase
         initialize_req_cov("TC_1", GC_REQ_FILE, "pc_10.csv");
         tick_off_req_cov("REQ_1");
-        log(ID_SEQUENCER, "\nProvoking 2 TB_ERRORs to stop simulations.", C_SCOPE);
-        -- Provoking tb_error 2 times to make testcase fail and simulation abort
-        provoke_uvvm_status_error(TB_ERROR);
+        log(ID_SEQUENCER, "\nProvoking a TB_ERROR to stop simulations.", C_SCOPE);
+        -- Provoking tb_error to make testcase fail and simulation abort
         provoke_uvvm_status_error(TB_ERROR);
         -- End testcase
         finalize_req_cov(VOID);

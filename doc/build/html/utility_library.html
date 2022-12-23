@@ -1941,6 +1941,15 @@ at the end</p></td>
 <td><p><em>see overloads</em></p></td>
 <td><p>Maximum value in the range to generate the random number</p></td>
 </tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between
+min_value and max_value. If the given resolution is too
+small for the range, a TB_WARNING will be printed once.
+Default value is the simulator time resolution.</p></td>
+</tr>
 </tbody>
 </table>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
@@ -1991,19 +2000,28 @@ at the end</p></td>
 <td><p><em>see overloads</em></p></td>
 <td><p>Maximum value in the range to generate the random number</p></td>
 </tr>
-<tr class="row-even"><td><p>variable</p></td>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>time_resolution</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Defines how many values can be generated between
+min_value and max_value. If the given resolution is too
+small for the range, a TB_WARNING will be printed once.
+Default value is the simulator time resolution.</p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
 <td><p>v_seed1</p></td>
 <td><p>inout</p></td>
 <td><p>positive</p></td>
 <td><p>Randomization seed 1</p></td>
 </tr>
-<tr class="row-odd"><td><p>variable</p></td>
+<tr class="row-even"><td><p>variable</p></td>
 <td><p>v_seed2</p></td>
 <td><p>inout</p></td>
 <td><p>positive</p></td>
 <td><p>Randomization seed 2</p></td>
 </tr>
-<tr class="row-even"><td><p>variable</p></td>
+<tr class="row-odd"><td><p>variable</p></td>
 <td><p>v_target</p></td>
 <td><p>inout</p></td>
 <td><p><em>see overloads</em></p></td>

@@ -77,6 +77,15 @@ package body csv_file_reader_pkg is
 
       end_of_file_reached := false;
 
+      -- Check that file is not empty
+      if v_file_open_status = open_ok then
+        if endfile(my_csv_file) then
+          alert(TB_ERROR, "CSV file is empty " & file_pathname);
+          end_of_file_reached := true;
+          return false;
+        end if;
+      end if;
+
       if v_file_open_status = open_ok then
         return true;
       else

@@ -19,6 +19,10 @@ Released: 2022-XX.XX
 - Updated bfm_config record example in vvc_generator.py.
 - Fixed wrong log msg_id used in BFM axistream_expect() procedure.
 - Added one delta cycle delay in the setup for read and write process for AXI, AXILite and Avalon MM VVCs.
+- Added clear_list(VOID) argument to protected type t_prot_vvc_list.
+- Added add_to_vvc_list() method to VVCs for use with await_completion().
+- Added ti_vvc_framework_context.vhd
+- Removed cmd_idx from add() method in t_prot_vvc_list (t_vvc_info_list).
 - Fixed crash in Spec Cov VIP when opening an empty requirement file or non existing partial coverage directory.
 - Fixed random() time function and procedure overflowing when default time resolution was too small for a given range.
 - Added an overload for the random() time function and procedure with a parameter to select the time resolution.

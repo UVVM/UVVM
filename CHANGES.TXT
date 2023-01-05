@@ -10,9 +10,9 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
-v2 2022.XX.XX
+v2 2023.XX.XX
 --------------------
-Released: 2022-XX.XX
+Released: 2023-XX.XX
 - Fixed compilation warnings on rand_pkg regarding a truncated value.
 - Fixed compilation warnings on string_methods_pkg regarding using an attribute on a function call.
 - Fixed compilation warning on avalon_mm_vvc regarding the initial value of a signal depending on a port signal value.
@@ -26,6 +26,7 @@ Released: 2022-XX.XX
 - Fixed crash in Spec Cov VIP when opening an empty requirement file or non existing partial coverage directory.
 - Fixed random() time function and procedure overflowing when default time resolution was too small for a given range.
 - Added an overload for the random() time function and procedure with a parameter to select the time resolution.
+- Added missing constraint to clock_name in Clock Generator VVC.
 
 
 v2 2022.10.07

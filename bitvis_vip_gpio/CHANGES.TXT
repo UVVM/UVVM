@@ -1,6 +1,13 @@
 Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
+v1.8.4
+----------
+Released: 2023-01-23
+- Increased C_VVC_CMD_DATA_MAX_LENGTH from 8 to 1024 to enable bigger widths by default.
+- Updated testbench with multiple widths (2, 3, 8 and 1024). C_MAX_VVC_INSTANCE_NUM in adaptions_pkg.vhd
+  had to be increased from 8 to 10 due to the number of vvc instances in the testbench.
+
 v1.8.3
 ----------
 Released: 2022-05-05

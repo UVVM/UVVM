@@ -141,7 +141,7 @@ def get_number_of_channels():
 
 # Get the channel name and check if it is valid
 def get_channel_name(idx):
-    raw_input = input("\rPlease enter a channel name (e.g. tx or rx), press enter for default (channel_" + str(idx) + "): ")
+    raw_input = input("\rPlease enter a channel name (e.g. RX or TX), press enter for default (channel_" + str(idx) + "): ")
     requested_vvc_channel_name = raw_input.lower()
     if raw_input == "":
         requested_vvc_channel_name = "channel_" + str(idx)

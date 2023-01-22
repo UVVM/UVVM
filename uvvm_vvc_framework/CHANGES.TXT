@@ -2,6 +2,12 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.5
+----------
+Released: 2023-01-23
+- vvc_generator.py prompt text concerning naming channels have been changed
+  from (e.g. tx or rx) to (e.g. RX or TX).
+
 v2.12.4
 ----------
 Released: 2022-XX-XX

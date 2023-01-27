@@ -672,13 +672,12 @@ package body axistream_bfm_pkg is
   --
   --------------------------------------------------------
 
-  -- Send a packet on the AXI interface.
-  -- Packet length and data is defined by data_array
-  -- tuser is set based on user_array,
-  -- tstrb is set based on strb_array, etc
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
-  procedure axistream_transmit_bytes(
-    constant data_array   : in t_byte_array; -- Byte in index 0 is transmitted first
+  -- -- Send a packet on the AXI interface.
+  -- -- Packet length and data is defined by data_array
+  -- -- tuser is set based on user_array,
+  -- -- tstrb is set based on strb_array, etc
+  procedure axistream_transmit(
+    constant data_array   : in t_slv_array; -- Byte in index 0 is transmitted first
     constant user_array   : in t_user_array;
     constant strb_array   : in t_strb_array;
     constant id_array     : in t_id_array;
@@ -690,7 +689,7 @@ package body axistream_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
   ) is
-
+    
     constant proc_name : string := "axistream_transmit";
     constant proc_call : string := "axistream_transmit(" & to_string(data_array'length) & "B)";
 
@@ -709,10 +708,9 @@ package body axistream_bfm_pkg is
     variable v_valid_low_duration           : natural                                     := 0;
     variable v_valid_low_cycle_count        : natural                                     := 0;
     variable v_timeout                      : boolean                                     := false;
-    variable v_tready                       : std_logic; -- Sampled tready for the current clock cycle
+    variable v_tready                       : std_logic; -- Sampled tready for the current clock cycle    
+    
   begin
-    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
-    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
 
     check_value(axistream_if.tdata'length >= 8, TB_ERROR, "Sanity check: Check that tdata is at least one byte wide. Narrower tdata is not supported.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(axistream_if.tdata'length mod 8 = 0, TB_ERROR, "Sanity check: Check that tdata is an integer number of bytes wide.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -737,7 +735,7 @@ package body axistream_bfm_pkg is
                                               user_width => axistream_if.tuser'length,
                                               id_width   => axistream_if.tid'length,
                                               dest_width => axistream_if.tdest'length);
-
+                                              
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
 
@@ -870,13 +868,16 @@ package body axistream_bfm_pkg is
     else
       log(ID_PACKET_COMPLETE, proc_call & "=> Tx DONE. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
-  end procedure axistream_transmit_bytes;
-
-  -----------------------
-  -- t_slv_array overload
-  -----------------------
-  procedure axistream_transmit(
-    constant data_array   : in t_slv_array; -- Byte in index 0 is transmitted first
+  end procedure axistream_transmit;
+  
+  
+  -- Send a packet on the AXI interface.
+  -- Packet length and data is defined by data_array
+  -- tuser is set based on user_array,
+  -- tstrb is set based on strb_array, etc
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+  procedure axistream_transmit_bytes(
+    constant data_array   : in t_byte_array; -- Byte in index 0 is transmitted first
     constant user_array   : in t_user_array;
     constant strb_array   : in t_strb_array;
     constant id_array     : in t_id_array;
@@ -888,23 +889,21 @@ package body axistream_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
   ) is
-    -- Helper variables
-    variable v_bytes_in_word   : integer           := (data_array(data_array'low)'length / 8);
-    variable v_num_bytes       : integer           := (data_array'length) * v_bytes_in_word;
-    variable v_data_array      : t_byte_array(0 to v_num_bytes - 1);
-    variable v_data_array_idx  : integer           := 0;
+    constant proc_name : string := "axistream_transmit_bytes";
+    constant proc_call : string := "axistream_transmit_bytes(" & to_string(data_array'length) & "B)";
     variable v_check_ok        : boolean           := false;
-    variable v_byte_endianness : t_byte_endianness := config.byte_endianness;
   begin
-    -- t_slv_array sanity check
-    v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte", scope, ID_NEVER, msg_id_panel);
+    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
+
+    -- t_byte_array sanity check
+    v_check_ok := check_value(data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");   
     if v_check_ok then
-      -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
-      -- call t_byte_array overloaded procedure
-      axistream_transmit_bytes(v_data_array, user_array, strb_array, id_array, dest_array, msg, clk, axistream_if, scope, msg_id_panel, config);
+      -- call t_slv_array overloaded procedure
+      axistream_transmit(data_array, user_array, strb_array, id_array, dest_array, msg, clk, axistream_if, scope, msg_id_panel, config);
     end if;
-  end procedure;
+  end procedure axistream_transmit_bytes;
+
   -----------------------
   -- std_logic_vector overload
   -----------------------
@@ -1254,9 +1253,8 @@ package body axistream_bfm_pkg is
 
   -- Receive a packet, store it in data_array
   -- data_array'length can be longer than the actual packet, so that you can call receive() without knowing the length to be expected.
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
-  procedure axistream_receive_bytes(
-    variable data_array    : inout t_byte_array;
+  procedure axistream_receive(
+    variable data_array    : inout t_slv_array;
     variable data_length   : inout natural; -- Number of bytes received
     variable user_array    : inout t_user_array;
     variable strb_array    : inout t_strb_array;
@@ -1269,7 +1267,7 @@ package body axistream_bfm_pkg is
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
-  ) is
+  ) is                                  -- helper variables
     constant c_num_bytes_per_word     : natural := axistream_if.tdata'length / 8;
     constant c_num_user_bits_per_word : natural := axistream_if.tuser'length;
     constant c_num_strb_bits_per_word : natural := axistream_if.tstrb'length;
@@ -1300,9 +1298,6 @@ package body axistream_bfm_pkg is
       -- Called from another BFM procedure, log 'ext_proc_call while executing axistream_receive...'
       write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
     end if;
-
-    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
-    deprecate(local_proc_call, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
 
     check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS, TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
     check_value(axistream_if.tdata'length >= 8, TB_ERROR, "Sanity check: Check that tdata is at least one byte wide. Narrower tdata is not supported.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
@@ -1577,12 +1572,16 @@ package body axistream_bfm_pkg is
       dest_width => axistream_if.tdest'length,
       config     => config);
 
-    DEALLOCATE(v_proc_call);
-  end procedure axistream_receive_bytes;
+    DEALLOCATE(v_proc_call);   
 
-  -- Overloaded t_slv_array procedure
-  procedure axistream_receive(
-    variable data_array    : inout t_slv_array;
+  end procedure axistream_receive;
+  
+  
+-- Receive a packet, store it in data_array
+  -- data_array'length can be longer than the actual packet, so that you can call receive() without knowing the length to be expected.
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+  procedure axistream_receive_bytes(
+    variable data_array    : inout t_byte_array;
     variable data_length   : inout natural; -- Number of bytes received
     variable user_array    : inout t_user_array;
     variable strb_array    : inout t_strb_array;
@@ -1595,21 +1594,19 @@ package body axistream_bfm_pkg is
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
-  ) is                                  -- helper variables
-    variable v_bytes_in_word      : integer           := (data_array(data_array'low)'length / 8);
-    variable v_num_bytes          : integer           := (data_array'length) * v_bytes_in_word;
-    variable v_data_array_as_byte : t_byte_array(0 to v_num_bytes - 1);
-    variable v_byte_endianness    : t_byte_endianness := config.byte_endianness;
+  ) is
+    constant local_proc_name          : string  := "axistream_receive_bytes"; -- Internal proc_name; used if called from sequncer or VVC
+    constant local_proc_call          : string  := local_proc_name & "()";    -- Internal proc_call; used if called from sequncer or VVC
 
   begin
-    -- call overloaded t_byte_array procedure
-    axistream_receive_bytes(v_data_array_as_byte,
-                            data_length, user_array, strb_array, id_array, dest_array, msg,
-                            clk, axistream_if, scope, msg_id_panel, config, ext_proc_call);
+    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    deprecate(local_proc_call, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
 
-    data_array := convert_byte_array_to_slv_array(v_data_array_as_byte, v_bytes_in_word, v_byte_endianness);
-  end procedure axistream_receive;
-
+    -- Call overloaded t_slv_array procedure
+    axistream_receive(data_array, data_length, user_array, strb_array, id_array, dest_array,
+                        msg, clk, axistream_if, scope, msg_id_panel, config, ext_proc_call);
+  end procedure axistream_receive_bytes;
+  
   -- Overloaded version without records
   -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_receive_bytes(
@@ -1660,6 +1657,7 @@ package body axistream_bfm_pkg is
       config              => config,
       ext_proc_call       => ext_proc_call);
   end procedure axistream_receive_bytes;
+  
   -- Overloading t_slv_array procedure
   procedure axistream_receive(
     variable data_array          : inout t_slv_array;
@@ -1717,15 +1715,14 @@ package body axistream_bfm_pkg is
   --------------------------------------------------------
 
   -- Receive data, then compare the received data against exp_data_array
-  -- - If the received data is inconsistent with the expected data, an alert with
-  --   severity 'alert_level' is triggered.
-  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
-  procedure axistream_expect_bytes(
-    constant exp_data_array : in t_byte_array; -- Expected data
-    constant exp_user_array : in t_user_array; -- Expected tuser
-    constant exp_strb_array : in t_strb_array; -- Expected tstrb
-    constant exp_id_array   : in t_id_array; -- Expected tid
-    constant exp_dest_array : in t_dest_array; -- Expected tdest
+  --  If the received data is inconsistent with the expected data, an alert with
+  --  severity 'alert_level' is triggered.
+  procedure axistream_expect(
+    constant exp_data_array : in t_slv_array;   -- Expected data
+    constant exp_user_array : in t_user_array;  -- Expected tuser
+    constant exp_strb_array : in t_strb_array;  -- Expected tstrb
+    constant exp_id_array   : in t_id_array;    -- Expected tid
+    constant exp_dest_array : in t_dest_array;  -- Expected tdest
     constant msg            : in string;
     signal   clk            : in std_logic;
     signal   axistream_if   : inout t_axistream_if;
@@ -1745,7 +1742,7 @@ package body axistream_bfm_pkg is
 
     -- Helper variables
     variable v_config             : t_axistream_bfm_config := config;
-    variable v_rx_data_array      : t_byte_array(exp_data_array'range); -- received data
+    variable v_rx_data_array      : t_slv_array(exp_data_array'range)(7 downto 0);  -- received data
     variable v_rx_user_array      : t_user_array(exp_user_array'range); -- received tuser
     variable v_rx_strb_array      : t_strb_array(exp_strb_array'range);
     variable v_rx_id_array        : t_id_array(exp_id_array'range);
@@ -1760,19 +1757,19 @@ package body axistream_bfm_pkg is
     variable v_alert_radix        : t_radix;
   begin
     -- Receive and store data
-    axistream_receive_bytes(data_array    => v_rx_data_array,
-                            data_length   => v_rx_data_length,
-                            user_array    => v_rx_user_array,
-                            strb_array    => v_rx_strb_array,
-                            id_array      => v_rx_id_array,
-                            dest_array    => v_rx_dest_array,
-                            msg           => msg,
-                            clk           => clk,
-                            axistream_if  => axistream_if,
-                            scope         => scope,
-                            msg_id_panel  => msg_id_panel,
-                            config        => v_config,
-                            ext_proc_call => proc_call);
+    axistream_receive(data_array    => v_rx_data_array,
+                      data_length   => v_rx_data_length,
+                      user_array    => v_rx_user_array,
+                      strb_array    => v_rx_strb_array,
+                      id_array      => v_rx_id_array,
+                      dest_array    => v_rx_dest_array,
+                      msg           => msg,
+                      clk           => clk,
+                      axistream_if  => axistream_if,
+                      scope         => scope,
+                      msg_id_panel  => msg_id_panel,
+                      config        => v_config,
+                      ext_proc_call => proc_call);
 
     -- Check if each received bit matches the expected
     -- Find and report the first errored byte
@@ -1876,16 +1873,17 @@ package body axistream_bfm_pkg is
       log(ID_PACKET_COMPLETE, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & "Bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
-  end procedure axistream_expect_bytes;
-  -----------------------
-  -- t_slv_array overload
-  -----------------------
-  procedure axistream_expect(
-    constant exp_data_array : in t_slv_array; -- Expected data
-    constant exp_user_array : in t_user_array; -- Expected tuser
-    constant exp_strb_array : in t_strb_array; -- Expected tstrb
-    constant exp_id_array   : in t_id_array; -- Expected tid
-    constant exp_dest_array : in t_dest_array; -- Expected tdest
+  end procedure axistream_expect;
+
+
+  -- t_byte_array overload
+  -- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
+  procedure axistream_expect_bytes(
+    constant exp_data_array : in t_byte_array; -- Expected data
+    constant exp_user_array : in t_user_array;  -- Expected tuser
+    constant exp_strb_array : in t_strb_array;  -- Expected tstrb
+    constant exp_id_array   : in t_id_array;    -- Expected tid
+    constant exp_dest_array : in t_dest_array;  -- Expected tdest
     constant msg            : in string;
     signal   clk            : in std_logic;
     signal   axistream_if   : inout t_axistream_if;
@@ -1894,26 +1892,17 @@ package body axistream_bfm_pkg is
     constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
     constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
   ) is
-    constant local_proc_name      : string            := "axistream_expect"; -- Internal proc_name; used if called from sequncer or VVC
-    -- helper variables
-    variable v_bytes_in_word      : integer           := (exp_data_array(exp_data_array'low)'length / 8);
-    variable v_num_bytes          : integer           := (exp_data_array'length) * v_bytes_in_word;
-    variable v_exp_data_array     : t_byte_array(0 to v_num_bytes - 1);
-    variable v_exp_data_array_idx : integer           := 0;
+    constant proc_name : string := "axistream_expect_bytes";
+    constant proc_call : string := "axistream_expect_bytes(" & to_string(exp_data_array'length) & "B)";
     variable v_check_ok           : boolean           := false;
-    variable v_dummy              : t_slv_array(0 to 0)(31 downto 0);
-    variable v_byte_endianness    : t_byte_endianness := config.byte_endianness;
 
   begin
-    -- t_slv_array sanity check
-    v_check_ok := check_value(exp_data_array(exp_data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array is N*byte", scope, ID_NEVER, msg_id_panel);
-
+    -- t_byte_array sanity check
+    v_check_ok := check_value(exp_data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");
+       
     if v_check_ok then
-      -- copy byte(s) from t_slv_array to t_byte_array
-      v_exp_data_array := convert_slv_array_to_byte_array(exp_data_array, v_byte_endianness);
-
       -- call t_byte_array overloaded procedure
-      axistream_expect_bytes(v_exp_data_array,
+      axistream_expect_bytes(exp_data_array,
                              exp_user_array,
                              exp_strb_array,
                              exp_id_array,
@@ -1927,6 +1916,8 @@ package body axistream_bfm_pkg is
                              config);
     end if;
   end procedure;
+
+
   -----------------------
   -- std_logic_vector overload
   -----------------------

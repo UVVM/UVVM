@@ -83,7 +83,7 @@ package transaction_pkg is
   -- Base transaction
   type t_base_transaction is record
     operation          : t_operation;
-    data_array         : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1);
+    data_array         : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1)(7 downto 0);
     data_length        : integer range 0 to C_VVC_CMD_DATA_MAX_BYTES;
     user_array         : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1);
     strb_array         : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1);

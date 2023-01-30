@@ -5,8 +5,9 @@ UVVM VVC Framework - Overview on Versions and Changes
 v2.12.5
 ----------
 Released: 2023-01-23
-- vvc_generator.py prompt text concerning naming channels have been changed
-  from (e.g. tx or rx) to (e.g. RX or TX).
+- vvc_generator.py prompts related to the order of RX and TX channels are changed.
+  There is also added a check for which order RX and TX channels have been added.
+  If not in the order RX (first) then TX (second), it is changed to this order.
 
 v2.12.4
 ----------

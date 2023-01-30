@@ -145,6 +145,12 @@ def get_channel_name(idx):
     requested_vvc_channel_name = raw_input.lower()
     if raw_input == "":
         requested_vvc_channel_name = "channel_" + str(idx)
+    elif raw_input == "TX" and idx == 0:
+        print("TX entered as the first channel, changed to RX to avoid manual change of t_channel in adaptions_pkg.vhd")
+        requested_vvc_channel_name = "RX"
+    elif raw_input == "RX" and idx == 1:
+        print("RX entered as the second channel, changed to TX to avoid manual change of t_channel in adaptions_pkg.vhd")
+        requested_vvc_channel_name = "TX"    
     else:
         if is_input_vhdl_legal(requested_vvc_channel_name) is False:
             return get_channel_name(idx)

@@ -7,7 +7,7 @@ v2.12.5
 Released: 2023-01-23
 - vvc_generator.py prompts related to the order of RX and TX channels are changed.
   There is also added a check for which order RX and TX channels have been added.
-  If not in the order RX (first) then TX (second), it is changed to this order.
+  If not in the order RX (first) then TX (second) a message is given to the user
 
 v2.12.4
 ----------

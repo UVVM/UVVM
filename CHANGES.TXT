@@ -30,7 +30,7 @@ Released: 2023-XX.XX
 - Increased C_VVC_CMD_DATA_MAX_LENGTH from 32 to 1024 in bitvis_vip_gpio to enable bigger widths by default.
 - Changed the main procedures of bitvis_vip_axistream using t_byte_array (deprecated) to be using t_slv_array instead.
   Old procedures are now overloads to ensure backwards compability
-- Changed/improved the prompt and added a check and correction for channel name input order of RX and TX in vvc_generator
+- Changed/improved the prompt and added a check and alert message for channel name input order of RX and TX in vvc_generator
 
 
 

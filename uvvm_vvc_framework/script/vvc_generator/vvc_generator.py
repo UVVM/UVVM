@@ -146,11 +146,9 @@ def get_channel_name(idx):
     if raw_input == "":
         requested_vvc_channel_name = "channel_" + str(idx)
     elif raw_input == "TX" and idx == 0:
-        print("TX entered as the first channel, changed to RX to avoid manual change of t_channel in adaptions_pkg.vhd")
-        requested_vvc_channel_name = "RX"
+        print("TX entered as the first channel, RX and TX are already pre-defined channels but must be entered\nin that order to avoid manual change in t_channel in adaptations_pkg.vhd.\nIf a RX and TX channel is the desired output, either manually change t_channel or re-run\nthe vvc_generator and enter the channels in the following order: RX first then TX.")
     elif raw_input == "RX" and idx == 1:
-        print("RX entered as the second channel, changed to TX to avoid manual change of t_channel in adaptions_pkg.vhd")
-        requested_vvc_channel_name = "TX"    
+        print("RX entered as the second channel, RX and TX are already pre-defined channels but must be entered\nin that order to avoid manual change in t_channel in adaptations_pkg.vhd.\nIf a RX and TX channel is the desired output,, either manually change t_channel or re-run\nthe vvc_generator and enter the channels in the following order: RX first then TX.")
     else:
         if is_input_vhdl_legal(requested_vvc_channel_name) is False:
             return get_channel_name(idx)

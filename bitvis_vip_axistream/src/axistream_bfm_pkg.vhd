@@ -889,11 +889,11 @@ package body axistream_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
   ) is
-    constant proc_name : string := "axistream_transmit_bytes";
-    constant proc_call : string := "axistream_transmit_bytes(" & to_string(data_array'length) & "B)";
-    variable v_check_ok        : boolean           := false;
+    constant proc_name    : string  := "axistream_transmit_bytes";
+    constant proc_call    : string  := "axistream_transmit_bytes(" & to_string(data_array'length) & "B)";
+    variable v_check_ok   : boolean := false;
   begin
-    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    -- DEPRECATE: data_array as t_byte_array will be removsed in next major release
     deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
 
     -- t_byte_array sanity check
@@ -1267,7 +1267,7 @@ package body axistream_bfm_pkg is
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
-  ) is                                  -- helper variables
+  ) is
     constant c_num_bytes_per_word     : natural := axistream_if.tdata'length / 8;
     constant c_num_user_bits_per_word : natural := axistream_if.tuser'length;
     constant c_num_strb_bits_per_word : natural := axistream_if.tstrb'length;

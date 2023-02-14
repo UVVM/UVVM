@@ -638,7 +638,6 @@ package body vvc_methods_pkg is
   end procedure;
   
 
-
   --------------------------------------------------------
   --
   -- AXIStream Receive
@@ -705,7 +704,6 @@ package body vvc_methods_pkg is
   ) is
     constant proc_name      : string         := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call      : string         := proc_name & "()";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
   begin
     axistream_receive_bytes(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
   end procedure axistream_receive_bytes;
@@ -715,7 +713,6 @@ package body vvc_methods_pkg is
   -- AXIStream Expect
   --
   --------------------------------------------------------
-
   -- Expect, receive and compare to specified data_array, user_array, strb_array, id_array, dest_array
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;

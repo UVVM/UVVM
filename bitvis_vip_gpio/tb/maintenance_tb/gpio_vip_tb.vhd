@@ -224,7 +224,7 @@ begin
       variable v_received_data  : bitvis_vip_gpio.vvc_cmd_pkg.t_vvc_result;
       variable v_is_ok          : boolean;
     begin
-      log("Testing get on GPIO VVC " & to_string(vvc_instance_idx));
+      log(ID_SEQUENCER_SUB, "Testing get on GPIO VVC " & to_string(vvc_instance_idx));
       set_gpio(vvc_input, data, "GPIO " & to_string(vvc_instance_idx) & " input");
       -- Perform get, which stores the data in the VVC
       gpio_get(GPIO_VVCT, vvc_instance_idx, "Readback inside VVC");
@@ -249,7 +249,7 @@ begin
       ) is
       variable v_cmd_idx        : natural;
     begin
-      log("Testing get on GPIO VVC " & to_string(vvc_instance_idx) & " using SB");
+      log(ID_SEQUENCER_SUB, "Testing get on GPIO VVC " & to_string(vvc_instance_idx) & " using SB");
       set_gpio(vvc_input, data, "GPIO " & to_string(vvc_instance_idx) & " input");
       GPIO_VVC_SB.add_expected(vvc_instance_idx, pad_gpio_sb(data));
       
@@ -263,13 +263,13 @@ begin
     ----------------------------------------------------------------------
     -- Test of GPIO VVC Check method
     ----------------------------------------------------------------------
-    procedure check_gpio(
+    procedure set_and_check_gpio(
       constant vvc_instance_idx : natural;
       signal   vvc_input        : out std_logic_vector;
       constant data             : std_logic_vector
       ) is
     begin
-      log("Testing check on GPIO VVC " & to_string(vvc_instance_idx));
+      log(ID_SEQUENCER_SUB, "Testing check on GPIO VVC " & to_string(vvc_instance_idx));
       set_gpio(vvc_input, data, "GPIO " & to_string(vvc_instance_idx) & " input");
       wait for C_CLK_PERIOD;
       
@@ -277,7 +277,7 @@ begin
       gpio_check(GPIO_VVCT, vvc_instance_idx, data, "Readback inside VVC", error);
       await_completion(GPIO_VVCT, vvc_instance_idx, 100 ns, "Wait for gpio_check to finish");
       wait for C_CLK_PERIOD * 4;
-    end procedure check_gpio;
+    end procedure set_and_check_gpio;
     
     ----------------------------------------------------------------------
     -- Test of GPIO VVC Check Stable method
@@ -290,9 +290,7 @@ begin
       constant data             : std_logic_vector
       ) is
     begin
-      log("Testing check_stable on GPIO VVC " & to_string(vvc_instance_idx));
-      v_set_data    := x"77";
-      v_expect_data := v_set_data;
+      log(ID_SEQUENCER_SUB, "Testing check_stable on GPIO VVC " & to_string(vvc_instance_idx));
       set_gpio(vvc_input, data, "GPIO " & to_string(vvc_instance_idx) & " input");
       wait for C_CLK_PERIOD * 5;
       -- Perform get, which stores the data in the VVC
@@ -319,6 +317,7 @@ begin
     enable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_SEQUENCER);
     enable_log_msg(ID_LOG_HDR);
+    enable_log_msg(ID_LOG_HDR_LARGE);
     enable_log_msg(ID_BFM);
 
     for i in 1 to 9 loop
@@ -327,7 +326,7 @@ begin
     end loop;
 
 
-    log(ID_LOG_HDR, "Verifying TLM + GPIO executor + BFM", C_SCOPE);
+    log(ID_LOG_HDR_LARGE, "Verifying TLM + GPIO executor + BFM", C_SCOPE);
     wait for C_CLK_PERIOD * 10;
     ------------------------------------------------------------
 
@@ -433,10 +432,10 @@ begin
     --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of GPIO Check", C_SCOPE);
     v_data_exp_1024 := (others => '1');
-    check_gpio(1, gpio_1_input, "1");
-    check_gpio(2, gpio_2_input, "11");
-    check_gpio(3, gpio_3_input, "00000000");
-    check_gpio(4, gpio_4_input, v_data_exp_1024);
+    set_and_check_gpio(1, gpio_1_input, "1");
+    set_and_check_gpio(2, gpio_2_input, "11");
+    set_and_check_gpio(3, gpio_3_input, "00000000");
+    set_and_check_gpio(4, gpio_4_input, v_data_exp_1024);
 
 
     --------------------------------------------------------------------------------------

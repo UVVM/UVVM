@@ -3,6 +3,11 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.3
+----------
+Released: 2023-01-23
+- C_MAX_VVC_INSTANCE_NUM in adaptions_pkg.vhd had to be increased from 8 to 10.
+
 v2.19.2
 ----------
 Released: 2022-XX-XX

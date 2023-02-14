@@ -119,7 +119,70 @@ package vvc_methods_pkg is
   -- AXIStream Transmit
   --
   --------------------------------------------------------
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_slv_array;
+    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_user_array
+    constant strb_array          : in t_strb_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_strb_array
+    constant id_array            : in t_id_array;   -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_id_array
+    constant dest_array          : in t_dest_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_dest_array
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in std_logic_vector;
+    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_user_array
+    constant strb_array          : in t_strb_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_strb_array
+    constant id_array            : in t_id_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_id_array
+    constant dest_array          : in t_dest_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_dest_array
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_slv_array;
+    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, replace this with a wider type:
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in std_logic_vector;
+    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, replace this with a wider type:
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
 
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_slv_array;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in std_logic_vector;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
   -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
@@ -133,31 +196,7 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_slv_array;
-    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_user_array
-    constant strb_array          : in t_strb_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_strb_array
-    constant id_array            : in t_id_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_id_array
-    constant dest_array          : in t_dest_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_dest_array
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in std_logic_vector;
-    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_user_array
-    constant strb_array          : in t_strb_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_strb_array
-    constant id_array            : in t_id_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_id_array
-    constant dest_array          : in t_dest_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_dest_array
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
-
+  
   -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
@@ -168,46 +207,12 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_slv_array;
-    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, replace this with a wider type:
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in std_logic_vector;
-    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, replace this with a wider type:
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
-
+  
   -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
     constant data_array          : in t_byte_array;
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_slv_array;
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in std_logic_vector;
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
@@ -235,6 +240,7 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
+  
   procedure axistream_receive(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -256,21 +262,6 @@ package vvc_methods_pkg is
   -- AXIStream Expect
   --
   --------------------------------------------------------
-
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
-  procedure axistream_expect_bytes(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_byte_array;
-    constant user_array          : in t_user_array;
-    constant strb_array          : in t_strb_array;
-    constant id_array            : in t_id_array;
-    constant dest_array          : in t_dest_array;
-    constant msg                 : in string;
-    constant alert_level         : in t_alert_level  := error;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -284,6 +275,7 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
+  
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -298,17 +290,6 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
-  procedure axistream_expect_bytes(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_byte_array;
-    constant user_array          : in t_user_array;
-    constant msg                 : in string;
-    constant alert_level         : in t_alert_level  := error;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -319,6 +300,7 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
+  
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -330,6 +312,53 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
+  procedure axistream_expect(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_slv_array;
+    constant msg                 : in string;
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
+  procedure axistream_expect(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in std_logic_vector;
+    constant msg                 : in string;
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+  procedure axistream_expect_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_byte_array;
+    constant user_array          : in t_user_array;
+    constant strb_array          : in t_strb_array;
+    constant id_array            : in t_id_array;
+    constant dest_array          : in t_dest_array;
+    constant msg                 : in string;
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+  procedure axistream_expect_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_byte_array;
+    constant user_array          : in t_user_array;
+    constant msg                 : in string;
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+  
   -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_expect_bytes(
     signal   VVCT                : inout t_vvc_target_record;
@@ -340,24 +369,7 @@ package vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
-  procedure axistream_expect(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_slv_array;
-    constant msg                 : in string;
-    constant alert_level         : in t_alert_level  := error;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
-  procedure axistream_expect(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in std_logic_vector;
-    constant msg                 : in string;
-    constant alert_level         : in t_alert_level  := error;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  );
+
 
   --==============================================================================
   -- Transaction info methods
@@ -401,14 +413,14 @@ package body vvc_methods_pkg is
   -- These procedures will be used to forward commands to the VVC executor, which will
   -- call the corresponding BFM procedures.
 
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
-  procedure axistream_transmit_bytes(
+  -- axistream_transmit slv_array
+  procedure axistream_transmit(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_byte_array;
+    constant data_array          : in t_slv_array;
     constant user_array          : in t_user_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_user_array
     constant strb_array          : in t_strb_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_strb_array
-    constant id_array            : in t_id_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_id_array
+    constant id_array            : in t_id_array;   -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_id_array
     constant dest_array          : in t_dest_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_dest_array
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
@@ -416,66 +428,48 @@ package body vvc_methods_pkg is
   ) is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(data_array'length, 5) & " bytes)";
+                                   & ", " & to_string(data_array'length, 5) & " words)";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    
+    -- Helper variables
+    variable v_bytes_in_word   : integer           := (data_array(data_array'low)'length / 8);
+    variable v_num_bytes       : integer           := (data_array'length) * v_bytes_in_word;
+    variable v_data_array      : t_byte_array(0 to v_num_bytes - 1);
+    variable v_check_ok        : boolean           := false;
+    variable v_byte_endianness : t_byte_endianness := shared_axistream_vvc_config(vvc_instance_idx).bfm_config.byte_endianness;
   begin
-    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
-    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
-
+    
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
     -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, TRANSMIT);
+    
     -- Sanity check to avoid confusing fatal error
-    check_value(data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");
+    -- check_value(data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");
+    check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
+    
+    -- copy byte(s) from t_slv_array to t_byte_array
+    v_data_array := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
+    
     -- Generate cmd record
-    shared_vvc_cmd.data_array(0 to data_array'high) := data_array;
-    shared_vvc_cmd.user_array(0 to user_array'high) := user_array;
-    shared_vvc_cmd.strb_array(0 to strb_array'high) := strb_array;
-    shared_vvc_cmd.id_array(0 to id_array'high)     := id_array;
-    shared_vvc_cmd.dest_array(0 to dest_array'high) := dest_array;
-    shared_vvc_cmd.data_array_length                := data_array'length;
-    shared_vvc_cmd.user_array_length                := user_array'length;
-    shared_vvc_cmd.strb_array_length                := strb_array'length;
-    shared_vvc_cmd.id_array_length                  := id_array'length;
-    shared_vvc_cmd.dest_array_length                := dest_array'length;
-    shared_vvc_cmd.parent_msg_id_panel              := parent_msg_id_panel;
+    shared_vvc_cmd.data_array(0 to v_data_array'high) := v_data_array;
+    shared_vvc_cmd.user_array(0 to user_array'high)   := user_array;
+    shared_vvc_cmd.strb_array(0 to strb_array'high)   := strb_array;
+    shared_vvc_cmd.id_array(0 to id_array'high)       := id_array;
+    shared_vvc_cmd.dest_array(0 to dest_array'high)   := dest_array;
+    shared_vvc_cmd.data_array_length                  := v_data_array'length;
+    shared_vvc_cmd.user_array_length                  := user_array'length;
+    shared_vvc_cmd.strb_array_length                  := strb_array'length;
+    shared_vvc_cmd.id_array_length                    := id_array'length;
+    shared_vvc_cmd.dest_array_length                  := dest_array'length;
+    shared_vvc_cmd.parent_msg_id_panel                := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
-  -- t_slv_array overload
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_slv_array;
-    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_user_array
-    constant strb_array          : in t_strb_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_strb_array
-    constant id_array            : in t_id_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_id_array
-    constant dest_array          : in t_dest_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_dest_array
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    -- helper variables
-    variable v_bytes_in_word   : integer           := (data_array(data_array'low)'length / 8);
-    variable v_num_bytes       : integer           := (data_array'length) * v_bytes_in_word;
-    variable v_data_array      : t_byte_array(0 to v_num_bytes - 1);
-    variable v_data_array_idx  : integer           := 0;
-    variable v_check_ok        : boolean           := false;
-    variable v_byte_endianness : t_byte_endianness := shared_axistream_vvc_config(vvc_instance_idx).bfm_config.byte_endianness;
-  begin
-    -- t_slv_array sanity check
-    v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
 
-    if v_check_ok then
-      -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
-      -- call t_byte_array overloaded procedure
-      axistream_transmit_bytes(VVCT, vvc_instance_idx, v_data_array, user_array, strb_array, id_array, dest_array, msg, scope, parent_msg_id_panel);
-    end if;
-  end procedure;
+
   -- std_logic_vector overload
   procedure axistream_transmit(
     signal   VVCT                : inout t_vvc_target_record;
@@ -501,6 +495,111 @@ package body vvc_methods_pkg is
     end if;
   end procedure;
 
+  
+  -- t_slv_array overload
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_slv_array;
+    constant user_array          : in t_user_array;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    -- Default user data : We don't know c_user_array length (how many words to send), so assume worst case: tdata = 8 bits (one data_array byte per word)
+    constant c_strb_array : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
+    constant c_id_array   : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1)   := (others => (others => '0'));
+    constant c_dest_array : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
+  begin
+    axistream_transmit(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, scope, parent_msg_id_panel);
+  end procedure;
+  
+  
+  -- std_logic_vector overload
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in std_logic_vector;
+    constant user_array          : in t_user_array;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    -- Default user data : We don't know c_user_array length (how many words to send), so assume worst case: tdata = 8 bits (one data_array byte per word)
+    constant c_strb_array : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
+    constant c_id_array   : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1)   := (others => (others => '0'));
+    constant c_dest_array : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
+  begin
+    axistream_transmit(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, scope, parent_msg_id_panel);
+  end procedure;
+  
+  
+  -- t_slv_array overload
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_slv_array;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    -- Default user data : We don't know c_user_array length (how many words to send), so assume tdata = 8 bits (one data_array byte per word)
+    constant c_user_array : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
+  begin
+    -- Use another overload to fill in the rest
+    axistream_transmit(VVCT, vvc_instance_idx, data_array, c_user_array, msg, scope, parent_msg_id_panel);
+  end procedure;
+  
+  
+  -- std_logic_vector overload
+  procedure axistream_transmit(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in std_logic_vector;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    -- Default user data : We don't know c_user_array length (how many words to send), so assume tdata = 8 bits (one data_array byte per word)
+    constant c_user_array : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
+  begin
+    -- Use another overload to fill in the rest
+    axistream_transmit(VVCT, vvc_instance_idx, data_array, c_user_array, msg, scope, parent_msg_id_panel);
+  end procedure;  
+
+  
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+  procedure axistream_transmit_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_byte_array;
+    constant user_array          : in t_user_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_user_array
+    constant strb_array          : in t_strb_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_strb_array
+    constant id_array            : in t_id_array;   -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_id_array
+    constant dest_array          : in t_dest_array; -- If you need support for more bits per data byte, edit axistream_bfm_pkg.t_dest_array
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                   & ", " & to_string(data_array'length, 5) & " bytes)";
+    -- Helper variables
+    variable v_check_ok        : boolean           := false;
+  begin
+    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
+    
+    -- t_byte_array sanity check
+    v_check_ok := check_value(data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");
+    
+    if v_check_ok then
+      -- Call t_slv_array overloaded procedure
+      axistream_transmit(VVCT, vvc_instance_idx, data_array, user_array, strb_array, id_array, dest_array, msg, scope, parent_msg_id_panel);
+    end if;
+  end procedure;
+
+  
   -- Overload, without the strb_array, id_array, dest_array  arguments
   -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
   procedure axistream_transmit_bytes(
@@ -519,40 +618,7 @@ package body vvc_methods_pkg is
   begin
     axistream_transmit_bytes(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, scope, parent_msg_id_panel);
   end procedure;
-  -- t_slv_array overload
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_slv_array;
-    constant user_array          : in t_user_array;
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    -- Default user data : We don't know c_user_array length (how many words to send), so assume worst case: tdata = 8 bits (one data_array byte per word)
-    constant c_strb_array : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
-    constant c_id_array   : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1)   := (others => (others => '0'));
-    constant c_dest_array : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
-  begin
-    axistream_transmit(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, scope, parent_msg_id_panel);
-  end procedure;
-  -- std_logic_vector overload
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in std_logic_vector;
-    constant user_array          : in t_user_array;
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    -- Default user data : We don't know c_user_array length (how many words to send), so assume worst case: tdata = 8 bits (one data_array byte per word)
-    constant c_strb_array : t_strb_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
-    constant c_id_array   : t_id_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1)   := (others => (others => '0'));
-    constant c_dest_array : t_dest_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
-  begin
-    axistream_transmit(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, scope, parent_msg_id_panel);
-  end procedure;
+
 
   -- Overload, without the user_array, strb_array, id_array, dest_array  arguments
   -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
@@ -570,43 +636,14 @@ package body vvc_methods_pkg is
     -- Use another overload to fill in the rest
     axistream_transmit_bytes(VVCT, vvc_instance_idx, data_array, c_user_array, msg, scope, parent_msg_id_panel);
   end procedure;
-  -- t_slv_array overload
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_slv_array;
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    -- Default user data : We don't know c_user_array length (how many words to send), so assume tdata = 8 bits (one data_array byte per word)
-    constant c_user_array : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
-  begin
-    -- Use another overload to fill in the rest
-    axistream_transmit(VVCT, vvc_instance_idx, data_array, c_user_array, msg, scope, parent_msg_id_panel);
-  end procedure;
-  -- std_logic_vector overload
-  procedure axistream_transmit(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in std_logic_vector;
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    -- Default user data : We don't know c_user_array length (how many words to send), so assume tdata = 8 bits (one data_array byte per word)
-    constant c_user_array : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1) := (others => (others => '0'));
-  begin
-    -- Use another overload to fill in the rest
-    axistream_transmit(VVCT, vvc_instance_idx, data_array, c_user_array, msg, scope, parent_msg_id_panel);
-  end procedure;
+  
 
   --------------------------------------------------------
   --
   -- AXIStream Receive
   --
   --------------------------------------------------------
-  procedure axistream_receive_bytes(
+  procedure axistream_receive(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
     constant data_routing        : in t_data_routing;
@@ -628,37 +665,8 @@ package body vvc_methods_pkg is
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
-  end procedure axistream_receive_bytes;
-
-  -- overload without data_routing
-  procedure axistream_receive_bytes(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    constant proc_name      : string         := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call      : string         := proc_name & "()";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-  begin
-    axistream_receive_bytes(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
-  end procedure axistream_receive_bytes;
-
-  -- Overloading procedure
-  procedure axistream_receive(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_routing        : in t_data_routing;
-    constant msg                 : in string;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-  begin
-    -- Call overloaded procedure
-    axistream_receive_bytes(VVCT, vvc_instance_idx, data_routing, msg, scope, parent_msg_id_panel);
   end procedure axistream_receive;
-
+  
   -- Overloading procedure without data_routing
   procedure axistream_receive(
     signal   VVCT                : inout t_vvc_target_record;
@@ -671,59 +679,41 @@ package body vvc_methods_pkg is
     -- Call overloaded procedure
     axistream_receive_bytes(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
   end procedure axistream_receive;
-
+  
+  -- Overload with data_routing
+  procedure axistream_receive_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_routing        : in t_data_routing;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+  begin
+    -- Call overloaded procedure
+    axistream_receive(VVCT, vvc_instance_idx, data_routing, msg, scope, parent_msg_id_panel);
+  end procedure axistream_receive_bytes;
+  
+  -- overload without data_routing
+  procedure axistream_receive_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant msg                 : in string;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant proc_name      : string         := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call      : string         := proc_name & "()";
+  begin
+    axistream_receive_bytes(VVCT, vvc_instance_idx, NA, msg, scope, parent_msg_id_panel);
+  end procedure axistream_receive_bytes;
+  
   --------------------------------------------------------
   --
   -- AXIStream Expect
   --
   --------------------------------------------------------
-
   -- Expect, receive and compare to specified data_array, user_array, strb_array, id_array, dest_array
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
-  procedure axistream_expect_bytes(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_byte_array;
-    constant user_array          : in t_user_array;
-    constant strb_array          : in t_strb_array;
-    constant id_array            : in t_id_array;
-    constant dest_array          : in t_dest_array;
-    constant msg                 : in string;
-    constant alert_level         : in t_alert_level  := error;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
-    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
-                                   & ", " & to_string(data_array'length) & "B)";
-    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
-  begin
-    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
-    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
-
-    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
-    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
-    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
-    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, EXPECT);
-    -- Generate cmd record
-    shared_vvc_cmd.data_array(0 to data_array'high) := data_array;
-    shared_vvc_cmd.user_array(0 to user_array'high) := user_array; -- user_array Length = data_array_length
-    shared_vvc_cmd.strb_array(0 to strb_array'high) := strb_array;
-    shared_vvc_cmd.id_array(0 to id_array'high)     := id_array;
-    shared_vvc_cmd.dest_array(0 to dest_array'high) := dest_array;
-    shared_vvc_cmd.data_array_length                := data_array'length;
-    shared_vvc_cmd.user_array_length                := user_array'length;
-    shared_vvc_cmd.strb_array_length                := strb_array'length;
-    shared_vvc_cmd.id_array_length                  := id_array'length;
-    shared_vvc_cmd.dest_array_length                := dest_array'length;
-    shared_vvc_cmd.alert_level                      := alert_level;
-    shared_vvc_cmd.parent_msg_id_panel              := parent_msg_id_panel;
-    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
-      v_msg_id_panel := parent_msg_id_panel;
-    end if;
-    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
-  end procedure;
-  -- t_slv_array overload
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -737,24 +727,53 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+    
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                   & ", " & to_string(data_array'length) & "Words)";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    
     -- helper variables
     variable v_bytes_in_word   : integer           := (data_array(data_array'low)'length / 8);
     variable v_num_bytes       : integer           := (data_array'length) * v_bytes_in_word;
     variable v_data_array      : t_byte_array(0 to v_num_bytes - 1);
-    variable v_data_array_idx  : integer           := 0;
     variable v_check_ok        : boolean           := false;
     variable v_byte_endianness : t_byte_endianness := shared_axistream_vvc_config(vvc_instance_idx).bfm_config.byte_endianness;
+  
   begin
-    -- t_slv_array sanity check
-    v_check_ok := check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
+    
+    -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
+    -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
+    -- semaphore gets unlocked in await_cmd_from_sequencer of the targeted VVC
+    set_general_target_and_command_fields(VVCT, vvc_instance_idx, proc_call, msg, QUEUED, EXPECT);
 
-    if v_check_ok then
-      -- copy byte(s) from t_slv_array to t_byte_array
-      v_data_array := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
-      -- call t_byte_array overloaded procedure
-      axistream_expect_bytes(VVCT, vvc_instance_idx, v_data_array, user_array, strb_array, id_array, dest_array, msg, alert_level, scope, parent_msg_id_panel);
+    -- Sanity check to avoid confusing fatal error
+    -- check_value(data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");
+    check_value(data_array(data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that data_array word is N*byte");
+    
+    -- copy byte(s) from t_slv_array to t_byte_array
+    v_data_array := convert_slv_array_to_byte_array(data_array, v_byte_endianness);
+    
+    -- Generate cmd record
+    shared_vvc_cmd.data_array(0 to v_data_array'high) := v_data_array;
+    shared_vvc_cmd.user_array(0 to user_array'high)   := user_array; -- user_array Length = data_array_length
+    shared_vvc_cmd.strb_array(0 to strb_array'high)   := strb_array;
+    shared_vvc_cmd.id_array(0 to id_array'high)       := id_array;
+    shared_vvc_cmd.dest_array(0 to dest_array'high)   := dest_array;
+    shared_vvc_cmd.data_array_length                  := v_data_array'length;
+    shared_vvc_cmd.user_array_length                  := user_array'length;
+    shared_vvc_cmd.strb_array_length                  := strb_array'length;
+    shared_vvc_cmd.id_array_length                    := id_array'length;
+    shared_vvc_cmd.dest_array_length                  := dest_array'length;
+    shared_vvc_cmd.alert_level                        := alert_level;
+    shared_vvc_cmd.parent_msg_id_panel                := parent_msg_id_panel;
+    if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
+      v_msg_id_panel := parent_msg_id_panel;
     end if;
+    send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
+  
+  
   -- std_logic_vector overload
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
@@ -781,28 +800,7 @@ package body vvc_methods_pkg is
     end if;
   end procedure;
 
-  -- Overload for calling axiStreamExpect() without a value for strb_array, id_array, dest_array
-  -- (will be set to don't care)
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
-  procedure axistream_expect_bytes(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_byte_array;
-    constant user_array          : in t_user_array;
-    constant msg                 : in string;
-    constant alert_level         : in t_alert_level  := error;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    -- Default expected strb, id, dest
-    -- Don't know #bytes in AXIStream tdata, so *_array length is unknown.
-    -- Make the array as short as possible for best simulation time during the check performed in the BFM.
-    constant c_strb_array : t_strb_array(0 downto 0) := (others => (others => '-'));
-    constant c_id_array   : t_id_array(0 downto 0)   := (others => (others => '-'));
-    constant c_dest_array : t_dest_array(0 downto 0) := (others => (others => '-'));
-  begin
-    axistream_expect_bytes(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, alert_level, scope, parent_msg_id_panel);
-  end procedure;
+
   -- t_slv_array overload
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
@@ -823,6 +821,8 @@ package body vvc_methods_pkg is
   begin
     axistream_expect(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
+  
+  
   -- std_logic_vector overload
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
@@ -843,26 +843,8 @@ package body vvc_methods_pkg is
   begin
     axistream_expect(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
-
-  -- Overload, without the user_array, strb_array, id_array, dest_array  arguments
-  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
-  procedure axistream_expect_bytes(
-    signal   VVCT                : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant data_array          : in t_byte_array;
-    constant msg                 : in string;
-    constant alert_level         : in t_alert_level  := error;
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
-  ) is
-    -- Default user data
-    -- Don't know #bytes in AXIStream tdata, so user_array length is unknown.
-    -- Make the array as short as possible for best simulation time during the check performed in the BFM.
-    constant c_user_array : t_user_array(0 downto 0) := (others => (others => '-'));
-  begin
-    -- Use another overload to fill in the rest: strb_array, id_array, dest_array
-    axistream_expect_bytes(VVCT, vvc_instance_idx, data_array, c_user_array, msg, alert_level, scope, parent_msg_id_panel);
-  end procedure;
+  
+  
   -- t_slv_array overload
   procedure axistream_expect(
     signal   VVCT                : inout t_vvc_target_record;
@@ -899,6 +881,84 @@ package body vvc_methods_pkg is
     -- Use another overload to fill in the rest: strb_array, id_array, dest_array
     axistream_expect(VVCT, vvc_instance_idx, data_array, c_user_array, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
+
+  
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+  procedure axistream_expect_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_byte_array;
+    constant user_array          : in t_user_array;
+    constant strb_array          : in t_strb_array;
+    constant id_array            : in t_id_array;
+    constant dest_array          : in t_dest_array;
+    constant msg                 : in string;
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
+    constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
+                                   & ", " & to_string(data_array'length) & "B)";
+    variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+    variable v_check_ok        : boolean           := false;
+  begin
+    -- DEPRECATE: data_array as t_byte_array will be removed in next major release
+    deprecate(proc_name, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
+    
+    -- t_byte_array sanity check
+    v_check_ok := check_value(data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");
+    if v_check_ok then
+      -- Call t_slv_array overloaded procedure
+      axistream_expect(VVCT, vvc_instance_idx, data_array, user_array, strb_array, id_array, dest_array, msg, alert_level, scope, parent_msg_id_panel);
+    end if;
+  end procedure;
+
+
+  -- Overload for calling axiStreamExpect() without a value for strb_array, id_array, dest_array
+  -- (will be set to don't care)
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+  procedure axistream_expect_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_byte_array;
+    constant user_array          : in t_user_array;
+    constant msg                 : in string;
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    -- Default expected strb, id, dest
+    -- Don't know #bytes in AXIStream tdata, so *_array length is unknown.
+    -- Make the array as short as possible for best simulation time during the check performed in the BFM.
+    constant c_strb_array : t_strb_array(0 downto 0) := (others => (others => '-'));
+    constant c_id_array   : t_id_array(0 downto 0)   := (others => (others => '-'));
+    constant c_dest_array : t_dest_array(0 downto 0) := (others => (others => '-'));
+  begin
+    axistream_expect_bytes(VVCT, vvc_instance_idx, data_array, user_array, c_strb_array, c_id_array, c_dest_array, msg, alert_level, scope, parent_msg_id_panel);
+  end procedure;
+
+
+  -- Overload, without the user_array, strb_array, id_array, dest_array  arguments
+  -- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
+  procedure axistream_expect_bytes(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_array          : in t_byte_array;
+    constant msg                 : in string;
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    -- Default user data
+    -- Don't know #bytes in AXIStream tdata, so user_array length is unknown.
+    -- Make the array as short as possible for best simulation time during the check performed in the BFM.
+    constant c_user_array : t_user_array(0 downto 0) := (others => (others => '-'));
+  begin
+    -- Use another overload to fill in the rest: strb_array, id_array, dest_array
+    axistream_expect_bytes(VVCT, vvc_instance_idx, data_array, c_user_array, msg, alert_level, scope, parent_msg_id_panel);
+  end procedure;
+  
 
   --==============================================================================
   -- Transaction info methods

@@ -6,7 +6,7 @@ Quick summary
    and follow the instructions.
 2. Modify the generated code as instructed anywhere the key --<USER_INPUT> is found.
 3. If necessary, update t_channel type in UVVM-Util adaptations_pkg if new channels (other than 
-   TX and RX) are used.
+   RX and TX) are used.
 
 
 Introduction

@@ -39,7 +39,7 @@ package vvc_cmd_pkg is
   --===============================================================================================
   type t_vvc_cmd_record is record
     -- VVC dedicated fields
-    data_array          : t_byte_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1);
+    data_array          : t_slv_array(0 to C_VVC_CMD_DATA_MAX_BYTES - 1)(7 downto 0);
     data_array_length   : integer range -10 to C_VVC_CMD_DATA_MAX_BYTES; -- Some negative numbers have special meaning in axistreamStartTransmits()
     -- If you need support for more bits per data byte, replace this with a wider type:
     user_array          : t_user_array(0 to C_VVC_CMD_DATA_MAX_WORDS - 1);

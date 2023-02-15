@@ -1,0 +1,102 @@
+[libraries]
+uvvm_util.files = [
+'uvvm_util/**/*.vhd',
+]
+
+uvvm_vvc_framework.files = [
+'uvvm_vvc_framework/src/*.vhd',
+]
+
+bitvis_vip_avalon_mm.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_avalon_mm/**/*.vhd',
+]
+
+bitvis_vip_avalon_st.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_avalon_st/**/*.vhd',
+]
+
+bitvis_vip_axi.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_axi/**/*.vhd',
+]
+
+bitvis_vip_axilite.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_axilite/**/*.vhd',
+]
+
+bitvis_vip_axistream.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_axistream/**/*.vhd',
+]
+
+bitvis_vip_clock_generator.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_clock_generator/**/*.vhd',
+]
+
+bitvis_vip_error_injection.files = [
+ 'bitvis_vip_error_injection/**/*.vhd',
+]
+
+bitvis_vip_ethernet.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_ethernet/**/*.vhd',
+]
+
+bitvis_vip_gmii.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_gmii/**/*.vhd',
+]
+
+bitvis_vip_gpio.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_gpio/**/*.vhd',
+]
+
+bitvis_vip_hvvc_to_vvc_bridge.files = [
+'bitvis_vip_hvvc_to_vvc_bridge/**/*.vhd',
+]
+
+bitvis_vip_i2c.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_i2c/**/*.vhd',
+]
+
+bitvis_vip_rgmii.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_rgmii/**/*.vhd',
+]
+
+bitvis_vip_sbi.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_sbi/**/*.vhd',
+]
+
+bitvis_vip_spec_cov.files = [
+'bitvis_vip_spec_cov/src/*.vhd',
+]
+
+bitvis_vip_scoreboard.files = [
+'bitvis_vip_scoreboard/**/*.vhd',
+]
+
+bitvis_vip_spi.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_spi/**/*.vhd',
+]
+
+bitvis_vip_uart.files = [
+'uvvm_vvc_framework/src_target_dependent/*.vhd',
+'bitvis_vip_uart/**/*.vhd',
+]
+
+bitvis_uart.files = [
+'bitvis_uart/**/*.vhd',
+]
+
+bitvis_irqc.files = [
+'bitvis_irqc/**/*.vhd',
+]

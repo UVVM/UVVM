@@ -18,7 +18,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
--- Include Verification IPs
 library bitvis_vip_axistream;
 use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
@@ -49,17 +48,11 @@ entity test_harness is
                                                           tstrb(GC_DATA_WIDTH / 8 - 1 downto 0),
                                                           tid(GC_ID_WIDTH - 1 downto 0),
                                                           tdest(GC_DEST_WIDTH - 1 downto 0)
-                                                         );
-    signal axistream_if_m_VVC2VVC  : inout t_axistream_if(tdata(GC_DATA_WIDTH - 1 downto 0),
-                                                          tkeep((GC_DATA_WIDTH / 8) - 1 downto 0),
-                                                          tuser(GC_USER_WIDTH - 1 downto 0),
-                                                          tstrb(GC_DATA_WIDTH / 8 - 1 downto 0),
-                                                          tid(GC_ID_WIDTH - 1 downto 0),
-                                                          tdest(GC_DEST_WIDTH - 1 downto 0)
                                                          )
   );
 
 end entity test_harness;
+
 --=================================================================================================
 architecture struct_simple of test_harness is
 
@@ -97,8 +90,7 @@ begin
   axistream_if_s_FIFO2VVC.tlast  <= m_axis_tlast;
 
   -----------------------------
-  -- Instantiate a DUT model : a self-made AXI-Stream FIFO
-  -- (I tried using a Xilinx FIFO IP between the BFMs but could only get verilog files, causing Modelsim licencing issues)
+  -- Instantiate a DUT model
   -----------------------------
   i_axis_fifo : entity work.axis_fifo
     generic map(
@@ -129,10 +121,17 @@ end struct_simple;
 --=================================================================================================
 architecture struct_vvc of test_harness is
 
+  signal axistream_if_m_VVC2VVC  : t_axistream_if(tdata(GC_DATA_WIDTH - 1 downto 0),
+                                                  tkeep((GC_DATA_WIDTH / 8) - 1 downto 0),
+                                                  tuser(GC_USER_WIDTH - 1 downto 0),
+                                                  tstrb(GC_DATA_WIDTH / 8 - 1 downto 0),
+                                                  tid(GC_ID_WIDTH - 1 downto 0),
+                                                  tdest(GC_DEST_WIDTH - 1 downto 0)
+                                                 );
+
 begin
   -----------------------------
-  -- Instantiate a DUT model : a self-made AXI-Stream FIFO
-  -- (I tried using a Xilinx FIFO IP between the BFMs but could only get verilog files, causing Modelsim licencing issues)
+  -- Instantiate a DUT model
   -----------------------------
   i_axis_fifo : entity work.axis_fifo
     generic map(
@@ -157,14 +156,6 @@ begin
       m_axis_tlast  => axistream_if_s_FIFO2VVC.tlast,
       empty         => open
     );
-
-  -- This is not necessary, the BFM can receive 'U' without problems
-  -- axistream_if_s_FIFO2VVC.tstrb   <= (others => '0');
-  -- axistream_if_s_FIFO2VVC.tid   <= (others => '0');
-  -- axistream_if_s_FIFO2VVC.tdest   <= (others => '0');
-  -- g_Not_Include_tuser: if (not GC_INCLUDE_TUSER) generate
-  --    axistream_if_s_FIFO2VVC.tuser <= (others => '0');
-  -- end generate;
 
   -----------------------------
   -- vvc/executors
@@ -233,10 +224,12 @@ begin
 
 end struct_vvc;
 
+--=================================================================================================
 architecture struct_multiple_vvc of test_harness is
+
 begin
   -----------------------------
-  -- Multiple VVCs just to test await_any_completion
+  -- Multiple VVCs just to test await_completion(ANY_OF)
   -----------------------------
   gen_axistream_vvc_master : for i in 0 to 7 generate
     signal axistream_if_m_local : t_axistream_if(tdata(GC_DATA_WIDTH - 1 downto 0),
@@ -265,4 +258,3 @@ begin
   end generate gen_axistream_vvc_master;
 
 end struct_multiple_vvc;
-

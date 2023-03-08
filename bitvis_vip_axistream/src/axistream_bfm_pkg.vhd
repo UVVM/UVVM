@@ -189,7 +189,6 @@ package axistream_bfm_pkg is
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
-
 	-- Overloaded version without records
 	-- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
 	procedure axistream_transmit_bytes(
@@ -257,7 +256,6 @@ package axistream_bfm_pkg is
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
-
 	-- Overload for default strb_array, id_array, dest_array
 	-- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
 	procedure axistream_transmit_bytes(
@@ -292,7 +290,6 @@ package axistream_bfm_pkg is
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
-
 	-- Overload for default user_array, strb_array, id_array, dest_array
 	-- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
 	procedure axistream_transmit_bytes(
@@ -365,7 +362,6 @@ package axistream_bfm_pkg is
 		constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
 	);
-
 	-- Overloaded version without records
 	-- DEPRECATE: procedure with data_array as t_byte_array will be removed in next major release
 	procedure axistream_receive_bytes(
@@ -426,7 +422,7 @@ package axistream_bfm_pkg is
 		constant exp_data_array : in t_byte_array; -- Expected data
 		constant exp_user_array : in t_user_array; -- Expected tuser
 		constant exp_strb_array : in t_strb_array; -- Expected tstrb
-		constant exp_id_array   : in t_id_array; -- Expected tid
+		constant exp_id_array   : in t_id_array;   -- Expected tid
 		constant exp_dest_array : in t_dest_array; -- Expected tdest
 		constant msg            : in string;
 		signal   clk            : in std_logic;
@@ -438,10 +434,10 @@ package axistream_bfm_pkg is
 	);
 	-- t_slv_array overload
 	procedure axistream_expect(
-		constant exp_data_array : in t_slv_array; -- Expected data
+		constant exp_data_array : in t_slv_array;  -- Expected data
 		constant exp_user_array : in t_user_array; -- Expected tuser
 		constant exp_strb_array : in t_strb_array; -- Expected tstrb
-		constant exp_id_array   : in t_id_array; -- Expected tid
+		constant exp_id_array   : in t_id_array;   -- Expected tid
 		constant exp_dest_array : in t_dest_array; -- Expected tdest
 		constant msg            : in string;
 		signal   clk            : in std_logic;
@@ -454,10 +450,10 @@ package axistream_bfm_pkg is
 	-- std_logic_vector overload
 	procedure axistream_expect(
 		constant exp_data_array : in std_logic_vector; -- Expected data
-		constant exp_user_array : in t_user_array; -- Expected tuser
-		constant exp_strb_array : in t_strb_array; -- Expected tstrb
-		constant exp_id_array   : in t_id_array; -- Expected tid
-		constant exp_dest_array : in t_dest_array; -- Expected tdest
+		constant exp_user_array : in t_user_array;     -- Expected tuser
+		constant exp_strb_array : in t_strb_array;     -- Expected tstrb
+		constant exp_id_array   : in t_id_array;       -- Expected tid
+		constant exp_dest_array : in t_dest_array;     -- Expected tdest
 		constant msg            : in string;
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
@@ -466,14 +462,13 @@ package axistream_bfm_pkg is
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
-
 	-- Overloaded version without records
 	-- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
 	procedure axistream_expect_bytes(
 		constant exp_data_array      : in t_byte_array; -- Expected data
 		constant exp_user_array      : in t_user_array; -- Expected tuser
 		constant exp_strb_array      : in t_strb_array; -- Expected tstrb
-		constant exp_id_array        : in t_id_array; -- Expected tid
+		constant exp_id_array        : in t_id_array;   -- Expected tid
 		constant exp_dest_array      : in t_dest_array; -- Expected tdest
 		constant msg                 : in string;
 		signal   clk                 : in std_logic;
@@ -493,10 +488,10 @@ package axistream_bfm_pkg is
 	);
 	-- t_slv_array overload
 	procedure axistream_expect(
-		constant exp_data_array      : in t_slv_array; -- Expected data
+		constant exp_data_array      : in t_slv_array;  -- Expected data
 		constant exp_user_array      : in t_user_array; -- Expected tuser
 		constant exp_strb_array      : in t_strb_array; -- Expected tstrb
-		constant exp_id_array        : in t_id_array; -- Expected tid
+		constant exp_id_array        : in t_id_array;   -- Expected tid
 		constant exp_dest_array      : in t_dest_array; -- Expected tdest
 		constant msg                 : in string;
 		signal   clk                 : in std_logic;
@@ -517,10 +512,10 @@ package axistream_bfm_pkg is
 	-- std_logic_vector overload
 	procedure axistream_expect(
 		constant exp_data_array      : in std_logic_vector; -- Expected data
-		constant exp_user_array      : in t_user_array; -- Expected tuser
-		constant exp_strb_array      : in t_strb_array; -- Expected tstrb
-		constant exp_id_array        : in t_id_array; -- Expected tid
-		constant exp_dest_array      : in t_dest_array; -- Expected tdest
+		constant exp_user_array      : in t_user_array;     -- Expected tuser
+		constant exp_strb_array      : in t_strb_array;     -- Expected tstrb
+		constant exp_id_array        : in t_id_array;       -- Expected tid
+		constant exp_dest_array      : in t_dest_array;     -- Expected tdest
 		constant msg                 : in string;
 		signal   clk                 : in std_logic;
 		signal   axistream_if_tdata  : inout std_logic_vector;
@@ -537,7 +532,6 @@ package axistream_bfm_pkg is
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
-
 	-- Overload for default strb_array, id_array, dest_array
 	-- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
 	procedure axistream_expect_bytes(
@@ -575,7 +569,6 @@ package axistream_bfm_pkg is
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
-
 	-- Overload for default user_array, strb_array, id_array, dest_array
 	-- DEPRECATE: procedure with exp_data_array as t_byte_array will be removed in next major release
 	procedure axistream_expect_bytes(
@@ -687,14 +680,13 @@ package body axistream_bfm_pkg is
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
-
-		constant C_DATA_ARRAY_BYTES_PER_WORD : natural := data_array(data_array'low)'length / 8;
-		constant C_PROC_CALL                 : string  := "axistream_transmit(" & to_string(data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b])";
-		constant C_NUM_BYTES_PER_WORD        : natural := axistream_if.tdata'length / 8;
-		constant C_NUM_USER_BITS_PER_WORD    : natural := axistream_if.tuser'length;
-		constant C_NUM_STRB_BITS_PER_WORD    : natural := axistream_if.tstrb'length;
-		constant C_NUM_ID_BITS_PER_WORD      : natural := axistream_if.tid'length;
-		constant C_NUM_DEST_BITS_PER_WORD    : natural := axistream_if.tdest'length;
+		constant C_DATA_ARRAY_BYTES_PER_WORD    : natural := data_array(data_array'low)'length / 8;
+		constant C_PROC_CALL                    : string  := "axistream_transmit(" & to_string(data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b])";
+		constant C_NUM_BYTES_PER_WORD           : natural := axistream_if.tdata'length / 8;
+		constant C_NUM_USER_BITS_PER_WORD       : natural := axistream_if.tuser'length;
+		constant C_NUM_STRB_BITS_PER_WORD       : natural := axistream_if.tstrb'length;
+		constant C_NUM_ID_BITS_PER_WORD         : natural := axistream_if.tid'length;
+		constant C_NUM_DEST_BITS_PER_WORD       : natural := axistream_if.tdest'length;
 
 		variable v_data_byte_array              : t_slv_array(0 to (data_array'length * C_DATA_ARRAY_BYTES_PER_WORD) - 1)(7 downto 0);
 		variable v_byte_in_word                 : integer range 0 to C_NUM_BYTES_PER_WORD - 1 := 0; -- current byte within the data word
@@ -892,14 +884,14 @@ package body axistream_bfm_pkg is
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
 		constant C_PROC_NAME  : string  := "axistream_transmit_bytes";
-		constant proc_call  : string  := "axistream_transmit_bytes(" & to_string(data_array'length) & "B)";
+		constant C_PROC_CALL  : string  := "axistream_transmit_bytes(" & to_string(data_array'length) & "B)";
 		variable v_check_ok : boolean := false;
 	begin
 		-- DEPRECATE: data_array as t_byte_array will be removsed in next major release
 		deprecate(C_PROC_NAME, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
 
 		-- t_byte_array sanity check
-		v_check_ok := check_value(data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");
+		v_check_ok := check_value(data_array'length > 0, TB_ERROR, C_PROC_CALL & "data_array length must be > 0", "VVC");
 		if v_check_ok then
 			-- call t_slv_array overloaded procedure
 			axistream_transmit(data_array, user_array, strb_array, id_array, dest_array, msg, clk, axistream_if, scope, msg_id_panel, config);
@@ -973,7 +965,8 @@ package body axistream_bfm_pkg is
 			msg_id_panel        => msg_id_panel,
 			config              => config);
 	end procedure axistream_transmit_bytes;
-	-----------------------
+	
+    -----------------------
 	-- t_slv_array overload
 	-----------------------
 	procedure axistream_transmit(
@@ -1020,7 +1013,8 @@ package body axistream_bfm_pkg is
 			msg_id_panel        => msg_id_panel,
 			config              => config);
 	end procedure axistream_transmit;
-	-----------------------
+	
+    -----------------------
 	-- std_logic_vector overload
 	-----------------------
 	procedure axistream_transmit(
@@ -1081,16 +1075,16 @@ package body axistream_bfm_pkg is
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
 		-- One entry per word. Max words possible is the number of bytes in data_array
-		constant c_strb_array_default : t_strb_array(0 to data_array'high) := (others => (others => '0'));
-		constant c_id_array_default   : t_id_array(0 to data_array'high)   := (others => (others => '0'));
-		constant c_dest_array_default : t_dest_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_STRB_ARRAY_DEFAULT : t_strb_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_ID_ARRAY_DEFAULT   : t_id_array(0 to data_array'high)   := (others => (others => '0'));
+		constant C_DEST_ARRAY_DEFAULT : t_dest_array(0 to data_array'high) := (others => (others => '0'));
 	begin
 		axistream_transmit_bytes(
 			data_array   => data_array,
 			user_array   => user_array,
-			strb_array   => c_strb_array_default,
-			id_array     => c_id_array_default,
-			dest_array   => c_dest_array_default,
+			strb_array   => C_STRB_ARRAY_DEFAULT,
+			id_array     => C_ID_ARRAY_DEFAULT,
+			dest_array   => C_DEST_ARRAY_DEFAULT,
 			msg          => msg,
 			clk          => clk,
 			axistream_if => axistream_if,
@@ -1098,7 +1092,8 @@ package body axistream_bfm_pkg is
 			msg_id_panel => msg_id_panel,
 			config       => config);
 	end procedure axistream_transmit_bytes;
-	-----------------------
+	
+    -----------------------
 	-- t_slv_array overload
 	-----------------------
 	procedure axistream_transmit(
@@ -1112,17 +1107,17 @@ package body axistream_bfm_pkg is
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
 		-- One entry per word. Max words possible is the number of bytes in data_array
-		constant c_strb_array_default : t_strb_array(0 to data_array'high) := (others => (others => '0'));
-		constant c_id_array_default   : t_id_array(0 to data_array'high)   := (others => (others => '0'));
-		constant c_dest_array_default : t_dest_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_STRB_ARRAY_DEFAULT : t_strb_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_ID_ARRAY_DEFAULT   : t_id_array(0 to data_array'high)   := (others => (others => '0'));
+		constant C_DEST_ARRAY_DEFAULT : t_dest_array(0 to data_array'high) := (others => (others => '0'));
 	begin
 		-- call overloading t_slv_array procedure
 		axistream_transmit(
 			data_array   => data_array,
 			user_array   => user_array,
-			strb_array   => c_strb_array_default,
-			id_array     => c_id_array_default,
-			dest_array   => c_dest_array_default,
+			strb_array   => C_STRB_ARRAY_DEFAULT,
+			id_array     => C_ID_ARRAY_DEFAULT,
+			dest_array   => C_DEST_ARRAY_DEFAULT,
 			msg          => msg,
 			clk          => clk,
 			axistream_if => axistream_if,
@@ -1143,16 +1138,16 @@ package body axistream_bfm_pkg is
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
 		-- One entry per word. Max words possible is the number of words in data_array
-		constant c_strb_array_default : t_strb_array(0 to data_array'high) := (others => (others => '0'));
-		constant c_id_array_default   : t_id_array(0 to data_array'high)   := (others => (others => '0'));
-		constant c_dest_array_default : t_dest_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_STRB_ARRAY_DEFAULT : t_strb_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_ID_ARRAY_DEFAULT   : t_id_array(0 to data_array'high)   := (others => (others => '0'));
+		constant C_DEST_ARRAY_DEFAULT : t_dest_array(0 to data_array'high) := (others => (others => '0'));
 	begin
 		axistream_transmit(
 			data_array   => data_array,
 			user_array   => user_array,
-			strb_array   => c_strb_array_default,
-			id_array     => c_id_array_default,
-			dest_array   => c_dest_array_default,
+			strb_array   => C_STRB_ARRAY_DEFAULT,
+			id_array     => C_ID_ARRAY_DEFAULT,
+			dest_array   => C_DEST_ARRAY_DEFAULT,
 			msg          => msg,
 			clk          => clk,
 			axistream_if => axistream_if,
@@ -1172,12 +1167,12 @@ package body axistream_bfm_pkg is
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
-		constant c_user_array_default : t_user_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_USER_ARRAY_DEFAULT : t_user_array(0 to data_array'high) := (others => (others => '0'));
 	begin
 		-- Calling another overload that fills in strb_array, id_array, dest_array
 		axistream_transmit_bytes(
 			data_array   => data_array,
-			user_array   => c_user_array_default,
+			user_array   => C_USER_ARRAY_DEFAULT,
 			msg          => msg,
 			clk          => clk,
 			axistream_if => axistream_if,
@@ -1196,11 +1191,11 @@ package body axistream_bfm_pkg is
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
-		constant c_user_array_default : t_user_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_USER_ARRAY_DEFAULT : t_user_array(0 to data_array'high) := (others => (others => '0'));
 	begin
 		axistream_transmit(
 			data_array   => data_array,
-			user_array   => c_user_array_default,
+			user_array   => C_USER_ARRAY_DEFAULT,
 			msg          => msg,
 			clk          => clk,
 			axistream_if => axistream_if,
@@ -1219,11 +1214,11 @@ package body axistream_bfm_pkg is
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
-		constant c_user_array_default : t_user_array(0 to data_array'high) := (others => (others => '0'));
+		constant C_USER_ARRAY_DEFAULT : t_user_array(0 to data_array'high) := (others => (others => '0'));
 	begin
 		axistream_transmit(
 			data_array   => data_array,
-			user_array   => c_user_array_default,
+			user_array   => C_USER_ARRAY_DEFAULT,
 			msg          => msg,
 			clk          => clk,
 			axistream_if => axistream_if,
@@ -1254,37 +1249,36 @@ package body axistream_bfm_pkg is
 		constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
 	) is
-		constant c_data_array_bytes_per_word : natural := data_array(data_array'low)'length / 8;
-		constant c_data_array_length         : natural := data_array'length;
-		constant c_num_bytes_per_word        : natural := axistream_if.tdata'length / 8;
-		constant c_num_user_bits_per_word    : natural := axistream_if.tuser'length;
-		constant c_num_strb_bits_per_word    : natural := axistream_if.tstrb'length;
-		constant c_num_id_bits_per_word      : natural := axistream_if.tid'length;
-		constant c_num_dest_bits_per_word    : natural := axistream_if.tdest'length;
-		constant local_proc_name             : string  := "axistream_receive"; -- Internal proc_name; used if called from sequncer or VVC
-		constant local_proc_call             : string  := local_proc_name & "()"; -- Internal proc_call; used if called from sequncer or VVC
+		constant C_DATA_ARRAY_BYTES_PER_WORD : natural := data_array(data_array'low)'length / 8;
+		constant C_NUM_BYTES_PER_WORD        : natural := axistream_if.tdata'length / 8;
+		constant C_NUM_USER_BITS_PER_WORD    : natural := axistream_if.tuser'length;
+		constant C_NUM_STRB_BITS_PER_WORD    : natural := axistream_if.tstrb'length;
+		constant C_NUM_ID_BITS_PER_WORD      : natural := axistream_if.tid'length;
+		constant C_NUM_DEST_BITS_PER_WORD    : natural := axistream_if.tdest'length;
+		constant C_LOCAL_PROC_NAME           : string  := "axistream_receive"; -- Internal proc_name; used if called from sequncer or VVC
+		constant C_LOCAL_PROC_CALL           : string  := C_LOCAL_PROC_NAME & "()"; -- Internal proc_call; used if called from sequncer or VVC
 
-		variable v_proc_call             : line; -- Current proc_call, external or local
-		variable v_data_byte_array       : t_slv_array(0 to (data_array'length * c_data_array_bytes_per_word) - 1)(7 downto 0);
-		variable v_byte_in_word          : integer range 0 to c_num_bytes_per_word - 1 := 0; -- current Byte within the data word
-		variable v_byte_cnt              : integer                                     := 0; -- # bytes received
-		variable v_timeout               : boolean                                     := false;
-		variable v_done                  : boolean                                     := false;
-		variable v_invalid_count         : integer                                     := 0; -- # cycles without valid being asserted
-		variable v_byte_idx              : integer;
-		variable v_word_idx              : integer;
-		variable v_ready_low_duration    : natural                                     := 0;
-		variable v_ready_low_cycle_count : natural                                     := 0;
-		variable v_time_of_rising_edge   : time                                        := -1 ns; -- time stamp for clk period checking
-		variable v_time_of_falling_edge  : time                                        := -1 ns; -- time stamp for clk period checking
-		variable v_sample_data_now       : boolean                                     := false;
+		variable v_proc_call                 : line; -- Current proc_call, external or local
+		variable v_data_byte_array           : t_slv_array(0 to (data_array'length * C_DATA_ARRAY_BYTES_PER_WORD) - 1)(7 downto 0);
+		variable v_byte_in_word              : integer range 0 to C_NUM_BYTES_PER_WORD - 1 := 0; -- current Byte within the data word
+		variable v_byte_cnt                  : integer                                     := 0; -- # bytes received
+		variable v_timeout                   : boolean                                     := false;
+		variable v_done                      : boolean                                     := false;
+		variable v_invalid_count             : integer                                     := 0; -- # cycles without valid being asserted
+		variable v_byte_idx                  : integer;
+		variable v_word_idx                  : integer;
+		variable v_ready_low_duration        : natural                                     := 0;
+		variable v_ready_low_cycle_count     : natural                                     := 0;
+		variable v_time_of_rising_edge       : time                                        := -1 ns; -- time stamp for clk period checking
+		variable v_time_of_falling_edge      : time                                        := -1 ns; -- time stamp for clk period checking
+		variable v_sample_data_now           : boolean                                     := false;
 	begin
 		if ext_proc_call = "" then
 			-- Called directly from sequencer/VVC, log 'axistream_receive...'
-			write(v_proc_call, local_proc_call);
+			write(v_proc_call, C_LOCAL_PROC_CALL);
 		else
 			-- Called from another BFM procedure, log 'ext_proc_call while executing axistream_receive...'
-			write(v_proc_call, ext_proc_call & " while executing " & local_proc_name);
+			write(v_proc_call, ext_proc_call & " while executing " & C_LOCAL_PROC_NAME);
 		end if;
 
 		check_value(axistream_if.tuser'length <= C_MAX_TUSER_BITS, TB_ERROR, "Sanity check: Check that C_MAX_TUSER_BITS is high enough for axistream_if.tuser.", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
@@ -1336,7 +1330,7 @@ package body axistream_bfm_pkg is
 				end if;
 
 				-- Deassert tready once per transmission on a specific word
-				if config.ready_low_at_word_num = v_byte_cnt / c_num_bytes_per_word then
+				if config.ready_low_at_word_num = v_byte_cnt / C_NUM_BYTES_PER_WORD then
 					axistream_if.tready <= '0';
 					-- Wait until tvalid goes high before counting the deassertion cycles
 					while axistream_if.tvalid = '0' and v_invalid_count < config.max_wait_cycles loop
@@ -1431,25 +1425,25 @@ package body axistream_bfm_pkg is
 
 				-- Sample sideband data for this transfer (this word): There is one array entry per word
 				if v_byte_in_word = 0 then
-					v_word_idx := v_byte_cnt / c_num_bytes_per_word;
+					v_word_idx := v_byte_cnt / C_NUM_BYTES_PER_WORD;
 					if (v_word_idx <= user_array'high) then -- Include this 'if' to allow a shorter user_array if the caller doesn't care what tuser is
-						user_array(v_byte_cnt / c_num_bytes_per_word)(c_num_user_bits_per_word - 1 downto 0) := axistream_if.tuser(c_num_user_bits_per_word - 1 downto 0);
+						user_array(v_byte_cnt / C_NUM_BYTES_PER_WORD)(C_NUM_USER_BITS_PER_WORD - 1 downto 0) := axistream_if.tuser(C_NUM_USER_BITS_PER_WORD - 1 downto 0);
 					end if;
 					if (v_word_idx <= strb_array'high) then -- Include this 'if' to allow a shorter *_array if the caller doesn't care what tstrb is
-						strb_array(v_byte_cnt / c_num_bytes_per_word)(c_num_strb_bits_per_word - 1 downto 0) := axistream_if.tstrb(c_num_strb_bits_per_word - 1 downto 0);
+						strb_array(v_byte_cnt / C_NUM_BYTES_PER_WORD)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0) := axistream_if.tstrb(C_NUM_STRB_BITS_PER_WORD - 1 downto 0);
 					end if;
 					if (v_word_idx <= id_array'high) then -- Include this 'if' to allow a shorter *_array if the caller doesn't care what tid is
-						id_array(v_byte_cnt / c_num_bytes_per_word)(c_num_id_bits_per_word - 1 downto 0) := axistream_if.tid(c_num_id_bits_per_word - 1 downto 0);
+						id_array(v_byte_cnt / C_NUM_BYTES_PER_WORD)(C_NUM_ID_BITS_PER_WORD - 1 downto 0) := axistream_if.tid(C_NUM_ID_BITS_PER_WORD - 1 downto 0);
 					end if;
 					if (v_word_idx <= dest_array'high) then -- Include this 'if' to allow a shorter *_array if the caller doesn't care what tdest is
-						dest_array(v_byte_cnt / c_num_bytes_per_word)(c_num_dest_bits_per_word - 1 downto 0) := axistream_if.tdest(c_num_dest_bits_per_word - 1 downto 0);
+						dest_array(v_byte_cnt / C_NUM_BYTES_PER_WORD)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0) := axistream_if.tdest(C_NUM_DEST_BITS_PER_WORD - 1 downto 0);
 					end if;
 				end if;
 
-				log(ID_PACKET_DATA, v_proc_call.all & "=> Rx " & to_string(v_data_byte_array(v_byte_cnt), HEX, AS_IS, INCL_RADIX) & --     ", tuser=" & to_string(user_array(v_byte_cnt/c_num_bytes_per_word), HEX, AS_IS, INCL_RADIX) &
-				--     ", tstrb=" & to_string(strb_array(v_byte_cnt/c_num_bytes_per_word), HEX, AS_IS, INCL_RADIX) &
-				--     ", tid="   & to_string(id_array(v_byte_cnt/c_num_bytes_per_word),   HEX, AS_IS, INCL_RADIX) &
-				--     ", tdest=" & to_string(dest_array(v_byte_cnt/c_num_bytes_per_word), HEX, AS_IS, INCL_RADIX) &
+				log(ID_PACKET_DATA, v_proc_call.all & "=> Rx " & to_string(v_data_byte_array(v_byte_cnt), HEX, AS_IS, INCL_RADIX) & --     ", tuser=" & to_string(user_array(v_byte_cnt/C_NUM_BYTES_PER_WORD), HEX, AS_IS, INCL_RADIX) &
+				--     ", tstrb=" & to_string(strb_array(v_byte_cnt/C_NUM_BYTES_PER_WORD), HEX, AS_IS, INCL_RADIX) &
+				--     ", tid="   & to_string(id_array(v_byte_cnt/C_NUM_BYTES_PER_WORD),   HEX, AS_IS, INCL_RADIX) &
+				--     ", tdest=" & to_string(dest_array(v_byte_cnt/C_NUM_BYTES_PER_WORD), HEX, AS_IS, INCL_RADIX) &
 				" (byte# " & to_string(v_byte_cnt) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
 
 				-- Stop sampling data when we have filled the v_data_byte_array
@@ -1465,7 +1459,7 @@ package body axistream_bfm_pkg is
 				-- if receive() is called without knowing the length to be expected.
 				if axistream_if.tlast = '1' then
 					if axistream_if.tkeep(v_byte_in_word) = '1' then
-						if v_byte_in_word = c_num_bytes_per_word - 1 then
+						if v_byte_in_word = C_NUM_BYTES_PER_WORD - 1 then
 							-- it's the last byte in word and tlast='1', thus the last in packet.
 							v_done := true;
 						else
@@ -1496,7 +1490,7 @@ package body axistream_bfm_pkg is
 				end if;
 
 				-- Next byte is in the next clk cycle
-				if v_byte_in_word = c_num_bytes_per_word - 1 then
+				if v_byte_in_word = C_NUM_BYTES_PER_WORD - 1 then
 					-- Don't wait on the last cycle
 					if not (v_done) then
 						wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
@@ -1544,14 +1538,14 @@ package body axistream_bfm_pkg is
 			alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " & add_msg_delimiter(msg), scope);
 		else
 			if ext_proc_call = "" then
-				log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(data_array'length) & " words[" & to_string(c_data_array_bytes_per_word * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
+				log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
 			else
 			-- Log will be handled by calling procedure (e.g. axistream_expect)
 			end if;
 		end if;
 
 		-- Convert SLV with byte-width to expected variable word-width
-		data_array := convert_byte_array_to_slv_array(v_data_byte_array, c_data_array_bytes_per_word, config.byte_endianness);
+		data_array := convert_byte_array_to_slv_array(v_data_byte_array, C_DATA_ARRAY_BYTES_PER_WORD, config.byte_endianness);
 
 		-- Done, set axistream back to default
 		axistream_if <= init_axistream_if_signals(
@@ -1583,12 +1577,11 @@ package body axistream_bfm_pkg is
 		constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
 	) is
-		constant local_proc_name : string := "axistream_receive_bytes"; -- Internal proc_name; used if called from sequncer or VVC
-		constant local_proc_call : string := local_proc_name & "()"; -- Internal proc_call; used if called from sequncer or VVC
-
+		constant C_LOCAL_PROC_NAME : string := "axistream_receive_bytes"; -- Internal proc_name; used if called from sequncer or VVC
+		constant C_LOCAL_PROC_CALL : string := C_LOCAL_PROC_NAME & "()"; -- Internal proc_call; used if called from sequncer or VVC
 	begin
 		-- DEPRECATE: data_array as t_byte_array will be removed in next major release
-		deprecate(local_proc_call, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
+		deprecate(C_LOCAL_PROC_CALL, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
 
 		-- Call overloaded t_slv_array procedure
 		axistream_receive(data_array, data_length, user_array, strb_array, id_array, dest_array,
@@ -1621,7 +1614,6 @@ package body axistream_bfm_pkg is
 		constant ext_proc_call       : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
 	) is
 	begin
-		-- Simply call the record version
 		axistream_receive_bytes(
 			data_array          => data_array,
 			data_length         => data_length,
@@ -1718,14 +1710,14 @@ package body axistream_bfm_pkg is
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
-		constant c_data_array_bytes_per_word : natural := exp_data_array(exp_data_array'low)'length / 8;
-		constant proc_call                   : string  := "axistream_expect(" & to_string(exp_data_array'length) & " words[" & to_string(c_data_array_bytes_per_word * 8) & "b])";
+		constant C_DATA_ARRAY_BYTES_PER_WORD : natural := exp_data_array(exp_data_array'low)'length / 8;
+		constant C_PROC_CALL                   : string  := "axistream_expect(" & to_string(exp_data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b])";
 
-		constant c_num_bytes_per_word     : natural := axistream_if.tdata'length / 8;
-		constant c_num_user_bits_per_word : natural := axistream_if.tuser'length;
-		constant c_num_strb_bits_per_word : natural := axistream_if.tstrb'length;
-		constant c_num_id_bits_per_word   : natural := axistream_if.tid'length;
-		constant c_num_dest_bits_per_word : natural := axistream_if.tdest'length;
+		constant C_NUM_BYTES_PER_WORD     : natural := axistream_if.tdata'length / 8;
+		constant C_NUM_USER_BITS_PER_WORD : natural := axistream_if.tuser'length;
+		constant C_NUM_STRB_BITS_PER_WORD : natural := axistream_if.tstrb'length;
+		constant C_NUM_ID_BITS_PER_WORD   : natural := axistream_if.tid'length;
+		constant C_NUM_DEST_BITS_PER_WORD : natural := axistream_if.tdest'length;
 
 		variable v_config             : t_axistream_bfm_config := config;
 		variable v_rx_data_array      : t_slv_array(exp_data_array'range)(exp_data_array(exp_data_array'low)'range); -- received data
@@ -1743,7 +1735,7 @@ package body axistream_bfm_pkg is
 		variable v_alert_radix        : t_radix;
 		variable v_check_ok           : boolean                := true;
 	begin
-		v_check_ok := v_check_ok and check_value(exp_data_array(exp_data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array word is N*byte", scope, ID_NEVER, msg_id_panel, proc_call);
+		v_check_ok := v_check_ok and check_value(exp_data_array(exp_data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array word is N*byte", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
 		if not (v_check_ok) then
 			return;
 		end if;
@@ -1764,7 +1756,7 @@ package body axistream_bfm_pkg is
 		                  scope         => scope,
 		                  msg_id_panel  => msg_id_panel,
 		                  config        => v_config,
-		                  ext_proc_call => proc_call);
+		                  ext_proc_call => C_PROC_CALL);
 
 		-- Check if each received bit matches the expected
 		-- Find and report the first errored word
@@ -1785,12 +1777,12 @@ package body axistream_bfm_pkg is
 		-- Check tuser matches exp_user_array
 		-- Check all bits the exp_user_array. If the caller (Test Sequencer or VVC) don't care, the length of exp_user_array input shall be only one
 		for word in exp_user_array'high downto 0 loop
-			for i in c_num_user_bits_per_word - 1 downto 0 loop -- i = bit
+			for i in C_NUM_USER_BITS_PER_WORD - 1 downto 0 loop -- i = bit
 				-- Allow don't care in expected value and use match strictness from config for comparison
 				if exp_user_array(word)(i) = '-' or check_value(v_rx_user_array(word)(i), exp_user_array(word)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
 				-- Check is OK
 				else
-					log(ID_PACKET_DATA, proc_call & "=> NOK(word=" & to_string(word) & "), checked " & to_string(v_rx_user_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_user_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
+					log(ID_PACKET_DATA, C_PROC_CALL & "=> NOK(word=" & to_string(word) & "), checked " & to_string(v_rx_user_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_user_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
 					-- Received tuser word does not match the expected word
 					v_user_error_cnt     := v_user_error_cnt + 1;
 					v_first_errored_word := word;
@@ -1800,12 +1792,12 @@ package body axistream_bfm_pkg is
 
 		-- Check that all bits in exp_strb_array matches received tstrb
 		for word in exp_strb_array'high downto 0 loop
-			for i in c_num_strb_bits_per_word - 1 downto 0 loop -- i = bit
+			for i in C_NUM_STRB_BITS_PER_WORD - 1 downto 0 loop -- i = bit
 				-- Allow don't care in expected value and use match strictness from config for comparison
 				if exp_strb_array(word)(i) = '-' or check_value(v_rx_strb_array(word)(i), exp_strb_array(word)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
 				-- Check is OK
 				else
-					log(ID_PACKET_DATA, proc_call & "=> NOK(word=" & to_string(word) & "), checked " & to_string(v_rx_strb_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_strb_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
+					log(ID_PACKET_DATA, C_PROC_CALL & "=> NOK(word=" & to_string(word) & "), checked " & to_string(v_rx_strb_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_strb_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
 					-- Received tstrb word does not match the expected word
 					v_strb_error_cnt     := v_strb_error_cnt + 1;
 					v_first_errored_word := word;
@@ -1820,7 +1812,7 @@ package body axistream_bfm_pkg is
 				if exp_id_array(word)(i) = '-' or check_value(v_rx_id_array(word)(i), exp_id_array(word)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
 				-- Check is OK
 				else
-					log(ID_PACKET_DATA, proc_call & "=> NOK(word=" & to_string(word) & "), checked " & to_string(v_rx_id_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_id_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
+					log(ID_PACKET_DATA, C_PROC_CALL & "=> NOK(word=" & to_string(word) & "), checked " & to_string(v_rx_id_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_id_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
 					-- Received tid word does not match the expected word
 					v_id_error_cnt       := v_id_error_cnt + 1;
 					v_first_errored_word := word;
@@ -1830,12 +1822,12 @@ package body axistream_bfm_pkg is
 
 		-- Check that all bits in exp_dest_array matches received tdest
 		for word in exp_dest_array'high downto 0 loop
-			for i in c_num_dest_bits_per_word - 1 downto 0 loop -- i = bit
+			for i in C_NUM_DEST_BITS_PER_WORD - 1 downto 0 loop -- i = bit
 				-- Allow don't care in expected value and use match strictness from config for comparison
 				if exp_dest_array(word)(i) = '-' or check_value(v_rx_dest_array(word)(i), exp_dest_array(word)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
 				-- Check is OK
 				else
-					log(ID_PACKET_DATA, proc_call & "=> NOK(word=" & to_string(word) & "), checked " & to_string(v_rx_dest_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_dest_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
+					log(ID_PACKET_DATA, C_PROC_CALL & "=> NOK(word=" & to_string(word) & "), checked " & to_string(v_rx_dest_array(word), HEX, AS_IS, INCL_RADIX) & "=" & to_string(exp_dest_array(word), HEX, AS_IS, INCL_RADIX) & add_msg_delimiter(msg), scope, msg_id_panel);
 					-- Received tdest word does not match the expected word
 					v_dest_error_cnt     := v_dest_error_cnt + 1;
 					v_first_errored_word := word;
@@ -1847,25 +1839,25 @@ package body axistream_bfm_pkg is
 		if v_data_error_cnt /= 0 then
 			-- Use binary representation when mismatch is due to weak signals
 			v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_errored_word), exp_data_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-			alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+			alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
 		elsif v_user_error_cnt /= 0 then
 			-- Use binary representation when mismatch is due to weak signals
 			v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_user_array(v_first_errored_word), exp_user_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-			alert(alert_level, proc_call & "=> Failed in " & to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_user_array(v_first_errored_word)(c_num_user_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_word)(c_num_user_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+			alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
 		elsif v_strb_error_cnt /= 0 then
 			-- Use binary representation when mismatch is due to weak signals
 			v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_strb_array(v_first_errored_word), exp_strb_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-			alert(alert_level, proc_call & "=> Failed in " & to_string(v_strb_error_cnt) & " tstrb bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_strb_array(v_first_errored_word)(c_num_strb_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_strb_array(v_first_errored_word)(c_num_strb_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+			alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_strb_error_cnt) & " tstrb bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
 		elsif v_id_error_cnt /= 0 then
 			-- Use binary representation when mismatch is due to weak signals
 			v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_id_array(v_first_errored_word), exp_id_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-			alert(alert_level, proc_call & "=> Failed in " & to_string(v_id_error_cnt) & " tid bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_id_array(v_first_errored_word)(c_num_id_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_id_array(v_first_errored_word)(c_num_id_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+			alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_id_error_cnt) & " tid bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
 		elsif v_dest_error_cnt /= 0 then
 			-- Use binary representation when mismatch is due to weak signals
 			v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_dest_array(v_first_errored_word), exp_dest_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-			alert(alert_level, proc_call & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_dest_array(v_first_errored_word)(c_num_dest_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_dest_array(v_first_errored_word)(c_num_dest_bits_per_word - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+			alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
 		else
-			log(ID_PACKET_COMPLETE, proc_call & "=> OK, received " & to_string(exp_data_array'length) & " words[" & to_string(c_data_array_bytes_per_word * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
+			log(ID_PACKET_COMPLETE, C_PROC_CALL & "=> OK, received " & to_string(exp_data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
 		end if;
 
 	end procedure axistream_expect;
@@ -1886,13 +1878,12 @@ package body axistream_bfm_pkg is
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
-		constant proc_name  : string  := "axistream_expect_bytes";
-		constant proc_call  : string  := "axistream_expect_bytes(" & to_string(exp_data_array'length) & "B)";
+		constant C_PROC_CALL  : string  := "axistream_expect_bytes(" & to_string(exp_data_array'length) & "B)";
 		variable v_check_ok : boolean := false;
 
 	begin
 		-- t_byte_array sanity check
-		v_check_ok := check_value(exp_data_array'length > 0, TB_ERROR, proc_call & "data_array length must be > 0", "VVC");
+		v_check_ok := check_value(exp_data_array'length > 0, TB_ERROR, C_PROC_CALL & "data_array length must be > 0", "VVC");
 
 		if v_check_ok then
 			-- call t_byte_array overloaded procedure
@@ -1968,7 +1959,6 @@ package body axistream_bfm_pkg is
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
 	begin
-		-- Simply call the record version
 		axistream_expect_bytes(
 			exp_data_array      => exp_data_array,
 			exp_user_array      => exp_user_array,
@@ -2016,7 +2006,6 @@ package body axistream_bfm_pkg is
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
 	begin
-		-- Simply call the t_slv_array record version
 		axistream_expect(
 			exp_data_array      => exp_data_array,
 			exp_user_array      => exp_user_array,
@@ -2064,7 +2053,6 @@ package body axistream_bfm_pkg is
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
 	begin
-		-- Simply call the slv record version
 		axistream_expect(
 			exp_data_array      => exp_data_array,
 			exp_user_array      => exp_user_array,
@@ -2119,7 +2107,8 @@ package body axistream_bfm_pkg is
 		                       msg_id_panel,
 		                       config);
 	end procedure;
-	-----------------------
+	
+    -----------------------
 	-- t_slv_array overload
 	-----------------------
 	procedure axistream_expect(

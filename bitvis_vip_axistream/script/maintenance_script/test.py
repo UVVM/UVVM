@@ -100,7 +100,7 @@ hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_v
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_axistream")
 
 
-hr.start(regression_mode=False, gui_mode=False)
+hr.start(regression_mode=True, gui_mode=False)
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()

@@ -3,7 +3,7 @@ Bitvis VIP Error Injection - Overview on Versions and Changes
 
 v1.0.0
 ----------
-Released: 2023-XX-XX
+Released: 2023-03-10
 - Initial version of Error Injection VIP.
 - Corrected version in 0.1.0.
 

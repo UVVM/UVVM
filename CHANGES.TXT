@@ -32,6 +32,9 @@ Released: 2023-XX.XX
 - Changed the main procedures of bitvis_vip_axistream using t_byte_array (deprecated) to be using t_slv_array instead.
   Old procedures are now overloads to ensure backwards compability
 - Changed/improved the prompt and added a check and alert message for channel name input order of RX and TX in vvc_generator
+- Added PR from @kraigher adding a project setup file for rust HDL language server.
+- Added PR from @runeben fixing an issue with AXI-Lite VVC by adding an extra delta cycle delay in the beginning of the
+  read and write executors.
 
 
 

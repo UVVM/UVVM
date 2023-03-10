@@ -5478,8 +5478,10 @@ package body rand_pkg is
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_max_range      : signed(32 downto 0);
       variable v_max_value      : signed(32 downto 0);
-      variable v_acc_range_len  : signed(32 downto 0);
+      variable v_acc_range_len  : signed(33 downto 0);
+      variable v_prev_offset    : signed(33 downto 0);
       variable v_gen_new_random : boolean     := true;
+      variable v_ret_long       : signed(32 downto 0);
       variable v_ret            : integer;
     begin
       if priv_rand_dist = GAUSSIAN then
@@ -5495,29 +5497,30 @@ package body rand_pkg is
         end loop;
         v_max_range := v_max_range - 1;
         v_max_value := v_max_range + priv_int_constraints.val_incl'length;
-        if v_max_value > to_signed(integer'right, 33) then
+        if v_max_range > to_signed(integer'right, 33) or v_max_value > to_signed(integer'right, 33) then
           alert(TB_ERROR, proc_call & "=> Constraints are greater than integer's range", priv_scope);
           priv_ret_valid := false;
           priv_rand_dist := C_PREVIOUS_DIST; -- Restore previous distribution
           return v_ret;
         end if;
 
-        v_ret := rand(C_MIN_RANGE, to_integer(v_max_value), priv_cyclic_mode, msg_id_panel, proc_call);
+        v_ret := rand(C_MIN_RANGE, to_integer(v_max_value(31 downto 0)), priv_cyclic_mode, msg_id_panel, proc_call);
 
         -- Convert the random value to the correct range
         if v_ret <= v_max_range then
-          v_ret           := v_ret - C_MIN_RANGE; -- Remove offset
+          v_ret_long      := to_signed(v_ret, 33) - to_signed(C_MIN_RANGE, 33); -- Remove offset
           v_acc_range_len := (others => '0');
           for j in 0 to priv_int_constraints.ran_incl'length - 1 loop
             v_acc_range_len := v_acc_range_len + priv_int_constraints.ran_incl(j).range_len;
-            if v_ret < v_acc_range_len then
-              v_ret := v_ret + priv_int_constraints.ran_incl(j).min_value - to_integer(v_acc_range_len - priv_int_constraints.ran_incl(j).range_len);
+            if v_ret_long < v_acc_range_len then
+              v_prev_offset := v_acc_range_len - priv_int_constraints.ran_incl(j).range_len;
+              v_ret         := to_integer(v_ret_long + priv_int_constraints.ran_incl(j).min_value - v_prev_offset);
               exit;
             end if;
           end loop;
         -- If random value isn't a range, convert it to the corresponding added value
         else
-          v_ret := priv_int_constraints.val_incl(v_ret - to_integer(v_max_range) - 1);
+          v_ret := priv_int_constraints.val_incl(v_ret - to_integer(v_max_range(31 downto 0)) - 1);
         end if;
 
         -- Check if the random value is in the exclusion list

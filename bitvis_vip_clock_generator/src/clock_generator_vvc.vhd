@@ -105,10 +105,10 @@ begin
       wait for 0 ns;
       exit when shared_uvvm_state = PHASE_B;
     end loop;
-    clock_name                            := (others => NUL);
-    clock_name(1 to GC_CLOCK_NAME'length) := GC_CLOCK_NAME;
-    clock_period                          := GC_CLOCK_PERIOD;
-    clock_high_time                       := GC_CLOCK_HIGH_TIME;
+    clock_name(1 to vvc_config.clock_name'length) := (others => NUL);
+    clock_name(1 to GC_CLOCK_NAME'length)         := GC_CLOCK_NAME;
+    clock_period                                  := GC_CLOCK_PERIOD;
+    clock_high_time                               := GC_CLOCK_HIGH_TIME;
     wait;
   end process;
   --========================================================================================================================

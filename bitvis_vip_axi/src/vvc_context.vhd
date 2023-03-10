@@ -20,7 +20,5 @@ context vvc_context is
   use bitvis_vip_axi.vvc_methods_pkg.all;
   use bitvis_vip_axi.vvc_cmd_pkg.all;
   use bitvis_vip_axi.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_axi.axi_bfm_pkg.t_axi_if;
-  use bitvis_vip_axi.axi_bfm_pkg.t_axi_bfm_config;
-  use bitvis_vip_axi.axi_bfm_pkg.C_AXI_BFM_CONFIG_DEFAULT;
+  use bitvis_vip_axi.axi_bfm_pkg.all;
 end context;

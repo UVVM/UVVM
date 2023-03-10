@@ -1,6 +1,13 @@
 Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
+v4.7.6
+----------
+Released: 2023-03-10
+- Fixed wrong log msg_id used in BFM axistream_expect() procedure.
+- Changed transmit and expect "main" procedures to use t_slv_array instead of t_byte_array.
+  The former procedures using t_byte_array are now overloads of the ones using t_slv_array.
+
 v4.7.5
 ----------
 Released: 2022-05-05

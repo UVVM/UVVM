@@ -29,6 +29,7 @@ package global_signals_and_shared_variables_pkg is
   shared variable shared_log_file_name_is_set    : boolean                                         := false;
   shared variable shared_alert_file_name_is_set  : boolean                                         := false;
   shared variable shared_warned_time_stamp_trunc : boolean                                         := false;
+  shared variable shared_warned_rand_time_res    : boolean                                         := false;
   shared variable shared_alert_attention         : t_alert_attention                               := C_DEFAULT_ALERT_ATTENTION;
   shared variable shared_stop_limit              : t_alert_counters                                := C_DEFAULT_STOP_LIMIT;
   shared variable shared_log_hdr_for_waveview    : string(1 to C_LOG_HDR_FOR_WAVEVIEW_WIDTH);

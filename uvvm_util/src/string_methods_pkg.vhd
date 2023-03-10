@@ -1294,12 +1294,15 @@ package body string_methods_pkg is
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
+      variable v_line                  : line;
     begin
       if val'length > 0 then
         v_commas       := 2 * (val'length - 1);
         v_radix_prefix := 3 * val'length;
         for i in val'range loop
-          v_max_array_element_len := v_max_array_element_len + to_string(val(i), radix)'length;
+          write(v_line, to_string(val(i), radix));
+          v_max_array_element_len := v_max_array_element_len + v_line'length;
+          deallocate(v_line);
         end loop;
       end if;
       return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len);
@@ -1347,12 +1350,15 @@ package body string_methods_pkg is
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
+      variable v_line                  : line;
     begin
       if val'length > 0 then
         v_commas       := 2 * (val'length - 1);
         v_radix_prefix := 3 * val'length;
         for i in val'range loop
-          v_max_array_element_len := v_max_array_element_len + to_string(val(i), radix)'length;
+          write(v_line, to_string(val(i), radix));
+          v_max_array_element_len := v_max_array_element_len + v_line'length;
+          deallocate(v_line);
         end loop;
       end if;
       return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len);
@@ -1400,12 +1406,15 @@ package body string_methods_pkg is
       variable v_commas                : integer := 0; -- Commas (and spaces)
       variable v_radix_prefix          : integer := 0; -- Radix prefixes (and enclosing quotes)
       variable v_max_array_element_len : integer := 0; -- Maximum length of the array elements (accounts for radix size and message "(too wide to be converted to integer)")
+      variable v_line                  : line;
     begin
       if val'length > 0 then
         v_commas       := 2 * (val'length - 1);
         v_radix_prefix := 3 * val'length;
         for i in val'range loop
-          v_max_array_element_len := v_max_array_element_len + to_string(val(i), radix)'length;
+          write(v_line, to_string(val(i), radix));
+          v_max_array_element_len := v_max_array_element_len + v_line'length;
+          deallocate(v_line);
         end loop;
       end if;
       return (v_parantheses + v_commas + v_radix_prefix + v_max_array_element_len);

@@ -1,6 +1,12 @@
 Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
+v1.0.0
+----------
+Released: 2023-03-10
+- Added one delta cycle delay in the setup for read and write process in VVC.
+- Initial version of AXI VIP.
+- Corrected version in 0.1.0.
 
 v0.2.1
 ----------
@@ -25,4 +31,4 @@ Released: 2021-04-08
 v0.1.0
 ----------
 Released: 2020-10-06
-- Initial version of AXI VIP
+- Beta version of AXI VIP.

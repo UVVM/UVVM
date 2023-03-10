@@ -3,6 +3,16 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.2
+----------
+Released: 2023-03-10
+- C_MAX_VVC_INSTANCE_NUM in adaptions_pkg.vhd had to be increased from 8 to 10.
+- Fixed compilation warnings on rand_pkg regarding a truncated value.
+- Fixed compilation warnings on string_methods_pkg regarding using an attribute on a function call.
+- Fixed random() time function and procedure overflowing when default time resolution was too small for a given range.
+- Added an overload for the random() time function and procedure with a parameter to select the time resolution.
+- Fixed possible overflow when randomizing with multiple ranges.
+
 v2.19.1
 ----------
 Released: 2022-10-07

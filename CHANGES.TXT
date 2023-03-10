@@ -10,9 +10,9 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
-v2 2023.XX.XX
+v2 2023.03.10
 --------------------
-Released: 2023-XX.XX
+Released: 2023-03.10
 - Fixed compilation warnings on rand_pkg regarding a truncated value.
 - Fixed compilation warnings on string_methods_pkg regarding using an attribute on a function call.
 - Fixed compilation warning on avalon_mm_vvc regarding the initial value of a signal depending on a port signal value.

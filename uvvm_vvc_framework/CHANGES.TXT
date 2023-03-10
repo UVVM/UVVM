@@ -2,6 +2,18 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.4
+----------
+Released: 2023-03-10
+- vvc_generator.py prompts related to the order of RX and TX channels are changed.
+  There is also added a check for which order RX and TX channels have been added.
+  If not in the order RX (first) then TX (second) a message is given to the user
+- Updated bfm_config record example in vvc_generator.py.
+- Added clear_list(VOID) argument to protected type t_prot_vvc_list.
+- Added add_to_vvc_list() method to VVCs for use with await_completion().
+- Added ti_vvc_framework_context.vhd
+- Removed cmd_idx from add() method in t_prot_vvc_list (t_vvc_info_list).
+
 v2.12.3
 ----------
 Released: 2022-05-05

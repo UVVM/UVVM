@@ -156,6 +156,7 @@ package body spec_cov_pkg is
   shared variable priv_testcase_name           : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
   shared variable priv_testcase_passed         : boolean;
   shared variable priv_requirement_file_exists : boolean;
+  shared variable priv_result_file_exists      : boolean;
 
   type t_disabled_tick_off_array is array (0 to shared_spec_cov_config.max_requirements) of string(1 to C_CSV_FILE_MAX_LINE_LENGTH);
   shared variable priv_disabled_tick_off_array : t_disabled_tick_off_array := (others => (others => NUL));
@@ -238,7 +239,9 @@ package body spec_cov_pkg is
       log(ID_SPEC_COV, "Logging requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & priv_get_description(requirement) & "'. " & msg, scope);
       -- Log to file
       write(v_requirement_to_file_line, requirement & C_CSV_DELIMITER & priv_get_default_testcase_name & C_CSV_DELIMITER & priv_test_status_to_string(v_requirement_status));
-      writeline(RESULT_FILE, v_requirement_to_file_line);
+      if priv_result_file_exists then
+        writeline(RESULT_FILE, v_requirement_to_file_line);
+      end if;
       -- Increment number of tick off for this requirement
       priv_inc_num_requirement_tick_offs(requirement);
     end if;
@@ -342,7 +345,9 @@ package body spec_cov_pkg is
     log(ID_SPEC_COV, "Marking requirement coverage result.", C_SCOPE);
     write(v_checksum_string, priv_get_summary_string);
 
-    writeline(RESULT_FILE, v_checksum_string);
+    if priv_result_file_exists then
+      writeline(RESULT_FILE, v_checksum_string);
+    end if;
 
     file_close(RESULT_FILE);
     log(ID_SPEC_COV, "Requirement coverage finalized.", C_SCOPE);
@@ -363,6 +368,13 @@ package body spec_cov_pkg is
   begin
     file_open(v_file_open_status, RESULT_FILE, file_name, write_mode);
     check_file_open_status(v_file_open_status, file_name);
+
+    if v_file_open_status = open_ok then
+      priv_result_file_exists := true;
+    else
+      priv_result_file_exists := false;
+      return;
+    end if;
 
     -- Write info and settings to CSV file for Python post-processing script
     log(ID_SPEC_COV, "Adding test and configuration information to coverage file. ", C_SCOPE);

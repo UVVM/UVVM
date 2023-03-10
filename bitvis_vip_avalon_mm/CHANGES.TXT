@@ -2,6 +2,13 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ==============================================================
 ----------------------------------------------------------------------
 
+
+v2.8.3
+----------
+Released: 2023-03-10
+- Fixed compilation warning on avalon_mm_vvc regarding the initial value of a signal depending on a port signal value.
+- Added one delta cycle delay in the setup for read and write process in VVC.
+
 v2.8.2
 ----------
 Released: 2022-05-05

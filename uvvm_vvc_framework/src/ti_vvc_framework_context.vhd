@@ -14,10 +14,11 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-context vvc_context is
-  library bitvis_vip_axilite;
-  use bitvis_vip_axilite.transaction_pkg.all;
-  use bitvis_vip_axilite.vvc_methods_pkg.all;
-  use bitvis_vip_axilite.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_axilite.axilite_bfm_pkg.all;
+context vvc_framework_context is
+  library uvvm_vvc_framework;
+  use uvvm_vvc_framework.ti_data_fifo_pkg.all;
+  use uvvm_vvc_framework.ti_data_queue_pkg.all;
+  use uvvm_vvc_framework.ti_data_stack_pkg.all;
+  use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+  use uvvm_vvc_framework.ti_protected_types_pkg.all;
 end context;

@@ -279,23 +279,41 @@ package ti_vvc_framework_support_pkg is
   -------------------------------------------
   -- await_completion
   -------------------------------------------
-  -- Awaits completion of any VVC in the list or until timeout.
-  procedure await_completion(
-    constant vvc_select    : in t_vvc_select;
-    variable vvc_info_list : inout t_vvc_info_list;
-    constant timeout       : in time;
-    constant list_action   : in t_list_action := CLEAR_LIST;
-    constant msg           : in string        := "";
-    constant scope         : in string        := C_VVC_CMD_SCOPE_DEFAULT
-  );
-
-  -- Awaits completion of all the VVCs in the activity register or until timeout.
   procedure await_completion(
     constant vvc_select  : in t_vvc_select;
+    variable vvc_list    : inout t_prot_vvc_list;
+    constant wanted_idx  : in integer;
     constant timeout     : in time;
     constant list_action : in t_list_action := CLEAR_LIST;
     constant msg         : in string        := "";
     constant scope       : in string        := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  -- Overload without vvc_select, using ALL_OF
+  procedure await_completion(
+    variable vvc_list    : inout t_prot_vvc_list;
+    constant timeout     : in time;
+    constant list_action : in t_list_action := CLEAR_LIST;
+    constant msg         : in string        := "";
+    constant scope       : in string        := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  -- Overload. Awaits completion of any or all VVCs in the list, or until timeout
+  procedure await_completion(
+    constant vvc_select  : in t_vvc_select;
+    variable vvc_list    : inout t_prot_vvc_list;
+    constant timeout     : in time;
+    constant list_action : in t_list_action := CLEAR_LIST;
+    constant msg         : in string        := "";
+    constant scope       : in string        := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
+  -- Overload. Awaits completion of all VVCs in the activity register (Broadcast), or until timeout.
+  procedure await_completion(
+    constant vvc_select : in t_vvc_select;
+    constant timeout    : in time;
+    constant msg        : in string := "";
+    constant scope      : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
   -- ============================================================================
@@ -665,18 +683,19 @@ package body ti_vvc_framework_support_pkg is
   end function;
 
   procedure await_completion(
-    constant vvc_select    : in t_vvc_select;
-    variable vvc_info_list : inout t_vvc_info_list;
-    constant timeout       : in time;
-    constant list_action   : in t_list_action := CLEAR_LIST;
-    constant msg           : in string        := "";
-    constant scope         : in string        := C_VVC_CMD_SCOPE_DEFAULT
+    constant vvc_select  : in t_vvc_select;
+    variable vvc_list    : inout t_prot_vvc_list;
+    constant wanted_idx  : in integer;
+    constant timeout     : in time;
+    constant list_action : in t_list_action := CLEAR_LIST;
+    constant msg         : in string        := "";
+    constant scope       : in string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
     constant proc_name                      : string                                      := "await_completion";
-    constant proc_call                      : string                                      := proc_name & "(" & to_string(vvc_select) & "," & vvc_info_list.priv_get_vvc_info_list & "," & to_string(timeout, ns) & ")";
+    constant proc_call                      : string                                      := proc_name & "(" & to_string(vvc_select) & "," & vvc_list.priv_get_vvc_list & "," & to_string(timeout, ns) & ")";
     constant proc_call_short                : string                                      := proc_name & "(" & to_string(vvc_select) & "," & to_string(timeout, ns) & ")";
     constant c_index_not_found              : integer                                     := -1;
-    constant c_vvc_info_list_length         : natural                                     := vvc_info_list.priv_get_num_vvc_in_list;
+    constant c_vvc_list_length              : natural                                     := vvc_list.priv_get_num_vvc_in_list;
     variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM)      := (others => -1);
     variable v_num_vvc_instances            : natural                                     := 0;
     variable v_tot_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM         := 0;
@@ -689,10 +708,14 @@ package body ti_vvc_framework_support_pkg is
     variable v_list_idx                     : natural                                     := 0;
     variable v_proc_call                    : line;
   begin
-    if vvc_select = ALL_VVCS and shared_vvc_activity_register.priv_get_num_registered_vvcs = c_vvc_info_list_length then
+    if vvc_select = ALL_VVCS and shared_vvc_activity_register.priv_get_num_registered_vvcs = c_vvc_list_length then
       v_proc_call := new string'(proc_call_short);
     else
       v_proc_call := new string'(proc_call);
+    end if;
+
+    if c_vvc_list_length > 1 and wanted_idx >= 0 then
+      alert(TB_ERROR, v_proc_call.all & add_msg_delimiter(msg) & "=> wanted_idx and VVC list can only be used with 1 single VVC in the VVC list.", scope);
     end if;
 
     -- Increment shared_cmd_idx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
@@ -705,30 +728,30 @@ package body ti_vvc_framework_support_pkg is
     log(ID_AWAIT_COMPLETION, v_proc_call.all & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
 
     -- Give a warning for incorrect use of ALL_VVCS
-    if vvc_select = ALL_VVCS and shared_vvc_activity_register.priv_get_num_registered_vvcs /= c_vvc_info_list_length then
+    if vvc_select = ALL_VVCS and shared_vvc_activity_register.priv_get_num_registered_vvcs /= c_vvc_list_length then
       alert(TB_WARNING, v_proc_call.all & add_msg_delimiter(msg) & "=> When using ALL_VVCS with a VVC list, only the VVCs from the list will be checked." & format_command_idx(v_local_cmd_idx), scope);
     end if;
 
     -- Check that list is not empty
-    if c_vvc_info_list_length = 0 then
+    if c_vvc_list_length = 0 then
       v_done := true;
     end if;
 
     -- Loop through the VVC list and get the corresponding index from the vvc activity register
-    for i in 0 to c_vvc_info_list_length - 1 loop
-      if vvc_info_list.priv_get_instance(i) = ALL_INSTANCES or vvc_info_list.priv_get_channel(i) = ALL_CHANNELS then
+    for i in 0 to c_vvc_list_length - 1 loop
+      if vvc_list.priv_get_instance(i) = ALL_INSTANCES or vvc_list.priv_get_channel(i) = ALL_CHANNELS then
         -- Check how many instances or channels of this VVC are registered in the vvc activity register
-        v_num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_matches(vvc_info_list.priv_get_name(i),
-                                                                                                vvc_info_list.priv_get_instance(i), vvc_info_list.priv_get_channel(i));
+        v_num_vvc_instances := shared_vvc_activity_register.priv_get_num_registered_vvc_matches(vvc_list.priv_get_name(i),
+                                                                                                vvc_list.priv_get_instance(i), vvc_list.priv_get_channel(i));
         -- Get the index for every instance or channel of this VVC
         for j in 0 to v_num_vvc_instances - 1 loop
-          v_vvc_idx_in_activity_register(v_tot_vvc_instances + j) := shared_vvc_activity_register.priv_get_vvc_idx(j, vvc_info_list.priv_get_name(i),
-                                                                                                                   vvc_info_list.priv_get_instance(i), vvc_info_list.priv_get_channel(i));
+          v_vvc_idx_in_activity_register(v_tot_vvc_instances + j) := shared_vvc_activity_register.priv_get_vvc_idx(j, vvc_list.priv_get_name(i),
+                                                                                                                   vvc_list.priv_get_instance(i), vvc_list.priv_get_channel(i));
         end loop;
       else
         -- Get the index for a specific VVC
-        v_vvc_idx_in_activity_register(v_tot_vvc_instances) := shared_vvc_activity_register.priv_get_vvc_idx(vvc_info_list.priv_get_name(i),
-                                                                                                             vvc_info_list.priv_get_instance(i), vvc_info_list.priv_get_channel(i));
+        v_vvc_idx_in_activity_register(v_tot_vvc_instances) := shared_vvc_activity_register.priv_get_vvc_idx(vvc_list.priv_get_name(i),
+                                                                                                             vvc_list.priv_get_instance(i), vvc_list.priv_get_channel(i));
         v_num_vvc_instances                                 := 0 when v_vvc_idx_in_activity_register(v_tot_vvc_instances) = c_index_not_found else 1;
       end if;
 
@@ -737,18 +760,22 @@ package body ti_vvc_framework_support_pkg is
 
       -- Check if the VVC from the list is registered in the vvc activity register, otherwise clean the list and exit procedure
       if v_vvc_idx_in_activity_register(v_tot_vvc_instances - v_num_vvc_instances) = c_index_not_found then
-        alert(TB_ERROR, v_proc_call.all & add_msg_delimiter(msg) & "=> " & vvc_info_list.priv_get_vvc_info(i) & " does not support this procedure." & format_command_idx(v_local_cmd_idx), scope);
+        alert(TB_ERROR, v_proc_call.all & add_msg_delimiter(msg) & "=> " & vvc_list.priv_get_vvc_info(i) & " does not support this procedure." & format_command_idx(v_local_cmd_idx), scope);
         v_done := true;
         exit;
       end if;
     end loop;
+
+    if v_tot_vvc_instances = 0 then
+      alert(TB_WARNING, v_proc_call.all & add_msg_delimiter(msg) & "=> No matching VVC from vvc_list found in VVC activity register.", scope);
+    end if;
 
     v_timestamp := now;
     while not (v_done) loop
       v_list_idx := 0;
       for i in 0 to v_tot_vvc_instances - 1 loop
         -- Wait for the VVCs in the group to complete (INACTIVE status)
-        if vvc_info_list.priv_get_cmd_idx(v_list_idx) = -1 then
+        if wanted_idx = -1 then
           if shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register(i)) = INACTIVE then
             if not (v_vvc_logged(i)) then
               log(ID_AWAIT_COMPLETION_END, v_proc_call.all & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) & " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
@@ -761,7 +788,7 @@ package body ti_vvc_framework_support_pkg is
           end if;
         -- Wait for the VVCs in the group to complete (cmd_idx completed)
         else
-          if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= vvc_info_list.priv_get_cmd_idx(v_list_idx) then
+          if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= wanted_idx then
             if not (v_vvc_logged(i)) then
               log(ID_AWAIT_COMPLETION_END, v_proc_call.all & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) & " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
               v_vvc_logged(i)  := '1';
@@ -772,8 +799,8 @@ package body ti_vvc_framework_support_pkg is
             end if;
           end if;
         end if;
-        -- Increment the vvc_info_list index (different from the v_vvc_idx_in_activity_register)
-        if not (vvc_info_list.priv_get_instance(v_list_idx) = ALL_INSTANCES or vvc_info_list.priv_get_channel(v_list_idx) = ALL_CHANNELS) then
+        -- Increment the vvc_list index (different from the v_vvc_idx_in_activity_register)
+        if not (vvc_list.priv_get_instance(v_list_idx) = ALL_INSTANCES or vvc_list.priv_get_channel(v_list_idx) = ALL_CHANNELS) then
           v_list_idx := v_list_idx + 1;
         end if;
       end loop;
@@ -796,7 +823,7 @@ package body ti_vvc_framework_support_pkg is
     end loop;
 
     if list_action = CLEAR_LIST then
-      vvc_info_list.priv_clear_list;
+      vvc_list.clear_list(VOID);
       log(ID_AWAIT_COMPLETION_LIST, v_proc_call.all & "=> All VVCs removed from the list. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
     elsif list_action = KEEP_LIST then
       log(ID_AWAIT_COMPLETION_LIST, v_proc_call.all & "=> Keeping all VVCs in the list. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, shared_msg_id_panel);
@@ -804,24 +831,46 @@ package body ti_vvc_framework_support_pkg is
   end procedure;
 
   procedure await_completion(
-    constant vvc_select  : in t_vvc_select;
+    variable vvc_list    : inout t_prot_vvc_list;
     constant timeout     : in time;
     constant list_action : in t_list_action := CLEAR_LIST;
     constant msg         : in string        := "";
     constant scope       : in string        := C_VVC_CMD_SCOPE_DEFAULT
   ) is
-    constant proc_name       : string := "await_completion";
-    constant proc_call       : string := proc_name & "(" & to_string(vvc_select) & "," & to_string(timeout, ns) & ")";
-    variable v_vvc_info_list : t_vvc_info_list;
+  begin
+    await_completion(ALL_OF, vvc_list, timeout, list_action, msg, scope);
+  end procedure await_completion;
+
+  procedure await_completion(
+    constant vvc_select  : in t_vvc_select;
+    variable vvc_list    : inout t_prot_vvc_list;
+    constant timeout     : in time;
+    constant list_action : in t_list_action := CLEAR_LIST;
+    constant msg         : in string        := "";
+    constant scope       : in string        := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    await_completion(vvc_select, vvc_list, -1, timeout, list_action, msg, scope);
+  end procedure await_completion;
+
+  procedure await_completion(
+    constant vvc_select  : in t_vvc_select;
+    constant timeout     : in time;
+    constant msg         : in string        := "";
+    constant scope       : in string        := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+    constant proc_name  : string := "await_completion";
+    constant proc_call  : string := proc_name & "(" & to_string(vvc_select) & "," & to_string(timeout, ns) & ")";
+    variable v_vvc_list : t_prot_vvc_list;
   begin
     if vvc_select = ALL_VVCS then
-      -- Get all the VVCs from the vvc activity register and put them in the vvc_info_list
+      -- Get all the VVCs from the vvc activity register and put them in the vvc_list
       for i in 0 to shared_vvc_activity_register.priv_get_num_registered_vvcs - 1 loop
-        v_vvc_info_list.add(shared_vvc_activity_register.priv_get_vvc_name(i),
-                            shared_vvc_activity_register.priv_get_vvc_instance(i),
-                            shared_vvc_activity_register.priv_get_vvc_channel(i));
+        v_vvc_list.add(shared_vvc_activity_register.priv_get_vvc_name(i),
+                       shared_vvc_activity_register.priv_get_vvc_instance(i),
+                       shared_vvc_activity_register.priv_get_vvc_channel(i));
       end loop;
-      await_completion(vvc_select, v_vvc_info_list, timeout, list_action, msg, scope);
+      await_completion(vvc_select, v_vvc_list, timeout, CLEAR_LIST, msg, scope);
     else
       alert(TB_ERROR, proc_call & add_msg_delimiter(msg) & "=> A VVC list is required when using " & to_string(vvc_select) & ".", scope);
     end if;

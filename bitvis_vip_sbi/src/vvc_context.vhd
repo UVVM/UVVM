@@ -19,7 +19,5 @@ context vvc_context is
   use bitvis_vip_sbi.transaction_pkg.all;
   use bitvis_vip_sbi.vvc_methods_pkg.all;
   use bitvis_vip_sbi.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_sbi.sbi_bfm_pkg.t_sbi_if;
-  use bitvis_vip_sbi.sbi_bfm_pkg.t_sbi_bfm_config;
-  use bitvis_vip_sbi.sbi_bfm_pkg.C_SBI_BFM_CONFIG_DEFAULT;
+  use bitvis_vip_sbi.sbi_bfm_pkg.all;
 end context;

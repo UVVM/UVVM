@@ -32,8 +32,9 @@ context uvvm_util.uvvm_util_context;
 
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+use uvvm_vvc_framework.ti_protected_types_pkg.all;
 
-use work.vvc_cmd_pkg.all;               -- shared_vvc_response, t_vvc_result
+use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 
 package td_vvc_framework_common_methods_pkg is
@@ -41,6 +42,19 @@ package td_vvc_framework_common_methods_pkg is
   --======================================================================
   -- Common Methods
   --======================================================================
+
+  procedure add_to_vvc_list(
+    signal   vvc_target       : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant vvc_channel      : in t_channel;
+    variable vvc_list         : inout t_prot_vvc_list
+  );
+
+  procedure add_to_vvc_list(
+    signal   vvc_target       : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    variable vvc_list         : inout t_prot_vvc_list
+  );
 
   -------------------------------------------
   -- await_completion
@@ -434,30 +448,24 @@ package body td_vvc_framework_common_methods_pkg is
   --       a) include the new operator(s) in its t_operation, or
   --       b) change the use-reference to an older common_methods package.
 
-  procedure await_completion(
-    signal   vvc_target          : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant vvc_channel         : in t_channel;
-    constant timeout             : in time;
-    constant msg                 : in string         := "";
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
+  procedure add_to_vvc_list(
+    signal   vvc_target       : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    constant vvc_channel      : in t_channel;
+    variable vvc_list         : inout t_prot_vvc_list
   ) is
   begin
-    await_completion(vvc_target, vvc_instance_idx, vvc_channel, -1, timeout, msg, scope, parent_msg_id_panel);
-  end procedure;
+    vvc_list.add(vvc_target.vvc_name, vvc_instance_idx, vvc_channel);
+  end procedure add_to_vvc_list;
 
-  procedure await_completion(
-    signal   vvc_target          : inout t_vvc_target_record;
-    constant vvc_instance_idx    : in integer;
-    constant timeout             : in time;
-    constant msg                 : in string         := "";
-    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
-    constant parent_msg_id_panel : in t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
+  procedure add_to_vvc_list(
+    signal   vvc_target       : inout t_vvc_target_record;
+    constant vvc_instance_idx : in integer;
+    variable vvc_list         : inout t_prot_vvc_list
   ) is
   begin
-    await_completion(vvc_target, vvc_instance_idx, NA, -1, timeout, msg, scope, parent_msg_id_panel);
-  end procedure;
+    vvc_list.add(vvc_target.vvc_name, vvc_instance_idx, NA);
+  end procedure add_to_vvc_list;
 
   procedure await_completion(
     signal   vvc_target          : inout t_vvc_target_record;
@@ -474,19 +482,15 @@ package body td_vvc_framework_common_methods_pkg is
                                    & ", " & to_string(wanted_idx) & ", " & to_string(timeout, ns) & ")";
     constant proc_call_short : string := proc_name & "(" & to_string(vvc_target, vvc_instance_idx, vvc_channel) -- First part common for all
                                          & ", " & to_string(timeout, ns) & ")";
-    variable v_msg_id_panel   : t_msg_id_panel                              := shared_msg_id_panel;
-    variable v_vvc_logged     : std_logic_vector(0 to C_MAX_TB_VVC_NUM - 1) := (others => '0');
-    variable v_vvcs_completed : natural                                     := 0;
-    variable v_local_cmd_idx  : integer;
-    variable v_timestamp      : time;
-    variable v_done           : boolean                                     := false;
-    variable v_first_wait     : boolean                                     := true;
-    variable v_proc_call      : line;
-
+    variable v_msg_id_panel                 : t_msg_id_panel                         := shared_msg_id_panel;
+    variable v_local_cmd_idx                : integer;
+    variable v_proc_call                    : line;
     variable v_vvc_idx_in_activity_register : t_integer_array(0 to C_MAX_TB_VVC_NUM) := (others => -1);
     variable v_num_vvc_instances            : natural range 0 to C_MAX_TB_VVC_NUM    := 0;
     variable v_vvc_instance_idx             : integer                                := vvc_instance_idx;
     variable v_vvc_channel                  : t_channel                              := vvc_channel;
+    variable v_vvc_list                     : t_prot_vvc_list;
+
   begin
 
     -- Only log wanted_idx when it's given as a parameter
@@ -516,71 +520,8 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is registered use the new mechanism
     if v_num_vvc_instances > 0 then
-      -- Wait for a few delta cycles to account for any potential extra delays in new or user VVCs.
-      wait for 0 ns;
-      wait for 0 ns;
-      wait for 0 ns;
-
-      -- Checking if await selected (with a specified wanted_idx) is supported by this VVC
-      if wanted_idx /= -1 and not shared_vvc_activity_register.priv_get_vvc_await_selected_supported(v_vvc_idx_in_activity_register(0)) then
-        alert(TB_ERROR, v_proc_call.all & " await_completion with a specified wanted_idx is not supported by " & shared_vvc_activity_register.priv_get_vvc_name(v_vvc_idx_in_activity_register(0)) & ". " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
-      end if;
-      -- Increment shared_cmd_idx. It is protected by the protected_semaphore and only one sequencer can access the variable at a time.
-      -- Store it in a local variable since new commands might be executed from another sequencer.
-      await_semaphore_in_delta_cycles(protected_semaphore);
-      shared_cmd_idx  := shared_cmd_idx + 1;
-      v_local_cmd_idx := shared_cmd_idx;
-      release_semaphore(protected_semaphore);
-
-      log(ID_AWAIT_COMPLETION, v_proc_call.all & ": " & add_msg_delimiter(msg) & "." & format_command_idx(v_local_cmd_idx), scope, v_msg_id_panel);
-
-      v_timestamp := now;
-      while not (v_done) loop
-        for i in 0 to v_num_vvc_instances - 1 loop
-          -- Wait for all of the VVC's instances and channels to complete (INACTIVE status)
-          if wanted_idx = -1 then
-            if shared_vvc_activity_register.priv_get_vvc_activity(v_vvc_idx_in_activity_register(i)) = INACTIVE then
-              if not (v_vvc_logged(i)) then
-                log(ID_AWAIT_COMPLETION_END, v_proc_call.all & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) & " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, v_msg_id_panel);
-                v_vvc_logged(i)  := '1';
-                v_vvcs_completed := v_vvcs_completed + 1;
-              end if;
-              if v_vvcs_completed = v_num_vvc_instances then
-                v_done := true;
-              end if;
-            end if;
-          -- Wait for all of the VVC's instances and channels to complete (cmd_idx completed)
-          else
-            if shared_vvc_activity_register.priv_get_vvc_last_cmd_idx_executed(v_vvc_idx_in_activity_register(i)) >= wanted_idx then
-              if not (v_vvc_logged(i)) then
-                log(ID_AWAIT_COMPLETION_END, v_proc_call.all & "=> " & shared_vvc_activity_register.priv_get_vvc_info(v_vvc_idx_in_activity_register(i)) & " finished. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, v_msg_id_panel);
-                v_vvc_logged(i)  := '1';
-                v_vvcs_completed := v_vvcs_completed + 1;
-              end if;
-              if v_vvcs_completed = v_num_vvc_instances then
-                v_done := true;
-              end if;
-            end if;
-          end if;
-        end loop;
-
-        if not (v_done) then
-          if v_first_wait then
-            log(ID_AWAIT_COMPLETION_WAIT, v_proc_call.all & " - Pending completion. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope, v_msg_id_panel);
-            v_first_wait := false;
-          end if;
-
-          -- Wait for vvc activity trigger pulse
-          wait on global_trigger_vvc_activity_register for timeout;
-
-          -- Check if there was a timeout
-          if now >= v_timestamp + timeout then
-            alert(TB_ERROR, v_proc_call.all & "=> Timeout. " & add_msg_delimiter(msg) & format_command_idx(v_local_cmd_idx), scope);
-            v_done := true;
-          end if;
-        end if;
-      end loop;
-
+      add_to_vvc_list(vvc_target, vvc_instance_idx, vvc_channel, v_vvc_list);
+      await_completion(ALL_OF, v_vvc_list, wanted_idx, timeout, CLEAR_LIST, msg, scope);
     -- If the VVC is not registered use the old mechanism
     else
       log(ID_OLD_AWAIT_COMPLETION, vvc_target.vvc_name & " is not supporting the VVC activity register, using old await_completion() method.", scope, v_msg_id_panel);
@@ -606,6 +547,31 @@ package body td_vvc_framework_common_methods_pkg is
   ) is
   begin
     await_completion(vvc_target, vvc_instance_idx, NA, wanted_idx, timeout, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure await_completion(
+    signal   vvc_target          : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant vvc_channel         : in t_channel;
+    constant timeout             : in time;
+    constant msg                 : in string         := "";
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
+  ) is
+  begin
+    await_completion(vvc_target, vvc_instance_idx, vvc_channel, -1, timeout, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure await_completion(
+    signal   vvc_target          : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant timeout             : in time;
+    constant msg                 : in string         := "";
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := shared_msg_id_panel --UVVM: temporary fix for HVVC, replace for C_UNUSED_MSG_ID_PANEL in v3.0
+  ) is
+  begin
+    await_completion(vvc_target, vvc_instance_idx, NA, -1, timeout, msg, scope, parent_msg_id_panel);
   end procedure;
 
   procedure await_any_completion(

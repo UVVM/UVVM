@@ -19,7 +19,5 @@ context vvc_context is
   use bitvis_vip_avalon_mm.transaction_pkg.all;
   use bitvis_vip_avalon_mm.vvc_methods_pkg.all;
   use bitvis_vip_avalon_mm.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.t_avalon_mm_if;
-  use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.t_avalon_mm_bfm_config;
-  use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.C_AVALON_MM_BFM_CONFIG_DEFAULT;
+  use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 end context;

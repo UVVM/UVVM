@@ -31,7 +31,7 @@ use std.env.all;
 
 package methods_pkg is
 
-  constant C_UVVM_VERSION : string := "v2 2022.10.07";
+  constant C_UVVM_VERSION : string := "v2 2023.03.10";
 
   -- -- ============================================================================
   -- -- Initialisation and license
@@ -1856,6 +1856,12 @@ package methods_pkg is
   ) return real;
 
   impure function random(
+    constant min_value       : time;
+    constant max_value       : time;
+    constant time_resolution : time
+  ) return time;
+
+  impure function random(
     constant min_value : time;
     constant max_value : time
   ) return time;
@@ -1886,6 +1892,16 @@ package methods_pkg is
     variable v_seed1   : inout positive;
     variable v_seed2   : inout positive;
     variable v_target  : inout real
+  );
+
+  procedure random(
+    constant min_value       : time;
+    constant max_value       : time;
+    constant time_resolution : time;
+    variable v_seed1         : inout positive;
+    variable v_seed2         : inout positive;
+    variable v_target        : inout time;
+    constant ext_proc_call   : string := ""
   );
 
   procedure random(
@@ -6802,8 +6818,25 @@ package body methods_pkg is
     return v_rand_scaled;
   end;
 
-  -- Return a random time between min time and max time
+  -- Return a random time between min time and max time using the given time resolution
   -- Use global seeds
+  impure function random(
+    constant min_value       : time;
+    constant max_value       : time;
+    constant time_resolution : time
+  ) return time is
+    variable v_rand_scaled : time;
+    variable v_seed1       : positive := shared_seed1;
+    variable v_seed2       : positive := shared_seed2;
+  begin
+    random(min_value, max_value, time_resolution, v_seed1, v_seed2, v_rand_scaled);
+    -- Write back seeds
+    shared_seed1 := v_seed1;
+    shared_seed2 := v_seed2;
+    return v_rand_scaled;
+  end;
+
+  -- Overload with default time resolution
   impure function random(
     constant min_value : time;
     constant max_value : time
@@ -6812,7 +6845,7 @@ package body methods_pkg is
     variable v_seed1       : positive := shared_seed1;
     variable v_seed2       : positive := shared_seed2;
   begin
-    random(min_value, max_value, v_seed1, v_seed2, v_rand_scaled);
+    random(min_value, max_value, std.env.resolution_limit, v_seed1, v_seed2, v_rand_scaled, "overload");
     -- Write back seeds
     shared_seed1 := v_seed1;
     shared_seed2 := v_seed2;
@@ -6878,12 +6911,49 @@ package body methods_pkg is
   begin
     -- Random real-number value in range 0 to 1.0
     uniform(v_seed1, v_seed2, v_rand);
-
     -- Scale to a random integer between min_value and max_value
     v_target := min_value + v_rand * (max_value - min_value);
   end;
 
-  -- Set target to a random integer between min_value and max_value
+  -- Set target to a random integer between min_value and max_value using the given time resolution
+  procedure random(
+    constant min_value       : time;
+    constant max_value       : time;
+    constant time_resolution : time;
+    variable v_seed1         : inout positive;
+    variable v_seed2         : inout positive;
+    variable v_target        : inout time;
+    constant ext_proc_call   : string := "" -- External proc_call. Overwrite if called from random() overload
+  ) is
+    constant C_MAX_INT_VAL : real := real(integer'right);
+    variable v_time_unit   : time := time_resolution;
+    variable v_rand        : real;
+    variable v_rand_int    : integer;
+    function get_range(constant max : in time; constant min : in time; constant unit : in time) return real is
+    begin
+      return (1.0 + real(max / unit) - real(min / unit));
+    end function;
+  begin
+    -- Adjust the time resolution so that the random value does not overflow the integer range
+    if get_range(max_value, min_value, v_time_unit) > C_MAX_INT_VAL then
+      while(get_range(max_value, min_value, v_time_unit) > C_MAX_INT_VAL) loop
+        v_time_unit := v_time_unit * 1000;
+      end loop;
+      if not(shared_warned_rand_time_res) and ext_proc_call = "" then
+        alert(TB_WARNING, "random(" & to_string(min_value) & "," & to_string(max_value) & "," & to_string(time_resolution) &
+          ") => time_resolution is too small for the given range. It has been increased to " & to_string(v_time_unit), C_TB_SCOPE_DEFAULT);
+        shared_warned_rand_time_res := true;
+      end if;
+    end if;
+
+    -- Random real-number value in range 0 to 1.0
+    uniform(v_seed1, v_seed2, v_rand);
+    -- Scale to a random integer between min_value and max_value
+    v_rand_int := integer(real(min_value / v_time_unit) + trunc(v_rand * get_range(max_value, min_value, v_time_unit)));
+    v_target   := v_rand_int * v_time_unit;
+  end;
+
+  -- Overload with default time resolution
   procedure random(
     constant min_value : time;
     constant max_value : time;
@@ -6891,15 +6961,8 @@ package body methods_pkg is
     variable v_seed2   : inout positive;
     variable v_target  : inout time
   ) is
-    constant time_unit  : time := std.env.resolution_limit;
-    variable v_rand     : real;
-    variable v_rand_int : integer;
   begin
-    -- Random real-number value in range 0 to 1.0
-    uniform(v_seed1, v_seed2, v_rand);
-    -- Scale to a random integer between min_value and max_value
-    v_rand_int := integer(real(min_value / time_unit) + trunc(v_rand * (1.0 + real(max_value / time_unit) - real(min_value / time_unit))));
-    v_target   := v_rand_int * time_unit;
+    random(min_value, max_value, std.env.resolution_limit, v_seed1, v_seed2, v_target, "overload");
   end;
 
   -- Set global seeds

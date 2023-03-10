@@ -19,6 +19,5 @@ context vvc_context is
   use bitvis_vip_gpio.transaction_pkg.all;
   use bitvis_vip_gpio.vvc_methods_pkg.all;
   use bitvis_vip_gpio.td_vvc_framework_common_methods_pkg.all;
-  use bitvis_vip_gpio.gpio_bfm_pkg.t_gpio_bfm_config;
-  use bitvis_vip_gpio.gpio_bfm_pkg.C_GPIO_BFM_CONFIG_DEFAULT;
+  use bitvis_vip_gpio.gpio_bfm_pkg.all;
 end context;

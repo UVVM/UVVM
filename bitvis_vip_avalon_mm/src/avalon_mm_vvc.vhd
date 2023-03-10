@@ -96,7 +96,7 @@ architecture behave of avalon_mm_vvc is
   signal avalon_mm_vvc_master_if_pd : t_avalon_mm_if(address(GC_ADDR_WIDTH - 1 downto 0),
                                                      byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0),
                                                      writedata(GC_DATA_WIDTH - 1 downto 0),
-                                                     readdata(GC_DATA_WIDTH - 1 downto 0)) := avalon_mm_vvc_master_if;
+                                                     readdata(GC_DATA_WIDTH - 1 downto 0)) := init_avalon_mm_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH);
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
@@ -521,6 +521,7 @@ begin
     variable v_cmd_queues_are_empty : boolean;
 
   begin
+    wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     command_response_queue.set_scope(C_SCOPE & ":RQ");
     command_response_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);

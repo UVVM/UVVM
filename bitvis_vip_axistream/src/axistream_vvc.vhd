@@ -294,7 +294,7 @@ begin
             transaction_info.numPacketsSent := transaction_info.numPacketsSent + 1;
 
             -- Call the corresponding procedure in the BFM package.
-            axistream_transmit_bytes(
+            axistream_transmit(
               data_array   => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
               user_array   => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
               strb_array   => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
@@ -348,7 +348,7 @@ begin
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
             -- Call the corresponding procedure in the BFM package.
-            axistream_expect_bytes(
+            axistream_expect(
               exp_data_array => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
               exp_user_array => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
               exp_strb_array => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),

@@ -1,0 +1,40 @@
+name: 'Test UVVM with GHDL'
+
+# TODO add events (push, pull_request, release) and/or schedule as required
+on: [workflow_dispatch]
+
+jobs:
+  test-ghdl:
+    name: 'Test UVVM with GHDL'
+    runs-on: windows-2019
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: 'Setup MSYS2-MinGW64'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw32
+          update: true
+      - name: 'Install GHDL'
+        run: |
+          pacman -S --noconfirm mingw-w64-i686-ghdl-mcode
+      - name: 'Run Tests'
+        run: |
+          mkdir test && cd test
+          sh ../script/compile_all.sh ghdl
+          sh ../bitvis_irqc/script/compile_all_and_simulate.sh ghdl
+          grep -Rq "Simulation SUCCESS" ghdl/_Log.txt
+          if (( $? != 0 )); then
+            exit 1
+          fi
+          sh ../bitvis_uart/script/compile_all_and_simulate.sh ghdl
+          grep -Rq "Simulation SUCCESS" ghdl/_Log.txt
+          if (( $? != 0 )); then
+            exit 1
+          fi
+

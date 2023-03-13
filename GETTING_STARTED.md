@@ -11,19 +11,32 @@ A number of VHDL verification components (VVCs) are provided for free with this 
 NOTE: All Libraries, BFMs, VVCs, etc. have their own dedicated Quick Reference (QR) showing you all you need to use the respective part.
 
 ## Github directory naming notation
-- The directories starting with 'uvvm_' are the core libraries for UVVM Utility Library and UVVM VVC System
-- All directories starting with 'bitvis_vip_' are verification IP/modules from Bitvis
-- All other directories starting with 'bitvis_' are design IP/modules from Bitvis
+- The directories starting with `uvvm_` are the core libraries for UVVM Utility Library and UVVM VVC System
+- All directories starting with `bitvis_vip_` are verification IP/modules from Bitvis
+- All other directories starting with `bitvis_` are design IP/modules from Bitvis
 - Directories starting with 'x' are external (third party) libraries that work seamlessly with UVVM
 
-## List of demo testbenches
- - /bitvis_irqc/tb
-    - Navigate to /bitvis_irqc/sim
-    - Open "bitvis_irqc.mpf" or run "vsim -c -do ../script/compile_all_and_simulate.do"
+## Compiling all of UVVM
 
- - /bitvis_uart/tb
-    - Navigate to /bitvis_uart/sim
-    - Open "bitvis_uart.mpf" or run "vsim -c -do ../script/compile_all_and_simulate.do"
+The easiest way to compile the complete UVVM with everything (Utility Library, VVC Framework, BFMS, VVCs, etc.) is to go to the top-level script directory and either run `compile_all.do` inside Modelsim / Questasim / RivieraPro / ActiveHDL, or run the `compile_all.sh` shell script:
+
+    sh compile_all.sh <simulator> <target>
+
+`<simulator>` specifies the simulator to be used and should be `ghdl`, `nvc` or `vsim`. `<target_dir>` sets target directory (defaults to current directory if not specified).
+
+## Demo testbenches
+
+Demo testbenches are provided in the `bitvis_irqc` and `bitvis_uart` directories.
+
+To compile and simulate a demo, start by navigating to its `script` subdirectory. Users of ModelSim, Questa, Riviera Pro and ActiveHDl can run the `compile_all_and_simulate.do` script:
+
+     vsim -c -do compile_all_and_simulate.do
+
+Alternatively, run the `compile_all_and_simulate.sh` shell script:
+
+    sh compile_all_and_simulate.sh <simulator> <target_dir>
+
+`<simulator>` specifies the simulator to be used and should be `ghdl`, `nvc` or `vsim`. `<target_dir>` sets target directory (defaults to current directory if not specified).
 
 ## For developers with no previous UVVM experience:
 ### Step 1
@@ -32,23 +45,21 @@ You should start by first understanding and trying out the Utility Library. The 
 * Go through the powerpoint 'Making a simple, structured and efficient VHDL testbench – Step-by-step' linked to from the README-file
 
 ### Step 2
-To compile Utility Library related VHDL files you can do the following:
-* To compile Utility Library only you can use the following approaches:
-   * Running commands inside Modelsim/Questasim/RivieraPro/ActiveHDL:
-      1. Go to the uvvm_util/script directory using the simulator's console.
-      2. Run the command: do compile_src.do 
-         The following arguments are suported compile_src.do arg1 arg2 :
-         - arg1: sets source directory, target will be current directory if no arg2
-         - arg2: sets target directory
-   * Using GHDL:
-      Use GHDL provided script with uvvm_util/script/compile_order.txt as input
-   * Any other approach - or with script problems:
-      Follow compile order given in uvvm_util/script/compile_order.txt
-      Note that VHDL 2008 must be used. Lines starting with '# ' are required library definitions
-* To compile the complete IRQC demo testbench including Utility Library, SBI BFM and the IRQC DUT:
-   1. Use any of the approaches above and exchange the path 'uvvm_util' with 'bitvis_irqc'
-   2. Use the file compile_all_and_simulate.do instead.
-* To compile all above plus all provided BFMs, the scripts for compiling the complete UVVM should be used. (See below) (This compiles far more than you need, but then at least everything is pre-compiled)
+To compile Utility Library related VHDL files, navigate to `uvvm_util/script`. Users of Modelsim, Questasim, Riviera Pro or ActiveHDL may run the `compile_src.do` script in the simulator console:
+
+    do compile_src.do <source_dir> <target_dir>
+
+`<source_dir>` sets source directory, `<target_dir>` sets target directory (defaults to current directory if not specified).
+
+Alternatively, run the `compile_src.sh` shell script:
+
+    sh compile_src.sh <simulator> <target_dir>
+
+`<simulator>` specifies the simulator to be used and should be `ghdl`, `nvc` or `vsim`. `<target_dir>` sets target directory (defaults to current directory if not specified).
+
+To compile the demo testbenches, refer to the **Demo testbenches** section above.
+
+To compile everything, refer to the **Compiling all of UVVM** section above.
 
 ## For developers who understand the basics of UVVM Utility library and need more than just basic testbenches:
 ### Step 1
@@ -57,11 +68,17 @@ To compile Utility Library related VHDL files you can do the following:
 * For a slightly deeper introduction - also explaining the challenges - please check out our PPT-file [The_critically_missing_VHDL_TB_feature.ppsx](./uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
 
 ### Step 2
-* The easiest way to compile the complete UVVM with everything (Utility Library, VVC Framework, BFMS, VVCs, etc.) is to go to the top-level script directory and run 'compile_all.do' inside Modelsim/Questasim/RivieraPro/ActiveHDL.
+* Refer to the **Compiling all of UVVM** section above.
 
-* For the UART VVC demo, go to bitvis_uart/script and run 'compile_all_and_simulate.do'
-
-* For GHDL use the provided 'compile_order.txt' files.
+* Refer to the **Demo testbenches** section above.
 
 ### Step 3
-If you like to use UVVM in a more advanced way you should read the relevant documentation under [UVVM VVC Framework doc](./uvvm_vvc_framework/doc)
+If you would like to use UVVM in a more advanced way you should read the relevant documentation under [UVVM VVC Framework doc](./uvvm_vvc_framework/doc).
+
+## Running Shell Scripts on Windows
+
+[MSYS2](https://www.msys2.org/) is recommended for running shell scripts, GNU utilities etc on Windows. It is also recommended for the GHDL and NVC simulators. Remember to add the MSYS2 binary directories to the Windows path if you would like to use a Windows Terminal or Command Prompt instead of the MSYS2 terminal:
+
+    C:\msys64\usr\bin
+    C:\msys64\mingw64\bin
+    C:\msys64\mingw32\bin

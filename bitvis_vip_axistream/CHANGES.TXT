@@ -6,6 +6,8 @@ v4.7.7
 ----------
 Released: 2023-03-21
 - Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
+- In axistream_vvc: When calling a BFM procedure,
+  always use the non-record version to avoid fatal error in Questa: (SIGSEGV) Bad handle or reference 
 
 v4.7.6
 ----------

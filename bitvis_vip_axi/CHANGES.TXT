@@ -6,7 +6,8 @@ v1.0.1
 ----------
 Released: 2023-03-21
 - Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
-
+- Fixed bug where queue status in VVC depends on undefined process
+  execution order, issue #201.
 
 v1.0.0
 ----------

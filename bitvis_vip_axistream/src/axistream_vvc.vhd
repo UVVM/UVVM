@@ -52,12 +52,12 @@ entity axistream_vvc is
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level          := warning;
     GC_RESULT_QUEUE_COUNT_MAX                : natural                := 1000;
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := WARNING
-  );
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := warning
+    );
   port(
     clk              : in    std_logic;
     axistream_vvc_if : inout t_axistream_if := init_axistream_if_signals(GC_VVC_IS_MASTER, GC_DATA_WIDTH, GC_USER_WIDTH, GC_ID_WIDTH, GC_DEST_WIDTH)
-  );
+    );
 begin
   -- Check the interface widths to assure that the interface was correctly set up
   assert (axistream_vvc_if.tdata'length = GC_DATA_WIDTH) report "axistream_vvc_if.data'length =/ GC_DATA_WIDTH" severity failure;
@@ -92,7 +92,7 @@ architecture behave of axistream_vvc is
   function get_msg_id_panel(
     constant command    : in t_vvc_cmd_record;
     constant vvc_config : in t_vvc_config
-  ) return t_msg_id_panel is
+    ) return t_msg_id_panel is
   begin
     -- If the parent_msg_id_panel is set then use it,
     -- otherwise use the VVCs msg_id_panel from its config.
@@ -129,10 +129,10 @@ begin
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
-                                                                                                            instance => GC_INSTANCE_IDX);
+    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
+                                                                                         instance => GC_INSTANCE_IDX);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
-    v_msg_id_panel                                        := vvc_config.msg_id_panel;
+    v_msg_id_panel := vvc_config.msg_id_panel;
 
     -- Then for every single command from the sequencer
     loop                                -- basically as long as new commands are received
@@ -295,17 +295,25 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             axistream_transmit(
-              data_array   => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
-              user_array   => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
-              strb_array   => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
-              id_array     => v_cmd.id_array(0 to v_cmd.id_array_length - 1),
-              dest_array   => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
-              msg          => format_msg(v_cmd),
-              clk          => clk,
-              axistream_if => axistream_vvc_if,
-              scope        => C_SCOPE,
-              msg_id_panel => v_msg_id_panel,
-              config       => vvc_config.bfm_config);
+              data_array          => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
+              user_array          => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
+              strb_array          => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
+              id_array            => v_cmd.id_array(0 to v_cmd.id_array_length - 1),
+              dest_array          => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
+              msg                 => format_msg(v_cmd),
+              clk                 => clk,
+              axistream_if.tdata  => axistream_vvc_if.tdata,
+              axistream_if.tkeep  => axistream_vvc_if.tkeep,
+              axistream_if.tuser  => axistream_vvc_if.tuser,
+              axistream_if.tvalid => axistream_vvc_if.tvalid,
+              axistream_if.tlast  => axistream_vvc_if.tlast,
+              axistream_if.tready => axistream_vvc_if.tready,
+              axistream_if.tstrb  => axistream_vvc_if.tstrb,
+              axistream_if.tid    => axistream_vvc_if.tid,
+              axistream_if.tdest  => axistream_vvc_if.tdest,
+              scope               => C_SCOPE,
+              msg_id_panel        => v_msg_id_panel,
+              config              => vvc_config.bfm_config);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for master (source) VVC", C_SCOPE);
           end if;
@@ -315,18 +323,26 @@ begin
             -- Set vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
 
-            axistream_receive(data_array   => v_result.data_array,
-                              data_length  => v_result.data_length,
-                              user_array   => v_result.user_array,
-                              strb_array   => v_result.strb_array,
-                              id_array     => v_result.id_array,
-                              dest_array   => v_result.dest_array,
-                              msg          => format_msg(v_cmd),
-                              clk          => clk,
-                              axistream_if => axistream_vvc_if,
-                              scope        => C_SCOPE,
-                              msg_id_panel => v_msg_id_panel,
-                              config       => vvc_config.bfm_config);
+            axistream_receive(data_array          => v_result.data_array,
+                              data_length         => v_result.data_length,
+                              user_array          => v_result.user_array,
+                              strb_array          => v_result.strb_array,
+                              id_array            => v_result.id_array,
+                              dest_array          => v_result.dest_array,
+                              msg                 => format_msg(v_cmd),
+                              clk                 => clk,
+                              axistream_if.tdata  => axistream_vvc_if.tdata,
+                              axistream_if.tkeep  => axistream_vvc_if.tkeep,
+                              axistream_if.tuser  => axistream_vvc_if.tuser,
+                              axistream_if.tvalid => axistream_vvc_if.tvalid,
+                              axistream_if.tlast  => axistream_vvc_if.tlast,
+                              axistream_if.tready => axistream_vvc_if.tready,
+                              axistream_if.tstrb  => axistream_vvc_if.tstrb,
+                              axistream_if.tid    => axistream_vvc_if.tid,
+                              axistream_if.tdest  => axistream_vvc_if.tdest,
+                              scope               => C_SCOPE,
+                              msg_id_panel        => v_msg_id_panel,
+                              config              => vvc_config.bfm_config);
 
             -- Request SB check result
             if v_cmd.data_routing = TO_SB then
@@ -349,18 +365,26 @@ begin
 
             -- Call the corresponding procedure in the BFM package.
             axistream_expect(
-              exp_data_array => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
-              exp_user_array => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
-              exp_strb_array => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
-              exp_id_array   => v_cmd.id_array(0 to v_cmd.id_array_length - 1),
-              exp_dest_array => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
-              msg            => format_msg(v_cmd),
-              clk            => clk,
-              axistream_if   => axistream_vvc_if,
-              alert_level    => v_cmd.alert_level,
-              scope          => C_SCOPE,
-              msg_id_panel   => v_msg_id_panel,
-              config         => vvc_config.bfm_config);
+              exp_data_array      => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
+              exp_user_array      => v_cmd.user_array(0 to v_cmd.user_array_length - 1),
+              exp_strb_array      => v_cmd.strb_array(0 to v_cmd.strb_array_length - 1),
+              exp_id_array        => v_cmd.id_array(0 to v_cmd.id_array_length - 1),
+              exp_dest_array      => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
+              msg                 => format_msg(v_cmd),
+              clk                 => clk,
+              axistream_if.tdata  => axistream_vvc_if.tdata,
+              axistream_if.tkeep  => axistream_vvc_if.tkeep,
+              axistream_if.tuser  => axistream_vvc_if.tuser,
+              axistream_if.tvalid => axistream_vvc_if.tvalid,
+              axistream_if.tlast  => axistream_vvc_if.tlast,
+              axistream_if.tready => axistream_vvc_if.tready,
+              axistream_if.tstrb  => axistream_vvc_if.tstrb,
+              axistream_if.tid    => axistream_vvc_if.tid,
+              axistream_if.tdest  => axistream_vvc_if.tdest,
+              alert_level         => v_cmd.alert_level,
+              scope               => C_SCOPE,
+              msg_id_panel        => v_msg_id_panel,
+              config              => vvc_config.bfm_config);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
           end if;

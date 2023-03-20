@@ -1,6 +1,12 @@
 Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
+
+v2.7.3
+----------
+Released: 2023-03-21
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
+
 v2.7.2
 ----------
 Released: 2022-05-05

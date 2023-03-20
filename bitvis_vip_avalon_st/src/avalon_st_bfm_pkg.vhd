@@ -31,7 +31,7 @@ package avalon_st_bfm_pkg is
   --==========================================================================================
   -- Types and constants for AVALON_ST BFM
   --==========================================================================================
-  constant C_SCOPE : string := "AVALON_ST BFM";
+  constant C_BFM_SCOPE : string := "AVALON_ST BFM";
 
   constant C_MAX_BITS_PER_SYMBOL  : positive := 512; -- Recommended maximum in protocol specification (MNL-AVABUSREF)
   constant C_MAX_SYMBOLS_PER_BEAT : positive := 32; -- Recommended maximum in protocol specification (MNL-AVABUSREF)
@@ -109,7 +109,7 @@ package avalon_st_bfm_pkg is
     constant msg           : in string                 := "";
     signal   clk           : in std_logic;
     signal   avalon_st_if  : inout t_avalon_st_if;
-    constant scope         : in string                 := C_SCOPE;
+    constant scope         : in string                 := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   );
@@ -119,7 +119,7 @@ package avalon_st_bfm_pkg is
     constant msg          : in string                 := "";
     signal   clk          : in std_logic;
     signal   avalon_st_if : inout t_avalon_st_if;
-    constant scope        : in string                 := C_SCOPE;
+    constant scope        : in string                 := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   );
@@ -134,7 +134,7 @@ package avalon_st_bfm_pkg is
     constant msg           : in string                 := "";
     signal   clk           : in std_logic;
     signal   avalon_st_if  : inout t_avalon_st_if;
-    constant scope         : in string                 := C_SCOPE;
+    constant scope         : in string                 := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -145,7 +145,7 @@ package avalon_st_bfm_pkg is
     constant msg           : in string                 := "";
     signal   clk           : in std_logic;
     signal   avalon_st_if  : inout t_avalon_st_if;
-    constant scope         : in string                 := C_SCOPE;
+    constant scope         : in string                 := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -161,7 +161,7 @@ package avalon_st_bfm_pkg is
     signal   clk          : in std_logic;
     signal   avalon_st_if : inout t_avalon_st_if;
     constant alert_level  : in t_alert_level          := error;
-    constant scope        : in string                 := C_SCOPE;
+    constant scope        : in string                 := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   );
@@ -172,7 +172,7 @@ package avalon_st_bfm_pkg is
     signal   clk          : in std_logic;
     signal   avalon_st_if : inout t_avalon_st_if;
     constant alert_level  : in t_alert_level          := error;
-    constant scope        : in string                 := C_SCOPE;
+    constant scope        : in string                 := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   );
@@ -231,7 +231,7 @@ package body avalon_st_bfm_pkg is
     constant msg           : in string                 := "";
     signal   clk           : in std_logic;
     signal   avalon_st_if  : inout t_avalon_st_if;
-    constant scope         : in string                 := C_SCOPE;
+    constant scope         : in string                 := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
@@ -395,7 +395,7 @@ package body avalon_st_bfm_pkg is
     constant msg          : in string                 := "";
     signal   clk          : in std_logic;
     signal   avalon_st_if : inout t_avalon_st_if;
-    constant scope        : in string                 := C_SCOPE;
+    constant scope        : in string                 := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
@@ -414,7 +414,7 @@ package body avalon_st_bfm_pkg is
     constant msg           : in string                 := "";
     signal   clk           : in std_logic;
     signal   avalon_st_if  : inout t_avalon_st_if;
-    constant scope         : in string                 := C_SCOPE;
+    constant scope         : in string                 := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -623,7 +623,7 @@ package body avalon_st_bfm_pkg is
     constant msg           : in string                 := "";
     signal   clk           : in std_logic;
     signal   avalon_st_if  : inout t_avalon_st_if;
-    constant scope         : in string                 := C_SCOPE;
+    constant scope         : in string                 := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -643,7 +643,7 @@ package body avalon_st_bfm_pkg is
     signal   clk          : in std_logic;
     signal   avalon_st_if : inout t_avalon_st_if;
     constant alert_level  : in t_alert_level          := error;
-    constant scope        : in string                 := C_SCOPE;
+    constant scope        : in string                 := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
@@ -708,7 +708,7 @@ package body avalon_st_bfm_pkg is
     signal   clk          : in std_logic;
     signal   avalon_st_if : inout t_avalon_st_if;
     constant alert_level  : in t_alert_level          := error;
-    constant scope        : in string                 := C_SCOPE;
+    constant scope        : in string                 := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
     constant config       : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is

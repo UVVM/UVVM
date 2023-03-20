@@ -10,9 +10,18 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2023.03.21
+--------------------
+Released: 2023-03-21
+- Changed name from C_SCOPE to C_SCOPE_BFM in BFM packages.
+- In axistream_vvc: When calling a BFM procedure,
+  always use the non-record version to avoid fatal error: (SIGSEGV) Bad handle or reference, issue #202.
+- Fixed bug where queue status in AXI and AXI-LITE VVCS depend on undefined process
+  execution order, issue #201.
+
 v2 2023.03.10
 --------------------
-Released: 2023-03.10
+Released: 2023-03-10
 - Fixed compilation warnings on rand_pkg regarding a truncated value.
 - Fixed compilation warnings on string_methods_pkg regarding using an attribute on a function call.
 - Fixed compilation warning on avalon_mm_vvc regarding the initial value of a signal depending on a port signal value.

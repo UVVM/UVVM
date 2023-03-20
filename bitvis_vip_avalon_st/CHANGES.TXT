@@ -2,6 +2,11 @@ Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v1.2.4
+----------
+Released: 2023-03-21
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
+
 v1.2.3
 ----------
 Released: 2022-05-05

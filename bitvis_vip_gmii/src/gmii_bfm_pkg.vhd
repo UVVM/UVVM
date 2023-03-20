@@ -31,7 +31,7 @@ package gmii_bfm_pkg is
   --==========================================================================================
   -- Types and constants for GMII BFM 
   --==========================================================================================
-  constant C_SCOPE : string := "GMII BFM";
+  constant C_BFM_SCOPE : string := "GMII BFM";
 
   -- Interface record for BFM signals to DUT
   type t_gmii_tx_if is record
@@ -95,7 +95,7 @@ package gmii_bfm_pkg is
     constant data_array   : in t_slv_array;
     constant msg          : in string            := "";
     signal   gmii_tx_if   : inout t_gmii_tx_if;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   );
@@ -105,7 +105,7 @@ package gmii_bfm_pkg is
     constant msg                          : in string            := "";
     signal   gmii_tx_if                   : inout t_gmii_tx_if;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
-    constant scope                        : in string            := C_SCOPE;
+    constant scope                        : in string            := C_BFM_SCOPE;
     constant msg_id_panel                 : in t_msg_id_panel    := shared_msg_id_panel;
     constant config                       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   );
@@ -119,7 +119,7 @@ package gmii_bfm_pkg is
     variable data_len      : out natural;
     constant msg           : in string            := "";
     signal   gmii_rx_if    : inout t_gmii_rx_if;
-    constant scope         : in string            := C_SCOPE;
+    constant scope         : in string            := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel    := shared_msg_id_panel;
     constant config        : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string            := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -133,7 +133,7 @@ package gmii_bfm_pkg is
     constant msg          : in string            := "";
     signal   gmii_rx_if   : inout t_gmii_rx_if;
     constant alert_level  : in t_alert_level     := ERROR;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   );
@@ -172,7 +172,7 @@ package body gmii_bfm_pkg is
     constant data_array   : in t_slv_array;
     constant msg          : in string            := "";
     signal   gmii_tx_if   : inout t_gmii_tx_if;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   ) is
@@ -185,7 +185,7 @@ package body gmii_bfm_pkg is
     constant msg                          : in string            := "";
     signal   gmii_tx_if                   : inout t_gmii_tx_if;
     constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
-    constant scope                        : in string            := C_SCOPE;
+    constant scope                        : in string            := C_BFM_SCOPE;
     constant msg_id_panel                 : in t_msg_id_panel    := shared_msg_id_panel;
     constant config                       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   ) is
@@ -239,7 +239,7 @@ package body gmii_bfm_pkg is
     variable data_len      : out natural;
     constant msg           : in string            := "";
     signal   gmii_rx_if    : inout t_gmii_rx_if;
-    constant scope         : in string            := C_SCOPE;
+    constant scope         : in string            := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel    := shared_msg_id_panel;
     constant config        : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string            := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -342,7 +342,7 @@ package body gmii_bfm_pkg is
     constant msg          : in string            := "";
     signal   gmii_rx_if   : inout t_gmii_rx_if;
     constant alert_level  : in t_alert_level     := ERROR;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT
   ) is

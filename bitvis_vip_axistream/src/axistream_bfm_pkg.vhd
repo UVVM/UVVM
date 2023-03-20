@@ -34,7 +34,7 @@ package axistream_bfm_pkg is
 	--========================================================================================================================
 	-- Types and constants for AXISTREAM_BFM
 	--========================================================================================================================
-	constant C_SCOPE : string := "AXISTREAM_BFM";
+	constant C_BFM_SCOPE : string := "AXISTREAM_BFM";
 
 	--========================================================================================================================
 	-- C_MAX_*_BITS : Maximum number of bits per data word supported by the BFM.
@@ -157,7 +157,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -171,7 +171,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -185,7 +185,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -208,7 +208,7 @@ package axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -230,7 +230,7 @@ package axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -252,7 +252,7 @@ package axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -264,7 +264,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -275,7 +275,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -286,7 +286,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -297,7 +297,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -307,7 +307,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -317,7 +317,7 @@ package axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -342,7 +342,7 @@ package axistream_bfm_pkg is
 		constant msg           : in string;
 		signal   clk           : in std_logic;
 		signal   axistream_if  : inout t_axistream_if;
-		constant scope         : in string                 := C_SCOPE;
+		constant scope         : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -357,7 +357,7 @@ package axistream_bfm_pkg is
 		constant msg           : in string;
 		signal   clk           : in std_logic;
 		signal   axistream_if  : inout t_axistream_if;
-		constant scope         : in string                 := C_SCOPE;
+		constant scope         : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -382,7 +382,7 @@ package axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call       : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -406,7 +406,7 @@ package axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call       : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -428,7 +428,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -443,7 +443,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -458,7 +458,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -482,7 +482,7 @@ package axistream_bfm_pkg is
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
 		constant alert_level         : in t_alert_level          := error;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -505,7 +505,7 @@ package axistream_bfm_pkg is
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
 		constant alert_level         : in t_alert_level          := error;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -528,7 +528,7 @@ package axistream_bfm_pkg is
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
 		constant alert_level         : in t_alert_level          := error;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -541,7 +541,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -553,7 +553,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -565,7 +565,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -577,7 +577,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -588,7 +588,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -599,7 +599,7 @@ package axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	);
@@ -676,7 +676,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -879,7 +879,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -908,7 +908,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -938,7 +938,7 @@ package body axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -986,7 +986,7 @@ package body axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1034,7 +1034,7 @@ package body axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1070,7 +1070,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1102,7 +1102,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1133,7 +1133,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1163,7 +1163,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1187,7 +1187,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1210,7 +1210,7 @@ package body axistream_bfm_pkg is
 		constant msg          : in string                 := "";
 		signal   clk          : in std_logic;
 		signal   axistream_if : inout t_axistream_if;
-		constant scope        : in string                 := C_SCOPE;
+		constant scope        : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config       : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1244,7 +1244,7 @@ package body axistream_bfm_pkg is
 		constant msg           : in string;
 		signal   clk           : in std_logic;
 		signal   axistream_if  : inout t_axistream_if;
-		constant scope         : in string                 := C_SCOPE;
+		constant scope         : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -1572,7 +1572,7 @@ package body axistream_bfm_pkg is
 		constant msg           : in string;
 		signal   clk           : in std_logic;
 		signal   axistream_if  : inout t_axistream_if;
-		constant scope         : in string                 := C_SCOPE;
+		constant scope         : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config        : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -1608,7 +1608,7 @@ package body axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call       : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -1657,7 +1657,7 @@ package body axistream_bfm_pkg is
 		signal   axistream_if_tvalid : inout std_logic;
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
 		constant ext_proc_call       : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -1706,7 +1706,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1874,7 +1874,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1913,7 +1913,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -1954,7 +1954,7 @@ package body axistream_bfm_pkg is
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
 		constant alert_level         : in t_alert_level          := error;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -2001,7 +2001,7 @@ package body axistream_bfm_pkg is
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
 		constant alert_level         : in t_alert_level          := error;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -2048,7 +2048,7 @@ package body axistream_bfm_pkg is
 		signal   axistream_if_tlast  : inout std_logic;
 		signal   axistream_if_tready : inout std_logic;
 		constant alert_level         : in t_alert_level          := error;
-		constant scope               : in string                 := C_SCOPE;
+		constant scope               : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel        : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config              : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -2085,7 +2085,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -2118,7 +2118,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -2150,7 +2150,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -2181,7 +2181,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -2212,7 +2212,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is
@@ -2243,7 +2243,7 @@ package body axistream_bfm_pkg is
 		signal   clk            : in std_logic;
 		signal   axistream_if   : inout t_axistream_if;
 		constant alert_level    : in t_alert_level          := error;
-		constant scope          : in string                 := C_SCOPE;
+		constant scope          : in string                 := C_BFM_SCOPE;
 		constant msg_id_panel   : in t_msg_id_panel         := shared_msg_id_panel;
 		constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
 	) is

@@ -1,6 +1,12 @@
 Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+
+v1.0.1
+----------
+Released: 2023-03-21
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
+
 v1.0.0
 ----------
 Released: 2023-03-10

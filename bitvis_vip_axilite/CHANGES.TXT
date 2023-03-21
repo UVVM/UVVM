@@ -2,6 +2,13 @@ Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
 
+v2.9.3
+----------
+Released: 2023-03-21
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
+- Fixed bug where queue status in VVC depends on undefined process
+  execution order, issue #201.
+
 v2.9.2
 ----------
 Released: 2023-03-10

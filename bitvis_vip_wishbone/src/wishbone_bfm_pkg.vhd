@@ -30,7 +30,7 @@ package wishbone_bfm_pkg is
   --========================================================================================================================
   -- Types and constants for WISHBONE BFM
   --========================================================================================================================
-  constant C_SCOPE : string := "WISHBONE BFM";
+  constant C_BFM_SCOPE : string := "WISHBONE BFM";
 
   type t_wishbone_if is record
     -- Common for slave and master interfaces
@@ -90,7 +90,7 @@ package wishbone_bfm_pkg is
     constant msg          : in string;
     signal   clk          : in std_logic;
     signal   wishbone_if  : inout t_wishbone_if;
-    constant scope        : in string                := C_SCOPE;
+    constant scope        : in string                := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel        := shared_msg_id_panel;
     constant config       : in t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT
   );
@@ -101,7 +101,7 @@ package wishbone_bfm_pkg is
     constant msg           : in string;
     signal   clk           : in std_logic;
     signal   wishbone_if   : inout t_wishbone_if;
-    constant scope         : in string                := C_SCOPE;
+    constant scope         : in string                := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel        := shared_msg_id_panel;
     constant config        : in t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -114,7 +114,7 @@ package wishbone_bfm_pkg is
     signal   clk          : in std_logic;
     signal   wishbone_if  : inout t_wishbone_if;
     constant alert_level  : in t_alert_level         := error;
-    constant scope        : in string                := C_SCOPE;
+    constant scope        : in string                := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel        := shared_msg_id_panel;
     constant config       : in t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT
   );
@@ -154,7 +154,7 @@ package body wishbone_bfm_pkg is
     constant msg          : in string;
     signal   clk          : in std_logic;
     signal   wishbone_if  : inout t_wishbone_if;
-    constant scope        : in string                := C_SCOPE;
+    constant scope        : in string                := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel        := shared_msg_id_panel;
     constant config       : in t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT
   ) is
@@ -230,7 +230,7 @@ package body wishbone_bfm_pkg is
     constant msg           : in string;
     signal   clk           : in std_logic;
     signal   wishbone_if   : inout t_wishbone_if;
-    constant scope         : in string                := C_SCOPE;
+    constant scope         : in string                := C_BFM_SCOPE;
     constant msg_id_panel  : in t_msg_id_panel        := shared_msg_id_panel;
     constant config        : in t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -332,7 +332,7 @@ package body wishbone_bfm_pkg is
     signal   clk          : in std_logic;
     signal   wishbone_if  : inout t_wishbone_if;
     constant alert_level  : in t_alert_level         := error;
-    constant scope        : in string                := C_SCOPE;
+    constant scope        : in string                := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel        := shared_msg_id_panel;
     constant config       : in t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT
   ) is

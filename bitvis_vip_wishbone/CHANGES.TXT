@@ -3,6 +3,11 @@ Bitvis VIP Wishbone - Overview of Versions and Changes
 
 ----------------------------------------------------------------------
 
+v0.1.2 BETA
+----------
+Released: 2023-03-21
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package. 
+
 v0.1.1 BETA
 ----------
 Released: 2022-05-05

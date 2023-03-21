@@ -30,7 +30,7 @@ package gpio_bfm_pkg is
   --=========================================================================================
   -- Types and constants for GPIO BFM
   --=========================================================================================
-  constant C_SCOPE : string := "GPIO BFM";
+  constant C_BFM_SCOPE : string := "GPIO BFM";
 
   -- Configuration record to be assigned in the test harness.
   type t_gpio_bfm_config is record
@@ -61,7 +61,7 @@ package gpio_bfm_pkg is
     constant data_value   : in std_logic_vector; -- '-' means don't change
     constant msg          : in string;
     signal   data_port    : inout std_logic_vector;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   );
@@ -73,7 +73,7 @@ package gpio_bfm_pkg is
     variable data_value   : out std_logic_vector;
     constant msg          : in string;
     signal   data_port    : in std_logic_vector;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   );
@@ -87,7 +87,7 @@ package gpio_bfm_pkg is
     constant msg          : in string;
     signal   data_port    : in std_logic_vector;
     constant alert_level  : in t_alert_level     := error;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   );
@@ -100,7 +100,7 @@ package gpio_bfm_pkg is
     constant msg          : in string;
     signal   data_port    : in std_logic_vector;
     constant alert_level  : in t_alert_level     := error;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   );
@@ -115,7 +115,7 @@ package gpio_bfm_pkg is
     signal   data_port    : in std_logic_vector;
     constant timeout      : in time              := -1 ns; -- -1 = no timeout
     constant alert_level  : in t_alert_level     := error;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   );
@@ -131,7 +131,7 @@ package gpio_bfm_pkg is
     signal   data_port       : in std_logic_vector;
     constant timeout         : in time              := -1 ns; -- -1 = no timeout
     constant alert_level     : in t_alert_level     := error;
-    constant scope           : in string            := C_SCOPE;
+    constant scope           : in string            := C_BFM_SCOPE;
     constant msg_id_panel    : in t_msg_id_panel    := shared_msg_id_panel;
     constant config          : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   );
@@ -150,7 +150,7 @@ package body gpio_bfm_pkg is
     constant data_value   : in std_logic_vector; -- '-' means don't change
     constant msg          : in string;
     signal   data_port    : inout std_logic_vector;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   ) is
@@ -174,7 +174,7 @@ package body gpio_bfm_pkg is
     variable data_value   : out std_logic_vector;
     constant msg          : in string;
     signal   data_port    : in std_logic_vector;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   ) is
@@ -193,7 +193,7 @@ package body gpio_bfm_pkg is
     constant msg          : in string;
     signal   data_port    : in std_logic_vector;
     constant alert_level  : in t_alert_level     := error;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   ) is
@@ -227,7 +227,7 @@ package body gpio_bfm_pkg is
     constant msg          : in string;
     signal   data_port    : in std_logic_vector;
     constant alert_level  : in t_alert_level     := error;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   ) is
@@ -268,7 +268,7 @@ package body gpio_bfm_pkg is
     signal   data_port    : in std_logic_vector;
     constant timeout      : in time              := -1 ns; -- -1 = no timeout
     constant alert_level  : in t_alert_level     := error;
-    constant scope        : in string            := C_SCOPE;
+    constant scope        : in string            := C_BFM_SCOPE;
     constant msg_id_panel : in t_msg_id_panel    := shared_msg_id_panel;
     constant config       : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   ) is
@@ -302,7 +302,7 @@ package body gpio_bfm_pkg is
     signal   data_port       : in std_logic_vector;
     constant timeout         : in time              := -1 ns; -- -1 = no timeout
     constant alert_level     : in t_alert_level     := error;
-    constant scope           : in string            := C_SCOPE;
+    constant scope           : in string            := C_BFM_SCOPE;
     constant msg_id_panel    : in t_msg_id_panel    := shared_msg_id_panel;
     constant config          : in t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT
   ) is

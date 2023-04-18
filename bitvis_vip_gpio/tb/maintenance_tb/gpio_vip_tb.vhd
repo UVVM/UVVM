@@ -320,10 +320,8 @@ begin
     enable_log_msg(ID_LOG_HDR_LARGE);
     enable_log_msg(ID_BFM);
 
-    for i in 1 to 9 loop
-      disable_log_msg(GPIO_VVCT, i, ALL_MESSAGES);
-      enable_log_msg(GPIO_VVCT, i, ID_BFM);
-    end loop;
+    disable_log_msg(GPIO_VVCT, ALL_INSTANCES, ALL_MESSAGES);
+    enable_log_msg(GPIO_VVCT, ALL_INSTANCES, ID_BFM);
 
 
     log(ID_LOG_HDR_LARGE, "Verifying TLM + GPIO executor + BFM", C_SCOPE);

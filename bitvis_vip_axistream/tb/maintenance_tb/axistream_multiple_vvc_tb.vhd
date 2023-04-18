@@ -160,10 +160,8 @@ begin
 		enable_log_msg(ID_LOG_HDR);
 		enable_log_msg(ID_SEQUENCER);
 
-		for i in 0 to c_num_vvcs - 1 loop
-			disable_log_msg(AXISTREAM_VVCT, i, ALL_MESSAGES);
-			enable_log_msg(AXISTREAM_VVCT, i, ID_SEQUENCER);
-		end loop;
+		disable_log_msg(AXISTREAM_VVCT, ALL_INSTANCES, ALL_MESSAGES);
+		enable_log_msg(AXISTREAM_VVCT, ALL_INSTANCES, ID_SEQUENCER);
 
 		--    enable_log_msg(AXISTREAM_VVCT, 0, ID_BFM);
 		--    enable_log_msg(AXISTREAM_VVCT, 1, ID_BFM);

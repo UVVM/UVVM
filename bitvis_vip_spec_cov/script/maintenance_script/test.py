@@ -23,6 +23,7 @@ def cleanup(msg='Cleaning up...'):
         except:
             os.remove(path)
 
+
 print('Verify Bitvis VIP Spec Cov')
 
 cleanup('Removing any previous runs.')
@@ -35,7 +36,8 @@ hr.run_command("rm *.txt")
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
 hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd",
+             "bitvis_vip_scoreboard")
 hr.add_files("../../src/*.vhd", "bitvis_vip_spec_cov")
 
 # Add TB/TH
@@ -43,18 +45,25 @@ hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_spec_cov")
 hr.add_files("../../tb/*.vhd", "bitvis_vip_spec_cov")
 
 hr.add_generics(entity="spec_cov_tb",
-                     generics=["GC_REQ_FILE",       ("../../tb/maintenance_tb/req_file.csv", "PATH"),
-                               "GC_REQ_FILE_EMPTY", ("../../tb/maintenance_tb/req_file_empty.csv", "PATH"),
-                               "GC_SUB_REQ_FILE",   ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
-                               "GC_REQ_OMIT_MAP",   ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
+                generics=["GC_REQ_FILE",       ("../../tb/maintenance_tb/req_file.csv", "PATH"),
+                          "GC_REQ_FILE_EMPTY", (
+                    "../../tb/maintenance_tb/req_file_empty.csv", "PATH"),
+                    "GC_SUB_REQ_FILE",   (
+                    "../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
+                    "GC_REQ_OMIT_MAP",   ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")])
 
-hr.start(regression_mode=True, gui_mode=False)
+sim_options = None
+if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
+    sim_options = '-t ns'
+
+hr.start(sim_options=sim_options)
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()
 
 # Check with golden reference
-(ret_txt, ret_code) = hr.run_command("python ../script/maintenance_script/maintenance_run_spec_cov.py")
+(ret_txt, ret_code) = hr.run_command(
+    "python ../script/maintenance_script/maintenance_run_spec_cov.py")
 
 if ret_code != 0:
     print(ret_txt)

@@ -13,8 +13,8 @@ except:
 
 
 def cleanup():
-  if os.path.isdir('./hdlregression'):
-    shutil.rmtree('./hdlregression')
+    if os.path.isdir('./hdlregression'):
+        shutil.rmtree('./hdlregression')
 
 #  for filename in Path(".").glob("*.txt"):
 #      filename.unlink()
@@ -55,7 +55,11 @@ hr.add_generics(entity='func_cov_tb',
                 architecture='func',
                 generics=['GC_FILE_PATH', (path_called_from + '/', 'PATH')])
 
-hr.start(regression_mode=False, gui_mode=False)
+sim_options = None
+if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
+    sim_options = '-t ns'
+
+hr.start(sim_options=sim_options)
 
 # Run coverage accumulation script
 hr.run_command(
@@ -83,7 +87,7 @@ if num_passing_tests == 0:
     sys.exit(1)
 
 if num_failing_tests == 0:
-  cleanup()
+    cleanup()
 
 # Return number of failing tests
 sys.exit(num_failing_tests)

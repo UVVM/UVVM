@@ -1950,7 +1950,7 @@ package methods_pkg is
   function convert_slv_array_to_byte_array(
     constant slv_array       : t_slv_array;
     constant ascending       : boolean           := false;
-    constant byte_endianness : t_byte_endianness := FIRST_BYTE_LEFT
+    constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array;
 
   function reverse_vector(
@@ -7133,7 +7133,7 @@ package body methods_pkg is
   function convert_slv_array_to_byte_array(
     constant slv_array       : t_slv_array;
     constant ascending       : boolean           := false;
-    constant byte_endianness : t_byte_endianness := FIRST_BYTE_LEFT
+    constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array is
     variable v_bytes_in_word     : integer := (slv_array(0)'length / 8);
     variable v_byte_array_length : integer := (slv_array'length * v_bytes_in_word);

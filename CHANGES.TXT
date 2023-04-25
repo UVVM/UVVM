@@ -15,6 +15,7 @@ v2 2023.XX.XX
 Released: 2023-XX-XX
 - Improved vvc_generator.py script to automatically generate compilable
   code without requiring any user inputs.
+- Fixed compilation warning on rand_pkg regarding a truncated value.
 
 
 v2 2023.03.21
@@ -25,6 +26,7 @@ Released: 2023-03-21
   always use the non-record version to avoid fatal error: (SIGSEGV) Bad handle or reference, issue #202.
 - Fixed bug where queue status in AXI and AXI-LITE VVCS depend on undefined process
   execution order, issue #201.
+
 
 v2 2023.03.10
 --------------------
@@ -51,7 +53,6 @@ Released: 2023-03-10
 - Added PR from @kraigher adding a project setup file for rust HDL language server.
 - Added PR from @runeben fixing an issue with AXI-Lite VVC by adding an extra delta cycle delay in the beginning of the
   read and write executors.
-
 
 
 v2 2022.10.07

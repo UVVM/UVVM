@@ -10,6 +10,13 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2023.XX.XX
+--------------------
+Released: 2023-XX-XX
+- Improved vvc_generator.py script to automatically generate compilable
+  code without requiring any user inputs.
+
+
 v2 2023.03.21
 --------------------
 Released: 2023-03-21

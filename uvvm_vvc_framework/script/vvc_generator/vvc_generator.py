@@ -2024,7 +2024,7 @@ def add_bfm_pkg_header(file_handle, vvc_name):
         "    --<USER_INPUT> Insert all BFM config parameters here\n")
     file_handle.write("    -- Example:\n")
     file_handle.write(
-        "    -- id_for_bfm               : t_msg_id; -- To replace default log msg IDs. <USER_INPUT> Adapt name to msg IDs used in this BFM\n")
+        "    id_for_bfm               : t_msg_id; -- To replace default log msg IDs. <USER_INPUT> Adapt name to msg IDs used in this BFM\n")
     file_handle.write(
         "    -- id_for_bfm_wait          : t_msg_id; -- To replace default log msg IDs. <USER_INPUT> Adapt name to msg IDs used in this BFM\n")
     file_handle.write(
@@ -2041,7 +2041,7 @@ def add_bfm_pkg_header(file_handle, vvc_name):
         "    --<USER_INPUT> Insert defaults for all BFM config parameters here\n")
     file_handle.write("    -- Example:\n")
     file_handle.write(
-        "    -- id_for_bfm               => ID_BFM,      --<USER_INPUT> Adapt name and ID to msg IDs used in this BFM\n")
+        "    id_for_bfm               => ID_BFM      --<USER_INPUT> Adapt name and ID to msg IDs used in this BFM\n")
     file_handle.write(
         "    -- id_for_bfm_wait          => ID_BFM_WAIT, --<USER_INPUT> Adapt name and ID to msg IDs used in this BFM\n")
     file_handle.write(

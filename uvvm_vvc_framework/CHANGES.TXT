@@ -4,6 +4,13 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 v2.12.4
 ----------
+Released: 2023-0X-XX
+- Improved vvc_generator.py script to automatically generate compilable
+  code without requiring any user inputs.
+
+
+v2.12.4
+----------
 Released: 2023-03-10
 - vvc_generator.py prompts related to the order of RX and TX channels are changed.
   There is also added a check for which order RX and TX channels have been added.

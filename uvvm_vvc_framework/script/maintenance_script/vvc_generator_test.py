@@ -29,8 +29,8 @@ print('Verify VVC Generator code')
 hr = HDLRegression(simulator='modelsim')
 
 # Add util, fw and VIP Scoreboard
-hr.add_files('../../sim/output/*.vhd', 'vvc_generator_lib')
-hr.add_files("../../src_target_dependent/*.vhd", "vvc_generator_lib")
+hr.add_files('../../script/vvc_generator/output/*.vhd', 'bitvis_vip_sbi')
+hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_sbi")
 
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
 hr.add_files("../../src/*.vhd", "uvvm_vvc_framework")

@@ -69,7 +69,8 @@ package spi_bfm_pkg is
     id_for_bfm_poll  => ID_BFM_POLL
   );
 
-  signal CONSTANT_TERMINATE_ACCESS : std_logic := '0';
+  -- Dummy signal to pass in procedure sub-calls in spi_slave method overloads without terminate_access parameter
+  signal NO_ACCESS_TERMINATION : std_logic := '0';
 
   --===============================================================================================
   -- BFM procedures
@@ -1260,7 +1261,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_transmit_and_receive(tx_data, rx_data, msg,
-                                  sclk, ss_n, mosi, miso, CONSTANT_TERMINATE_ACCESS, when_to_start_transfer, scope,
+                                  sclk, ss_n, mosi, miso, NO_ACCESS_TERMINATION, when_to_start_transfer, scope,
                                   msg_id_panel, config, ext_proc_call);
   end procedure;
 
@@ -1296,7 +1297,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_transmit_and_receive(tx_data, rx_data, msg,
-                                   spi_if.sclk, spi_if.ss_n, spi_if.mosi, spi_if.miso, CONSTANT_TERMINATE_ACCESS,
+                                   spi_if.sclk, spi_if.ss_n, spi_if.mosi, spi_if.miso, NO_ACCESS_TERMINATION,
                                    when_to_start_transfer, scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
@@ -1338,7 +1339,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_transmit_and_receive(tx_data, rx_data, msg, spi_if,
-                                CONSTANT_TERMINATE_ACCESS, when_to_start_transfer,
+                                NO_ACCESS_TERMINATION, when_to_start_transfer,
                                 scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
@@ -1403,7 +1404,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_transmit_and_check(tx_data, data_exp, msg,
-                                spi_if, CONSTANT_TERMINATE_ACCESS, alert_level,
+                                spi_if, NO_ACCESS_TERMINATION, alert_level,
                                 when_to_start_transfer, scope, msg_id_panel, config);
   end procedure;
 
@@ -1452,7 +1453,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_transmit_and_check(tx_data, data_exp, msg,
-                                spi_if, CONSTANT_TERMINATE_ACCESS, alert_level,
+                                spi_if, NO_ACCESS_TERMINATION, alert_level,
                                 when_to_start_transfer, scope, msg_id_panel, config);
   end procedure;
 
@@ -1490,7 +1491,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_transmit(tx_data, msg, spi_if,
-                      CONSTANT_TERMINATE_ACCESS, when_to_start_transfer,
+                      NO_ACCESS_TERMINATION, when_to_start_transfer,
                       scope, msg_id_panel, config);
   end procedure;
 
@@ -1526,7 +1527,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_transmit(tx_data, msg, spi_if,
-                      CONSTANT_TERMINATE_ACCESS, when_to_start_transfer,
+                      NO_ACCESS_TERMINATION, when_to_start_transfer,
                       scope, msg_id_panel, config);
   end procedure;
 
@@ -1563,7 +1564,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_receive(rx_data, msg, spi_if,
-                    CONSTANT_TERMINATE_ACCESS, when_to_start_transfer,
+                    NO_ACCESS_TERMINATION, when_to_start_transfer,
                     scope, msg_id_panel, config);
   end procedure;
 
@@ -1599,7 +1600,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_receive(rx_data, msg, spi_if,
-                    CONSTANT_TERMINATE_ACCESS, when_to_start_transfer,
+                    NO_ACCESS_TERMINATION, when_to_start_transfer,
                     scope, msg_id_panel, config);
   end;
 
@@ -1664,7 +1665,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_check(data_exp, msg, spi_if,
-                  CONSTANT_TERMINATE_ACCESS, alert_level, when_to_start_transfer,
+                  NO_ACCESS_TERMINATION, alert_level, when_to_start_transfer,
                   scope, msg_id_panel, config);
   end procedure;
 
@@ -1707,7 +1708,7 @@ package body spi_bfm_pkg is
   ) is
   begin
     spi_slave_check(data_exp, msg, spi_if,
-                  CONSTANT_TERMINATE_ACCESS, alert_level, when_to_start_transfer,
+                  NO_ACCESS_TERMINATION, alert_level, when_to_start_transfer,
                   scope, msg_id_panel, config);
   end procedure;
 

@@ -76,9 +76,6 @@ hr.add_files(
     "../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
 
 sim_options = None
-if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
-    sim_options = '-t ns'
-
 hr.start(sim_options=sim_options)
 
 num_failing_tests = hr.get_num_fail_tests()

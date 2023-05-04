@@ -56,9 +56,6 @@ hr.add_generics(entity='func_cov_tb',
                 generics=['GC_FILE_PATH', (path_called_from + '/', 'PATH')])
 
 sim_options = None
-if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
-    sim_options = '-t ns'
-
 hr.start(sim_options=sim_options)
 
 # Run coverage accumulation script

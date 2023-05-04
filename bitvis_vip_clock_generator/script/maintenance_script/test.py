@@ -45,9 +45,6 @@ hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd",
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_clock_generator")
 
 sim_options = None
-if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
-    sim_options = '-t ns'
-
 hr.start(sim_options=sim_options)
 
 num_failing_tests = hr.get_num_fail_tests()

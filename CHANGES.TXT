@@ -19,6 +19,7 @@ Released: 2023-XX-XX
 - Fixed optimization warning on methods_pkg regarding a string comparison.
 - Updated AXI-Stream BFM documentation on byte_endianness config.
 - Updated Avalon-ST BFM and VVC documentation on data_array word length.
+- Added missing alert level method parameter in documentation for check_value_in_range().
 
 
 v2 2023.03.21

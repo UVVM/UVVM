@@ -6,6 +6,7 @@ v2.9.4
 ----------
 Released: 2023-XX-XX
 - All queue setups now come directly from the VVC generics.
+- Removed delta cycle wait in VVC multiple executors.
 
 v2.9.3
 ----------

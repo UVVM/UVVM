@@ -1062,8 +1062,6 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
         "    " + queue_name + "_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);\n")
     file_handle.write(
         "    " + queue_name + "_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);\n")
-    file_handle.write("    wait for 0 ns;  -- Wait for " + 
-                      queue_name + " executor to initialize completely\n")
     print_linefeed(file_handle)
     file_handle.write(
         "    -- Set initial value of v_msg_id_panel to msg_id_panel in config\n")

@@ -2,6 +2,11 @@ Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
 
+v2.9.4
+----------
+Released: 2023-XX-XX
+- All queue setups now come directly from the VVC generics.
+
 v2.9.3
 ----------
 Released: 2023-03-21

@@ -524,9 +524,9 @@ begin
     wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     command_response_queue.set_scope(C_SCOPE & ":RQ");
-    command_response_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    command_response_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    command_response_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    command_response_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    command_response_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    command_response_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
 
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;

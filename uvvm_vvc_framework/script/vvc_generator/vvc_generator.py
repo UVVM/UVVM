@@ -1057,11 +1057,11 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     file_handle.write(
         "    " + queue_name + "_queue.set_scope(C_SCOPE & \":" + queue_name.upper() + "\");\n")
     file_handle.write(
-        "    " + queue_name + "_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);\n")
+        "    " + queue_name + "_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);\n")
     file_handle.write(
-        "    " + queue_name + "_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);\n")
+        "    " + queue_name + "_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);\n")
     file_handle.write(
-        "    " + queue_name + "_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);\n")
+        "    " + queue_name + "_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);\n")
     file_handle.write("    wait for 0 ns;  -- Wait for " + 
                       queue_name + " executor to initialize completely\n")
     print_linefeed(file_handle)

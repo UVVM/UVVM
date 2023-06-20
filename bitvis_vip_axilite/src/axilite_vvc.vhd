@@ -435,9 +435,9 @@ begin
     wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     read_address_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    read_address_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    read_address_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    read_address_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    read_address_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    read_address_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    read_address_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
@@ -492,9 +492,9 @@ begin
     wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     read_data_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    read_data_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    read_data_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    read_data_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    read_data_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    read_data_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    read_data_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
@@ -575,9 +575,9 @@ begin
     wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_address_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    write_address_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    write_address_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    write_address_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    write_address_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    write_address_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    write_address_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
@@ -625,9 +625,9 @@ begin
     wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_data_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    write_data_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    write_data_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    write_data_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    write_data_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    write_data_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    write_data_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
@@ -676,9 +676,9 @@ begin
     wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_response_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    write_response_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    write_response_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    write_response_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    write_response_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    write_response_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    write_response_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config

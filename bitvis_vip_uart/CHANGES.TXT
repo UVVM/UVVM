@@ -1,6 +1,13 @@
 Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
+
+v2.8.7
+----------
+Released: 2023-XX-XX
+- Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
+  unused and will be removed in v3.0.
+
 v2.8.6
 ----------
 Released: 2023-03-21

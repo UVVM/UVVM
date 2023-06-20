@@ -22,6 +22,8 @@ Released: 2023-XX-XX
 - Added missing alert level method parameter in documentation for check_value_in_range().
 - All queue setups now come directly from the VVC generics. Updated vvc_generator.py script.
 - Removed delta cycle wait in VVC multiple executors. Updated vvc_generator.py script.
+- Added a note to VVC QuickRefs that cmd/result queue parameters in the VVC Configuration are
+  unused and will be removed in v3.0.
 
 
 v2 2023.03.21

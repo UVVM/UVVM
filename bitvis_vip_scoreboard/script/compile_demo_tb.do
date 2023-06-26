@@ -20,13 +20,6 @@ proc quietly { args } {
   }
 }
 
-# End the simulations if there's an error or when run from terminal.
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
-
 # Detect simulator
 if {[catch {eval "vsim -version"} message] == 0} {
   quietly set simulator_version [eval "vsim -version"]
@@ -42,6 +35,18 @@ if {[catch {eval "vsim -version"} message] == 0} {
 } else {
     puts "vsim -version failed with the following message:\n $message"
     abort all
+}
+
+# End the simulations if there's an error or when run from terminal.
+if {[batch_mode]} {
+  if { [string equal -nocase $simulator "rivierapro"] } {
+    # Special for Riviera-PRO
+    onerror {abort all; quit -code 1 -force}
+   } else {
+    onerror {abort all; exit -f -code 1}
+  }
+} else {
+  onerror {abort all}
 }
 
 #-----------------------------------------------------------------------

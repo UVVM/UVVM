@@ -24,6 +24,7 @@ Released: 2023-XX-XX
 - Removed delta cycle wait in VVC multiple executors. Updated vvc_generator.py script.
 - Added a note to VVC QuickRefs that cmd/result queue parameters in the VVC Configuration are
   unused and will be removed in v3.0.
+- Changed back to full record mapping in AXI-Stream VVC to BFM call.
 
 
 v2 2023.03.21

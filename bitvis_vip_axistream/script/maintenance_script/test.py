@@ -100,6 +100,8 @@ hr.add_generics(entity="axistream_multiple_vvc_tb",
 hr.add_generics(entity="axistream_multiple_vvc_tb",
                 generics=["GC_DATA_WIDTH", 32, "GC_USER_WIDTH", 8, "GC_ID_WIDTH", 7, "GC_DEST_WIDTH", 4, "GC_INCLUDE_TUSER", True, "GC_USE_SETUP_AND_HOLD", False])
 
+hr.add_generics(entity="axistream_width_vvc_tb")
+
 # Add src files
 hr.add_files("../../src/*.vhd", "bitvis_vip_axistream")
 hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd",

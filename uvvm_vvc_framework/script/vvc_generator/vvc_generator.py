@@ -378,17 +378,17 @@ def add_vvc_entity(file_handle, vvc_name, vvc_channel):
                       " : t_" + vvc_name.lower() + "_bfm_config" + fill_with_n_spaces(vvc_name.__len__(), 13) + 
                       ":= C_" + vvc_name.upper() + "_BFM_CONFIG_DEFAULT;\n")
     file_handle.write(
-        "    GC_CMD_QUEUE_COUNT_MAX                   : natural                   := 1000;\n")
+        "    GC_CMD_QUEUE_COUNT_MAX                   : natural                   := C_CMD_QUEUE_COUNT_MAX;\n")
     file_handle.write(
-        "    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                   := 950;\n")
+        "    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                   := C_CMD_QUEUE_COUNT_THRESHOLD;\n")
     file_handle.write(
-        "    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level             := WARNING;\n")
+        "    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level             := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;\n")
     file_handle.write(
-        "    GC_RESULT_QUEUE_COUNT_MAX                : natural                   := 1000;\n")
+        "    GC_RESULT_QUEUE_COUNT_MAX                : natural                   := C_RESULT_QUEUE_COUNT_MAX;\n")
     file_handle.write(
-        "    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                   := 950;\n")
+        "    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                   := C_RESULT_QUEUE_COUNT_THRESHOLD;\n")
     file_handle.write(
-        "    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level             := WARNING\n")
+        "    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level             := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY\n")
     file_handle.write("  );\n")
     file_handle.write("  port (\n")
     file_handle.write("    --<USER_INPUT> Insert BFM interface signals here\n")

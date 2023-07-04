@@ -37,12 +37,12 @@ entity clock_generator_vvc is
     GC_CLOCK_NAME                            : string        := "clk";
     GC_CLOCK_PERIOD                          : time          := 10 ns;
     GC_CLOCK_HIGH_TIME                       : time          := 5 ns;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural       := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural       := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural       := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural       := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := warning
+    GC_CMD_QUEUE_COUNT_MAX                   : natural       := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural       := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural       := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural       := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     clk : out std_logic

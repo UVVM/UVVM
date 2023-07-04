@@ -9,6 +9,8 @@ Released: 2023-XX-XX
   code without requiring any user inputs.
 - Updated vvc_generator.py so that all queue setups now come directly from the VVC generics
   and removed delta cycle wait in VVC multiple executors.
+- Updated vvc_generator.py so that the default values related to the cmd/results queues use
+  the constants from adaptations_pkg.
 
 v2.12.4
 ----------

@@ -10,6 +10,8 @@ Released: 2023-XX-XX
 - Removed delta cycle wait in VVC multiple executors.
 - Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
   unused and will be removed in v3.0.
+- Replaced the default values in VVC generics related to the cmd/results queues with
+  the constants from adaptations_pkg.
 
 v2.8.4
 ----------

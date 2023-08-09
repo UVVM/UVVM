@@ -41,7 +41,7 @@ architecture func of gpio_vip_tb is
 
   constant C_CLK_PERIOD        : time    := 10 ns;
   constant C_SCOPE             : string  := C_TB_SCOPE_DEFAULT;
-  constant C_GPIO_SET_MAX_TIME : time    := 1 ps;
+  constant C_GPIO_SET_MAX_TIME : time    := 1 * std.env.resolution_limit;
 
   signal gpio_1_input  : std_logic_vector(0 downto 0);
   signal gpio_2_input  : std_logic_vector(1 downto 0);
@@ -205,6 +205,7 @@ begin
       constant expected_data    : std_logic_vector
       ) is
     begin
+      log(ID_SEQUENCER_SUB, "xxx Testing get on GPIO VVC " & to_string(vvc_instance_idx));
       -- Set GPIO setting to 0xAA. Check GPIO setting
       gpio_set(GPIO_VVCT, vvc_instance_idx, data, "Setting gpio " & to_string(vvc_instance_idx) & " to 0x" & to_string(data, HEX) & ").");
       await_completion(GPIO_VVCT, vvc_instance_idx, C_GPIO_SET_MAX_TIME);

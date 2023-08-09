@@ -46,6 +46,8 @@ hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_gpio")
 hr.add_files("../../tb/*.vhd", "bitvis_vip_gpio")
 
 sim_options = None
+if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
+    sim_options = '-t ps'
 hr.start(sim_options=sim_options)
 
 num_failing_tests = hr.get_num_fail_tests()

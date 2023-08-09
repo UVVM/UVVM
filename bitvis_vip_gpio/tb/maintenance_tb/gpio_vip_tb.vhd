@@ -41,7 +41,7 @@ architecture func of gpio_vip_tb is
 
   constant C_CLK_PERIOD        : time    := 10 ns;
   constant C_SCOPE             : string  := C_TB_SCOPE_DEFAULT;
-  constant C_GPIO_SET_MAX_TIME : time    := 1 * std.env.resolution_limit;
+  constant C_GPIO_SET_MAX_TIME : time    := 1 ps;
 
   signal gpio_1_input  : std_logic_vector(0 downto 0);
   signal gpio_2_input  : std_logic_vector(1 downto 0);

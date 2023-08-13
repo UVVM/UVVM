@@ -75,6 +75,10 @@ hr.add_files(
 hr.add_files(
     "../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
 
+# Set compile options
+default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+hr.set_simulator(simulator="MODELSIM", com_options=default_options)
+
 sim_options = None
 hr.start(sim_options=sim_options)
 

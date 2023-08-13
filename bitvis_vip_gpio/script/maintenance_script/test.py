@@ -43,11 +43,15 @@ hr.add_files(
 
 # Add TB/TH
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_gpio")
-hr.add_files("../../tb/*.vhd", "bitvis_vip_gpio")
 
 sim_options = None
 if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
     sim_options = '-t ps'
+
+# Set compile options
+default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+hr.set_simulator(simulator="MODELSIM", com_options=default_options)
+
 hr.start(sim_options=sim_options)
 
 num_failing_tests = hr.get_num_fail_tests()

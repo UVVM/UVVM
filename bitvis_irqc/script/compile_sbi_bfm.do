@@ -96,7 +96,7 @@ vlib $vip_sbi_part_path/sim/$lib_name
 vmap $lib_name $vip_sbi_part_path/sim/$lib_name
 
 if { [string equal -nocase $simulator "modelsim"] } {
-  set compdirectives "-2008 -work $lib_name"
+  quietly set compdirectives "-quiet -suppress 1346 -2008 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
   set compdirectives "-2008 -dbg -work $lib_name"
 }

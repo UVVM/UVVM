@@ -100,7 +100,8 @@ hr.add_generics(entity="axistream_multiple_vvc_tb",
 hr.add_generics(entity="axistream_multiple_vvc_tb",
                 generics=["GC_DATA_WIDTH", 32, "GC_USER_WIDTH", 8, "GC_ID_WIDTH", 7, "GC_DEST_WIDTH", 4, "GC_INCLUDE_TUSER", True, "GC_USE_SETUP_AND_HOLD", False])
 
-hr.add_generics(entity="axistream_width_vvc_tb")
+hr.add_generics(entity="axistream_width_vvc_tb",
+                generics=["GC_DATA_WIDTH", 32, "GC_USER_WIDTH", 1, "GC_ID_WIDTH", 1, "GC_DEST_WIDTH", 1, "GC_INCLUDE_TUSER", True, "GC_USE_SETUP_AND_HOLD", True])
 
 # Add src files
 hr.add_files("../../src/*.vhd", "bitvis_vip_axistream")
@@ -113,6 +114,10 @@ hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_axistream")
 sim_options = None
 if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
     sim_options = '-t ns'
+
+# Set compile options
+default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+hr.set_simulator(simulator="MODELSIM", com_options=default_options)
 
 hr.start(sim_options=sim_options)
 

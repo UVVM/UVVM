@@ -43,7 +43,10 @@ hr.add_files(
 
 # Add TB/TH
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_sbi")
-hr.add_files("../../tb/*.vhd", "bitvis_vip_sbi")
+
+# Set compile options
+default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+hr.set_simulator(simulator="MODELSIM", com_options=default_options)
 
 sim_options = None
 hr.start(sim_options=sim_options)

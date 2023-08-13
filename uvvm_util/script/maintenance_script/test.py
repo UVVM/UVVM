@@ -55,6 +55,10 @@ hr.add_generics(entity='func_cov_tb',
                 architecture='func',
                 generics=['GC_FILE_PATH', (path_called_from + '/', 'PATH')])
 
+# Set compile options
+default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+hr.set_simulator(simulator="MODELSIM", com_options=default_options)
+
 sim_options = None
 hr.start(sim_options=sim_options)
 

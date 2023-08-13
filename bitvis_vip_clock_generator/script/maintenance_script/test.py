@@ -44,6 +44,10 @@ hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd",
 # Add TB/TH
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_clock_generator")
 
+# Set compile options
+default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+hr.set_simulator(simulator="MODELSIM", com_options=default_options)
+
 sim_options = None
 hr.start(sim_options=sim_options)
 

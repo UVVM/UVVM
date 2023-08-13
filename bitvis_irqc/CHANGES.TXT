@@ -1,11 +1,15 @@
 Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
+v1.0.13
+----------
+Released: 2023-XX-XX
+- Added filter for (vcom-1246) warning in test.py script.
 
 v1.0.12
 ----------
 Released: 2021-10-22
-- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util 
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util
   packages.
 
 v1.0.11

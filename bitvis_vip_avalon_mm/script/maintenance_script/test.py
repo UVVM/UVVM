@@ -16,12 +16,16 @@ def cleanup(msg='Cleaning up...'):
 
     sim_path = os.getcwd()
 
-    for files in os.listdir(sim_path):
-        path = os.path.join(sim_path, files)
-        try:
-            shutil.rmtree(path)
-        except:
-            os.remove(path)
+    # Check if the current directory is 'sim'
+    if os.path.basename(sim_path) == 'sim':
+        for files in os.listdir(sim_path):
+            path = os.path.join(sim_path, files)
+            try:
+                shutil.rmtree(path)
+            except:
+                os.remove(path)
+    else:
+        print('Current directory is not "sim". Skipping cleanup.')
 
 
 print('Verify Bitvis VIP Avalon MM')
@@ -53,12 +57,13 @@ hr.add_generics(entity="avalon_mm_vvc_pipeline_tb",
                 generics=["GC_DELTA_DELAYED_VVC_CLK", False])
 
 sim_options = None
-if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
+default_options = []
+simulator_name = hr.settings.get_simulator_name()
+if simulator_name in ['MODELSIM', 'RIVIERA']:
     sim_options = '-t ns'
-
-# Set compile options
-default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
-hr.set_simulator(simulator="MODELSIM", com_options=default_options)
+    # Set compile options
+    default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=default_options)
 
 hr.start(sim_options=sim_options)
 

@@ -16,12 +16,16 @@ def cleanup(msg='Cleaning up...'):
 
     sim_path = os.getcwd()
 
-    for files in os.listdir(sim_path):
-        path = os.path.join(sim_path, files)
-        try:
-            shutil.rmtree(path)
-        except:
-            os.remove(path)
+    # Check if the current directory is 'sim'
+    if os.path.basename(sim_path) == 'sim':
+        for files in os.listdir(sim_path):
+            path = os.path.join(sim_path, files)
+            try:
+                shutil.rmtree(path)
+            except:
+                os.remove(path)
+    else:
+        print('Current directory is not "sim". Skipping cleanup.')
 
 
 print('Verify Bitvis IRQC DUT')
@@ -50,12 +54,13 @@ hr.add_files("../../../bitvis_irqc/tb/*.vhd", "bitvis_irqc")
 hr.add_files("../../../bitvis_irqc/tb/maintenance_tb/*.vhd", "bitvis_irqc")
 
 sim_options = None
-if hr.settings.get_simulator_name() in ['MODELSIM', 'RIVIERA']:
+default_options = []
+simulator_name = hr.settings.get_simulator_name()
+if simulator_name in ['MODELSIM', 'RIVIERA']:
     sim_options = '-t ns'
-
-# Set compile options
-default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
-hr.set_simulator(simulator="MODELSIM", com_options=default_options)
+    # Set compile options
+    default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=default_options)
 
 hr.start(sim_options=sim_options)
 
@@ -65,8 +70,10 @@ num_passing_tests = hr.get_num_pass_tests()
 # No tests run error
 if num_passing_tests == 0:
     sys.exit(1)
+
 # Remove output only if OK
 if hr.check_run_results(exp_fail=0) is True:
     cleanup('Removing simulation output')
+
 # Return number of failing tests
 sys.exit(num_failing_tests)

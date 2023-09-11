@@ -844,7 +844,6 @@ def test_uvvm_util():
         "python ../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_holes.txt -r -hl -im")
 
     # Check with golden reference
-    (ret_txt, ret_code) = hr.run_command("pwd")
     (ret_txt, ret_code) = hr.run_command(
         "python ../uvvm_util/script/maintenance_script/verify_with_golden.py -modelsim")
 

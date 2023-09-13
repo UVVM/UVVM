@@ -1,6 +1,11 @@
 Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+v2.0.0
+----------
+Released: 2023-07-03
+- Added a new switch for setting data valid on both clock edges. Switch may be set to "false" for 10/100 Mbps mode.
+  Default is "true" (1 Gbps mode).
 
 v1.0.2
 ----------
@@ -14,7 +19,7 @@ Released: 2023-XX-XX
 v1.0.1
 ----------
 Released: 2023-03-21
-- Renamed C_SCOPE to C_SCOPE_BFM in BFM package. 
+- Renamed C_SCOPE to C_SCOPE_BFM in BFM package.
 
 v1.0.0
 ----------
@@ -53,7 +58,7 @@ Released: 2020-05-19
 - Added shared_rgmii_vvc_transaction_info information to quick reference.
 - Changed VVC activity methods parameters and default scope.
 - Updated quick reference Activity Watchdog section.
-- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and 
+- Updated activity_watchdog_register_vvc_state() call with new t_activity parameter and
   other minor improvements.
 - Removed extra log in read procedure when called from another BFM procedure.
 

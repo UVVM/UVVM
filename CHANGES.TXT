@@ -32,6 +32,7 @@ Released: 2023-XX-XX
   and usage of t_vvc_result.
 - Updated scripts for proper handling of errors during compilation/simulation
   in older versions of Riviera-PRO, based on Github user bennyslbs contributions.
+- Added terminate_access functionality description in SPI BFM QuickRef.
 
 
 v2 2023.03.21

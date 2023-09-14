@@ -10,6 +10,7 @@ Released: 2023-XX-XX
 - Replaced the default values in VVC generics related to the cmd/results queues with
   the constants from adaptations_pkg.
 - Added filter for (vcom-1246) warning in test.py script.
+- Added terminate_access functionality description to BFM QuickRef.
 
 v3.9.5
 ----------

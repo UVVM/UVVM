@@ -242,7 +242,7 @@ begin
     v_rgmii_bfm_config.clock_period  := C_CLK_PERIOD;
     v_rgmii_bfm_config.rx_clock_skew := C_CLK_PERIOD / 4;
 
-    --if GC_TESTCASE = "test_rgmii_ddr" then
+    if GC_TESTCASE = "test_rgmii_double_data_rate" then
         -- Testing that BFM procedures normalize data arrays
         await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
         rgmii_read(v_rx_data_array(2 to 6), v_data_len);
@@ -278,44 +278,44 @@ begin
         await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
         rgmii_expect(data_array(0 to 15));
 
-    -- elsif GC_TESTCASE = "test_rgmii_sdr" then
-    --     v_rgmii_bfm_config.data_valid_on_both_clock_edges := false;
+    elsif GC_TESTCASE = "test_rgmii_single_data_rate" then
+        v_rgmii_bfm_config.data_valid_on_both_clock_edges := false;
 
-    --     -- Testing that BFM procedures normalize data arrays
-    --     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    --     rgmii_read(v_rx_data_array(2 to 6), v_data_len);
-    --     rgmii_expect(data_array(3 to 9));
+        -- Testing that BFM procedures normalize data arrays
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        rgmii_read(v_rx_data_array(2 to 6), v_data_len);
+        rgmii_expect(data_array(3 to 9));
 
-    --     -- Testing explicit std_logic_vector values
-    --     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    --     rgmii_expect((x"01", x"23", x"45", x"67", x"89"));
+        -- Testing explicit std_logic_vector values
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        rgmii_expect((x"01", x"23", x"45", x"67", x"89"));
 
-    --     -- Testing data sizes
-    --     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    --     for i in 0 to 30 loop
-    --     rgmii_expect(data_array(0 to i));
-    --     end loop;
+        -- Testing data sizes
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        for i in 0 to 30 loop
+        rgmii_expect(data_array(0 to i));
+        end loop;
 
-    --     -- Testing error case: write() txc timeout
-    --     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    --     wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
+        -- Testing error case: write() txc timeout
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
 
-    --     -- Testing error case: read() rxc timeout
-    --     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    --     rgmii_read(v_rx_data_array, v_data_len);
+        -- Testing error case: read() rxc timeout
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        rgmii_read(v_rx_data_array, v_data_len);
 
-    --     -- Testing error case: read() rx_ctl timeout
-    --     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    --     rgmii_read(v_rx_data_array, v_data_len);
+        -- Testing error case: read() rx_ctl timeout
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        rgmii_read(v_rx_data_array, v_data_len);
 
-    --     -- Testing error case: expect() wrong data
-    --     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    --     rgmii_expect(data_array(10 to 20));
+        -- Testing error case: expect() wrong data
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        rgmii_expect(data_array(10 to 20));
 
-    --     -- Testing error case: expect() wrong size of data_array
-    --     await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
-    --     rgmii_expect(data_array(0 to 15));
-    -- end if;
+        -- Testing error case: expect() wrong size of data_array
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        rgmii_expect(data_array(0 to 15));
+    end if;
     wait;                               -- to stop completely
 
   end process p_slave;

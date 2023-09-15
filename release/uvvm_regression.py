@@ -384,6 +384,7 @@ def test_bitvis_vip_axistream():
 
     # Add testcase configurations
     created_testcases = 0
+
     configs = create_config(data_widths=[32], user_widths=[8], id_widths=[
                             7], dest_widths=[4], include_tuser=[False], use_setup_and_hold=[True, False])
     for config in configs:
@@ -446,6 +447,10 @@ def test_bitvis_vip_axistream():
     # Add TB/TH
     hr.add_files("../bitvis_vip_axistream/tb/maintenance_tb/*.vhd",
                  "bitvis_vip_axistream")
+
+    # Add axistream_width_vvc_tb testcase
+    created_testcases += 1
+
     hr.start(sim_options=get_sim_options(hr))
 
     check_result(exp_pass=created_testcases, exp_fail=0, exp_minor=0, hr=hr)

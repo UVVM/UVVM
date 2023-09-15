@@ -26,7 +26,7 @@ Released: 2023-XX-XX
   unused and will be removed in v3.0.
 - Changed back to full record mapping in AXI-Stream VVC to BFM call.
 - Updated constant values related to cmd/results queues. Updated vvc_generator.py script.
-- Added filter for (vcom-1246) warning in test.py and TCL compile scripts.
+- Added filter for (vcom-1246) warning in TCL compile scripts.
 - Added bitvis_uart and bitvis_irqc to uvvm/script/component_list.txt.
 - Updated vvc_framework.rst documentation for further explanation of common types 
   and usage of t_vvc_result.

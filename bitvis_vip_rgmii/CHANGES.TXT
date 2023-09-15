@@ -3,18 +3,13 @@ Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Ver
 
 v2.0.0
 ----------
-Released: 2023-07-03
+Released: 2023-XX-XX
 - Added a new switch for setting data valid on both clock edges. Switch may be set to "false" for 10/100 Mbps mode.
   Default is "true" (1 Gbps mode).
-
-v1.0.2
-----------
-Released: 2023-XX-XX
 - Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
   unused and will be removed in v3.0.
 - Replaced the default values in VVC generics related to the cmd/results queues with
   the constants from adaptations_pkg.
-- Added filter for (vcom-1246) warning in test.py script.
 
 v1.0.1
 ----------

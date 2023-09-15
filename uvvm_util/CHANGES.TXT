@@ -9,7 +9,7 @@ Released: 2023-XX-XX
 - Fixed compilation warning on rand_pkg regarding a truncated value.
 - Fixed optimization warning on methods_pkg regarding a string comparison.
 - Updated the constant default values related to the cmd/results queues in adaptations_pkg.
-- Added filter for (vcom-1246) warning in test.py and TCL compile script.
+- Added filter for (vcom-1246) warning in TCL compile script.
 
 v2.19.2
 ----------

@@ -112,7 +112,7 @@ begin
     clock_ena <= true;                  -- start clock generator
     wait for 10 * C_CLK_PERIOD;
 
-    --if GC_TESTCASE = "test_rgmii_ddr" then
+    if GC_TESTCASE = "test_rgmii_double_data_rate" then
         await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
         log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
         rgmii_write(data_array(2 to 6));
@@ -155,51 +155,51 @@ begin
         increment_expected_alerts_and_stop_limit(ERROR, 1);
         rgmii_write(data_array(0 to 10));
 
-    -- elsif GC_TESTCASE = "test_rgmii_sdr" then
-    --     v_rgmii_bfm_config.data_valid_on_both_clock_edges := false;
+     elsif GC_TESTCASE = "test_rgmii_single_data_rate" then
+        v_rgmii_bfm_config.data_valid_on_both_clock_edges := false;
 
-    --     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    --     log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
-    --     rgmii_write(data_array(2 to 6));
-    --     rgmii_write(data_array(3 to 9));
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing that BFM procedures normalize data arrays");
+        rgmii_write(data_array(2 to 6));
+        rgmii_write(data_array(3 to 9));
 
-    --     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    --     log(ID_LOG_HDR, "Testing explicit std_logic_vector values");
-    --     rgmii_write((x"01", x"23", x"45", x"67", x"89"));
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing explicit std_logic_vector values");
+        rgmii_write((x"01", x"23", x"45", x"67", x"89"));
 
-    --     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    --     log(ID_LOG_HDR, "Testing data sizes");
-    --     for i in 0 to 30 loop
-    --     rgmii_write(data_array(0 to i));
-    --     end loop;
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing data sizes");
+        for i in 0 to 30 loop
+        rgmii_write(data_array(0 to i));
+        end loop;
 
-    --     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    --     log(ID_LOG_HDR, "Testing error case: write() txc timeout");
-    --     clock_ena <= false;
-    --     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    --     rgmii_write(data_array(0 to 10));
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing error case: write() txc timeout");
+        clock_ena <= false;
+        increment_expected_alerts_and_stop_limit(ERROR, 1);
+        rgmii_write(data_array(0 to 10));
 
-    --     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    --     log(ID_LOG_HDR, "Testing error case: read() rxc timeout");
-    --     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    --     wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
-    --     clock_ena <= true;
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing error case: read() rxc timeout");
+        increment_expected_alerts_and_stop_limit(ERROR, 1);
+        wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
+        clock_ena <= true;
 
-    --     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    --     log(ID_LOG_HDR, "Testing error case: read() rx_ctl timeout");
-    --     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    --     wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing error case: read() rx_ctl timeout");
+        increment_expected_alerts_and_stop_limit(ERROR, 1);
+        wait for 10 * C_CLK_PERIOD;         -- 10 = default max_wait_cycles
 
-    --     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    --     log(ID_LOG_HDR, "Testing error case: expect() wrong data");
-    --     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    --     rgmii_write(data_array(0 to 10));
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing error case: expect() wrong data");
+        increment_expected_alerts_and_stop_limit(ERROR, 1);
+        rgmii_write(data_array(0 to 10));
 
-    --     await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
-    --     log(ID_LOG_HDR, "Testing error case: expect() wrong size of data_array");
-    --     increment_expected_alerts_and_stop_limit(ERROR, 1);
-    --     rgmii_write(data_array(0 to 10));
-    -- end if;
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing error case: expect() wrong size of data_array");
+        increment_expected_alerts_and_stop_limit(ERROR, 1);
+        rgmii_write(data_array(0 to 10));
+    end if;
     ------------------------------------------------------------------------------
     -- Ending the simulation
     ------------------------------------------------------------------------------

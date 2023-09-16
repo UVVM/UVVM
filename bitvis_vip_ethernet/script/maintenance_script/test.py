@@ -16,12 +16,17 @@ def cleanup(msg='Cleaning up...'):
 
     sim_path = os.getcwd()
 
-    for files in os.listdir(sim_path):
-        path = os.path.join(sim_path, files)
-        try:
-            shutil.rmtree(path)
-        except:
-            os.remove(path)
+    # Check if the current directory is 'sim'
+    if os.path.basename(sim_path) == 'sim':
+        for files in os.listdir(sim_path):
+            path = os.path.join(sim_path, files)
+            try:
+                shutil.rmtree(path)
+            except:
+                os.remove(path)
+    else:
+        print('Current directory is not "sim". Skipping cleanup.')
+
 
 print('Verify Bitvis VIP Ethernet')
 
@@ -32,22 +37,27 @@ hr = HDLRegression(simulator='modelsim')
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
 hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd",
+             "bitvis_vip_scoreboard")
 
 # Add Ethernet VIP
 hr.add_files("../../src/*.vhd", "bitvis_vip_ethernet")
-hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_ethernet")
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd",
+             "bitvis_vip_ethernet")
 
 # Add HVVC Bridge VIP
-hr.add_files("../../../bitvis_vip_hvvc_to_vvc_bridge/src/*.vhd", "bitvis_vip_hvvc_to_vvc_bridge")
+hr.add_files("../../../bitvis_vip_hvvc_to_vvc_bridge/src/*.vhd",
+             "bitvis_vip_hvvc_to_vvc_bridge")
 
 # Add GMII VIP
 hr.add_files("../../../bitvis_vip_gmii/src/*.vhd", "bitvis_vip_gmii")
-hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_gmii")
+hr.add_files(
+    "../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_gmii")
 
 # Add SBI VIP
 hr.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
-hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
+hr.add_files(
+    "../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
 
 # Add testbench and harness
 hr.add_files("../../tb/*.vhd", "bitvis_vip_ethernet")
@@ -55,15 +65,30 @@ hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_ethernet")
 
 # Add TB dependencies
 compile_directives_93 = ["-suppress", "1346,1236,1090", "-93"]
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd", "xilinxcorelib")
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim") # 08
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd", "unisim", com_options=compile_directives_93) #version="93")
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/*.vhd", "mac_master") 
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/*.vhd", "mac_master")
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/generic/*.vhd", "mac_master")
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
+hr.add_files(
+    "../../tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd", "xilinxcorelib")
+hr.add_files(
+    "../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim")  # 08
+hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd",
+             "unisim", com_options=compile_directives_93)  # version="93")
+hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/*.vhd", "mac_master")
+hr.add_files(
+    "../../tb/maintenance_tb/ethernet_mac-master/xilinx/*.vhd", "mac_master")
+hr.add_files(
+    "../../tb/maintenance_tb/ethernet_mac-master/generic/*.vhd", "mac_master")
+hr.add_files(
+    "../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
 
-hr.start(regression_mode=True, gui_mode=False)
+sim_options = None
+default_options = []
+simulator_name = hr.settings.get_simulator_name()
+if simulator_name in ['MODELSIM', 'RIVIERA']:
+    sim_options = '-t ns'
+    # Set compile options
+    default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=default_options)
+
+hr.start(sim_options=sim_options)
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()

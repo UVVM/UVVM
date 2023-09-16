@@ -43,12 +43,12 @@ entity gpio_vvc is
     GC_INSTANCE_IDX                          : natural;
     GC_DEFAULT_LINE_VALUE                    : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
     GC_GPIO_BFM_CONFIG                       : t_gpio_bfm_config := C_GPIO_BFM_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural           := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural           := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level     := warning;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural           := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural           := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := warning
+    GC_CMD_QUEUE_COUNT_MAX                   : natural           := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural           := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level     := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural           := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural           := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     gpio_vvc_if : inout std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := GC_DEFAULT_LINE_VALUE

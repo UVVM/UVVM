@@ -41,12 +41,12 @@ entity wishbone_vvc is
     GC_DATA_WIDTH                            : integer               := 32;
     GC_INSTANCE_IDX                          : natural               := 1; -- Instance index for this WISHBONE_VVCT instance
     GC_WISHBONE_BFM_CONFIG                   : t_wishbone_bfm_config := C_WISHBONE_BFM_CONFIG_DEFAULT; -- Behavior specification for BFM
-    GC_CMD_QUEUE_COUNT_MAX                   : natural               := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural               := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level         := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural               := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural               := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level         := WARNING
+    GC_CMD_QUEUE_COUNT_MAX                   : natural               := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural               := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level         := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural               := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural               := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level         := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     -- VVC control signals:

@@ -28,12 +28,12 @@ entity rgmii_vvc is
   generic(
     GC_INSTANCE_IDX                          : natural;
     GC_RGMII_BFM_CONFIG                      : t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural            := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural            := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level      := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural            := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural            := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level      := WARNING
+    GC_CMD_QUEUE_COUNT_MAX                   : natural            := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural            := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level      := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural            := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural            := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level      := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     rgmii_vvc_tx_if : inout t_rgmii_tx_if;

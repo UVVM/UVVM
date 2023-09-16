@@ -19,3 +19,5 @@ bitvis_vip_ethernet
 bitvis_vip_axi
 bitvis_vip_spec_cov
 bitvis_vip_wishbone
+bitvis_irqc
+bitvis_uart

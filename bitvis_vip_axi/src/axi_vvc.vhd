@@ -48,12 +48,12 @@ entity axi_vvc is
     GC_USER_WIDTH                            : integer range 0 to C_VVC_CMD_USER_MAX_LENGTH := 8;
     GC_INSTANCE_IDX                          : natural                                      := 1; -- Instance index for this AXI_VVCT instance
     GC_AXI_CONFIG                            : t_axi_bfm_config                             := C_AXI_BFM_CONFIG_DEFAULT; -- Behavior specification for BFM
-    GC_CMD_QUEUE_COUNT_MAX                   : natural                                      := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                                      := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                                := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                                      := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                                      := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                                := WARNING
+    GC_CMD_QUEUE_COUNT_MAX                   : natural                                      := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                                      := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                                := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural                                      := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                                      := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                                := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     clk               : in    std_logic;
@@ -474,12 +474,11 @@ begin
     constant C_CHANNEL_SCOPE      : string                                     := C_VVC_NAME & "_AR" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS : t_vvc_labels                               := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
-    wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     read_address_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    read_address_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    read_address_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    read_address_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    read_address_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    read_address_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    read_address_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
@@ -552,12 +551,11 @@ begin
     constant C_CHANNEL_SCOPE        : string       := C_VVC_NAME & "_R" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
-    wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     read_data_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    read_data_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    read_data_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    read_data_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    read_data_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    read_data_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    read_data_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Setup the read data queue
     v_read_data_queue.set_scope(C_CHANNEL_SCOPE & ":PQ");
     -- Wait until VVC is registered in vvc activity register in the interpreter
@@ -709,12 +707,11 @@ begin
     constant C_CHANNEL_SCOPE      : string                                     := C_VVC_NAME & "_AW" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS : t_vvc_labels                               := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
-    wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_address_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    write_address_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    write_address_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    write_address_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    write_address_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    write_address_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    write_address_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
@@ -783,12 +780,11 @@ begin
     constant C_CHANNEL_SCOPE      : string       := C_VVC_NAME & "_W" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
-    wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_data_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    write_data_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    write_data_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    write_data_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    write_data_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    write_data_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    write_data_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
@@ -854,12 +850,11 @@ begin
     constant C_CHANNEL_SCOPE        : string       := C_VVC_NAME & "_B" & "," & to_string(GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
-    wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     write_response_channel_queue.set_scope(C_CHANNEL_SCOPE & ":Q");
-    write_response_channel_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    write_response_channel_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    write_response_channel_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    write_response_channel_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    write_response_channel_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    write_response_channel_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config

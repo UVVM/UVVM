@@ -151,14 +151,12 @@ begin
     enable_log_msg(ALL_MESSAGES);
     disable_log_msg(ID_CMD_INTERPRETER_WAIT);
     disable_log_msg(ID_UVVM_CMD_ACK);
-    for i in 0 to 3 loop
-      disable_log_msg(AVALON_ST_VVCT, i, ID_CMD_INTERPRETER);
-      disable_log_msg(AVALON_ST_VVCT, i, ID_CMD_INTERPRETER_WAIT);
-      disable_log_msg(AVALON_ST_VVCT, i, ID_CMD_EXECUTOR);
-      disable_log_msg(AVALON_ST_VVCT, i, ID_CMD_EXECUTOR_WAIT);
-      disable_log_msg(AVALON_ST_VVCT, i, ID_IMMEDIATE_CMD_WAIT);
-      disable_log_msg(AVALON_ST_VVCT, i, ID_PACKET_DATA);
-    end loop;
+    disable_log_msg(AVALON_ST_VVCT, ALL_INSTANCES, ID_CMD_INTERPRETER);
+    disable_log_msg(AVALON_ST_VVCT, ALL_INSTANCES, ID_CMD_INTERPRETER_WAIT);
+    disable_log_msg(AVALON_ST_VVCT, ALL_INSTANCES, ID_CMD_EXECUTOR);
+    disable_log_msg(AVALON_ST_VVCT, ALL_INSTANCES, ID_CMD_EXECUTOR_WAIT);
+    disable_log_msg(AVALON_ST_VVCT, ALL_INSTANCES, ID_IMMEDIATE_CMD_WAIT);
+    disable_log_msg(AVALON_ST_VVCT, ALL_INSTANCES, ID_PACKET_DATA);
 
     --------------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "Start Simulation of Avalon-ST");

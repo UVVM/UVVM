@@ -940,6 +940,54 @@ begin                                   -- architecture behav
         end loop;
       end loop;
 
+      -- Testing functionality of terminate_access for slave side, one word
+      for iteration in 1 to 10 loop
+        tx_word := std_logic_vector(to_unsigned(iteration, GC_DATA_WIDTH)); --Making individual tx words per loop
+        spi_master_transmit_and_check(not(tx_word), tx_word);
+        spi_slave_transmit_and_check(tx_word, not(tx_word));
+        -- Terminating commands between loop 3 and 7.
+        -- This is done to firstly check function of terminate_access, and then
+        -- to verify correct function of slave_transmit after previous terminated access
+        if (iteration > 3) and (iteration < 7) then 
+          wait for iteration*C_CLK_PERIOD;
+          increment_expected_alerts(WARNING, 1);
+          increment_expected_alerts_and_stop_limit(ERROR);
+          terminate_current_command(SPI_VVCT, C_VVC_IDX_SLAVE_1);
+        end if;
+        await_slave_tx_completion(50 ms);
+        await_master_tx_completion(50 ms);
+      end loop;
+
+      -- Testing functionality of terminate_access for slave side, multi-word
+      for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
+        for i in 1 to iteration loop
+          master_word_array(i - 1) := random(GC_DATA_WIDTH);
+        end loop;
+        spi_master_receive_only(iteration, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
+        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_VVC_IDX_MASTER_1);
+        spi_slave_transmit_only(master_word_array(iteration - 1 downto 0), C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
+        terminate_current_command(SPI_VVCT, C_VVC_IDX_SLAVE_1);
+        await_slave_rx_completion(50 ms);
+        await_master_tx_completion(50 ms);
+        for i in 1 to iteration loop
+          increment_expected_alerts_and_stop_limit(ERROR);
+          fetch_result(SPI_VVCT, C_VVC_IDX_MASTER_1, v_cmd_idx, result);
+          check_value(master_word_array(i - 1), result(GC_DATA_WIDTH - 1 downto 0), ERROR, "check received data");
+        end loop;
+      end loop;
+
+      --Verifying correct function of multi-word transaction from slave after previous terminated access
+      for iteration in 0 to 5 loop
+        -- Generate word array
+        for idx in 0 to GC_DATA_ARRAY_WIDTH - 1 loop
+          master_word_array(idx) := random(GC_DATA_WIDTH);
+          slave_word_array(idx)  := random(GC_DATA_WIDTH);
+        end loop;
+        -- transmit and check
+        spi_master_transmit_and_check(master_word_array, slave_word_array, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER, RELEASE_LINE_BETWEEN_WORDS);
+        spi_slave_transmit_and_check(slave_word_array, master_word_array, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
+      end loop;
+
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 0 ns;
 
     elsif GC_TESTCASE = "spi_master_dut_to_slave_VVC" then

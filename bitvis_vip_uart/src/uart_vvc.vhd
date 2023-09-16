@@ -27,12 +27,15 @@ use work.transaction_pkg.all;
 --=================================================================================================
 entity uart_vvc is
   generic(
-    GC_DATA_WIDTH                         : natural           := 8;
-    GC_INSTANCE_IDX                       : natural           := 1;
-    GC_UART_CONFIG                        : t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                : natural           := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD          : natural           := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := WARNING
+    GC_DATA_WIDTH                            : natural           := 8;
+    GC_INSTANCE_IDX                          : natural           := 1;
+    GC_UART_CONFIG                           : t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
+    GC_CMD_QUEUE_COUNT_MAX                   : natural           := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural           := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level     := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural           := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural           := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     uart_vvc_rx : in    std_logic;
@@ -50,13 +53,16 @@ begin
   -- UART RX VVC
   i1_uart_rx : entity work.uart_rx_vvc
     generic map(
-      GC_DATA_WIDTH                         => GC_DATA_WIDTH,
-      GC_INSTANCE_IDX                       => GC_INSTANCE_IDX,
-      GC_CHANNEL                            => RX,
-      GC_UART_CONFIG                        => GC_UART_CONFIG,
-      GC_CMD_QUEUE_COUNT_MAX                => GC_CMD_QUEUE_COUNT_MAX,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => GC_CMD_QUEUE_COUNT_THRESHOLD,
-      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY
+      GC_DATA_WIDTH                            => GC_DATA_WIDTH,
+      GC_INSTANCE_IDX                          => GC_INSTANCE_IDX,
+      GC_CHANNEL                               => RX,
+      GC_UART_CONFIG                           => GC_UART_CONFIG,
+      GC_CMD_QUEUE_COUNT_MAX                   => GC_CMD_QUEUE_COUNT_MAX,
+      GC_CMD_QUEUE_COUNT_THRESHOLD             => GC_CMD_QUEUE_COUNT_THRESHOLD,
+      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
+      GC_RESULT_QUEUE_COUNT_MAX                => GC_RESULT_QUEUE_COUNT_MAX,
+      GC_RESULT_QUEUE_COUNT_THRESHOLD          => GC_RESULT_QUEUE_COUNT_THRESHOLD,
+      GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY => GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
     )
     port map(
       uart_vvc_rx => uart_vvc_rx
@@ -65,13 +71,16 @@ begin
   -- UART TX VVC
   i1_uart_tx : entity work.uart_tx_vvc
     generic map(
-      GC_DATA_WIDTH                         => GC_DATA_WIDTH,
-      GC_INSTANCE_IDX                       => GC_INSTANCE_IDX,
-      GC_CHANNEL                            => TX,
-      GC_UART_CONFIG                        => GC_UART_CONFIG,
-      GC_CMD_QUEUE_COUNT_MAX                => GC_CMD_QUEUE_COUNT_MAX,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => GC_CMD_QUEUE_COUNT_THRESHOLD,
-      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY
+      GC_DATA_WIDTH                            => GC_DATA_WIDTH,
+      GC_INSTANCE_IDX                          => GC_INSTANCE_IDX,
+      GC_CHANNEL                               => TX,
+      GC_UART_CONFIG                           => GC_UART_CONFIG,
+      GC_CMD_QUEUE_COUNT_MAX                   => GC_CMD_QUEUE_COUNT_MAX,
+      GC_CMD_QUEUE_COUNT_THRESHOLD             => GC_CMD_QUEUE_COUNT_THRESHOLD,
+      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    => GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
+      GC_RESULT_QUEUE_COUNT_MAX                => GC_RESULT_QUEUE_COUNT_MAX,
+      GC_RESULT_QUEUE_COUNT_THRESHOLD          => GC_RESULT_QUEUE_COUNT_THRESHOLD,
+      GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY => GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
     )
     port map(
       uart_vvc_tx => uart_vvc_tx

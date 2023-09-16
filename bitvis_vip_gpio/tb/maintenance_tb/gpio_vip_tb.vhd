@@ -205,6 +205,7 @@ begin
       constant expected_data    : std_logic_vector
       ) is
     begin
+      log(ID_SEQUENCER_SUB, "xxx Testing get on GPIO VVC " & to_string(vvc_instance_idx));
       -- Set GPIO setting to 0xAA. Check GPIO setting
       gpio_set(GPIO_VVCT, vvc_instance_idx, data, "Setting gpio " & to_string(vvc_instance_idx) & " to 0x" & to_string(data, HEX) & ").");
       await_completion(GPIO_VVCT, vvc_instance_idx, C_GPIO_SET_MAX_TIME);
@@ -320,10 +321,8 @@ begin
     enable_log_msg(ID_LOG_HDR_LARGE);
     enable_log_msg(ID_BFM);
 
-    for i in 1 to 9 loop
-      disable_log_msg(GPIO_VVCT, i, ALL_MESSAGES);
-      enable_log_msg(GPIO_VVCT, i, ID_BFM);
-    end loop;
+    disable_log_msg(GPIO_VVCT, ALL_INSTANCES, ALL_MESSAGES);
+    enable_log_msg(GPIO_VVCT, ALL_INSTANCES, ID_BFM);
 
 
     log(ID_LOG_HDR_LARGE, "Verifying TLM + GPIO executor + BFM", C_SCOPE);

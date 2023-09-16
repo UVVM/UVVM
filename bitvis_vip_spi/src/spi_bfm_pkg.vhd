@@ -292,7 +292,7 @@ package spi_bfm_pkg is
     signal   mosi                   : inout std_logic;
     signal   miso                   : inout std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -305,7 +305,7 @@ package spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -332,7 +332,7 @@ package spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -364,7 +364,7 @@ package spi_bfm_pkg is
     signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
@@ -391,7 +391,7 @@ package spi_bfm_pkg is
     signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
@@ -420,7 +420,7 @@ package spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
@@ -443,7 +443,7 @@ package spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
@@ -470,7 +470,7 @@ package spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
@@ -493,7 +493,7 @@ package spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
@@ -524,7 +524,7 @@ package spi_bfm_pkg is
     signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
@@ -549,7 +549,7 @@ package spi_bfm_pkg is
     signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
@@ -1254,7 +1254,7 @@ package body spi_bfm_pkg is
     signal   mosi                   : inout std_logic;
     signal   miso                   : inout std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -1272,7 +1272,7 @@ package body spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     signal   terminate_access       : in std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -1332,7 +1332,7 @@ package body spi_bfm_pkg is
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
@@ -1398,7 +1398,7 @@ package body spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
@@ -1447,7 +1447,7 @@ package body spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
@@ -1485,7 +1485,7 @@ package body spi_bfm_pkg is
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
@@ -1521,7 +1521,7 @@ package body spi_bfm_pkg is
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
@@ -1558,7 +1558,7 @@ package body spi_bfm_pkg is
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
@@ -1594,7 +1594,7 @@ package body spi_bfm_pkg is
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
@@ -1659,7 +1659,7 @@ package body spi_bfm_pkg is
     signal   spi_if                 : inout t_spi_if;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is
@@ -1677,7 +1677,7 @@ package body spi_bfm_pkg is
     signal   terminate_access       : in std_logic;
     constant alert_level            : in t_alert_level            := error;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_SCOPE;
+    constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   ) is

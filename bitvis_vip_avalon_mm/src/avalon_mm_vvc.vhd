@@ -42,12 +42,12 @@ entity avalon_mm_vvc is
     GC_DATA_WIDTH                            : integer range 1 to C_VVC_CMD_DATA_MAX_LENGTH := 32; -- Avalon MM data bus
     GC_INSTANCE_IDX                          : natural                                      := 1; -- Instance index for this AVALON_MM_VVCT instance
     GC_AVALON_MM_CONFIG                      : t_avalon_mm_bfm_config                       := C_AVALON_MM_BFM_CONFIG_DEFAULT; -- Behavior specification for BFM
-    GC_CMD_QUEUE_COUNT_MAX                   : natural                                      := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                                      := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                                := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                                      := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                                      := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                                := WARNING
+    GC_CMD_QUEUE_COUNT_MAX                   : natural                                      := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                                      := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                                := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural                                      := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                                      := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                                := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     clk                     : in    std_logic;
@@ -521,12 +521,11 @@ begin
     variable v_cmd_queues_are_empty : boolean;
 
   begin
-    wait for 0 ns; -- delay by 1 delta cycle to allow constructor to finish first
     -- Set the command response queue up to the same settings as the command queue
     command_response_queue.set_scope(C_SCOPE & ":RQ");
-    command_response_queue.set_queue_count_max(vvc_config.cmd_queue_count_max);
-    command_response_queue.set_queue_count_threshold(vvc_config.cmd_queue_count_threshold);
-    command_response_queue.set_queue_count_threshold_severity(vvc_config.cmd_queue_count_threshold_severity);
+    command_response_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
+    command_response_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
+    command_response_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
 
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;

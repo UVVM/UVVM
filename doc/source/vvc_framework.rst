@@ -292,7 +292,7 @@ successful fetch, a message with log ID ID_UVVM_CMD_RESULT is logged. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | wanted_idx         | in     | natural                      | The index to be fetched or awaited                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| variable | result             | out    | t_vvc_result                 | The output where the fetched data is to be placed       |
+| variable | result             | out    | :ref:`t_vvc_result`          | The output where the fetched data is to be placed       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | fetch_is_accepted  | out    | boolean                      | Whether the fetch command was accepted or not. Will be  |
 |          |                    |        |                              | false if the specified command idx has not been stored. |
@@ -518,6 +518,40 @@ In order to use a VVC the following libraries need to be included: ::
 
     library bitvis_vip_<name>;
     context bitvis_vip_<name>.vvc_context;
+
+Types
+==================================================================================================================================    
+Some VVC-related types will need to be hierarchically declared, based on their package name, in order to avoid ambiguity among 
+different VVCs.
+
+If only a single VVC is needed: ::
+
+    --Example:
+    variable v_result : t_vvc_result;
+
+If several VVCs are needed: ::
+
+    --Example:
+    variable v_spi_result : bitvis_vip_spi.vvc_cmd_pkg.t_vvc_result;
+    variable v_axi_result : bitvis_vip_axi.vvc_cmd_pkg.t_vvc_result;
+
+.. _t_vvc_result:
+
+t_vvc_result
+----------------------------------------------------------------------------------------------------------------------------------
+The common type t_vvc_result is always defined with the max length of fetched data that the VVC supports (see the definition of 
+t_vvc_result in its corresponding vvc_cmd_pkg). Therefore it is recommended to define the range of the desired data output after 
+the fetch_result method has been completed. ::
+
+    --Example:
+    variable v_data     : t_vvc_result;
+    variable v_data_out : std_logic_vector(7 downto 0);
+
+And then: ::
+
+    fetch_result(SPI_VVCT, 1, v_cmd_idx, v_data, "Fetching result of SPI receive operation");
+    v_data_out := v_data(7 downto 0);
+
 
 UVVM Initialization
 ==================================================================================================================================

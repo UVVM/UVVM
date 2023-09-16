@@ -84,9 +84,9 @@ check_value_in_range()
 Checks if min_value ≤ val ≤ max_value, and alerts with severity alert_level if val is outside the range. The result of the check 
 is returned as a boolean if the method is called as a function. ::
 
-    [boolean :=] check_value_in_range(value(u), min_value(u), max_value(u), msg, [scope, [msg_id, [msg_id_panel]]])
-    [boolean :=] check_value_in_range(value(s), min_value(s), max_value(s), msg, [scope, [msg_id, [msg_id_panel]]])
-    [boolean :=] check_value_in_range(value(int), min_value(int), max_value(int), msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(u), min_value(u), max_value(u), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(s), min_value(s), max_value(s), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(int), min_value(int), max_value(int), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     [boolean :=] check_value_in_range(value(time), min_value(time), max_value(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     [boolean :=] check_value_in_range(value(real), min_value(real), max_value(real), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 

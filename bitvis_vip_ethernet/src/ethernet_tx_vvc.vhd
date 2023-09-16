@@ -45,12 +45,12 @@ entity ethernet_tx_vvc is
     GC_PHY_MAX_ACCESS_TIME                   : time                                  := 1 us;
     GC_DUT_IF_FIELD_CONFIG                   : t_dut_if_field_config_direction_array := C_DUT_IF_FIELD_CONFIG_DIRECTION_ARRAY_DEFAULT;
     GC_ETHERNET_PROTOCOL_CONFIG              : t_ethernet_protocol_config            := C_ETHERNET_PROTOCOL_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural                               := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                               := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                         := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                               := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                               := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                         := WARNING
+    GC_CMD_QUEUE_COUNT_MAX                   : natural                               := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                               := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                         := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural                               := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                               := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                         := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
 end entity ethernet_tx_vvc;
 

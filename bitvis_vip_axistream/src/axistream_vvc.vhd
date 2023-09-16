@@ -47,12 +47,12 @@ entity axistream_vvc is
     GC_INSTANCE_IDX                          : natural;
     GC_PACKETINFO_QUEUE_COUNT_MAX            : natural                := 1; -- Number of PacketInfo Queues, normally one per source VVC
     GC_AXISTREAM_BFM_CONFIG                  : t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural                := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level          := warning;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := warning
+    GC_CMD_QUEUE_COUNT_MAX                   : natural                := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level          := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural                := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
     );
   port(
     clk              : in    std_logic;
@@ -302,15 +302,7 @@ begin
               dest_array          => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
               msg                 => format_msg(v_cmd),
               clk                 => clk,
-              axistream_if.tdata  => axistream_vvc_if.tdata,
-              axistream_if.tkeep  => axistream_vvc_if.tkeep,
-              axistream_if.tuser  => axistream_vvc_if.tuser,
-              axistream_if.tvalid => axistream_vvc_if.tvalid,
-              axistream_if.tlast  => axistream_vvc_if.tlast,
-              axistream_if.tready => axistream_vvc_if.tready,
-              axistream_if.tstrb  => axistream_vvc_if.tstrb,
-              axistream_if.tid    => axistream_vvc_if.tid,
-              axistream_if.tdest  => axistream_vvc_if.tdest,
+              axistream_if        => axistream_vvc_if,
               scope               => C_SCOPE,
               msg_id_panel        => v_msg_id_panel,
               config              => vvc_config.bfm_config);
@@ -331,15 +323,7 @@ begin
                               dest_array          => v_result.dest_array,
                               msg                 => format_msg(v_cmd),
                               clk                 => clk,
-                              axistream_if.tdata  => axistream_vvc_if.tdata,
-                              axistream_if.tkeep  => axistream_vvc_if.tkeep,
-                              axistream_if.tuser  => axistream_vvc_if.tuser,
-                              axistream_if.tvalid => axistream_vvc_if.tvalid,
-                              axistream_if.tlast  => axistream_vvc_if.tlast,
-                              axistream_if.tready => axistream_vvc_if.tready,
-                              axistream_if.tstrb  => axistream_vvc_if.tstrb,
-                              axistream_if.tid    => axistream_vvc_if.tid,
-                              axistream_if.tdest  => axistream_vvc_if.tdest,
+                              axistream_if        => axistream_vvc_if,
                               scope               => C_SCOPE,
                               msg_id_panel        => v_msg_id_panel,
                               config              => vvc_config.bfm_config);
@@ -372,15 +356,7 @@ begin
               exp_dest_array      => v_cmd.dest_array(0 to v_cmd.dest_array_length - 1),
               msg                 => format_msg(v_cmd),
               clk                 => clk,
-              axistream_if.tdata  => axistream_vvc_if.tdata,
-              axistream_if.tkeep  => axistream_vvc_if.tkeep,
-              axistream_if.tuser  => axistream_vvc_if.tuser,
-              axistream_if.tvalid => axistream_vvc_if.tvalid,
-              axistream_if.tlast  => axistream_vvc_if.tlast,
-              axistream_if.tready => axistream_vvc_if.tready,
-              axistream_if.tstrb  => axistream_vvc_if.tstrb,
-              axistream_if.tid    => axistream_vvc_if.tid,
-              axistream_if.tdest  => axistream_vvc_if.tdest,
+              axistream_if        => axistream_vvc_if,
               alert_level         => v_cmd.alert_level,
               scope               => C_SCOPE,
               msg_id_panel        => v_msg_id_panel,

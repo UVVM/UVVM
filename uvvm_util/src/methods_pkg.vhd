@@ -1950,7 +1950,7 @@ package methods_pkg is
   function convert_slv_array_to_byte_array(
     constant slv_array       : t_slv_array;
     constant ascending       : boolean           := false;
-    constant byte_endianness : t_byte_endianness := FIRST_BYTE_LEFT
+    constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array;
 
   function reverse_vector(
@@ -3259,7 +3259,7 @@ package body methods_pkg is
     constant open_mode       : in file_open_kind    := append_mode) is
   begin
     -- Write the info string to the target file
-    if log_file_name = "" and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
+    if log_file_name'length = 0 and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
       -- Output file specified, but file name was invalid.
       alert(TB_ERROR, "log called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
     else
@@ -3314,7 +3314,7 @@ package body methods_pkg is
 
       -- Prepare strings for msg_id and scope
       v_log_msg_id := to_upper(justify(to_string(msg_id), left, C_LOG_MSG_ID_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE));
-      if (scope = "") then
+      if (scope'length = 0) then
         v_log_scope := justify("(non scoped)", left, C_LOG_SCOPE_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE);
       else
         v_log_scope := justify(to_string(scope), left, C_LOG_SCOPE_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE);
@@ -3396,7 +3396,7 @@ package body methods_pkg is
       prefix_lines(v_info_final);
 
       -- Write the info string to the target file
-      if log_file_name = "" and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
+      if log_file_name'length = 0 and (log_destination = LOG_ONLY or log_destination = CONSOLE_AND_LOG) then
         -- Output file specified, but file name was invalid.
         alert(TB_ERROR, "log called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
       else
@@ -3458,7 +3458,7 @@ package body methods_pkg is
     variable v_log_body              : line;
     variable v_text_block_is_empty   : boolean;
   begin
-    if ((log_file_name = "") and ((log_destination = CONSOLE_AND_LOG) or (log_destination = LOG_ONLY))) then
+    if ((log_file_name'length = 0) and ((log_destination = CONSOLE_AND_LOG) or (log_destination = LOG_ONLY))) then
       alert(TB_ERROR, "log_text_block called with log_destination " & to_upper(to_string(log_destination)) & ", but log file name was empty.");
     -- Check if message ID is enabled
     elsif (msg_id_panel(msg_id) = ENABLED) then
@@ -6939,7 +6939,7 @@ package body methods_pkg is
       while(get_range(max_value, min_value, v_time_unit) > C_MAX_INT_VAL) loop
         v_time_unit := v_time_unit * 1000;
       end loop;
-      if not(shared_warned_rand_time_res) and ext_proc_call = "" then
+      if not(shared_warned_rand_time_res) and ext_proc_call'length = 0 then
         alert(TB_WARNING, "random(" & to_string(min_value) & "," & to_string(max_value) & "," & to_string(time_resolution) &
           ") => time_resolution is too small for the given range. It has been increased to " & to_string(v_time_unit), C_TB_SCOPE_DEFAULT);
         shared_warned_rand_time_res := true;
@@ -7133,7 +7133,7 @@ package body methods_pkg is
   function convert_slv_array_to_byte_array(
     constant slv_array       : t_slv_array;
     constant ascending       : boolean           := false;
-    constant byte_endianness : t_byte_endianness := FIRST_BYTE_LEFT
+    constant byte_endianness : t_byte_endianness := LOWER_BYTE_LEFT
   ) return t_byte_array is
     variable v_bytes_in_word     : integer := (slv_array(0)'length / 8);
     variable v_byte_array_length : integer := (slv_array'length * v_bytes_in_word);
@@ -7588,7 +7588,7 @@ package body methods_pkg is
     constant name        : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_proc_call : line;
   begin
-    if caller_name = "" then
+    if caller_name'length = 0 then
       write(v_proc_call, name);
     else
       write(v_proc_call, caller_name);
@@ -8218,7 +8218,7 @@ package body methods_pkg is
     variable v_stable_req_met          : boolean := false; -- When true, the procedure is done and has logged a conclusion.
     variable v_proc_call               : line;
   begin
-    if caller_name = "" then
+    if caller_name'length = 0 then
       write(v_proc_call, name);
     else
       write(v_proc_call, caller_name);

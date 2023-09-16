@@ -2,6 +2,16 @@ Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
 
+v2.9.4
+----------
+Released: 2023-09-16
+- All queue setups now come directly from the VVC generics.
+- Removed delta cycle wait in VVC multiple executors.
+- Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
+  unused and will be removed in v3.0.
+- Replaced the default values in VVC generics related to the cmd/results queues with
+  the constants from adaptations_pkg.
+
 v2.9.3
 ----------
 Released: 2023-03-21

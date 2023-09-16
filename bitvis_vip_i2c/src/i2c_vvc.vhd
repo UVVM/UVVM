@@ -43,12 +43,12 @@ entity i2c_vvc is
     GC_INSTANCE_IDX                          : natural          := 1; -- Instance index for this I2C_VVCT instance
     GC_MASTER_MODE                           : boolean          := true;
     GC_I2C_CONFIG                            : t_i2c_bfm_config := C_I2C_BFM_CONFIG_DEFAULT; -- Behavior specification for BFM
-    GC_CMD_QUEUE_COUNT_MAX                   : natural          := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural          := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level    := warning;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural          := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural          := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level    := warning
+    GC_CMD_QUEUE_COUNT_MAX                   : natural          := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural          := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level    := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural          := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural          := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level    := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     i2c_vvc_if : inout t_i2c_if := init_i2c_if_signals(VOID)

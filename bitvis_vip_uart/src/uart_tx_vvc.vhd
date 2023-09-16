@@ -39,12 +39,12 @@ entity uart_tx_vvc is
     GC_INSTANCE_IDX                          : natural           := 1;
     GC_CHANNEL                               : t_channel         := TX;
     GC_UART_CONFIG                           : t_uart_bfm_config := C_UART_BFM_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural           := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural           := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level     := warning;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural           := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural           := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := warning
+    GC_CMD_QUEUE_COUNT_MAX                   : natural           := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural           := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level     := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural           := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural           := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     uart_vvc_tx : inout std_logic := GC_UART_CONFIG.idle_state

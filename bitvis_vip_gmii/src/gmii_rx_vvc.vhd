@@ -42,12 +42,12 @@ entity gmii_rx_vvc is
     GC_INSTANCE_IDX                          : natural;
     GC_CHANNEL                               : t_channel;
     GC_GMII_BFM_CONFIG                       : t_gmii_bfm_config := C_GMII_BFM_CONFIG_DEFAULT;
-    GC_CMD_QUEUE_COUNT_MAX                   : natural           := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural           := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level     := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural           := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural           := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := WARNING
+    GC_CMD_QUEUE_COUNT_MAX                   : natural           := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural           := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level     := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural           := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural           := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level     := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     gmii_vvc_rx_if : inout t_gmii_rx_if := init_gmii_if_signals

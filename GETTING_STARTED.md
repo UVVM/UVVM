@@ -64,7 +64,7 @@ To compile everything, refer to the **Compiling all of UVVM** section above.
 ## For developers who understand the basics of UVVM Utility library and need more than just basic testbenches:
 ### Step 1
 * A very brief introduction to making a structured testbench architecture can be found under [Advanced Verification - Made simple](./_supplementary_doc).
-* Our presentation at the ESA (European Space Agency) conference on SEFUW 2018 gives a good introduction to UVVM, Testbench architecture, VVCs and how UVVM is standardising the VHDL testbench architecture: https://indico.esa.int/indico/event/232/session/6/contribution/8/material/slides/0.pdf
+* Our presentation at the ESA (European Space Agency) conference on SEFUW 2018 gives a good introduction to UVVM, Testbench architecture, VVCs and how UVVM is standardising the VHDL testbench architecture: https://github.com/UVVM/UVVM/blob/master/uvvm_util/doc/Advanced_VHDL_verification.pdf
 * For a slightly deeper introduction - also explaining the challenges - please check out our PPT-file [The_critically_missing_VHDL_TB_feature.ppsx](./uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx)
 
 ### Step 2

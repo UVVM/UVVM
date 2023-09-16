@@ -350,13 +350,7 @@ package body td_vvc_entity_support_pkg is
     variable v_comma_number        : natural := 0;
   begin
     check_value(instance_idx <= C_MAX_VVC_INSTANCE_NUM - 1, TB_FAILURE, "Generic VVC Instance index =" & to_string(instance_idx) & " cannot exceed C_MAX_VVC_INSTANCE_NUM-1 in UVVM adaptations = " & to_string(C_MAX_VVC_INSTANCE_NUM - 1), C_SCOPE, ID_NEVER);
-    vvc_config.bfm_config                            := bfm_config;
-    vvc_config.cmd_queue_count_max                   := cmd_queue_count_max;
-    vvc_config.cmd_queue_count_threshold             := cmd_queue_count_threshold;
-    vvc_config.cmd_queue_count_threshold_severity    := cmd_queue_count_threshold_severity;
-    vvc_config.result_queue_count_max                := result_queue_count_max;
-    vvc_config.result_queue_count_threshold          := result_queue_count_threshold;
-    vvc_config.result_queue_count_threshold_severity := result_queue_count_threshold_severity;
+    vvc_config.bfm_config := bfm_config;
 
     -- compose log message based on the number of channels in scope string
     if pos_of_leftmost(',', scope, 1) = pos_of_rightmost(',', scope, 1) then

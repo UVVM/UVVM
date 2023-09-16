@@ -29,7 +29,7 @@ use std.textio.all;
 package rgmii_bfm_pkg is
 
   --==========================================================================================
-  -- Types and constants for RGMII BFM 
+  -- Types and constants for RGMII BFM
   --==========================================================================================
   constant C_BFM_SCOPE : string := "RGMII BFM";
 
@@ -48,27 +48,29 @@ package rgmii_bfm_pkg is
 
   -- Configuration record to be assigned in the test harness.
   type t_rgmii_bfm_config is record
-    max_wait_cycles          : integer; -- Used for setting the maximum cycles to wait before an alert is issued when
-                                        -- waiting for signals from the DUT.
-    max_wait_cycles_severity : t_alert_level; -- Severity if max_wait_cycles expires.
-    clock_period             : time;    -- Period of the clock signal.
-    rx_clock_skew            : time;    -- Skew of the sampling of the data in connection to the RX clock edges
-    match_strictness         : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
-    id_for_bfm               : t_msg_id; -- The message ID used as a general message ID in the BFM
+    max_wait_cycles                : integer; -- Used for setting the maximum cycles to wait before an alert is issued when
+                                              -- waiting for signals from the DUT.
+    max_wait_cycles_severity       : t_alert_level; -- Severity if max_wait_cycles expires.
+    clock_period                   : time;    -- Period of the clock signal.
+    rx_clock_skew                  : time;    -- Skew of the sampling of the data in connection to the RX clock edges
+    match_strictness               : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    id_for_bfm                     : t_msg_id; -- The message ID used as a general message ID in the BFM
+    data_valid_on_both_clock_edges : boolean;  -- Data is valid on both edges of the clock. Set this to true for 1 Gbps, and false for 10/100 Mbps.
   end record;
 
   -- Define the default value for the BFM config
   constant C_RGMII_BFM_CONFIG_DEFAULT : t_rgmii_bfm_config := (
-    max_wait_cycles          => 10,
-    max_wait_cycles_severity => ERROR,
-    clock_period             => -1 ns,
-    rx_clock_skew            => -1 ns,
-    match_strictness         => MATCH_EXACT,
-    id_for_bfm               => ID_BFM
+    max_wait_cycles                => 10,
+    max_wait_cycles_severity       => ERROR,
+    clock_period                   => -1 ns,
+    rx_clock_skew                  => -1 ns,
+    match_strictness               => MATCH_EXACT,
+    id_for_bfm                     => ID_BFM,
+    data_valid_on_both_clock_edges => true -- Default 1 Gbps
   );
 
   --==========================================================================================
-  -- BFM procedures 
+  -- BFM procedures
   --==========================================================================================
   -- This function returns an RGMII interface with initialized signals.
   -- All input signals are initialized to 0
@@ -177,7 +179,17 @@ package body rgmii_bfm_pkg is
       for i in data_array'range loop
         rgmii_tx_if.txd <= data_array(i)(3 downto 0);
         wait until falling_edge(rgmii_tx_if.txc);
-        rgmii_tx_if.txd <= data_array(i)(7 downto 4);
+
+        if config.data_valid_on_both_clock_edges then
+          -- 1 Gbps
+          rgmii_tx_if.txd <= data_array(i)(7 downto 4);
+        else -- not config.data_valid_on_both_clock_edges
+          -- 10/100 Mbps
+          wait until rising_edge(rgmii_tx_if.txc);
+          rgmii_tx_if.txd <= data_array(i)(7 downto 4);
+          wait until falling_edge(rgmii_tx_if.txc);
+        end if; -- config.data_valid_on_both_clock_edges
+
         wait until rising_edge(rgmii_tx_if.txc);
       end loop;
     else
@@ -251,8 +263,18 @@ package body rgmii_bfm_pkg is
         if rgmii_rx_if.rx_ctl = '1' then
           v_normalized_data(v_byte_cnt)(3 downto 0) := rgmii_rx_if.rxd;
           wait until falling_edge(rgmii_rx_if.rxc);
-          wait for config.rx_clock_skew;
-          v_normalized_data(v_byte_cnt)(7 downto 4) := rgmii_rx_if.rxd;
+
+          if config.data_valid_on_both_clock_edges then
+            -- 1 Gbps
+            wait for config.rx_clock_skew;
+            v_normalized_data(v_byte_cnt)(7 downto 4) := rgmii_rx_if.rxd;
+          else -- not config.data_valid_on_both_clock_edges
+            -- 10/100 Mbps
+            wait until rising_edge(rgmii_rx_if.rxc);
+            wait for config.rx_clock_skew;
+            v_normalized_data(v_byte_cnt)(7 downto 4) := rgmii_rx_if.rxd;
+            wait until falling_edge(rgmii_rx_if.rxc);
+          end if; -- config.data_valid_on_both_clock_edges
 
           if v_byte_cnt = v_normalized_data'length - 1 then
             v_done := true;

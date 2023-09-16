@@ -45,12 +45,12 @@ entity spi_vvc is
     GC_INSTANCE_IDX                          : natural          := 1; -- Instance index for this SPI_VVCT instance
     GC_MASTER_MODE                           : boolean          := true;
     GC_SPI_CONFIG                            : t_spi_bfm_config := C_SPI_BFM_CONFIG_DEFAULT; -- Behavior specification for BFM
-    GC_CMD_QUEUE_COUNT_MAX                   : natural          := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural          := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level    := warning;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural          := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural          := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level    := warning
+    GC_CMD_QUEUE_COUNT_MAX                   : natural          := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural          := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level    := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural          := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural          := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level    := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     spi_vvc_if : inout t_spi_if := init_spi_if_signals(GC_SPI_CONFIG, GC_MASTER_MODE)
@@ -501,6 +501,7 @@ begin
                                              rx_data                => v_result(0)(GC_DATA_WIDTH - 1 downto 0),
                                              msg                    => format_msg(v_cmd),
                                              spi_if                 => spi_vvc_if,
+                                             terminate_access       => terminate_current_cmd.is_active,
                                              when_to_start_transfer => v_cmd.when_to_start_transfer,
                                              scope                  => C_SCOPE,
                                              msg_id_panel           => v_msg_id_panel,
@@ -513,6 +514,7 @@ begin
                                              rx_data                => v_data_receive(v_num_words - 1 downto 0),
                                              msg                    => format_msg(v_cmd),
                                              spi_if                 => spi_vvc_if,
+                                             terminate_access       => terminate_current_cmd.is_active,
                                              when_to_start_transfer => v_cmd.when_to_start_transfer,
                                              scope                  => C_SCOPE,
                                              msg_id_panel           => v_msg_id_panel,
@@ -546,6 +548,7 @@ begin
                                            data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH - 1 downto 0),
                                            msg                    => format_msg(v_cmd),
                                            spi_if                 => spi_vvc_if,
+                                           terminate_access       => terminate_current_cmd.is_active,
                                            alert_level            => v_cmd.alert_level,
                                            when_to_start_transfer => v_cmd.when_to_start_transfer,
                                            scope                  => C_SCOPE,
@@ -560,6 +563,7 @@ begin
                                            data_exp               => v_normalized_data_exp(v_num_words - 1 downto 0),
                                            msg                    => format_msg(v_cmd),
                                            spi_if                 => spi_vvc_if,
+                                           terminate_access       => terminate_current_cmd.is_active,
                                            alert_level            => v_cmd.alert_level,
                                            when_to_start_transfer => v_cmd.when_to_start_transfer,
                                            scope                  => C_SCOPE,
@@ -581,6 +585,7 @@ begin
               spi_slave_transmit(tx_data                => v_cmd.data(0)(GC_DATA_WIDTH - 1 downto 0),
                                  msg                    => format_msg(v_cmd),
                                  spi_if                 => spi_vvc_if,
+                                 terminate_access       => terminate_current_cmd.is_active,
                                  when_to_start_transfer => v_cmd.when_to_start_transfer,
                                  scope                  => C_SCOPE,
                                  msg_id_panel           => v_msg_id_panel,
@@ -592,6 +597,7 @@ begin
               spi_slave_transmit(tx_data                => v_normalized_data(v_num_words - 1 downto 0),
                                  msg                    => format_msg(v_cmd),
                                  spi_if                 => spi_vvc_if,
+                                 terminate_access       => terminate_current_cmd.is_active,
                                  when_to_start_transfer => v_cmd.when_to_start_transfer,
                                  scope                  => C_SCOPE,
                                  msg_id_panel           => v_msg_id_panel,
@@ -611,6 +617,7 @@ begin
               spi_slave_receive(rx_data                => v_result(0)(GC_DATA_WIDTH - 1 downto 0),
                                 msg                    => format_msg(v_cmd),
                                 spi_if                 => spi_vvc_if,
+                                terminate_access       => terminate_current_cmd.is_active,
                                 when_to_start_transfer => v_cmd.when_to_start_transfer,
                                 scope                  => C_SCOPE,
                                 msg_id_panel           => v_msg_id_panel,
@@ -619,6 +626,7 @@ begin
               spi_slave_receive(rx_data                => v_data_receive(v_num_words - 1 downto 0),
                                 msg                    => format_msg(v_cmd),
                                 spi_if                 => spi_vvc_if,
+                                terminate_access       => terminate_current_cmd.is_active,
                                 when_to_start_transfer => v_cmd.when_to_start_transfer,
                                 scope                  => C_SCOPE,
                                 msg_id_panel           => v_msg_id_panel,
@@ -652,6 +660,7 @@ begin
               spi_slave_check(data_exp               => v_cmd.data_exp(0)(GC_DATA_WIDTH - 1 downto 0),
                               msg                    => format_msg(v_cmd),
                               spi_if                 => spi_vvc_if,
+                              terminate_access       => terminate_current_cmd.is_active,
                               alert_level            => v_cmd.alert_level,
                               when_to_start_transfer => v_cmd.when_to_start_transfer,
                               scope                  => C_SCOPE,
@@ -664,6 +673,7 @@ begin
               spi_slave_check(data_exp               => v_normalized_data_exp(v_num_words - 1 downto 0),
                               msg                    => format_msg(v_cmd),
                               spi_if                 => spi_vvc_if,
+                              terminate_access       => terminate_current_cmd.is_active,
                               alert_level            => v_cmd.alert_level,
                               when_to_start_transfer => v_cmd.when_to_start_transfer,
                               scope                  => C_SCOPE,

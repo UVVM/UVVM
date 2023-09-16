@@ -2,6 +2,14 @@ Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
 
+v1.8.6
+----------
+Released: 2023-09-16
+- Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
+  unused and will be removed in v3.0.
+- Replaced the default values in VVC generics related to the cmd/results queues with
+  the constants from adaptations_pkg.
+
 v1.8.5
 ----------
 Released: 2023-03-21

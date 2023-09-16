@@ -5514,7 +5514,7 @@ package body rand_pkg is
             v_acc_range_len := v_acc_range_len + priv_int_constraints.ran_incl(j).range_len;
             if v_ret_long < v_acc_range_len then
               v_prev_offset := v_acc_range_len - priv_int_constraints.ran_incl(j).range_len;
-              v_ret         := to_integer(v_ret_long + priv_int_constraints.ran_incl(j).min_value - v_prev_offset);
+              v_ret         := to_integer(resize(v_ret_long + priv_int_constraints.ran_incl(j).min_value - v_prev_offset, 32));
               exit;
             end if;
           end loop;

@@ -1,7 +1,6 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
-
 v2.3.1
 ----------
 Released: 2021-10-22
@@ -13,7 +12,6 @@ v2.3.0
 Released: 2021-05-26
 - Insert_expected() to an empty Scoreboard using identifier_position=POSITION
   and identifier=1 is now allowed.
-
 
 v2.2.0
 ----------

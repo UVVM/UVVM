@@ -2,6 +2,16 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.5
+----------
+Released: 2023-09-16
+- Improved vvc_generator.py script to automatically generate compilable
+  code without requiring any user inputs.
+- Updated vvc_generator.py so that all queue setups now come directly from the VVC generics
+  and removed delta cycle wait in VVC multiple executors.
+- Updated vvc_generator.py so that the default values related to the cmd/results queues use
+  the constants from adaptations_pkg.
+
 v2.12.4
 ----------
 Released: 2023-03-10

@@ -49,12 +49,12 @@ entity avalon_st_vvc is
     GC_INSTANCE_IDX                          : natural;
     GC_AVALON_ST_BFM_CONFIG                  : t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     -- Common VVC fields
-    GC_CMD_QUEUE_COUNT_MAX                   : natural                := 1000;
-    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                := 950;
-    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level          := WARNING;
-    GC_RESULT_QUEUE_COUNT_MAX                : natural                := 1000;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := 950;
-    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := WARNING
+    GC_CMD_QUEUE_COUNT_MAX                   : natural                := C_CMD_QUEUE_COUNT_MAX;
+    GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                := C_CMD_QUEUE_COUNT_THRESHOLD;
+    GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level          := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
+    GC_RESULT_QUEUE_COUNT_MAX                : natural                := C_RESULT_QUEUE_COUNT_MAX;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                := C_RESULT_QUEUE_COUNT_THRESHOLD;
+    GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level          := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
   );
   port(
     clk              : in    std_logic;

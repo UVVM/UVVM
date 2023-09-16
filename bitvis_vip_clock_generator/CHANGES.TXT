@@ -4,7 +4,7 @@ Bitvis VIP Clock Generator - Overview on Versions and Changes
 
 v1.5.3
 ----------
-Released: 2023-XX-XX
+Released: 2023-09-16
 - Added a note to VVC QuickRef that cmd/result queue parameters in the VVC Configuration are
   unused and will be removed in v3.0.
 - Replaced the default values in VVC generics related to the cmd/results queues with

@@ -586,7 +586,7 @@ def test_bitvis_vip_rgmii():
     hr.add_files("../bitvis_vip_rgmii/tb/*.vhd", "bitvis_vip_rgmii")
     hr.start(sim_options=get_sim_options(hr))
 
-    check_result(exp_pass=2, exp_fail=0, exp_minor=0, hr=hr)
+    check_result(exp_pass=3, exp_fail=0, exp_minor=0, hr=hr)
 
 
 def test_bitvis_vip_sbi():

@@ -2,6 +2,11 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v4.7.9
+----------
+Released: 2023-XX-XX
+- Fixed incorrect logging of ID_PACKET_PAYLOAD and ID_PACKET_COMPLETE in axistream_receive.
+
 v4.7.8
 ----------
 Released: 2023-09-16

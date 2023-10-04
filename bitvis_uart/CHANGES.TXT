@@ -2,6 +2,11 @@ Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
 
+v1.1.7
+----------
+Released: 202X-XX-XX
+- Removed suppressing vcom-1090 warning in test.py.
+
 v1.1.6
 ----------
 Released: 2021-10-22

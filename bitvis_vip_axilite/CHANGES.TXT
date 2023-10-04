@@ -2,6 +2,11 @@ Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
 
+v2.9.5
+----------
+Released: 202X-XX-XX
+- Fixed compilation warning vcom-1090.
+
 v2.9.4
 ----------
 Released: 2023-09-16

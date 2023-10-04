@@ -2,6 +2,11 @@ Bitvis VIP GMII (Gigabit Media-Independent Interface) - Overview on Versions and
 ==============================================================
 
 
+v1.0.3
+----------
+Released: 202X-XX-XX
+- Fixed compilation warning vcom-1090.
+
 v1.0.2
 ----------
 Released: 2023-09-16

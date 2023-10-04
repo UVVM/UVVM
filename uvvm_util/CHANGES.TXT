@@ -3,6 +3,11 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.4
+----------
+Released: 202X-XX-XX
+- Removed suppressing vcom-1090 warning in test.py.
+
 v2.19.3
 ----------
 Released: 2023-09-16

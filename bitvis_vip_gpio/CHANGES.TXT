@@ -2,6 +2,11 @@ Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
 
+v1.8.7
+----------
+Released: 202X-XX-XX
+- Fixed compilation warning vcom-1090.
+
 v1.8.6
 ----------
 Released: 2023-09-16

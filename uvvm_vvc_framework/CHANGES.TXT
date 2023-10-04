@@ -2,6 +2,12 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.6
+----------
+Released: 202X-XX-XX
+- Updated vvc_generator.py to fix compilation warning vcom-1090.
+- Removed suppressing vcom-1090 warning in test.py.
+
 v2.12.5
 ----------
 Released: 2023-09-16

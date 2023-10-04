@@ -2,6 +2,11 @@ Bitvis VIP SPI - Overview on Versions and Changes
 ==============================================================
 
 
+v3.9.7
+----------
+Released: 202X-XX-XX
+- Fixed compilation warning vcom-1090.
+
 v3.9.6
 ----------
 Released: 2023-09-16

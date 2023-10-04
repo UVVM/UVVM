@@ -67,7 +67,7 @@ simulator_name = hr.settings.get_simulator_name()
 if simulator_name in ['MODELSIM', 'RIVIERA']:
     sim_options = '-t ns'
     # Set compile options
-    default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+    default_options = ["-suppress", "1346,1246,1236", "-2008"]
     hr.set_simulator(simulator=simulator_name, com_options=default_options)
 
 hr.start(sim_options=sim_options)

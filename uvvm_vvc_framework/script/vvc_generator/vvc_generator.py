@@ -663,6 +663,7 @@ def add_vvc_interpreter(file_handle, vvc_channel, features, num_of_queues):
     file_handle.write("      end if;\n")
     print_linefeed(file_handle)
     file_handle.write("    end loop;\n")
+    file_handle.write("    wait;\n")
     file_handle.write("  end process;\n")
     file_handle.write(division_line + "\n")
     print_linefeed(file_handle)

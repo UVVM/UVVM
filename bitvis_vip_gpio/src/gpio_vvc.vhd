@@ -188,7 +188,6 @@ begin
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
 
         end case;
-        wait for 0 ns;
 
         --UVVM: temporary fix for HVVC, remove line below in v3.0
         if v_local_vvc_cmd.operation /= DISABLE_LOG_MSG and v_local_vvc_cmd.operation /= ENABLE_LOG_MSG then
@@ -206,6 +205,7 @@ begin
       end if;
 
     end loop;
+    wait;
   end process;
   --========================================================================================================================
 

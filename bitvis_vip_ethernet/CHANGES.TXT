@@ -2,6 +2,11 @@ Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
 
+v0.2.4
+----------
+Released: 2023-XX-XX
+- Removed ethernet_sb_pkg file, package already defined in vvc_methods_pkg.
+
 v0.2.3
 ----------
 Released: 2023-09-16

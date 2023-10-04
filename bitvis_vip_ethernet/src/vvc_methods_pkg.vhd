@@ -34,7 +34,6 @@ use work.support_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
-use work.ethernet_sb_pkg.all;
 
 library std;
 use std.textio.all;

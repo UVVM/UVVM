@@ -5,7 +5,7 @@ Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 v1.0.1
 ----------
 Released: 202X-XX-XX
-- Removed suppressing vcom-1090 warning in test.py.
+- Fixed compilation warning vcom-1090.
 
 v1.0.0
 ----------

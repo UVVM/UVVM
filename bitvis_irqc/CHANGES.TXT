@@ -2,11 +2,6 @@ Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
 
-v1.0.13
-----------
-Released: 202X-XX-XX
-- Removed suppressing vcom-1090 warning in test.py.
-
 v1.0.12
 ----------
 Released: 2021-10-22

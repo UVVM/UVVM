@@ -55,7 +55,7 @@ if {[catch {eval "vsim -version"} message] == 0} {
 
 # Set compile directives
 if { [string equal -nocase $simulator "modelsim"] } {
-  quietly set compdirectives "-quiet -suppress 1346,1236,1090 -2008"
+  quietly set compdirectives "-quiet -suppress 1346,1236 -2008"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg"
 }

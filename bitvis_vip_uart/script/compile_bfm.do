@@ -114,7 +114,7 @@ if {$lib_name != "uvvm_util" && $lib_name != "bitvis_irqc" && $lib_name != "bitv
 # Setup compile directives
 #------------------------------------------------------
 if { [string equal -nocase $simulator "modelsim"] } {
-  quietly set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
+  quietly set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
 } elseif { [string equal -nocase $simulator "rivierapro"] } {
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
 }

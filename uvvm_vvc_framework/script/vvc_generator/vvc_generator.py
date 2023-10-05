@@ -475,7 +475,7 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, n
                           vvc_name.lower() + "_vvc_status(GC_INSTANCE_IDX);\n")
 
         if features["transaction_info"]:
-            file_handle.write("    -- vvc_transaction_info\n")
+            file_handle.write("  -- Transaction info\n")
             file_handle.write("  alias vvc_transaction_info_trigger        : std_logic           is global_" + 
                               vvc_name.lower() + "_vvc_transaction_trigger(GC_INSTANCE_IDX);\n")
             file_handle.write("  alias vvc_transaction_info                : t_transaction_group is shared_" + 
@@ -488,7 +488,7 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, n
                           vvc_name.lower() + "_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);\n")
 
         if features["transaction_info"]:
-            file_handle.write("    -- vvc_transaction_info\n")
+            file_handle.write("  -- Transaction info\n")
             file_handle.write("  alias vvc_transaction_info_trigger        : std_logic           is global_" + 
                               vvc_name.lower() + "_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);\n")
             file_handle.write("  alias vvc_transaction_info                : t_transaction_group is shared_" + 
@@ -654,7 +654,7 @@ def add_vvc_interpreter(file_handle, vvc_channel, features, num_of_queues):
     file_handle.write("      end if;\n")
     print_linefeed(file_handle)
     file_handle.write(
-        "      -- 3. Acknowledge command after runing or queuing the command\n")
+        "      -- 3. Acknowledge command after running or queuing the command\n")
     file_handle.write(
         "      -------------------------------------------------------------------------\n")
     file_handle.write("      if not v_cmd_has_been_acked then\n")
@@ -806,9 +806,9 @@ def add_vvc_executor(file_handle, vvc_channel, features):
         print_linefeed(file_handle)
 
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \"" + 
-                      vvc_name.lower() + "_write() called with to wide address. \" & v_cmd.msg);\n")
+                      vvc_name.lower() + "_write() called with too wide address. \" & v_cmd.msg);\n")
     file_handle.write("        --     v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, \"data\", \"shared_vvc_cmd.data\", \"" + 
-                      vvc_name.lower() + "_write() called with to wide data. \" & v_cmd.msg);\n")
+                      vvc_name.lower() + "_write() called with too wide data. \" & v_cmd.msg);\n")
     file_handle.write(
         "        --     -- Call the corresponding procedure in the BFM package.\n")
     file_handle.write("        --     " + vvc_name.lower() + 
@@ -843,7 +843,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
         print_linefeed(file_handle)
 
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \"" + 
-                      vvc_name.lower() + "_write() called with to wide address. \" & v_cmd.msg);\n")
+                      vvc_name.lower() + "_write() called with too wide address. \" & v_cmd.msg);\n")
     file_handle.write(
         "        --     -- Call the corresponding procedure in the BFM package.\n")
 
@@ -1526,8 +1526,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    inter_bfm_delay_violation_severity => WARNING\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
-    file_handle.write("  type t_vvc_config is\n")
-    file_handle.write("  record\n")
+    file_handle.write("  type t_vvc_config is record\n")
     file_handle.write("    inter_bfm_delay                       : t_inter_bfm_delay; -- Minimum delay between BFM " + 
                       "accesses from the VVC. If parameter delay_type is set to NO_DELAY, BFM accesses will be back to back, i.e. no delay.\n")
     file_handle.write("    cmd_queue_count_max                   : natural;           -- Maximum pending number in command " + 
@@ -1575,8 +1574,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
         "    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
-    file_handle.write("  type t_vvc_status is\n")
-    file_handle.write("  record\n")
+    file_handle.write("  type t_vvc_status is record\n")
     file_handle.write("    current_cmd_idx  : natural;\n")
     file_handle.write("    previous_cmd_idx : natural;\n")
     file_handle.write("    pending_cmd_cnt  : natural;\n")
@@ -1771,10 +1769,10 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
                       "to_string(data, HEX, AS_IS, INCL_RADIX) & \")\";\n")
     file_handle.write("  --   variable v_normalised_addr    : unsigned(C_VVC_CMD_ADDR_MAX_LENGTH-1 downto 0) := \n"
                       "  --            normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", "
-                      "proc_call & \" called with to wide addr. \" & msg);\n")
+                      "proc_call & \" called with too wide addr. \" & msg);\n")
     file_handle.write("  --   variable v_normalised_data    : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0) := \n"
                       "  --            normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, \"data\", \"shared_vvc_cmd.data\", "
-                      "proc_call & \" called with to wide data. \" & msg);\n")
+                      "proc_call & \" called with too wide data. \" & msg);\n")
     file_handle.write(
         "  --   variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;\n")
     file_handle.write("  -- begin\n")
@@ -1863,7 +1861,7 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
             "    constant scope                       : in string := C_VVC_CMD_SCOPE_DEFAULT) is\n")
         file_handle.write("  begin\n")
         file_handle.write(
-            "  -- <USER_INPUT> Please insert the VVC operations here with the appropiate fields.\n")
+            "  -- <USER_INPUT> Please insert the VVC operations here with the appropriate fields.\n")
         file_handle.write("  --  case vvc_cmd.operation is\n")
         file_handle.write("  --    when WRITE | READ =>\n")
         file_handle.write(
@@ -2168,7 +2166,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
             "  --==========================================================================================\n")
         file_handle.write("  --\n")
         file_handle.write(
-            "  -- vvc_transaction_info - Transaction info types, constants and global signal\n")
+            "  -- Transaction info types, constants and global signal\n")
         file_handle.write("  --\n")
         file_handle.write(
             "  --==========================================================================================\n")
@@ -2220,7 +2218,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
         file_handle.write("    vvc_meta            => C_VVC_META_DEFAULT,\n")
         file_handle.write(
             "    transaction_status  => C_TRANSACTION_STATUS_DEFAULT\n")
-        file_handle.write("    );\n")
+        file_handle.write("  );\n")
         print_linefeed(file_handle)
         file_handle.write("  -- Transaction group\n")
         file_handle.write("  type t_transaction_group is record\n")
@@ -2230,7 +2228,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
         file_handle.write(
             "  constant C_TRANSACTION_GROUP_DEFAULT : t_transaction_group := (\n")
         file_handle.write("    bt => C_BASE_TRANSACTION_SET_DEFAULT\n")
-        file_handle.write("    );\n")
+        file_handle.write("  );\n")
         print_linefeed(file_handle)
         if vvc_channels.__len__() == 1:
             file_handle.write(

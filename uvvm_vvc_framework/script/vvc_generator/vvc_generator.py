@@ -398,7 +398,11 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, n
     else:
         file_handle.write("architecture behave of " + vvc_name.lower() + "_vvc is\n")
     print_linefeed(file_handle)
-    file_handle.write("  constant C_SCOPE      : string        := C_VVC_NAME & \",\" & to_string(GC_INSTANCE_IDX);\n")
+    file_handle.write("  constant C_SCOPE      : string        := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX")
+    if vvc_channel.name == "NA":
+        file_handle.write(");\n")
+    else:
+        file_handle.write(", GC_CHANNEL);\n")
     file_handle.write("  constant C_VVC_LABELS : t_vvc_labels  := assign_vvc_labels(C_SCOPE, C_VVC_NAME,")
     if vvc_channel.name == "NA":
         file_handle.write(" GC_INSTANCE_IDX, NA);\n")

@@ -6,6 +6,7 @@ v3.9.7
 ----------
 Released: 202X-XX-XX
 - Fixed compilation warning vcom-1090.
+- Use the function get_scope_for_log() to generate VVC scope.
 
 v3.9.6
 ----------

@@ -6,6 +6,7 @@ v2.12.6
 ----------
 Released: 202X-XX-XX
 - Updated vvc_generator.py to fix compilation warning vcom-1090.
+- Updated vvc_generator.py to use the function get_scope_for_log() to generate VVC scope.
 
 v2.12.5
 ----------

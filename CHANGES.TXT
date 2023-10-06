@@ -15,7 +15,8 @@ v2 2023.XX.XX
 Released: 2023-XX-XX
 - Fixed incorrect log messages in AXI-Stream BFM package.
 - Removed ethernet_sb_pkg file, package already defined in vvc_methods_pkg.
-- Fixed compilation warning vcom-1090.
+- Fixed compilation warning vcom-1090. Updated vvc_generator.py script.
+- Use the function get_scope_for_log() to generate all the VVCs scopes. Updated vvc_generator.py script.
 
 
 v2 2023.09.16

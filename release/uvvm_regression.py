@@ -772,7 +772,7 @@ def test_bitvis_vip_ethernet():
     hr.add_files("../bitvis_vip_ethernet/tb/maintenance_tb/*.vhd",
                  "bitvis_vip_ethernet")
     # Add TB dependencies
-    compile_directives_93 = ["-suppress", "1346,1236,1090", "-93"]
+    compile_directives_93 = ["-suppress", "1346,1236", "-93"]
     hr.add_files(
         "../bitvis_vip_ethernet/tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd", "xilinxcorelib")
     hr.add_files(

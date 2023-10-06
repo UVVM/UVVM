@@ -2481,9 +2481,9 @@ The UVVM Utility Library must be compiled with VHDL 2008.
 Suppressed warnings
 ==================================================================================================================================
 The compile script compiles the Utility Library with the following directives for the vcom command to suppress warnings about the 
-use of protected types and a possible infinite loop in a VVC process. **These can be ignored.**
+use of protected types and interface objects not being globally static. **These can be ignored.**
 
-    * Modelsim: -suppress 1346,1236,1090
+    * Modelsim: -suppress 1346,1236
     * Riviera-PRO: -nowarn COMP96_0564 -nowarn COMP96_0048
 
 .. _util_simulator_compatibility:

@@ -1299,9 +1299,10 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     if features["scoreboard"]:
         file_handle.write("  -- Scoreboard\n")
         file_handle.write("  package " + vvc_name.lower() + "_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg\n")
-        file_handle.write("       generic map (t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0),\n")
-        file_handle.write("                    element_match     => std_match,\n")
-        file_handle.write("                    to_string_element => to_string);\n")
+        file_handle.write("    generic map(\n")
+        file_handle.write("      t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),\n")
+        file_handle.write("      element_match     => std_match,\n")
+        file_handle.write("      to_string_element => to_string);\n")
         file_handle.write("  use " + vvc_name.lower() + "_sb_pkg.all;\n")
         file_handle.write("  shared variable " + vvc_name.upper() + "_VVC_SB  : " + vvc_name.lower() + "_sb_pkg.t_generic_sb;\n")
         print_linefeed(file_handle)

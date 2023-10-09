@@ -68,12 +68,12 @@ architecture behave of uart_rx_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config                          : t_vvc_config is shared_uart_vvc_config(RX, GC_INSTANCE_IDX);
-  alias vvc_status                          : t_vvc_status is shared_uart_vvc_status(RX, GC_INSTANCE_IDX);
-  alias transaction_info                    : t_transaction_info is shared_uart_transaction_info(RX, GC_INSTANCE_IDX);
+  alias vvc_config                          : t_vvc_config is shared_uart_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_status                          : t_vvc_status is shared_uart_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias transaction_info                    : t_transaction_info is shared_uart_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
   -- Transaction info
-  alias vvc_transaction_info_trigger        : std_logic is global_uart_vvc_transaction_trigger(RX, GC_INSTANCE_IDX);
-  alias vvc_transaction_info                : t_transaction_group is shared_uart_vvc_transaction_info(RX, GC_INSTANCE_IDX);
+  alias vvc_transaction_info_trigger        : std_logic is global_uart_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_transaction_info                : t_transaction_group is shared_uart_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
   -- VVC Activity 
   signal entry_num_in_vvc_activity_register : integer;
 
@@ -93,6 +93,8 @@ architecture behave of uart_rx_vvc is
   end function;
 
 begin
+
+  assert GC_CHANNEL = RX report "GC_CHANNEL must be set accordingly to the VVC, i.e. RX" severity failure;
 
   --===============================================================================================
   -- Constructor
@@ -116,7 +118,7 @@ begin
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
-    shared_vvc_last_received_cmd_idx(RX, GC_INSTANCE_IDX) := 0;
+    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
     entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
                                                                                                             instance => GC_INSTANCE_IDX,
@@ -136,7 +138,7 @@ begin
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
       v_cmd_has_been_acked                                  := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
-      shared_vvc_last_received_cmd_idx(RX, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
+      shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel                                        := get_msg_id_panel(v_local_vvc_cmd, vvc_config);

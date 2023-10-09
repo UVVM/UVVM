@@ -6,6 +6,7 @@ v2.8.8
 ----------
 Released: 202X-XX-XX
 - Fixed compilation warning vcom-1090.
+- Added an assertion to check that the GC_CHANNEL generic is used correctly.
 
 v2.8.7
 ----------

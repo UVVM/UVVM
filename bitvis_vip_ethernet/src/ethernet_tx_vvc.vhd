@@ -82,6 +82,8 @@ architecture behave of ethernet_tx_vvc is
 
 begin
 
+  assert GC_CHANNEL = TX report "GC_CHANNEL must be set accordingly to the VVC, i.e. TX" severity failure;
+
   --==========================================================================================
   -- HVVC-to-VVC Bridge
   -- Choose the correct architecture with the generic GC_PHY_INTERFACE

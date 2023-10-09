@@ -85,6 +85,8 @@ architecture behave of ethernet_rx_vvc is
 
 begin
 
+  assert GC_CHANNEL = RX report "GC_CHANNEL must be set accordingly to the VVC, i.e. RX" severity failure;
+
   --==========================================================================================
   -- HVVC-to-VVC Bridge
   -- Choose the correct architecture with the generic GC_PHY_INTERFACE

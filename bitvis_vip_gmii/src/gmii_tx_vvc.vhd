@@ -92,6 +92,8 @@ architecture behave of gmii_tx_vvc is
 
 begin
 
+  assert GC_CHANNEL = TX report "GC_CHANNEL must be set accordingly to the VVC, i.e. TX" severity failure;
+
   --==========================================================================================
   -- Constructor
   -- - Set up the defaults and show constructor if enabled

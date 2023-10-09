@@ -461,6 +461,9 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, n
 
     file_handle.write("begin\n")
     print_linefeed(file_handle)
+    if vvc_channel.name != "NA":
+        file_handle.write("  assert GC_CHANNEL = " + vvc_channel.name.upper() + " report \"GC_CHANNEL must be set accordingly to the VVC, i.e. " + vvc_channel.name.upper() +
+                          "\" severity failure;\n")
     print_linefeed(file_handle)
 
 

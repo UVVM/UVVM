@@ -7,6 +7,7 @@ v2.8.8
 Released: 202X-XX-XX
 - Fixed compilation warning vcom-1090.
 - Added an assertion to check that the GC_CHANNEL generic is used correctly.
+- Removed constant C_DATA_WIDTH in uart_tx_vvc and use generic GC_DATA_WIDTH instead.
 
 v2.8.7
 ----------

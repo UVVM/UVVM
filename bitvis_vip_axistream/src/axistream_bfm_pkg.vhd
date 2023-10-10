@@ -1538,8 +1538,8 @@ package body axistream_bfm_pkg is
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " & add_msg_delimiter(msg), scope);
     else
       if ext_proc_call = "" then
-        log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(v_byte_cnt) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
-      else
+        log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(integer(ceil((real(v_byte_cnt) / real(C_DATA_ARRAY_BYTES_PER_WORD))))) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
+        else
       -- Log will be handled by calling procedure (e.g. axistream_expect)
       end if;
     end if;

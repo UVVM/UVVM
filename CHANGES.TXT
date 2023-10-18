@@ -19,6 +19,7 @@ Released: 2023-XX-XX
 - Use the function get_scope_for_log() to generate all the VVCs scopes. Updated vvc_generator.py script.
 - Added an assertion to VVCs with the GC_CHANNEL generic to check it is used correctly. Updated vvc_generator.py script.
 - Removed constant C_DATA_WIDTH in uart_tx_vvc and use generic GC_DATA_WIDTH instead.
+- Normalized the data parameter in the uart_transmit and uart_expect BFM procedure.
 
 
 v2 2023.09.16

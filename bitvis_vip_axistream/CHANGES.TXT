@@ -8,6 +8,7 @@ Released: 2023-XX-XX
 - Fixed incorrect logging of ID_PACKET_PAYLOAD and ID_PACKET_COMPLETE in axistream_receive.
 - Fixed compilation warning vcom-1090.
 - Use the function get_scope_for_log() to generate VVC scope.
+- Fixed data length typo in Axistream BFM- and VVC Quick Reference.
 
 v4.7.8
 ----------

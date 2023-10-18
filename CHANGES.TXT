@@ -21,6 +21,7 @@ Released: 2023-XX-XX
 - Removed constant C_DATA_WIDTH in uart_tx_vvc and use generic GC_DATA_WIDTH instead.
 - Normalized the data parameter in the uart_transmit and uart_expect BFM procedure.
 - Fixed the wrong example for uart_expect in UART BFM Quick Reference.
+- Fixed data length typo in Axistream BFM- and VVC Quick Reference.
 
 
 v2 2023.09.16

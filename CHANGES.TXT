@@ -22,6 +22,7 @@ Released: 2023-XX-XX
 - Normalized the data parameter in the uart_transmit and uart_expect BFM procedure.
 - Fixed the wrong example for uart_expect in UART BFM Quick Reference.
 - Fixed data length typo in Axistream BFM- and VVC Quick Reference.
+- Updated Section 10.2 in Spec_Coverage QuickRef.
 
 
 v2 2023.09.16

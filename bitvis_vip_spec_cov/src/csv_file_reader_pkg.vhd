@@ -143,18 +143,22 @@ package body csv_file_reader_pkg is
 
     -- Read a string from the csv file, until a delimiter is found
     impure function read_string return string is
-      variable v_return_string : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
-      variable v_read_char     : character;
-      variable v_read_ok       : boolean                                 := true;
-      variable v_index         : integer                                 := 1;
+      variable v_return_string           : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
+      variable v_read_char               : character;
+      variable v_read_ok                 : boolean                                 := true;
+      variable v_index                   : integer                                 := 1;
+      variable v_skip_leading_whitespace : boolean                                 := true;
     begin
       read(priv_current_line, v_read_char, v_read_ok);
       l_read_char : while v_read_ok loop
-        if v_read_char = priv_csv_delimiter then
+        if v_read_char = ' ' and v_skip_leading_whitespace then
+          null;
+        elsif v_read_char = priv_csv_delimiter then
           exit l_read_char;
         elsif v_index <= C_CSV_FILE_MAX_LINE_LENGTH then
-          v_return_string(v_index) := v_read_char;
-          v_index                  := v_index + 1;
+          v_return_string(v_index)  := v_read_char;
+          v_index                   := v_index + 1;
+          v_skip_leading_whitespace := false;
         else
           alert(FAILURE, "A line length in the CSV file is greater than C_CSV_FILE_MAX_LINE_LENGTH defined in local_adaptations_pkg.vhd", C_CSV_READER_SCOPE);
         end if;

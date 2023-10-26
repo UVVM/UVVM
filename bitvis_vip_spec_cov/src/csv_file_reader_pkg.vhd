@@ -158,7 +158,7 @@ package body csv_file_reader_pkg is
           return_string(index) := read_char;
           index                := index + 1;
         else
-          alert(FAILURE, "Length of CSV file is greater than C_CSV_FILE_MAX_LINE_LENGTH defined in local_adaptations_pkg.vhd", C_CSV_READER_SCOPE);
+          alert(FAILURE, "A line length in the CSV file is greater than C_CSV_FILE_MAX_LINE_LENGTH defined in local_adaptations_pkg.vhd", C_CSV_READER_SCOPE);
         end if;
         read(current_line, read_char, read_ok);
       end loop;

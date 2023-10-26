@@ -23,7 +23,7 @@ Released: 2023-XX-XX
 - Fixed the wrong example for uart_expect in UART BFM Quick Reference.
 - Fixed data length typo in Axistream BFM- and VVC Quick Reference.
 - Updated Section 10.2 in Spec_Coverage QuickRef.
-- Added an alert when Spec Cov CSV file size is greater than the maximum supported size.
+- Added an alert when Spec Cov CSV file line length is greater than the maximum supported size.
 
 
 v2 2023.09.16

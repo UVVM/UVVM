@@ -154,9 +154,11 @@ package body csv_file_reader_pkg is
       while read_ok loop
         if read_char = v_CSV_delimiter then
           return return_string;
-        else
+        elsif index <= C_CSV_FILE_MAX_LINE_LENGTH then
           return_string(index) := read_char;
           index                := index + 1;
+        else
+          alert(FAILURE, "Length of CSV file is greater than C_CSV_FILE_MAX_LINE_LENGTH defined in local_adaptations_pkg.vhd", C_CSV_READER_SCOPE);
         end if;
         read(current_line, read_char, read_ok);
       end loop;

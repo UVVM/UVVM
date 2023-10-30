@@ -64,39 +64,48 @@ class TestcaseFailError(TestcaseError):
         if self.exp != self.act:
             return f"Number of tests fail: expected={self.exp}, actual={self.act}."
         return ''
+    
+def print_delimiter():
+    print("\033[1;32;40m" + "-" * 80 + "\033[m")
 
 
 def passing():
-    ''' Using the ANSI Shadow font from 
-    http://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=PASS%20w%2Fminor '''
-    print('''
-██████╗  █████╗ ███████╗███████╗
-██╔══██╗██╔══██╗██╔════╝██╔════╝
-██████╔╝███████║███████╗███████╗
-██╔═══╝ ██╔══██║╚════██║╚════██║
-██║     ██║  ██║███████║███████║
-╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝''')
+    print_delimiter()
+    print('''\033[1;32;40m
+PPPP   AAAAA  SSSSS  SSSSS
+P   P  A   A  S      S    
+PPPP   AAAAA  SSSSS  SSSSS
+P      A   A      S      S
+P      A   A  SSSSS  SSSSS
+\033[m
+''')
+    print_delimiter()
+    
 
 
 def passing_with_minor():
-    print('''
-██████╗  █████╗ ███████╗███████╗    ██╗    ██╗    ██╗███╗   ███╗██╗███╗   ██╗ ██████╗ ██████╗ 
-██╔══██╗██╔══██╗██╔════╝██╔════╝    ██║    ██║   ██╔╝████╗ ████║██║████╗  ██║██╔═══██╗██╔══██╗
-██████╔╝███████║███████╗███████╗    ██║ █╗ ██║  ██╔╝ ██╔████╔██║██║██╔██╗ ██║██║   ██║██████╔╝
-██╔═══╝ ██╔══██║╚════██║╚════██║    ██║███╗██║ ██╔╝  ██║╚██╔╝██║██║██║╚██╗██║██║   ██║██╔══██╗
-██║     ██║  ██║███████║███████║    ╚███╔███╔╝██╔╝   ██║ ╚═╝ ██║██║██║ ╚████║╚██████╔╝██║  ██║
-╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝     ╚══╝╚══╝ ╚═╝    ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  
-╚═╝''')
+    print_delimiter()
+    print('''\033[93m
+PPPP   AAAAA  SSSSS  SSSSS    W   W      / M     M  IIII   N   N   OOO   RRRR
+P   P  A   A  S      S        W   W     /  MM   MM    I    NN  N  O   O  R   R
+PPPP   AAAAA  SSSSS  SSSSS    W W W    /   M M M M    I    N N N  O   O  RRRR
+P      A   A      S      S    W W W   /    M  M  M    I    N  NN  O   O  R   R
+P      A   A  SSSSS  SSSSS    W   W  /     M     M  IIII   N   N   OOO   R   R
+\033[m''')
+    print_delimiter()
 
 
 def failing():
-    print('''
-███████╗ █████╗ ██╗██╗     
-██╔════╝██╔══██╗██║██║     
-█████╗  ███████║██║██║     
-██╔══╝  ██╔══██║██║██║     
-██║     ██║  ██║██║███████╗
-╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝ ''')
+    print_delimiter()
+    print('''\033[91m
+FFFF   AAAAA  IIII   L    
+F      A   A    I    L    
+FFFF   AAAAA    I    L    
+F      A   A    I    L    
+F      A   A  IIII  LLLLL
+\033[m
+''')
+    print_delimiter()
 
 
 def os_adjust_path(path) -> str:

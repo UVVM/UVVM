@@ -152,7 +152,7 @@ package uart_bfm_pkg is
   -- - If the number of '1' in the 'data' input is odd, '1' will be returned
   -- - If the number of '1' in the 'data' input is even, '0' will be returned
   function odd_parity(
-    constant data : std_logic_vector(7 downto 0))
+    constant data : std_logic_vector)
   return std_logic;
 
 end package uart_bfm_pkg;
@@ -163,7 +163,7 @@ end package uart_bfm_pkg;
 package body uart_bfm_pkg is
 
   function odd_parity(
-    constant data : std_logic_vector(7 downto 0))
+    constant data : std_logic_vector)
   return std_logic is
   begin
     return xnor(data);

@@ -26,6 +26,8 @@ Released: 2023-XX-XX
 - Added an alert when Spec Cov CSV file line length is greater than the maximum supported size.
 - Skip leading whitespace in all fields when reading the Spec Cov CSV file.
 - Fixed typo in Figure 6, section 2.3.2 in VVC_Framework_Manual.
+- Added switch for displaying full received error frame in streaming interfaces.
+- Implemented functionality for displaying full received error frame in rgmii bfm.
 
 
 v2 2023.09.16

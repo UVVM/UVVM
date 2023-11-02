@@ -591,6 +591,12 @@ def write_spec_cov_files(run_configuration, container, delimiter):
     # Write the results to CSVs
     #==========================================================================
     filename = run_configuration.get("spec_cov")
+
+    # Check if specification coverage file has been specified
+    if not(filename):
+        msg = "Error specification coverage file not specified"
+        abort(error_code = 1, msg = msg)
+
     spec_cov_req_vs_single_tc_filename = filename[: filename.rfind(".")] + ".req_vs_single_tc.csv"
     spec_cov_tc_vs_req_filename = filename[: filename.rfind(".")] + ".tc_vs_reqs.csv"
     spec_cov_req_vs_tc_filename = filename[: filename.rfind(".")] + ".req_vs_tcs.csv"
@@ -1015,8 +1021,20 @@ def build_partial_cov_list(run_configuration, container):
     # Get the partial coverage file - note: can be a txt file with
     # a list of partial coverage files.
     partial_coverage_file_name = run_configuration.get("partial_cov")
+
+    # Check if partial coverage file has been specified
     if not(partial_coverage_file_name):
-        msg = "partial coverage file missing: " + partial_coverage_file_name
+        msg = "Error partial coverage file not specified"
+        abort(error_code = 1, msg = msg)
+
+    # Check if partial coverage file is missing
+    if not(os.path.isfile(partial_coverage_file_name)):
+        msg = "Error partial coverage file not found: " + partial_coverage_file_name
+        abort(error_code = 1, msg = msg)
+
+    # Check if partial coverage file is empty
+    if (os.path.getsize(partial_coverage_file_name) == 0):
+        msg = "Error partial coverage file empty: " + partial_coverage_file_name
         abort(error_code = 1, msg = msg)
 
     #==========================================================================

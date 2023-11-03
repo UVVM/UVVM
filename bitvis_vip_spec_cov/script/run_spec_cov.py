@@ -380,10 +380,12 @@ testcase_not_run_string             = "NOT_EXECUTED"
 compliant_string                    = "COMPLIANT"
 non_compliant_string                = "NON_COMPLIANT"
 not_tested_compliant_string         = "NOT_TESTED"
+parsed_string                       = "Has been parsed by run_spec_cov.py script for total coverage"
 delimiter                           = "," # Default delimiter - will be updated from partial coverage file
 
 
 reporting_dict = {}
+previously_executed_coverage_list = []
 
 
 
@@ -561,7 +563,11 @@ def terminal_present_results(container, delimiter) -> dict:
             print("%s%s " %(item.name, delimiter), end='')
         print("\n")
 
-
+    if previously_executed_coverage_list:
+        print("Following %d partial coverage file(s) have been previously executed :" %len(previously_executed_coverage_list))
+        for item in previously_executed_coverage_list:
+            print(item)
+        print("\n")
 
 
 def write_spec_cov_files(run_configuration, container, delimiter):
@@ -987,7 +993,7 @@ def find_pc_summary(partial_coverage_file, container):
             csv_reader = csv.reader(csv_file, delimiter=delimiter)
             for idx, row in enumerate(csv_reader):
                 # Get the testcase summary
-                if (idx > 3) and (row[0].upper() == "SUMMARY"):
+                if (idx > 3) and (row != []) and (row[0].upper() == "SUMMARY"):
                     result = row[2].strip().upper()
                     if result == testcase_pass_string:
                         return True
@@ -998,6 +1004,32 @@ def find_pc_summary(partial_coverage_file, container):
         abort(error_code = 1, msg = error_msg)
     return False
 
+def find_parsed_string(partial_coverage_file):
+    """
+    This method will search for the parsed string in the
+    partial coverage file and return True if found.
+
+    Parameters:
+
+    partial_coverage_file (str) : name of the partial coverage file
+
+    Return:
+
+    Boolean : True if the parsed string is found, else False is returned.
+    """
+    try:
+        with open(partial_coverage_file) as csv_file:
+            csv_reader = csv.reader(csv_file)
+            for idx, row in enumerate(csv_reader):
+                # Find the parsed string
+                if (idx > 3) and (row != []) and (row[0] == parsed_string):
+                    return True
+                else:
+                    continue
+    except:
+        error_msg = ("Error %s occurred with file %s when searching for the parsed string" %(sys.exc_info()[0], partial_coverage_file))
+        abort(error_code = 1, msg = error_msg)
+    return False
 
 def build_partial_cov_list(run_configuration, container):
     """
@@ -1115,9 +1147,9 @@ def build_partial_cov_list(run_configuration, container):
 
                 for idx, row in enumerate(csv_reader):
 
-                    # Skip partial_coveage_file header info on the 4 first lines and
-                    # summary line at the end (if it exists)
-                    if (idx > 3) and (row[0].upper() != "SUMMARY"):
+                    # Skip partial_coveage_file header info on the 4 first lines,
+                    # empty line, summary line, and parsed string (if these exist)
+                    if (idx > 3) and (row != []) and (row[0].upper() != "SUMMARY") and (row[0] != parsed_string):
 
                         # Read 3 cells: requirement name, testcase name, testcase result
                         requirement_name = row[0]
@@ -1149,7 +1181,26 @@ def build_partial_cov_list(run_configuration, container):
         error_msg = ("Error %s occurred with file %s when reading PC file" %(sys.exc_info()[0], partial_coverage_file))
         abort(error_code = 1, msg = error_msg)
 
+    #==========================================================================
+    # Write the parsed string at the bottom of the partial_cov files
+    #==========================================================================
+    try:
+        for partial_coverage_file in partial_coverage_files:
 
+            # Find the parsed string
+            if not(find_parsed_string(partial_coverage_file)):
+                # Write the parsed string if not found
+                with open(partial_coverage_file, mode='a', newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file, delimiter=delimiter)
+                    csv_writer.writerow([])
+                    csv_writer.writerow([parsed_string])
+            # Put the partial_cov file name in a list if the parsed string already exists
+            else:
+                previously_executed_coverage_list.append(partial_coverage_file)
+
+    except:
+        error_msg = ("Error %s occurred with file %s when writing a parsed message to PC file" %(sys.exc_info()[0], partial_coverage_file))
+        abort(error_code = 1, msg = error_msg)
 
 def abort(error_code = 0, msg = ""):
     """

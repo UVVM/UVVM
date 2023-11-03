@@ -1837,25 +1837,38 @@ package body axistream_bfm_pkg is
 
     -- No more than one alert per packet
     if v_data_error_cnt /= 0 then
-      -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_errored_word), exp_data_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      if C_ERROR_REPORT_EXTENT = EXTENDED then
+        -- Use binary representation when mismatch is due to weak signals
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_errored_word), exp_data_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+        alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & 
+          ". Expected " & to_string(exp_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & "Data was:" & LF & to_string(v_rx_data_array, v_alert_radix, AS_IS) & LF & "Expected:" & LF & to_string(exp_data_array, v_alert_radix, AS_IS) & 
+          LF & add_msg_delimiter(msg), scope);
+      elsif C_ERROR_REPORT_EXTENT = BRIEF then
+        -- Use binary representation when mismatch is due to weak signals
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_errored_word), exp_data_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+        alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & 
+          ". Expected " & to_string(exp_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      end if;
     elsif v_user_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_user_array(v_first_errored_word), exp_user_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), 
+        v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_strb_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_strb_array(v_first_errored_word), exp_strb_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_strb_error_cnt) & " tstrb bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_strb_error_cnt) & " tstrb bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), 
+        v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_id_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_id_array(v_first_errored_word), exp_id_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_id_error_cnt) & " tid bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_id_error_cnt) & " tid bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), 
+        v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     elsif v_dest_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
       v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_dest_array(v_first_errored_word), exp_dest_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), 
+        v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(ID_PACKET_COMPLETE, C_PROC_CALL & "=> OK, received " & to_string(exp_data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;

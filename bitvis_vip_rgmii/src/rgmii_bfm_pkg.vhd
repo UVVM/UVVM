@@ -365,9 +365,9 @@ package body rgmii_bfm_pkg is
           -- Use binary representation when mismatch is due to weak signals
           v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, 
             NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-          alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte) & ". Was " & 
+          alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " & 
             to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), 
-            v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & "Frame was (First word left):" & LF & to_string(v_rx_data_array, v_alert_radix, AS_IS) & LF &"Expected:" & LF & 
+            v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & "Was:" & LF & to_string(v_rx_data_array, v_alert_radix, AS_IS) & LF &"Expected:" & LF & 
             to_string(v_normalized_data, v_alert_radix, AS_IS) & LF & add_msg_delimiter(msg), scope);
         else
           log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -380,7 +380,7 @@ package body rgmii_bfm_pkg is
           -- Use binary representation when mismatch is due to weak signals
           v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, 
             NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-          alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte) & ". Was " & 
+          alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " & 
             to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte),
             v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
         else

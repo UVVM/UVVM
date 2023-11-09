@@ -10,6 +10,7 @@ Released: 202X-XX-XX
 - Added an alert when CSV file line length is greater than the maximum supported size.
 - Skip leading whitespace in all fields when reading the CSV file.
 - Fixed crash that could occur when partial_cov file and spec_cov file are missing.
+- Updated spec_cov reporting in the run_spec_cov.py script.
 
 v1.0.0
 ----------

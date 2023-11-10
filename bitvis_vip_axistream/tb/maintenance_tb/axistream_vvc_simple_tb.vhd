@@ -242,7 +242,7 @@ begin
 
       -- verify alert if the data is not as expected
       increment_expected_alerts(warning, 1);
-      axistream_transmit_bytes(AXISTREAM_VVCT, 2, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, data wrogn ,i=" & to_string(i));
+      axistream_transmit_bytes(AXISTREAM_VVCT, 2, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, data wrong ,i=" & to_string(i));
       v_idx               := random(0, v_numBytes - 1);
       v_data_array(v_idx) := not v_data_array(v_idx);
       axistream_expect_bytes(AXISTREAM_VVCT, 3, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "expect,   data wrong ,i=" & to_string(i), warning);
@@ -251,7 +251,7 @@ begin
       increment_expected_alerts(warning, 1);
       axistream_transmit_bytes(AXISTREAM_VVCT, 2, v_data_array(0 to v_numBytes - 1),
                                v_user_array(0 to v_numWords - 1), v_strb_array(0 to v_numWords - 1), v_id_array(0 to v_numWords - 1), v_dest_array(0 to v_numWords - 1),
-                               "transmit, tuser wrogn ,i=" & to_string(i));
+                               "transmit, tuser wrong ,i=" & to_string(i));
 
       v_idx               := random(0, v_numWords - 1);
       v_user_array(v_idx) := not v_user_array(v_idx); -- Provoke alert in axistream_expect()
@@ -263,7 +263,7 @@ begin
       increment_expected_alerts(warning, 1);
       axistream_transmit_bytes(AXISTREAM_VVCT, 2, v_data_array(0 to v_numBytes - 1),
                                v_user_array(0 to v_numWords - 1), v_strb_array(0 to v_numWords - 1), v_id_array(0 to v_numWords - 1), v_dest_array(0 to v_numWords - 1),
-                               "transmit, tstrb wrogn ,i=" & to_string(i));
+                               "transmit, tstrb wrong ,i=" & to_string(i));
       v_idx               := random(0, v_numWords - 1);
       v_strb_array(v_idx) := not v_strb_array(v_idx); -- Provoke alert in axistream_expect()
       axistream_expect_bytes(AXISTREAM_VVCT, 3, v_data_array(0 to v_numBytes - 1),
@@ -274,7 +274,7 @@ begin
       increment_expected_alerts(warning, 1);
       axistream_transmit_bytes(AXISTREAM_VVCT, 2, v_data_array(0 to v_numBytes - 1),
                                v_user_array(0 to v_numWords - 1), v_strb_array(0 to v_numWords - 1), v_id_array(0 to v_numWords - 1), v_dest_array(0 to v_numWords - 1),
-                               "transmit, tid wrogn ,i=" & to_string(i));
+                               "transmit, tid wrong ,i=" & to_string(i));
       v_idx             := random(0, v_numWords - 1);
       v_id_array(v_idx) := not v_id_array(v_idx); -- Provoke alert in axistream_expect()
       axistream_expect_bytes(AXISTREAM_VVCT, 3, v_data_array(0 to v_numBytes - 1),
@@ -285,7 +285,7 @@ begin
       increment_expected_alerts(warning, 1);
       axistream_transmit_bytes(AXISTREAM_VVCT, 2, v_data_array(0 to v_numBytes - 1),
                                v_user_array(0 to v_numWords - 1), v_strb_array(0 to v_numWords - 1), v_id_array(0 to v_numWords - 1), v_dest_array(0 to v_numWords - 1),
-                               "transmit, tdest wrogn ,i=" & to_string(i));
+                               "transmit, tdest wrong ,i=" & to_string(i));
       v_idx               := random(0, v_numWords - 1);
       v_dest_array(v_idx) := not v_dest_array(v_idx); -- Provoke alert in axistream_expect()
 
@@ -399,14 +399,14 @@ begin
 
           -- verify alert if the data is not what is expected
           increment_expected_alerts(warning, 1);
-          axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, data wrogn ,i=" & to_string(i));
+          axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, data wrong ,i=" & to_string(i));
           v_idx               := random(0, v_numBytes - 1);
           v_data_array(v_idx) := not v_data_array(v_idx);
           axistream_expect_bytes(AXISTREAM_VVCT, 1, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "expect,   data wrong ,i=" & to_string(i), warning);
 
           -- verify alert if the tuser is not what is expected
           increment_expected_alerts(warning, 1);
-          axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, tuser wrogn ,i=" & to_string(i));
+          axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, tuser wrong ,i=" & to_string(i));
           v_idx               := random(0, v_numWords - 1);
           v_user_array(v_idx) := not v_user_array(v_idx);
           axistream_expect_bytes(AXISTREAM_VVCT, 1, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "expect,   tuser wrong ,i=" & to_string(i), warning);
@@ -427,7 +427,7 @@ begin
         v_numWords := integer(ceil(real(v_numBytes) / (real(GC_DATA_WIDTH) / 8.0)));
 
         await_completion(AXISTREAM_VVCT, 1, 1 ms);
-        axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, tlast wrogn ,i=" & to_string(i));
+        axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, tlast wrong ,i=" & to_string(i));
         increment_expected_alerts(warning, 1);
         shared_axistream_vvc_config(1).bfm_config.protocol_error_severity := warning;
         v_numBytes                                                        := v_numBytes - 1;

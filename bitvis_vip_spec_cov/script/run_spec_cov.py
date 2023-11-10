@@ -186,7 +186,7 @@ class Requirement():
             if not(self.__req_compliance == non_compliant_string):
                 if not(sub_requirement.is_user_omitted):
                     if sub_requirement.compliance == not_tested_compliant_string:
-                        self.__req_compliance = non_compliant_string
+                        self.__req_compliance = not_tested_compliant_string
                     else:    
                         self.__req_compliance = sub_requirement.compliance
         return self.__req_compliance
@@ -428,7 +428,12 @@ def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
                 if tc:
                     csv_writer.writerow([req.name, tc.name, req.compliance])
                 else:
-                    csv_writer.writerow([req.name, "", not_tested_compliant_string])
+                    if req.is_super_requirement() and req.compliance == "COMPLIANT":
+                        csv_writer.writerow([req.name, "", compliant_string])
+                    elif req.is_super_requirement() and req.compliance == "NON_COMPLIANT":
+                        csv_writer.writerow([req.name, "", non_compliant_string])
+                    else:
+                        csv_writer.writerow([req.name, "", not_tested_compliant_string])
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_single_req_vs_single_tc_filename))
         abort(error_code = 1, msg = error_msg)
@@ -757,7 +762,7 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
                 # All of the listed testcases for the requirement has been run
                 ok =  all(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
             if not(ok):
-                requirement.compliance = non_compliant_string
+                requirement.compliance = not_tested_compliant_string
 
             # Super/sub-requirement(s) are updated automatically in the Requirement Object
 
@@ -780,7 +785,7 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
                 # All of the listed testcases for the requirement has been run
                 ok =  all(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
             if not(ok):
-                requirement.compliance = non_compliant_string
+                requirement.compliance = not_tested_compliant_string
 
             # Verify that only this requirement has run this testcase
             for testcase in requirement.get_expected_testcase_list():               
@@ -1035,7 +1040,7 @@ def build_partial_cov_list(run_configuration, container):
     """
     This method will read the delimiter written by the spec_cov_pkg.vhd to 
     the partial_coverage CSV files, and updated the global delimiter.
-    The method will create requirement and testcase objects, setrequirement compliance 
+    The method will create requirement and testcase objects, set requirement compliance
     and testcase results.
     The objects are stored in the requirement and testcase containers.
 

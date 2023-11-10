@@ -11,6 +11,7 @@ Released: 202X-XX-XX
 - Skip leading whitespace in all fields when reading the CSV file.
 - Fixed crash that could occur when partial_cov file and spec_cov file are missing.
 - Added a feature for detection of reading old partial coverage files in the run_spec_cov.py script.
+- Updated spec_cov reporting in the run_spec_cov.py script.
 
 v1.0.0
 ----------

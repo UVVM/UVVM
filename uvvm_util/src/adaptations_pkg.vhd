@@ -220,6 +220,11 @@ package adaptations_pkg is
 
   constant C_MSG_DELIMITER : character := ''';
 
+  -- Switch for setting the extent of error reports in mismatched stream data. Options are EXTENDED and BRIEF,
+  -- where EXTENDED prints all received data with error, and BRIEF exclusively prints first mismatched word.
+  -- Applies to RGMII, GMII, Avalon_st and Axistream
+  constant C_ERROR_REPORT_EXTENT : t_error_report_extent := EXTENDED;
+
   --------------------------------------------------------------------------------------------------------------------------------
   -- Alert counters
   --------------------------------------------------------------------------------------------------------------------------------

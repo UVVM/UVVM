@@ -22,6 +22,14 @@ Checks and awaits
 
 check_value()
 ----------------------------------------------------------------------------------------------------------------------------------
+
+.. hint::
+
+    Checking that a value is not equal to another value is possible by using a boolean expression as the [value] parameter. ::
+
+        --Example:
+        check_value((value_1 /= value_2), ERROR, "Checking that value_1 is not equal value_2");
+        
 Checks if value equals exp, and alerts with severity alert_level if the values do not match. The result of the check is returned as 
 a boolean if the method is called as a function. ::
 

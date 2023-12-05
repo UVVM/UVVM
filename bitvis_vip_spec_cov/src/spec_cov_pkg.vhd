@@ -327,7 +327,7 @@ package body spec_cov_pkg is
     variable v_checksum_string : line;
   begin
     -- Free used memory
-    log(ID_SPEC_COV, "Freeing stored requirements from memory", C_SCOPE);
+    log(ID_SPEC_COV, "Finalizing requirement coverage", C_SCOPE);
 
     for i in 0 to priv_requirements_in_array - 1 loop
       deallocate(priv_requirement_array(i).requirement);
@@ -342,7 +342,6 @@ package body spec_cov_pkg is
     priv_requirements_in_array := 0;
 
     -- Add closing line
-    log(ID_SPEC_COV, "Marking requirement coverage result.", C_SCOPE);
     write(v_checksum_string, priv_get_summary_string);
 
     if priv_result_file_exists then
@@ -350,7 +349,6 @@ package body spec_cov_pkg is
     end if;
 
     file_close(RESULT_FILE);
-    log(ID_SPEC_COV, "Requirement coverage finalized.", C_SCOPE);
   end procedure finalize_req_cov;
 
   --=================================================================================================  
@@ -435,7 +433,6 @@ package body spec_cov_pkg is
       priv_requirements_in_array := priv_requirements_in_array + 1;
     end loop;
 
-    log(ID_SPEC_COV, "Closing requirement file", C_SCOPE);
     priv_csv_file.dispose;
   end procedure priv_read_and_parse_csv_file;
 

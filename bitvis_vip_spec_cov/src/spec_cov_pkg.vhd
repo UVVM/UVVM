@@ -170,6 +170,7 @@ package body spec_cov_pkg is
     constant partial_cov_file : string
   ) is
   begin
+    log(ID_SPEC_COV_INIT, "Initializing requirement coverage with requirement file: " & req_list_file, C_SCOPE);
     priv_set_default_testcase_name(testcase);
     -- update pkg local variables
     priv_testcase_passed         := true;
@@ -184,7 +185,7 @@ package body spec_cov_pkg is
     constant partial_cov_file : string
   ) is
   begin
-    log(ID_SPEC_COV_INIT, "Requirement Coverage initialized with no requirement file.", C_SCOPE);
+    log(ID_SPEC_COV_INIT, "Initializing requirement coverage without requirement file.", C_SCOPE);
     priv_set_default_testcase_name(testcase);
     -- update pkg local variables
     priv_testcase_passed         := true;
@@ -375,7 +376,7 @@ package body spec_cov_pkg is
     end if;
 
     -- Write info and settings to CSV file for Python post-processing script
-    log(ID_SPEC_COV_INIT, "Adding test and configuration information to coverage file. ", C_SCOPE);
+    log(ID_SPEC_COV_INIT, "Adding test and configuration information to coverage file: " & file_name, C_SCOPE);
     write(v_settings_to_file_line, "NOTE: This coverage file is only valid when the last line is 'SUMMARY, " & priv_get_default_testcase_name & ", PASS'" & LF);
     write(v_settings_to_file_line, "TESTCASE_NAME: " & priv_get_default_testcase_name & LF);
     write(v_settings_to_file_line, "DELIMITER: " & shared_spec_cov_config.csv_delimiter & LF);
@@ -391,8 +392,6 @@ package body spec_cov_pkg is
     variable v_tc_valid : boolean;
     variable v_file_ok  : boolean;
   begin
-    log(ID_SPEC_COV_INIT, "Reading and parsing requirement file, " & req_list_file, C_SCOPE);
-
     if priv_requirements_in_array > 0 then
       alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
       return;
@@ -442,18 +441,26 @@ package body spec_cov_pkg is
   procedure priv_log_entry(
     constant index : natural
   ) is
+    variable v_line : line;
   begin
     if priv_requirement_array(index).valid then
       -- log requirement and description to terminal
-      log(ID_SPEC_COV_REQS, "Requirement: " & priv_requirement_array(index).requirement.all, C_SCOPE);
-      log(ID_SPEC_COV_REQS, "Description: " & priv_requirement_array(index).description.all, C_SCOPE);
+      log(ID_SPEC_COV_REQS, "Requirement: " & priv_requirement_array(index).requirement.all & ", " & priv_requirement_array(index).description.all, C_SCOPE);
       -- log testcases to terminal
-      for i in 0 to priv_requirement_array(index).num_tcs - 1 loop
-        log(ID_SPEC_COV_REQS, "  TC: " & priv_requirement_array(index).tc_list(i).all, C_SCOPE);
-      end loop;
+      if priv_requirement_array(index).num_tcs > 0 then
+        write(v_line, string'("  TC: "));
+        for i in 0 to priv_requirement_array(index).num_tcs - 1 loop
+          if i > 0 then
+            write(v_line, string'(", "));
+          end if;
+          write(v_line, priv_requirement_array(index).tc_list(i).all);
+        end loop;
+        log(ID_SPEC_COV_REQS, v_line.all, C_SCOPE);
+      end if;
     else
       log(ID_SPEC_COV_REQS, "Requirement entry was not valid", C_SCOPE);
     end if;
+    deallocate(v_line);
   end procedure priv_log_entry;
 
   --

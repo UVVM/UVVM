@@ -170,6 +170,10 @@ package methods_pkg is
     constant quietness       : t_quietness := NON_QUIET
   );
 
+  function get_time_unit(
+    constant value : time
+  ) return time;
+
   -- ============================================================================
   -- Alert-related
   -- ============================================================================
@@ -3674,6 +3678,32 @@ package body methods_pkg is
     shared_default_log_destination := log_destination;
   end;
 
+  -- Function for getting time unit
+  function get_time_unit(
+    constant value : time
+  ) return time is
+    variable time_unit : time;
+  begin
+    if (value >= 1 hr) then
+      time_unit := hr;
+    elsif (value >= 1 min) then
+      time_unit := min;
+    elsif (value >= 1 sec) then
+      time_unit := sec;
+    elsif (value >= 1 ms) then
+      time_unit := ms;
+    elsif (value >= 1 us) then
+      time_unit := us;
+    elsif (value >= 1 ns) then
+      time_unit := ns;
+    elsif (value >= 1 ps) then
+      time_unit := ps;
+    else
+      time_unit := fs;
+    end if;
+    return time_unit;
+  end;
+
   -- ============================================================================
   -- Check counters related
   -- ============================================================================
@@ -4613,17 +4643,22 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()"
   ) return boolean is
-    constant value_type  : string := "time";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    constant value_type   : string := "time";
+    variable v_value_line : line;
+    variable v_exp_line   : line;
+    variable v_time_unit  : time;
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
+    v_time_unit := get_time_unit(exp);
+    write(v_value_line, value, right, 0, v_time_unit);
+    write(v_exp_line, exp, right, 0, v_time_unit);
+
     if value = exp then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_line.all & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected " & v_exp_str & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_line.all & ". Expected " & v_exp_line.all & LF & msg, scope);
       return false;
     end if;
   end;
@@ -5987,25 +6022,31 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value_in_range()"
   ) return boolean is
-    constant value_type      : string := "time";
-    constant v_value_str     : string := to_string(value);
-    constant v_min_value_str : string := to_string(min_value);
-    constant v_max_value_str : string := to_string(max_value);
-    variable v_check_ok      : boolean;
+    constant value_type        : string := "time";
+    variable v_value_line      : line;
+    variable v_min_value_line  : line;
+    variable v_max_value_line  : line;
+    variable v_check_ok        : boolean;
+    variable v_time_unit       : time;
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
+    v_time_unit := get_time_unit(min_value);
+    write(v_value_line, value, right, 0, v_time_unit);
+    write(v_min_value_line, min_value, right, 0, v_time_unit);
+    write(v_max_value_line, max_value, right, 0, v_time_unit);
+
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
-                " => min_value (" & v_min_value_str & ") must be less than max_value(" & v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+                " => min_value (" & v_min_value_line.all & ") must be less than max_value(" & v_max_value_line.all & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_line.all & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_line.all & ". Expected between " & v_min_value_line.all & " and " & v_max_value_line.all & LF & msg, scope);
       return false;
     end if;
   end;

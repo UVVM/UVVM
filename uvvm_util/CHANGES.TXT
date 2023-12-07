@@ -3,6 +3,12 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.4
+----------
+Released: 20XX-XX-XX
+- Added function for extracting closest time unit for time type.
+- Changed check_value and check_value_in_ranged to print formatted time types with closest fitting time unit.
+
 v2.19.3
 ----------
 Released: 2023-09-16

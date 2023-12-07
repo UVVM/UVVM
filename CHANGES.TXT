@@ -32,6 +32,7 @@ Released: 2023-XX-XX
 - Fixed crash in run_spec_cov.py that could occur when partial_cov file and spec_cov file are missing.
 - Added a feature for detection of reading old partial coverage files in the run_spec_cov.py script.
 - Updated spec_cov reporting in the run_spec_cov.py script.
+- Added functionality in check_value and check_value_in_range to print closest fitting time units wrt. time type checks.
 
 
 

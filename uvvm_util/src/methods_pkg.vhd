@@ -4661,6 +4661,8 @@ package body methods_pkg is
       alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_line.all & ". Expected " & v_exp_line.all & LF & msg, scope);
       return false;
     end if;
+    DEALLOCATE(v_value_line);
+    DEALLOCATE(v_exp_line);
   end;
 
   impure function check_value(
@@ -6031,7 +6033,7 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
-    v_time_unit := get_time_unit(min_value);
+    v_time_unit := get_time_unit(max_value);
     write(v_value_line, value, right, 0, v_time_unit);
     write(v_min_value_line, min_value, right, 0, v_time_unit);
     write(v_max_value_line, max_value, right, 0, v_time_unit);
@@ -6049,6 +6051,9 @@ package body methods_pkg is
       alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_line.all & ". Expected between " & v_min_value_line.all & " and " & v_max_value_line.all & LF & msg, scope);
       return false;
     end if;
+    DEALLOCATE(v_value_line);
+    DEALLOCATE(v_min_value_line);
+    DEALLOCATE(v_max_value_line);
   end;
 
   impure function check_value_in_range(

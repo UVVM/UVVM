@@ -1771,34 +1771,14 @@ thread (here: 'channel'). No more; no less. This allows a single command queue a
 
 Note that SBI_VVC must handle both read and write accesses, but never simultaneously and always in the given order.
 
-Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. Some examples:
+Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. The included
+bitvis_vip_uart implementation uses the following method:
 
-    #. | **As unique VVC implementation**
-       | Unique VVCs may be used in order to omit the channel input, e.g. UART RX VVC and UART TX VVC. UART TX VVC would only 
-         contain TX specific BFM procedures, while UART RX VVC would only contain RX specific BFM procedures. With this approach 
-         the testbench sequencer calls would look like e.g. (assuming both VVCs in this pair are set to instance index 1):
-       |    a. uart_transmit(UART_TX_VVCT, 1, ...)
-       |    b. uart_receive(UART_RX_VVCT, 1, ...)
-
-    #. | **As shared VVC implementation with usage restricted by user, and multiple VVC instances**
-       | A combined VVC with different VVC instances for different channels e.g. RX and TX. The TX instance could e.g. be instance 
-         1, and the RX instance could be e.g. instance 2. Using this UART VVC with this implementation would look like:
-       |    a. uart_transmit(UART_VVCT, 1, ...)
-       |    b. uart_receive(UART_VVCT, 2, ...)
-
-    #. | **As shared VVC implementation with GC_CHANNEL generic input**
-       | A combined VVC with the same combined VVC implementation, but separate instances for different channels e.g. RX and TX 
-         (both functionalities inside the same leaf VVC). The downside of this implementation is that it would be possible to call 
-         TX BFM procedures when calling the RX VVC channel. Using this UART VVC would look like:
-       |    a. uart_transmit(UART_VVCT, TX, 1, ...)
-       |    b. uart_receive(UART_VVCT, RX, 1, ...)
-
-    #. | **As unique VVC implementation with GC_CHANNEL generic input**
+    *  | **A unique VVC implementation with GC_CHANNEL generic input**
        | This approach uses unique VVC implementations for each channel, e.g. in uart_rx_vvc.vhd and uart_tx_vvc.vhd, but they 
          both share the VVC target parameter, UART_VVCT. They both use the GC_CHANNEL generic input to specify their channel, i.e. 
-         TX or RX. This is similar to the method described in example 3, but with restrictions that ensure that e.g. the UART TX 
-         VVC can't use the UART RX BFM procedures. The included bitvis_vip_uart example is implemented with this method. Using 
-         this UART VVC would look like:
+         TX or RX. The VVCs have restrictions that ensure that e.g. the UART TX VVC can't use the UART RX BFM procedures.
+         Using this UART VVC would look like:
        |    a. uart_transmit(UART_VVCT, TX, 1, ...)
        |    b. uart_receive(UART_VVCT, RX, 1, ...)
 

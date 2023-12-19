@@ -12,6 +12,7 @@ Released: 202X-XX-XX
 - Fixed crash that could occur when partial_cov file and spec_cov file are missing.
 - Added a feature for detection of reading old partial coverage files in the run_spec_cov.py script.
 - Updated spec_cov reporting in the run_spec_cov.py script.
+- Updated log messages and use new msg IDs for better verbosity.
 
 v1.0.0
 ----------

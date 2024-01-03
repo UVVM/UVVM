@@ -450,7 +450,7 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.bt_rd.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
         vvc_transaction_info_group.bt_rd.transaction_status := transaction_status;
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        alert(TB_ERROR, "VVC operation not recognized", scope);
     end case;
     gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
     wait for 0 ns;
@@ -479,7 +479,7 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.st_ar.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
         vvc_transaction_info_group.st_ar.transaction_status := transaction_status;
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        alert(TB_ERROR, "VVC operation not recognized", scope);
     end case;
     gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
     wait for 0 ns;

@@ -301,7 +301,7 @@ begin
         when MASTER_TRANSMIT_AND_RECEIVE =>
           if GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             transaction_info.tx_data := v_cmd.data;
 
@@ -349,7 +349,7 @@ begin
         when MASTER_TRANSMIT_AND_CHECK =>
           if GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
@@ -385,7 +385,7 @@ begin
         when MASTER_TRANSMIT_ONLY =>
           if GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
@@ -418,7 +418,7 @@ begin
         when MASTER_RECEIVE_ONLY =>
           if GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -460,7 +460,7 @@ begin
         when MASTER_CHECK_ONLY =>
           if GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -493,7 +493,7 @@ begin
         when SLAVE_TRANSMIT_AND_RECEIVE =>
           if not GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             transaction_info.tx_data := v_cmd.data;
             -- Call the corresponding procedure in the BFM package.
@@ -541,7 +541,7 @@ begin
         when SLAVE_TRANSMIT_AND_CHECK =>
           if not GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -579,7 +579,7 @@ begin
         when SLAVE_TRANSMIT_ONLY =>
           if not GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -611,7 +611,7 @@ begin
         when SLAVE_RECEIVE_ONLY =>
           if not GC_MASTER_MODE then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then
@@ -654,7 +654,7 @@ begin
         when SLAVE_CHECK_ONLY =>
           if not GC_MASTER_MODE then    -- slave check
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Call the corresponding procedure in the BFM package.
             if v_num_words = 1 then

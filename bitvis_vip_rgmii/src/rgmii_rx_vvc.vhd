@@ -281,7 +281,7 @@ begin
         --===================================
         when READ =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.
           rgmii_read(data_array   => v_result.data_array,
@@ -307,7 +307,7 @@ begin
 
         when EXPECT =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.
           rgmii_expect(data_exp     => v_cmd.data_array(0 to v_cmd.data_array_length - 1),

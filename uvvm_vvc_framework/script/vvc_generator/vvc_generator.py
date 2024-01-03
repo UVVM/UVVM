@@ -692,7 +692,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
 
     if features["transaction_info"]:
         file_handle.write("        --    -- Set transaction info\n")
-        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);\n")
+        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \"" +
@@ -720,7 +720,7 @@ def add_vvc_executor(file_handle, vvc_channel, features):
 
     if features["transaction_info"]:
         file_handle.write("        --    -- Set vvc_transaction_info\n")
-        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);\n")
+        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \"" +
@@ -911,7 +911,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
 
     if features["transaction_info"]:
         file_handle.write("        --    -- Set vvc_transaction_info\n")
-        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);\n")
+        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("        --     -- Initiate read response\n")
@@ -933,7 +933,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
 
     if features["transaction_info"]:
         file_handle.write("        --    -- Set vvc_transaction_info\n")
-        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);\n")
+        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("        --     -- Initiate check response\n")
@@ -1487,7 +1487,7 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
         file_handle.write("  --      gen_pulse(vvc_transaction_info_trigger, 0 ns, \"pulsing global vvc transaction info trigger\", scope, ID_NEVER);\n")
         print_linefeed(file_handle)
         file_handle.write("  --    when others =>\n")
-        file_handle.write("  --      alert(TB_ERROR, \"VVC operation not recognized\");\n")
+        file_handle.write("  --      alert(TB_ERROR, \"VVC operation not recognized\", scope);\n")
         file_handle.write("  --  end case;\n")
         print_linefeed(file_handle)
         file_handle.write("    wait for 0 ns;\n")

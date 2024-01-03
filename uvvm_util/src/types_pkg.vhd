@@ -191,6 +191,8 @@ package types_pkg is
   -------------------------------------
   type t_transaction_result is (ACK, NAK, ERROR); -- add more when needed
 
+  type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED, COMPLETED);
+
   type t_hierarchy_alert_level_print is array (NOTE to t_alert_level'right) of boolean;
 
   type t_hierarchy_node is record

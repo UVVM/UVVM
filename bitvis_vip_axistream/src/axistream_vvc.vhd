@@ -288,7 +288,7 @@ begin
         when TRANSMIT =>
           if GC_VVC_IS_MASTER then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             -- Put in queue so that the monitor VVC knows what to expect
             -- Needed when the sink is in Monitor Mode, as an alternative to calling lbusExpect() for each packet
@@ -314,7 +314,7 @@ begin
         when RECEIVE =>
           if not GC_VVC_IS_MASTER then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             axistream_receive(data_array          => v_result.data_array,
                               data_length         => v_result.data_length,
@@ -346,7 +346,7 @@ begin
         when EXPECT =>
           if not GC_VVC_IS_MASTER then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             -- Call the corresponding procedure in the BFM package.
             axistream_expect(

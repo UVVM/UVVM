@@ -285,7 +285,7 @@ begin
         when MASTER_TRANSMIT =>
           if GC_MASTER_MODE then        -- master transmit
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             transaction_info.data                         := v_cmd.data;
             transaction_info.num_bytes                    := v_cmd.num_bytes;
@@ -307,7 +307,7 @@ begin
         when MASTER_RECEIVE =>
           if GC_MASTER_MODE then        -- master receive
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.action_when_transfer_is_done := v_cmd.action_when_transfer_is_done;
@@ -343,7 +343,7 @@ begin
         when MASTER_CHECK =>
           if GC_MASTER_MODE then        -- master check
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             transaction_info.data                         := v_cmd.data;
             transaction_info.num_bytes                    := v_cmd.num_bytes;
@@ -366,7 +366,7 @@ begin
         when MASTER_QUICK_CMD =>
           if GC_MASTER_MODE then        -- master check
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             transaction_info.addr                         := v_cmd.addr;
             transaction_info.exp_ack                      := v_cmd.exp_ack;
@@ -389,7 +389,7 @@ begin
         when SLAVE_TRANSMIT =>
           if not GC_MASTER_MODE then    -- slave transmit
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;
@@ -407,7 +407,7 @@ begin
         when SLAVE_RECEIVE =>
           if not GC_MASTER_MODE then    -- requires slave mode
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             transaction_info.num_bytes := v_cmd.num_bytes;
 
@@ -439,7 +439,7 @@ begin
         when SLAVE_CHECK =>
           if not GC_MASTER_MODE then    -- slave check
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS);
 
             transaction_info.data      := v_cmd.data;
             transaction_info.num_bytes := v_cmd.num_bytes;

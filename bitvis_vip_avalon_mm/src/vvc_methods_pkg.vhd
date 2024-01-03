@@ -225,6 +225,7 @@ package vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
   procedure reset_vvc_transaction_info(
@@ -470,6 +471,7 @@ package body vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
@@ -480,7 +482,7 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.bt.byte_enable(vvc_cmd.byte_enable'length - 1 downto 0) := vvc_cmd.byte_enable;
         vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)                := vvc_cmd.msg;
         vvc_transaction_info_group.bt.vvc_meta.cmd_idx                                     := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                                   := IN_PROGRESS;
+        vvc_transaction_info_group.bt.transaction_status                                   := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when READ | CHECK =>
@@ -489,7 +491,7 @@ package body vvc_methods_pkg is
         vvc_transaction_info_group.st.data(vvc_cmd.data'length - 1 downto 0) := vvc_cmd.data;
         vvc_transaction_info_group.st.vvc_meta.msg(1 to vvc_cmd.msg'length)  := vvc_cmd.msg;
         vvc_transaction_info_group.st.vvc_meta.cmd_idx                       := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.st.transaction_status                     := IN_PROGRESS;
+        vvc_transaction_info_group.st.transaction_status                     := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when others =>

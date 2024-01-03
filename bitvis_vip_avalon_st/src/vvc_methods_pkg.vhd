@@ -367,12 +367,12 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
-        vvc_transaction_info_group.bt.operation                             := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.channel_value                         := vvc_cmd.channel_value;
-        vvc_transaction_info_group.bt.data_array                            := vvc_cmd.data_array;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                    := transaction_status;
+        vvc_transaction_info_group.bt.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.channel_value      := vvc_cmd.channel_value;
+        vvc_transaction_info_group.bt.data_array         := vvc_cmd.data_array;
+        vvc_transaction_info_group.bt.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");

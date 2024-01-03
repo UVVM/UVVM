@@ -544,15 +544,15 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when WRITE =>
-        vvc_transaction_info_group.bt_wr.operation                             := vvc_cmd.operation;
-        vvc_transaction_info_group.bt_wr.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-        vvc_transaction_info_group.bt_wr.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt_wr.transaction_status                    := transaction_status;
+        vvc_transaction_info_group.bt_wr.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt_wr.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.bt_wr.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt_wr.transaction_status := transaction_status;
       when READ | CHECK =>
-        vvc_transaction_info_group.bt_rd.operation                             := vvc_cmd.operation;
-        vvc_transaction_info_group.bt_rd.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-        vvc_transaction_info_group.bt_rd.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt_rd.transaction_status                    := transaction_status;
+        vvc_transaction_info_group.bt_rd.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt_rd.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.bt_rd.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt_rd.transaction_status := transaction_status;
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
@@ -571,37 +571,37 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when WRITE =>
-        vvc_transaction_info_group.st_aw.operation                             := vvc_cmd.operation;
-        vvc_transaction_info_group.st_aw.arwid                                 := vvc_cmd.aid;
-        vvc_transaction_info_group.st_aw.arwaddr                               := vvc_cmd.addr;
-        vvc_transaction_info_group.st_aw.arwlen                                := vvc_cmd.len;
-        vvc_transaction_info_group.st_aw.arwsize                               := vvc_cmd.size;
-        vvc_transaction_info_group.st_aw.arwburst                              := vvc_cmd.burst;
-        vvc_transaction_info_group.st_aw.arwlock                               := vvc_cmd.lock;
-        vvc_transaction_info_group.st_aw.arwcache                              := vvc_cmd.cache;
-        vvc_transaction_info_group.st_aw.arwprot                               := vvc_cmd.prot;
-        vvc_transaction_info_group.st_aw.arwqos                                := vvc_cmd.qos;
-        vvc_transaction_info_group.st_aw.arwregion                             := vvc_cmd.region;
-        vvc_transaction_info_group.st_aw.arwuser                               := vvc_cmd.auser;
-        vvc_transaction_info_group.st_aw.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-        vvc_transaction_info_group.st_aw.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.st_aw.transaction_status                    := transaction_status;
+        vvc_transaction_info_group.st_aw.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.st_aw.arwid              := vvc_cmd.aid;
+        vvc_transaction_info_group.st_aw.arwaddr            := vvc_cmd.addr;
+        vvc_transaction_info_group.st_aw.arwlen             := vvc_cmd.len;
+        vvc_transaction_info_group.st_aw.arwsize            := vvc_cmd.size;
+        vvc_transaction_info_group.st_aw.arwburst           := vvc_cmd.burst;
+        vvc_transaction_info_group.st_aw.arwlock            := vvc_cmd.lock;
+        vvc_transaction_info_group.st_aw.arwcache           := vvc_cmd.cache;
+        vvc_transaction_info_group.st_aw.arwprot            := vvc_cmd.prot;
+        vvc_transaction_info_group.st_aw.arwqos             := vvc_cmd.qos;
+        vvc_transaction_info_group.st_aw.arwregion          := vvc_cmd.region;
+        vvc_transaction_info_group.st_aw.arwuser            := vvc_cmd.auser;
+        vvc_transaction_info_group.st_aw.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.st_aw.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.st_aw.transaction_status := transaction_status;
       when READ | CHECK =>
-        vvc_transaction_info_group.st_ar.operation                             := vvc_cmd.operation;
-        vvc_transaction_info_group.st_ar.arwid                                 := vvc_cmd.aid;
-        vvc_transaction_info_group.st_ar.arwaddr                               := vvc_cmd.addr;
-        vvc_transaction_info_group.st_ar.arwlen                                := vvc_cmd.len;
-        vvc_transaction_info_group.st_ar.arwsize                               := vvc_cmd.size;
-        vvc_transaction_info_group.st_ar.arwburst                              := vvc_cmd.burst;
-        vvc_transaction_info_group.st_ar.arwlock                               := vvc_cmd.lock;
-        vvc_transaction_info_group.st_ar.arwcache                              := vvc_cmd.cache;
-        vvc_transaction_info_group.st_ar.arwprot                               := vvc_cmd.prot;
-        vvc_transaction_info_group.st_ar.arwqos                                := vvc_cmd.qos;
-        vvc_transaction_info_group.st_ar.arwregion                             := vvc_cmd.region;
-        vvc_transaction_info_group.st_ar.arwuser                               := vvc_cmd.auser;
-        vvc_transaction_info_group.st_ar.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-        vvc_transaction_info_group.st_ar.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.st_ar.transaction_status                    := transaction_status;
+        vvc_transaction_info_group.st_ar.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.st_ar.arwid              := vvc_cmd.aid;
+        vvc_transaction_info_group.st_ar.arwaddr            := vvc_cmd.addr;
+        vvc_transaction_info_group.st_ar.arwlen             := vvc_cmd.len;
+        vvc_transaction_info_group.st_ar.arwsize            := vvc_cmd.size;
+        vvc_transaction_info_group.st_ar.arwburst           := vvc_cmd.burst;
+        vvc_transaction_info_group.st_ar.arwlock            := vvc_cmd.lock;
+        vvc_transaction_info_group.st_ar.arwcache           := vvc_cmd.cache;
+        vvc_transaction_info_group.st_ar.arwprot            := vvc_cmd.prot;
+        vvc_transaction_info_group.st_ar.arwqos             := vvc_cmd.qos;
+        vvc_transaction_info_group.st_ar.arwregion          := vvc_cmd.region;
+        vvc_transaction_info_group.st_ar.arwuser            := vvc_cmd.auser;
+        vvc_transaction_info_group.st_ar.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.st_ar.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.st_ar.transaction_status := transaction_status;
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");
     end case;
@@ -618,13 +618,13 @@ package body vvc_methods_pkg is
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
-    vvc_transaction_info_group.st_w.operation                             := vvc_cmd.operation;
-    vvc_transaction_info_group.st_w.wdata                                 := vvc_cmd.data_array;
-    vvc_transaction_info_group.st_w.wstrb                                 := vvc_cmd.strb_array;
-    vvc_transaction_info_group.st_w.wuser                                 := vvc_cmd.user_array;
-    vvc_transaction_info_group.st_w.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-    vvc_transaction_info_group.st_w.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-    vvc_transaction_info_group.st_w.transaction_status                    := transaction_status;
+    vvc_transaction_info_group.st_w.operation          := vvc_cmd.operation;
+    vvc_transaction_info_group.st_w.wdata              := vvc_cmd.data_array;
+    vvc_transaction_info_group.st_w.wstrb              := vvc_cmd.strb_array;
+    vvc_transaction_info_group.st_w.wuser              := vvc_cmd.user_array;
+    vvc_transaction_info_group.st_w.vvc_meta.msg       := vvc_cmd.msg;
+    vvc_transaction_info_group.st_w.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+    vvc_transaction_info_group.st_w.transaction_status := transaction_status;
     gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
     wait for 0 ns;
   end procedure set_w_vvc_transaction_info;
@@ -638,13 +638,13 @@ package body vvc_methods_pkg is
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
-    vvc_transaction_info_group.st_b.operation                             := vvc_cmd.operation;
-    vvc_transaction_info_group.st_b.bid                                   := vvc_cmd.id;
-    vvc_transaction_info_group.st_b.bresp                                 := vvc_cmd.resp;
-    vvc_transaction_info_group.st_b.buser                                 := vvc_cmd.user;
-    vvc_transaction_info_group.st_b.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-    vvc_transaction_info_group.st_b.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-    vvc_transaction_info_group.st_b.transaction_status                    := transaction_status;
+    vvc_transaction_info_group.st_b.operation          := vvc_cmd.operation;
+    vvc_transaction_info_group.st_b.bid                := vvc_cmd.id;
+    vvc_transaction_info_group.st_b.bresp              := vvc_cmd.resp;
+    vvc_transaction_info_group.st_b.buser              := vvc_cmd.user;
+    vvc_transaction_info_group.st_b.vvc_meta.msg       := vvc_cmd.msg;
+    vvc_transaction_info_group.st_b.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+    vvc_transaction_info_group.st_b.transaction_status := transaction_status;
     gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
     wait for 0 ns;
   end procedure set_b_vvc_transaction_info;
@@ -658,14 +658,14 @@ package body vvc_methods_pkg is
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
   ) is
   begin
-    vvc_transaction_info_group.st_r.operation                             := vvc_cmd.operation;
-    vvc_transaction_info_group.st_r.rid                                   := vvc_cmd.id;
-    vvc_transaction_info_group.st_r.rdata                                 := vvc_cmd.data_array;
-    vvc_transaction_info_group.st_r.rresp                                 := vvc_cmd.resp_array;
-    vvc_transaction_info_group.st_r.ruser                                 := vvc_cmd.user_array;
-    vvc_transaction_info_group.st_r.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-    vvc_transaction_info_group.st_r.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-    vvc_transaction_info_group.st_r.transaction_status                    := transaction_status;
+    vvc_transaction_info_group.st_r.operation          := vvc_cmd.operation;
+    vvc_transaction_info_group.st_r.rid                := vvc_cmd.id;
+    vvc_transaction_info_group.st_r.rdata              := vvc_cmd.data_array;
+    vvc_transaction_info_group.st_r.rresp              := vvc_cmd.resp_array;
+    vvc_transaction_info_group.st_r.ruser              := vvc_cmd.user_array;
+    vvc_transaction_info_group.st_r.vvc_meta.msg       := vvc_cmd.msg;
+    vvc_transaction_info_group.st_r.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+    vvc_transaction_info_group.st_r.transaction_status := transaction_status;
     gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
     wait for 0 ns;
   end procedure set_r_vvc_transaction_info;

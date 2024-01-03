@@ -437,24 +437,24 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when WRITE | READ | CHECK =>
-        vvc_transaction_info_group.bt.operation                                 := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.address(vvc_cmd.addr'length - 1 downto 0) := vvc_cmd.addr;
-        vvc_transaction_info_group.bt.data(vvc_cmd.data'length - 1 downto 0)    := vvc_cmd.data;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)     := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                          := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                        := transaction_status;
+        vvc_transaction_info_group.bt.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.address            := vvc_cmd.addr;
+        vvc_transaction_info_group.bt.data               := vvc_cmd.data;
+        vvc_transaction_info_group.bt.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when POLL_UNTIL =>
-        vvc_transaction_info_group.ct.operation                                 := vvc_cmd.operation;
-        vvc_transaction_info_group.ct.address(vvc_cmd.addr'length - 1 downto 0) := vvc_cmd.addr;
-        vvc_transaction_info_group.ct.data(vvc_cmd.data'length - 1 downto 0)    := vvc_cmd.data;
-        vvc_transaction_info_group.ct.randomisation                             := vvc_cmd.randomisation;
-        vvc_transaction_info_group.ct.num_words                                 := vvc_cmd.num_words;
-        vvc_transaction_info_group.ct.max_polls                                 := vvc_cmd.max_polls;
-        vvc_transaction_info_group.ct.vvc_meta.msg(1 to vvc_cmd.msg'length)     := vvc_cmd.msg;
-        vvc_transaction_info_group.ct.vvc_meta.cmd_idx                          := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.ct.transaction_status                        := transaction_status;
+        vvc_transaction_info_group.ct.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.ct.address            := vvc_cmd.addr;
+        vvc_transaction_info_group.ct.data               := vvc_cmd.data;
+        vvc_transaction_info_group.ct.randomisation      := vvc_cmd.randomisation;
+        vvc_transaction_info_group.ct.num_words          := vvc_cmd.num_words;
+        vvc_transaction_info_group.ct.max_polls          := vvc_cmd.max_polls;
+        vvc_transaction_info_group.ct.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.ct.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.ct.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when others =>

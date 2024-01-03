@@ -728,16 +728,16 @@ package body vvc_methods_pkg is
     case vvc_cmd.operation is
       when MASTER_TRANSMIT | MASTER_RECEIVE | MASTER_CHECK |
            SLAVE_TRANSMIT | SLAVE_RECEIVE | SLAVE_CHECK | MASTER_QUICK_CMD =>
-        vvc_transaction_info_group.bt.operation                              := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.addr(vvc_cmd.addr'length - 1 downto 0) := vvc_cmd.addr;
-        vvc_transaction_info_group.bt.data                                   := vvc_cmd.data;
-        vvc_transaction_info_group.bt.num_bytes                              := vvc_cmd.num_bytes;
-        vvc_transaction_info_group.bt.action_when_transfer_is_done           := vvc_cmd.action_when_transfer_is_done;
-        vvc_transaction_info_group.bt.exp_ack                                := vvc_cmd.exp_ack;
-        vvc_transaction_info_group.bt.rw_bit                                 := vvc_cmd.rw_bit;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)  := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                       := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                     := transaction_status;
+        vvc_transaction_info_group.bt.operation                    := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.addr                         := vvc_cmd.addr;
+        vvc_transaction_info_group.bt.data                         := vvc_cmd.data;
+        vvc_transaction_info_group.bt.num_bytes                    := vvc_cmd.num_bytes;
+        vvc_transaction_info_group.bt.action_when_transfer_is_done := vvc_cmd.action_when_transfer_is_done;
+        vvc_transaction_info_group.bt.exp_ack                      := vvc_cmd.exp_ack;
+        vvc_transaction_info_group.bt.rw_bit                       := vvc_cmd.rw_bit;
+        vvc_transaction_info_group.bt.vvc_meta.msg                 := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx             := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status           := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
       when others =>
         alert(TB_ERROR, "VVC operation not recognized");

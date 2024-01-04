@@ -757,24 +757,24 @@ def add_vvc_executor(file_handle, vvc_channel, features):
         print_linefeed(file_handle)
 
         if features["scoreboard"]:
-            file_handle.write("        --     -- Request SB check result\n")
-            file_handle.write("        --     if v_cmd.data_routing = TO_SB then\n")
-            file_handle.write("        --       -- call SB check_received\n")
-            file_handle.write("        --       " + vvc_name.upper() + "_VVC_SB.check_received(GC_INSTANCE_IDX, pad_" + vvc_name.lower() +
+            file_handle.write("        --       -- Request SB check result\n")
+            file_handle.write("        --       if v_cmd.data_routing = TO_SB then\n")
+            file_handle.write("        --         -- call SB check_received\n")
+            file_handle.write("        --         " + vvc_name.upper() + "_VVC_SB.check_received(GC_INSTANCE_IDX, pad_" + vvc_name.lower() +
                               "_sb(v_result(GC_DATA_WIDTH-1 downto 0)));\n")
-            file_handle.write("        --     else\n")
+            file_handle.write("        --       else\n")
+            file_handle.write("        --         -- Store the result\n")
+            file_handle.write("        --         work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
+            file_handle.write("        --                                           cmd_idx       => v_cmd.cmd_idx,\n")
+            file_handle.write("        --                                           result        => v_result);\n")
+            file_handle.write("        --       end if;\n")
+        else:
             file_handle.write("        --       -- Store the result\n")
             file_handle.write("        --       work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
             file_handle.write("        --                                         cmd_idx       => v_cmd.cmd_idx,\n")
             file_handle.write("        --                                         result        => v_result);\n")
-            file_handle.write("        --     end if;\n")
-        else:
-            file_handle.write("        --     -- Store the result\n")
-            file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
-            file_handle.write("        --                                       cmd_idx       => v_cmd.cmd_idx,\n")
-            file_handle.write("        --                                       result        => v_result);\n")
 
-        file_handle.write("        --  end if;\n")
+        file_handle.write("        --    end if;\n")
 
     else:
         file_handle.write("        --     " + vvc_name.lower() + "_read(addr_value    => v_normalised_addr,\n")
@@ -923,10 +923,25 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     file_handle.write("        --                             scope               => C_SCOPE,\n")
     file_handle.write("        --                             msg_id_panel        => v_msg_id_panel,\n")
     file_handle.write("        --                             config              => vvc_config.bfm_config);\n")
-    file_handle.write("        --     -- Store the result\n")
-    file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(result_queue => result_queue,\n")
-    file_handle.write("        --                                                 cmd_idx      => v_cmd.cmd_idx,\n")
-    file_handle.write("        --                                                 data         => v_result);\n")
+    print_linefeed(file_handle)
+
+    if features["scoreboard"]:
+        file_handle.write("        --     -- Request SB check result\n")
+        file_handle.write("        --     if v_cmd.data_routing = TO_SB then\n")
+        file_handle.write("        --       -- call SB check_received\n")
+        file_handle.write("        --       " + vvc_name.upper() + "_VVC_SB.check_received(GC_INSTANCE_IDX, pad_" + vvc_name.lower() +
+                          "_sb(v_result(GC_DATA_WIDTH-1 downto 0)));\n")
+        file_handle.write("        --     else\n")
+        file_handle.write("        --       -- Store the result\n")
+        file_handle.write("        --       work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
+        file_handle.write("        --                                         cmd_idx       => v_cmd.cmd_idx,\n")
+        file_handle.write("        --                                         result        => v_result);\n")
+        file_handle.write("        --     end if;\n")
+    else:
+        file_handle.write("        --     -- Store the result\n")
+        file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
+        file_handle.write("        --                                       cmd_idx       => v_cmd.cmd_idx,\n")
+        file_handle.write("        --                                       result        => v_result);\n")
 
     print_linefeed(file_handle)
     file_handle.write("        --   when CHECK =>\n")
@@ -948,8 +963,7 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     file_handle.write("        --                              config              => vvc_config.bfm_config);\n")
     print_linefeed(file_handle)
 
-    print_linefeed(file_handle)
-    file_handle.write("          when others =>")
+    file_handle.write("          when others =>\n")
     file_handle.write("            tb_error(\"Unsupported local command received for execution: '\" & to_string(v_cmd.operation) & \"'\", C_SCOPE);\n")
     print_linefeed(file_handle)
     file_handle.write("      end case;\n")

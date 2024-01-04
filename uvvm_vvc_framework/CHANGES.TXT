@@ -8,6 +8,7 @@ Released: 202X-XX-XX
 - Updated vvc_generator.py to fix compilation warning vcom-1090.
 - Updated vvc_generator.py to use the function get_scope_for_log() to generate VVC scope.
 - Updated vvc_generator.py to add an assertion to check that the GC_CHANNEL generic is used correctly.
+- Updated vvc_generator.py to add missing scoreboard support in multiple executors.
 - Fixed typo in Figure 6, section 2.3.2 in VVC_Framework_Manual.
 
 v2.12.5

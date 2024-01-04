@@ -247,6 +247,15 @@ package vvc_methods_pkg is
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
   );
 
+  procedure set_r_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
+  );
+
   procedure reset_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record
@@ -665,6 +674,24 @@ package body vvc_methods_pkg is
     vvc_transaction_info_group.st_r.ruser              := vvc_cmd.user_array;
     vvc_transaction_info_group.st_r.vvc_meta.msg       := vvc_cmd.msg;
     vvc_transaction_info_group.st_r.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+    vvc_transaction_info_group.st_r.transaction_status := transaction_status;
+    gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+    wait for 0 ns;
+  end procedure set_r_vvc_transaction_info;
+
+  procedure set_r_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT
+  ) is
+  begin
+    vvc_transaction_info_group.st_r.rid                := vvc_result.rid;
+    vvc_transaction_info_group.st_r.rdata              := vvc_result.rdata;
+    vvc_transaction_info_group.st_r.rresp              := vvc_result.rresp;
+    vvc_transaction_info_group.st_r.ruser              := vvc_result.ruser;
     vvc_transaction_info_group.st_r.transaction_status := transaction_status;
     gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
     wait for 0 ns;

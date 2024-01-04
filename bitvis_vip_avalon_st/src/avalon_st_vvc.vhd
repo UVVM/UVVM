@@ -299,6 +299,9 @@ begin
                                msg_id_panel  => v_msg_id_panel,
                                config        => vvc_config.bfm_config);
             deallocate(v_data_array_ptr);
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for master (source) VVC", C_SCOPE);
           end if;
@@ -335,6 +338,9 @@ begin
                                                           cmd_idx      => v_cmd.cmd_idx,
                                                           result       => v_result);
             end if;
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
           end if;
@@ -359,6 +365,9 @@ begin
                              msg_id_panel => v_msg_id_panel,
                              config       => vvc_config.bfm_config);
             deallocate(v_data_array_ptr);
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
           end if;

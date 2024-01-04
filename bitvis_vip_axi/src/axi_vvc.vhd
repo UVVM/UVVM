@@ -529,6 +529,8 @@ begin
                                  msg_id_panel   => v_msg_id_panel,
                                  config         => vvc_config.bfm_config);
 
+      -- Update vvc transaction info
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
@@ -621,6 +623,9 @@ begin
                                                         result       => v_result);
           end if;
 
+          -- Update vvc transaction info
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
+
         when CHECK =>
           -- Set vvc transaction info
           set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
@@ -684,11 +689,17 @@ begin
             log(vvc_config.bfm_config.id_for_bfm, "read data channel check OK. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, v_msg_id_panel);
           end if;
 
+          -- Update vvc transaction info
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
       end case;
       v_check_ok                          := true;
       last_read_data_channel_idx_executed <= v_cmd.cmd_idx;
+
+      -- Update vvc transaction info
+      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
       -- Set vvc transaction info back to default values
       reset_r_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
@@ -762,6 +773,8 @@ begin
                                   msg_id_panel   => v_msg_id_panel,
                                   config         => vvc_config.bfm_config);
 
+      -- Update vvc transaction info
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
@@ -824,10 +837,12 @@ begin
                                scope        => C_CHANNEL_SCOPE,
                                msg_id_panel => v_msg_id_panel,
                                config       => vvc_config.bfm_config);
-
       deallocate(v_wdata_array_ptr);
       deallocate(v_wstrb_array_ptr);
       deallocate(v_wuser_array_ptr);
+
+      -- Update vvc transaction info
+      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
       -- Set vvc transaction info back to default values
       reset_w_vvc_transaction_info(vvc_transaction_info);
     end loop;
@@ -915,6 +930,10 @@ begin
       check_value(v_bresp_value = v_cmd.resp, error, "Checking BRESP value. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, ID_POS_ACK, v_msg_id_panel);
 
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
+
+      -- Update vvc transaction info
+      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
       -- Set vvc transaction info back to default values
       reset_b_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);

@@ -317,6 +317,9 @@ begin
                           scope        => C_SCOPE,
                           msg_id_panel => v_msg_id_panel);
 
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config, COMPLETED, C_SCOPE);
+
             -- Set transaction info back to default values
             reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 

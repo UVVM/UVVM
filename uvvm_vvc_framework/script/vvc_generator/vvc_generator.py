@@ -691,8 +691,8 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     file_handle.write("        --   when WRITE =>\n")
 
     if features["transaction_info"]:
-        file_handle.write("        --    -- Set transaction info\n")
-        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
+        file_handle.write("        --     -- Set vvc transaction info\n")
+        file_handle.write("        --     set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \"" +
@@ -710,6 +710,11 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     file_handle.write("        --               config        => vvc_config.bfm_config);\n")
     print_linefeed(file_handle)
 
+    if features["transaction_info"]:
+        file_handle.write("        --     -- Update vvc transaction info\n")
+        file_handle.write("        --     set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);\n")
+        print_linefeed(file_handle)
+
     if number_of_executors > 1:
         file_handle.write("        --  Example of pipelined read, eg. Avalon interface.\n")
     else:
@@ -719,8 +724,8 @@ def add_vvc_executor(file_handle, vvc_channel, features):
     file_handle.write("        --   when READ =>\n")
 
     if features["transaction_info"]:
-        file_handle.write("        --    -- Set vvc_transaction_info\n")
-        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
+        file_handle.write("        --     -- Set vvc_transaction_info\n")
+        file_handle.write("        --     set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("        --     v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, \"addr\", \"shared_vvc_cmd.addr\", \"" +
@@ -774,6 +779,11 @@ def add_vvc_executor(file_handle, vvc_channel, features):
             file_handle.write("        --                                         cmd_idx       => v_cmd.cmd_idx,\n")
             file_handle.write("        --                                         result        => v_result);\n")
 
+        if features["transaction_info"]:
+            print_linefeed(file_handle)
+            file_handle.write("        --       -- Update vvc transaction info\n")
+            file_handle.write("        --       set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);\n")
+
         file_handle.write("        --    end if;\n")
 
     else:
@@ -804,6 +814,11 @@ def add_vvc_executor(file_handle, vvc_channel, features):
             file_handle.write("        --     work.td_vvc_entity_support_pkg.store_result(result_queue  => result_queue,\n")
             file_handle.write("        --                                                 cmd_idx       => v_cmd.cmd_idx,\n")
             file_handle.write("        --                                                 result        => v_result);\n")
+
+        if features["transaction_info"]:
+            file_handle.write("        --     -- Update vvc transaction info\n")
+            file_handle.write("        --     set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);\n")
+            print_linefeed(file_handle)
 
     print_linefeed(file_handle)
     print_linefeed(file_handle)
@@ -910,8 +925,8 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     file_handle.write("        --   when READ =>\n")
 
     if features["transaction_info"]:
-        file_handle.write("        --    -- Set vvc_transaction_info\n")
-        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
+        file_handle.write("        --     -- Set vvc_transaction_info\n")
+        file_handle.write("        --     set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("        --     -- Initiate read response\n")
@@ -943,12 +958,17 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
         file_handle.write("        --                                       cmd_idx       => v_cmd.cmd_idx,\n")
         file_handle.write("        --                                       result        => v_result);\n")
 
+    if features["transaction_info"]:
+        print_linefeed(file_handle)
+        file_handle.write("        --     -- Update vvc transaction info\n")
+        file_handle.write("        --     set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);\n")
+
     print_linefeed(file_handle)
     file_handle.write("        --   when CHECK =>\n")
 
     if features["transaction_info"]:
-        file_handle.write("        --    -- Set vvc_transaction_info\n")
-        file_handle.write("        --    set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
+        file_handle.write("        --     -- Set vvc_transaction_info\n")
+        file_handle.write("        --     set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);\n")
         print_linefeed(file_handle)
 
     file_handle.write("        --     -- Initiate check response\n")
@@ -962,6 +982,11 @@ def add_vvc_pipeline_step(file_handle, queue_name, features):
     file_handle.write("        --                              msg_id_panel        => v_msg_id_panel,\n")
     file_handle.write("        --                              config              => vvc_config.bfm_config);\n")
     print_linefeed(file_handle)
+
+    if features["transaction_info"]:
+        file_handle.write("        --     -- Update vvc transaction info\n")
+        file_handle.write("        --     set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);\n")
+        print_linefeed(file_handle)
 
     file_handle.write("          when others =>\n")
     file_handle.write("            tb_error(\"Unsupported local command received for execution: '\" & to_string(v_cmd.operation) & \"'\", C_SCOPE);\n")

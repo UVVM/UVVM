@@ -272,7 +272,7 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- Set transaction info
+          -- Set vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.

@@ -302,7 +302,7 @@ begin
                 null;
             end case;
 
-            -- Set transaction info
+            -- Set vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Normalise address and data
@@ -320,7 +320,7 @@ begin
             -- Update vvc transaction info
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config, COMPLETED, C_SCOPE);
 
-            -- Set transaction info back to default values
+            -- Set vvc transaction info back to default values
             reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
             -- exit loop if terminate_current_cmd is requested

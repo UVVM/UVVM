@@ -20,18 +20,13 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-
-library std;
 use std.textio.all;
-
-library bitvis_vip_axi;
-use bitvis_vip_axi.vvc_cmd_pkg.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library work;
 use work.axi_bfm_pkg.all;
+use work.vvc_cmd_pkg.all;
 
 package local_pkg is
   function result_to_string(
@@ -64,21 +59,18 @@ package body local_pkg is
 end package body local_pkg;
 
 ------------------------------------------------------------------------------------------
---  axi_sb_pkg
+--  vvc_sb_pkg
 ------------------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library bitvis_vip_axi;
-use bitvis_vip_axi.vvc_cmd_pkg.all;
-
-library work;
-use work.local_pkg.all;
-
 library bitvis_vip_scoreboard;
 
-package axi_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+use work.vvc_cmd_pkg.all;
+use work.local_pkg.all;
+
+package vvc_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
   generic map(t_element         => t_vvc_result,
               element_match     => "=",
               to_string_element => result_to_string);

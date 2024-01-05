@@ -23,13 +23,11 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.gpio_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
+use work.vvc_sb_pkg.all;
 
 --========================================================================================================================
 package vvc_methods_pkg is
@@ -110,14 +108,7 @@ package vvc_methods_pkg is
   shared variable shared_gpio_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_GPIO_VVC_CONFIG_DEFAULT);
   shared variable shared_gpio_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_gpio_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
-
-  -- Scoreboard
-  package gpio_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map(t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),
-                element_match     => std_match,
-                to_string_element => to_string);
-  use gpio_sb_pkg.all;
-  shared variable GPIO_VVC_SB : gpio_sb_pkg.t_generic_sb;
+  shared variable GPIO_VVC_SB                  : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC 

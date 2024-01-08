@@ -191,6 +191,8 @@ package types_pkg is
   -------------------------------------
   type t_transaction_result is (ACK, NAK, ERROR); -- add more when needed
 
+  -- Transaction status FAILED and SUCCEEDED are only applicable for Monitor Transaction Info records and not for VVC Transaction Info records.
+  -- Whereas COMPLETED is applicable only for VVCs and not Monitors.
   type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED, COMPLETED);
 
   type t_hierarchy_alert_level_print is array (NOTE to t_alert_level'right) of boolean;

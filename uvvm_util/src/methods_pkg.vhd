@@ -4647,6 +4647,7 @@ package body methods_pkg is
     variable v_value_line : line;
     variable v_exp_line   : line;
     variable v_time_unit  : time;
+    variable v_return_val : boolean;
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
@@ -4656,13 +4657,14 @@ package body methods_pkg is
 
     if value = exp then
       log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_line.all & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-      return true;
+      v_return_val := true;
     else
       alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_line.all & ". Expected " & v_exp_line.all & LF & msg, scope);
-      return false;
+      v_return_val := false;
     end if;
     DEALLOCATE(v_value_line);
     DEALLOCATE(v_exp_line);
+    return v_return_val;
   end;
 
   impure function check_value(
@@ -6030,6 +6032,7 @@ package body methods_pkg is
     variable v_max_value_line  : line;
     variable v_check_ok        : boolean;
     variable v_time_unit       : time;
+    variable v_return_val      : boolean;
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
@@ -6046,14 +6049,15 @@ package body methods_pkg is
 
     if (value >= min_value and value <= max_value) then
       log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_line.all & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
-      return true;
+      v_return_val := true;
     else
       alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_line.all & ". Expected between " & v_min_value_line.all & " and " & v_max_value_line.all & LF & msg, scope);
-      return false;
+      v_return_val := false;
     end if;
     DEALLOCATE(v_value_line);
     DEALLOCATE(v_min_value_line);
     DEALLOCATE(v_max_value_line);
+    return v_return_val;
   end;
 
   impure function check_value_in_range(

@@ -285,8 +285,8 @@ begin
       -------------------------------------------------------------------------
       case v_cmd.operation is           -- Only operations in the dedicated record are relevant
         when RECEIVE =>
-          -- Set transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_cmd.data(GC_DATA_WIDTH - 1 downto 0);
           -- Call the corresponding procedure in the BFM package.
@@ -312,9 +312,12 @@ begin
                                                         result       => v_read_data);
           end if;
 
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_SCOPE);
+
         when EXPECT =>
-          -- Set transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Normalise address and data
           v_normalised_data                                 := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_expect() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
@@ -330,6 +333,9 @@ begin
                       config         => vvc_config.bfm_config,
                       scope          => C_SCOPE,
                       msg_id_panel   => v_msg_id_panel);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
         when INSERT_DELAY =>
           log(ID_INSERTED_DELAY, "Running: " & to_string(v_cmd.proc_call) & " " & format_command_idx(v_cmd), C_SCOPE, v_msg_id_panel);

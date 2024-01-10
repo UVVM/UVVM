@@ -54,11 +54,6 @@ package transaction_pkg is
   --
   --==========================================================================================
 
-  -- Transaction status
-  type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED);
-
-  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := INACTIVE;
-
   -- VVC Meta
   type t_vvc_meta is record
     msg     : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
@@ -84,7 +79,7 @@ package transaction_pkg is
     data               => (others => '0'),
     data_exp           => (others => '0'),
     vvc_meta           => C_VVC_META_DEFAULT,
-    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+    transaction_status => INACTIVE
   );
 
   -- Transaction group

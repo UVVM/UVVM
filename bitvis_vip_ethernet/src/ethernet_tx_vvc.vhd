@@ -284,7 +284,7 @@ begin
         --===================================
         when TRANSMIT =>
           -- Set vvc_transaction_info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the vvc_methods_pkg.
           priv_ethernet_transmit_to_bridge(interpacket_gap_time => vvc_config.bfm_config.interpacket_gap_time,
@@ -295,6 +295,9 @@ begin
                                            vvc_transaction_info => vvc_transaction_info,
                                            scope                => C_SCOPE,
                                            msg_id_panel         => v_msg_id_panel);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
         -- UVVM common operations
         --===================================

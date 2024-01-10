@@ -272,8 +272,8 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- Set transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.
           gmii_write(data_array                   => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
@@ -283,6 +283,9 @@ begin
                      scope                        => C_SCOPE,
                      msg_id_panel                 => v_msg_id_panel,
                      config                       => vvc_config.bfm_config);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
         -- UVVM common operations
         --===================================

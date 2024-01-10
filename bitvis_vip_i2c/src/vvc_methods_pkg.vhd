@@ -343,6 +343,15 @@ package vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
   procedure reset_vvc_transaction_info(
@@ -721,24 +730,47 @@ package body vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when MASTER_TRANSMIT | MASTER_RECEIVE | MASTER_CHECK |
            SLAVE_TRANSMIT | SLAVE_RECEIVE | SLAVE_CHECK | MASTER_QUICK_CMD =>
-        vvc_transaction_info_group.bt.operation                              := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.addr(vvc_cmd.addr'length - 1 downto 0) := vvc_cmd.addr;
-        vvc_transaction_info_group.bt.data                                   := vvc_cmd.data;
-        vvc_transaction_info_group.bt.num_bytes                              := vvc_cmd.num_bytes;
-        vvc_transaction_info_group.bt.action_when_transfer_is_done           := vvc_cmd.action_when_transfer_is_done;
-        vvc_transaction_info_group.bt.exp_ack                                := vvc_cmd.exp_ack;
-        vvc_transaction_info_group.bt.rw_bit                                 := vvc_cmd.rw_bit;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)  := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                       := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                     := IN_PROGRESS;
+        vvc_transaction_info_group.bt.operation                    := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.addr                         := vvc_cmd.addr;
+        vvc_transaction_info_group.bt.data                         := vvc_cmd.data;
+        vvc_transaction_info_group.bt.num_bytes                    := vvc_cmd.num_bytes;
+        vvc_transaction_info_group.bt.action_when_transfer_is_done := vvc_cmd.action_when_transfer_is_done;
+        vvc_transaction_info_group.bt.exp_ack                      := vvc_cmd.exp_ack;
+        vvc_transaction_info_group.bt.rw_bit                       := vvc_cmd.rw_bit;
+        vvc_transaction_info_group.bt.vvc_meta.msg                 := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx             := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status           := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        alert(TB_ERROR, "VVC operation not recognized", scope);
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_vvc_transaction_info;
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  begin
+    case vvc_cmd.operation is
+      when MASTER_RECEIVE | SLAVE_RECEIVE =>
+        vvc_transaction_info_group.bt.data               := vvc_result;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when others =>
+        alert(TB_ERROR, "VVC operation does not update vvc_result", scope);
     end case;
 
     wait for 0 ns;
@@ -752,6 +784,7 @@ package body vvc_methods_pkg is
       when MASTER_TRANSMIT | MASTER_RECEIVE | MASTER_CHECK |
            SLAVE_TRANSMIT | SLAVE_RECEIVE | SLAVE_CHECK | MASTER_QUICK_CMD =>
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+
       when others =>
         null;
     end case;

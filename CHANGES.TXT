@@ -13,6 +13,11 @@ CHANGES.TXT in each module's sub-directory.
 v2 2023.XX.XX
 --------------------
 Released: 2023-XX-XX
+- Updated vvc_transaction_info in all VVCs to also trigger after the BFM call with updated data and the status
+  COMPLETED. Updated vvc_generator.py script.
+- Added missing scope to alert in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
+- Removed unnecessary constraining in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
+- Moved t_transaction_status type from all VVCs to types_pkg and added COMPLETED. Updated vvc_generator.py script.
 - Fixed incorrect log messages in AXI-Stream BFM package.
 - Removed ethernet_sb_pkg file, package already defined in vvc_methods_pkg.
 - Fixed compilation warning vcom-1090. Updated vvc_generator.py script.

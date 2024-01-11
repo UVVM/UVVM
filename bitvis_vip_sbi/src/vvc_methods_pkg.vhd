@@ -221,13 +221,6 @@ package vvc_methods_pkg is
     constant data : in std_logic_vector
   ) return t_vvc_result;
 
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-  function pad_sbi_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector;
-
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -500,17 +493,6 @@ package body vvc_methods_pkg is
     end if;
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-
-  function pad_sbi_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector is
-  begin
-    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end function pad_sbi_sb;
 
 end package body vvc_methods_pkg;
 

@@ -351,13 +351,6 @@ package vvc_methods_pkg is
                                          constant command_queue_is_empty               : in boolean;
                                          constant scope                                : in string := C_VVC_NAME);
 
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-  function pad_i2c_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector;
-
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -779,16 +772,5 @@ package body vvc_methods_pkg is
     end if;
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-
-  function pad_i2c_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector is
-  begin
-    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end function pad_i2c_sb;
 
 end package body vvc_methods_pkg;

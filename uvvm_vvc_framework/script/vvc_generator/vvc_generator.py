@@ -324,6 +324,8 @@ def add_leaf_includes(file_handle, vvc_name, features):
     file_handle.write("use work.td_result_queue_pkg.all;\n")
     if features["transaction_pkg"]:
         file_handle.write("use work.transaction_pkg.all;\n")
+    if features["scoreboard"]:
+        file_handle.write("use work.vvc_sb_support_pkg.all;\n")
     print_linefeed(file_handle)
     file_handle.write(division_line + "\n")
 
@@ -1380,15 +1382,6 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("                                          constant scope                              : in string := C_VVC_NAME);\n")
     print_linefeed(file_handle)
 
-    if features["scoreboard"]:
-        file_handle.write(division_line + "\n")
-        file_handle.write("  -- VVC Scoreboard helper method\n")
-        file_handle.write(division_line + "\n")
-        file_handle.write("    function pad_" + vvc_name.lower() + "_sb(\n")
-        file_handle.write("      constant data : in std_logic_vector\n")
-        file_handle.write("    ) return std_logic_vector;\n")
-        print_linefeed(file_handle)
-
     file_handle.write("end package vvc_methods_pkg;\n")
     print_linefeed(file_handle)
 
@@ -1543,20 +1536,6 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
     file_handle.write("    end if;\n")
     file_handle.write("    gen_pulse(global_trigger_vvc_activity_register, 0 ns, \"pulsing global trigger for vvc activity\", scope, ID_NEVER);\n")
     file_handle.write("  end procedure;\n")
-    print_linefeed(file_handle)
-
-    if features["scoreboard"]:
-        file_handle.write(division_line + "\n")
-        file_handle.write("  -- VVC Scoreboard helper method\n")
-        file_handle.write(division_line + "\n")
-        file_handle.write("    function pad_" + vvc_name.lower() + "_sb(\n")
-        file_handle.write("      constant data : in std_logic_vector\n")
-        file_handle.write("    ) return std_logic_vector is \n")
-        file_handle.write("    begin\n")
-        file_handle.write("      return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);\n")
-        file_handle.write("    end function pad_" + vvc_name.lower() + "_sb;\n")
-        print_linefeed(file_handle)
-
     print_linefeed(file_handle)
     file_handle.write("end package body vvc_methods_pkg;\n")
 
@@ -1814,6 +1793,10 @@ def generate_transaction_pkg_file(vvc_name, vvc_channels, features):
 
 def add_vvc_sb_pkg(file_handle, vvc_name, vvc_channels, features):
     add_vvc_header(file_handle)
+
+    file_handle.write(division_line + "\n")
+    file_handle.write("--  vvc_sb_pkg\n")
+    file_handle.write(division_line + "\n")
     file_handle.write("library ieee;\n")
     file_handle.write("use ieee.std_logic_1164.all;\n")
     file_handle.write("use ieee.numeric_std.all;\n")
@@ -1826,6 +1809,39 @@ def add_vvc_sb_pkg(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("  generic map(t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),\n")
     file_handle.write("              element_match     => std_match,\n")
     file_handle.write("              to_string_element => to_string);\n")
+    print_linefeed(file_handle)
+
+    file_handle.write(division_line + "\n")
+    file_handle.write("--  vvc_sb_support_pkg\n")
+    file_handle.write(division_line + "\n")
+    file_handle.write("library ieee;\n")
+    file_handle.write("use ieee.std_logic_1164.all;\n")
+    file_handle.write("use ieee.numeric_std.all;\n")
+    print_linefeed(file_handle)
+    file_handle.write("library bitvis_vip_scoreboard;\n")
+    file_handle.write("use bitvis_vip_scoreboard.generic_sb_support_pkg.all;\n")
+    print_linefeed(file_handle)
+    file_handle.write("use work.transaction_pkg.all;\n")
+    print_linefeed(file_handle)
+    file_handle.write("package vvc_sb_support_pkg is\n")
+    file_handle.write("  -- The data parameter used in the scoreboard procedures needs to have the same length as\n")
+    file_handle.write("  -- the t_element defined in the VVC's built-in scoreboard, since even though it is a generic\n")
+    file_handle.write("  -- type, it constrained during elaboration time.\n")
+    file_handle.write("  -- This function is used to pad the data without having to know the exact length of t_element.\n")
+    file_handle.write("  function pad_" + vvc_name.lower() + "_sb(\n")
+    file_handle.write("    constant data : in std_logic_vector\n")
+    file_handle.write("  ) return std_logic_vector;\n")
+    file_handle.write("end package vvc_sb_support_pkg;\n")
+    print_linefeed(file_handle)
+    file_handle.write("package body vvc_sb_support_pkg is\n")
+    file_handle.write("  function pad_" + vvc_name.lower() + "_sb(\n")
+    file_handle.write("    constant data : in std_logic_vector\n")
+    file_handle.write("  ) return std_logic_vector is \n")
+    file_handle.write("  begin\n")
+    file_handle.write("    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);\n")
+    file_handle.write("  end function pad_" + vvc_name.lower() + "_sb;\n")
+    file_handle.write("end package body vvc_sb_support_pkg;\n")
+    print_linefeed(file_handle)
 
 
 def generate_vvc_sb_pkg_file(vvc_name, vvc_channels, features):

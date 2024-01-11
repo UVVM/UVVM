@@ -14,6 +14,7 @@ Released: 202X-XX-XX
 - Removed constant C_DATA_WIDTH in uart_tx_vvc and use generic GC_DATA_WIDTH instead.
 - Normalized the data parameter in the uart_transmit and uart_expect BFM procedure.
 - Fixed the wrong example for uart_expect in UART BFM Quick Reference.
+- Moved sb_pkg from methods_pkg to new vvc_sb_pkg.
 
 v2.8.7
 ----------

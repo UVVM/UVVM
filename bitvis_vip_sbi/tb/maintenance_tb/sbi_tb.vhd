@@ -26,6 +26,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
+use bitvis_vip_sbi.vvc_sb_support_pkg.all;
 
 --hdlregression:tb
 -- Test case entity

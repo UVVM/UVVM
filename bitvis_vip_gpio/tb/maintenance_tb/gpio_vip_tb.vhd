@@ -27,6 +27,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 -- Include Verification IPs
 library bitvis_vip_gpio;
 context bitvis_vip_gpio.vvc_context;
+use bitvis_vip_gpio.vvc_sb_support_pkg.all;
 
 --hdlregression:tb
 -- Test case entity

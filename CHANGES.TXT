@@ -40,7 +40,7 @@ Released: 2023-XX-XX
 - Added functionality in check_value and check_value_in_range to print closest fitting time units wrt. time type checks.
 - Updated spec cov log messages and use new msg IDs for better verbosity.
 - Updated vvc_generator.py to add missing scoreboard support in multiple executors.
-
+- Moved sb_pkg and pad_xxx_sb function in all VVCs from methods_pkg to new vvc_sb_pkg. Updated vvc_generator.py script.
 
 
 v2 2023.09.16

@@ -13,6 +13,7 @@ Released: 202X-XX-XX
 - Use the function get_scope_for_log() to generate VVC scope.
 - Added an assertion to check that the GC_CHANNEL generic is used correctly.
 - Added functionality for printing extended error frame on mismatch.
+- Moved sb_pkg from methods_pkg to new vvc_sb_pkg.
 
 v1.0.2
 ----------

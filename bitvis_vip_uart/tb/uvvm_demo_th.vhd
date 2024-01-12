@@ -26,6 +26,7 @@ context uvvm_util.uvvm_util_context;    -- t_channel (RX/TX)
 
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
+use bitvis_vip_sbi.vvc_sb_support_pkg.all;
 
 library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;

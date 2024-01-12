@@ -11,6 +11,7 @@ Released: 202X-XX-XX
 - Updated vvc_generator.py to add an assertion to check that the GC_CHANNEL generic is used correctly.
 - Updated vvc_generator.py to add missing scoreboard support in multiple executors.
 - Fixed typo in Figure 6, section 2.3.2 in VVC_Framework_Manual.
+- Updated vvc_generator.py to move sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
 
 v2.12.5
 ----------

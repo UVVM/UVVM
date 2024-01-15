@@ -503,8 +503,8 @@ package body vvc_methods_pkg is
   begin
     case vvc_cmd.operation is
       when READ =>
-        vvc_transaction_info_group.bt.data               := vvc_result;
-        vvc_transaction_info_group.bt.transaction_status := transaction_status;
+        vvc_transaction_info_group.st.data               := vvc_result;
+        vvc_transaction_info_group.st.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when others =>

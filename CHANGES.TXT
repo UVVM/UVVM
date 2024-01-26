@@ -41,6 +41,7 @@ Released: 2023-XX-XX
 - Updated spec cov log messages and use new msg IDs for better verbosity.
 - Updated vvc_generator.py to add missing scoreboard support in multiple executors.
 - Moved sb_pkg and pad_xxx_sb function in all VVCs from methods_pkg to new vvc_sb_pkg. Updated vvc_generator.py script.
+- Added 7-bit data functionality to bitvis_uart
 
 
 v2 2023.09.16

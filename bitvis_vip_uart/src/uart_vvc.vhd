@@ -22,7 +22,6 @@ library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
 use work.uart_bfm_pkg.all;
-use work.transaction_pkg.all;
 
 --=================================================================================================
 entity uart_vvc is

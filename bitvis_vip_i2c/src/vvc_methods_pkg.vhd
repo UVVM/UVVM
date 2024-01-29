@@ -26,7 +26,6 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
 use work.i2c_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
-use work.td_vvc_framework_common_methods_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
 use work.vvc_sb_pkg.all;

@@ -9,6 +9,7 @@ Released: 202X-XX-XX
 - Moved t_transaction_status type to types_pkg and added COMPLETED.
 - Added function for extracting closest time unit for time type.
 - Changed check_value and check_value_in_ranged to print formatted time types with closest fitting time unit.
+- Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
 
 v2.19.3
 ----------

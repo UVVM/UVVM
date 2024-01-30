@@ -307,10 +307,17 @@ begin
             -- mux in new bit
             rx_buffer(to_integer(rx_bit_counter)) <= find_most_repeated_bit(rx_bit_samples);
           elsif to_integer(rx_bit_counter) = p2c.rw_num_data_bits then
-            -- check parity
-            if (odd_parity(rx_buffer) /= find_most_repeated_bit(rx_bit_samples)) then
-              parity_err       <= '1';
-              v_error_detected := true;
+            -- check parity based on number of data bits
+            if p2c.rw_num_data_bits = 8 then -- num_data_bits = 8
+              if (odd_parity(rx_buffer(7 downto 0)) /= find_most_repeated_bit(rx_bit_samples)) then
+                parity_err       <= '1';
+                v_error_detected := true;
+              end if;
+            elsif p2c.rw_num_data_bits = 7 then -- num_data_bits = 7
+              if (odd_parity(rx_buffer(6 downto 0)) /= find_most_repeated_bit(rx_bit_samples)) then
+                parity_err       <= '1';
+                v_error_detected := true;
+              end if;
             end if;
           elsif to_integer(rx_bit_counter) = p2c.rw_num_data_bits + 1 then
             rx_data_valid <= '1';     -- ready for higher level protocol
@@ -325,7 +332,12 @@ begin
             if v_error_detected then
               rx_data_valid <= '0';
             else
-              rx_data(to_integer(vr_rx_data_idx)) <= rx_buffer;
+              -- Add data bits to rx_data
+              if p2c.rw_num_data_bits = 8 then -- num_data_bits = 8
+                rx_data(to_integer(vr_rx_data_idx)) <= rx_buffer;
+              elsif p2c.rw_num_data_bits = 7 then -- num_data_bits = 7
+                rx_data(to_integer(vr_rx_data_idx)) <= ("0" & rx_buffer(p2c.rw_num_data_bits-1 downto 0));
+              end if;
               if vr_rx_data_idx < 3 then
                 vr_rx_data_idx := vr_rx_data_idx + 1;
               else

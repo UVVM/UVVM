@@ -18,6 +18,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library std;
+use std.textio.all;
+
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -32,9 +35,6 @@ use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
 use work.vvc_sb_pkg.all;
-
-library std;
-use std.textio.all;
 
 --==========================================================================================
 --==========================================================================================

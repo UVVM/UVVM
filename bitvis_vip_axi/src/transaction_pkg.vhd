@@ -21,7 +21,6 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library work;
 use work.axi_bfm_pkg.all;
 
 --=================================================================================================

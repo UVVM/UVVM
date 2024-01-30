@@ -200,7 +200,11 @@ begin
           -- mux out the correct tx bit
           tx <= tx_buffer(to_integer(tx_bit_counter) - 1);
         elsif to_integer(tx_bit_counter) = p2c.rw_num_data_bits + 1 then
-          tx <= odd_parity(tx_buffer);
+          if p2c.rw_num_data_bits = 8 then
+            tx <= odd_parity(tx_buffer);
+          elsif p2c.rw_num_data_bits = 7 then
+            tx <= odd_parity(tx_buffer(6 downto 0));
+          end if;
         elsif to_integer(tx_bit_counter) = p2c.rw_num_data_bits + 2 then
           tx <= GC_STOP_BIT;
         else

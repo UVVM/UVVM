@@ -50,6 +50,7 @@ architecture func of uart_vvc_new_tb is
   constant C_ADDR_RX_DATA_VALID : unsigned(3 downto 0) := x"1";
   constant C_ADDR_TX_DATA       : unsigned(3 downto 0) := x"2";
   constant C_ADDR_TX_READY      : unsigned(3 downto 0) := x"3";
+  constant C_ADDR_NUM_DATA_BITS : unsigned(3 downto 0) := x"4";
 
 begin
 
@@ -155,6 +156,38 @@ begin
     check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
     check_value(v_received_data(7 downto 0), x"56", ERROR, "Readback data via fetch_result()");
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+    wait for 10 * C_BIT_PERIOD;         -- margin
+
+    log(ID_LOG_HDR, "Configuring VVC and DUT to 7-bit data", C_SCOPE);
+    ------------------------------------------------------------
+    sbi_write(SBI_VVCT, 1, C_ADDR_NUM_DATA_BITS, x"07", "NUM_DATA_BITS = 7");
+    shared_uart_vvc_config(TX, 1).bfm_config.num_data_bits := 7;
+    shared_uart_vvc_config(RX, 1).bfm_config.num_data_bits := 7;
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    wait for 10 * C_BIT_PERIOD;         -- margin
+
+    log(ID_LOG_HDR, "Check of uart_transmit() for 7-bit data", C_SCOPE);
+    ------------------------------------------------------------
+    uart_transmit(UART_VVCT, 1, TX, "0000000", "Testing UART TX");
+    await_completion(UART_VVCT, 1, TX, 13 * C_BIT_PERIOD);
+    wait for 200 ns;                    -- margin
+    sbi_check(SBI_VVCT, 1, C_ADDR_RX_DATA, "00000000", "RX_DATA ", ERROR);
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+
+    log(ID_LOG_HDR, "Check of uart_expect() for 7-bit data", C_SCOPE);
+    ------------------------------------------------------------
+    sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "TX_DATA");
+    uart_expect(UART_VVCT, 1, RX, 7x"55", "Expecting TX data");
+    await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+    wait for 10 * C_BIT_PERIOD;         -- margin
+
+    log(ID_LOG_HDR, "Configuring VVC and DUT back to 8-bit data", C_SCOPE);
+    ------------------------------------------------------------
+    sbi_write(SBI_VVCT, 1, C_ADDR_NUM_DATA_BITS, x"08", "NUM_DATA_BITS = 8");
+    shared_uart_vvc_config(TX, 1).bfm_config.num_data_bits := 8;
+    shared_uart_vvc_config(RX, 1).bfm_config.num_data_bits := 8;
+    await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
     wait for 10 * C_BIT_PERIOD;         -- margin
 
     log(ID_LOG_HDR, "Check of uart_receive() using Scoreboard", C_SCOPE);

@@ -301,9 +301,9 @@ package body vvc_methods_pkg is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ", " & to_string(byte_enable, BIN, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr     : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)                := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_normalised_data     : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0)        := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
-    variable v_normalised_byte_ena : std_logic_vector(shared_vvc_cmd.byte_enable'length - 1 downto 0) := normalize_and_check(byte_enable, shared_vvc_cmd.byte_enable, ALLOW_WIDER_NARROWER, "byte_enable", "shared_vvc_cmd.byte_enable", proc_call & " called with to wide byte_enable. " & add_msg_delimiter(msg));
+    variable v_normalised_addr     : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)                := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_data     : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0)        := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
+    variable v_normalised_byte_ena : std_logic_vector(shared_vvc_cmd.byte_enable'length - 1 downto 0) := normalize_and_check(byte_enable, shared_vvc_cmd.byte_enable, ALLOW_WIDER_NARROWER, "byte_enable", "shared_vvc_cmd.byte_enable", proc_call & " called with too wide byte_enable. " & add_msg_delimiter(msg));
     variable v_msg_id_panel        : t_msg_id_panel                                                   := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -332,8 +332,8 @@ package body vvc_methods_pkg is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -402,8 +402,8 @@ package body vvc_methods_pkg is
     constant proc_name : string := get_procedure_name_from_instance_name(vvc_instance_idx'instance_name);
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record

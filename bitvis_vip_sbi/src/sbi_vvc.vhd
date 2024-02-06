@@ -317,8 +317,8 @@ begin
             set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Normalise address and data
-            v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with to wide addrress. " & v_cmd.msg);
-            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with to wide data. " & v_cmd.msg);
+            v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_write() called with too wide addrress. " & v_cmd.msg);
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_write() called with too wide data. " & v_cmd.msg);
 
             transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
@@ -349,7 +349,7 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Normalise address and data
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with to wide addrress. " & v_cmd.msg);
+          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_read() called with too wide addrress. " & v_cmd.msg);
 
           v_read_data                                       := (others => '-');
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
@@ -381,8 +381,8 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Normalise address and data
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with to wide addrress. " & v_cmd.msg);
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_check() called with to wide data. " & v_cmd.msg);
+          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_check() called with too wide addrress. " & v_cmd.msg);
+          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_check() called with too wide data. " & v_cmd.msg);
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
@@ -405,8 +405,8 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Normalise address and data
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with to wide addrress. " & v_cmd.msg);
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_poll_until() called with to wide data. " & v_cmd.msg);
+          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "sbi_poll_until() called with too wide addrress. " & v_cmd.msg);
+          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "sbi_poll_until() called with too wide data. " & v_cmd.msg);
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;

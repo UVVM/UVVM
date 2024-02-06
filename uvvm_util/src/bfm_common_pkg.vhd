@@ -343,9 +343,9 @@ package body bfm_common_pkg is
   begin
     -- check directions
     if (value'ascending and not (target'ascending)) then
-      tb_error("value instanciated as 'to', target instanciated as 'dowto'." & add_msg_delimiter(msg), C_SCOPE);
+      tb_error("value instantiated as 'to', target instantiated as 'downto'." & add_msg_delimiter(msg), C_SCOPE);
     elsif (not (value'ascending) and target'ascending) then
-      tb_error("value instanciated as 'downto', target instanciated as 'to'." & add_msg_delimiter(msg), C_SCOPE);
+      tb_error("value instantiated as 'downto', target instantiated as 'to'." & add_msg_delimiter(msg), C_SCOPE);
     end if;
 
     -- return ascending t_slv_array
@@ -390,9 +390,9 @@ package body bfm_common_pkg is
   begin
     -- check directions
     if (value'ascending and not (target'ascending)) then
-      tb_error("value instanciated as 'to', target instanciated as 'dowto'." & add_msg_delimiter(msg), C_SCOPE);
+      tb_error("value instantiated as 'to', target instantiated as 'downto'." & add_msg_delimiter(msg), C_SCOPE);
     elsif (not (value'ascending) and target'ascending) then
-      tb_error("value instanciated as 'downto', target instanciated as 'to'." & add_msg_delimiter(msg), C_SCOPE);
+      tb_error("value instantiated as 'downto', target instantiated as 'to'." & add_msg_delimiter(msg), C_SCOPE);
     end if;
 
     if value'length > target'length then
@@ -420,9 +420,9 @@ package body bfm_common_pkg is
   begin
     -- check directions
     if (value'ascending and not (target'ascending)) then
-      tb_error("value instanciated as 'to', target instanciated as 'dowto'." & add_msg_delimiter(msg), C_SCOPE);
+      tb_error("value instantiated as 'to', target instantiated as 'downto'." & add_msg_delimiter(msg), C_SCOPE);
     elsif (not (value'ascending) and target'ascending) then
-      tb_error("value instanciated as 'downto', target instanciated as 'to'." & add_msg_delimiter(msg), C_SCOPE);
+      tb_error("value instantiated as 'downto', target instantiated as 'to'." & add_msg_delimiter(msg), C_SCOPE);
     end if;
 
     if value'length > target'length then

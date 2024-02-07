@@ -43,7 +43,7 @@ Released: 2023-XX-XX
 - Moved sb_pkg and pad_xxx_sb function in all VVCs from methods_pkg to new vvc_sb_pkg. Updated vvc_generator.py script.
 - Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
 - Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
-- Added test of --clean parameter of run_spec_cov.py in Spec Cov maintenance test script.
+- Updated spec cov documentation for modified clean parameter to run_spec_cov.py
 
 
 v2 2023.09.16

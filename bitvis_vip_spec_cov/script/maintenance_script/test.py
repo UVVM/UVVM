@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+import subprocess
 from itertools import product
 
 
@@ -27,6 +28,48 @@ def cleanup(msg='Cleaning up...'):
     else:
         print('Current directory is not "sim". Skipping cleanup.')
 
+def test_clean_parameter():
+    # Function for testing that running run_spec_cov.py with the --clean parameter
+    # works as intended, both for deleting files in the current directory, and
+    # when specifying a directory to be cleaned.
+
+    print("Testing '--clean (DIR)' parameter of run_spec_cov.py")
+
+    # Create subdirectory within test directory to test cleaning of specified directory.
+    os.makedirs("test_subdir", exist_ok=True)
+
+    # Create dummy CSV files in the two test directories
+    csv_file_testdir = open(os.path.join("pc_delete_me.csv"),'w')
+    csv_file_subdir = open(os.path.join("test_subdir", "pc_delete_me.csv"),'w')
+    csv_file_testdir.close()
+    csv_file_subdir.close()
+
+    try:
+        subprocess.run(["python", "../script/run_spec_cov.py", "--clean"], check=True)
+    except subprocess.CalledProcessError as e:
+        print("ERROR: Test of --clean parameter failed. %s" %(e))
+        sys.exit(1)
+
+    try:
+        subprocess.run(["python", "../script/run_spec_cov.py", "--clean", "./test_subdir"], check=True)
+    except subprocess.CalledProcessError as e:
+        print("ERROR: Cleaning test (specified dir) failed. %s" %(e))
+        sys.exit(1)
+
+    # Check that files have been deleted
+    if os.path.exists("pc_delete_me.csv") == True:
+        print("Testing of clean parameter: Error: File not deleted")
+        sys.exit(1)
+
+    if os.path.exists(os.path.join("test_subdir", "pc_delete_me.csv")) == True:
+        print("Testing of clean parameter: Error: File in subdir not deleted")
+        sys.exit(1)
+
+    shutil.rmtree("test_subdir")
+
+
+# Test running run_spec_cov.py with --clean parameter
+test_clean_parameter()
 
 print('Verify Bitvis VIP Spec Cov')
 

@@ -13,6 +13,7 @@ Released: 202X-XX-XX
 - Added a feature for detection of reading old partial coverage files in the run_spec_cov.py script.
 - Updated spec_cov reporting in the run_spec_cov.py script.
 - Updated log messages and use new msg IDs for better verbosity.
+- Updated spec cov documentation for modified clean parameter to run_spec_cov.py
 
 v1.0.0
 ----------

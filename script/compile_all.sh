@@ -4,6 +4,7 @@
 # Compiles all UVVM libraries and VIPs.
 # Usage: sh compile_all.sh <simulator> <target_dir>
 # simulator  : ghdl, nvc, or vsim
+#            : Note that current UVVM support in Xsim is limited.
 # target_dir : path to target directory (optional, defaults to .)
 
 set -o errexit

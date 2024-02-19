@@ -4430,7 +4430,7 @@ package body methods_pkg is
     end function pad_short_string;
 
     -- Function to represent signed value as string if value_type is "signed"
-    function slv_to_signed_string(
+    function signed_string_check(
       constant slv_value  : std_logic_vector;
       constant radix      : t_radix;
       constant format     : t_format_zeros;
@@ -4442,10 +4442,10 @@ package body methods_pkg is
       else
         return to_string(slv_value, radix, format, INCL_RADIX);
       end if;
-    end function slv_to_signed_string;
+    end function signed_string_check;
 
-    constant v_value_str     : string := slv_to_signed_string(a_value, radix, format, value_type);
-    constant v_exp_str       : string := slv_to_signed_string(a_exp, radix, format, value_type);
+    constant v_value_str     : string := signed_string_check(a_value, radix, format, value_type);
+    constant v_exp_str       : string := signed_string_check(a_exp, radix, format, value_type);
 
   begin
     protected_check_counters.increment(CHECK_VALUE);

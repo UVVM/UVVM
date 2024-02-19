@@ -44,6 +44,7 @@ Released: 2023-XX-XX
 - Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
 - Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
 - Updated spec cov documentation for modified clean parameter to run_spec_cov.py
+- Added function to util check_value to properly display signed values
 
 
 v2 2023.09.16

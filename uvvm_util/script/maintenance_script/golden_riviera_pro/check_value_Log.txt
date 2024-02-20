@@ -430,33 +430,33 @@ UVVM:                                                                           
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_WARNINGs by 3. 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_slv_array x"A"'. '2check_value with t_slv_array of different array
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_slv_array x"A"'. 'check_value with t_slv_array of different array
 UVVM:                                                                           indexes'
 UVVM: 
 UVVM: ***  TB_WARNING #4  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. t_slv_array  Was x"B". Expected x"C".
-UVVM:                    2check_value with t_slv_array of different array indexes
+UVVM:                    check_value with t_slv_array of different array indexes
 UVVM: 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_signed_array x"C"'. '2check_value with t_signed_array of different
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_signed_array x"C"'. 'check_value with t_signed_array of different
 UVVM:                                                                           array indexes'
 UVVM: 
 UVVM: ***  TB_WARNING #5  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. t_signed_array  Was x"D". Expected x"A".
-UVVM:                    2check_value with t_signed_array of different array indexes
+UVVM:                    check_value with t_signed_array of different array indexes
 UVVM: 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_unsigned_array x"E"'. '2check_value with t_unsigned_array of
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for t_unsigned_array x"E"'. 'check_value with t_unsigned_array of
 UVVM:                                                                           different array indexes'
 UVVM: 
 UVVM: ***  TB_WARNING #6  ***
 UVVM:             1 ns   TB seq.
 UVVM:                    check_value() => Failed. t_unsigned_array  Was x"F". Expected x"D".
-UVVM:                    2check_value with t_unsigned_array of different array indexes
+UVVM:                    check_value with t_unsigned_array of different array indexes
 UVVM: 
 UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Incrementing alert_stop_limit(TB_ERROR) for 1 provoked tb_error to pass in simulation.
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 

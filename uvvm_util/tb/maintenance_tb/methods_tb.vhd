@@ -814,9 +814,9 @@ begin
       v_exp_slv_array(1)      := x"C";
       v_exp_signed_array(1)   := x"A";
       v_exp_unsigned_array(1) := x"D";
-      check_value(v_value_slv_array, v_exp_slv_array, tb_warning, "2check_value with t_slv_array of different array indexes");
-      check_value(v_value_signed_array, v_exp_signed_array, tb_warning, "2check_value with t_signed_array of different array indexes");
-      check_value(v_value_unsigned_array, v_exp_unsigned_array, tb_warning, "2check_value with t_unsigned_array of different array indexes");
+      check_value(v_value_slv_array, v_exp_slv_array, tb_warning, "check_value with t_slv_array of different array indexes");
+      check_value(v_value_signed_array, v_exp_signed_array, tb_warning, "check_value with t_signed_array of different array indexes");
+      check_value(v_value_unsigned_array, v_exp_unsigned_array, tb_warning, "check_value with t_unsigned_array of different array indexes");
 
       log(ID_SEQUENCER, "Incrementing alert_stop_limit(TB_ERROR) for 1 provoked tb_error to pass in simulation.", C_SCOPE);
       set_alert_stop_limit(TB_ERROR, 2);

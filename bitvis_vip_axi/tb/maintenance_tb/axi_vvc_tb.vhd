@@ -596,6 +596,58 @@ begin
     -- Checking that it takes twice as long (+- 20 %)
     check_value_in_range(now - v_timestamp, v_measured_time * 1.8, v_measured_time * 2.2, ERROR, "Checking that it takes longer time to force a single pending transaction");
 
+    --------------------------------------------------------------------------------------------------------------------
+    -- Testing configuration of default severity level
+    --------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing severity level configuration");
+
+    -- Set general_severity in bfm config to WARNING
+    -- Test with unexpected BRESP
+    shared_axi_vvc_config(1).bfm_config.general_severity := WARNING;
+    increment_expected_alerts(WARNING, 1, "Expecting warning due to triggering of unexpected BRESP value", C_SCOPE);
+    axi_write(
+        VVCT             => AXI_VVCT,
+        vvc_instance_idx => 1,
+        awid             => x"001",
+        awaddr           => x"000000510",
+        awlen            => x"01",
+        awsize           => 4,
+        awuser           => x"001",
+        wdata            => v_write_data_wide,
+        wstrb            => v_wstrb_wide,
+        wuser            => v_wuser_wide,
+        buser_exp        => x"000",
+        bresp_exp        => SLVERR,
+        msg              => "Testing axi_write with unexpected BRESP response value"
+      );
+      await_completion(AXI_VVCT, 1, 1 us, "Waiting for commands to finish");
+
+
+    -- Set general_severity in bfm config to NOTE
+    -- Test with unexpected BUSER
+    shared_axi_vvc_config(1).bfm_config.general_severity := NOTE;
+    increment_expected_alerts(NOTE, 1, "Expecting note due to triggering of unexpected BUSER value", C_SCOPE);
+    axi_write(
+        VVCT             => AXI_VVCT,
+        vvc_instance_idx => 1,
+        awid             => x"001",
+        awaddr           => x"000000510",
+        awlen            => x"01",
+        awsize           => 4,
+        awuser           => x"001",
+        wdata            => v_write_data_wide,
+        wstrb            => v_wstrb_wide,
+        wuser            => v_wuser_wide,
+        buser_exp        => x"010",
+        msg              => "Testing axi_write with unexpected BUSER response value"
+      );
+      await_completion(AXI_VVCT, 1, 1 us, "Waiting for commands to finish");
+
+      -- Set severity level back to default (ERROR) in case more tests are added below
+      shared_axi_vvc_config(1).bfm_config.general_severity := ERROR;
+
+
+
     report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 

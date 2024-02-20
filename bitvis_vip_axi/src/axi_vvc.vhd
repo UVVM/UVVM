@@ -926,7 +926,9 @@ begin
         v_normalized_buser := normalize_and_check(v_cmd.user, v_normalized_buser, ALLOW_WIDER_NARROWER, "v_cmd.user", "v_normalized_buser", v_cmd.msg);
         check_value(v_buser_value, v_normalized_buser, vvc_config.bfm_config.match_strictness, error, "Checking BUSER value. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, HEX, KEEP_LEADING_0, ID_POS_ACK, v_msg_id_panel);
       end if;
-      check_value(v_bresp_value = v_cmd.resp, error, "Checking BRESP value. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, ID_POS_ACK, v_msg_id_panel);
+      if v_bresp_value /= v_cmd.resp then
+        alert(vvc_config.bfm_config.general_severity,"Unexpected BRESP value. Was " & to_string(v_bresp_value) & ". Expected " & to_string(v_cmd.resp) ,  C_CHANNEL_SCOPE);
+      end if;
 
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
 

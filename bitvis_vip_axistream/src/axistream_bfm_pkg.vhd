@@ -39,7 +39,7 @@ package axistream_bfm_pkg is
   --========================================================================================================================
   -- C_MAX_*_BITS : Maximum number of bits per data word supported by the BFM.
   -- These constant can be increased as needed.
-  constant C_MAX_TUSER_BITS : positive := 8;
+  constant C_MAX_TUSER_BITS : positive := 64;
   constant C_MAX_TSTRB_BITS : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
   constant C_MAX_TID_BITS   : positive := 8; -- Recommended maximum in protocol specification (ARM IHI0051A)
   constant C_MAX_TDEST_BITS : positive := 4; -- Recommended maximum in protocol specification (ARM IHI0051A)

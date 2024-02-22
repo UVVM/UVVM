@@ -14,6 +14,7 @@ Released: 202X-XX-XX
 - Use the function get_scope_for_log() to generate VVC scope.
 - Fixed data length typo in Axistream BFM- and VVC Quick Reference.
 - Added functionality for extended error mismatch message for data.
+- Increased C_MAX_TUSER_BITS to 64 in BFM. (allows for higher GC_USER_WIDTH)
 
 v4.7.8
 ----------

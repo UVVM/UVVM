@@ -3310,7 +3310,7 @@ package body methods_pkg is
     variable v_log_scope         : string(1 to C_LOG_SCOPE_WIDTH);
     variable v_log_pre_msg_width : natural;
     variable v_idx               : natural := 1;
-
+    
   begin
     -- Check if message ID is enabled
     if (msg_id_panel(msg_id) = ENABLED) then
@@ -3384,7 +3384,7 @@ package body methods_pkg is
         shared_current_log_hdr.xl := justify(msg, left, C_LOG_HDR_FOR_WAVEVIEW_WIDTH, KEEP_LEADING_SPACE, ALLOW_TRUNCATE);
         write(v_info_final, LF & fill_string('#', (C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH)) & LF & LF);
       end if;
-
+      
       write(v_info_final, v_info.all);  -- include actual info
       deallocate_line_if_exists(v_info);
       -- Handle rest of potential log header
@@ -3598,18 +3598,18 @@ package body methods_pkg is
     quietness : t_quietness := NON_QUIET;
     scope     : string      := C_TB_SCOPE_DEFAULT
   ) is
-  begin
+      begin
     enable_log_msg(msg_id, shared_msg_id_panel, msg, scope, quietness);
-  end;
+      end;
 
   procedure enable_log_msg(
     msg_id    : t_msg_id;
     quietness : t_quietness := NON_QUIET;
     scope     : string      := C_TB_SCOPE_DEFAULT
   ) is
-  begin
+      begin
     enable_log_msg(msg_id, shared_msg_id_panel, "", scope, quietness);
-  end;
+      end;
 
   procedure disable_log_msg(
     constant msg_id       : t_msg_id;
@@ -3642,18 +3642,18 @@ package body methods_pkg is
     quietness : t_quietness := NON_QUIET;
     scope     : string      := C_TB_SCOPE_DEFAULT
   ) is
-  begin
+      begin
     disable_log_msg(msg_id, shared_msg_id_panel, msg, scope, quietness);
-  end;
+      end;
 
   procedure disable_log_msg(
     msg_id    : t_msg_id;
     quietness : t_quietness := NON_QUIET;
     scope     : string      := C_TB_SCOPE_DEFAULT
   ) is
-  begin
+      begin
     disable_log_msg(msg_id, shared_msg_id_panel, "", scope, quietness);
-  end;
+      end;
 
   impure function is_log_msg_enabled(
     msg_id       : t_msg_id;
@@ -3974,21 +3974,21 @@ package body methods_pkg is
     attention   : t_attention;
     msg         : string := ""
   ) is
-  begin
+      begin
     if alert_level = NO_ALERT then
       tb_warning("set_alert_attention not allowed for alert_level NO_ALERT (always IGNORE).");
     else
       check_value(attention = IGNORE or attention = REGARD, TB_ERROR,
                   "set_alert_attention only supported for IGNORE and REGARD", C_BURIED_SCOPE, ID_NEVER);
       shared_alert_attention(alert_level) := attention;
-      log(ID_ALERT_CTRL, "set_alert_attention(" & to_upper(to_string(alert_level)) & ", " & to_string(attention) & "). " & add_msg_delimiter(msg));
+            log(ID_ALERT_CTRL, "set_alert_attention(" & to_upper(to_string(alert_level)) & ", " & to_string(attention) & "). " & add_msg_delimiter(msg));
     end if;
   end;
 
   impure function get_alert_attention(
     alert_level : t_alert_level
   ) return t_attention is
-  begin
+      begin
     if alert_level = NO_ALERT then
       return IGNORE;
     else
@@ -4000,13 +4000,13 @@ package body methods_pkg is
     alert_level : t_alert_level;
     value       : natural
   ) is
-  begin
+      begin
     if alert_level = NO_ALERT then
       tb_warning("set_alert_stop_limit not allowed for alert_level NO_ALERT (stop limit always 0).");
     else
       if not C_ENABLE_HIERARCHICAL_ALERTS then
         shared_stop_limit(alert_level) := value;
-
+        
         -- Evaluate new stop limit in case it is less than or equal to the current alert counter for this alert level
         -- If that is the case, a new alert with the same alert level shall be triggered.
         if (get_alert_stop_limit(alert_level) /= 0) and (get_alert_counter(alert_level) >= get_alert_stop_limit(alert_level)) then
@@ -4023,13 +4023,13 @@ package body methods_pkg is
   impure function get_alert_stop_limit(
     alert_level : t_alert_level
   ) return natural is
-  begin
+      begin
     if alert_level = NO_ALERT then
       return 0;
     else
       if not C_ENABLE_HIERARCHICAL_ALERTS then
         return shared_stop_limit(alert_level);
-      else
+              else
         return get_hierarchical_alert_top_level_stop_limit(alert_level);
       end if;
     end if;
@@ -4048,7 +4048,7 @@ package body methods_pkg is
     attention   : t_attention := REGARD; -- regard, expect, ignore
     number      : natural     := 1
   ) is
-    type alert_array is array (1 to 6) of t_alert_level;
+        type alert_array is array (1 to 6) of t_alert_level;
     constant alert_check_array : alert_array := (warning, TB_WARNING, error, TB_ERROR, failure, TB_FAILURE);
     alias found_unexpected_simulation_warnings_or_worse is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
     alias found_unexpected_simulation_errors_or_worse is shared_uvvm_status.found_unexpected_simulation_errors_or_worse;
@@ -4064,7 +4064,7 @@ package body methods_pkg is
         found_unexpected_simulation_errors_or_worse       := 0; -- default
         mismatch_on_expected_simulation_warnings_or_worse := 0; -- default
         mismatch_on_expected_simulation_errors_or_worse   := 0; -- default
-
+        
         -- Compare expected and current allerts
         for i in 1 to alert_check_array'high loop
           if (get_alert_counter(alert_check_array(i), REGARD) /= get_alert_counter(alert_check_array(i), EXPECT)) then
@@ -4088,7 +4088,7 @@ package body methods_pkg is
             end if;
 
           end if;
-        end loop;
+                  end loop;
 
       end if;
     end if;
@@ -4129,7 +4129,7 @@ package body methods_pkg is
     constant msg : string := ""
   ) is
     variable v_found : boolean;
-  begin
+      begin
     v_found := false;
     if C_DEPRECATE_SETTING /= NO_DEPRECATE then -- only perform if deprecation enabled
       l_find_caller_name_in_list : for i in deprecated_subprogram_list'range loop
@@ -4151,7 +4151,7 @@ package body methods_pkg is
         l_insert_caller_name_in_first_available : for i in deprecated_subprogram_list'range loop
           if deprecated_subprogram_list(i) = justify("", right, 100) then
             deprecated_subprogram_list(i) := justify(caller_name, right, 100);
-            exit l_insert_caller_name_in_first_available;
+                        exit l_insert_caller_name_in_first_available;
           end if;
         end loop;
 
@@ -4312,16 +4312,16 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
     constant caller_name  : string         := "check_value()"
   ) return boolean is
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    constant value_str    : string := to_string(value);
+    constant exp_str      : string := to_string(exp);
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
     if value = exp then
-      log(msg_id, caller_name & " => OK, for boolean " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for boolean " & value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. Boolean was " & v_value_str & ". Expected " & v_exp_str & ". " & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. Boolean was " & value_str & ". Expected " & exp_str & ". " & LF & msg, scope);
       return false;
     end if;
   end;
@@ -4338,8 +4338,8 @@ package body methods_pkg is
     constant caller_name      : string         := "check_value()"
   ) return boolean is
     constant value_type  : string  := "std_logic";
-    constant v_value_str : string  := to_string(value);
-    constant v_exp_str   : string  := to_string(exp);
+    constant value_str   : string  := to_string(value);
+    constant exp_str     : string  := to_string(exp);
     variable v_failed    : boolean := false;
   begin
     protected_check_counters.increment(CHECK_VALUE);
@@ -4348,28 +4348,28 @@ package body methods_pkg is
 
       when MATCH_STD =>
         if std_match(value, exp) then
-          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(msg_id, caller_name & " => OK, for " & value_type & " '" & value_str & "' (exp: '" & exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
         end if;
 
       when MATCH_STD_INCL_Z =>
         if (value = 'Z' and exp = 'Z') or std_match(value, exp) then
-          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(msg_id, caller_name & " => OK, for " & value_type & " '" & value_str & "' (exp: '" & exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
         end if;
 
       when MATCH_STD_INCL_ZXUW =>
         if (value = 'Z' and exp = 'Z') or (value = 'X' and exp = 'X') or (value = 'U' and exp = 'U') or (value = 'W' and exp = 'W') or std_match(value, exp) then
-          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "' (exp: '" & v_exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(msg_id, caller_name & " => OK, for " & value_type & " '" & value_str & "' (exp: '" & exp_str & "'). " & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
         end if;
 
       when others =>
         if value = exp then
-          log(msg_id, caller_name & " => OK, for " & value_type & " '" & v_value_str & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
+          log(msg_id, caller_name & " => OK, for " & value_type & " '" & value_str & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
         else
           v_failed := true;
         end if;
@@ -4377,7 +4377,7 @@ package body methods_pkg is
     end case;
 
     if v_failed = true then
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was '" & v_value_str & "'. Expected '" & v_exp_str & "'" & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was '" & value_str & "'. Expected '" & exp_str & "'" & LF & msg, scope);
       return false;
     else
       return true;
@@ -4395,8 +4395,6 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value()"
   ) return boolean is
     constant value_type  : string := "std_logic";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
   begin
     return check_value(value, exp, MATCH_STD, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
   end;
@@ -4418,8 +4416,8 @@ package body methods_pkg is
     -- Normalise vectors to (N downto 0)
     alias a_value            : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_exp              : std_logic_vector(exp'length - 1 downto 0) is exp;
-    constant v_value_str     : string  := to_string(a_value, radix, format, INCL_RADIX);
-    constant v_exp_str       : string  := to_string(a_exp, radix, format, INCL_RADIX);
+    constant value_str       : string  := to_string(a_value, radix, format, INCL_RADIX);
+    constant exp_str         : string  := to_string(a_exp, radix, format, INCL_RADIX);
     variable v_check_ok      : boolean := true; -- as default prior to checking
     variable v_trigger_alert : boolean := false; -- trigger alert and log message
 
@@ -4442,12 +4440,12 @@ package body methods_pkg is
     v_check_ok := matching_values(a_value, a_exp, match_strictness);
 
     if v_check_ok then
-      if v_value_str = v_exp_str then
-        log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      if value_str = exp_str then
+        log(msg_id, caller_name & " => OK, for " & value_type & " " & value_str & "'. " & add_msg_delimiter(msg), scope, msg_id_panel);
       else
-        -- H,L or - is present in v_exp_str
+        -- H,L or - is present in exp_str
         if match_strictness = MATCH_STD then
-          log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & "' (exp: " & v_exp_str & "'). " & add_msg_delimiter(msg),
+          log(msg_id, caller_name & " => OK, for " & value_type & " " & value_str & "' (exp: " & exp_str & "'). " & add_msg_delimiter(msg),
               scope, msg_id_panel);
         else
           v_trigger_alert := true;      -- alert and log
@@ -4458,20 +4456,20 @@ package body methods_pkg is
     end if;
     -- trigger alert and log message
     if v_trigger_alert then
-      if v_value_str'length > v_exp_str'length then
+      if value_str'length > exp_str'length then
         if radix = HEX_BIN_IF_INVALID then
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected " & exp_str & "." & LF & msg, scope);
         else
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected " & pad_short_string(v_exp_str, v_value_str) & "." & LF & msg, scope);
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected " & pad_short_string(exp_str, value_str) & "." & LF & msg, scope);
         end if;
-      elsif v_value_str'length < v_exp_str'length then
+      elsif value_str'length < exp_str'length then
         if radix = HEX_BIN_IF_INVALID then
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected " & exp_str & "." & LF & msg, scope);
         else
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & pad_short_string(v_value_str, v_exp_str) & ". Expected " & v_exp_str & "." & LF & msg, scope);
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & pad_short_string(value_str, exp_str) & ". Expected " & exp_str & "." & LF & msg, scope);
         end if;
       else
-        alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected " & v_exp_str & "." & LF & msg, scope);
+        alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected " & exp_str & "." & LF & msg, scope);
       end if;
     end if;
 
@@ -4494,8 +4492,6 @@ package body methods_pkg is
     -- Normalise vectors to (N downto 0)
     alias a_value        : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_exp          : std_logic_vector(exp'length - 1 downto 0) is exp;
-    constant v_value_str : string  := to_string(a_value, radix, format);
-    constant v_exp_str   : string  := to_string(a_exp, radix, format);
     variable v_check_ok  : boolean := true; -- as default prior to checking
   begin
     return check_value(value, exp, MATCH_STD, alert_level, msg, scope, radix, format, msg_id, msg_id_panel, caller_name, value_type);
@@ -4594,16 +4590,16 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value()"
   ) return boolean is
     constant value_type  : string := "int";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    constant value_str   : string := to_string(value);
+    constant exp_str     : string := to_string(exp);
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
     if value = exp then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected " & v_exp_str & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected " & exp_str & LF & msg, scope);
       return false;
     end if;
   end;
@@ -4619,16 +4615,16 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value()"
   ) return boolean is
     constant value_type  : string := "real";
-    constant v_value_str : string := to_string(value);
-    constant v_exp_str   : string := to_string(exp);
+    constant value_str   : string := to_string(value);
+    constant exp_str     : string := to_string(exp);
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
     if value = exp then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected " & v_exp_str & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected " & exp_str & LF & msg, scope);
       return false;
     end if;
   end;
@@ -5927,24 +5923,24 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "integer"
   ) return boolean is
-    constant v_value_str     : string := to_string(value);
-    constant v_min_value_str : string := to_string(min_value);
-    constant v_max_value_str : string := to_string(max_value);
+    constant value_str       : string := to_string(value);
+    constant min_value_str   : string := to_string(min_value);
+    constant max_value_str   : string := to_string(max_value);
     variable v_check_ok      : boolean;
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
-                " => min_value (" & v_min_value_str & ") must be less than max_value(" & v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+                " => min_value (" & min_value_str & ") must be less than max_value(" & max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected between " & min_value_str & " and " & max_value_str & LF & msg, scope);
       return false;
     end if;
   end;
@@ -5961,23 +5957,23 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "unsigned"
   ) return boolean is
-    constant v_value_str     : string := to_string(value);
-    constant v_min_value_str : string := to_string(min_value);
-    constant v_max_value_str : string := to_string(max_value);
+    constant value_str       : string := to_string(value);
+    constant min_value_str   : string := to_string(min_value);
+    constant max_value_str   : string := to_string(max_value);
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
-                " => min_value (" & v_min_value_str & ") must be less than max_value(" & v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+                " => min_value (" & min_value_str & ") must be less than max_value(" & max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected between " & min_value_str & " and " & max_value_str & LF & msg, scope);
       return false;
     end if;
   end;
@@ -5994,23 +5990,23 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()";
     constant value_type   : string         := "signed"
   ) return boolean is
-    constant v_value_str     : string := to_string(value);
-    constant v_min_value_str : string := to_string(min_value);
-    constant v_max_value_str : string := to_string(max_value);
+    constant value_str       : string := to_string(value);
+    constant min_value_str   : string := to_string(min_value);
+    constant max_value_str   : string := to_string(max_value);
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR, scope,
-                " => min_value (" & v_min_value_str & ") must be less than max_value(" & v_max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+                " => min_value (" & min_value_str & ") must be less than max_value(" & max_value_str & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected between " & min_value_str & " and " & max_value_str & LF & msg, scope);
       return false;
     end if;
   end;
@@ -6072,25 +6068,25 @@ package body methods_pkg is
     constant caller_name  : string         := "check_value_in_range()"
   ) return boolean is
     constant value_type      : string := "real";
-    constant v_value_str     : string := to_string(value);
-    constant v_min_value_str : string := to_string(min_value);
-    constant v_max_value_str : string := to_string(max_value);
+    constant value_str       : string := to_string(value);
+    constant min_value_str   : string := to_string(min_value);
+    constant max_value_str   : string := to_string(max_value);
     variable v_check_ok      : boolean;
   begin
     protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
 
     -- Sanity check
     check_value(max_value >= min_value, TB_ERROR,
-                " => min_value (" & v_min_value_str & ") must be less than max_value(" & v_max_value_str & ")" & LF & msg, scope,
+                " => min_value (" & min_value_str & ") must be less than max_value(" & max_value_str & ")" & LF & msg, scope,
                 ID_NEVER, msg_id_panel, caller_name);
     -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
     protected_check_counters.decrement(CHECK_VALUE);
 
     if (value >= min_value and value <= max_value) then
-      log(msg_id, caller_name & " => OK, for " & value_type & " " & v_value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & value_str & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
       return true;
     else
-      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & v_value_str & ". Expected between " & v_min_value_str & " and " & v_max_value_str & LF & msg, scope);
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & value_str & ". Expected between " & min_value_str & " and " & max_value_str & LF & msg, scope);
       return false;
     end if;
   end;
@@ -7528,8 +7524,7 @@ package body methods_pkg is
   ) is
     constant value_type : string := "boolean";
     constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant name       : string := "await_value(" & value_type & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     if (target /= exp) then
       wait until (target = exp) for max_time;
@@ -7551,8 +7546,7 @@ package body methods_pkg is
   ) is
     constant value_type : string  := "std_logic";
     constant start_time : time    := now;
-    constant v_exp_str  : string  := to_string(exp);
-    constant name       : string  := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant name       : string  := "await_value(" & value_type & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable success    : boolean := false;
   begin
     success := false;
@@ -7610,8 +7604,7 @@ package body methods_pkg is
   ) is
     constant value_type : string := "std_logic";
     constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant name       : string := "await_value(" & value_type & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     await_value(target, exp, MATCH_EXACT, min_time, max_time, alert_level, msg, scope, msg_id, msg_id_panel);
   end;
@@ -7634,8 +7627,8 @@ package body methods_pkg is
   ) is
     constant value_type  : string := "slv";
     constant start_time  : time   := now;
-    constant v_exp_str   : string := to_string(exp, radix, format, INCL_RADIX);
-    constant name        : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant exp_str     : string := to_string(exp, radix, format, INCL_RADIX);
+    constant name        : string := "await_value(" & value_type & " " & exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
     variable v_proc_call : line;
   begin
     if caller_name'length = 0 then
@@ -7714,8 +7707,8 @@ package body methods_pkg is
   ) is
     constant value_type : string := "slv";
     constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp, radix, format, INCL_RADIX);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
+    constant name       : string := "await_value(" & value_type & " " & exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     await_value(target, exp, MATCH_STD, min_time, max_time, alert_level, msg, scope, radix, format, msg_id, msg_id_panel);
   end;
@@ -7735,8 +7728,8 @@ package body methods_pkg is
   ) is
     constant value_type : string := "unsigned";
     constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp, radix, format, INCL_RADIX);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
+    constant name       : string := "await_value(" & value_type & " " & exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
@@ -7768,8 +7761,8 @@ package body methods_pkg is
   ) is
     constant value_type : string := "signed";
     constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp, radix, format, INCL_RADIX);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant exp_str    : string := to_string(exp, radix, format, INCL_RADIX);
+    constant name       : string := "await_value(" & value_type & " " & exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     -- AS_IS format has been deprecated and will be removed in the near future
     if format = AS_IS then
@@ -7799,8 +7792,7 @@ package body methods_pkg is
   ) is
     constant value_type : string := "integer";
     constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant name       : string := "await_value(" & value_type & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     if (target /= exp) then
       wait until (target = exp) for max_time;
@@ -7821,8 +7813,7 @@ package body methods_pkg is
   ) is
     constant value_type : string := "real";
     constant start_time : time   := now;
-    constant v_exp_str  : string := to_string(exp);
-    constant name       : string := "await_value(" & value_type & " " & v_exp_str & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    constant name       : string := "await_value(" & value_type & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
   begin
     if (target /= exp) then
       wait until (target = exp) for max_time;
@@ -9011,15 +9002,15 @@ package body methods_pkg is
     constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
   ) is
     constant init_value : std_logic_vector(target'range)                    := target;
-    constant v_pulse    : std_logic_vector(pulse_value'length - 1 downto 0) := pulse_value;
+    constant pulse      : std_logic_vector(pulse_value'length - 1 downto 0) := pulse_value;
     variable v_target   : std_logic_vector(target'length - 1 downto 0)      := target;
   begin
     wait until falling_edge(clock_signal);
     check_value(target /= pulse_value, TB_ERROR, "gen_pulse: target was already " & to_string(pulse_value) & ". " & add_msg_delimiter(msg), scope, ID_NEVER);
 
     for i in 0 to (v_target'length - 1) loop
-      if v_pulse(i) /= '-' then
-        v_target(i) := v_pulse(i);      -- Generate pulse
+      if pulse(i) /= '-' then
+        v_target(i) := pulse(i);      -- Generate pulse
       end if;
     end loop;
     target <= v_target;
@@ -9371,9 +9362,9 @@ package body methods_pkg is
     constant clock_period          : in time;
     signal   clock_high_percentage : in natural range 0 to 100
   ) is
-    constant v_clock_name : string := "";
+    constant clock_name : string := "";
   begin
-    adjustable_clock_generator(clock_signal, clock_ena, clock_period, v_clock_name, clock_high_percentage);
+    adjustable_clock_generator(clock_signal, clock_ena, clock_period, clock_name, clock_high_percentage);
   end procedure;
 
   -- Overloaded version with clock enable, clock name
@@ -9444,7 +9435,7 @@ package body methods_pkg is
     variable v_idx           : integer := 0;
     variable v_is_new        : boolean := false;
     variable v_is_array_full : boolean := true;
-  begin
+      begin
     for i in shared_flag_array'range loop
       -- Search for empty index. If found add a new flag
       if (shared_flag_array(i).flag_name = (shared_flag_array(i).flag_name'range => NUL)) then
@@ -9470,10 +9461,10 @@ package body methods_pkg is
     variable v_idx           : integer := 0;
     variable v_is_new        : boolean := false;
     variable v_is_array_full : boolean := true;
-  begin
+      begin
     -- Find flag, or add a new provided the array is not full.
     (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
-    if (v_is_array_full = true) then
+        if (v_is_array_full = true) then
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else                                -- Block flag
       if (v_is_new = true) then
@@ -9487,7 +9478,7 @@ package body methods_pkg is
         end if;
       end if;
       shared_flag_array(v_idx).is_blocked := true;
-    end if;
+          end if;
   end procedure;
 
   procedure unblock_flag(
@@ -9499,10 +9490,10 @@ package body methods_pkg is
     variable v_idx           : integer := 0;
     variable v_is_new        : boolean := false;
     variable v_is_array_full : boolean := true;
-  begin
+      begin
     -- Find flag, or add a new provided the array is not full.
     (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
-    if (v_is_array_full = true) then
+        if (v_is_array_full = true) then
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else                                -- Unblock flag
       if (v_is_new = true) then
@@ -9511,7 +9502,7 @@ package body methods_pkg is
         log(ID_BLOCKING, flag_name & ": Unblocking flag. " & add_msg_delimiter(msg), scope);
       end if;
       shared_flag_array(v_idx).is_blocked := false;
-      -- Triggers a signal to allow await_unblock_flag() to detect unblocking.
+            -- Triggers a signal to allow await_unblock_flag() to detect unblocking.
       gen_pulse(trigger, 0 ns, "pulsing global_trigger. " & add_msg_delimiter(msg), C_TB_SCOPE_DEFAULT, ID_NEVER);
     end if;
   end procedure;
@@ -9533,7 +9524,7 @@ package body methods_pkg is
   begin
     -- Find flag, or add a new provided the array is not full.
     (v_idx, v_is_new, v_is_array_full) := find_or_add_sync_flag(flag_name);
-    if (v_is_array_full = true) then
+        if (v_is_array_full = true) then
       alert(TB_ERROR, "The flag " & flag_name & " was not found and the maximum number of flags (" & to_string(C_NUM_SYNC_FLAGS) & ") have been used. Configure in adaptations_pkg. " & add_msg_delimiter(msg), scope);
     else                                -- Waits only if the flag is found and is blocked. Will wait when a new flag is added, as it is default blocked.
       v_flag_is_blocked := shared_flag_array(v_idx).is_blocked;
@@ -9542,7 +9533,7 @@ package body methods_pkg is
           -- wait for all sequencer that are waiting for that flag before reseting it
           wait for 0 ns;
           shared_flag_array(v_idx).is_blocked := true;
-          log(ID_BLOCKING, flag_name & ": Was already unblocked. Returned to blocked. " & add_msg_delimiter(msg), scope);
+                    log(ID_BLOCKING, flag_name & ": Was already unblocked. Returned to blocked. " & add_msg_delimiter(msg), scope);
         else
           log(ID_BLOCKING, flag_name & ": Was already unblocked. " & add_msg_delimiter(msg), scope);
         end if;
@@ -9575,7 +9566,7 @@ package body methods_pkg is
             -- wait for all sequencer that are waiting for that flag before reseting it
             wait for 0 ns;
             shared_flag_array(v_idx).is_blocked := true;
-          end if;
+                      end if;
         end if;
 
       end loop;

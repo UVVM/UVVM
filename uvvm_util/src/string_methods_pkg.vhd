@@ -904,57 +904,57 @@ package body string_methods_pkg is
     constant alignment_pos2 : natural;  -- Line position of first aligned character in line 2
     constant line_width     : natural
   ) is
-    constant v_string           : string(1 to text_lines'length) := text_lines.all;
-    constant v_string_width     : natural                        := text_lines'length;
-    variable v_line_no          : natural                        := 0;
-    variable v_last_string_wrap : natural                        := 0;
-    variable v_min_string_wrap  : natural;
-    variable v_max_string_wrap  : natural;
+    constant text_lines_str       : string(1 to text_lines'length) := text_lines.all;
+    constant text_lines_str_width : natural                        := text_lines'length;
+    variable v_line_no            : natural                        := 0;
+    variable v_last_string_wrap   : natural                        := 0;
+    variable v_min_string_wrap    : natural;
+    variable v_max_string_wrap    : natural;
   begin
     deallocate(text_lines);             -- empty the line prior to filling it up again
     l_line : loop                       -- For every tekstline found in text_lines
       v_line_no := v_line_no + 1;
-      -- Find position to wrap in v_string
+      -- Find position to wrap in text_lines_str
       if (v_line_no = 1) then
         v_min_string_wrap := 1;         -- Minimum 1 character of input line
-        v_max_string_wrap := minimum(line_width - alignment_pos1 + 1, v_string_width);
+        v_max_string_wrap := minimum(line_width - alignment_pos1 + 1, text_lines_str_width);
         write(text_lines, fill_string(' ', alignment_pos1 - 1));
       else
         v_min_string_wrap := v_last_string_wrap + 1; -- Minimum 1 character further into the inpit line
-        v_max_string_wrap := minimum(v_last_string_wrap + (line_width - alignment_pos2 + 1), v_string_width);
+        v_max_string_wrap := minimum(v_last_string_wrap + (line_width - alignment_pos2 + 1), text_lines_str_width);
         write(text_lines, fill_string(' ', alignment_pos2 - 1));
       end if;
 
       -- 1. First handle any potential explicit line feed in the current maximum text line
       -- Search forward for potential LF
-      for i in (v_last_string_wrap + 1) to minimum(v_max_string_wrap + 1, v_string_width) loop
-        if (character(v_string(i)) = LF) then
-          write(text_lines, v_string((v_last_string_wrap + 1) to i)); -- LF now terminates this part
+      for i in (v_last_string_wrap + 1) to minimum(v_max_string_wrap + 1, text_lines_str_width) loop
+        if (character(text_lines_str(i)) = LF) then
+          write(text_lines, text_lines_str((v_last_string_wrap + 1) to i)); -- LF now terminates this part
           v_last_string_wrap := i;
           next l_line;                  -- next line
         end if;
       end loop;
 
       -- 2. Then check if remaining text fits into a single text line
-      if (v_string_width <= v_max_string_wrap) then
+      if (text_lines_str_width <= v_max_string_wrap) then
         -- No (more) wrapping required
-        write(text_lines, v_string((v_last_string_wrap + 1) to v_string_width));
+        write(text_lines, text_lines_str((v_last_string_wrap + 1) to text_lines_str_width));
         exit;                           -- No more lines
       end if;
 
       -- 3. Search for blanks from char after max msg width and downwards (in the left direction)
       for i in v_max_string_wrap + 1 downto (v_last_string_wrap + 1) loop
-        if (character(v_string(i)) = ' ') then
-          write(text_lines, v_string((v_last_string_wrap + 1) to i - 1)); -- Exchange last blank with LF
+        if (character(text_lines_str(i)) = ' ') then
+          write(text_lines, text_lines_str((v_last_string_wrap + 1) to i - 1)); -- Exchange last blank with LF
           v_last_string_wrap := i;
-          if (i = v_string_width) then
+          if (i = text_lines_str_width) then
             exit l_line;
           end if;
           -- Skip any potential extra blanks in the string
-          for j in (i + 1) to v_string_width loop
-            if (v_string(j) = ' ') then
+          for j in (i + 1) to text_lines_str_width loop
+            if (text_lines_str(j) = ' ') then
               v_last_string_wrap := j;
-              if (j = v_string_width) then
+              if (j = text_lines_str_width) then
                 exit l_line;
               end if;
             else
@@ -968,7 +968,7 @@ package body string_methods_pkg is
 
       -- 4. At this point no LF or blank is found in the searched section of the string.
       --    Hence just break the string - and continue.
-      write(text_lines, v_string((v_last_string_wrap + 1) to v_max_string_wrap) & LF); -- Added LF termination
+      write(text_lines, text_lines_str((v_last_string_wrap + 1) to v_max_string_wrap) & LF); -- Added LF termination
       v_last_string_wrap := v_max_string_wrap;
     end loop;
   end;
@@ -977,11 +977,11 @@ package body string_methods_pkg is
     variable text_lines : inout line;
     constant prefix     : string := C_LOG_PREFIX
   ) is
-    constant v_string           : string(1 to text_lines'length) := text_lines.all;
-    constant v_string_width     : natural                        := text_lines'length;
-    constant prefix_width       : natural                        := prefix'length;
-    variable v_last_string_wrap : natural                        := 0;
-    variable i                  : natural                        := 0; -- for indexing v_string
+    constant text_lines_str       : string(1 to text_lines'length) := text_lines.all;
+    constant text_lines_str_width : natural                        := text_lines'length;
+    constant prefix_width         : natural                        := prefix'length;
+    variable v_last_string_wrap   : natural                        := 0;
+    variable i                    : natural                        := 0; -- for indexing text_lines_str
   begin
     deallocate(text_lines);             -- empty the line prior to filling it up again
     l_line : loop
@@ -990,23 +990,23 @@ package body string_methods_pkg is
       -- 2. Write rest of text line (or rest of input line if no LF)
       l_char : loop
         i := i + 1;
-        if (i < v_string_width) then
-          if (character(v_string(i)) = LF) then
-            write(text_lines, v_string((v_last_string_wrap + 1) to i));
+        if (i < text_lines_str_width) then
+          if (character(text_lines_str(i)) = LF) then
+            write(text_lines, text_lines_str((v_last_string_wrap + 1) to i));
             v_last_string_wrap := i;
             exit l_char;
           end if;
         else
           -- 3. Reached end of string. Hence just write the rest.
-          write(text_lines, v_string((v_last_string_wrap + 1) to v_string_width));
+          write(text_lines, text_lines_str((v_last_string_wrap + 1) to text_lines_str_width));
           --    But ensure new line with prefix if ending with LF
-          if (v_string(i) = LF) then
+          if (text_lines_str(i) = LF) then
             write(text_lines, prefix);
           end if;
           exit l_char;
         end if;
       end loop;
-      if (i = v_string_width) then
+      if (i = text_lines_str_width) then
         exit;
       end if;
     end loop;

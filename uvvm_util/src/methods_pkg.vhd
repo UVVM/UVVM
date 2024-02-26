@@ -3981,7 +3981,7 @@ package body methods_pkg is
       check_value(attention = IGNORE or attention = REGARD, TB_ERROR,
                   "set_alert_attention only supported for IGNORE and REGARD", C_BURIED_SCOPE, ID_NEVER);
       shared_alert_attention(alert_level) := attention;
-            log(ID_ALERT_CTRL, "set_alert_attention(" & to_upper(to_string(alert_level)) & ", " & to_string(attention) & "). " & add_msg_delimiter(msg));
+      log(ID_ALERT_CTRL, "set_alert_attention(" & to_upper(to_string(alert_level)) & ", " & to_string(attention) & "). " & add_msg_delimiter(msg));
     end if;
   end;
 
@@ -4129,7 +4129,7 @@ package body methods_pkg is
     constant msg : string := ""
   ) is
     variable v_found : boolean;
-      begin
+  begin
     v_found := false;
     if C_DEPRECATE_SETTING /= NO_DEPRECATE then -- only perform if deprecation enabled
       l_find_caller_name_in_list : for i in deprecated_subprogram_list'range loop
@@ -9478,7 +9478,7 @@ package body methods_pkg is
         end if;
       end if;
       shared_flag_array(v_idx).is_blocked := true;
-          end if;
+      end if;
   end procedure;
 
   procedure unblock_flag(

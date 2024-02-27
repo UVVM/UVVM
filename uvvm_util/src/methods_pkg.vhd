@@ -3920,22 +3920,22 @@ package body methods_pkg is
   procedure report_global_ctrl(
     constant dummy : in t_void
   ) is
-    constant prefix : string := C_LOG_PREFIX & "     ";
-    variable v_line : line;
+    constant C_PREFIX : string := C_LOG_PREFIX & "     ";
+    variable v_line   : line;
   begin
     pot_initialise_util(VOID);          -- Only executed the first time called
     write(v_line,
-          LF & fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "***  REPORT OF GLOBAL CTRL ***" & LF & fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "                          IGNORE    STOP_LIMIT" & LF);
+          LF & fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "***  REPORT OF GLOBAL CTRL ***" & LF & fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "                          IGNORE    STOP_LIMIT" & LF);
     for i in note to t_alert_level'right loop
       write(v_line, "          " & to_upper(to_string(i, 13, left)) & ": "); -- Severity
 
       write(v_line, to_string(get_alert_attention(i), 7, right) & "    "); -- column 1
       write(v_line, to_string(integer'(get_alert_stop_limit(i)), 6, right, KEEP_LEADING_SPACE) & LF); -- column 2
     end loop;
-    write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+    write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
-    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - prefix'length);
-    prefix_lines(v_line, prefix);
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+    C_PREFIX(v_line, C_PREFIX);
 
     -- Write the info string to the target file
     tee(OUTPUT, v_line);
@@ -3946,22 +3946,22 @@ package body methods_pkg is
   procedure report_msg_id_panel(
     constant dummy : in t_void
   ) is
-    constant prefix : string := C_LOG_PREFIX & "     ";
-    variable v_line : line;
+    constant C_PREFIX : string := C_LOG_PREFIX & "     ";
+    variable v_line   : line;
   begin
     pot_initialise_util(VOID);          -- Only executed the first time called
     write(v_line,
-          LF & fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "***  REPORT OF MSG ID PANEL ***" & LF & fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "          " & justify("ID", left, C_LOG_MSG_ID_WIDTH) & "       Status" & LF & "          " & fill_string('-', C_LOG_MSG_ID_WIDTH) & "       ------" & LF);
+          LF & fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "***  REPORT OF MSG ID PANEL ***" & LF & fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "          " & justify("ID", left, C_LOG_MSG_ID_WIDTH) & "       Status" & LF & "          " & fill_string('-', C_LOG_MSG_ID_WIDTH) & "       ------" & LF);
     for i in t_msg_id'left to t_msg_id'right loop
       if ((i /= ALL_MESSAGES) and ((i /= NO_ID) and (i /= ID_NEVER))) then -- report all but ID_NEVER, NO_ID and ALL_MESSAGES
         write(v_line, "          " & to_upper(to_string(i, C_LOG_MSG_ID_WIDTH + 5, left)) & ": "); -- MSG_ID
         write(v_line, to_upper(to_string(shared_msg_id_panel(i))) & LF); -- Enabled/disabled
       end if;
     end loop;
-    write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+    write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
-    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - prefix'length);
-    prefix_lines(v_line, prefix);
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+    prefix_lines(v_line, C_PREFIX);
 
     -- Write the info string to the target file
     tee(OUTPUT, v_line);
@@ -4049,7 +4049,7 @@ package body methods_pkg is
     number      : natural     := 1
   ) is
     type alert_array is array (1 to 6) of t_alert_level;
-    constant alert_check_array : alert_array := (warning, TB_WARNING, error, TB_ERROR, failure, TB_FAILURE);
+    constant C_ALERT_CHECK_ARRAY : alert_array := (warning, TB_WARNING, error, TB_ERROR, failure, TB_FAILURE);
     alias found_unexpected_simulation_warnings_or_worse is shared_uvvm_status.found_unexpected_simulation_warnings_or_worse;
     alias found_unexpected_simulation_errors_or_worse is shared_uvvm_status.found_unexpected_simulation_errors_or_worse;
     alias mismatch_on_expected_simulation_warnings_or_worse is shared_uvvm_status.mismatch_on_expected_simulation_warnings_or_worse;
@@ -4066,23 +4066,23 @@ package body methods_pkg is
         mismatch_on_expected_simulation_errors_or_worse   := 0; -- default
 
         -- Compare expected and current allerts
-        for i in 1 to alert_check_array'high loop
-          if (get_alert_counter(alert_check_array(i), REGARD) /= get_alert_counter(alert_check_array(i), EXPECT)) then
+        for i in 1 to C_ALERT_CHECK_ARRAY'high loop
+          if (get_alert_counter(C_ALERT_CHECK_ARRAY(i), REGARD) /= get_alert_counter(C_ALERT_CHECK_ARRAY(i), EXPECT)) then
 
             -- MISMATCH
             -- warning or worse
             mismatch_on_expected_simulation_warnings_or_worse := 1;
             -- error or worse
-            if not (alert_check_array(i) = warning) and not (alert_check_array(i) = TB_WARNING) then
+            if not (C_ALERT_CHECK_ARRAY(i) = warning) and not (C_ALERT_CHECK_ARRAY(i) = TB_WARNING) then
               mismatch_on_expected_simulation_errors_or_worse := 1;
             end if;
 
             -- FOUND UNEXPECTED ALERT
-            if (get_alert_counter(alert_check_array(i), REGARD) > get_alert_counter(alert_check_array(i), EXPECT)) then
+            if (get_alert_counter(C_ALERT_CHECK_ARRAY(i), REGARD) > get_alert_counter(C_ALERT_CHECK_ARRAY(i), EXPECT)) then
               -- warning and worse
               found_unexpected_simulation_warnings_or_worse := 1;
               -- error and worse
-              if not (alert_check_array(i) = warning) and not (alert_check_array(i) = TB_WARNING) then
+              if not (C_ALERT_CHECK_ARRAY(i) = warning) and not (C_ALERT_CHECK_ARRAY(i) = TB_WARNING) then
                 found_unexpected_simulation_errors_or_worse := 1;
               end if;
             end if;
@@ -4169,8 +4169,8 @@ package body methods_pkg is
     target : std_logic;
     vector : std_logic_vector
   ) return integer is
-    alias a_vector               : std_logic_vector(vector'length - 1 downto 0) is vector;
-    constant result_if_not_found : integer := -1; -- To indicate not found
+    alias a_vector                 : std_logic_vector(vector'length - 1 downto 0) is vector;
+    constant C_RESULT_IF_NOT_FOUND : integer := -1; -- To indicate not found
   begin
     bitvis_assert(vector'length > 0, error, "idx_leftmost_p1_in_p2()", "String input is empty");
     for i in a_vector'left downto a_vector'right loop
@@ -4178,7 +4178,7 @@ package body methods_pkg is
         return i;
       end if;
     end loop;
-    return result_if_not_found;
+    return C_RESULT_IF_NOT_FOUND;
   end;
 
   -- Matching if same width or only zeros in "extended width"

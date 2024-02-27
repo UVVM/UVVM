@@ -372,7 +372,6 @@ package body string_methods_pkg is
     val : string
   ) return string is
     variable v_result : string(val'range) := val;
-    variable char     : character;
   begin
     for i in val'range loop
       -- NOTE: Illegal characters are allowed and will pass through (check Mentor's std_developers_kit)
@@ -981,7 +980,7 @@ package body string_methods_pkg is
     constant C_TEXT_LINES_STR_WIDTH : natural                        := text_lines'length;
     constant prefix_width           : natural                        := prefix'length;
     variable v_last_string_wrap     : natural                        := 0;
-    variable i                      : natural                        := 0; -- for indexing text_lines_str
+    variable v_i                    : natural                        := 0; -- for indexing text_lines_str
   begin
     deallocate(text_lines);             -- empty the line prior to filling it up again
     l_line : loop
@@ -989,24 +988,24 @@ package body string_methods_pkg is
       write(text_lines, prefix);
       -- 2. Write rest of text line (or rest of input line if no LF)
       l_char : loop
-        i := i + 1;
+        v_i := v_i + 1;
         if (i < C_TEXT_LINES_STR_WIDTH) then
-          if (character(C_TEXT_LINES_STR(i)) = LF) then
-            write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to i));
-            v_last_string_wrap := i;
+          if (character(C_TEXT_LINES_STR(v_i)) = LF) then
+            write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to v_i));
+            v_last_string_wrap := v_i;
             exit l_char;
           end if;
         else
           -- 3. Reached end of string. Hence just write the rest.
           write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to C_TEXT_LINES_STR_WIDTH));
           --    But ensure new line with prefix if ending with LF
-          if (C_TEXT_LINES_STR(i) = LF) then
+          if (C_TEXT_LINES_STR(v_i) = LF) then
             write(text_lines, prefix);
           end if;
           exit l_char;
         end if;
       end loop;
-      if (i = C_TEXT_LINES_STR_WIDTH) then
+      if (v_i = C_TEXT_LINES_STR_WIDTH) then
         exit;
       end if;
     end loop;
@@ -1017,14 +1016,14 @@ package body string_methods_pkg is
     target_char   : character;
     exchange_char : character
   ) return string is
-    variable result : string(1 to val'length) := val;
+    variable v_result : string(1 to val'length) := val;
   begin
     for i in val'range loop
       if val(i) = target_char then
-        result(i) := exchange_char;
+        v_result(i) := exchange_char;
       end if;
     end loop;
-    return result;
+    return v_result;
   end;
 
   procedure replace(
@@ -1034,16 +1033,16 @@ package body string_methods_pkg is
   ) is
     variable v_string       : string(1 to text_line'length) := text_line.all;
     variable v_string_width : natural                       := text_line'length;
-    variable i              : natural                       := 0; -- for indexing v_string
+    variable v_i            : natural                       := 0; -- for indexing v_string
   begin
     if v_string_width > 0 then
       deallocate(text_line);            -- empty the line prior to filling it up again
       -- 1. Loop through string and replace characters
       l_char : loop
-        i := i + 1;
-        if (i < v_string_width) then
-          if (character(v_string(i)) = target_char) then
-            v_string(i) := exchange_char;
+        v_i := v_i + 1;
+        if (v_i < v_string_width) then
+          if (character(v_string(v_i)) = target_char) then
+            v_string(v_i) := exchange_char;
           end if;
         else
           -- 2. Reached end of string. Hence just write the new string.

@@ -3935,7 +3935,7 @@ package body methods_pkg is
     write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
     wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
-    C_PREFIX(v_line, C_PREFIX);
+    prefix_lines(v_line, C_PREFIX);
 
     -- Write the info string to the target file
     tee(OUTPUT, v_line);
@@ -4459,7 +4459,7 @@ package body methods_pkg is
         if radix = HEX_BIN_IF_INVALID then
           alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected " & C_EXP_STR & "." & LF & msg, scope);
         else
-          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected " & pad_short_string(C_EXP_STR, value_str) & "." & LF & msg, scope);
+          alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected " & pad_short_string(C_EXP_STR, C_VALUE_STR) & "." & LF & msg, scope);
         end if;
       elsif C_VALUE_STR'length < C_EXP_STR'length then
         if radix = HEX_BIN_IF_INVALID then
@@ -7621,11 +7621,14 @@ package body methods_pkg is
     constant msg_id_panel     : in t_msg_id_panel := shared_msg_id_panel;
     constant caller_name      : in string         := ""
   ) is
+    constant C_VALUE_TYPE  : string := "slv";
     constant C_START_TIME  : time   := now;
-    variable v_proc_call : line;
+    constant C_EXP_STR     : string := to_string(exp, radix, format, INCL_RADIX);
+    constant C_NAME        : string := "await_value(" & C_VALUE_TYPE & " " & C_EXP_STR & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_proc_call   : line;
   begin
     if caller_name'length = 0 then
-      write(v_proc_call, name);
+      write(v_proc_call, C_NAME);
     else
       write(v_proc_call, caller_name);
     end if;

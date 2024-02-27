@@ -433,7 +433,7 @@ package body string_methods_pkg is
     variable result       : string(1 to width) := (others => ' ');
   begin
     -- return val if width is too small
-    if val_length >= width then
+    if C_VAL_LENGTH >= width then
       if (format = TRUNCATE) then
         return val(1 to width);
       else

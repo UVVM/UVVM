@@ -9470,7 +9470,7 @@ package body methods_pkg is
         end if;
       end if;
       shared_flag_array(v_idx).is_blocked := true;
-      end if;
+    end if;
   end procedure;
 
   procedure unblock_flag(

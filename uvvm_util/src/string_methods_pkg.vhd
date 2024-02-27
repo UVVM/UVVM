@@ -989,7 +989,7 @@ package body string_methods_pkg is
       -- 2. Write rest of text line (or rest of input line if no LF)
       l_char : loop
         v_i := v_i + 1;
-        if (i < C_TEXT_LINES_STR_WIDTH) then
+        if (v_i < C_TEXT_LINES_STR_WIDTH) then
           if (character(C_TEXT_LINES_STR(v_i)) = LF) then
             write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to v_i));
             v_last_string_wrap := v_i;

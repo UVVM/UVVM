@@ -15,7 +15,7 @@ to monitor inputs, outputs or internal registers within the design, logging the 
 package sizes and data fields sent over a communication interface, fill grades experienced by a FIFO, or configurations written
 to an internal register during simulation.
 
-Funtional Coverage works very well in combination with randomized generation of input stimuli, where the testbench can
+Functional Coverage works very well in combination with randomized generation of input stimuli, where the testbench can
 for instance be set up to keep generating randomized stimuli until the we have covered both all of the specified corner cases
 and tested a defined amount of general random input values. The combination of Functional Coverage and randomization forms the basis
 of UVVMs :ref:`optimized_randomization` functionality.
@@ -24,10 +24,8 @@ After tests have been run, the Functional Coverage package can generate reports 
 been tested. This makes Functional Coverage a particularly useful tool for projects with stringent demands for documentation of 
 compliance with requirements.
 
-
 Coverpoints and bins
 =================================================================================================================================
-
 Each point of the design that we wish to test is referred to as a *coverpoint*. A coverpoint can for instance be an input port, 
 output port or an internal register.
 
@@ -35,11 +33,11 @@ A coverpoint is added by creating a shared variable of the protected type t_cove
 
 .. code-block::
 
-    shared variable v_my_coverpoint : t_coverpoint;
+    shared variable my_coverpoint : t_coverpoint;
 
 
 Once a coverpoint for a particular part of the design has been defined, we need to set up containers to track which values have 
-occured on that coverpoint. These containers are called *bins*. Each bin will count the occurences of either a specific value, 
+occurred on that coverpoint. These containers are called *bins*. Each bin will count the occurrences of either a specific value, 
 a range of values or a given transition between values.
 
 Bins are generated using the ``bin()`` function and added to the coverpoint using the ``add_bins()`` procedure. See the section 
@@ -76,7 +74,7 @@ combinations of values for *src_addr* and *dst_addr*.
 
 
 Once we have defined all our coverpoints with bins or crosses for the required scenarios, we can begin running tests on our 
-design and tick of the tested coverpoint values. This is done by sampling all observed coverpoint values using the 
+design and tick off the tested coverpoint values. This is done by sampling all observed coverpoint values using the 
 :ref:`sample_coverage` procedure.
 
 Figure 3 illustrates an example scenario where we have created a coverpoint with three bins for the DUT input named "input1". 
@@ -85,7 +83,7 @@ the value 255. This will increment the hit counter of the bin associated with th
 min_hits requirement of 1, the hit coverage of the bin will reach 100% after a single hit. Once all the bins reach 100%
 hit coverage, the coverpoint will have full coverage. 
 
-.. figure:: images/functional_coverage/fc_sampling.png
+.. figure:: images/functional_coverage/func_cov_sampling.png
    :alt: Sampling coverage
    :width: 400pt
    :align: center
@@ -113,8 +111,6 @@ hit coverage, the coverpoint will have full coverage.
     my_coverpoint.sample_coverage(to_integer(address));
     rand_addr_int := my_coverpoint.rand(NO_SAMPLE_COV);
     rand_addr     <= to_unsigned(rand_addr_int,rand_addr'length);
-
-
 
 **********************************************************************************************************************************
 Getting started
@@ -158,19 +154,18 @@ type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` proced
 **********************************************************************************************************************************
 Creating and adding bins
 **********************************************************************************************************************************
-
 Bins are generated using one of the bin generation functions defined in the functional coverage package, and added to a coverpoint 
 using the ``add_bins()`` procedure.
-(This is necessary for several reasons: better readability, avoiding conflicts with overloads which have similar parameters and 
-supporting adding multiple types of bins in a single line.)
+This is necessary for several reasons: better readability, avoiding conflicts with overloads which have similar parameters and 
+supporting adding multiple types of bins in a single line.
 
 By calling the ``add_bins()`` procedure with the ``bin()`` function as parameter, we can generate and add a bin in a single operation. 
 
-The following code adds a bin for the value 1 to the coverpoint named *v_my_coverpoint*.
+The following code adds a bin for the value 1 to the coverpoint named *my_coverpoint*.
 
 .. code-block::
 
-    v_my_coverpoint.add_bins(bin(1));
+    my_coverpoint.add_bins(bin(1));
 
 Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.
 
@@ -241,7 +236,6 @@ The bin functions may be concatenated to add several bins at once.
     The maximum number of bins which can be added at once using a single ``add_bins()`` call is limited by C_FC_MAX_NUM_NEW_BINS 
     defined in adaptations_pkg.
 
-
 Ignore bins
 ==================================================================================================================================
 Specific values or transitions can be excluded from the coverage by using ignore bins. This is useful to:
@@ -289,7 +283,6 @@ sampled. The default severity of the alert is ERROR and can be configured using 
     my_coverpoint.add_bins(illegal_bin_range(220, 250));
     my_coverpoint.add_bins(illegal_bin_transition((200,100,0)));
 
-
 Using predefined bins
 ==================================================================================================================================
 Sometimes it is useful to define bins which have a particular meaning or which are used several times. A constant or a variable 
@@ -307,7 +300,6 @@ can be created using the type *t_new_bin_array(0 to 0)* which is returned by any
     my_coverpoint.add_cross(C_BIN_IDLE, v_bin_sequence & v_bin_ranges);
     my_coverpoint.add_cross(C_BIN_RUNNING, v_bin_sequence & v_bin_ranges);
     my_coverpoint.add_cross(C_BIN_ILLEGAL, v_bin_sequence & v_bin_ranges);
-
 
 Adding bins from separate process
 ==================================================================================================================================
@@ -337,7 +329,6 @@ it before the sequencer has added the bins, the testbench will generate a TB_ERR
     It is recommended to add all the bins at the beginning of the testbench (time 0 ns) to avoid adding any bins after the coverpoint 
     has been sampled. If this happens, a TB_WARNING alert will be generated because some bins might have incomplete coverage.
 
-
 Bin memory allocation
 ==================================================================================================================================
 For users who want more control over the memory usage during simulation, it is possible to configure how large the bin list is 
@@ -346,7 +337,6 @@ when the list becomes full. These constants are defined in adaptations_pkg.
 
 Moreover, the procedures ``set_num_allocated_bins()`` and ``set_num_allocated_bins_increment()`` can be used to reconfigure a 
 coverpoint's respective values.
-
 
 Bin name
 ==================================================================================================================================
@@ -361,7 +351,6 @@ default name will be automatically given. Having a bin name is useful when readi
 
 The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.
 
-
 Minimum coverage
 ==================================================================================================================================
 By default all bins created have a minimum coverage of 1, i.e. they only need to be sampled once to be covered. The parameter 
@@ -374,7 +363,6 @@ By default all bins created have a minimum coverage of 1, i.e. they only need to
     my_coverpoint.add_bins(bin(0), 1);
     my_coverpoint.add_bins(bin(2), 5);
     my_coverpoint.add_bins(bin(4), 10);
-
 
 **********************************************************************************************************************************
 Cross coverage
@@ -401,12 +389,10 @@ Crosses are made using the ``add_cross()`` procedure and can be made either betw
     Once the number of crossed bins has been set in a coverpoint, by calling the first ``add_cross()``, it cannot be 
     changed anymore.
 
-
 Crossing bins
 ==================================================================================================================================
-
 This is a "faster" way of creating the crosses and useful when we need specific combinations of values. A cross between bins is 
-added to a coverpoint by calling the ``add_cross()`` procedure in combination with :ref:`bin functions <bin_functions>`.. 
+added to a coverpoint by calling the ``add_cross()`` procedure in combination with :ref:`bin functions <bin_functions>`. 
 The ``add_cross()`` overloads support up to 5 crossed elements. 
 The min_hits argument can be included to specify how many times the scenario given by the cross must be sampled for the cross to be 
 marked as covered. The default value is one, meaning that the scenario only has to be sampled once for the cross to be covered.
@@ -451,10 +437,8 @@ The bin functions may also be concatenated to add several bins at once.
     # UVVM:       (30)x(8 to 15)x(1000)       0           1           0.00%          bin_5            -       
     # UVVM:  ========================================================================================================
 
-
 Crossing coverpoints
 ==================================================================================================================================
-
 This alternative is useful when the coverpoints are already created and we don't want to repeat the declaration of the bins. The 
 ``add_cross()`` overloads support up to 16 crossed elements. **Beta release only supports up to 5 crossed elements.**
 
@@ -517,7 +501,6 @@ in a bin has reached the minimum coverage, the bin will be marked as covered.
 
     It is NOT recommended to add more bins to a given coverpoint after it has been sampled, since the new bins will be missing any 
     previous sampled coverage. A TB_WARNING alert is generated whenever this occurs.
-
 
 Overlapping bins
 ==================================================================================================================================
@@ -587,7 +570,6 @@ Coverage goal
 Defines a percentage of the total coverage to complete. This can be used to scale the simulation time without changing the minimum 
 coverage for each bin. It must be set at the beginning of the testbench, before sampling any coverage. There are 3 types:
 
-
 Bins coverage goal
 ==================================================================================================================================
 This value defines the percentage of the number of bins which need to be covered in the coverpoint and therefore the range is 
@@ -601,7 +583,6 @@ between 1 and 100. Default value is 100 (as in 100%).
     -- Cover only 10% of the total number of bins in the coverpoint
     my_coverpoint.set_bins_coverage_goal(10);
 
-
 Hits coverage goal
 ==================================================================================================================================
 This value defines the percentage of the min_hits which need to be covered for each bin in the coverpoint. Default value is 100 
@@ -614,7 +595,6 @@ This value defines the percentage of the min_hits which need to be covered for e
 
     -- Cover twice the min_hits of each bin in the coverpoint
     my_coverpoint.set_hits_coverage_goal(200);
-
 
 Coverpoints coverage goal
 ==================================================================================================================================
@@ -632,7 +612,6 @@ Default value is 100 (as in 100%).
 **********************************************************************************************************************************
 Coverage weight
 **********************************************************************************************************************************
-
 It specifies the weight of a coverpoint used when calculating the overall coverage. It must be set at the beginning of the 
 testbench, before sampling any coverage. If set to 0, the coverpoint will be excluded from the overall coverage calculation. 
 Default value is 1.
@@ -669,7 +648,6 @@ The amount of information can be adjusted by using the parameter verbosity.
     * When the bin values don't fit under the BINS column, the bin name is printed instead and the values are printed at the bottom 
       of the report.
 
-
 Coverpoint Verbose
 ==================================================================================================================================
 
@@ -701,7 +679,6 @@ Coverpoint Verbose
     # UVVM:  transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM:  =================================================================================================================
 
-
 Coverpoint Non-Verbose
 ==================================================================================================================================
 
@@ -728,7 +705,6 @@ Coverpoint Non-Verbose
     # UVVM:  transition_2: (0->15->127->248->249->250->251->252->253->254)
     # UVVM:  =================================================================================================================
 
-
 Coverpoint Holes
 ==================================================================================================================================
 
@@ -749,7 +725,6 @@ Coverpoint Holes
     # UVVM:           (0->1->2->3)            0           2           0.00%            transition_1              -            
     # UVVM:  -----------------------------------------------------------------------------------------------------------------
     # UVVM:  =================================================================================================================
-
 
 Overall Verbose
 ==================================================================================================================================
@@ -776,7 +751,6 @@ Overall Verbose
     # UVVM:        Covpt_8            1             12 / 12       100.00% | 100.00%      100% | 100%       100.00% | 100.00%  
     # UVVM:  =================================================================================================================
 
-
 Overall Non-Verbose
 ==================================================================================================================================
 
@@ -791,7 +765,6 @@ Overall Non-Verbose
     # UVVM:  =================================================================================================================
     # UVVM:  Coverage (for goal 100): Covpts: 50.00%,   Bins: 73.68%,   Hits: 76.00%  
     # UVVM:  =================================================================================================================
-
 
 Overall Holes
 ==================================================================================================================================
@@ -813,7 +786,6 @@ Overall Holes
     # UVVM:        Covpt_5            1              0 / 1          0.00% | 0.00%        100% | 100%         0.00% | 0.00%    
     # UVVM:        Covpt_7            1              0 / 3          0.00% | 0.00%        100% | 100%         0.00% | 0.00%    
     # UVVM:  =================================================================================================================
-
 
 Using goal
 ==================================================================================================================================
@@ -978,7 +950,6 @@ accumulated coverage for each coverpoint.
 
     The downside of this approach is that the accumulated coverage will not be visible in simulation.
 
-
 Overall coverage accumulation
 ==================================================================================================================================
 Since the ``write_coverage_db()`` procedure is defined in a protected type, every single coverpoint needs to call the procedure to 
@@ -1017,13 +988,11 @@ coverpoints in a global package as shared variables and create a procedure, e.g.
       ...
     end package body global_fc_pkg;
 
-
 Clearing coverage
 ==================================================================================================================================
 A coverpoint's coverage counters can be reset with ``clear_coverage()``. This might be useful for example when running several 
 testcases in a single testbench and the coverage needs to be restarted after each testcase or when loading a coverpoint database 
 and only want to keep the model and configuration.
-
 
 File format
 ==================================================================================================================================
@@ -1206,7 +1175,6 @@ The following rules apply when merging a coverpoint from different files:
 Clearing a coverpoint
 **********************************************************************************************************************************
 A coverpoint's complete model, configuration and counters can be reset with ``delete_coverpoint()``.
-
 
 **********************************************************************************************************************************
 Additional info

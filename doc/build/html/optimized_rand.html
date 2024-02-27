@@ -314,18 +314,18 @@ not included in the transition bins, we can use a range bin:</p>
 <h2>Randomization using crosses<a class="headerlink" href="#randomization-using-crosses" title="Link to this heading"></a></h2>
 <p>When running the <code class="docutils literal notranslate"><span class="pre">rand()</span></code> procedure on a coverpoint containing a cross, the procedure will return a vector containing a set of values
 from the uncovered crosses. The length of the vector will be the same as the number of crossed elements.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">v_coverpoint_a</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
-<span class="n">v_coverpoint_a</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
-<span class="n">v_coverpoint_b</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
-<span class="n">v_coverpoint_b</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">coverpoint_a</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">coverpoint_a</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">coverpoint_b</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">coverpoint_b</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 
 <span class="c1">-- Create cross of above coverpoints. The cross coverpoint will contain the following bins:</span>
 <span class="c1">-- 0x0, 0x1, 1x0, 1x1</span>
-<span class="n">v_coverpoint_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">v_coverpoint_a</span><span class="p">,</span><span class="w"> </span><span class="n">v_coverpoint_b</span><span class="p">);</span>
+<span class="n">coverpoint_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">coverpoint_a</span><span class="p">,</span><span class="w"> </span><span class="n">coverpoint_b</span><span class="p">);</span>
 
 <span class="c1">-- Generate vectors containing the data pairs above until all four pairs have been generated.</span>
-<span class="k">while</span><span class="w"> </span><span class="k">not</span><span class="p">(</span><span class="n">v_coverpoint_cross</span><span class="p">.</span><span class="n">coverage_completed</span><span class="p">(</span><span class="n">BINS_AND_HITS</span><span class="p">))</span><span class="w"> </span><span class="k">loop</span>
-<span class="w">    </span><span class="n">my_data_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">v_coverpoint_cross</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">SAMPLE_COV</span><span class="p">);</span>
+<span class="k">while</span><span class="w"> </span><span class="k">not</span><span class="p">(</span><span class="n">coverpoint_cross</span><span class="p">.</span><span class="n">coverage_completed</span><span class="p">(</span><span class="n">BINS_AND_HITS</span><span class="p">))</span><span class="w"> </span><span class="k">loop</span>
+<span class="w">    </span><span class="n">my_data_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">coverpoint_cross</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">SAMPLE_COV</span><span class="p">);</span>
 <span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span>
 </pre></div>
 </div>

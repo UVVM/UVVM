@@ -173,7 +173,7 @@ All the functionality for coverage can be found in <em>uvvm_util/src/func_cov_pk
 to monitor inputs, outputs or internal registers within the design, logging the values that occur. For example, it can track
 package sizes and data fields sent over a communication interface, fill grades experienced by a FIFO, or configurations written
 to an internal register during simulation.</p>
-<p>Funtional Coverage works very well in combination with randomized generation of input stimuli, where the testbench can
+<p>Functional Coverage works very well in combination with randomized generation of input stimuli, where the testbench can
 for instance be set up to keep generating randomized stimuli until the we have covered both all of the specified corner cases
 and tested a defined amount of general random input values. The combination of Functional Coverage and randomization forms the basis
 of UVVMs <a class="reference internal" href="optimized_rand.html#optimized-randomization"><span class="std std-ref">Optimized Randomization</span></a> functionality.</p>
@@ -185,11 +185,11 @@ compliance with requirements.</p>
 <p>Each point of the design that we wish to test is referred to as a <em>coverpoint</em>. A coverpoint can for instance be an input port,
 output port or an internal register.</p>
 <p>A coverpoint is added by creating a shared variable of the protected type t_coverpoint.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">v_my_coverpoint</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_coverpoint</span><span class="p">;</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_coverpoint</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>Once a coverpoint for a particular part of the design has been defined, we need to set up containers to track which values have
-occured on that coverpoint. These containers are called <em>bins</em>. Each bin will count the occurences of either a specific value,
+occurred on that coverpoint. These containers are called <em>bins</em>. Each bin will count the occurrences of either a specific value,
 a range of values or a given transition between values.</p>
 <p>Bins are generated using the <code class="docutils literal notranslate"><span class="pre">bin()</span></code> function and added to the coverpoint using the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure. See the section
 <a class="reference internal" href="#creating-and-adding-bins">Creating and adding bins</a>  for more information about how to generate bins.</p>
@@ -214,7 +214,7 @@ combinations of values for <em>src_addr</em> and <em>dst_addr</em>.</p>
 </figcaption>
 </figure>
 <p>Once we have defined all our coverpoints with bins or crosses for the required scenarios, we can begin running tests on our
-design and tick of the tested coverpoint values. This is done by sampling all observed coverpoint values using the
+design and tick off the tested coverpoint values. This is done by sampling all observed coverpoint values using the
 <a class="reference internal" href="func_cov_pkg_t_coverpoint.html#sample-coverage"><span class="std std-ref">sample_coverage()</span></a> procedure.</p>
 <p>Figure 3 illustrates an example scenario where we have created a coverpoint with three bins for the DUT input named “input1”.
 Each value received through the input is sampled using the <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedure. In this example the input receives
@@ -222,7 +222,7 @@ the value 255. This will increment the hit counter of the bin associated with th
 min_hits requirement of 1, the hit coverage of the bin will reach 100% after a single hit. Once all the bins reach 100%
 hit coverage, the coverpoint will have full coverage.</p>
 <figure class="align-center" id="id4">
-<a class="reference internal image-reference" href="_images/fc_sampling.png"><img alt="Sampling coverage" src="_images/fc_sampling.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/func_cov_sampling.png"><img alt="Sampling coverage" src="_images/func_cov_sampling.png" style="width: 400pt;" /></a>
 <figcaption>
 <p><span class="caption-text">Figure 3</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
 </figcaption>
@@ -289,11 +289,11 @@ type <em>t_coverpoint</em> and call the <code class="docutils literal notranslat
 <h2>Creating and adding bins<a class="headerlink" href="#creating-and-adding-bins" title="Link to this heading"></a></h2>
 <p>Bins are generated using one of the bin generation functions defined in the functional coverage package, and added to a coverpoint
 using the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure.
-(This is necessary for several reasons: better readability, avoiding conflicts with overloads which have similar parameters and
-supporting adding multiple types of bins in a single line.)</p>
+This is necessary for several reasons: better readability, avoiding conflicts with overloads which have similar parameters and
+supporting adding multiple types of bins in a single line.</p>
 <p>By calling the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure with the <code class="docutils literal notranslate"><span class="pre">bin()</span></code> function as parameter, we can generate and add a bin in a single operation.</p>
-<p>The following code adds a bin for the value 1 to the coverpoint named <em>v_my_coverpoint</em>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">v_my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<p>The following code adds a bin for the value 1 to the coverpoint named <em>my_coverpoint</em>.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 </pre></div>
 </div>
 <p>Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.</p>
@@ -505,7 +505,7 @@ changed anymore.</p>
 <section id="crossing-bins">
 <h3>Crossing bins<a class="headerlink" href="#crossing-bins" title="Link to this heading"></a></h3>
 <p>This is a “faster” way of creating the crosses and useful when we need specific combinations of values. A cross between bins is
-added to a coverpoint by calling the <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedure in combination with <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>..
+added to a coverpoint by calling the <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedure in combination with <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>.
 The <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> overloads support up to 5 crossed elements.
 The min_hits argument can be included to specify how many times the scenario given by the cross must be sampled for the cross to be
 marked as covered. The default value is one, meaning that the scenario only has to be sampled once for the cross to be covered.</p>

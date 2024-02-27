@@ -213,20 +213,19 @@ from the uncovered crosses. The length of the vector will be the same as the num
 
 .. code-block::
 
-    v_coverpoint_a.add_bins(bin(0));
-    v_coverpoint_a.add_bins(bin(1));
-    v_coverpoint_b.add_bins(bin(0));
-    v_coverpoint_b.add_bins(bin(1));
+    coverpoint_a.add_bins(bin(0));
+    coverpoint_a.add_bins(bin(1));
+    coverpoint_b.add_bins(bin(0));
+    coverpoint_b.add_bins(bin(1));
 
     -- Create cross of above coverpoints. The cross coverpoint will contain the following bins:
     -- 0x0, 0x1, 1x0, 1x1
-    v_coverpoint_cross.add_cross(v_coverpoint_a, v_coverpoint_b);
+    coverpoint_cross.add_cross(coverpoint_a, coverpoint_b);
 
     -- Generate vectors containing the data pairs above until all four pairs have been generated.
-    while not(v_coverpoint_cross.coverage_completed(BINS_AND_HITS)) loop
-        my_data_vector := v_coverpoint_cross.rand(SAMPLE_COV);
+    while not(coverpoint_cross.coverage_completed(BINS_AND_HITS)) loop
+        my_data_vector := coverpoint_cross.rand(SAMPLE_COV);
     end loop;
-
 
 **********************************************************************************************************************************
 Additional info

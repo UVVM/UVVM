@@ -1912,9 +1912,7 @@ def add_vvc_context(file_handle, vvc_name, features):
         file_handle.write("  use bitvis_vip_" + vvc_name.lower() + ".transaction_pkg.all;\n")
     file_handle.write("  use bitvis_vip_" + vvc_name.lower() + ".vvc_methods_pkg.all;\n")
     file_handle.write("  use bitvis_vip_" + vvc_name.lower() + ".td_vvc_framework_common_methods_pkg.all;\n")
-    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + "." + vvc_name.lower() + "_bfm_pkg.t_" + vvc_name.lower() + "_if;\n")
-    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + "." + vvc_name.lower() + "_bfm_pkg.t_" + vvc_name.lower() + "_bfm_config;\n")
-    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + "." + vvc_name.lower() + "_bfm_pkg.C_" + vvc_name.upper() + "_BFM_CONFIG_DEFAULT;\n")
+    file_handle.write("  use bitvis_vip_" + vvc_name.lower() + "." + vvc_name.lower() + "_bfm_pkg.all;\n")
     file_handle.write("end context;\n")
 
 

@@ -1,75 +1,93 @@
 import os
 import subprocess
+import glob
 import sys
-import platform
-import shutil
+import json
 
 
-def os_adjust_path(path) -> str:
-    if platform.system().lower() == "windows":
-        return path.replace('\\', '//')
+def find_and_run_tests(base_dir="..", script_args=[]):
+    pattern = os.path.join(base_dir, "*/script/maintenance_script/test.py")
+
+    test_scripts = glob.glob(pattern, recursive=True)
+    original_cwd = os.getcwd()  # Save the original cwd to restore later
+
+    non_zero_exit_codes = 0  # Counter for non-zero exit codes
+    results_dict = {}
+
+    for test_script in test_scripts:
+        sim_dir_relative_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(test_script))), "sim"
+        )
+
+        sim_dir = os.path.relpath(sim_dir_relative_path, start=original_cwd)
+
+        module_name = test_script.split(os.sep)[3].upper()
+
+        if not os.path.exists(sim_dir):
+            print("Creating missing sim directory: {}".format(sim_dir))
+            os.makedirs(sim_dir)
+
+        print(
+            "\n\n{}\nUVVMegression script running: {}".format(("=" * 80), module_name)
+        )
+        print(
+            "\n==> Execute {} in {} with arguments {}\n\n".format(
+                test_script, sim_dir, script_args
+            )
+        )
+
+        script_path = os.path.relpath(test_script, start=sim_dir).replace("\\", "/")
+
+        return_code = 1
+
+        try:
+            return_code = subprocess.run(
+                ["python", os.path.relpath(test_script, start=sim_dir)] + script_args,
+                cwd=sim_dir,
+            ).returncode
+
+            results_dict[module_name] = return_code
+
+            if return_code != 0:
+                non_zero_exit_codes += 1
+                print(
+                    "\n\n===>> WARNING!! Script {} exited with error code {}".format(
+                        test_script, return_code
+                    ),
+                    file=sys.stderr,
+                )
+
+        except subprocess.CalledProcessError as e:
+            results_dict[module_name] = "Error"
+            non_zero_exit_codes += 1  # Increment for timeout as well
+            print(
+                "\n\n===>> WARNING!! Error executing {} (Module: {}): {e}".format(
+                    test_script, module_name, e
+                ),
+                file=sys.stderr,
+            )
+        except Exception as e:
+            results_dict[module_name] = "Exception"
+            non_zero_exit_codes += 1  # Increment for any other exceptions
+            print("\n\n===>> WARNING!! Error executing {}: {}".format(test_script, e))
+
+    if non_zero_exit_codes == 0:
+        print("All test.py scripts executed successfully. SUMMARY: SUCCESS")
     else:
-        return path.replace('\\', '\\\\')
+        print(
+            f"Some test.py scripts failed ({non_zero_exit_codes} errors). SUMMARY: FAIL"
+        )
 
-def find_test_files(root_dir):
-    test_files = []
-    for foldername, subfolders, filenames in os.walk(root_dir):
-        for filename in filenames:
-            if filename == "test.py":
-                file_with_path = os_adjust_path(os.path.relpath(os.path.join(foldername, filename), root_dir))
-                test_files.append(file_with_path)
-    return test_files
+    os.chdir(original_cwd)  # Restore the original cwd
 
-def delete_hdlregression_folder():
-    script_directory = os.path.dirname(__file__)
-    hdlregression_dir = os.path.join(script_directory, "hdlregression")
+    print("\nSummary of test execution results:")
+    print(json.dumps(results_dict, indent=4))
 
-    if os.path.exists(hdlregression_dir):
-        print(f"Deleting 'hdlregression' folder...")
-        try:
-            shutil.rmtree(hdlregression_dir)
-            print(f"Deleted 'hdlregression' folder.")
-        except Exception as e:
-            print(f"Failed to delete 'hdlregression' folder: {str(e)}")
-
-def run_tests(test_files, command_line_args):
-    script_directory = os.path.dirname(__file__)
-    for test_file in test_files:
-        test_file_path = os.path.abspath(os.path.join(script_directory, "..", test_file))  # Prepend "../"
-        test_dir = os.path.dirname(test_file_path)
-
-        env = os.environ.copy()
-        env["TERM"] = "xterm-256color"
-        
-        command = ["python", "-u", test_file_path] + command_line_args
-
-        delete_hdlregression_folder()
-
-        try:
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=test_dir, text=True, env=env)
-            stdout, stderr = process.communicate()
-            if process.returncode == 0:
-                print(f"Successfully ran {test_file}")
-                print("=== Output ===")
-                print(stdout)
-            else:
-                print(f"Error running {test_file}. Return code: {process.returncode}")
-                print("=== Standard Output ===")
-                print(stdout)
-                print("=== Standard Error ===")
-                print(stderr)
-        except Exception as e:
-            print(f"Error running {test_file}: {str(e)}")
 
 if __name__ == "__main__":
-    script_directory = os.path.dirname(__file__)
-    root_directory = os.path.abspath(os.path.join(script_directory, ".."))
+    base_dir = os.path.join(os.path.dirname(__file__), "..")
+    base_dir = os.path.abspath(base_dir)
+    base_dir = os.path.normpath(base_dir)
 
-    command_line_args = sys.argv[1:]
-
-    test_files = find_test_files(root_directory)
-    
-    if not test_files:
-        print(f"No 'test.py' files found in '{root_directory}' or its subfolders.")
-    else:
-        run_tests(test_files, command_line_args)
+    script_args = sys.argv[1:]
+    find_and_run_tests(base_dir, script_args)

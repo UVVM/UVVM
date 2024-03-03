@@ -1,3 +1,8 @@
+#
+# UVVM regression runner script
+# Written by Marius Elvegård, Inventas AS
+#
+
 import os
 import subprocess
 import glob
@@ -5,7 +10,27 @@ import sys
 import json
 
 
-def find_and_run_tests(base_dir="..", script_args=[]):
+def find_python3_executable():
+    python_executables = ["python3", "python"]
+
+    for executable in python_executables:
+        try:
+            output = (
+                subprocess.check_output(
+                    [executable, "--version"], stderr=subprocess.STDOUT
+                )
+                .decode()
+                .strip()
+            )
+            if "Python 3" in output:
+                return executable
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            continue
+    return None
+
+
+def find_and_run_tests(base_dir="..", script_args=[], python_exec="Python3"):
+
     pattern = os.path.join(base_dir, "*/script/maintenance_script/test.py")
 
     test_scripts = glob.glob(pattern, recursive=True)
@@ -13,6 +38,7 @@ def find_and_run_tests(base_dir="..", script_args=[]):
 
     non_zero_exit_codes = 0  # Counter for non-zero exit codes
     results_dict = {}
+    print("\n\nUVVM regression running with arguments {}\n\n".format(script_args))
 
     for test_script in test_scripts:
         sim_dir_relative_path = os.path.join(
@@ -28,21 +54,15 @@ def find_and_run_tests(base_dir="..", script_args=[]):
             os.makedirs(sim_dir)
 
         print(
-            "\n\n{}\nUVVMegression script running: {}".format(("=" * 80), module_name)
-        )
-        print(
-            "\n==> Execute {} in {} with arguments {}\n\n".format(
-                test_script, sim_dir, script_args
+            "\n\n{}\n{}\n =====>>>>>  UVVM regression script running  <<<<<===== \n{}".format(
+                ("=" * 80), (" " * 8), ("=" * 80)
             )
         )
 
-        script_path = os.path.relpath(test_script, start=sim_dir).replace("\\", "/")
-
-        return_code = 1
-
         try:
             return_code = subprocess.run(
-                ["python", os.path.relpath(test_script, start=sim_dir)] + script_args,
+                [python_exec, os.path.relpath(test_script, start=sim_dir)]
+                + script_args,
                 cwd=sim_dir,
             ).returncode
 
@@ -89,5 +109,7 @@ if __name__ == "__main__":
     base_dir = os.path.abspath(base_dir)
     base_dir = os.path.normpath(base_dir)
 
+    python_exe = find_python3_executable()
+
     script_args = sys.argv[1:]
-    find_and_run_tests(base_dir, script_args)
+    find_and_run_tests(base_dir, script_args, python_exe)

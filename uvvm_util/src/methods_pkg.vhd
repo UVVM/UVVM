@@ -3682,26 +3682,26 @@ package body methods_pkg is
   function get_time_unit(
     constant value : time
   ) return time is
-    variable time_unit : time;
+    variable v_time_unit : time;
   begin
     if (value >= 1 hr) then
-      time_unit := hr;
+      v_time_unit := hr;
     elsif (value >= 1 min) then
-      time_unit := min;
+      v_time_unit := min;
     elsif (value >= 1 sec) then
-      time_unit := sec;
+      v_time_unit := sec;
     elsif (value >= 1 ms) then
-      time_unit := ms;
+      v_time_unit := ms;
     elsif (value >= 1 us) then
-      time_unit := us;
+      v_time_unit := us;
     elsif (value >= 1 ns) then
-      time_unit := ns;
+      v_time_unit := ns;
     elsif (value >= 1 ps) then
-      time_unit := ps;
+      v_time_unit := ps;
     else
-      time_unit := fs;
+      v_time_unit := fs;
     end if;
-    return time_unit;
+    return v_time_unit;
   end;
 
   -- ============================================================================
@@ -6809,13 +6809,13 @@ package body methods_pkg is
   impure function random(
     constant length : integer
   ) return std_logic_vector is
-    variable random_vec : std_logic_vector(length - 1 downto 0);
+    variable v_random_vec : std_logic_vector(length - 1 downto 0);
   begin
     -- Iterate through each bit and randomly set to 0 or 1
     for i in 0 to length - 1 loop
-      random_vec(i downto i) := std_logic_vector(to_unsigned(random(0, 1), 1));
+      v_random_vec(i downto i) := std_logic_vector(to_unsigned(random(0, 1), 1));
     end loop;
-    return random_vec;
+    return v_random_vec;
   end;
 
   -- Return a random std_logic, using overload for the SLV version of random()
@@ -7546,16 +7546,16 @@ package body methods_pkg is
     constant C_VALUE_TYPE : string  := "std_logic";
     constant C_START_TIME : time    := now;
     constant C_NAME       : string  := "await_value(" & C_VALUE_TYPE & " " & to_string(exp) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
-    variable success      : boolean := false;
+    variable v_success    : boolean := false;
   begin
-    success := false;
+    v_success := false;
 
     if match_strictness = MATCH_EXACT then
       if (target /= exp) then
         wait until (target = exp) for max_time;
       end if;
       if (target = exp) then
-        success := true;
+        v_success := true;
       end if;
 
     elsif match_strictness = MATCH_STD_INCL_Z then
@@ -7563,7 +7563,7 @@ package body methods_pkg is
         wait until (std_match(target, exp) or (target = 'Z' and exp = 'Z')) for max_time;
       end if;
       if std_match(target, exp) or (target = 'Z' and exp = 'Z') then
-        success := true;
+        v_success := true;
       end if;
 
     elsif match_strictness = MATCH_STD_INCL_ZXUW then
@@ -7571,7 +7571,7 @@ package body methods_pkg is
         wait until (std_match(target, exp) or (target = 'Z' and exp = 'Z') or (target = 'X' and exp = 'X') or (target = 'U' and exp = 'U') or (target = 'W' and exp = 'W')) for max_time;
       end if;
       if std_match(target, exp) or (target = 'Z' and exp = 'Z') or (target = 'X' and exp = 'X') or (target = 'U' and exp = 'U') or (target = 'W' and exp = 'W') then
-        success := true;
+        v_success := true;
       end if;
 
     else
@@ -7582,12 +7582,12 @@ package body methods_pkg is
       end if;
 
       if ((exp = '1' or exp = 'H') and (target = '1' or target = 'H')) then
-        success := true;
+        v_success := true;
       elsif ((exp = '0' or exp = 'L') and (target = '0' or target = 'L')) then
-        success := true;
+        v_success := true;
       end if;
     end if;
-    check_time_window(success, now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
+    check_time_window(v_success, now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
   end;
 
   procedure await_value(
@@ -9712,7 +9712,7 @@ package body methods_pkg is
     constant crc_in     : in std_logic_vector;
     constant polynomial : in std_logic_vector
   ) return std_logic_vector is
-    variable crc_out : std_logic_vector(crc_in'range) := crc_in;
+    variable v_crc_out : std_logic_vector(crc_in'range) := crc_in;
   begin
     -- Sanity checks
     check_value(not data'ascending, TB_FAILURE, "data have to be decending", C_SCOPE, ID_NEVER);
@@ -9721,14 +9721,14 @@ package body methods_pkg is
     check_value(crc_in'length, polynomial'length - 1, TB_FAILURE, "crc_in have to be one bit shorter than polynomial", C_SCOPE, ID_NEVER);
 
     for i in data'high downto data'low loop
-      if crc_out(crc_out'high) xor data(i) then
-        crc_out := crc_out sll 1;
-        crc_out := crc_out xor polynomial(polynomial'high - 1 downto polynomial'low);
+      if v_crc_out(v_crc_out'high) xor data(i) then
+        v_crc_out := v_crc_out sll 1;
+        v_crc_out := v_crc_out xor polynomial(polynomial'high - 1 downto polynomial'low);
       else
-        crc_out := crc_out sll 1;
+        v_crc_out := v_crc_out sll 1;
       end if;
     end loop;
-    return crc_out;
+    return v_crc_out;
   end function generate_crc;
 
   impure function generate_crc(
@@ -9736,15 +9736,15 @@ package body methods_pkg is
     constant crc_in     : in std_logic_vector;
     constant polynomial : in std_logic_vector
   ) return std_logic_vector is
-    variable crc_out : std_logic_vector(crc_in'range) := crc_in;
+    variable v_crc_out : std_logic_vector(crc_in'range) := crc_in;
   begin
     -- Sanity checks
     check_value(data'ascending, TB_FAILURE, "slv array have to be acending", C_SCOPE, ID_NEVER);
 
     for i in data'low to data'high loop
-      crc_out := generate_crc(data(i), crc_out, polynomial);
+      v_crc_out := generate_crc(data(i), v_crc_out, polynomial);
     end loop;
-    return crc_out;
+    return v_crc_out;
   end function generate_crc;
 
 end package body methods_pkg;

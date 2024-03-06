@@ -29,12 +29,12 @@ def_args = [{"short" : "-r", "long" : "--requirement_list",     "type" : "in-fil
             {"short" : "-s", "long" : "--spec_cov",             "type" : "out-file",  "help" : "-s              Path/spec_cov.csv specification coverage file", "default" : "NA"},
             {"short" : "",   "long" : "--strictness",           "type" : "setting",   "help" : "--strictness N  Optional: will set specification coverage to strictness (1-2) (0=default)", "default" : "X"},
             {"short" : "",   "long" : "--config",               "type" : "config",    "help" : "--config        Optional: configuration file with all arguments", "default" : "NA"},
-            {"short" : "",   "long" : "--clean",                "type" : "household", "help" : "--clean         Will clean any/all partial coverage file(s)", "default" : "NA"},
+            {"short" : "",   "long" : "--clean",                "type" : "household", "help" : "--clean (DIR)   Will clean any/all partial coverage file(s) (default=current directory)", "default" : "NA"},
             {"short" : "-h", "long" : "--help",                 "type" : "help",      "help" : "--help          This help screen", "default" : "NA"} 
             ]
 
 # Default, non-configured run
-run_parameter_default = {"requirement_list" : None, "partial_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : False, "strictness" : 'X', "config" : None}
+run_parameter_default = {"requirement_list" : None, "partial_cov" : None, "requirement_map_list" : None, "spec_cov" : None, "clean" : None, "strictness" : 'X', "config" : None}
 
 
 #==========================================================================
@@ -1279,7 +1279,17 @@ def arg_parser(arguments):
                         run_configuration[key_word] = arguments[idx + 1]
 
                 elif argument[1] == "household":
-                    run_configuration[key_word] = True
+
+                    # Check if a next argument exists
+                    if (idx + 1) >= len(arguments):
+                        arg_value = "."
+                    # and is not a possible keyword
+                    elif arguments[idx+1][0] == '-':
+                        arg_value = "."
+                    else:
+                        arg_value = arguments[idx + 1]
+
+                    run_configuration[key_word] = arg_value
 
                 elif argument[1] == "help":
                     abort(error_code = 0)
@@ -1378,11 +1388,13 @@ def run_housekeeping(run_configuration):
        abort(error_code = 1, msg = error_msg)
 
     else:
+        clean_dir = run_configuration.get("clean")
         try:
             num_files_removed = 0
-            for filename in os.listdir("."):
+            for filename in os.listdir(clean_dir):
                 if filename.endswith(".csv"):
-                    os.remove(filename)
+                    file_path = os.path.join(clean_dir, filename)
+                    os.remove(file_path)
                     num_files_removed += 1
                 
             msg = ("Successfully removed %d CSV files." %(num_files_removed))
@@ -1432,7 +1444,7 @@ def main():
     run_configuration = arg_parser(sys.argv[1:])
 
     # If --clean parameter is applied
-    if run_configuration.get("clean"):
+    if run_configuration.get("clean") is not None:
         run_housekeeping(run_configuration)
 
     # If --config parameter is applied

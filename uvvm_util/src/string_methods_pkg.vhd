@@ -372,7 +372,6 @@ package body string_methods_pkg is
     val : string
   ) return string is
     variable v_result : string(val'range) := val;
-    variable char     : character;
   begin
     for i in val'range loop
       -- NOTE: Illegal characters are allowed and will pass through (check Mentor's std_developers_kit)
@@ -429,11 +428,11 @@ package body string_methods_pkg is
     justified : side            := RIGHT;
     format    : t_format_string := AS_IS -- No defaults on 4 first param - to avoid ambiguity with std.textio
   ) return string is
-    constant val_length : natural            := val'length;
-    variable result     : string(1 to width) := (others => ' ');
+    constant C_VAL_LENGTH : natural            := val'length;
+    variable result       : string(1 to width) := (others => ' ');
   begin
     -- return val if width is too small
-    if val_length >= width then
+    if C_VAL_LENGTH >= width then
       if (format = TRUNCATE) then
         return val(1 to width);
       else
@@ -441,9 +440,9 @@ package body string_methods_pkg is
       end if;
     end if;
     if justified = left then
-      result(1 to val_length) := val;
+      result(1 to C_VAL_LENGTH) := val;
     elsif justified = right then
-      result(width - val_length + 1 to width) := val;
+      result(width - C_VAL_LENGTH + 1 to width) := val;
     end if;
     return result;
   end function;
@@ -691,10 +690,10 @@ package body string_methods_pkg is
     variable v_line     : line;
     variable v_msg_line : line;
     impure function return_and_deallocate return string is
-      constant r : string := v_line.all;
+      constant C_RET : string := v_line.all;
     begin
       DEALLOCATE(v_line);
-      return r;
+      return C_RET;
     end function;
   begin
     bitvis_assert(val'length > 2, FAILURE, "String input is not wide enough (<3)", "get_procedure_name_from_instance_name()");
@@ -715,10 +714,10 @@ package body string_methods_pkg is
     variable v_line     : line;
     variable v_msg_line : line;
     impure function return_and_deallocate return string is
-      constant r : string := v_line.all;
+      constant C_RET : string := v_line.all;
     begin
       DEALLOCATE(v_line);
-      return r;
+      return C_RET;
     end function;
   begin
     bitvis_assert(val'length > 2, FAILURE, "String input is not wide enough (<3)", "get_process_name_from_instance_name()");
@@ -738,10 +737,10 @@ package body string_methods_pkg is
     variable v_line     : line;
     variable v_msg_line : line;
     impure function return_and_deallocate return string is
-      constant r : string := v_line.all;
+      constant C_RET : string := v_line.all;
     begin
       DEALLOCATE(v_line);
-      return r;
+      return C_RET;
     end function;
   begin
     bitvis_assert(val'length > 2, FAILURE, "String input is not wide enough (<3)", "get_entity_name_from_instance_name()");
@@ -763,14 +762,14 @@ package body string_methods_pkg is
     val    : string;
     format : t_format_zeros := SKIP_LEADING_0
   ) return string is
-    alias a_val                : string(1 to val'length) is val;
-    constant leftmost_non_zero : natural := pos_of_leftmost_non_zero(a_val, 1);
+    alias a_val                  : string(1 to val'length) is val;
+    constant C_LEFTMOST_NON_ZERO : natural := pos_of_leftmost_non_zero(a_val, 1);
   begin
     if val'length <= 1 then
       return val;
     end if;
     if format = SKIP_LEADING_0 then
-      return a_val(leftmost_non_zero to val'length);
+      return a_val(C_LEFTMOST_NON_ZERO to val'length);
     else
       return a_val;
     end if;
@@ -904,57 +903,57 @@ package body string_methods_pkg is
     constant alignment_pos2 : natural;  -- Line position of first aligned character in line 2
     constant line_width     : natural
   ) is
-    constant v_string           : string(1 to text_lines'length) := text_lines.all;
-    constant v_string_width     : natural                        := text_lines'length;
-    variable v_line_no          : natural                        := 0;
-    variable v_last_string_wrap : natural                        := 0;
-    variable v_min_string_wrap  : natural;
-    variable v_max_string_wrap  : natural;
+    constant C_TEXT_LINES_STR       : string(1 to text_lines'length) := text_lines.all;
+    constant C_TEXT_LINES_STR_WIDTH : natural                        := text_lines'length;
+    variable v_line_no              : natural                        := 0;
+    variable v_last_string_wrap     : natural                        := 0;
+    variable v_min_string_wrap      : natural;
+    variable v_max_string_wrap      : natural;
   begin
     deallocate(text_lines);             -- empty the line prior to filling it up again
     l_line : loop                       -- For every tekstline found in text_lines
       v_line_no := v_line_no + 1;
-      -- Find position to wrap in v_string
+      -- Find position to wrap in C_TEXT_LINES_STR
       if (v_line_no = 1) then
         v_min_string_wrap := 1;         -- Minimum 1 character of input line
-        v_max_string_wrap := minimum(line_width - alignment_pos1 + 1, v_string_width);
+        v_max_string_wrap := minimum(line_width - alignment_pos1 + 1, C_TEXT_LINES_STR_WIDTH);
         write(text_lines, fill_string(' ', alignment_pos1 - 1));
       else
         v_min_string_wrap := v_last_string_wrap + 1; -- Minimum 1 character further into the inpit line
-        v_max_string_wrap := minimum(v_last_string_wrap + (line_width - alignment_pos2 + 1), v_string_width);
+        v_max_string_wrap := minimum(v_last_string_wrap + (line_width - alignment_pos2 + 1), C_TEXT_LINES_STR_WIDTH);
         write(text_lines, fill_string(' ', alignment_pos2 - 1));
       end if;
 
       -- 1. First handle any potential explicit line feed in the current maximum text line
       -- Search forward for potential LF
-      for i in (v_last_string_wrap + 1) to minimum(v_max_string_wrap + 1, v_string_width) loop
-        if (character(v_string(i)) = LF) then
-          write(text_lines, v_string((v_last_string_wrap + 1) to i)); -- LF now terminates this part
+      for i in (v_last_string_wrap + 1) to minimum(v_max_string_wrap + 1, C_TEXT_LINES_STR_WIDTH) loop
+        if (character(C_TEXT_LINES_STR(i)) = LF) then
+          write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to i)); -- LF now terminates this part
           v_last_string_wrap := i;
           next l_line;                  -- next line
         end if;
       end loop;
 
       -- 2. Then check if remaining text fits into a single text line
-      if (v_string_width <= v_max_string_wrap) then
+      if (C_TEXT_LINES_STR_WIDTH <= v_max_string_wrap) then
         -- No (more) wrapping required
-        write(text_lines, v_string((v_last_string_wrap + 1) to v_string_width));
+        write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to C_TEXT_LINES_STR_WIDTH));
         exit;                           -- No more lines
       end if;
 
       -- 3. Search for blanks from char after max msg width and downwards (in the left direction)
       for i in v_max_string_wrap + 1 downto (v_last_string_wrap + 1) loop
-        if (character(v_string(i)) = ' ') then
-          write(text_lines, v_string((v_last_string_wrap + 1) to i - 1)); -- Exchange last blank with LF
+        if (character(C_TEXT_LINES_STR(i)) = ' ') then
+          write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to i - 1)); -- Exchange last blank with LF
           v_last_string_wrap := i;
-          if (i = v_string_width) then
+          if (i = C_TEXT_LINES_STR_WIDTH) then
             exit l_line;
           end if;
           -- Skip any potential extra blanks in the string
-          for j in (i + 1) to v_string_width loop
-            if (v_string(j) = ' ') then
+          for j in (i + 1) to C_TEXT_LINES_STR_WIDTH loop
+            if (C_TEXT_LINES_STR(j) = ' ') then
               v_last_string_wrap := j;
-              if (j = v_string_width) then
+              if (j = C_TEXT_LINES_STR_WIDTH) then
                 exit l_line;
               end if;
             else
@@ -968,7 +967,7 @@ package body string_methods_pkg is
 
       -- 4. At this point no LF or blank is found in the searched section of the string.
       --    Hence just break the string - and continue.
-      write(text_lines, v_string((v_last_string_wrap + 1) to v_max_string_wrap) & LF); -- Added LF termination
+      write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to v_max_string_wrap) & LF); -- Added LF termination
       v_last_string_wrap := v_max_string_wrap;
     end loop;
   end;
@@ -977,11 +976,11 @@ package body string_methods_pkg is
     variable text_lines : inout line;
     constant prefix     : string := C_LOG_PREFIX
   ) is
-    constant v_string           : string(1 to text_lines'length) := text_lines.all;
-    constant v_string_width     : natural                        := text_lines'length;
-    constant prefix_width       : natural                        := prefix'length;
-    variable v_last_string_wrap : natural                        := 0;
-    variable i                  : natural                        := 0; -- for indexing v_string
+    constant C_TEXT_LINES_STR       : string(1 to text_lines'length) := text_lines.all;
+    constant C_TEXT_LINES_STR_WIDTH : natural                        := text_lines'length;
+    constant prefix_width           : natural                        := prefix'length;
+    variable v_last_string_wrap     : natural                        := 0;
+    variable v_i                    : natural                        := 0; -- for indexing text_lines_str
   begin
     deallocate(text_lines);             -- empty the line prior to filling it up again
     l_line : loop
@@ -989,24 +988,24 @@ package body string_methods_pkg is
       write(text_lines, prefix);
       -- 2. Write rest of text line (or rest of input line if no LF)
       l_char : loop
-        i := i + 1;
-        if (i < v_string_width) then
-          if (character(v_string(i)) = LF) then
-            write(text_lines, v_string((v_last_string_wrap + 1) to i));
-            v_last_string_wrap := i;
+        v_i := v_i + 1;
+        if (v_i < C_TEXT_LINES_STR_WIDTH) then
+          if (character(C_TEXT_LINES_STR(v_i)) = LF) then
+            write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to v_i));
+            v_last_string_wrap := v_i;
             exit l_char;
           end if;
         else
           -- 3. Reached end of string. Hence just write the rest.
-          write(text_lines, v_string((v_last_string_wrap + 1) to v_string_width));
+          write(text_lines, C_TEXT_LINES_STR((v_last_string_wrap + 1) to C_TEXT_LINES_STR_WIDTH));
           --    But ensure new line with prefix if ending with LF
-          if (v_string(i) = LF) then
+          if (C_TEXT_LINES_STR(v_i) = LF) then
             write(text_lines, prefix);
           end if;
           exit l_char;
         end if;
       end loop;
-      if (i = v_string_width) then
+      if (v_i = C_TEXT_LINES_STR_WIDTH) then
         exit;
       end if;
     end loop;
@@ -1017,14 +1016,14 @@ package body string_methods_pkg is
     target_char   : character;
     exchange_char : character
   ) return string is
-    variable result : string(1 to val'length) := val;
+    variable v_result : string(1 to val'length) := val;
   begin
     for i in val'range loop
       if val(i) = target_char then
-        result(i) := exchange_char;
+        v_result(i) := exchange_char;
       end if;
     end loop;
-    return result;
+    return v_result;
   end;
 
   procedure replace(
@@ -1034,16 +1033,16 @@ package body string_methods_pkg is
   ) is
     variable v_string       : string(1 to text_line'length) := text_line.all;
     variable v_string_width : natural                       := text_line'length;
-    variable i              : natural                       := 0; -- for indexing v_string
+    variable v_i            : natural                       := 0; -- for indexing v_string
   begin
     if v_string_width > 0 then
       deallocate(text_line);            -- empty the line prior to filling it up again
       -- 1. Loop through string and replace characters
       l_char : loop
-        i := i + 1;
-        if (i < v_string_width) then
-          if (character(v_string(i)) = target_char) then
-            v_string(i) := exchange_char;
+        v_i := v_i + 1;
+        if (v_i < v_string_width) then
+          if (character(v_string(v_i)) = target_char) then
+            v_string(v_i) := exchange_char;
           end if;
         else
           -- 2. Reached end of string. Hence just write the new string.
@@ -1084,10 +1083,10 @@ package body string_methods_pkg is
     variable v_width        : natural;
     variable v_use_end_char : boolean                       := false;
     impure function return_and_deallocate return string is
-      constant r : string := v_line.all;
+      constant C_RET : string := v_line.all;
     begin
       DEALLOCATE(v_line);
-      return r;
+      return C_RET;
     end function;
 
   begin
@@ -1573,9 +1572,9 @@ package body string_methods_pkg is
     width     : natural;
     justified : side := right
   ) return string is
-    constant inner_string : string := t_alert_level'image(val);
+    constant C_INNER_STRING : string := t_alert_level'image(val);
   begin
-    return to_upper(justify(inner_string, justified, width));
+    return to_upper(justify(C_INNER_STRING, justified, width));
   end function;
 
   function to_string(
@@ -1583,9 +1582,9 @@ package body string_methods_pkg is
     width     : natural;
     justified : side := right
   ) return string is
-    constant inner_string : string := t_msg_id'image(val);
+    constant C_INNER_STRING : string := t_msg_id'image(val);
   begin
-    return to_upper(justify(inner_string, justified, width));
+    return to_upper(justify(C_INNER_STRING, justified, width));
   end function;
 
   function to_string(
@@ -1602,9 +1601,9 @@ package body string_methods_pkg is
     width     : natural;
     justified : side := right
   ) return string is
-    constant inner_string : string := t_check_type'image(val);
+    constant C_INNER_STRING : string := t_check_type'image(val);
   begin
-    return to_upper(justify(inner_string, justified, width));
+    return to_upper(justify(C_INNER_STRING, justified, width));
   end function;
 
   procedure to_string(
@@ -1617,16 +1616,16 @@ package body string_methods_pkg is
     variable v_less_than_expected_alerts       : boolean := false;
     variable v_more_than_expected_minor_alerts : boolean := false;
     variable v_less_than_expected_minor_alerts : boolean := false;
-    constant prefix                            : string  := C_LOG_PREFIX & "     ";
+    constant C_PREFIX                          : string  := C_LOG_PREFIX & "     ";
 
     -- NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK
   begin
     if order = INTERMEDIATE then
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "*** INTERMEDIATE SUMMARY OF ALL ALERTS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
+            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "*** INTERMEDIATE SUMMARY OF ALL ALERTS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
     else                                -- order=FINAL
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "*** FINAL SUMMARY OF ALL ALERTS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
+            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "*** FINAL SUMMARY OF ALL ALERTS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
     end if;
 
     for i in NOTE to t_alert_level'right loop
@@ -1653,7 +1652,7 @@ package body string_methods_pkg is
         end if;
       end if;
     end loop;
-    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     -- Print a conclusion when called from the FINAL part of the test sequencer
     -- but not when called from in the middle of the test sequence (order=INTERMEDIATE)
     if order = FINAL then
@@ -1666,11 +1665,11 @@ package body string_methods_pkg is
       else
         write(v_line, ">> Simulation SUCCESS: No mismatch between counted and expected serious alerts" & LF);
       end if;
-      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
+      write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
     end if;
 
-    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - prefix'length);
-    prefix_lines(v_line, prefix);
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+    prefix_lines(v_line, C_PREFIX);
 
     -- Write the info string to the target file
     write(v_line_copy, v_line.all);     -- copy line
@@ -1688,14 +1687,14 @@ package body string_methods_pkg is
     variable v_line_copy                 : line;
     variable v_more_than_expected_alerts : boolean := false;
     variable v_less_than_expected_alerts : boolean := false;
-    constant prefix                      : string  := C_LOG_PREFIX & "     ";
+    constant C_PREFIX                    : string  := C_LOG_PREFIX & "     ";
   begin
     if order = INTERMEDIATE then
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "*** INTERMEDIATE SUMMARY OF ALL CHECK COUNTERS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "*** INTERMEDIATE SUMMARY OF ALL CHECK COUNTERS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     else                                -- order=FINAL
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "*** FINAL SUMMARY OF ALL CHECK COUNTERS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
+            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "*** FINAL SUMMARY OF ALL CHECK COUNTERS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     end if;
 
     for i in CHECK_VALUE to t_check_type'right loop
@@ -1704,10 +1703,10 @@ package body string_methods_pkg is
       write(v_line, "" & LF);
     end loop;
 
-    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & LF);
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
 
-    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - prefix'length);
-    prefix_lines(v_line, prefix);
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+    prefix_lines(v_line, C_PREFIX);
 
     -- Write the info string to the target file
     write(v_line_copy, v_line.all);     -- copy line

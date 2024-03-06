@@ -45,6 +45,7 @@ end entity axi_th;
 architecture struct of axi_th is
 
   constant C_AXI_CONFIG_1 : t_axi_bfm_config := (
+    general_severity         => ERROR,
     max_wait_cycles          => 1000,
     max_wait_cycles_severity => TB_FAILURE,
     clock_period             => 10 ns,
@@ -65,6 +66,7 @@ architecture struct of axi_th is
   );
 
   constant C_AXI_CONFIG_2 : t_axi_bfm_config := (
+    general_severity         => ERROR,
     max_wait_cycles          => 1000,
     max_wait_cycles_severity => TB_FAILURE,
     clock_period             => 10 ns,

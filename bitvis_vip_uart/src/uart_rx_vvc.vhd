@@ -252,6 +252,8 @@ begin
       -- update vvc activity
       update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
+      v_num_data_bits := vvc_config.bfm_config.num_data_bits;
+
       -- Set the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;
       transaction_info.operation := v_cmd.operation;

@@ -13,6 +13,7 @@ Released: 202X-XX-XX
 - Fixed typo in Figure 6, section 2.3.2 in VVC_Framework_Manual.
 - Updated vvc_generator.py to move sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
 - Updated vvc_generator.py generation of vvc_context file.
+- Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
 
 v2.12.5
 ----------

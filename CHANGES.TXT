@@ -48,6 +48,7 @@ Released: 2023-XX-XX
 - Added general_severity to AXI bfm config record. Replaces error as default alert level in BFM and VVC. From pull request by user EMAZAC.
 - Increased C_MAX_TUSER_BITS to 64 in Axistream BFM. (allows for higher GC_USER_WIDTH)
 - Updated vvc_generator.py generation of vvc_context file.
+- Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
 
 
 v2 2023.09.16

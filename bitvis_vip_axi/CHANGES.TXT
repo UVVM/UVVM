@@ -13,6 +13,7 @@ Released: 202X-XX-XX
 - Use the function get_scope_for_log() to generate VVC scope.
 - Moved sb_pkg from methods_pkg to new vvc_sb_pkg.
 - Added general_severity to bfm config record. Replaces error as default alert level in BFM and VVC. From pull request by user EMAZAC.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
 v1.0.2
 ----------

@@ -49,6 +49,7 @@ Released: 2023-XX-XX
 - Increased C_MAX_TUSER_BITS to 64 in Axistream BFM. (allows for higher GC_USER_WIDTH)
 - Updated vvc_generator.py generation of vvc_context file.
 - Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in some VVCs.
 
 
 v2 2023.09.16

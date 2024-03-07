@@ -15,6 +15,7 @@ Released: 202X-XX-XX
 - Fixed data length typo in Axistream BFM- and VVC Quick Reference.
 - Added functionality for extended error mismatch message for data.
 - Increased C_MAX_TUSER_BITS to 64 in BFM. (allows for higher GC_USER_WIDTH)
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
 v4.7.8
 ----------

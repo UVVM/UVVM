@@ -12,6 +12,7 @@ Released: 202X-XX-XX
 - Fixed compilation warning vcom-1090.
 - Use the function get_scope_for_log() to generate VVC scope.
 - Moved sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
 v1.8.6
 ----------

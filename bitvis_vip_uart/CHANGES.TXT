@@ -15,6 +15,7 @@ Released: 202X-XX-XX
 - Normalized the data parameter in the uart_transmit and uart_expect BFM procedure.
 - Fixed the wrong example for uart_expect in UART BFM Quick Reference.
 - Moved sb_pkg from methods_pkg to new vvc_sb_pkg.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
 v2.8.7
 ----------

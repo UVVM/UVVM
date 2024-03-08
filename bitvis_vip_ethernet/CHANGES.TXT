@@ -2,7 +2,7 @@ Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
 
-v1.0.0
+v0.3.0
 ----------
 Released: 2024-03-08
 - Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.

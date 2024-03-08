@@ -10,9 +10,9 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
-v2 2023.XX.XX
+v2 2023.03.08
 --------------------
-Released: 2023-XX-XX
+Released: 2023-03-08
 - Updated vvc_transaction_info in all VVCs to also trigger after the BFM call with updated data and the status
   COMPLETED. Updated vvc_generator.py script.
 - Added missing scope to alert in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
@@ -50,6 +50,7 @@ Released: 2023-XX-XX
 - Updated vvc_generator.py generation of vvc_context file.
 - Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
 - Added executor_is_busy to interpreter_terminate_current_command() missing in some VVCs.
+- Thanks to @m-kru, @malsheimer, @am9417 and @EMAZAC for PR and contributions.
 
 
 v2 2023.09.16

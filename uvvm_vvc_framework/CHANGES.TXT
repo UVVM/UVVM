@@ -4,7 +4,7 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 v2.12.6
 ----------
-Released: 202X-XX-XX
+Released: 2024-03-08
 - Updated vvc_generator.py with vvc_transaction_info updates.
 - Updated vvc_generator.py to fix compilation warning vcom-1090.
 - Updated vvc_generator.py to use the function get_scope_for_log() to generate VVC scope.

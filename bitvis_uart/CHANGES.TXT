@@ -3,7 +3,7 @@ Bitvis UART - Overview on Versions and Changes
 
 v1.1.7
 ----------
-Released: 20XX-XX-XX
+Released: 2024-03-08
 - Added functionality for 7-bit UART data
 
 v1.1.6

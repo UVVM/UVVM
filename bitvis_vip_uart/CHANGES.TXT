@@ -4,7 +4,7 @@ Bitvis VIP UART - Overview on Versions and Changes
 
 v3.0.0
 ----------
-Released: 202X-XX-XX
+Released: 2024-03-08
 - Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.
 - Added missing scope to alert in set_global_vvc_transaction_info procedure.
 - Removed unnecessary constraining in set_global_vvc_transaction_info procedure.

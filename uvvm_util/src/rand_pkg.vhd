@@ -1411,6 +1411,19 @@ package body rand_pkg is
     ran_incl : t_range_sig_vec_ptr;
   end record;
 
+  -- These subtypes are used to initialize a vector with zero elements
+  subtype t_null_integer_vector             is integer_vector(1 to 0);
+  subtype t_null_real_vector                is real_vector(1 to 0);
+  subtype t_null_time_vector                is time_vector(1 to 0);
+  subtype t_null_range_int_vec              is t_range_int_vec(1 to 0);
+  subtype t_null_range_weight_mode_int_vec  is t_range_weight_mode_int_vec(1 to 0);
+  subtype t_null_range_real_vec             is t_range_real_vec(1 to 0);
+  subtype t_null_range_weight_mode_real_vec is t_range_weight_mode_real_vec(1 to 0);
+  subtype t_null_range_time_vec             is t_range_time_vec(1 to 0);
+  subtype t_null_range_weight_mode_time_vec is t_range_weight_mode_time_vec(1 to 0);
+  subtype t_null_range_uns_vec              is t_range_uns_vec(1 to 0);
+  subtype t_null_range_sig_vec              is t_range_sig_vec(1 to 0);
+
   ------------------------------------------------------------
   -- Base procedures
   ------------------------------------------------------------
@@ -1508,23 +1521,23 @@ package body rand_pkg is
     -- Multi-method rand() configuration
     variable priv_cyclic_mode             : t_cyclic                            := NON_CYCLIC;
     variable priv_uniqueness              : t_uniqueness                        := NON_UNIQUE;
-    variable priv_int_constraints         : t_int_constraints                   := (ran_incl        => new t_range_int_vec(1 to 0),
-                                                                                    val_incl        => new integer_vector(1 to 0),
-                                                                                    val_excl        => new integer_vector(1 to 0),
-                                                                                    weighted        => new t_range_weight_mode_int_vec(1 to 0),
+    variable priv_int_constraints         : t_int_constraints                   := (ran_incl        => new t_null_range_int_vec,
+                                                                                    val_incl        => new t_null_integer_vector,
+                                                                                    val_excl        => new t_null_integer_vector,
+                                                                                    weighted        => new t_null_range_weight_mode_int_vec,
                                                                                     weighted_config => false);
-    variable priv_real_constraints        : t_real_constraints                  := (ran_incl        => new t_range_real_vec(1 to 0),
-                                                                                    val_incl        => new real_vector(1 to 0),
-                                                                                    val_excl        => new real_vector(1 to 0),
-                                                                                    weighted        => new t_range_weight_mode_real_vec(1 to 0),
+    variable priv_real_constraints        : t_real_constraints                  := (ran_incl        => new t_null_range_real_vec,
+                                                                                    val_incl        => new t_null_real_vector,
+                                                                                    val_excl        => new t_null_real_vector,
+                                                                                    weighted        => new t_null_range_weight_mode_real_vec,
                                                                                     weighted_config => false);
-    variable priv_time_constraints        : t_time_constraints                  := (ran_incl        => new t_range_time_vec(1 to 0),
-                                                                                    val_incl        => new time_vector(1 to 0),
-                                                                                    val_excl        => new time_vector(1 to 0),
-                                                                                    weighted        => new t_range_weight_mode_time_vec(1 to 0),
+    variable priv_time_constraints        : t_time_constraints                  := (ran_incl        => new t_null_range_time_vec,
+                                                                                    val_incl        => new t_null_time_vector,
+                                                                                    val_excl        => new t_null_time_vector,
+                                                                                    weighted        => new t_null_range_weight_mode_time_vec,
                                                                                     weighted_config => false);
-    variable priv_uns_constraints         : t_uns_constraints                   := (ran_incl => new t_range_uns_vec(1 to 0));
-    variable priv_sig_constraints         : t_sig_constraints                   := (ran_incl => new t_range_sig_vec(1 to 0));
+    variable priv_uns_constraints         : t_uns_constraints                   := (ran_incl => new t_null_range_uns_vec);
+    variable priv_sig_constraints         : t_sig_constraints                   := (ran_incl => new t_null_range_sig_vec);
 
     -- The number of attempts for a random value to be generated with exclude constraints is multiplied by this constant
     constant C_NUM_INVALID_TRIES : natural := 10;
@@ -6259,36 +6272,36 @@ package body rand_pkg is
       DEALLOCATE(priv_int_constraints.val_incl);
       DEALLOCATE(priv_int_constraints.val_excl);
       DEALLOCATE(priv_int_constraints.weighted);
-      priv_int_constraints.ran_incl        := new t_range_int_vec(1 to 0);
-      priv_int_constraints.val_incl        := new integer_vector(1 to 0);
-      priv_int_constraints.val_excl        := new integer_vector(1 to 0);
-      priv_int_constraints.weighted        := new t_range_weight_mode_int_vec(1 to 0);
+      priv_int_constraints.ran_incl        := new t_null_range_int_vec;
+      priv_int_constraints.val_incl        := new t_null_integer_vector;
+      priv_int_constraints.val_excl        := new t_null_integer_vector;
+      priv_int_constraints.weighted        := new t_null_range_weight_mode_int_vec;
       priv_int_constraints.weighted_config := false;
 
       DEALLOCATE(priv_real_constraints.ran_incl);
       DEALLOCATE(priv_real_constraints.val_incl);
       DEALLOCATE(priv_real_constraints.val_excl);
       DEALLOCATE(priv_real_constraints.weighted);
-      priv_real_constraints.ran_incl        := new t_range_real_vec(1 to 0);
-      priv_real_constraints.val_incl        := new real_vector(1 to 0);
-      priv_real_constraints.val_excl        := new real_vector(1 to 0);
-      priv_real_constraints.weighted        := new t_range_weight_mode_real_vec(1 to 0);
+      priv_real_constraints.ran_incl        := new t_null_range_real_vec;
+      priv_real_constraints.val_incl        := new t_null_real_vector;
+      priv_real_constraints.val_excl        := new t_null_real_vector;
+      priv_real_constraints.weighted        := new t_null_range_weight_mode_real_vec;
       priv_real_constraints.weighted_config := false;
 
       DEALLOCATE(priv_time_constraints.ran_incl);
       DEALLOCATE(priv_time_constraints.val_incl);
       DEALLOCATE(priv_time_constraints.val_excl);
       DEALLOCATE(priv_time_constraints.weighted);
-      priv_time_constraints.ran_incl        := new t_range_time_vec(1 to 0);
-      priv_time_constraints.val_incl        := new time_vector(1 to 0);
-      priv_time_constraints.val_excl        := new time_vector(1 to 0);
-      priv_time_constraints.weighted        := new t_range_weight_mode_time_vec(1 to 0);
+      priv_time_constraints.ran_incl        := new t_null_range_time_vec;
+      priv_time_constraints.val_incl        := new t_null_time_vector;
+      priv_time_constraints.val_excl        := new t_null_time_vector;
+      priv_time_constraints.weighted        := new t_null_range_weight_mode_time_vec;
       priv_time_constraints.weighted_config := false;
 
       DEALLOCATE(priv_uns_constraints.ran_incl);
-      priv_uns_constraints.ran_incl := new t_range_uns_vec(1 to 0);
+      priv_uns_constraints.ran_incl := new t_null_range_uns_vec;
       DEALLOCATE(priv_sig_constraints.ran_incl);
-      priv_sig_constraints.ran_incl := new t_range_sig_vec(1 to 0);
+      priv_sig_constraints.ran_incl := new t_null_range_sig_vec;
     end procedure;
 
     procedure clear_config(

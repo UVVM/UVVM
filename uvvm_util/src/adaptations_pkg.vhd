@@ -172,10 +172,13 @@ package adaptations_pkg is
     -- SB package
     ID_DATA,                            -- To write general handling of data
     ID_CTRL,                            -- To write general control/config information
-    -- Specification vs Verification IDs
+    -- Specification requirement coverage
+    ID_SPEC_COV_INIT,                   -- Used for logging specification requirement coverage initialization
+    ID_SPEC_COV_REQS,                   -- Used for logging the specification requirement list
+    ID_SPEC_COV,                        -- Used for logging general specification requirement coverage methods
+    -- File handling
     ID_FILE_OPEN_CLOSE,                 -- Id used when opening / closing file
     ID_FILE_PARSER,                     -- Id used in file parsers
-    ID_SPEC_COV,                        -- Messages from the specification coverage methods
     -- Special purpose - Not really IDs
     ALL_MESSAGES                        -- Applies to ALL message ID apart from ID_NEVER
   );
@@ -219,6 +222,11 @@ package adaptations_pkg is
   );
 
   constant C_MSG_DELIMITER : character := ''';
+
+  -- Switch for setting the extent of error reports in mismatched stream data. Options are EXTENDED and BRIEF,
+  -- where EXTENDED prints all received data with error, and BRIEF exclusively prints first mismatched word.
+  -- Applies to RGMII, GMII, Avalon_st and Axistream
+  constant C_ERROR_REPORT_EXTENT : t_error_report_extent := EXTENDED;
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Alert counters

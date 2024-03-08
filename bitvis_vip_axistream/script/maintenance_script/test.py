@@ -56,7 +56,7 @@ for config in configs:
                     generics=["GC_DATA_WIDTH", config[0], "GC_USER_WIDTH", config[1], "GC_ID_WIDTH", config[2], "GC_DEST_WIDTH", config[3], "GC_INCLUDE_TUSER", config[4], "GC_USE_SETUP_AND_HOLD", config[5]])
 
 
-configs = create_config(data_widths=[8, 16, 24, 64, 128], user_widths=[8], id_widths=[
+configs = create_config(data_widths=[8, 16, 24, 64, 128], user_widths=[8, 16], id_widths=[
                         8], dest_widths=[4], include_tuser=[True], use_setup_and_hold=[True])
 for config in configs:
     hr.add_generics(entity="axistream_vvc_simple_tb",
@@ -107,7 +107,7 @@ simulator_name = hr.settings.get_simulator_name()
 if simulator_name in ['MODELSIM', 'RIVIERA']:
     sim_options = '-t ns'
     # Set compile options
-    default_options = ["-suppress", "1346,1246,1236,1090", "-2008"]
+    default_options = ["-suppress", "1346,1246,1236", "-2008"]
     hr.set_simulator(simulator=simulator_name, com_options=default_options)
 
 hr.start(sim_options=sim_options)

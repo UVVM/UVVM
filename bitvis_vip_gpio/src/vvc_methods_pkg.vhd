@@ -23,13 +23,11 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.gpio_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
+use work.vvc_sb_pkg.all;
 
 --========================================================================================================================
 package vvc_methods_pkg is
@@ -110,14 +108,7 @@ package vvc_methods_pkg is
   shared variable shared_gpio_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_GPIO_VVC_CONFIG_DEFAULT);
   shared variable shared_gpio_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_gpio_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
-
-  -- Scoreboard
-  package gpio_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map(t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),
-                element_match     => std_match,
-                to_string_element => to_string);
-  use gpio_sb_pkg.all;
-  shared variable GPIO_VVC_SB : gpio_sb_pkg.t_generic_sb;
+  shared variable GPIO_VVC_SB                  : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC 
@@ -207,6 +198,15 @@ package vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
   procedure reset_vvc_transaction_info(
@@ -223,13 +223,6 @@ package vvc_methods_pkg is
                                          constant last_cmd_idx_executed                : in natural;
                                          constant command_queue_is_empty               : in boolean;
                                          constant scope                                : in string := C_VVC_NAME);
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-  function pad_gpio_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector;
 
 end package vvc_methods_pkg;
 
@@ -437,19 +430,42 @@ package body vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when SET | GET | CHECK | CHECK_STABLE | EXPECT | EXPECT_STABLE =>
-        vvc_transaction_info_group.bt.operation                                      := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.data(vvc_cmd.data'length - 1 downto 0)         := vvc_cmd.data;
-        vvc_transaction_info_group.bt.data_exp(vvc_cmd.data_exp'length - 1 downto 0) := vvc_cmd.data_exp;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)          := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                               := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                             := IN_PROGRESS;
+        vvc_transaction_info_group.bt.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.data               := vvc_cmd.data;
+        vvc_transaction_info_group.bt.data_exp           := vvc_cmd.data_exp;
+        vvc_transaction_info_group.bt.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        alert(TB_ERROR, "VVC operation not recognized", scope);
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_vvc_transaction_info;
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  begin
+    case vvc_cmd.operation is
+      when GET =>
+        vvc_transaction_info_group.bt.data               := vvc_result;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when others =>
+        alert(TB_ERROR, "VVC operation does not update vvc_result", scope);
     end case;
 
     wait for 0 ns;
@@ -462,6 +478,7 @@ package body vvc_methods_pkg is
     case vvc_cmd.operation is
       when SET | GET | CHECK | CHECK_STABLE | EXPECT | EXPECT_STABLE =>
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+
       when others =>
         null;
     end case;
@@ -498,16 +515,5 @@ package body vvc_methods_pkg is
     end if;
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-
-  function pad_gpio_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector is
-  begin
-    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end function pad_gpio_sb;
 
 end package body vvc_methods_pkg;

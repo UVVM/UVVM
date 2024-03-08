@@ -55,7 +55,7 @@ end entity gmii_tx_vvc;
 --==========================================================================================
 architecture behave of gmii_tx_vvc is
 
-  constant C_SCOPE      : string       := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
+  constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
 
   signal executor_is_busy      : boolean := false;
@@ -91,6 +91,8 @@ architecture behave of gmii_tx_vvc is
   end function;
 
 begin
+
+  assert GC_CHANNEL = TX report "GC_CHANNEL must be set accordingly to the VVC, i.e. TX" severity failure;
 
   --==========================================================================================
   -- Constructor
@@ -202,6 +204,7 @@ begin
       end if;
 
     end loop;
+    wait;
   end process;
   --==========================================================================================
 
@@ -269,8 +272,8 @@ begin
         -- VVC dedicated operations
         --===================================
         when WRITE =>
-          -- Set transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          -- Set vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.
           gmii_write(data_array                   => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
@@ -280,6 +283,9 @@ begin
                      scope                        => C_SCOPE,
                      msg_id_panel                 => v_msg_id_panel,
                      config                       => vvc_config.bfm_config);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
         -- UVVM common operations
         --===================================

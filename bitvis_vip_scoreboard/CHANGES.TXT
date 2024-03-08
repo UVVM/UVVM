@@ -1,6 +1,7 @@
 Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
+
 v2.3.1
 ----------
 Released: 2021-10-22

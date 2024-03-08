@@ -61,7 +61,7 @@ end entity ethernet_rx_vvc;
 --==========================================================================================
 architecture behave of ethernet_rx_vvc is
 
-  constant C_SCOPE      : string       := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
+  constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
 
   signal executor_is_busy      : boolean := false;
@@ -84,6 +84,8 @@ architecture behave of ethernet_rx_vvc is
   signal entry_num_in_vvc_activity_register : integer;
 
 begin
+
+  assert GC_CHANNEL = RX report "GC_CHANNEL must be set accordingly to the VVC, i.e. RX" severity failure;
 
   --==========================================================================================
   -- HVVC-to-VVC Bridge
@@ -216,6 +218,7 @@ begin
       end if;
 
     end loop;
+    wait;
   end process;
   --==========================================================================================
 
@@ -290,7 +293,7 @@ begin
         --===================================
         when RECEIVE =>
           -- Set vvc_transaction_info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the vvc_methods_pkg.
           priv_ethernet_receive_from_bridge(received_frame       => v_result.ethernet_frame,
@@ -315,9 +318,12 @@ begin
                                                         result       => v_result);
           end if;
 
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
+
         when EXPECT =>
           -- Set vvc_transaction_info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the vvc_methods_pkg.
           priv_ethernet_expect_from_bridge(fcs_error_severity   => vvc_config.bfm_config.fcs_error_severity,
@@ -328,6 +334,9 @@ begin
                                            vvc_transaction_info => vvc_transaction_info,
                                            scope                => C_SCOPE,
                                            msg_id_panel         => v_msg_id_panel);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
         -- UVVM common operations
         --===================================

@@ -22,6 +22,14 @@ Checks and awaits
 
 check_value()
 ----------------------------------------------------------------------------------------------------------------------------------
+
+.. hint::
+
+    Checking that a value is not equal to another value is possible by using a boolean expression as the [value] parameter. ::
+
+        --Example:
+        check_value((value_1 /= value_2), ERROR, "Checking that value_1 is not equal value_2");
+        
 Checks if value equals exp, and alerts with severity alert_level if the values do not match. The result of the check is returned as 
 a boolean if the method is called as a function. ::
 
@@ -2159,13 +2167,19 @@ The predefined message IDs are listed in the table below. All the message IDs ar
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_CTRL                  | To write general control/config information                                                         |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
-| -- **Specification vs Verification IDs**                                                                                       |
+| -- **Specification requirement coverage**                                                                                      |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SPEC_COV_INIT         | Used for logging specification requirement coverage initialization                                  |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SPEC_COV_REQS         | Used for logging the specification requirement list                                                 |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| ID_SPEC_COV              | Used for logging general specification requirement coverage methods                                 |
++--------------------------+-----------------------------------------------------------------------------------------------------+
+| -- **File handling**                                                                                                           |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_FILE_OPEN_CLOSE       | Id used when opening / closing file                                                                 |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_FILE_PARSER           | Id used in file parsers                                                                             |
-+--------------------------+-----------------------------------------------------------------------------------------------------+
-| ID_SPEC_COV              | Messages from the specification coverage methods                                                    |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | -- **Special purpose - Not really IDs**                                                                                        |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
@@ -2481,9 +2495,9 @@ The UVVM Utility Library must be compiled with VHDL 2008.
 Suppressed warnings
 ==================================================================================================================================
 The compile script compiles the Utility Library with the following directives for the vcom command to suppress warnings about the 
-use of protected types and a possible infinite loop in a VVC process. **These can be ignored.**
+use of protected types and interface objects not being globally static. **These can be ignored.**
 
-    * Modelsim: -suppress 1346,1236,1090
+    * Modelsim: -suppress 1346,1236
     * Riviera-PRO: -nowarn COMP96_0564 -nowarn COMP96_0048
 
 .. _util_simulator_compatibility:

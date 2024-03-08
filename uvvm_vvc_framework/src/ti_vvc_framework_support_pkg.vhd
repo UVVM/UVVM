@@ -18,15 +18,12 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.math_real.all;
-
-library std;
 use std.textio.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_protected_types_pkg.all;
+use work.ti_protected_types_pkg.all;
 
 package ti_vvc_framework_support_pkg is
 

@@ -58,8 +58,6 @@ UVVM is free and open source and has standardised the way to build good testbenc
 simple, and allows the FPGA community to share VVCs that will work together in a well-structured test harness.
 
 You may of course combine UVVM with any other legacy or 3rd party testbenches or verification models.
-`This post on LinkedIn <https://www.linkedin.com/pulse/what-uvvm-espen-tallaksen>`_ will give you some more info on why you should 
-use this library.
 
 **********************************************************************************************************************************
 Main Features

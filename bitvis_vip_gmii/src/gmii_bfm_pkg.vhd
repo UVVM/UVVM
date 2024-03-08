@@ -18,11 +18,11 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library uvvm_util;
-context uvvm_util.uvvm_util_context;
-
 library std;
 use std.textio.all;
+
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
 
 --================================================================================================================================
 --================================================================================================================================
@@ -383,14 +383,35 @@ package body gmii_bfm_pkg is
     end loop;
 
     -- Done. Report result
-    if v_length_error then
-      alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) & ". Expected " & to_string(v_normalized_data'length) & "." & LF & add_msg_delimiter(msg), scope);
-    elsif v_data_error_cnt /= 0 then
-      -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte) & ". Was " & to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
-    else
-      log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
+    if C_ERROR_REPORT_EXTENT = EXTENDED then
+      if v_length_error then
+        alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) & ". Expected " & to_string(v_normalized_data'length) 
+          & "." & LF & add_msg_delimiter(msg), scope);
+      elsif v_data_error_cnt /= 0 then
+        -- Use binary representation when mismatch is due to weak signals
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, 
+          NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+        alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " & 
+          to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), v_alert_radix, 
+          AS_IS, INCL_RADIX) & "." & LF & "Was:" & LF & to_string(v_rx_data_array, v_alert_radix, AS_IS) & LF & "Expected:" & LF & 
+          to_string(v_normalized_data, v_alert_radix, AS_IS) & LF & add_msg_delimiter(msg), scope);
+      else
+        log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      end if;
+    elsif C_ERROR_REPORT_EXTENT = BRIEF then
+      if v_length_error then
+        alert(alert_level, proc_call & "=> Failed. Mismatch in received data length. Was " & to_string(v_rx_data_len) & ". Expected " & to_string(v_normalized_data'length) 
+          & "." & LF & add_msg_delimiter(msg), scope);
+      elsif v_data_error_cnt /= 0 then
+        -- Use binary representation when mismatch is due to weak signals
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_byte), v_normalized_data(v_first_wrong_byte), MATCH_STD, 
+          NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+        alert(alert_level, proc_call & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in byte# " & to_string(v_first_wrong_byte+1) & ". Was " & 
+          to_string(v_rx_data_array(v_first_wrong_byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data(v_first_wrong_byte), v_alert_radix, 
+          AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
+      else
+        log(config.id_for_bfm, proc_call & "=> OK, received " & to_string(v_rx_data_array'length) & " bytes. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      end if;
     end if;
   end procedure;
 

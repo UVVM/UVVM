@@ -1,6 +1,20 @@
 Bitvis VIP Specification vs Verification - Overview on Versions and Changes
 ==============================================================
 
+
+v1.0.1
+----------
+Released: 2024-03-08
+- Fixed compilation warning vcom-1090.
+- Updated Section 10.2 in QuickRef.
+- Added an alert when CSV file line length is greater than the maximum supported size.
+- Skip leading whitespace in all fields when reading the CSV file.
+- Fixed crash that could occur when partial_cov file and spec_cov file are missing.
+- Added a feature for detection of reading old partial coverage files in the run_spec_cov.py script.
+- Updated spec_cov reporting in the run_spec_cov.py script.
+- Updated log messages and use new msg IDs for better verbosity.
+- Updated spec cov documentation for modified clean parameter to run_spec_cov.py
+
 v1.0.0
 ----------
 Released: 2023-03-10

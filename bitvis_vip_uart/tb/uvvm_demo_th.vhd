@@ -26,6 +26,7 @@ context uvvm_util.uvvm_util_context;    -- t_channel (RX/TX)
 
 library bitvis_vip_sbi;
 context bitvis_vip_sbi.vvc_context;
+use bitvis_vip_sbi.vvc_sb_support_pkg.all;
 
 library bitvis_vip_uart;
 context bitvis_vip_uart.vvc_context;
@@ -217,17 +218,10 @@ begin
       -- SBI transaction info
       -------------------------------
       if sbi_vvc_transaction_info_trigger'event then
-
-        case sbi_vvc_transaction_info.bt.operation is
-          when WRITE =>
-            -- add to UART scoreboard
-            UART_VVC_SB.add_expected(sbi_vvc_transaction_info.bt.data(C_DATA_WIDTH - 1 downto 0));
-
-          when READ =>
-            null;
-          when others =>
-            null;
-        end case;
+        if sbi_vvc_transaction_info.bt.operation = WRITE and sbi_vvc_transaction_info.bt.transaction_status = IN_PROGRESS then
+          -- add to UART scoreboard
+          UART_VVC_SB.add_expected(sbi_vvc_transaction_info.bt.data(C_DATA_WIDTH - 1 downto 0));
+        end if;
       end if;
 
       -------------------------------
@@ -242,24 +236,17 @@ begin
       -- UART TX transaction
       -------------------------------
       if uart_tx_transaction_info_trigger'event then
-
-        case uart_tx_transaction_info.bt.operation is
-          when TRANSMIT =>
-
-            -- Check if transaction is intended valid / free of error
-            if (uart_tx_transaction_info.bt.error_info.parity_bit_error = false) and (uart_tx_transaction_info.bt.error_info.stop_bit_error = false) then
-              -- Add to SBI scoreboard
-              SBI_VVC_SB.add_expected(pad_sbi_sb(uart_tx_transaction_info.bt.data(C_DATA_WIDTH - 1 downto 0)));
-              -- Wait for UART Transmit to finish before SBI VVC start
-              insert_delay(SBI_VVCT, 1, 12 * GC_BIT_PERIOD, "Wait for UART TX to finish");
-              -- Request SBI Read
-              sbi_read(SBI_VVCT, 1, GC_ADDR_RX_DATA, TO_SB, "SBI_READ");
-            end if;
-
-          when others =>
-            null;
-        end case;
-
+        if uart_tx_transaction_info.bt.operation = TRANSMIT and uart_tx_transaction_info.bt.transaction_status = IN_PROGRESS then
+          -- Check if transaction is intended valid / free of error
+          if (uart_tx_transaction_info.bt.error_info.parity_bit_error = false) and (uart_tx_transaction_info.bt.error_info.stop_bit_error = false) then
+            -- Add to SBI scoreboard
+            SBI_VVC_SB.add_expected(pad_sbi_sb(uart_tx_transaction_info.bt.data(C_DATA_WIDTH - 1 downto 0)));
+            -- Wait for UART Transmit to finish before SBI VVC start
+            insert_delay(SBI_VVCT, 1, 12 * GC_BIT_PERIOD, "Wait for UART TX to finish");
+            -- Request SBI Read
+            sbi_read(SBI_VVCT, 1, GC_ADDR_RX_DATA, TO_SB, "SBI_READ");
+          end if;
+        end if;
       end if;
 
     end loop;

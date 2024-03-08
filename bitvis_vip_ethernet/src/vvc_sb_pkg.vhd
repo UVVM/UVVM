@@ -10,24 +10,22 @@
 -- Note : Any functionality not explicitly described in the documentation is subject to change at any time
 ----------------------------------------------------------------------------------------------------------------------------------
 
----------------------------------------------------------------------------------------------
--- Description : See library quick reference (under 'doc') and README-file(s)
----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+-- Description   : See library quick reference (under 'doc') and README-file(s)
+------------------------------------------------------------------------------------------
 
+--==========================================================================================
+--  vvc_sb_pkg
+--==========================================================================================
 library ieee;
 use ieee.std_logic_1164.all;
-
-library uvvm_util;
-context uvvm_util.uvvm_util_context;
+use ieee.numeric_std.all;
 
 library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_pkg;
 
 use work.support_pkg.all;
 
---==========================================================================================
---==========================================================================================
-package ethernet_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
+package vvc_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
   generic map(t_element         => t_ethernet_frame,
               element_match     => ethernet_match,
               to_string_element => to_string);

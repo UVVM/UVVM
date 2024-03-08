@@ -24,7 +24,6 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library work;
 use work.axilite_bfm_pkg.all;
 
 --=================================================================================================

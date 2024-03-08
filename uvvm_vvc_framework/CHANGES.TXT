@@ -2,6 +2,19 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.6
+----------
+Released: 2024-03-08
+- Updated vvc_generator.py with vvc_transaction_info updates.
+- Updated vvc_generator.py to fix compilation warning vcom-1090.
+- Updated vvc_generator.py to use the function get_scope_for_log() to generate VVC scope.
+- Updated vvc_generator.py to add an assertion to check that the GC_CHANNEL generic is used correctly.
+- Updated vvc_generator.py to add missing scoreboard support in multiple executors.
+- Fixed typo in Figure 6, section 2.3.2 in VVC_Framework_Manual.
+- Updated vvc_generator.py to move sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
+- Updated vvc_generator.py generation of vvc_context file.
+- Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
+
 v2.12.5
 ----------
 Released: 2023-09-16

@@ -33,6 +33,7 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 -- Include Verification IPs
 library bitvis_vip_i2c;
 context bitvis_vip_i2c.vvc_context;
+use bitvis_vip_i2c.vvc_sb_support_pkg.all;
 
 library bitvis_vip_wishbone;
 context bitvis_vip_wishbone.vvc_context;

@@ -3,6 +3,16 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.4
+----------
+Released: 2024-03-08
+- Moved t_transaction_status type to types_pkg and added COMPLETED.
+- Added function for extracting closest time unit for time type.
+- Changed check_value and check_value_in_ranged to print formatted time types with closest fitting time unit.
+- Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
+- Added for latest version of Modelsim.
+- Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
+
 v2.19.3
 ----------
 Released: 2023-09-16

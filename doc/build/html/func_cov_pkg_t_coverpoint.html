@@ -45,11 +45,9 @@
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#getting-started">Getting started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#concepts">Concepts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#creating-and-adding-bins">Creating and adding bins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#bin-name">Bin name</a></li>
-<li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#minimum-coverage">Minimum coverage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#cross-coverage">Cross coverage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#sampling-coverage">Sampling coverage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="func_cov_pkg_overview.html#coverage-status">Coverage status</a></li>
@@ -987,7 +985,7 @@ value is shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="add-bins">
-<h2>add_bins()<a class="headerlink" href="#add-bins" title="Permalink to this headline"></a></h2>
+<span id="id1"></span><h2>add_bins()<a class="headerlink" href="#add-bins" title="Permalink to this headline"></a></h2>
 <p>Adds bins to the coverpoint. Must be used together with the <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a> which return a t_new_bin_array.
 Bin functions may be concatenated to add several bins at once.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span><span class="w"> </span><span class="n">min_hits</span><span class="p">,</span><span class="w"> </span><span class="n">rand_weight</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">bin_name</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span><span class="w"></span>
@@ -1277,7 +1275,7 @@ value is shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="sample-coverage">
-<h2>sample_coverage()<a class="headerlink" href="#sample-coverage" title="Permalink to this headline"></a></h2>
+<span id="id2"></span><h2>sample_coverage()<a class="headerlink" href="#sample-coverage" title="Permalink to this headline"></a></h2>
 <p>Samples a value (or values for crossed bins) in a coverpoint. If the value matches a bin, it will increase its number of hits and
 once the bin has reached its minimum number of hits, which is by default 1, it will be marked as covered.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sample_coverage</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">])</span><span class="w"></span>

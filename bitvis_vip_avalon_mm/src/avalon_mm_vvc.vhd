@@ -34,6 +34,7 @@ use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
 use work.transaction_pkg.all;
+use work.vvc_sb_support_pkg.all;
 
 --=================================================================================================
 entity avalon_mm_vvc is
@@ -66,7 +67,7 @@ end entity avalon_mm_vvc;
 
 architecture behave of avalon_mm_vvc is
 
-  constant C_SCOPE      : string       := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
+  constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
   signal vvc_is_active                   : boolean := false;
@@ -199,7 +200,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
-            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
+            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
             work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
@@ -225,6 +226,7 @@ begin
       end if;
 
     end loop;
+    wait;
   end process;
   --===============================================================================================
 
@@ -313,15 +315,15 @@ begin
         --===================================
         when WRITE =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Normalise address and data
-          v_normalised_addr                                              := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_write() called with to wide address. " & v_cmd.msg);
-          v_normalised_data                                              := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_write() called with to wide data. " & v_cmd.msg);
+          v_normalised_addr                                              := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_write() called with too wide address. " & v_cmd.msg);
+          v_normalised_data                                              := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_write() called with too wide data. " & v_cmd.msg);
           if (v_cmd.byte_enable = (0 to v_cmd.byte_enable'length - 1 => '1')) then
             v_normalised_byte_ena := (others => '1');
           else
-            v_normalised_byte_ena := normalize_and_check(v_cmd.byte_enable, v_normalised_byte_ena, ALLOW_WIDER_NARROWER, "v_cmd.byte_enable", "v_normalised_byte_ena", "avalon_mm_write() called with to wide byte_enable. " & v_cmd.msg);
+            v_normalised_byte_ena := normalize_and_check(v_cmd.byte_enable, v_normalised_byte_ena, ALLOW_WIDER_NARROWER, "v_cmd.byte_enable", "v_normalised_byte_ena", "avalon_mm_write() called with too wide byte_enable. " & v_cmd.msg);
           end if;
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0)              := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0)              := v_normalised_addr;
@@ -338,12 +340,15 @@ begin
                           msg_id_panel => v_msg_id_panel,
                           config       => vvc_config.bfm_config);
 
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+
         when READ =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Normalise address
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_read() called with to wide address. " & v_cmd.msg);
+          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_read() called with too wide address. " & v_cmd.msg);
 
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
 
@@ -383,15 +388,18 @@ begin
                                                           cmd_idx      => v_cmd.cmd_idx,
                                                           result       => v_read_data);
             end if;
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_SCOPE);
           end if;
 
         when CHECK =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Normalise address
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_check() called with to wide address. " & v_cmd.msg);
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_check() called with to wide data. " & v_cmd.msg);
+          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "avalon_mm_check() called with too wide address. " & v_cmd.msg);
+          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "avalon_mm_check() called with too wide data. " & v_cmd.msg);
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
@@ -422,11 +430,14 @@ begin
                             scope        => C_SCOPE,
                             msg_id_panel => v_msg_id_panel,
                             config       => vvc_config.bfm_config);
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
           end if;
 
         when RESET =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.
           avalon_mm_reset(clk            => clk,
@@ -437,9 +448,12 @@ begin
                           msg_id_panel   => v_msg_id_panel,
                           config         => vvc_config.bfm_config);
 
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+
         when LOCK =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.
           avalon_mm_lock(avalon_mm_if => avalon_mm_vvc_master_if,
@@ -448,9 +462,12 @@ begin
                          msg_id_panel => v_msg_id_panel,
                          config       => vvc_config.bfm_config);
 
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+
         when UNLOCK =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.
           avalon_mm_unlock(avalon_mm_if => avalon_mm_vvc_master_if,
@@ -458,6 +475,9 @@ begin
                            scope        => C_SCOPE,
                            msg_id_panel => v_msg_id_panel,
                            config       => vvc_config.bfm_config);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
         -- UVVM common operations
         --===================================
@@ -552,13 +572,13 @@ begin
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
 
       -- Normalise address and data
-      v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "Function called with to wide address. " & v_cmd.msg);
-      v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "Function called with to wide data. " & v_cmd.msg);
+      v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "Function called with too wide address. " & v_cmd.msg);
+      v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "Function called with too wide data. " & v_cmd.msg);
 
       case v_cmd.operation is
         when READ =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Initiate read response
           avalon_mm_read_response(addr_value   => v_normalised_addr,
@@ -580,9 +600,12 @@ begin
                                                         result       => v_read_data);
           end if;
 
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_SCOPE);
+
         when CHECK =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Initiate check response
           avalon_mm_check_response(addr_value   => v_normalised_addr,
@@ -594,6 +617,10 @@ begin
                                    scope        => C_SCOPE,
                                    msg_id_panel => v_msg_id_panel,
                                    config       => vvc_config.bfm_config);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_SCOPE);
 

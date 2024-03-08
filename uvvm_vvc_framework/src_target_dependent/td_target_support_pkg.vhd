@@ -213,9 +213,9 @@ package body td_target_support_pkg is
       end if;
     else
       if vvc_instance = -2 then
-        return to_string(value.vvc_name) & ",ALL_INSTANCES" & "," & to_string(v_channel);
+        return to_string(value.vvc_name) & ",ALL_INSTANCES" & "," & to_upper(to_string(v_channel));
       else
-        return to_string(value.vvc_name) & "," & to_string(v_instance) & "," & to_string(v_channel);
+        return to_string(value.vvc_name) & "," & to_string(v_instance) & "," & to_upper(to_string(v_channel));
       end if;
     end if;
   end;

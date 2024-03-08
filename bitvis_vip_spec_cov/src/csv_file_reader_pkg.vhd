@@ -1,9 +1,9 @@
 -- The CSV reader package was Retrieved from https://github.com/ricardo-jasinski/vhdl-csv-file-reader
 -- The package has been modified for use with UVVM.
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 use std.textio.all;
 
@@ -41,27 +41,25 @@ package csv_file_reader_pkg is
     impure function read_string return string;
     -- True when the end of the CSV file was reached
     impure function end_of_file return boolean;
-  end protected;
-end;
+  end protected csv_file_reader_type;
+
+end package csv_file_reader_pkg;
 
 package body csv_file_reader_pkg is
 
   type csv_file_reader_type is protected body
 
-    constant C_CSV_READER_SCOPE : string    := "CSV_READER";
-    variable v_CSV_delimiter    : character := ';';
-
-    file my_csv_file             : text;
-    -- cache one line at a time for read operations
-    variable current_line        : line;
-    -- true when end of file was reached and there are no more lines to read
-    variable end_of_file_reached : boolean;
+    constant C_CSV_READER_SCOPE       : string    := "CSV_READER";
+    variable priv_csv_delimiter       : character := ';';
+    file     priv_csv_file            : text;
+    variable priv_current_line        : line;    -- cache one line at a time for read operations
+    variable priv_end_of_file_reached : boolean; -- true when end of file was reached and there are no more lines to read
 
     -- True when the end of the CSV file was reached
     impure function end_of_file return boolean is
     begin
-      return end_of_file_reached;
-    end;
+      return priv_end_of_file_reached;
+    end function end_of_file;
 
     -- Open the CSV text file to be used for subsequent read operations
     impure function initialize(
@@ -70,18 +68,17 @@ package body csv_file_reader_pkg is
     ) return boolean is
       variable v_file_open_status : FILE_OPEN_STATUS;
     begin
-      v_CSV_delimiter := csv_delimiter;
-      log(ID_FILE_OPEN_CLOSE, "Opening CSV file " & file_pathname);
-      file_open(v_file_open_status, my_csv_file, file_pathname, READ_MODE);
+      priv_csv_delimiter := csv_delimiter;
+      file_open(v_file_open_status, priv_csv_file, file_pathname, READ_MODE);
       check_file_open_status(v_file_open_status, file_pathname);
 
-      end_of_file_reached := false;
+      priv_end_of_file_reached := false;
 
       -- Check that file is not empty
       if v_file_open_status = open_ok then
-        if endfile(my_csv_file) then
+        if endfile(priv_csv_file) then
           alert(TB_ERROR, "CSV file is empty " & file_pathname);
-          end_of_file_reached := true;
+          priv_end_of_file_reached := true;
           return false;
         end if;
       end if;
@@ -91,77 +88,83 @@ package body csv_file_reader_pkg is
       else
         return false;
       end if;
-    end;
+    end function initialize;
 
     -- Release (close) the associated CSV file
     procedure dispose is
     begin
-      log(ID_FILE_OPEN_CLOSE, "Closing CSV file");
-      file_close(my_csv_file);
-    end;
+      file_close(priv_csv_file);
+    end procedure dispose;
 
     -- Read one line from the csv file, and keep it in the cache
     procedure readline is
     begin
-      readline(my_csv_file, current_line);
-      end_of_file_reached := endfile(my_csv_file);
-    end;
+      readline(priv_csv_file, priv_current_line);
+      priv_end_of_file_reached := endfile(priv_csv_file);
+    end procedure readline;
 
     -- Skip a separator (comma character) in the current line
     procedure skip_separator is
-      variable dummy_string : string(1 to C_CSV_FILE_MAX_LINE_LENGTH);
+      variable v_dummy_string : string(1 to C_CSV_FILE_MAX_LINE_LENGTH);
     begin
-      dummy_string := read_string;
-    end;
+      v_dummy_string := read_string;
+    end procedure skip_separator;
 
     -- Read a string from the csv file and convert it to integer
     impure function read_integer return integer is
-      variable read_value : integer;
+      variable v_read_value : integer;
     begin
-      read(current_line, read_value);
+      read(priv_current_line, v_read_value);
       skip_separator;
-      return read_value;
-    end;
+      return v_read_value;
+    end function read_integer;
 
     -- Read a string from the csv file and convert it to real
     impure function read_real return real is
-      variable read_value : real;
+      variable v_read_value : real;
     begin
-      read(current_line, read_value);
+      read(priv_current_line, v_read_value);
       skip_separator;
-      return read_value;
-    end;
+      return v_read_value;
+    end function read_real;
 
     -- Read a string from the csv file and convert it to boolean
     impure function read_boolean return boolean is
     begin
       return boolean'value(read_string);
-    end;
+    end function read_boolean;
 
     impure function read_integer_as_boolean return boolean is
     begin
       return (read_integer /= 0);
-    end;
+    end function read_integer_as_boolean;
 
     -- Read a string from the csv file, until a delimiter is found
     impure function read_string return string is
-      variable return_string : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
-      variable read_char     : character;
-      variable read_ok       : boolean                                 := true;
-      variable index         : integer                                 := 1;
+      variable v_return_string           : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
+      variable v_read_char               : character;
+      variable v_read_ok                 : boolean                                 := true;
+      variable v_index                   : integer                                 := 1;
+      variable v_skip_leading_whitespace : boolean                                 := true;
     begin
-      read(current_line, read_char, read_ok);
-      while read_ok loop
-        if read_char = v_CSV_delimiter then
-          return return_string;
+      read(priv_current_line, v_read_char, v_read_ok);
+      l_read_char : while v_read_ok loop
+        if v_read_char = ' ' and v_skip_leading_whitespace then
+          null;
+        elsif v_read_char = priv_csv_delimiter then
+          exit l_read_char;
+        elsif v_index <= C_CSV_FILE_MAX_LINE_LENGTH then
+          v_return_string(v_index)  := v_read_char;
+          v_index                   := v_index + 1;
+          v_skip_leading_whitespace := false;
         else
-          return_string(index) := read_char;
-          index                := index + 1;
+          alert(FAILURE, "A line length in the CSV file is greater than C_CSV_FILE_MAX_LINE_LENGTH defined in local_adaptations_pkg.vhd", C_CSV_READER_SCOPE);
         end if;
-        read(current_line, read_char, read_ok);
-      end loop;
-      return return_string;
-    end;
-  end protected body;
+        read(priv_current_line, v_read_char, v_read_ok);
+      end loop l_read_char;
+      return v_return_string;
+    end function read_string;
 
-end;
+  end protected body csv_file_reader_type;
+
+end package body csv_file_reader_pkg;

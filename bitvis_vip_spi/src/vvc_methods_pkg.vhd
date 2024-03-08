@@ -24,14 +24,11 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.spi_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
-use work.td_vvc_framework_common_methods_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
+use work.vvc_sb_pkg.all;
 
 --=================================================================================================
 --=================================================================================================
@@ -121,14 +118,7 @@ package vvc_methods_pkg is
   shared variable shared_spi_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_SPI_VVC_CONFIG_DEFAULT);
   shared variable shared_spi_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_spi_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
-
-  -- Scoreboard
-  package spi_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map(t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),
-                element_match     => std_match,
-                to_string_element => to_string);
-  use spi_sb_pkg.all;
-  shared variable SPI_VVC_SB : spi_sb_pkg.t_generic_sb;
+  shared variable SPI_VVC_SB                  : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC 
@@ -421,6 +411,15 @@ package vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_slv_array;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
   procedure reset_vvc_transaction_info(
@@ -437,13 +436,6 @@ package vvc_methods_pkg is
                                          constant last_cmd_idx_executed                : in natural;
                                          constant command_queue_is_empty               : in boolean;
                                          constant scope                                : in string := C_VVC_NAME);
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-  function pad_spi_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector;
 
 end package vvc_methods_pkg;
 
@@ -478,7 +470,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                     := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -531,7 +523,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -586,8 +578,8 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0)     := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
-    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data(0)     := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
+    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                         := C_VVC_CMD_DEFAULT;
@@ -630,8 +622,8 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
-    v_normalized_data_exp                       := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
+    v_normalized_data_exp                       := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -670,7 +662,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0) := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data(0) := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                     := C_VVC_CMD_DEFAULT;
@@ -708,7 +700,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data                           := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- Locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -792,7 +784,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                         := C_VVC_CMD_DEFAULT;
@@ -832,7 +824,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data_exp                       := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data_exp                       := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                              := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -874,7 +866,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                     := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -925,7 +917,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                     := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data                     := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -978,8 +970,8 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0)     := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
-    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data(0)     := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
+    v_normalized_data_exp(0) := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                         := C_VVC_CMD_DEFAULT;
@@ -1021,8 +1013,8 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data                     := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
-    v_normalized_data_exp                 := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data                     := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
+    v_normalized_data_exp                 := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -1060,7 +1052,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data(0)                               := normalize_and_check(data, shared_vvc_cmd.data(0), ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                     := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -1096,7 +1088,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel    : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
 
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
@@ -1177,7 +1169,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize to t_slv_array
-    v_normalized_data_exp(0)                               := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data_exp(0)                               := normalize_and_check(data_exp, shared_vvc_cmd.data_exp(0), ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                                         := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -1216,7 +1208,7 @@ package body vvc_methods_pkg is
     variable v_msg_id_panel        : t_msg_id_panel                                                                        := shared_msg_id_panel;
   begin
     -- normalize
-    v_normalized_data_exp                 := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    v_normalized_data_exp                 := normalize_and_check(data_exp, shared_vvc_cmd.data_exp, ALLOW_WIDER_NARROWER, "data_exp", "shared_vvc_cmd.data_exp", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
     shared_vvc_cmd                        := C_VVC_CMD_DEFAULT;
     -- locking semaphore in set_general_target_and_command_fields to gain exclusive right to VVCT and shared_vvc_cmd
@@ -1242,26 +1234,49 @@ package body vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when MASTER_TRANSMIT_AND_RECEIVE | MASTER_TRANSMIT_AND_CHECK | MASTER_TRANSMIT_ONLY |
            MASTER_RECEIVE_ONLY | MASTER_CHECK_ONLY | SLAVE_TRANSMIT_AND_RECEIVE |
            SLAVE_TRANSMIT_AND_CHECK | SLAVE_TRANSMIT_ONLY | SLAVE_RECEIVE_ONLY | SLAVE_CHECK_ONLY =>
-        vvc_transaction_info_group.bt.operation                             := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.data                                  := vvc_cmd.data;
-        vvc_transaction_info_group.bt.data_exp                              := vvc_cmd.data_exp;
-        vvc_transaction_info_group.bt.num_words                             := vvc_cmd.num_words;
-        vvc_transaction_info_group.bt.word_length                           := vvc_cmd.word_length;
-        vvc_transaction_info_group.bt.when_to_start_transfer                := vvc_cmd.when_to_start_transfer;
-        vvc_transaction_info_group.bt.action_when_transfer_is_done          := vvc_cmd.action_when_transfer_is_done;
-        vvc_transaction_info_group.bt.action_between_words                  := vvc_cmd.action_between_words;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                    := IN_PROGRESS;
+        vvc_transaction_info_group.bt.operation                    := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.data                         := vvc_cmd.data;
+        vvc_transaction_info_group.bt.data_exp                     := vvc_cmd.data_exp;
+        vvc_transaction_info_group.bt.num_words                    := vvc_cmd.num_words;
+        vvc_transaction_info_group.bt.word_length                  := vvc_cmd.word_length;
+        vvc_transaction_info_group.bt.when_to_start_transfer       := vvc_cmd.when_to_start_transfer;
+        vvc_transaction_info_group.bt.action_when_transfer_is_done := vvc_cmd.action_when_transfer_is_done;
+        vvc_transaction_info_group.bt.action_between_words         := vvc_cmd.action_between_words;
+        vvc_transaction_info_group.bt.vvc_meta.msg                 := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx             := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status           := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        alert(TB_ERROR, "VVC operation not recognized", scope);
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_vvc_transaction_info;
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_slv_array;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  begin
+    case vvc_cmd.operation is
+      when MASTER_TRANSMIT_AND_RECEIVE | MASTER_RECEIVE_ONLY | SLAVE_TRANSMIT_AND_RECEIVE | SLAVE_RECEIVE_ONLY =>
+        vvc_transaction_info_group.bt.data               := vvc_result;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when others =>
+        alert(TB_ERROR, "VVC operation does not update vvc_result", scope);
     end case;
 
     wait for 0 ns;
@@ -1276,6 +1291,7 @@ package body vvc_methods_pkg is
            MASTER_RECEIVE_ONLY | MASTER_CHECK_ONLY | SLAVE_TRANSMIT_AND_RECEIVE |
            SLAVE_TRANSMIT_AND_CHECK | SLAVE_TRANSMIT_ONLY | SLAVE_RECEIVE_ONLY | SLAVE_CHECK_ONLY =>
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+
       when others =>
         null;
     end case;
@@ -1312,17 +1328,6 @@ package body vvc_methods_pkg is
     end if;
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-
-  function pad_spi_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector is
-  begin
-    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end function pad_spi_sb;
 
 end package body vvc_methods_pkg;
 

@@ -23,12 +23,10 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.wishbone_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
+use work.vvc_sb_pkg.all;
 
 --========================================================================================================================
 --========================================================================================================================
@@ -113,14 +111,7 @@ package vvc_methods_pkg is
   shared variable shared_wishbone_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_WISHBONE_VVC_CONFIG_DEFAULT);
   shared variable shared_wishbone_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
   shared variable shared_wishbone_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
-
-  -- Scoreboard
-  package wishbone_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map(t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),
-                element_match     => std_match,
-                to_string_element => to_string);
-  use wishbone_sb_pkg.all;
-  shared variable WISHBONE_VVC_SB : wishbone_sb_pkg.t_generic_sb;
+  shared variable WISHBONE_VVC_SB                  : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC 
@@ -182,13 +173,6 @@ package vvc_methods_pkg is
                                          constant command_queue_is_empty               : in boolean;
                                          constant scope                                : in string := C_VVC_NAME);
 
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-  function pad_wishbone_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector;
-
 end package vvc_methods_pkg;
 
 package body vvc_methods_pkg is
@@ -209,8 +193,8 @@ package body vvc_methods_pkg is
     constant proc_name : string := "wishbone_write";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -238,7 +222,7 @@ package body vvc_methods_pkg is
     constant proc_name : string := "wishbone_read";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0) := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0) := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                    := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -279,8 +263,8 @@ package body vvc_methods_pkg is
     constant proc_name : string := "wishbone_check";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -326,16 +310,5 @@ package body vvc_methods_pkg is
     end if;
     gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
   end procedure;
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-
-  function pad_wishbone_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector is
-  begin
-    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end function pad_wishbone_sb;
 
 end package body vvc_methods_pkg;

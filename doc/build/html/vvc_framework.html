@@ -1244,7 +1244,7 @@ Available information is dependent on VVC type and typical information is:</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">operation</span><span class="w">          </span><span class="o">:</span><span class="w"> </span><span class="n">t_operation</span><span class="p">;</span><span class="w">                                            </span><span class="c1">-- default NO_OPERATION</span><span class="w"></span>
 <span class="n">data</span><span class="w">               </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="n">C_VVC_CMD_DATA_MAX_LENGTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">-- default 0x0</span><span class="w"></span>
 <span class="n">vvc_meta</span><span class="w">           </span><span class="o">:</span><span class="w"> </span><span class="n">t_vvc_meta</span><span class="p">;</span><span class="w">                                             </span><span class="c1">-- default C_VVC_META_DEFAFULT</span><span class="w"></span>
-<span class="n">transaction_status</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_transaction_status</span><span class="p">;</span><span class="w">                                   </span><span class="c1">-- default C_TRANSACTION_STATUS_DEFAULT (INACTIVE)</span><span class="w"></span>
+<span class="n">transaction_status</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_transaction_status</span><span class="p">;</span><span class="w">                                   </span><span class="c1">-- default INACTIVE</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -1452,7 +1452,7 @@ general transaction record, whereas table 2 shows a concrete example for the SBI
 <p>Note that for a given interface/protocol, the VVC and the Monitor will use the same interface dedicated transaction record type -
 with some fields potentially unused.</p>
 <table class="docutils align-default" id="id14">
-<caption><span class="caption-text">Table 1 - General transaction record t_transaction. The fields in bold indicate optional or protocol dedicated fields</span><a class="headerlink" href="#id14" title="Permalink to this table"></a></caption>
+<caption><span class="caption-text">Table 1 - General transaction record t_base_transaction. The fields in bold indicate optional or protocol dedicated fields</span><a class="headerlink" href="#id14" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 20%" />
 <col style="width: 24%" />
@@ -1496,8 +1496,10 @@ fields, or a better solution, include as a complete sub-record.</div>
 <td><p>t_transaction_status</p></td>
 <td><div class="line-block">
 <div class="line">Handled slightly different from a VVC and a Monitor.</div>
-<div class="line">VVC: Will show ‘IN_PROGRESS’ during the transaction and INACTIVE
-in between (for at least one delta cycle).</div>
+<div class="line">VVC: Will show IN_PROGRESS during the transaction, then COMPLETED
+when the transaction ends (for one delta cycle) and finally
+INACTIVE until the next transaction (for at least one delta
+cycle).</div>
 <div class="line">Monitor: Will show FAILED or SUCCEEDED immediately as soon as
 this is 100% certain - and keep this info for the display period
 defined in the Monitor configuration record, or until the start
@@ -1524,6 +1526,8 @@ this sub-record may be left out.</p></td>
 <div class="line"><em>Note: For transaction info from a VVC, the record reflects the command status, i.e. the status assumed by the VVC when
 initiating the command, whereas the Monitor will set up the record only after knowing whether the transaction has failed
 or succeeded.</em></div>
+<div class="line"><em>However, the transaction info from a VVC is also updated at the end of the command, which can be useful to fetch the data
+from read/receive operations.</em></div>
 <div class="line"><em>The VVC does not know the BFM status, and this is fine because the BFM will issue an alert for unexpected behaviour.</em></div>
 </div>
 </td>
@@ -1531,7 +1535,7 @@ or succeeded.</em></div>
 </tbody>
 </table>
 <table class="docutils align-default" id="id15">
-<caption><span class="caption-text">Table 2 - SBI specific transaction record t_transaction. The fields in bold indicate protocol dedicated fields</span><a class="headerlink" href="#id15" title="Permalink to this table"></a></caption>
+<caption><span class="caption-text">Table 2 - SBI specific transaction record t_base_transaction. The fields in bold indicate protocol dedicated fields</span><a class="headerlink" href="#id15" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 20%" />
 <col style="width: 24%" />
@@ -1581,8 +1585,8 @@ potentially a CT record. Whereas for an Avalon, it will in addition also consist
 request may be active at the same time as a read response. (And the sub-transactions are part of a base transaction and may also
 be part of a CT).</p>
 <p>Table 3 shows the maximum transaction group record for an SBI, whereas Table 4 shows the maximum transaction group record for an
-Avalon. The bold CT is optional for both, and thus depends on whether CTs have been defined in the VVC. Multiple parallel STs may
-be written to the transaction group record simultaneously - as these are handled by different “threads” (concurrent statements
+Avalon MM. The bold CT is optional for both, and thus depends on whether CTs have been defined in the VVC. Multiple parallel STs
+may be written to the transaction group record simultaneously - as these are handled by different “threads” (concurrent statements
 like a process).</p>
 <p>A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-record. A Monitor for a split transaction protocol
 (i.e. with multiple STs) may or may not provide BT info. If it does, this should normally be implemented in a higher level
@@ -1590,16 +1594,22 @@ like a process).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>A VVC will update its Transaction Info leaf transaction details at the start of the transaction when the BFM is called. and
-turned off when BFM is finished.</p></li>
+<li><p>A VVC will update its Transaction Info leaf transaction details at the start of the transaction when the BFM is called, then
+again when the transaction is completed, and turned off one delta cycle afterwards.</p></li>
 <li><p>A Monitor will set its Transaction Info record after the transaction is finished (or transaction status is known) and keep
 it on for a pre-defined time - or until the next transaction is finished if earlier.</p></li>
 </ul>
 </div>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>It is recommended that the model (or any other user of Transaction Info) triggers on the VVC/Monitor trigger signal and checks
-when transaction_status is changing to ‘INACTIVE’ and then sample &lt;signal&gt;’last_value.</p>
+<ul class="simple">
+<li><p>For operations in which the VVC/Monitor knows the data beforehand, e.g. WRITE, TRANSMIT, it is recommended that the model
+triggers on the VVC/Monitor trigger signal and checks when the transaction_status is ‘IN_PROGRESS’ and then samples the
+transaction value.</p></li>
+<li><p>Whereas for operations in which the VVC/Monitor receives the data after the transaction, e.g. READ, RECEIVE, it is
+recommended that the model triggers on the VVC/Monitor trigger signal and checks when the transaction_status is ‘COMPLETED’
+and then samples the transaction value.</p></li>
+</ul>
 </div>
 <table class="docutils align-default" id="id16">
 <caption><span class="caption-text">Table 3 - Maximum transaction group record t_transaction_group - for an SBI interface</span><a class="headerlink" href="#id16" title="Permalink to this table"></a></caption>
@@ -1616,11 +1626,11 @@ when transaction_status is changing to ‘INACTIVE’ and then sample &lt;signal
 </thead>
 <tbody>
 <tr class="row-even"><td><p>bt</p></td>
-<td><p>t_transaction</p></td>
+<td><p>t_base_transaction</p></td>
 <td><p>Base transaction</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>ct</strong></p></td>
-<td><p><strong>t_transaction</strong></p></td>
+<td><p><strong>t_compound_transaction</strong></p></td>
 <td><p>Compound transaction</p></td>
 </tr>
 </tbody>
@@ -1640,19 +1650,19 @@ when transaction_status is changing to ‘INACTIVE’ and then sample &lt;signal
 </thead>
 <tbody>
 <tr class="row-even"><td><p>st_request</p></td>
-<td><p>t_transaction</p></td>
+<td><p>t_sub_transaction</p></td>
 <td><p>Sub-transaction</p></td>
 </tr>
 <tr class="row-odd"><td><p>st_response</p></td>
-<td><p>t_transaction</p></td>
+<td><p>t_sub_transaction</p></td>
 <td><p>Sub-transaction</p></td>
 </tr>
 <tr class="row-even"><td><p>bt</p></td>
-<td><p>t_transaction</p></td>
+<td><p>t_base_transaction</p></td>
 <td><p>Base transaction</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>ct</strong></p></td>
-<td><p><strong>t_transaction</strong></p></td>
+<td><p><strong>t_compound_transaction</strong></p></td>
 <td><p>Compound transaction</p></td>
 </tr>
 </tbody>
@@ -1661,7 +1671,8 @@ when transaction_status is changing to ‘INACTIVE’ and then sample &lt;signal
 <section id="transaction-info-record-signals">
 <span id="vvc-framework-transaction-info-record"></span><h4>Transaction Info record signals<a class="headerlink" href="#transaction-info-record-signals" title="Permalink to this headline"></a></h4>
 <p>The Transaction Info record is provided out of the VVC and Monitor using sets of a global signal and a shared variable. These and
-all Transaction Info related VHDL types are defined in transaction_pkg.vhd, located in the VIP src folder.</p>
+all Transaction Info related VHDL types are defined in transaction_pkg.vhd, located in the VIP src folder (except for the
+t_transaction_status type, which is defined in types_pkg).</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><strong>Monitor trigger signal</strong> : <em>global_&lt;protocol-name&gt;_monitor_transaction_trigger</em>, e.g. global_uart_monitor_transaction_trigger</p></li>
@@ -1689,8 +1700,8 @@ also responsible for filling out the vvc_meta record field.</p></li>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>bt</p></td>
-<td><p>t_transaction</p></td>
-<td><p>C_TRANSACTION_SET_DEFAULT</p></td>
+<td><p>t_base_transaction</p></td>
+<td><p>C_BASE_TRANSACTION_SET_DEFAULT</p></td>
 <td><p>Transaction Info record entry for base transaction</p></td>
 </tr>
 <tr class="row-odd"><td><p>-&gt; operation</p></td>
@@ -1728,14 +1739,14 @@ transaction</p></td>
 </tr>
 <tr class="row-odd"><td><p>-&gt; transaction_status</p></td>
 <td><p>t_transaction_status</p></td>
-<td><p>C_TRANSACTION_STATUS_DEFAULT</p></td>
+<td><p>INACTIVE</p></td>
 <td><p>The current status of transaction. Available statuses are
-INACTIVE, IN_PROGRESS, FAILED and SUCCEEDED <a class="footnote-reference brackets" href="#f2" id="id4">2</a></p></td>
+INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED and COMPLETED <a class="footnote-reference brackets" href="#f2" id="id4">2</a></p></td>
 </tr>
 <tr class="row-even"><td><p>-&gt; error_info
 <a class="footnote-reference brackets" href="#f3" id="id5">3</a></p></td>
 <td><p>t_error_info</p></td>
-<td><p>C_ERRO_INFO_DEFAULT</p></td>
+<td><p>C_ERROR_INFO_DEFAULT</p></td>
 <td><p>Record entry of errors that will be injected to the DUT access
 transaction</p></td>
 </tr>
@@ -1752,8 +1763,8 @@ set to true</p></td>
 to true</p></td>
 </tr>
 <tr class="row-odd"><td><p>ct <a class="footnote-reference brackets" href="#f5" id="id8">5</a></p></td>
-<td><p>t_transaction</p></td>
-<td><p>C_TRANSACTION_SET_DEFAULT</p></td>
+<td><p>t_compound_transaction</p></td>
+<td><p>C_COMPOUND_TRANSACTION_SET_DEFAULT</p></td>
 <td><div class="line-block">
 <div class="line">Transaction Info record entry for compound transaction</div>
 <div class="line">Note that sub-record entries would typically have the same
@@ -1773,8 +1784,8 @@ records.</div>
 informational purposes.</p>
 </dd>
 <dt class="label" id="f2"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
-<dd><p>Transaction status <strong>FAILED</strong> and <strong>SUCCEEDED</strong> are not applicable for VVC Transaction Info records, but will be used
-for Monitor Transaction Info records.</p>
+<dd><p>Transaction status <strong>FAILED</strong> and <strong>SUCCEEDED</strong> are only applicable for Monitor Transaction Info records and not for
+VVC Transaction Info records. Whereas <strong>COMPLETED</strong> is applicable only for VVCs and not Monitors.</p>
 </dd>
 <dt class="label" id="f3"><span class="brackets"><a class="fn-backref" href="#id5">3</a></span></dt>
 <dd><p>Record field <strong>error_info</strong> and its sub-record fields can be omitted if no error injection is implemented in the BFM.</p>
@@ -1792,13 +1803,13 @@ to record entry <strong>st</strong> as well (not shown here).</p>
 <section id="transaction-info-signal-and-shared-variable">
 <h4>Transaction Info signal and shared variable<a class="headerlink" href="#transaction-info-signal-and-shared-variable" title="Permalink to this headline"></a></h4>
 <p>A VVC or Monitor will trigger the global trigger signals listed in <a class="reference internal" href="#vvc-framework-transaction-info-record"><span class="std std-ref">Transaction Info record signals</span></a> when information
-of a new transaction info is made available. For a VVC, the transaction info is made available prior to the corresponding bus
-access, i.e. before calling the BFM method, and the global trigger signal will be pulsed for a delta cycle. The VVC will set the
-transaction info back to default values immediately after the bus access has finished, but then without pulsing the global trigger
-signal.</p>
+of a new transaction info is made available. For a VVC, the transaction info can be available prior to the corresponding bus
+access, i.e. before calling the BFM method, or at the end of the access, i.e. when the BFM method has finished. The global trigger
+signal will be pulsed in both cases for a delta cycle. The VVC will set the transaction info back to default values immediately
+after the second trigger, but then without pulsing the global trigger signal.</p>
 <p>For a Monitor, the transaction info will be made available immediately after a bus access is completed and then the global trigger
-signal will be pulsed for a delta cycle. The transaction info is valid when the global trigger signal is pulsed and is set back to
-default values after a period of transaction_display_time, set in the Monitor configuration record, or when a new transaction is
+signal will be pulsed for a delta cycle. The transaction info is valid when the global trigger signal is pulsed and it is set back
+to default values after a period of transaction_display_time, set in the Monitor configuration record, or when a new transaction is
 started.</p>
 </section>
 <section id="examples-of-transaction-info-usage">
@@ -1852,19 +1863,17 @@ Figure 5 uses aliasing to simplify and improve code readability, while Figure 6 
 <span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="p">(</span><span class="n">sbi_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="p">(</span><span class="n">uart_rx_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">sbi_transaction_trigger</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
-<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">sbi_transaction_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="k">is</span><span class="w"></span>
-<span class="w">        </span><span class="k">when</span><span class="w"> </span><span class="n">READ</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"></span>
-<span class="w">          </span><span class="n">v_sb_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">sbi_transaction_info</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">          </span><span class="n">SBI_VVC_SB</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_sb_element</span><span class="p">);</span><span class="w"></span>
-<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">case</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">sbi_transaction_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">READ</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">sbi_transaction_info</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">COMPLETED</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
+<span class="w">        </span><span class="n">v_sb_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">sbi_transaction_info</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">SBI_VVC_SB</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_sb_element</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">uart_rx_transaction_trigger</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
-<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">uart_rx_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="k">is</span><span class="w"></span>
-<span class="w">        </span><span class="k">when</span><span class="w"> </span><span class="n">RECEIVE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"></span>
-<span class="w">          </span><span class="n">v_sb_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_rx_info</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">          </span><span class="n">UART_VVC_SB</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">C_UART_VVC_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_sb_element</span><span class="p">);</span><span class="w"></span>
-<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">case</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">uart_rx_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RECEIVE</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">uart_rx_info</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">COMPLETED</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
+<span class="w">        </span><span class="n">v_sb_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_rx_info</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">UART_VVC_SB</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">C_UART_VVC_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_sb_element</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
@@ -1885,17 +1894,15 @@ these scoreboard approaches are already performed by the VVCs.</p>
 <span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="p">(</span><span class="n">global_sbi_vvc_transaction_trigger</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="p">(</span><span class="n">global_uart_vvc_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">global_sbi_vvc_transaction_trigger</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">)</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
-<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">shared_sbi_vvc_transaction_info</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="k">is</span><span class="w"></span>
-<span class="w">        </span><span class="k">when</span><span class="w"> </span><span class="n">WRITE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"></span>
-<span class="w">          </span><span class="n">UART_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">shared_sbi_vvc_transaction_info</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span><span class="w"></span>
-<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">case</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">shared_sbi_vvc_transaction_info</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">WRITE</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">shared_sbi_vvc_transaction_info</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IN_PROGRESS</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
+<span class="w">        </span><span class="n">UART_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">shared_sbi_vvc_transaction_info</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span><span class="w"></span>
+<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">global_uart_vvc_transaction_trigger</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">)</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
-<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">shared_uart_vvc_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="k">is</span><span class="w"></span>
-<span class="w">        </span><span class="k">when</span><span class="w"> </span><span class="n">TRANSMIT</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"></span>
-<span class="w">          </span><span class="n">SBI_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">shared_uart_vvc_transaction</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span><span class="w"></span>
-<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">case</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">shared_uart_vvc_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TRANSMIT</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">shared_uart_vvc_transaction_info</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IN_PROGRESS</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
+<span class="w">        </span><span class="n">SBI_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">shared_uart_vvc_transaction</span><span class="p">(</span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_VVC_1</span><span class="p">).</span><span class="n">bt</span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span><span class="w"></span>
+<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
@@ -1952,12 +1959,11 @@ record element.</p>
 <span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">until</span><span class="w"> </span><span class="n">avalon_st_transaction_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">avalon_st_transaction_trigger</span><span class="na">&#39;event</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
-<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="k">is</span><span class="w"></span>
-<span class="w">        </span><span class="k">when</span><span class="w"> </span><span class="n">RECEIVE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"></span>
-<span class="w">          </span><span class="n">v_sb_element</span><span class="p">.</span><span class="n">channel_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">channel_value</span><span class="p">(</span><span class="n">C_CH_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">          </span><span class="n">v_sb_element</span><span class="p">.</span><span class="n">data_array</span><span class="w">    </span><span class="o">:=</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_ARRAY_LENGTH</span><span class="o">-</span><span class="mi">1</span><span class="p">)(</span><span class="n">C_WORD_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">          </span><span class="n">AVALON_ST_VVC_SB</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">C_AVALON_ST_VVC_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_sb_element</span><span class="p">);</span><span class="w"></span>
-<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">case</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RECEIVE</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">transaction_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">COMPLETED</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
+<span class="w">        </span><span class="n">v_sb_element</span><span class="p">.</span><span class="n">channel_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">channel_value</span><span class="p">(</span><span class="n">C_CH_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">v_sb_element</span><span class="p">.</span><span class="n">data_array</span><span class="w">    </span><span class="o">:=</span><span class="w"> </span><span class="n">avalon_st_transaction_info</span><span class="p">.</span><span class="n">data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_ARRAY_LENGTH</span><span class="o">-</span><span class="mi">1</span><span class="p">)(</span><span class="n">C_WORD_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">AVALON_ST_VVC_SB</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">C_AVALON_ST_VVC_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_sb_element</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
@@ -2704,55 +2710,23 @@ for SBI we think it only makes sense for ‘READ’.</div>
 thread (here: ‘channel’). No more; no less. This allows a single command queue and a single executor handling DUT communication.
 (Additional processes to handle other characteristics is fine. E.g., a parallel bit-rate check thread).</p>
 <p>Note that SBI_VVC must handle both read and write accesses, but never simultaneously and always in the given order.</p>
-<p>Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. Some examples:</p>
+<p>Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. The included
+bitvis_vip_uart implementation uses the following method:</p>
 <blockquote>
-<div><ol class="arabic">
+<div><ul>
 <li><div class="line-block">
-<div class="line"><strong>As unique VVC implementation</strong></div>
-<div class="line">Unique VVCs may be used in order to omit the channel input, e.g. UART RX VVC and UART TX VVC. UART TX VVC would only
-contain TX specific BFM procedures, while UART RX VVC would only contain RX specific BFM procedures. With this approach
-the testbench sequencer calls would look like e.g. (assuming both VVCs in this pair are set to instance index 1):</div>
-<div class="line-block">
-<div class="line">a. uart_transmit(UART_TX_VVCT, 1, …)</div>
-<div class="line">b. uart_receive(UART_RX_VVCT, 1, …)</div>
-</div>
-</div>
-</li>
-<li><div class="line-block">
-<div class="line"><strong>As shared VVC implementation with usage restricted by user, and multiple VVC instances</strong></div>
-<div class="line">A combined VVC with different VVC instances for different channels e.g. RX and TX. The TX instance could e.g. be instance
-1, and the RX instance could be e.g. instance 2. Using this UART VVC with this implementation would look like:</div>
-<div class="line-block">
-<div class="line">a. uart_transmit(UART_VVCT, 1, …)</div>
-<div class="line">b. uart_receive(UART_VVCT, 2, …)</div>
-</div>
-</div>
-</li>
-<li><div class="line-block">
-<div class="line"><strong>As shared VVC implementation with GC_CHANNEL generic input</strong></div>
-<div class="line">A combined VVC with the same combined VVC implementation, but separate instances for different channels e.g. RX and TX
-(both functionalities inside the same leaf VVC). The downside of this implementation is that it would be possible to call
-TX BFM procedures when calling the RX VVC channel. Using this UART VVC would look like:</div>
-<div class="line-block">
-<div class="line">a. uart_transmit(UART_VVCT, TX, 1, …)</div>
-<div class="line">b. uart_receive(UART_VVCT, RX, 1, …)</div>
-</div>
-</div>
-</li>
-<li><div class="line-block">
-<div class="line"><strong>As unique VVC implementation with GC_CHANNEL generic input</strong></div>
+<div class="line"><strong>A unique VVC implementation with GC_CHANNEL generic input</strong></div>
 <div class="line">This approach uses unique VVC implementations for each channel, e.g. in uart_rx_vvc.vhd and uart_tx_vvc.vhd, but they
 both share the VVC target parameter, UART_VVCT. They both use the GC_CHANNEL generic input to specify their channel, i.e.
-TX or RX. This is similar to the method described in example 3, but with restrictions that ensure that e.g. the UART TX
-VVC can’t use the UART RX BFM procedures. The included bitvis_vip_uart example is implemented with this method. Using
-this UART VVC would look like:</div>
+TX or RX. The VVCs have restrictions that ensure that e.g. the UART TX VVC can’t use the UART RX BFM procedures.
+Using this UART VVC would look like:</div>
 <div class="line-block">
 <div class="line">a. uart_transmit(UART_VVCT, TX, 1, …)</div>
 <div class="line">b. uart_receive(UART_VVCT, RX, 1, …)</div>
 </div>
 </div>
 </li>
-</ol>
+</ul>
 </div></blockquote>
 <p>When using multiple leaf VVCs it is recommended to use a wrapper architecture to encapsulate the channels. This way, it is
 possible to instantiate a single VVC rather than each VVC channel individually. For more information about the wrapper architecture,

@@ -10,6 +10,49 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2023.03.08
+--------------------
+Released: 2023-03-08
+- Updated vvc_transaction_info in all VVCs to also trigger after the BFM call with updated data and the status
+  COMPLETED. Updated vvc_generator.py script.
+- Added missing scope to alert in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
+- Removed unnecessary constraining in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
+- Moved t_transaction_status type from all VVCs to types_pkg and added COMPLETED. Updated vvc_generator.py script.
+- Fixed incorrect log messages in AXI-Stream BFM package.
+- Removed ethernet_sb_pkg file, package already defined in vvc_methods_pkg.
+- Fixed compilation warning vcom-1090. Updated vvc_generator.py script.
+- Use the function get_scope_for_log() to generate all the VVCs scopes. Updated vvc_generator.py script.
+- Added an assertion to VVCs with the GC_CHANNEL generic to check it is used correctly. Updated vvc_generator.py script.
+- Removed constant C_DATA_WIDTH in uart_tx_vvc and use generic GC_DATA_WIDTH instead.
+- Normalized the data parameter in the uart_transmit and uart_expect BFM procedure.
+- Fixed the wrong example for uart_expect in UART BFM Quick Reference.
+- Fixed data length typo in Axistream BFM- and VVC Quick Reference.
+- Updated Section 10.2 in Spec_Coverage QuickRef.
+- Added an alert when Spec Cov CSV file line length is greater than the maximum supported size.
+- Skip leading whitespace in all fields when reading the Spec Cov CSV file.
+- Fixed typo in Figure 6, section 2.3.2 in VVC_Framework_Manual.
+- Added switch for displaying full received error frame in streaming interfaces.
+- Implemented functionality for displaying full received error frame in rgmii bfm.
+- Added functionality for extended error message, as default, to RGMII, GMII, Axi-Stream and Avalon stream.
+- Fixed crash in run_spec_cov.py that could occur when partial_cov file and spec_cov file are missing.
+- Added a feature for detection of reading old partial coverage files in the run_spec_cov.py script.
+- Updated spec_cov reporting in the run_spec_cov.py script.
+- Added functionality in check_value and check_value_in_range to print closest fitting time units wrt. time type checks.
+- Updated spec cov log messages and use new msg IDs for better verbosity.
+- Updated vvc_generator.py to add missing scoreboard support in multiple executors.
+- Moved sb_pkg and pad_xxx_sb function in all VVCs from methods_pkg to new vvc_sb_pkg. Updated vvc_generator.py script.
+- Added 7-bit data functionality to bitvis_uart
+- Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
+- Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
+- Updated spec cov documentation for modified clean parameter to run_spec_cov.py
+- Added general_severity to AXI bfm config record. Replaces error as default alert level in BFM and VVC. From pull request by user EMAZAC.
+- Increased C_MAX_TUSER_BITS to 64 in Axistream BFM. (allows for higher GC_USER_WIDTH)
+- Updated vvc_generator.py generation of vvc_context file.
+- Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in some VVCs.
+- Thanks to @m-kru, @malsheimer, @am9417 and @EMAZAC for PR and contributions.
+
+
 v2 2023.09.16
 --------------------
 Released: 2023-09-16

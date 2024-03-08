@@ -315,7 +315,7 @@ package axi_bfm_pkg is
     constant msg            : in string;
     signal   clk            : in std_logic;
     signal   axi_if         : inout t_axi_if;
-    constant alert_level    : in t_alert_level                := error;
+    constant alert_level    : in t_alert_level                := C_AXI_BFM_CONFIG_DEFAULT.general_severity;
     constant scope          : in string                       := C_BFM_SCOPE;
     constant msg_id_panel   : in t_msg_id_panel               := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config             := C_AXI_BFM_CONFIG_DEFAULT
@@ -902,7 +902,7 @@ package body axi_bfm_pkg is
     constant msg            : in string;
     signal   clk            : in std_logic;
     signal   axi_if         : inout t_axi_if;
-    constant alert_level    : in t_alert_level                := error;
+    constant alert_level    : in t_alert_level                := C_AXI_BFM_CONFIG_DEFAULT.general_severity;
     constant scope          : in string                       := C_BFM_SCOPE;
     constant msg_id_panel   : in t_msg_id_panel               := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config             := C_AXI_BFM_CONFIG_DEFAULT

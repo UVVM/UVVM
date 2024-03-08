@@ -3,56 +3,47 @@
 ##################################################################################################################################
 Functional Coverage
 ##################################################################################################################################
-**********************************************************************************************************************************
-Getting started
-**********************************************************************************************************************************
+
+**The Functional Coverage API is found in** :ref:`func_cov_pkg`.
 All the functionality for coverage can be found in *uvvm_util/src/func_cov_pkg.vhd*.
 
-To start using functional coverage it is necessary to import the utility library, create a variable with the protected 
-type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` procedures from the variable.
+**********************************************************************************************************************************
+Introduction
+**********************************************************************************************************************************
+Functional Coverage is a method used to measure how thoroughly a design has been tested. The Functional Coverage tool can be configured
+to monitor inputs, outputs or internal registers within the design, logging the values that occur. For example, it can track
+package sizes and data fields sent over a communication interface, fill grades experienced by a FIFO, or configurations written
+to an internal register during simulation.
+
+Functional Coverage works very well in combination with randomized generation of input stimuli, where the testbench can
+for instance be set up to keep generating randomized stimuli until the we have covered both all of the specified corner cases
+and tested a defined amount of general random input values. The combination of Functional Coverage and randomization forms the basis
+of UVVMs :ref:`optimized_randomization` functionality.
+
+After tests have been run, the Functional Coverage package can generate reports documenting which scenarios have
+been tested. This makes Functional Coverage a particularly useful tool for projects with stringent demands for documentation of 
+compliance with requirements.
+
+Coverpoints and bins
+=================================================================================================================================
+Each point of the design that we wish to test is referred to as a *coverpoint*. A coverpoint can for instance be an input port, 
+output port or an internal register.
+
+A coverpoint is added by creating a shared variable of the protected type t_coverpoint.
 
 .. code-block::
 
-    library uvvm_util;
-    context uvvm_util.uvvm_util_context;
-    ...
-    signal bus_addr : natural;
     shared variable my_coverpoint : t_coverpoint;
-    ...
-    p_main : process
-    begin
-      -- Add bins to the coverpoint
-      my_coverpoint.add_bins(bin(0), "bin_zero");
-      my_coverpoint.add_bins(bin_range(1,254));
-      my_coverpoint.add_bins(bin(255), "bin_max");
 
-      -- Sample the data
-      while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
-        bus_addr <= my_coverpoint.rand(SAMPLE_COV);
-        configure_addr(bus_addr);
-        wait for C_CLK_PERIOD;
-      end loop;
-      
-      -- Print the coverage report
-      my_coverpoint.report_coverage(VOID);
-      ...
 
-.. note::
+Once a coverpoint for a particular part of the design has been defined, we need to set up containers to track which values have 
+occurred on that coverpoint. These containers are called *bins*. Each bin will count the occurrences of either a specific value, 
+a range of values or a given transition between values.
 
-    The syntax for all methods is given in :ref:`func_cov_pkg`.
+Bins are generated using the ``bin()`` function and added to the coverpoint using the ``add_bins()`` procedure. See the section 
+`Creating and adding bins`_  for more information about how to generate bins.
 
-**********************************************************************************************************************************
-Concepts
-**********************************************************************************************************************************
-There are three main elements in the functional coverage data structure: bin, coverpoint and cross.
 
-* A bin associates a counter with a value, a set of values or a transitions of values. The counter is incremented when the 
-  coverpoint or cross is sampled.
-* A cross represents a combination of two or more objects (variable/signal/coverpoint).
-* A coverpoint represents a specification point to verify, e.g. a packet size, a memory address or a cross of the two. It is 
-  associated with one or several bins.
-
-Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.
 
 In Figure 1, we can see a coverpoint named *memory_address* which contains six different bins: four bins with a single value each, 
 one bin with a range of values and one bin with a transition of values. Each of the bins has a different counter value reflecting 
@@ -65,6 +56,12 @@ how many times the coverpoint has been sampled with the corresponding values of 
 
    Figure 1
 
+
+Sometimes we want to monitor the values of multiple points of our design at the same time. In this case, we can create a coverpoint 
+containing a *cross*. A cross is a type of container that can hold a combination of multiple bins or coverpoints, where every 
+combination of the values covered by the crossed bins or coverpoints must have been sampled during testing for the cross to be covered. 
+
+
 In Figure 2, we can see a cross named *src_addr_x_dst_addr* which contains eight different bins. Each bin contains different 
 combinations of values for *src_addr* and *dst_addr*.
 
@@ -74,6 +71,25 @@ combinations of values for *src_addr* and *dst_addr*.
    :align: center
 
    Figure 2
+
+
+Once we have defined all our coverpoints with bins or crosses for the required scenarios, we can begin running tests on our 
+design and tick off the tested coverpoint values. This is done by sampling all observed coverpoint values using the 
+:ref:`sample_coverage` procedure.
+
+Figure 3 illustrates an example scenario where we have created a coverpoint with three bins for the DUT input named "input1". 
+Each value received through the input is sampled using the ``sample_coverage()`` procedure. In this example the input receives 
+the value 255. This will increment the hit counter of the bin associated with that value by one. Since this bin has a 
+min_hits requirement of 1, the hit coverage of the bin will reach 100% after a single hit. Once all the bins reach 100%
+hit coverage, the coverpoint will have full coverage. 
+
+.. figure:: images/functional_coverage/func_cov_sampling.png
+   :alt: Sampling coverage
+   :width: 400pt
+   :align: center
+
+   Figure 3
+
 
 .. note::
 
@@ -97,11 +113,62 @@ combinations of values for *src_addr* and *dst_addr*.
     rand_addr     <= to_unsigned(rand_addr_int,rand_addr'length);
 
 **********************************************************************************************************************************
+Getting started
+**********************************************************************************************************************************
+All the functionality for coverage can be found in *uvvm_util/src/func_cov_pkg.vhd*.
+
+To start using functional coverage it is necessary to import the utility library, create one or more shared variables with the protected 
+type *t_coverpoint* and call the ``add_bins()`` and ``sample_coverage()`` procedures from the variable.
+
+.. code-block::
+
+    library uvvm_util;
+    context uvvm_util.uvvm_util_context;
+    ...
+    signal bus_addr : natural;
+    shared variable my_coverpoint : t_coverpoint;
+    ...
+    p_main : process
+    begin
+      -- Add bins to the coverpoint. (Default number of hits required is one per bin).
+      my_coverpoint.add_bins(bin(0), "bin_zero");
+      my_coverpoint.add_bins(bin_range(1,254)); -- Any value in the range 1 to 254 will increment the hit count by one
+      my_coverpoint.add_bins(bin(255), "bin_max");
+
+      -- Sample the data
+      -- Loop will terminate when each of the bins above has been hit at least once
+      while not(my_coverpoint.coverage_completed(BINS_AND_HITS)) loop
+        bus_addr <= my_coverpoint.rand(SAMPLE_COV); -- Generates an integer from an uncovered bin and samples the integer
+        configure_addr(bus_addr);
+        wait for C_CLK_PERIOD;
+      end loop;
+
+      -- Print the coverage report
+      my_coverpoint.report_coverage(VOID);
+      ...
+
+.. note::
+
+    The syntax for all methods is given in :ref:`func_cov_pkg`.
+
+**********************************************************************************************************************************
 Creating and adding bins
 **********************************************************************************************************************************
-Different functions are used to create bins, while a procedure is used to add them to the coverpoint. This is necessary for 
-several reasons: better readability, avoiding conflicts with overloads which have similar parameters and supporting adding 
-multiple types of bins in a single line.
+Bins are generated using one of the bin generation functions defined in the functional coverage package, and added to a coverpoint 
+using the ``add_bins()`` procedure.
+This is necessary for several reasons: better readability, avoiding conflicts with overloads which have similar parameters and 
+supporting adding multiple types of bins in a single line.
+
+By calling the ``add_bins()`` procedure with the ``bin()`` function as parameter, we can generate and add a bin in a single operation. 
+
+The following code adds a bin for the value 1 to the coverpoint named *my_coverpoint*.
+
+.. code-block::
+
+    my_coverpoint.add_bins(bin(1));
+
+Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.
+
 
 Bins can be created using the following :ref:`bin functions <bin_functions>`:
 
@@ -271,9 +338,8 @@ when the list becomes full. These constants are defined in adaptations_pkg.
 Moreover, the procedures ``set_num_allocated_bins()`` and ``set_num_allocated_bins_increment()`` can be used to reconfigure a 
 coverpoint's respective values.
 
-**********************************************************************************************************************************
 Bin name
-**********************************************************************************************************************************
+==================================================================================================================================
 Bins can be named by using the optional parameter *bin_name* in the ``add_bins()`` procedure. If no name is given to the bin, a 
 default name will be automatically given. Having a bin name is useful when reading the reports.
 
@@ -285,9 +351,8 @@ default name will be automatically given. Having a bin name is useful when readi
 
 The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.
 
-**********************************************************************************************************************************
 Minimum coverage
-**********************************************************************************************************************************
+==================================================================================================================================
 By default all bins created have a minimum coverage of 1, i.e. they only need to be sampled once to be covered. The parameter 
 *min_hits* in the ``add_bins()`` procedure specifies how many times the bin must be sampled in order to be marked as covered.
 
@@ -302,9 +367,17 @@ By default all bins created have a minimum coverage of 1, i.e. they only need to
 **********************************************************************************************************************************
 Cross coverage
 **********************************************************************************************************************************
-It can be used to track combinations of values from two or more objects (variable/signal/coverpoint). 
+Cross coverage can be used to track combinations of values from two or more objects (variable/signal/coverpoint). 
 For example, when certain combinations of source address and destination address of the Ethernet protocol need to be verified.
-This can be done in two different ways using the ``add_cross()`` procedure and :ref:`bin functions <bin_functions>`.
+Crosses are made using the ``add_cross()`` procedure and can be made either between bins or between coverpoints. 
+
+
+.. code-block::
+
+    add_cross(bin1, bin2)
+    
+    add_cross(coverpoint1, coverpoint2)
+
 
 * Every type of bin (single value, multiple values, range, transition, ignore & illegal) can be crossed with each other.
 * When crossing several transition bins, they must have the same number of transitions, e.g. ::
@@ -316,14 +389,18 @@ This can be done in two different ways using the ``add_cross()`` procedure and :
     Once the number of crossed bins has been set in a coverpoint, by calling the first ``add_cross()``, it cannot be 
     changed anymore.
 
-Using bins
+Crossing bins
 ==================================================================================================================================
-This is a "faster" way of creating the crosses and useful when we need specific combinations of values. The ``add_cross()`` 
-overloads support up to 5 crossed elements.
+This is a "faster" way of creating the crosses and useful when we need specific combinations of values. A cross between bins is 
+added to a coverpoint by calling the ``add_cross()`` procedure in combination with :ref:`bin functions <bin_functions>`. 
+The ``add_cross()`` overloads support up to 5 crossed elements. 
+The min_hits argument can be included to specify how many times the scenario given by the cross must be sampled for the cross to be 
+marked as covered. The default value is one, meaning that the scenario only has to be sampled once for the cross to be covered.
+
 
 .. code-block::
 
-    add_cross(bin1, bin2, [bin_name])
+    add_cross(bin1, bin2, [min_hits], [bin_name])
 
     my_cross.add_cross(bin(10), bin_range(0,15));
     my_cross.add_cross(bin(20), bin_range(16,31));
@@ -360,10 +437,13 @@ The bin functions may also be concatenated to add several bins at once.
     # UVVM:       (30)x(8 to 15)x(1000)       0           1           0.00%          bin_5            -       
     # UVVM:  ========================================================================================================
 
-Using coverpoints
+Crossing coverpoints
 ==================================================================================================================================
 This alternative is useful when the coverpoints are already created and we don't want to repeat the declaration of the bins. The 
 ``add_cross()`` overloads support up to 16 crossed elements. **Beta release only supports up to 5 crossed elements.**
+
+When crossing coverpoints, the resulting bins will all have a min_hits value of 1, unless another min_hits value is given as
+a parameter to the ``add_cross()`` procedure.
 
 .. code-block::
 
@@ -518,8 +598,8 @@ This value defines the percentage of the min_hits which need to be covered for e
 
 Coverpoints coverage goal
 ==================================================================================================================================
-This value defines the percentage of the number of coverpoints which need to be covered and therefore the range is between 1 and 
-100. Default value is 100 (as in 100%).
+This value defines the percentage of the number of coverpoints which need to be covered and therefore the range is between 1 and 100.
+Default value is 100 (as in 100%).
 
 .. code-block::
 
@@ -1132,5 +1212,7 @@ all the type definitions inside *func_cov_pkg*.
    func_cov_pkg_t_coverpoint.rst
    func_cov_pkg_methods.rst
    func_cov_pkg_types.rst
+
+
 
 .. include:: rst_snippets/ip_disclaimer.rst

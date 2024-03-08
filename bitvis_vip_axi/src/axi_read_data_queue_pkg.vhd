@@ -21,9 +21,8 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library work;
-use work.vvc_cmd_pkg.all;
 use work.axi_bfm_pkg.all;
+use work.vvc_cmd_pkg.all;
 
 package axi_read_data_queue_pkg is
   type t_axi_read_data_queue is protected

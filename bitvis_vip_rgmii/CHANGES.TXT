@@ -1,6 +1,20 @@
 Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Versions and Changes
 ==============================================================
 
+
+v3.0.0
+----------
+Released: 2024-03-08
+- Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.
+- Added missing scope to alert in set_global_vvc_transaction_info procedure.
+- Removed unnecessary constraining in set_global_vvc_transaction_info procedure.
+- Moved t_transaction_status type to types_pkg (common for all VVCs) and added COMPLETED.
+- Fixed compilation warning vcom-1090.
+- Use the function get_scope_for_log() to generate VVC scope.
+- Added an assertion to check that the GC_CHANNEL generic is used correctly.
+- Added option for displaying extended error frame on mismatch
+- Moved sb_pkg from methods_pkg to new vvc_sb_pkg.
+
 v2.0.0
 ----------
 Released: 2023-09-16

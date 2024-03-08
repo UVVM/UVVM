@@ -1001,6 +1001,7 @@ package body func_cov_pkg is
 
     type t_bin_type_verbosity is (LONG, SHORT, NONE);
     type t_samples_vector is array (natural range <>) of integer_vector(C_FC_MAX_NUM_BIN_VALUES - 1 downto 0);
+    type t_integer_vector_ptr is access integer_vector;
 
     -- This means that the randomization weight of the bin will be equal to the min_hits
     -- parameter and will be reduced by 1 every time the bin is sampled.
@@ -2740,6 +2741,8 @@ package body func_cov_pkg is
       variable v_value_match       : std_logic_vector(0 to priv_num_bins_crossed - 1) := (others => '0');
       variable v_illegal_match_idx : integer                                          := -1;
       variable v_num_occurrences   : natural                                          := 0;
+      variable v_sample_shift_reg  : t_integer_vector_ptr;
+      variable v_bin_values        : t_integer_vector_ptr;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       if priv_num_bins_crossed = C_UNINITIALIZED then
@@ -2778,11 +2781,20 @@ package body func_cov_pkg is
                 v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = RAN_ILLEGAL;
               end if;
             when TRN | TRN_IGNORE | TRN_ILLEGAL =>
+              -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
+              v_sample_shift_reg     := new integer_vector(priv_invalid_bins(i).cross_bins(j).num_values - 1 downto 0);
+              v_sample_shift_reg.all := priv_bin_sample_shift_reg(j)(priv_invalid_bins(i).cross_bins(j).num_values - 1 downto 0);
+              v_bin_values           := new integer_vector(0 to priv_invalid_bins(i).cross_bins(j).num_values - 1);
+              v_bin_values.all       := priv_invalid_bins(i).cross_bins(j).values(0 to priv_invalid_bins(i).cross_bins(j).num_values - 1);
+
               -- Check if there are enough valid values in the shift register to compare the transition
-              if priv_invalid_bins(i).transition_mask(priv_invalid_bins(i).cross_bins(j).num_values - 1) = '1' and priv_bin_sample_shift_reg(j)(priv_invalid_bins(i).cross_bins(j).num_values - 1 downto 0) = priv_invalid_bins(i).cross_bins(j).values(0 to priv_invalid_bins(i).cross_bins(j).num_values - 1) then
+              if priv_invalid_bins(i).transition_mask(priv_invalid_bins(i).cross_bins(j).num_values - 1) = '1' and v_sample_shift_reg.all = v_bin_values.all then
                 v_value_match(j)    := '1';
                 v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = TRN_ILLEGAL;
               end if;
+
+              DEALLOCATE(v_sample_shift_reg);
+              DEALLOCATE(v_bin_values);
             when others =>
               alert(TB_FAILURE, v_proc_call.all & "=> Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).cross_bins(j).contains)), priv_scope);
           end case;
@@ -2817,10 +2829,19 @@ package body func_cov_pkg is
                   v_value_match(j) := '1';
                 end if;
               when TRN =>
+                -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
+                v_sample_shift_reg     := new integer_vector(priv_bins(i).cross_bins(j).num_values - 1 downto 0);
+                v_sample_shift_reg.all := priv_bin_sample_shift_reg(j)(priv_bins(i).cross_bins(j).num_values - 1 downto 0);
+                v_bin_values           := new integer_vector(0 to priv_bins(i).cross_bins(j).num_values - 1);
+                v_bin_values.all       := priv_bins(i).cross_bins(j).values(0 to priv_bins(i).cross_bins(j).num_values - 1);
+
                 -- Check if there are enough valid values in the shift register to compare the transition
-                if priv_bins(i).transition_mask(priv_bins(i).cross_bins(j).num_values - 1) = '1' and priv_bin_sample_shift_reg(j)(priv_bins(i).cross_bins(j).num_values - 1 downto 0) = priv_bins(i).cross_bins(j).values(0 to priv_bins(i).cross_bins(j).num_values - 1) then
+                if priv_bins(i).transition_mask(priv_bins(i).cross_bins(j).num_values - 1) = '1' and v_sample_shift_reg.all = v_bin_values.all then
                   v_value_match(j) := '1';
                 end if;
+
+                DEALLOCATE(v_sample_shift_reg);
+                DEALLOCATE(v_bin_values);
               when others =>
                 alert(TB_FAILURE, v_proc_call.all & "=> Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).cross_bins(j).contains)), priv_scope);
             end case;

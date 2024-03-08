@@ -67,7 +67,7 @@ end entity axistream_vvc;
 --========================================================================================================================
 architecture behave of axistream_vvc is
 
-  constant C_SCOPE      : string       := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
+  constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
   signal executor_is_busy      : boolean := false;
@@ -186,7 +186,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
-            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
+            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
             work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
@@ -212,6 +212,7 @@ begin
       end if;
 
     end loop;
+    wait;
   end process;
   --========================================================================================================================
 
@@ -287,7 +288,7 @@ begin
         when TRANSMIT =>
           if GC_VVC_IS_MASTER then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Put in queue so that the monitor VVC knows what to expect
             -- Needed when the sink is in Monitor Mode, as an alternative to calling lbusExpect() for each packet
@@ -306,6 +307,9 @@ begin
               scope               => C_SCOPE,
               msg_id_panel        => v_msg_id_panel,
               config              => vvc_config.bfm_config);
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for master (source) VVC", C_SCOPE);
           end if;
@@ -313,7 +317,7 @@ begin
         when RECEIVE =>
           if not GC_VVC_IS_MASTER then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             axistream_receive(data_array          => v_result.data_array,
                               data_length         => v_result.data_length,
@@ -338,6 +342,9 @@ begin
                                                           cmd_idx      => v_cmd.cmd_idx,
                                                           result       => v_result);
             end if;
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
           end if;
@@ -345,7 +352,7 @@ begin
         when EXPECT =>
           if not GC_VVC_IS_MASTER then
             -- Set vvc transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config);
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Call the corresponding procedure in the BFM package.
             axistream_expect(
@@ -361,6 +368,9 @@ begin
               scope               => C_SCOPE,
               msg_id_panel        => v_msg_id_panel,
               config              => vvc_config.bfm_config);
+
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
           else
             alert(TB_ERROR, "Sanity check: Method call only makes sense for slave (sink) VVC", C_SCOPE);
           end if;

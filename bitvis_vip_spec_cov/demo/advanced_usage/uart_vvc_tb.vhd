@@ -85,8 +85,8 @@ architecture func of uart_vvc_tb is
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
-    enable_log_msg(ID_FILE_OPEN_CLOSE); -- Enable the Spec Cov IDs
-    enable_log_msg(ID_FILE_PARSER);     -- Enable the Spec Cov IDs
+    enable_log_msg(ID_SPEC_COV_INIT);   -- Enable the Spec Cov IDs
+    enable_log_msg(ID_SPEC_COV_REQS);   -- Enable the Spec Cov IDs
     enable_log_msg(ID_SPEC_COV);        -- Enable the Spec Cov IDs
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);

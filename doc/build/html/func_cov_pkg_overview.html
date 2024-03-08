@@ -45,21 +45,24 @@
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functional Coverage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coverpoints-and-bins">Coverpoints and bins</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#concepts">Concepts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-and-adding-bins">Creating and adding bins</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#ignore-bins">Ignore bins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#illegal-bins">Illegal bins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#using-predefined-bins">Using predefined bins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#adding-bins-from-separate-process">Adding bins from separate process</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bin-memory-allocation">Bin memory allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bin-name">Bin name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#minimum-coverage">Minimum coverage</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#bin-name">Bin name</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#minimum-coverage">Minimum coverage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cross-coverage">Cross coverage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#using-bins">Using bins</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#using-coverpoints">Using coverpoints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#crossing-bins">Crossing bins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#crossing-coverpoints">Crossing coverpoints</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#sampling-coverage">Sampling coverage</a><ul>
@@ -155,52 +158,34 @@
              
   <section id="functional-coverage">
 <span id="func-cov-pkg-overview"></span><h1>Functional Coverage<a class="headerlink" href="#functional-coverage" title="Permalink to this headline"></a></h1>
-<section id="getting-started">
-<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h2>
-<p>All the functionality for coverage can be found in <em>uvvm_util/src/func_cov_pkg.vhd</em>.</p>
-<p>To start using functional coverage it is necessary to import the utility library, create a variable with the protected
-type <em>t_coverpoint</em> and call the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedures from the variable.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span><span class="w"></span>
-<span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span><span class="w"></span>
-<span class="p">...</span><span class="w"></span>
-<span class="k">signal</span><span class="w"> </span><span class="n">bus_addr</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w"></span>
-<span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_coverpoint</span><span class="p">;</span><span class="w"></span>
-<span class="p">...</span><span class="w"></span>
-<span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span><span class="w"></span>
-<span class="k">begin</span><span class="w"></span>
-<span class="w">  </span><span class="c1">-- Add bins to the coverpoint</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_zero&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">254</span><span class="p">));</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_max&quot;</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="c1">-- Sample the data</span><span class="w"></span>
-<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="k">not</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">coverage_completed</span><span class="p">(</span><span class="n">BINS_AND_HITS</span><span class="p">))</span><span class="w"> </span><span class="k">loop</span><span class="w"></span>
-<span class="w">    </span><span class="n">bus_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">SAMPLE_COV</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">configure_addr</span><span class="p">(</span><span class="n">bus_addr</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">C_CLK_PERIOD</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="c1">-- Print the coverage report</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">...</span><span class="w"></span>
+<p><strong>The Functional Coverage API is found in</strong> <a class="reference internal" href="#func-cov-pkg"><span class="std std-ref">func_cov_pkg</span></a>.
+All the functionality for coverage can be found in <em>uvvm_util/src/func_cov_pkg.vhd</em>.</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline"></a></h2>
+<p>Functional Coverage is a method used to measure how thoroughly a design has been tested. The Functional Coverage tool can be configured
+to monitor inputs, outputs or internal registers within the design, logging the values that occur. For example, it can track
+package sizes and data fields sent over a communication interface, fill grades experienced by a FIFO, or configurations written
+to an internal register during simulation.</p>
+<p>Functional Coverage works very well in combination with randomized generation of input stimuli, where the testbench can
+for instance be set up to keep generating randomized stimuli until the we have covered both all of the specified corner cases
+and tested a defined amount of general random input values. The combination of Functional Coverage and randomization forms the basis
+of UVVMs <a class="reference internal" href="optimized_rand.html#optimized-randomization"><span class="std std-ref">Optimized Randomization</span></a> functionality.</p>
+<p>After tests have been run, the Functional Coverage package can generate reports documenting which scenarios have
+been tested. This makes Functional Coverage a particularly useful tool for projects with stringent demands for documentation of
+compliance with requirements.</p>
+<section id="coverpoints-and-bins">
+<h3>Coverpoints and bins<a class="headerlink" href="#coverpoints-and-bins" title="Permalink to this headline"></a></h3>
+<p>Each point of the design that we wish to test is referred to as a <em>coverpoint</em>. A coverpoint can for instance be an input port,
+output port or an internal register.</p>
+<p>A coverpoint is added by creating a shared variable of the protected type t_coverpoint.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_coverpoint</span><span class="p">;</span><span class="w"></span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The syntax for all methods is given in <a class="reference internal" href="#func-cov-pkg"><span class="std std-ref">func_cov_pkg</span></a>.</p>
-</div>
-</section>
-<section id="concepts">
-<h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline"></a></h2>
-<p>There are three main elements in the functional coverage data structure: bin, coverpoint and cross.</p>
-<ul class="simple">
-<li><p>A bin associates a counter with a value, a set of values or a transitions of values. The counter is incremented when the
-coverpoint or cross is sampled.</p></li>
-<li><p>A cross represents a combination of two or more objects (variable/signal/coverpoint).</p></li>
-<li><p>A coverpoint represents a specification point to verify, e.g. a packet size, a memory address or a cross of the two. It is
-associated with one or several bins.</p></li>
-</ul>
-<p>Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.</p>
+<p>Once a coverpoint for a particular part of the design has been defined, we need to set up containers to track which values have
+occurred on that coverpoint. These containers are called <em>bins</em>. Each bin will count the occurrences of either a specific value,
+a range of values or a given transition between values.</p>
+<p>Bins are generated using the <code class="docutils literal notranslate"><span class="pre">bin()</span></code> function and added to the coverpoint using the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure. See the section
+<a class="reference internal" href="#creating-and-adding-bins">Creating and adding bins</a>  for more information about how to generate bins.</p>
 <p>In Figure 1, we can see a coverpoint named <em>memory_address</em> which contains six different bins: four bins with a single value each,
 one bin with a range of values and one bin with a transition of values. Each of the bins has a different counter value reflecting
 how many times the coverpoint has been sampled with the corresponding values of the bins.</p>
@@ -210,12 +195,29 @@ how many times the coverpoint has been sampled with the corresponding values of 
 <p><span class="caption-text">Figure 1</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
+<p>Sometimes we want to monitor the values of multiple points of our design at the same time. In this case, we can create a coverpoint
+containing a <em>cross</em>. A cross is a type of container that can hold a combination of multiple bins or coverpoints, where every
+combination of the values covered by the crossed bins or coverpoints must have been sampled during testing for the cross to be covered.</p>
 <p>In Figure 2, we can see a cross named <em>src_addr_x_dst_addr</em> which contains eight different bins. Each bin contains different
 combinations of values for <em>src_addr</em> and <em>dst_addr</em>.</p>
 <figure class="align-center" id="id3">
 <a class="reference internal image-reference" href="_images/func_cov_cross.png"><img alt="Cross representation" src="_images/func_cov_cross.png" style="width: 400pt;" /></a>
 <figcaption>
 <p><span class="caption-text">Figure 2</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Once we have defined all our coverpoints with bins or crosses for the required scenarios, we can begin running tests on our
+design and tick off the tested coverpoint values. This is done by sampling all observed coverpoint values using the
+<a class="reference internal" href="func_cov_pkg_t_coverpoint.html#sample-coverage"><span class="std std-ref">sample_coverage()</span></a> procedure.</p>
+<p>Figure 3 illustrates an example scenario where we have created a coverpoint with three bins for the DUT input named “input1”.
+Each value received through the input is sampled using the <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedure. In this example the input receives
+the value 255. This will increment the hit counter of the bin associated with that value by one. Since this bin has a
+min_hits requirement of 1, the hit coverage of the bin will reach 100% after a single hit. Once all the bins reach 100%
+hit coverage, the coverpoint will have full coverage.</p>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="_images/func_cov_sampling.png"><img alt="Sampling coverage" src="_images/func_cov_sampling.png" style="width: 400pt;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 3</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <div class="admonition note">
@@ -239,11 +241,55 @@ unsigned, enumerated, etc., they must be converted to integer values first.</p>
 </pre></div>
 </div>
 </section>
+</section>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h2>
+<p>All the functionality for coverage can be found in <em>uvvm_util/src/func_cov_pkg.vhd</em>.</p>
+<p>To start using functional coverage it is necessary to import the utility library, create one or more shared variables with the protected
+type <em>t_coverpoint</em> and call the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">sample_coverage()</span></code> procedures from the variable.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span><span class="w"></span>
+<span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span><span class="w"></span>
+<span class="p">...</span><span class="w"></span>
+<span class="k">signal</span><span class="w"> </span><span class="n">bus_addr</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w"></span>
+<span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_coverpoint</span><span class="p">;</span><span class="w"></span>
+<span class="p">...</span><span class="w"></span>
+<span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span><span class="w"></span>
+<span class="k">begin</span><span class="w"></span>
+<span class="w">  </span><span class="c1">-- Add bins to the coverpoint. (Default number of hits required is one per bin).</span><span class="w"></span>
+<span class="w">  </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_zero&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">254</span><span class="p">));</span><span class="w"> </span><span class="c1">-- Any value in the range 1 to 254 will increment the hit count by one</span><span class="w"></span>
+<span class="w">  </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;bin_max&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">-- Sample the data</span><span class="w"></span>
+<span class="w">  </span><span class="c1">-- Loop will terminate when each of the bins above has been hit at least once</span><span class="w"></span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="k">not</span><span class="p">(</span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">coverage_completed</span><span class="p">(</span><span class="n">BINS_AND_HITS</span><span class="p">))</span><span class="w"> </span><span class="k">loop</span><span class="w"></span>
+<span class="w">    </span><span class="n">bus_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">SAMPLE_COV</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates an integer from an uncovered bin and samples the integer</span><span class="w"></span>
+<span class="w">    </span><span class="n">configure_addr</span><span class="p">(</span><span class="n">bus_addr</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">C_CLK_PERIOD</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">-- Print the coverage report</span><span class="w"></span>
+<span class="w">  </span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">report_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="p">...</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The syntax for all methods is given in <a class="reference internal" href="#func-cov-pkg"><span class="std std-ref">func_cov_pkg</span></a>.</p>
+</div>
+</section>
 <section id="creating-and-adding-bins">
 <h2>Creating and adding bins<a class="headerlink" href="#creating-and-adding-bins" title="Permalink to this headline"></a></h2>
-<p>Different functions are used to create bins, while a procedure is used to add them to the coverpoint. This is necessary for
-several reasons: better readability, avoiding conflicts with overloads which have similar parameters and supporting adding
-multiple types of bins in a single line.</p>
+<p>Bins are generated using one of the bin generation functions defined in the functional coverage package, and added to a coverpoint
+using the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure.
+This is necessary for several reasons: better readability, avoiding conflicts with overloads which have similar parameters and
+supporting adding multiple types of bins in a single line.</p>
+<p>By calling the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure with the <code class="docutils literal notranslate"><span class="pre">bin()</span></code> function as parameter, we can generate and add a bin in a single operation.</p>
+<p>The following code adds a bin for the value 1 to the coverpoint named <em>my_coverpoint</em>.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Bins are implemented as record elements inside the protected type t_coverpoint, which represents both coverpoints and crosses.</p>
 <p>Bins can be created using the following <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>:</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Create a single bin for a single value</span><span class="w"></span>
 <span class="n">bin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
@@ -401,9 +447,8 @@ when the list becomes full. These constants are defined in adaptations_pkg.</p>
 <p>Moreover, the procedures <code class="docutils literal notranslate"><span class="pre">set_num_allocated_bins()</span></code> and <code class="docutils literal notranslate"><span class="pre">set_num_allocated_bins_increment()</span></code> can be used to reconfigure a
 coverpoint’s respective values.</p>
 </section>
-</section>
 <section id="bin-name">
-<h2>Bin name<a class="headerlink" href="#bin-name" title="Permalink to this headline"></a></h2>
+<h3>Bin name<a class="headerlink" href="#bin-name" title="Permalink to this headline"></a></h3>
 <p>Bins can be named by using the optional parameter <em>bin_name</em> in the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure. If no name is given to the bin, a
 default name will be automatically given. Having a bin name is useful when reading the reports.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">bin_name</span><span class="p">])</span><span class="w"></span>
@@ -414,7 +459,7 @@ default name will be automatically given. Having a bin name is useful when readi
 <p>The maximum length of the name is determined by C_FC_MAX_NAME_LENGTH defined in adaptations_pkg.</p>
 </section>
 <section id="minimum-coverage">
-<h2>Minimum coverage<a class="headerlink" href="#minimum-coverage" title="Permalink to this headline"></a></h2>
+<h3>Minimum coverage<a class="headerlink" href="#minimum-coverage" title="Permalink to this headline"></a></h3>
 <p>By default all bins created have a minimum coverage of 1, i.e. they only need to be sampled once to be covered. The parameter
 <em>min_hits</em> in the <code class="docutils literal notranslate"><span class="pre">add_bins()</span></code> procedure specifies how many times the bin must be sampled in order to be marked as covered.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span><span class="w"> </span><span class="n">min_hits</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">bin_name</span><span class="p">])</span><span class="w"></span>
@@ -425,11 +470,17 @@ default name will be automatically given. Having a bin name is useful when readi
 </pre></div>
 </div>
 </section>
+</section>
 <section id="cross-coverage">
 <h2>Cross coverage<a class="headerlink" href="#cross-coverage" title="Permalink to this headline"></a></h2>
-<p>It can be used to track combinations of values from two or more objects (variable/signal/coverpoint).
+<p>Cross coverage can be used to track combinations of values from two or more objects (variable/signal/coverpoint).
 For example, when certain combinations of source address and destination address of the Ethernet protocol need to be verified.
-This can be done in two different ways using the <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedure and <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>.</p>
+Crosses are made using the <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedure and can be made either between bins or between coverpoints.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin1</span><span class="p">,</span><span class="w"> </span><span class="n">bin2</span><span class="p">)</span><span class="w"></span>
+
+<span class="n">add_cross</span><span class="p">(</span><span class="n">coverpoint1</span><span class="p">,</span><span class="w"> </span><span class="n">coverpoint2</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
 <ul>
 <li><p>Every type of bin (single value, multiple values, range, transition, ignore &amp; illegal) can be crossed with each other.</p></li>
 <li><p>When crossing several transition bins, they must have the same number of transitions, e.g.</p>
@@ -444,11 +495,14 @@ This can be done in two different ways using the <code class="docutils literal n
 <p>Once the number of crossed bins has been set in a coverpoint, by calling the first <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code>, it cannot be
 changed anymore.</p>
 </div>
-<section id="using-bins">
-<h3>Using bins<a class="headerlink" href="#using-bins" title="Permalink to this headline"></a></h3>
-<p>This is a “faster” way of creating the crosses and useful when we need specific combinations of values. The <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code>
-overloads support up to 5 crossed elements.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin1</span><span class="p">,</span><span class="w"> </span><span class="n">bin2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">bin_name</span><span class="p">])</span><span class="w"></span>
+<section id="crossing-bins">
+<h3>Crossing bins<a class="headerlink" href="#crossing-bins" title="Permalink to this headline"></a></h3>
+<p>This is a “faster” way of creating the crosses and useful when we need specific combinations of values. A cross between bins is
+added to a coverpoint by calling the <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedure in combination with <a class="reference internal" href="func_cov_pkg_methods.html#bin-functions"><span class="std std-ref">bin functions</span></a>.
+The <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> overloads support up to 5 crossed elements.
+The min_hits argument can be included to specify how many times the scenario given by the cross must be sampled for the cross to be
+marked as covered. The default value is one, meaning that the scenario only has to be sampled once for the cross to be covered.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin1</span><span class="p">,</span><span class="w"> </span><span class="n">bin2</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">min_hits</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">bin_name</span><span class="p">])</span><span class="w"></span>
 
 <span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">15</span><span class="p">));</span><span class="w"></span>
 <span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w"> </span><span class="n">bin_range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">31</span><span class="p">));</span><span class="w"></span>
@@ -483,10 +537,12 @@ overloads support up to 5 crossed elements.</p>
 </pre></div>
 </div>
 </section>
-<section id="using-coverpoints">
-<h3>Using coverpoints<a class="headerlink" href="#using-coverpoints" title="Permalink to this headline"></a></h3>
+<section id="crossing-coverpoints">
+<h3>Crossing coverpoints<a class="headerlink" href="#crossing-coverpoints" title="Permalink to this headline"></a></h3>
 <p>This alternative is useful when the coverpoints are already created and we don’t want to repeat the declaration of the bins. The
 <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> overloads support up to 16 crossed elements. <strong>Beta release only supports up to 5 crossed elements.</strong></p>
+<p>When crossing coverpoints, the resulting bins will all have a min_hits value of 1, unless another min_hits value is given as
+a parameter to the <code class="docutils literal notranslate"><span class="pre">add_cross()</span></code> procedure.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_coverpoint_addr</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span><span class="w"></span>
 <span class="n">my_coverpoint_size</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">127</span><span class="p">));</span><span class="w"></span>
 <span class="n">my_cross</span><span class="p">.</span><span class="n">add_cross</span><span class="p">(</span><span class="n">my_coverpoint_addr</span><span class="p">,</span><span class="w"> </span><span class="n">my_coverpoint_size</span><span class="p">);</span><span class="w"></span>
@@ -623,8 +679,8 @@ between 1 and 100. Default value is 100 (as in 100%).</p>
 </section>
 <section id="coverpoints-coverage-goal">
 <h3>Coverpoints coverage goal<a class="headerlink" href="#coverpoints-coverage-goal" title="Permalink to this headline"></a></h3>
-<p>This value defines the percentage of the number of coverpoints which need to be covered and therefore the range is between 1 and
-100. Default value is 100 (as in 100%).</p>
+<p>This value defines the percentage of the number of coverpoints which need to be covered and therefore the range is between 1 and 100.
+Default value is 100 (as in 100%).</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Cover only 25% of the total number of coverpoints</span><span class="w"></span>
 <span class="n">fc_set_covpts_coverage_goal</span><span class="p">(</span><span class="mi">25</span><span class="p">);</span><span class="w"></span>
 

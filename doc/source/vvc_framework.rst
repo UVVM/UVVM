@@ -623,7 +623,7 @@ Available information is dependent on VVC type and typical information is: ::
     operation          : t_operation;                                            -- default NO_OPERATION
     data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0); -- default 0x0
     vvc_meta           : t_vvc_meta;                                             -- default C_VVC_META_DEFAFULT
-    transaction_status : t_transaction_status;                                   -- default C_TRANSACTION_STATUS_DEFAULT (INACTIVE)
+    transaction_status : t_transaction_status;                                   -- default INACTIVE
 
 .. note::
 
@@ -809,7 +809,7 @@ general transaction record, whereas table 2 shows a concrete example for the SBI
 Note that for a given interface/protocol, the VVC and the Monitor will use the same interface dedicated transaction record type - 
 with some fields potentially unused.
 
-.. table:: Table 1 - General transaction record t_transaction. The fields in bold indicate optional or protocol dedicated fields
+.. table:: Table 1 - General transaction record t_base_transaction. The fields in bold indicate optional or protocol dedicated fields
 
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
@@ -827,8 +827,10 @@ with some fields potentially unused.
     |                         |                              |   fields, or a better solution, include as a complete sub-record.  |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | transaction_status      | t_transaction_status         | | Handled slightly different from a VVC and a Monitor.             |
-    |                         |                              | | VVC: Will show 'IN_PROGRESS' during the transaction and INACTIVE |
-    |                         |                              |   in between (for at least one delta cycle).                       |
+    |                         |                              | | VVC: Will show IN_PROGRESS during the transaction, then COMPLETED|
+    |                         |                              |   when the transaction ends (for one delta cycle) and finally      |
+    |                         |                              |   INACTIVE until the next transaction (for at least one delta      |
+    |                         |                              |   cycle).                                                          |
     |                         |                              | | Monitor: Will show FAILED or SUCCEEDED immediately as soon as    |
     |                         |                              |   this is 100% certain - and keep this info for the display period |
     |                         |                              |   defined in the Monitor configuration record, or until the start  |
@@ -848,10 +850,12 @@ with some fields potentially unused.
     | | *Note: For transaction info from a VVC, the record reflects the command status, i.e. the status assumed by the VVC when   |
     |   initiating the command, whereas the Monitor will set up the record only after knowing whether the transaction has failed  |
     |   or succeeded.*                                                                                                            |
+    | | *However, the transaction info from a VVC is also updated at the end of the command, which can be useful to fetch the data|
+    |   from read/receive operations.*                                                                                            |
     | | *The VVC does not know the BFM status, and this is fine because the BFM will issue an alert for unexpected behaviour.*    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
 
-.. table:: Table 2 - SBI specific transaction record t_transaction. The fields in bold indicate protocol dedicated fields
+.. table:: Table 2 - SBI specific transaction record t_base_transaction. The fields in bold indicate protocol dedicated fields
 
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
@@ -883,8 +887,8 @@ request may be active at the same time as a read response. (And the sub-transact
 be part of a CT).
 
 Table 3 shows the maximum transaction group record for an SBI, whereas Table 4 shows the maximum transaction group record for an 
-Avalon. The bold CT is optional for both, and thus depends on whether CTs have been defined in the VVC. Multiple parallel STs may 
-be written to the transaction group record simultaneously - as these are handled by different "threads" (concurrent statements 
+Avalon MM. The bold CT is optional for both, and thus depends on whether CTs have been defined in the VVC. Multiple parallel STs 
+may be written to the transaction group record simultaneously - as these are handled by different "threads" (concurrent statements 
 like a process).
 
 A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-record. A Monitor for a split transaction protocol 
@@ -893,24 +897,28 @@ A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-
 
 .. note::
 
-    * A VVC will update its Transaction Info leaf transaction details at the start of the transaction when the BFM is called. and 
-      turned off when BFM is finished.
+    * A VVC will update its Transaction Info leaf transaction details at the start of the transaction when the BFM is called, then
+      again when the transaction is completed, and turned off one delta cycle afterwards.
     * A Monitor will set its Transaction Info record after the transaction is finished (or transaction status is known) and keep 
       it on for a pre-defined time - or until the next transaction is finished if earlier.
 
 .. hint::
 
-    It is recommended that the model (or any other user of Transaction Info) triggers on the VVC/Monitor trigger signal and checks 
-    when transaction_status is changing to 'INACTIVE' and then sample <signal>'last_value.
+    * For operations in which the VVC/Monitor knows the data beforehand, e.g. WRITE, TRANSMIT, it is recommended that the model
+      triggers on the VVC/Monitor trigger signal and checks when the transaction_status is 'IN_PROGRESS' and then samples the 
+      transaction value.
+    * Whereas for operations in which the VVC/Monitor receives the data after the transaction, e.g. READ, RECEIVE, it is 
+      recommended that the model triggers on the VVC/Monitor trigger signal and checks when the transaction_status is 'COMPLETED' 
+      and then samples the transaction value.
 
 .. table:: Table 3 - Maximum transaction group record t_transaction_group - for an SBI interface
 
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
     +=========================+==============================+====================================================================+
-    | bt                      | t_transaction                | Base transaction                                                   |
+    | bt                      | t_base_transaction           | Base transaction                                                   |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | **ct**                  | **t_transaction**            | Compound transaction                                               |
+    | **ct**                  | **t_compound_transaction**   | Compound transaction                                               |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
 
 .. table:: Table 4 - Maximum transaction group record t_transaction_group - for an Avalon MM interface
@@ -918,13 +926,13 @@ A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
     +=========================+==============================+====================================================================+
-    | st_request              | t_transaction                | Sub-transaction                                                    |
+    | st_request              | t_sub_transaction            | Sub-transaction                                                    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | st_response             | t_transaction                | Sub-transaction                                                    |
+    | st_response             | t_sub_transaction            | Sub-transaction                                                    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | bt                      | t_transaction                | Base transaction                                                   |
+    | bt                      | t_base_transaction           | Base transaction                                                   |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | **ct**                  | **t_transaction**            | Compound transaction                                               |
+    | **ct**                  | **t_compound_transaction**   | Compound transaction                                               |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
 
 .. _vvc_framework_transaction_info_record:
@@ -932,7 +940,8 @@ A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-
 Transaction Info record signals
 ----------------------------------------------------------------------------------------------------------------------------------
 The Transaction Info record is provided out of the VVC and Monitor using sets of a global signal and a shared variable. These and 
-all Transaction Info related VHDL types are defined in transaction_pkg.vhd, located in the VIP src folder.
+all Transaction Info related VHDL types are defined in transaction_pkg.vhd, located in the VIP src folder (except for the 
+t_transaction_status type, which is defined in types_pkg).
 
     * **Monitor trigger signal** : *global_<protocol-name>_monitor_transaction_trigger*, e.g. global_uart_monitor_transaction_trigger
     * **Monitor shared variable** : *shared_<protocol-name>_monitor_transaction_info*, e.g. shared_uart_monitor_transaction_info
@@ -946,8 +955,8 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | Name             | Type                   | Default         | Description                                                   |
     +==================+========================+=================+===============================================================+
-    | bt               | t_transaction          | C_TRANSACTION_S\| Transaction Info record entry for base transaction            |
-    |                  |                        | ET_DEFAULT      |                                                               |
+    | bt               | t_base_transaction     | C_BASE_TRANSACT\| Transaction Info record entry for base transaction            |
+    |                  |                        | ION_SET_DEFAULT |                                                               |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | -> operation     | t_operation            | NO_OPERATION    | Equal to VVC transaction operation, e.g. TRANSMIT, RECEIVE and|
     |                  |                        |                 | EXPECT (UART)                                                 |
@@ -964,11 +973,11 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | ---> cmd_idx     | integer                | -1              | VVC command index resulting in this base transaction          |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
-    | -> transaction_s\| t_transaction_status   | C_TRANSACTION_S\| The current status of transaction. Available statuses are     |
-    | tatus            |                        | TATUS_DEFAULT   | INACTIVE, IN_PROGRESS, FAILED and SUCCEEDED [#f2]_            |
+    | -> transaction_s\| t_transaction_status   | INACTIVE        | The current status of transaction. Available statuses are     |
+    | tatus            |                        |                 | INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED and COMPLETED [#f2]_ |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
-    | -> error_info    | t_error_info           | C_ERRO_INFO_DEF\| Record entry of errors that will be injected to the DUT access|
-    | [#f3]_           |                        | AULT            | transaction                                                   |
+    | -> error_info    | t_error_info           | C_ERROR_INFO_DE\| Record entry of errors that will be injected to the DUT access|
+    | [#f3]_           |                        | FAULT           | transaction                                                   |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | ---> parity_bit\ | boolean                | False           | The DUT transaction will have a parity bit error if entry is  |
     | _error [#f4]_    |                        |                 | set to true                                                   |
@@ -976,9 +985,9 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
     | ---> stop_bir_er\| boolean                | False           | The DUT transaction will have a stop bit error if entry is set|
     | ror [#f4]_       |                        |                 | to true                                                       |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
-    | ct [#f5]_        | t_transaction          | C_TRANSACTION_S\| | Transaction Info record entry for compound transaction      |
-    |                  |                        | ET_DEFAULT      | | Note that sub-record entries would typically have the same  |
-    |                  |                        |                 |   entries as for a base transaction, and that this entry does |
+    | ct [#f5]_        | t_compound_transaction | C_COMPOUND_TRAN\| | Transaction Info record entry for compound transaction      |
+    |                  |                        | SACTION_SET_DEF\| | Note that sub-record entries would typically have the same  |
+    |                  |                        | AULT            |   entries as for a base transaction, and that this entry does |
     |                  |                        |                 |   not have to be suited for all interface Transaction Info    |
     |                  |                        |                 |   records.                                                    |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
@@ -987,8 +996,8 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
 
     .. [#f1] Record field **address** is not applicable for all interface types, e.g. UART, and is only shown here for 
        informational purposes.
-    .. [#f2] Transaction status **FAILED** and **SUCCEEDED** are not applicable for VVC Transaction Info records, but will be used 
-       for Monitor Transaction Info records.
+    .. [#f2] Transaction status **FAILED** and **SUCCEEDED** are only applicable for Monitor Transaction Info records and not for 
+       VVC Transaction Info records. Whereas **COMPLETED** is applicable only for VVCs and not Monitors.
     .. [#f3] Record field **error_info** and its sub-record fields can be omitted if no error injection is implemented in the BFM.
     .. [#f4] **error_info** sub-record fields **parity_bit_error** and **stop_bit_error** are examples of UART error injection.
     .. [#f5] Record entry **ct** will consist of similar record fields as **bt**, and might not always be necessary. This applies 
@@ -997,14 +1006,14 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
 Transaction Info signal and shared variable
 ----------------------------------------------------------------------------------------------------------------------------------
 A VVC or Monitor will trigger the global trigger signals listed in :ref:`vvc_framework_transaction_info_record` when information 
-of a new transaction info is made available. For a VVC, the transaction info is made available prior to the corresponding bus 
-access, i.e. before calling the BFM method, and the global trigger signal will be pulsed for a delta cycle. The VVC will set the 
-transaction info back to default values immediately after the bus access has finished, but then without pulsing the global trigger 
-signal.
+of a new transaction info is made available. For a VVC, the transaction info can be available prior to the corresponding bus 
+access, i.e. before calling the BFM method, or at the end of the access, i.e. when the BFM method has finished. The global trigger 
+signal will be pulsed in both cases for a delta cycle. The VVC will set the transaction info back to default values immediately 
+after the second trigger, but then without pulsing the global trigger signal.
 
 For a Monitor, the transaction info will be made available immediately after a bus access is completed and then the global trigger 
-signal will be pulsed for a delta cycle. The transaction info is valid when the global trigger signal is pulsed and is set back to 
-default values after a period of transaction_display_time, set in the Monitor configuration record, or when a new transaction is 
+signal will be pulsed for a delta cycle. The transaction info is valid when the global trigger signal is pulsed and it is set back 
+to default values after a period of transaction_display_time, set in the Monitor configuration record, or when a new transaction is 
 started.
 
 Examples of Transaction Info Usage
@@ -1058,19 +1067,17 @@ Figure 5 uses aliasing to simplify and improve code readability, while Figure 6 
         wait until (sbi_transaction_trigger = '1') or (uart_rx_transaction_trigger = '1');
 
         if sbi_transaction_trigger'event then
-          case sbi_transaction_info.operation is
-            when READ =>
-              v_sb_element := sbi_transaction_info.data(C_DATA_WIDTH-1 downto 0);
-              SBI_VVC_SB.check_received(C_SBI_VVC_1, v_sb_element);
-          end case;
+          if sbi_transaction_info.operation = READ and sbi_transaction_info.transaction_status = COMPLETED then
+            v_sb_element := sbi_transaction_info.data(C_DATA_WIDTH-1 downto 0);
+            SBI_VVC_SB.check_received(C_SBI_VVC_1, v_sb_element);
+          end if;
         end if;
 
         if uart_rx_transaction_trigger'event then
-          case uart_rx_info.operation is
-            when RECEIVE =>
-              v_sb_element := uart_rx_info.data(C_DATA_WIDTH-1 downto 0);
-              UART_VVC_SB.check_received(C_UART_VVC_1, v_sb_element);
-          end case;
+          if uart_rx_info.operation = RECEIVE and uart_rx_info.transaction_status = COMPLETED then
+            v_sb_element := uart_rx_info.data(C_DATA_WIDTH-1 downto 0);
+            UART_VVC_SB.check_received(C_UART_VVC_1, v_sb_element);
+          end if;
         end if;
 
       end loop;
@@ -1091,17 +1098,15 @@ these scoreboard approaches are already performed by the VVCs.
         wait until (global_sbi_vvc_transaction_trigger(C_SBI_VVC_1) = '1') or (global_uart_vvc_transaction_trigger(TX, C_UART_VVC_1) = '1');
 
         if global_sbi_vvc_transaction_trigger(C_SBI_VVC_1)'event then
-          case shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.operation is
-            when WRITE =>
-              UART_VVC_SB.add_expected(shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
-          end case;
+          if shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.operation = WRITE and shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.transaction_status = IN_PROGRESS then
+            UART_VVC_SB.add_expected(shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
+          end if;
         end if;
 
         if global_uart_vvc_transaction_trigger(TX, C_UART_VVC_1)'event then
-          case shared_uart_vvc_transaction_info(TX, C_UART_VVC_1).bt.operation is
-            when TRANSMIT =>
-              SBI_VVC_SB.add_expected(shared_uart_vvc_transaction(TX, C_UART_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
-          end case;
+          if shared_uart_vvc_transaction_info(TX, C_UART_VVC_1).bt.operation = TRANSMIT and shared_uart_vvc_transaction_info(TX, C_UART_VVC_1).bt.transaction_status = IN_PROGRESS then
+            SBI_VVC_SB.add_expected(shared_uart_vvc_transaction(TX, C_UART_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
+          end if;
         end if;
 
       end loop;
@@ -1158,12 +1163,11 @@ record element.
         wait until avalon_st_transaction_trigger = '1';
 
         if avalon_st_transaction_trigger'event then
-          case avalon_st_transaction_info.operation is
-            when RECEIVE =>
-              v_sb_element.channel_value := avalon_st_transaction_info.channel_value(C_CH_WIDTH-1 downto 0);
-              v_sb_element.data_array    := avalon_st_transaction_info.data_array(0 to C_ARRAY_LENGTH-1)(C_WORD_WIDTH-1 downto 0);
-              AVALON_ST_VVC_SB.check_received(C_AVALON_ST_VVC_1, v_sb_element);
-          end case;
+          if avalon_st_transaction_info.operation = RECEIVE and avalon_st_transaction_info.transaction_status = COMPLETED then
+            v_sb_element.channel_value := avalon_st_transaction_info.channel_value(C_CH_WIDTH-1 downto 0);
+            v_sb_element.data_array    := avalon_st_transaction_info.data_array(0 to C_ARRAY_LENGTH-1)(C_WORD_WIDTH-1 downto 0);
+            AVALON_ST_VVC_SB.check_received(C_AVALON_ST_VVC_1, v_sb_element);
+          end if;
         end if;
 
       end loop;
@@ -1771,34 +1775,14 @@ thread (here: 'channel'). No more; no less. This allows a single command queue a
 
 Note that SBI_VVC must handle both read and write accesses, but never simultaneously and always in the given order.
 
-Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. Some examples:
+Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. The included
+bitvis_vip_uart implementation uses the following method:
 
-    #. | **As unique VVC implementation**
-       | Unique VVCs may be used in order to omit the channel input, e.g. UART RX VVC and UART TX VVC. UART TX VVC would only 
-         contain TX specific BFM procedures, while UART RX VVC would only contain RX specific BFM procedures. With this approach 
-         the testbench sequencer calls would look like e.g. (assuming both VVCs in this pair are set to instance index 1):
-       |    a. uart_transmit(UART_TX_VVCT, 1, ...)
-       |    b. uart_receive(UART_RX_VVCT, 1, ...)
-
-    #. | **As shared VVC implementation with usage restricted by user, and multiple VVC instances**
-       | A combined VVC with different VVC instances for different channels e.g. RX and TX. The TX instance could e.g. be instance 
-         1, and the RX instance could be e.g. instance 2. Using this UART VVC with this implementation would look like:
-       |    a. uart_transmit(UART_VVCT, 1, ...)
-       |    b. uart_receive(UART_VVCT, 2, ...)
-
-    #. | **As shared VVC implementation with GC_CHANNEL generic input**
-       | A combined VVC with the same combined VVC implementation, but separate instances for different channels e.g. RX and TX 
-         (both functionalities inside the same leaf VVC). The downside of this implementation is that it would be possible to call 
-         TX BFM procedures when calling the RX VVC channel. Using this UART VVC would look like:
-       |    a. uart_transmit(UART_VVCT, TX, 1, ...)
-       |    b. uart_receive(UART_VVCT, RX, 1, ...)
-
-    #. | **As unique VVC implementation with GC_CHANNEL generic input**
+    *  | **A unique VVC implementation with GC_CHANNEL generic input**
        | This approach uses unique VVC implementations for each channel, e.g. in uart_rx_vvc.vhd and uart_tx_vvc.vhd, but they 
          both share the VVC target parameter, UART_VVCT. They both use the GC_CHANNEL generic input to specify their channel, i.e. 
-         TX or RX. This is similar to the method described in example 3, but with restrictions that ensure that e.g. the UART TX 
-         VVC can't use the UART RX BFM procedures. The included bitvis_vip_uart example is implemented with this method. Using 
-         this UART VVC would look like:
+         TX or RX. The VVCs have restrictions that ensure that e.g. the UART TX VVC can't use the UART RX BFM procedures.
+         Using this UART VVC would look like:
        |    a. uart_transmit(UART_VVCT, TX, 1, ...)
        |    b. uart_receive(UART_VVCT, RX, 1, ...)
 

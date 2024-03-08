@@ -266,6 +266,14 @@ fitting alert_level for any given check or await.</p>
 </div>
 <section id="check-value">
 <h4>check_value()<a class="headerlink" href="#check-value" title="Permalink to this headline"></a></h4>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Checking that a value is not equal to another value is possible by using a boolean expression as the [value] parameter.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">--Example:</span><span class="w"></span>
+<span class="n">check_value</span><span class="p">((</span><span class="n">value_1</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">value_2</span><span class="p">),</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking that value_1 is not equal value_2&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
 <p>Checks if value equals exp, and alerts with severity alert_level if the values do not match. The result of the check is returned as
 a boolean if the method is called as a function.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="p">]</span><span class="w"> </span><span class="n">check_value</span><span class="p">(</span><span class="n">value</span><span class="p">(</span><span class="n">bool</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">exp</span><span class="p">(</span><span class="n">bool</span><span class="p">)],</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span><span class="w"></span>
@@ -4490,7 +4498,18 @@ limitations)</p></td>
 <tr class="row-odd"><td><p>ID_CTRL</p></td>
 <td><p>To write general control/config information</p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>– <strong>Specification vs Verification IDs</strong></p></td>
+<tr class="row-even"><td colspan="2"><p>– <strong>Specification requirement coverage</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_SPEC_COV_INIT</p></td>
+<td><p>Used for logging specification requirement coverage initialization</p></td>
+</tr>
+<tr class="row-even"><td><p>ID_SPEC_COV_REQS</p></td>
+<td><p>Used for logging the specification requirement list</p></td>
+</tr>
+<tr class="row-odd"><td><p>ID_SPEC_COV</p></td>
+<td><p>Used for logging general specification requirement coverage methods</p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p>– <strong>File handling</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p>ID_FILE_OPEN_CLOSE</p></td>
 <td><p>Id used when opening / closing file</p></td>
@@ -4498,12 +4517,9 @@ limitations)</p></td>
 <tr class="row-even"><td><p>ID_FILE_PARSER</p></td>
 <td><p>Id used in file parsers</p></td>
 </tr>
-<tr class="row-odd"><td><p>ID_SPEC_COV</p></td>
-<td><p>Messages from the specification coverage methods</p></td>
+<tr class="row-odd"><td colspan="2"><p>– <strong>Special purpose - Not really IDs</strong></p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>– <strong>Special purpose - Not really IDs</strong></p></td>
-</tr>
-<tr class="row-odd"><td><p>ALL_MESSAGES</p></td>
+<tr class="row-even"><td><p>ALL_MESSAGES</p></td>
 <td><p>Not an ID. Applies to all IDs (apart from ID_NEVER).</p></td>
 </tr>
 </tbody>
@@ -4990,10 +5006,10 @@ msg_id ID_UVVM_SEND_CMD will be shown</p></td>
 <section id="suppressed-warnings">
 <h3>Suppressed warnings<a class="headerlink" href="#suppressed-warnings" title="Permalink to this headline"></a></h3>
 <p>The compile script compiles the Utility Library with the following directives for the vcom command to suppress warnings about the
-use of protected types and a possible infinite loop in a VVC process. <strong>These can be ignored.</strong></p>
+use of protected types and interface objects not being globally static. <strong>These can be ignored.</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Modelsim: -suppress 1346,1236,1090</p></li>
+<li><p>Modelsim: -suppress 1346,1236</p></li>
 <li><p>Riviera-PRO: -nowarn COMP96_0564 -nowarn COMP96_0048</p></li>
 </ul>
 </div></blockquote>

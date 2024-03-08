@@ -24,7 +24,6 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-use work.transaction_pkg.all;
 use work.uart_bfm_pkg.all;
 use work.vvc_methods_pkg.all;
 use work.vvc_cmd_pkg.all;
@@ -32,6 +31,7 @@ use work.td_target_support_pkg.all;
 use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
+use work.transaction_pkg.all;
 
 entity uart_tx_vvc is
   generic(
@@ -55,7 +55,6 @@ architecture behave of uart_tx_vvc is
 
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, GC_CHANNEL);
-  constant C_DATA_WIDTH : natural      := 8;
 
   signal executor_is_busy      : boolean := false;
   signal queue_is_increasing   : boolean := false;
@@ -66,12 +65,12 @@ architecture behave of uart_tx_vvc is
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
   shared variable result_queue  : work.td_result_queue_pkg.t_generic_queue;
 
-  alias vvc_config                          : t_vvc_config is shared_uart_vvc_config(TX, GC_INSTANCE_IDX);
-  alias vvc_status                          : t_vvc_status is shared_uart_vvc_status(TX, GC_INSTANCE_IDX);
-  alias transaction_info                    : t_transaction_info is shared_uart_transaction_info(TX, GC_INSTANCE_IDX);
+  alias vvc_config                          : t_vvc_config is shared_uart_vvc_config(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_status                          : t_vvc_status is shared_uart_vvc_status(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias transaction_info                    : t_transaction_info is shared_uart_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
   -- Transaction info
-  alias vvc_transaction_info_trigger        : std_logic is global_uart_vvc_transaction_trigger(TX, GC_INSTANCE_IDX);
-  alias vvc_transaction_info                : t_transaction_group is shared_uart_vvc_transaction_info(TX, GC_INSTANCE_IDX);
+  alias vvc_transaction_info_trigger        : std_logic is global_uart_vvc_transaction_trigger(GC_CHANNEL, GC_INSTANCE_IDX);
+  alias vvc_transaction_info                : t_transaction_group is shared_uart_vvc_transaction_info(GC_CHANNEL, GC_INSTANCE_IDX);
   -- Activity Watchdog
   signal entry_num_in_vvc_activity_register : integer;
 
@@ -91,6 +90,8 @@ architecture behave of uart_tx_vvc is
   end function;
 
 begin
+
+  assert GC_CHANNEL = TX report "GC_CHANNEL must be set accordingly to the VVC, i.e. TX" severity failure;
 
   --===============================================================================================
   -- Constructor
@@ -114,7 +115,7 @@ begin
     -- 0. Initialize the process prior to first command
     work.td_vvc_entity_support_pkg.initialize_interpreter(terminate_current_cmd, global_awaiting_completion);
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
-    shared_vvc_last_received_cmd_idx(TX, GC_INSTANCE_IDX) := 0;
+    shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
     entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name     => C_VVC_NAME,
                                                                                                             instance => GC_INSTANCE_IDX,
@@ -134,7 +135,7 @@ begin
       work.td_vvc_entity_support_pkg.await_cmd_from_sequencer(C_VVC_LABELS, vvc_config, THIS_VVCT, VVC_BROADCAST, global_vvc_busy, global_vvc_ack, v_local_vvc_cmd);
       v_cmd_has_been_acked                                  := false; -- Clear flag
       -- update shared_vvc_last_received_cmd_idx with received command index
-      shared_vvc_last_received_cmd_idx(TX, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
+      shared_vvc_last_received_cmd_idx(GC_CHANNEL, GC_INSTANCE_IDX) := v_local_vvc_cmd.cmd_idx;
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel                                        := get_msg_id_panel(v_local_vvc_cmd, vvc_config);
@@ -177,7 +178,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
-            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
+            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
             work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
@@ -203,6 +204,7 @@ begin
       end if;
 
     end loop;
+    wait;
   end process;
   --===============================================================================================
 
@@ -219,7 +221,7 @@ begin
     variable v_command_is_bfm_access                  : boolean                                     := false;
     variable v_prev_command_was_bfm_access            : boolean                                     := false;
     variable v_msg_id_panel                           : t_msg_id_panel;
-    variable v_normalised_data                        : std_logic_vector(C_DATA_WIDTH - 1 downto 0) := (others => '0');
+    variable v_normalised_data                        : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
     variable v_num_data_bits                          : natural                                     := vvc_config.bfm_config.num_data_bits;
     variable v_has_raised_warning_if_vvc_bfm_conflict : boolean                                     := false;
     variable v_vvc_config                             : t_vvc_config;
@@ -302,13 +304,13 @@ begin
                 null;
             end case;
 
-            -- Set transaction info
-            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config);
+            -- Set vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config, IN_PROGRESS, C_SCOPE);
 
             -- Normalise address and data
-            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with to wide data. " & add_msg_delimiter(v_cmd.msg));
+            v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "uart_transmit() called with too wide data. " & add_msg_delimiter(v_cmd.msg));
 
-            transaction_info.data(C_DATA_WIDTH - 1 downto 0) := v_normalised_data;
+            transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
             -- Call the corresponding procedure in the BFM package.
             uart_transmit(data_value   => v_normalised_data(v_num_data_bits - 1 downto 0),
                           msg          => format_msg(v_cmd),
@@ -317,7 +319,10 @@ begin
                           scope        => C_SCOPE,
                           msg_id_panel => v_msg_id_panel);
 
-            -- Set transaction info back to default values
+            -- Update vvc transaction info
+            set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_vvc_config, COMPLETED, C_SCOPE);
+
+            -- Set vvc transaction info back to default values
             reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
 
             -- exit loop if terminate_current_cmd is requested

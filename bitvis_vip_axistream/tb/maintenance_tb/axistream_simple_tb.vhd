@@ -157,7 +157,7 @@ begin
     if GC_USER_WIDTH = 1 then
       -- When calling axistream_expect later, setting tuser for second word to dont care to support cases where number of words are only 1 (depends on GC_DATA_WIDTH)
       v_data_array(0 to 1) := (x"D0", x"D1");
-      v_user_array(0 to 1) := (x"01", x"00");
+      v_user_array(0 to 1) := (64x"01", 64x"00");
       axistream_transmit_bytes(v_data_array(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
     end if;
 
@@ -236,7 +236,7 @@ begin
     if GC_USER_WIDTH = 1 then
       -- setting tuser for second word to dont care to support cases where number of words are only 1 (depends on GC_DATA_WIDTH)
       v_data_array(0 to 1) := (x"D0", x"D1");
-      v_user_array(0 to 1) := (x"01", "--------");
+      v_user_array(0 to 1) := (64x"01", (others => '-'));
       axistream_expect_bytes(v_data_array(0 to 1), v_user_array(0 to 1),
                              "Directly assigned args, including tuser " & ".", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config); --
     end if;

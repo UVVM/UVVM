@@ -226,13 +226,13 @@ begin
 
     if GC_USER_WIDTH = 1 then
       -- When calling axistream_expect later, setting tuser for second word to dont care to support cases where number of words are only 1 (depends on GC_DATA_WIDTH)
-      v_user_array(0 to 1) := (x"01", x"00");
+      v_user_array(0 to 1) := (64x"01", 64x"00");
       axistream_transmit(v_data_array_1_byte(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"02", x"10");
+      v_user_array(0 to 1) := (64x"02", 64x"10");
       axistream_transmit(v_data_array_2_byte(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"03", x"20");
+      v_user_array(0 to 1) := (64x"03", 64x"20");
       axistream_transmit(v_data_array_3_byte(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"04", x"30");
+      v_user_array(0 to 1) := (64x"04", 64x"30");
       axistream_transmit(v_data_array_4_byte(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
     end if;
 
@@ -407,13 +407,13 @@ begin
 
     if GC_USER_WIDTH = 1 then
       -- setting tuser for second word to dont care to support cases where number of words are only 1 (depends on GC_DATA_WIDTH)
-      v_user_array(0 to 1) := (x"01", "--------");
+      v_user_array(0 to 1) := (64x"01", (others => '-'));
       axistream_expect(v_data_array_1_byte(0 to 1), v_user_array(0 to 1), "Directly assigned args, including tuser.", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"02", "--------");
+      v_user_array(0 to 1) := (64x"02", (others => '-'));
       axistream_expect(v_data_array_2_byte(0 to 1), v_user_array(0 to 1), "Directly assigned args, including tuser.", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"03", "--------");
+      v_user_array(0 to 1) := (64x"03", (others => '-'));
       axistream_expect(v_data_array_3_byte(0 to 1), v_user_array(0 to 1), "Directly assigned args, including tuser.", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"04", "--------");
+      v_user_array(0 to 1) := (64x"04", (others => '-'));
       axistream_expect(v_data_array_4_byte(0 to 1), v_user_array(0 to 1), "Directly assigned args, including tuser.", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
     end if;
 

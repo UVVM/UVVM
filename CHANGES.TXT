@@ -10,9 +10,9 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
-v2 2023.03.08
+v2 2024.03.08
 --------------------
-Released: 2023-03-08
+Released: 2024-03-08
 - Updated vvc_transaction_info in all VVCs to also trigger after the BFM call with updated data and the status
   COMPLETED. Updated vvc_generator.py script.
 - Added missing scope to alert in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.

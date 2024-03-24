@@ -10,6 +10,12 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2024.XX.XX
+--------------------
+Released: 2024-XX-XX
+- Updated Scoreboard documentation to mention in every method that instance 1 is used as default.
+
+
 v2 2024.03.08
 --------------------
 Released: 2024-03-08

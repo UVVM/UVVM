@@ -2025,7 +2025,11 @@ package body rand_pkg is
       constant proc_call : string)
     return boolean is
     begin
-      if (min_value(min_value'high) /= '1' and find_leftmost(min_value, '1') >= length - 1) or (min_value(min_value'high) = '1' and find_leftmost(min_value, '0') >= length - 1) or (max_value(max_value'high) /= '1' and find_leftmost(max_value, '1') >= length - 1) or (max_value(max_value'high) = '1' and find_leftmost(max_value, '0') >= length - 1) then
+      if (min_value(min_value'high) /= '1' and find_leftmost(min_value, '1') >= length - 1) or
+         (min_value(min_value'high) = '1' and find_leftmost(min_value, '0') >= length - 1) or
+         (max_value(max_value'high) /= '1' and find_leftmost(max_value, '1') >= length - 1) or
+         (max_value(max_value'high) = '1' and find_leftmost(max_value, '0') >= length - 1)
+      then
         alert(TB_ERROR, proc_call & "=> signed min_value and max_value lengths must be less or equal than length", priv_scope);
         return false;
       end if;
@@ -2216,7 +2220,9 @@ package body rand_pkg is
       variable v_multi_method_configured : boolean;
     begin
       -- Print report header
-      write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "***  REPORT OF RANDOM GENERATOR CONFIGURATION ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+        "***  REPORT OF RANDOM GENERATOR CONFIGURATION ***" & LF &
+        fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print report config
       write(v_line, "          " & justify("NAME", left, C_COLUMN1_WIDTH) & ": " & justify(to_string(priv_name), right, C_COLUMN2_WIDTH) & LF);
@@ -2231,7 +2237,13 @@ package body rand_pkg is
       write(v_line, "          " & justify("STD_DEV", left, C_COLUMN1_WIDTH) & ": " & justify(to_string(priv_std_dev, 2), right, C_COLUMN2_WIDTH) & LF);
 
       -- Print multi-method config
-      v_multi_method_configured := priv_int_constraints.ran_incl'length > 0 or priv_int_constraints.val_incl'length > 0 or priv_int_constraints.val_excl'length > 0 or priv_int_constraints.weighted_config or priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 or priv_real_constraints.val_excl'length > 0 or priv_real_constraints.weighted_config or priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted_config or priv_uns_constraints.ran_incl'length > 0 or priv_sig_constraints.ran_incl'length > 0;
+      v_multi_method_configured := priv_int_constraints.ran_incl'length > 0 or priv_int_constraints.val_incl'length > 0 or
+                                   priv_int_constraints.val_excl'length > 0 or priv_int_constraints.weighted_config or
+                                   priv_real_constraints.ran_incl'length > 0 or priv_real_constraints.val_incl'length > 0 or
+                                   priv_real_constraints.val_excl'length > 0 or priv_real_constraints.weighted_config or
+                                   priv_time_constraints.ran_incl'length > 0 or priv_time_constraints.val_incl'length > 0 or
+                                   priv_time_constraints.val_excl'length > 0 or priv_time_constraints.weighted_config or
+                                   priv_uns_constraints.ran_incl'length > 0 or priv_sig_constraints.ran_incl'length > 0;
       if v_multi_method_configured then
         write(v_line, fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
         write(v_line, "          MULTI-METHOD CONSTRAINTS" & LF);
@@ -2616,7 +2628,9 @@ package body rand_pkg is
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call  : string         := "")
     return integer is
-      constant C_LOCAL_CALL          : string      := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_LOCAL_CALL          : string      := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_combined_set_values : integer_vector(0 to set_of_values1'length + set_of_values2'length - 1);
@@ -2873,7 +2887,9 @@ package body rand_pkg is
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call  : string         := "")
     return real is
-      constant C_LOCAL_CALL          : string      := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " & to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & ")";
+      constant C_LOCAL_CALL          : string      := "rand(RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
+        to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & ")";
       constant C_PREVIOUS_DIST       : t_rand_dist := priv_rand_dist;
       variable v_proc_call           : line;
       variable v_combined_set_values : real_vector(0 to set_of_values1'length + set_of_values2'length - 1);
@@ -3108,7 +3124,9 @@ package body rand_pkg is
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call  : string         := "")
     return time is
-      constant C_LOCAL_CALL          : string  := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & ")";
+      constant C_LOCAL_CALL          : string  := "rand(RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & ")";
       variable v_proc_call           : line;
       variable v_combined_set_values : time_vector(0 to set_of_values1'length + set_of_values2'length - 1);
       variable v_gen_new_random      : boolean := true;
@@ -3307,7 +3325,8 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random : boolean     := true;
       variable v_cyclic_mode    : t_cyclic    := cyclic_mode;
@@ -3398,7 +3417,9 @@ package body rand_pkg is
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return integer_vector is
-      constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & to_string_if_enabled(cyclic_mode) & ")";
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random : boolean     := true;
       variable v_cyclic_mode    : t_cyclic    := cyclic_mode;
@@ -3560,7 +3581,8 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " & to_upper(to_string(specifier)) & ":" & format_real(set_of_values) & to_string_if_enabled(uniqueness) & ")";
+      constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
+        to_upper(to_string(specifier)) & ":" & format_real(set_of_values) & to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random : boolean     := true;
       variable v_ret            : real_vector(0 to length - 1);
@@ -3643,7 +3665,9 @@ package body rand_pkg is
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return real_vector is
-      constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " & to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
+      constant C_LOCAL_CALL     : string      := "rand(LEN:" & to_string(length) & ", RANGE:[" & format_real(min_value) & ":" & format_real(max_value) & "], " &
+        to_upper(to_string(specifier1)) & ":" & format_real(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & format_real(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
       constant C_PREVIOUS_DIST  : t_rand_dist := priv_rand_dist;
       variable v_gen_new_random : boolean     := true;
       variable v_ret            : real_vector(0 to length - 1);
@@ -3782,7 +3806,8 @@ package body rand_pkg is
       constant uniqueness    : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & ")";
+      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(uniqueness) & ")";
       variable v_gen_new_random : boolean := true;
       variable v_ret            : time_vector(0 to length - 1);
     begin
@@ -3856,7 +3881,9 @@ package body rand_pkg is
       constant uniqueness     : t_uniqueness   := NON_UNIQUE;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return time_vector is
-      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
+      constant C_LOCAL_CALL     : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(uniqueness) & ")";
       variable v_gen_new_random : boolean := true;
       variable v_ret            : time_vector(0 to length - 1);
     begin
@@ -4089,7 +4116,8 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret_int    : integer;
       variable v_ret        : unsigned(length - 1 downto 0);
       variable v_check_ok   : boolean := true;
@@ -4151,7 +4179,9 @@ package body rand_pkg is
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return unsigned is
-      constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret_int    : integer;
       variable v_ret        : unsigned(length - 1 downto 0);
       variable v_check_ok   : boolean := true;
@@ -4360,7 +4390,8 @@ package body rand_pkg is
       constant cyclic_mode   : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel  : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier)) & ":" & to_string(set_of_values) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret        : integer;
       variable v_check_ok   : boolean := true;
     begin
@@ -4420,7 +4451,9 @@ package body rand_pkg is
       constant cyclic_mode    : t_cyclic       := NON_CYCLIC;
       constant msg_id_panel   : t_msg_id_panel := shared_msg_id_panel)
     return signed is
-      constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " & to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " & to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
+      constant C_LOCAL_CALL : string  := "rand(LEN:" & to_string(length) & ", RANGE:[" & to_string(min_value) & ":" & to_string(max_value) & "], " &
+        to_upper(to_string(specifier1)) & ":" & to_string(set_of_values1) & ", " &
+        to_upper(to_string(specifier2)) & ":" & to_string(set_of_values2) & to_string_if_enabled(cyclic_mode) & ")";
       variable v_ret        : integer;
       variable v_check_ok   : boolean := true;
     begin

@@ -3911,7 +3911,11 @@ package body methods_pkg is
   begin
     pot_initialise_util(VOID); -- Only executed the first time called
     write(v_line,
-          LF & fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "***  REPORT OF GLOBAL CTRL ***" & LF & fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "                          IGNORE    STOP_LIMIT" & LF);
+          LF &
+          fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+          "***  REPORT OF GLOBAL CTRL ***" & LF &
+          fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+          "                          IGNORE    STOP_LIMIT" & LF);
     for i in note to t_alert_level'right loop
       write(v_line, "          " & to_upper(to_string(i, 13, left)) & ": "); -- Severity
 
@@ -3937,7 +3941,12 @@ package body methods_pkg is
   begin
     pot_initialise_util(VOID); -- Only executed the first time called
     write(v_line,
-          LF & fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "***  REPORT OF MSG ID PANEL ***" & LF & fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "          " & justify("ID", left, C_LOG_MSG_ID_WIDTH) & "       Status" & LF & "          " & fill_string('-', C_LOG_MSG_ID_WIDTH) & "       ------" & LF);
+          LF &
+          fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+          "***  REPORT OF MSG ID PANEL ***" & LF &
+          fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+          "          " & justify("ID", left, C_LOG_MSG_ID_WIDTH) & "       Status" & LF &
+          "          " & fill_string('-', C_LOG_MSG_ID_WIDTH) & "       ------" & LF);
     for i in t_msg_id'left to t_msg_id'right loop
       if ((i /= ALL_MESSAGES) and ((i /= NO_ID) and (i /= ID_NEVER))) then -- report all but ID_NEVER, NO_ID and ALL_MESSAGES
         write(v_line, "          " & to_upper(to_string(i, C_LOG_MSG_ID_WIDTH + 5, left)) & ": "); -- MSG_ID
@@ -4221,7 +4230,9 @@ package body methods_pkg is
 
         when MATCH_STD_INCL_Z =>
           for i in v_min_length - 1 downto 0 loop
-            if not (std_match(a_value1(i), a_value2(i)) or (a_value1(i) = 'Z' and a_value2(i) = 'Z') or (a_value1(i) = '-' or a_value2(i) = '-')) then
+            if not (std_match(a_value1(i), a_value2(i)) or
+              (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
+              (a_value1(i) = '-' or a_value2(i) = '-')) then
               v_match := false;
               exit;
             end if;
@@ -4229,7 +4240,12 @@ package body methods_pkg is
 
         when MATCH_STD_INCL_ZXUW =>
           for i in v_min_length - 1 downto 0 loop
-            if not (std_match(a_value1(i), a_value2(i)) or (a_value1(i) = 'Z' and a_value2(i) = 'Z') or (a_value1(i) = 'X' and a_value2(i) = 'X') or (a_value1(i) = 'U' and a_value2(i) = 'U') or (a_value1(i) = 'W' and a_value2(i) = 'W') or (a_value1(i) = '-' or a_value2(i) = '-')) then
+            if not (std_match(a_value1(i), a_value2(i)) or
+              (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
+              (a_value1(i) = 'X' and a_value2(i) = 'X') or
+              (a_value1(i) = 'U' and a_value2(i) = 'U') or
+              (a_value1(i) = 'W' and a_value2(i) = 'W') or
+              (a_value1(i) = '-' or a_value2(i) = '-')) then
               v_match := false;
               exit;
             end if;

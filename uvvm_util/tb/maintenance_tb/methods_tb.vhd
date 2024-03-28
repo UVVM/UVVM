@@ -551,8 +551,6 @@ begin
 
     randomise(12, 14);
     randomize(14, 12);
-    report_global_ctrl(VOID);
-    report_msg_id_panel(VOID);
 
     set_alert_stop_limit(warning, 0);
     set_alert_stop_limit(error, 0);     -- 0 = Never stop
@@ -599,6 +597,9 @@ begin
       end loop;
 
     elsif GC_TESTCASE = "enable_disable_log_msg" then
+      report_global_ctrl(VOID);
+      report_msg_id_panel(VOID);
+
       --------------------------------------------------------------------------------------
       -- Verifying disable_log_msg and enable_log_msg
       --------------------------------------------------------------------------------------

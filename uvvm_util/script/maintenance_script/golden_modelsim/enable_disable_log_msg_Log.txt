@@ -2,6 +2,10 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM:                                                                           Use randomize().
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 14, 12
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
 UVVM:      
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      ***  REPORT OF GLOBAL CTRL ***
@@ -12,7 +16,7 @@ UVVM:                TB_NOTE      :  REGARD         0
 UVVM:                WARNING      :  REGARD         0
 UVVM:                TB_WARNING   :  REGARD         0
 UVVM:                MANUAL_CHECK :  REGARD         0
-UVVM:                ERROR        :  REGARD         1
+UVVM:                ERROR        :  REGARD         0
 UVVM:                TB_ERROR     :  REGARD         1
 UVVM:                FAILURE      :  REGARD         1
 UVVM:                TB_FAILURE   :  REGARD         1
@@ -101,15 +105,13 @@ UVVM:                ID_MONITOR                   : ENABLED
 UVVM:                ID_MONITOR_ERROR             : ENABLED
 UVVM:                ID_DATA                      : ENABLED
 UVVM:                ID_CTRL                      : ENABLED
+UVVM:                ID_SPEC_COV_INIT             : ENABLED
+UVVM:                ID_SPEC_COV_REQS             : ENABLED
+UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:                ID_FILE_OPEN_CLOSE           : ENABLED
 UVVM:                ID_FILE_PARSER               : ENABLED
-UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         1.0 ns  (non scoped)                   Verifying disable_log_msg and enable_log_msg

@@ -187,27 +187,27 @@ UVVM: ID_LOG_HDR                       540.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_POS_ACK                       640.0 ns  TB seq                         check_stable() => OK. Stable at 0. 'Check that adjustable clock is quiet when disabled'
 UVVM: ID_CLOCK_GEN                     640.0 ns  TB seq.                        Starting clock: adj_clk100M
-UVVM: ID_POS_ACK                       645.0 ns  TB seq                         check_value() => OK, for time 5000 ps. 'Checking rising edge.'
+UVVM: ID_POS_ACK                       645.0 ns  TB seq                         check_value() => OK, for time 5 ns. 'Checking rising edge.'
 UVVM: ID_POS_ACK                       645.0 ns  TB seq                         check_value() => OK, for std_logic '1' (exp: '1'). 'Check that adjustable clock is set to high
 UVVM:                                                                           during the period.'
 UVVM: ID_POS_ACK                       645.0 ns  TB seq                         check_stable() => OK. Stable at 1. 'Check adjustable clock is stable during high period.'
-UVVM: ID_POS_ACK                       650.0 ns  TB seq                         check_value() => OK, for time 5000 ps. 'Checking falling edge.'
+UVVM: ID_POS_ACK                       650.0 ns  TB seq                         check_value() => OK, for time 5 ns. 'Checking falling edge.'
 UVVM: ID_POS_ACK                       650.0 ns  TB seq                         check_value() => OK, for std_logic '0' (exp: '0'). 'Check that adjustable clock is set to low
 UVVM:                                                                           during the period.'
 UVVM: ID_POS_ACK                       650.0 ns  TB seq                         check_stable() => OK. Stable at 0. 'Check adjustable clock is stable during low period.'
 UVVM: ID_CLOCK_GEN                     660.0 ns  TB seq.                        Stopping clock: adj_clk100M
 UVVM: ID_CLOCK_GEN                     670.0 ns  TB seq.                        Starting clock: adj_clk100M
-UVVM: ID_POS_ACK                       672.5 ns  TB seq                         check_value() => OK, for time 2500 ps. 'Checking rising edge.'
+UVVM: ID_POS_ACK                       672.5 ns  TB seq                         check_value() => OK, for time 2.5 ns. 'Checking rising edge.'
 UVVM: ID_POS_ACK                       672.5 ns  TB seq                         check_value() => OK, for std_logic '1' (exp: '1'). 'Check that adjustable clock is set to high
 UVVM:                                                                           during the period.'
 UVVM: ID_POS_ACK                       672.5 ns  TB seq                         check_stable() => OK. Stable at 1. 'Check adjustable clock is stable during high period.'
-UVVM: ID_POS_ACK                       680.0 ns  TB seq                         check_value() => OK, for time 7500 ps. 'Checking falling edge.'
+UVVM: ID_POS_ACK                       680.0 ns  TB seq                         check_value() => OK, for time 7.5 ns. 'Checking falling edge.'
 UVVM: ID_POS_ACK                       680.0 ns  TB seq                         check_value() => OK, for std_logic '0' (exp: '0'). 'Check that adjustable clock is set to low
 UVVM:                                                                           during the period.'
 UVVM: ID_POS_ACK                       680.0 ns  TB seq                         check_stable() => OK. Stable at 0. 'Check adjustable clock is stable during low period.'
 UVVM: ID_CLOCK_GEN                     690.0 ns  TB seq.                        Stopping clock: adj_clk100M
 UVVM: ID_CLOCK_GEN                     700.0 ns  TB seq.                        Starting clock: adj_clk100M
-UVVM: ID_POS_ACK                       709.9 ns  TB seq                         check_value() => OK, for time 9900 ps. 'Checking rising edge.'
+UVVM: ID_POS_ACK                       709.9 ns  TB seq                         check_value() => OK, for time 9.9 ns. 'Checking rising edge.'
 UVVM: ID_POS_ACK                       709.9 ns  TB seq                         check_value() => OK, for std_logic '1' (exp: '1'). 'Check that adjustable clock is set to high
 UVVM:                                                                           during the period, high: 9900 ps, low: 100 ps'
 UVVM: ID_POS_ACK                       709.9 ns  TB seq                         check_stable() => OK. Stable at 1. 'Check adjustable clock is stable during high period, high:
@@ -337,7 +337,7 @@ UVVM: ID_POS_ACK                      3051.0 ns  TB seq                         
 UVVM: ID_POS_ACK                      3101.0 ns  TB seq                         await_value(std_logic 0, 50 ns, 50 ns) => OK. Condition occurred after 50 ns. 'Pulse generator,
 UVVM:                                                                           end of high period'
 UVVM: ID_GEN_PULSE                    3205.0 ns  TB seq.                        Pulsed to 1 for 10 clk cycles. 'Test pulse 10 clk periods'
-UVVM: ID_POS_ACK                      3205.0 ns  TB seq.                        check_value() => OK, for time 100000 ps. 'Check start of pulse'
+UVVM: ID_POS_ACK                      3205.0 ns  TB seq.                        check_value() => OK, for time 100 ns. 'Check start of pulse'
 UVVM: ID_POS_ACK                      3205.0 ns  TB seq                         check_value() => OK, for std_logic '0' (exp: '0'). 'pulse for 10 clk periods, pulse done'
 UVVM: ID_POS_ACK                      3205.0 ns  TB seq                         check_value() => OK, for time 0 ps. 'pulse for 10 clk periods. Check that it actually pulsed
 UVVM:                                                                           for a delta cycle'
@@ -357,38 +357,38 @@ UVVM: ID_POS_ACK                      3355.0 ns  TB seq.                        
 UVVM: ID_GEN_PULSE                    3405.0 ns  TB seq.                        Pulsed to 1 for 50000 ps. 'Test pulse sl '
 UVVM: ID_POS_ACK                      3405.0 ns  TB seq.                        check_value() => OK, for std_logic 'L' (exp: 'L'). 'Check the value after the pulse'
 UVVM: ID_GEN_PULSE                    3435.0 ns  TB seq.                        Pulsed to x"AB" for 2 clk cycles. 'Test pulse slv defined as 'to' for 2 clks'
-UVVM: ID_POS_ACK                      3435.0 ns  TB seq.                        check_value() => OK, for time 20000 ps. 'Check start of pulse'
+UVVM: ID_POS_ACK                      3435.0 ns  TB seq.                        check_value() => OK, for time 20 ns. 'Check start of pulse'
 UVVM: ID_POS_ACK                      3435.0 ns  TB seq.                        check_value() => OK, for time 0 ps. 'Check pulse is just done'
 UVVM: ID_POS_ACK                      3435.0 ns  TB seq.                        check_value() => OK, for slv x"AB"'. 'Check what the value was during the pulse'
 UVVM: ID_POS_ACK                      3435.0 ns  TB seq.                        check_value() => OK, for slv x"00"'. 'Check the value after the pulse'
 UVVM: ID_GEN_PULSE                    3465.0 ns  TB seq.                        Pulsed to x"AB" for 2 clk cycles. 'Test pulse slv defined as 'downto' for 2 clks'
-UVVM: ID_POS_ACK                      3465.0 ns  TB seq.                        check_value() => OK, for time 20000 ps. 'Check start of pulse'
+UVVM: ID_POS_ACK                      3465.0 ns  TB seq.                        check_value() => OK, for time 20 ns. 'Check start of pulse'
 UVVM: ID_POS_ACK                      3465.0 ns  TB seq.                        check_value() => OK, for time 0 ps. 'Check pulse is just done'
 UVVM: ID_POS_ACK                      3465.0 ns  TB seq.                        check_value() => OK, for slv x"AB"'. 'Check what the value was during the pulse'
 UVVM: ID_POS_ACK                      3465.0 ns  TB seq.                        check_value() => OK, for slv x"00"'. 'Check the value after the pulse'
 UVVM: ID_GEN_PULSE                    3495.0 ns  TB seq.                        Pulsed to x"X6" for 2 clk cycles. 'Test pulse slv defined as 'to' with don't care for 2 clks'
-UVVM: ID_POS_ACK                      3495.0 ns  TB seq.                        check_value() => OK, for time 20000 ps. 'Check start of pulse'
+UVVM: ID_POS_ACK                      3495.0 ns  TB seq.                        check_value() => OK, for time 20 ns. 'Check start of pulse'
 UVVM: ID_POS_ACK                      3495.0 ns  TB seq.                        check_value() => OK, for time 0 ps. 'Check pulse is just done'
 UVVM: ID_POS_ACK                      3495.0 ns  TB seq.                        check_value() => OK, for slv x"F6"'. 'Check what the value was during the pulse'
 UVVM: ID_POS_ACK                      3495.0 ns  TB seq.                        check_value() => OK, for slv x"FF"'. 'Check the value after the pulse'
 UVVM: ID_GEN_PULSE                    3525.0 ns  TB seq.                        Pulsed to x"XX" for 2 clk cycles. 'Test pulse slv defined as 'downto' with don't care for 2
 UVVM:                                                                           clks'
-UVVM: ID_POS_ACK                      3525.0 ns  TB seq.                        check_value() => OK, for time 20000 ps. 'Check start of pulse'
+UVVM: ID_POS_ACK                      3525.0 ns  TB seq.                        check_value() => OK, for time 20 ns. 'Check start of pulse'
 UVVM: ID_POS_ACK                      3525.0 ns  TB seq.                        check_value() => OK, for time 0 ps. 'Check pulse is just done'
 UVVM: ID_POS_ACK                      3525.0 ns  TB seq.                        check_value() => OK, for slv x"99"'. 'Check what the value was during the pulse'
 UVVM: ID_POS_ACK                      3525.0 ns  TB seq.                        check_value() => OK, for slv x"CC"'. 'Check the value after the pulse'
 UVVM: ID_GEN_PULSE                    3555.0 ns  TB seq.                        Pulsed to x"XX" for 2 clk cycles. 'Test pulse slv defined as 'to' for 2 clks'
-UVVM: ID_POS_ACK                      3555.0 ns  TB seq.                        check_value() => OK, for time 20000 ps. 'Check start of pulse'
+UVVM: ID_POS_ACK                      3555.0 ns  TB seq.                        check_value() => OK, for time 20 ns. 'Check start of pulse'
 UVVM: ID_POS_ACK                      3555.0 ns  TB seq.                        check_value() => OK, for time 0 ps. 'Check pulse is just done'
 UVVM: ID_POS_ACK                      3555.0 ns  TB seq.                        check_value() => OK, for slv x"55"'. 'Check what the value was during the pulse'
 UVVM: ID_POS_ACK                      3555.0 ns  TB seq.                        check_value() => OK, for slv x"FF"'. 'Check the value after the pulse'
 UVVM: ID_GEN_PULSE                    3585.0 ns  TB seq.                        Pulsed to x"FF" for 2 clk cycles. 'Test pulse slv defined as 'to' for 2 clks'
-UVVM: ID_POS_ACK                      3585.0 ns  TB seq.                        check_value() => OK, for time 20000 ps. 'Check start of pulse'
+UVVM: ID_POS_ACK                      3585.0 ns  TB seq.                        check_value() => OK, for time 20 ns. 'Check start of pulse'
 UVVM: ID_POS_ACK                      3585.0 ns  TB seq.                        check_value() => OK, for time 0 ps. 'Check pulse is just done'
 UVVM: ID_POS_ACK                      3585.0 ns  TB seq.                        check_value() => OK, for slv x"FF"'. 'Check what the value was during the pulse'
 UVVM: ID_POS_ACK                      3585.0 ns  TB seq.                        check_value() => OK, for slv x"23"'. 'Check the value after the pulse'
 UVVM: ID_GEN_PULSE                    3615.0 ns  TB seq.                        Pulsed to x"FF" for 2 clk cycles. 'Test pulse slv for 2 clks'
-UVVM: ID_POS_ACK                      3615.0 ns  TB seq.                        check_value() => OK, for time 20000 ps. 'Check start of pulse'
+UVVM: ID_POS_ACK                      3615.0 ns  TB seq.                        check_value() => OK, for time 20 ns. 'Check start of pulse'
 UVVM: ID_POS_ACK                      3615.0 ns  TB seq.                        check_value() => OK, for time 0 ps. 'Check pulse is just done'
 UVVM: ID_POS_ACK                      3615.0 ns  TB seq.                        check_value() => OK, for slv x"FF"'. 'Check what the value was during the pulse'
 UVVM: ID_POS_ACK                      3615.0 ns  TB seq.                        check_value() => OK, for slv x"23"'. 'Check the value after the pulse'

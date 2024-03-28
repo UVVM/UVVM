@@ -60,15 +60,15 @@ UVVM: ==========================================================================
 UVVM: 
 UVVM: 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for time 3000 ps. 'Check time in range, OK'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for time 3000 ps. 'Check time in range, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for time 3 ns. 'Check time in range, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value_in_range() => OK, for time 3 ns. 'Check time in range, OK'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for boolean true. 'check_value with return value shall return true when
 UVVM:                                                                           OK'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #5  ***
 UVVM:             1 ns   TB seq
-UVVM:                    check_value_in_range() => Failed. time  Was 3000 ps. Expected between 4000 ps and 5000 ps
+UVVM:                    check_value_in_range() => Failed. time  Was 3 ns. Expected between 4 ns and 5 ns
 UVVM:                    Check time in range, Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 

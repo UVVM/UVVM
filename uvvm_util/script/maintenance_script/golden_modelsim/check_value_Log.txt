@@ -297,12 +297,12 @@ UVVM:                                                                           
 UVVM: 
 UVVM: ***  WARNING #7  ***
 UVVM:             1 ns   TB seq
-UVVM:                    check_value() => Failed. time  Was 15000 ps. Expected 14000 ps
+UVVM:                    check_value() => Failed. time  Was 15 ns. Expected 14 ns
 UVVM:                    My msg I, Fail
 UVVM: 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15000 ps. 'My msg I, OK'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15000 ps. 'My msg I, OK'
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15000 ps. 'My msg I, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15 ns. 'My msg I, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15 ns. 'My msg I, OK'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for time 15 ns. 'My msg I, OK'
 UVVM: 
 UVVM: ***  WARNING #8  ***
 UVVM:             1 ns   TB seq

@@ -2831,6 +2831,8 @@ UVVM:
 UVVM: 
 UVVM: ID_RAND_GEN                        0.0 ns  MY SCOPE                       rand(LEN:5, ONLY:(0.00, 1.00), UNIQUE)=> (1.000000e+00, 0.000000e+00, 0.000000e+00,
 UVVM:                                                                           -1.000000e+308, -1.000000e+308)
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for time 1 ps. 'Simulator time resolution must be set to 'ps' for this
+UVVM:                                                                           testcase'
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing time (range)

@@ -97,9 +97,11 @@ UVVM:                ID_MONITOR                   : ENABLED
 UVVM:                ID_MONITOR_ERROR             : ENABLED
 UVVM:                ID_DATA                      : ENABLED
 UVVM:                ID_CTRL                      : ENABLED
+UVVM:                ID_SPEC_COV_INIT             : ENABLED
+UVVM:                ID_SPEC_COV_REQS             : ENABLED
+UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:                ID_FILE_OPEN_CLOSE           : ENABLED
 UVVM:                ID_FILE_PARSER               : ENABLED
-UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
 UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ALL_MESSAGES). 

@@ -27,7 +27,7 @@ def os_adjust_path(path) -> str:
         return path.replace('\\', '\\\\')
 
 
-path_called_from = os_adjust_path(os.getcwd() + '\\')
+path_called_from = os_adjust_path(os.getcwd())
 
 print('Verify UVVM Util')
 
@@ -53,7 +53,7 @@ hr.add_generics(entity="simplified_data_queue_tb",
 
 hr.add_generics(entity='func_cov_tb',
                 architecture='func',
-                generics=['GC_FILE_PATH', (path_called_from, 'PATH')])
+                generics=['GC_FILE_PATH', (path_called_from + os.sep, 'PATH')])
 
 sim_options = None
 default_options = []

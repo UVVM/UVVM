@@ -336,8 +336,7 @@ begin
 
     log(ID_LOG_HDR, "Check that commands are distributed to the correct VVC channel");
     -- Calling an invalid channel will yield a TB_WARNING from each of the UART channels
-    -- We will also get another TB_WARNING from the timeout, related to having more decimals in the log time than we can display
-    increment_expected_alerts(TB_WARNING, 5);
+    increment_expected_alerts(TB_WARNING, 4);
     -- Calling an invalid channel will also cause a timeout, since the target VVC does not exist. This results in an ERROR
     increment_expected_alerts(TB_ERROR, 4);
     insert_delay(UART_VVCT, 1, C_BIT_PERIOD, "Inserting delay without specifying UART channel, expecting tb warning and tb error");

@@ -3,6 +3,10 @@ import os
 import sys
 import ntpath
 
+# Lines to be filtered out due to expected mismatches
+filter_list =  ["load_coverage_db",
+                "write_coverage_db"]
+
 
 def get_golden_file_list(simulator='modelsim', path=None):
   filelist = []
@@ -58,7 +62,12 @@ def compare_lines(golden_lines, verify_lines):
   else:
     for idx, line in enumerate(golden_lines):
       if line.rstrip() != verify_lines[idx].rstrip():
-        error_lines.append('(%d) Golden >>> %s\n(%d) Output >>> %s' % (idx, line.strip(), idx, verify_lines[idx].rstrip()))
+        skip = False
+        for filter_line in filter_list:
+          if filter_line in line.rstrip():
+            skip = True
+        if not skip:
+          error_lines.append('(%d) Golden >>> %s\n(%d) Output >>> %s' % (idx, line.strip(), idx, verify_lines[idx].rstrip()))
   return error_lines
 
 

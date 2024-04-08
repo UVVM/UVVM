@@ -7,9 +7,7 @@ from itertools import product
 try:
     from hdlregression import HDLRegression
 except:
-    print(
-        "Unable to import HDLRegression module. See HDLRegression documentation for installation instructions."
-    )
+    print("Unable to import HDLRegression module. See HDLRegression documentation for installation instructions.")
     sys.exit(1)
 
 
@@ -48,9 +46,7 @@ hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_v
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_i2c")
 # Add TB dependencies
 hr.add_files("../../tb/maintenance_tb/fpga_i2c_slave_github/*.vhd", "bitvis_vip_i2c")
-hr.add_files(
-    "../../tb/maintenance_tb/i2c_opencores/trunk/rtl/vhdl/*.vhd", "bitvis_vip_i2c"
-)
+hr.add_files("../../tb/maintenance_tb/i2c_opencores/trunk/rtl/vhdl/*.vhd", "bitvis_vip_i2c")
 
 # Add SBI VIP
 hr.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
@@ -58,9 +54,7 @@ hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_v
 
 # Add Wishbone VIP
 hr.add_files("../../../bitvis_vip_wishbone/src/*.vhd", "bitvis_vip_wishbone")
-hr.add_files(
-    "../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_wishbone"
-)
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_wishbone")
 
 sim_options = None
 default_options = []

@@ -53,13 +53,7 @@ def find_python3_executable():
 
     for executable in python_executables:
         try:
-            output = (
-                subprocess.check_output(
-                    [executable, "--version"], stderr=subprocess.STDOUT
-                )
-                .decode()
-                .strip()
-            )
+            output = (subprocess.check_output([executable, "--version"], stderr=subprocess.STDOUT).decode().strip())
             if "Python 3" in output:
                 return executable
         except (subprocess.CalledProcessError, FileNotFoundError):
@@ -359,10 +353,7 @@ def verify_test_results(python_exe):
     print("Verify test results...")
     num_errors = 0
     try:
-        subprocess.check_call(
-            [python_exe, "../script/maintenance_script/verify_with_golden.py"],
-            stderr=subprocess.PIPE,
-        )
+        subprocess.check_call([python_exe, "../script/maintenance_script/verify_with_golden.py"], stderr=subprocess.PIPE)
     except subprocess.CalledProcessError as e:
         num_errors = int(e.returncode)
     if num_errors != 0:

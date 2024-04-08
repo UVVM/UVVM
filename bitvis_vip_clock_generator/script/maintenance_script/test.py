@@ -7,9 +7,7 @@ from itertools import product
 try:
     from hdlregression import HDLRegression
 except:
-    print(
-        "Unable to import HDLRegression module. See HDLRegression documentation for installation instructions."
-    )
+    print("Unable to import HDLRegression module. See HDLRegression documentation for installation instructions.")
     sys.exit(1)
 
 
@@ -43,10 +41,7 @@ hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard"
 
 # Add Avalon AXI VIP
 hr.add_files("../../src/*.vhd", "bitvis_vip_clock_generator")
-hr.add_files(
-    "../../../uvvm_vvc_framework/src_target_dependent/*.vhd",
-    "bitvis_vip_clock_generator",
-)
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_clock_generator",)
 
 # Add TB/TH
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_clock_generator")

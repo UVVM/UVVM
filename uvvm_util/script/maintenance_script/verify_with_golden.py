@@ -132,7 +132,7 @@ def compare(modelsim=False, riviera=False, path=None):
   if failing_verify_file:
     print("Mismatch found in the following file(s) : ")
     for file, error_lines in failing_verify_file:
-      print('\n%s\n\File: %s' % (50*'-', file))
+      print('\n%s\nFile: %s' % (50*'-', file))
       if error_lines:
         for line in error_lines:
           print(line)

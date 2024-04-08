@@ -7,9 +7,7 @@ from itertools import product
 try:
     from hdlregression import HDLRegression
 except:
-    print(
-        "Unable to import HDLRegression module. See HDLRegression documentation for installation instructions."
-    )
+    print("Unable to import HDLRegression module. See HDLRegression documentation for installation instructions.")
     sys.exit(1)
 
 
@@ -43,20 +41,14 @@ hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard"
 
 # Add Ethernet VIP
 hr.add_files("../../src/*.vhd", "bitvis_vip_ethernet")
-hr.add_files(
-    "../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_ethernet"
-)
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_ethernet")
 
 # Add HVVC Bridge VIP
-hr.add_files(
-    "../../../bitvis_vip_hvvc_to_vvc_bridge/src/*.vhd", "bitvis_vip_hvvc_to_vvc_bridge"
-)
+hr.add_files("../../../bitvis_vip_hvvc_to_vvc_bridge/src/*.vhd", "bitvis_vip_hvvc_to_vvc_bridge")
 
 # Add GMII VIP
 hr.add_files("../../../bitvis_vip_gmii/src/*.vhd", "bitvis_vip_gmii")
-hr.add_files(
-    "../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_gmii"
-)
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_gmii")
 
 # Add SBI VIP
 hr.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
@@ -68,24 +60,13 @@ hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_ethernet")
 
 # Add TB dependencies
 compile_directives_93 = ["-suppress", "1346,1236", "-93"]
-hr.add_files(
-    "../../tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd",
-    "xilinxcorelib",
-)
-hr.add_files(
-    "../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim"
-)  # 08
-hr.add_files(
-    "../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd",
-    "unisim",
-    com_options=compile_directives_93,
-)  # version="93")
+hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd", "xilinxcorelib")
+hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim")  # 08
+hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd", "unisim", com_options=compile_directives_93)  # version="93")
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/*.vhd", "mac_master")
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/*.vhd", "mac_master")
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/generic/*.vhd", "mac_master")
-hr.add_files(
-    "../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master"
-)
+hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
 
 sim_options = None
 default_options = []

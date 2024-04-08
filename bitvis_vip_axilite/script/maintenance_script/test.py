@@ -37,13 +37,11 @@ hr = HDLRegression(simulator='modelsim')
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
 hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd",
-             "bitvis_vip_scoreboard")
+hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
 # Add Avalon AXI VIP
 hr.add_files("../../src/*.vhd", "bitvis_vip_axilite")
-hr.add_files(
-    "../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_axilite")
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_axilite")
 
 # Add TB/TH
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_axilite")

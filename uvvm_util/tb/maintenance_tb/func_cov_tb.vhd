@@ -495,13 +495,13 @@ begin
     end procedure;
 
     procedure load_coverage_db_quiet (
-      variable coverpoint : inout t_coverpoint;
-      constant path       : in string;
-      constant verbosity  : in t_report_verbosity := HOLES_ONLY
+      variable coverpoint       : inout t_coverpoint;
+      constant path             : in string;
+      constant report_verbosity : in t_report_verbosity := HOLES_ONLY
     ) is
     begin
       disable_log_msg(ID_FUNC_COV_CONFIG, QUIET);
-      coverpoint.load_coverage_db(path, report_verbosity => verbosity);
+      coverpoint.load_coverage_db(path, report_verbosity => report_verbosity);
       enable_log_msg(ID_FUNC_COV_CONFIG, QUIET);
     end procedure;
 

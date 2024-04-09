@@ -5,8 +5,6 @@ UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.                        
 UVVM: =========================================================================================================================================================================
 UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_GEN). 
 UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_CONF). 
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for time 1 ps. 'Simulator time resolution must be set to 'ps' for this
-UVVM:                                                                           testcase'
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Reducing log messages from rand_pkg
 UVVM: 
 UVVM: 

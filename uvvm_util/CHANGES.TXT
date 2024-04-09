@@ -3,6 +3,11 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.5
+----------
+Released: 2024-XX-XX
+- Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
+
 v2.19.4
 ----------
 Released: 2024-03-08

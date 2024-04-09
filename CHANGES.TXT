@@ -14,6 +14,7 @@ v2 2024.XX.XX
 --------------------
 Released: 2024-XX-XX
 - Updated Scoreboard documentation to mention in every method that instance 1 is used as default.
+- Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
 
 
 v2 2024.03.08

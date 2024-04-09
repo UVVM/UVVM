@@ -4033,7 +4033,11 @@ package body rand_pkg is
         return v_ret;
       end if;
       v_ret_int := rand(min_value, max_value, cyclic_mode, msg_id_panel, C_LOCAL_CALL);
-      v_ret     := to_unsigned(v_ret_int, length);
+      if not priv_ret_valid then
+        v_ret := (others => '0');
+      else
+        v_ret := to_unsigned(v_ret_int, length);
+      end if;
 
       log(ID_RAND_GEN, C_LOCAL_CALL & "=> " & to_string(v_ret, HEX, KEEP_LEADING_0, INCL_RADIX), priv_scope, msg_id_panel);
       return v_ret;

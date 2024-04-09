@@ -5,7 +5,8 @@ import ntpath
 
 # Lines to be filtered out due to expected mismatches
 filter_list =  ["load_coverage_db",
-                "write_coverage_db"]
+                "write_coverage_db",
+                "in the bins will be overwritten"]
 
 
 def get_golden_file_list(simulator='modelsim', path=None):

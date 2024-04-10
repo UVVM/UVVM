@@ -113,6 +113,17 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
+  procedure rgmii_write(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in integer;
+    constant channel                      : in t_channel;
+    constant data_array                   : in t_byte_array;
+    constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
+    constant msg                          : in string;
+    constant scope                        : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
   procedure rgmii_read(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -193,6 +204,20 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+  begin
+    rgmii_write(VVCT, vvc_instance_idx, channel, data_array, RELEASE_LINE_AFTER_TRANSFER, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure rgmii_write(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in integer;
+    constant channel                      : in t_channel;
+    constant data_array                   : in t_byte_array;
+    constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
+    constant msg                          : in string;
+    constant scope                        : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
     constant proc_name      : string         := "rgmii_write";
     constant proc_call      : string         := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_array'length) & " bytes)";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
@@ -203,6 +228,7 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, WRITE);
     shared_vvc_cmd.data_array(0 to data_array'length - 1) := data_array;
     shared_vvc_cmd.data_array_length                      := data_array'length;
+    shared_vvc_cmd.action_when_transfer_is_done           := action_when_transfer_is_done;
     shared_vvc_cmd.parent_msg_id_panel                    := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;

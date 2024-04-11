@@ -53,6 +53,7 @@ Released: 2024-03-08
 - Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
 - Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
 - Updated spec cov documentation for modified clean parameter to run_spec_cov.py
+- Added function to util check_value to properly display signed values
 - Added general_severity to AXI bfm config record. Replaces error as default alert level in BFM and VVC. From pull request by user EMAZAC.
 - Increased C_MAX_TUSER_BITS to 64 in Axistream BFM. (allows for higher GC_USER_WIDTH)
 - Updated vvc_generator.py generation of vvc_context file.

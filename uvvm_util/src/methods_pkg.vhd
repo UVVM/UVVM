@@ -4413,6 +4413,7 @@ package body methods_pkg is
       constant value_type       : string         := "slv"
     ) return boolean is
     -- Normalise vectors to (N downto 0)
+
     alias a_value : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_exp   : std_logic_vector(exp'length - 1 downto 0)   is exp;
     constant C_VALUE_STR : string := to_string(a_value, radix, format, INCL_RADIX);
@@ -4427,6 +4428,24 @@ package body methods_pkg is
       -- Include leading 'x"'
       return short(1 to 2) & v_padding & short(3 to short'length);
     end function;
+
+    -- Function to represent signed value as string if value_type is "signed"
+    function signed_string_check(
+      constant slv_value  : std_logic_vector;
+      constant radix      : t_radix;
+      constant format     : t_format_zeros;
+      constant value_type : string
+    ) return string is
+    begin
+      if value_type = "signed" then
+        return to_string(signed(slv_value), radix, format, INCL_RADIX);
+      else
+        return to_string(slv_value, radix, format, INCL_RADIX);
+      end if;
+    end function signed_string_check;
+
+    constant v_value_str     : string := signed_string_check(a_value, radix, format, value_type);
+    constant v_exp_str       : string := signed_string_check(a_exp, radix, format, value_type);
 
   begin
     protected_check_counters.increment(CHECK_VALUE);

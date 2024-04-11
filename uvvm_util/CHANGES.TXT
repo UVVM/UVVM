@@ -18,6 +18,7 @@ Released: 2024-03-08
 - Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
 - Added for latest version of Modelsim.
 - Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
+- Added function to check_value to properly display signed values
 
 v2.19.3
 ----------

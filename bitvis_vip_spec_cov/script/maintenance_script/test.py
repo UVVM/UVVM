@@ -11,6 +11,18 @@ except:
     print("Unable to import HDLRegression module. See HDLRegression documentation for installation instructions.")
     sys.exit(1)
 
+def find_python3_executable():
+    python_executables = ["python3", "python"]
+
+    for executable in python_executables:
+        try:
+            output = (subprocess.check_output([executable, "--version"], stderr=subprocess.STDOUT).decode().strip())
+            if "Python 3" in output:
+                return executable
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            continue
+    return None
+
 
 def cleanup(msg="Cleaning up..."):
     print(msg)
@@ -46,13 +58,13 @@ def test_clean_parameter():
     csv_file_subdir.close()
 
     try:
-        subprocess.run(["python3", "../script/run_spec_cov.py", "--clean"], check=True)
+        subprocess.run([find_python3_executable(), "../script/run_spec_cov.py", "--clean"], check=True)
     except subprocess.CalledProcessError as e:
         print("ERROR: Test of --clean parameter failed. %s" % (e))
         return 1
 
     try:
-        subprocess.run(["python3", "../script/run_spec_cov.py", "--clean", "./test_subdir"], check=True)
+        subprocess.run([find_python3_executable(), "../script/run_spec_cov.py", "--clean", "./test_subdir"], check=True)
     except subprocess.CalledProcessError as e:
         print("ERROR: Cleaning test (specified dir) failed. %s" % (e))
         return 1
@@ -115,7 +127,7 @@ num_passing_tests = hr.get_num_pass_tests()
 num_failing_tests += errors
 
 # Check with golden reference
-(ret_txt, ret_code) = hr.run_command("python3 ../script/maintenance_script/maintenance_run_spec_cov.py")
+(ret_txt, ret_code) = hr.run_command(find_python3_executable() + " ../script/maintenance_script/maintenance_run_spec_cov.py")
 
 if ret_code != 0:
     print(ret_txt)

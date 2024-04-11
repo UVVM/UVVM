@@ -1086,7 +1086,7 @@ package body hierarchy_linked_list_pkg is
         v_child_ptr.parent    := v_new_parent_ptr;
         -- Update hierarchy levels for the whole tree
         priv_max_hierarchy_level := 0;
-        propagate_hierarchy_level(v_top_element_ptr);
+        propagate_hierarchy_level(priv_top_element_ptr);
       end if;
     end procedure;
 
@@ -1098,13 +1098,13 @@ package body hierarchy_linked_list_pkg is
       --
       --
 
-      v_top_element_ptr.element_data.alert_stop_limit(alert_level) := value;
+      priv_top_element_ptr.element_data.alert_stop_limit(alert_level) := value;
 
       -- Evaluate new stop limit in case it is less than or equal to the current alert counter for this alert level
       -- If that is the case, a new alert with the same alert level shall be triggered.
-      if v_top_element_ptr.element_data.alert_stop_limit(alert_level) /= 0 and (v_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD) >= v_top_element_ptr.element_data.alert_stop_limit(alert_level)) then
+      if priv_top_element_ptr.element_data.alert_stop_limit(alert_level) /= 0 and (priv_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD) >= priv_top_element_ptr.element_data.alert_stop_limit(alert_level)) then
         assert false
-        report "Alert stop limit for scope " & v_top_element_ptr.element_data.name & " at alert level " & to_upper(to_string(alert_level)) & " set to " & to_string(value) & ", which is lower than the current " & to_upper(to_string(alert_level)) & " count (" & to_string(v_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD)) & ")."
+        report "Alert stop limit for scope " & priv_top_element_ptr.element_data.name & " at alert level " & to_upper(to_string(alert_level)) & " set to " & to_string(value) & ", which is lower than the current " & to_upper(to_string(alert_level)) & " count (" & to_string(priv_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD)) & ")."
         severity failure;
 
       end if;
@@ -1115,7 +1115,7 @@ package body hierarchy_linked_list_pkg is
       alert_level : t_alert_level
     ) return natural is
     begin
-      return v_top_element_ptr.element_data.alert_stop_limit(alert_level);
+      return priv_top_element_ptr.element_data.alert_stop_limit(alert_level);
     end function;
 
     procedure propagate_alert_level(
@@ -1144,7 +1144,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      search_for_scope(v_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
       if v_found then
         propagate_alert_level(v_current_ptr, alert_level, true);
       end if;
@@ -1157,7 +1157,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      search_for_scope(v_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
       if v_found then
         propagate_alert_level(v_current_ptr, alert_level, false);
       end if;
@@ -1169,7 +1169,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      search_for_scope(v_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
       if v_found then
         for alert_level in NOTE to t_alert_level'right loop
           propagate_alert_level(v_current_ptr, alert_level, true);
@@ -1183,7 +1183,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      search_for_scope(v_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
       if v_found then
         for alert_level in NOTE to t_alert_level'right loop
           propagate_alert_level(v_current_ptr, alert_level, false);

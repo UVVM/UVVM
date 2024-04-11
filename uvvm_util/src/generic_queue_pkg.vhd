@@ -871,8 +871,8 @@ package body generic_queue_pkg is
       -- Entry_num is not necessarily increasing as we follow next_element pointers.
       -- This means that we must do a complete search for each entry we want to delete
       elsif (identifier_option = ENTRY_NUM) then
-        check_value(priv_entry_num(instance) >= identifier_max, TB_ERROR, proc_name & " where identifier_max > highest entry number", v_scope(instance), ID_NEVER);
-        check_value(identifier_max >= identifier_min, TB_ERROR, "Check that identifier_max >= identifier_min", v_scope(instance), ID_NEVER);
+        check_value(priv_entry_num(instance) >= identifier_max, TB_ERROR, proc_name & " where identifier_max > highest entry number", priv_scope(instance), ID_NEVER);
+        check_value(identifier_max >= identifier_min, TB_ERROR, "Check that identifier_max >= identifier_min", priv_scope(instance), ID_NEVER);
 
         v_deletes_remaining := 1 + identifier_max - identifier_min;
 
@@ -997,8 +997,8 @@ package body generic_queue_pkg is
       variable v_matched_position      : integer; -- Keep track of POSITION when traversing the linked list
       variable v_found_match           : boolean := false;
     begin
-      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
-      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", v_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       match_identifier(
         instance              => instance,
@@ -1066,8 +1066,8 @@ package body generic_queue_pkg is
       variable v_matched_position      : integer;
       variable v_found_match           : boolean;
     begin
-      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
-      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", v_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       if (priv_num_elements_in_queue(instance) < priv_queue_count_threshold(instance)) then
         -- reset alert trigger if set
@@ -1146,10 +1146,10 @@ package body generic_queue_pkg is
       variable v_matched_position : integer;
       variable v_found_match      : boolean;
     begin
-      check_value(priv_scope_is_defined(instance), TB_WARNING, "find_position: Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, "find_position: Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
 
       -- Don't include this check, because we may want to use exists() on an empty queue.
-      -- check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "find_position() from generic queue when empty", v_scope(instance), ID_NEVER);
+      -- check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "find_position() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       match_element_data(
         instance            => instance,
@@ -1198,8 +1198,8 @@ package body generic_queue_pkg is
       variable v_matched_position : integer;
       variable v_found_match      : boolean;
     begin
-      check_value(priv_scope_is_defined(instance), TB_WARNING, "find_entry_num(): Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
-      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "find_entry_num() from generic queue when empty", v_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, "find_entry_num(): Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "find_entry_num() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       match_element_data(
         instance            => instance,
@@ -1233,8 +1233,8 @@ package body generic_queue_pkg is
       variable v_matched_element_ptr   : t_element_ptr;
       variable v_preceding_element_ptr : t_element_ptr;
     begin
-      check_value(priv_scope_is_defined(instance), TB_WARNING, "get_entry_num(): Scope name must be defined for this generic queue", v_scope(instance), ID_NEVER);
-      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "get_entry_num() from generic queue when empty", v_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, "get_entry_num(): Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "get_entry_num() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       match_identifier(
         instance              => instance,

@@ -75,7 +75,15 @@ begin
   -- Mapping of interface to signals is done to make TB run in Riviera Pro.
   -- Values are not propagated when interface elements are mapped directly
   -- to ports. Riviera-PRO version 2018.10.137.7135
+  axistream_if_m_VVC2FIFO.tdata  <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tkeep  <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tuser  <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tvalid <= 'Z';
+  axistream_if_m_VVC2FIFO.tlast  <= 'Z';
   axistream_if_m_VVC2FIFO.tready <= s_axis_tready;
+  axistream_if_m_VVC2FIFO.tstrb  <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tid    <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tdest  <= (others => 'Z');
   s_axis_tvalid                  <= axistream_if_m_VVC2FIFO.tvalid;
   s_axis_tdata                   <= axistream_if_m_VVC2FIFO.tdata;
   s_axis_tuser                   <= axistream_if_m_VVC2FIFO.tuser;
@@ -83,11 +91,15 @@ begin
   s_axis_tlast                   <= axistream_if_m_VVC2FIFO.tlast;
 
   m_axis_tready                  <= axistream_if_s_FIFO2VVC.tready;
-  axistream_if_s_FIFO2VVC.tvalid <= m_axis_tvalid;
   axistream_if_s_FIFO2VVC.tdata  <= m_axis_tdata;
-  axistream_if_s_FIFO2VVC.tuser  <= m_axis_tuser;
   axistream_if_s_FIFO2VVC.tkeep  <= m_axis_tkeep;
+  axistream_if_s_FIFO2VVC.tuser  <= m_axis_tuser;
+  axistream_if_s_FIFO2VVC.tvalid <= m_axis_tvalid;
   axistream_if_s_FIFO2VVC.tlast  <= m_axis_tlast;
+  axistream_if_s_FIFO2VVC.tready <= 'Z';
+  axistream_if_s_FIFO2VVC.tstrb  <= (others => 'Z');
+  axistream_if_s_FIFO2VVC.tid    <= (others => 'Z');
+  axistream_if_s_FIFO2VVC.tdest  <= (others => 'Z');
 
   -----------------------------
   -- Instantiate a DUT model
@@ -116,7 +128,7 @@ begin
       empty         => open
     );
 
-end struct_simple;
+end architecture struct_simple;
 
 --=================================================================================================
 architecture struct_vvc of test_harness is
@@ -222,7 +234,7 @@ begin
       axistream_vvc_if => axistream_if_m_VVC2VVC
     );
 
-end struct_vvc;
+end architecture struct_vvc;
 
 --=================================================================================================
 architecture struct_multiple_vvc of test_harness is
@@ -257,7 +269,7 @@ begin
       );
   end generate gen_axistream_vvc_master;
 
-end struct_multiple_vvc;
+end architecture struct_multiple_vvc;
 
 --=================================================================================================
 architecture struct_width_vvc of test_harness is
@@ -361,4 +373,4 @@ begin
       axistream_vvc_if => axistream_if_64b
     );
 
-end struct_width_vvc;
+end architecture struct_width_vvc;

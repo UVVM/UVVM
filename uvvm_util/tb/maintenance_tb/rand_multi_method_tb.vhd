@@ -35,6 +35,7 @@ architecture func of rand_multi_method_tb is
   constant C_NUM_RAND_REPETITIONS   : natural := 7;
   constant C_NUM_WEIGHT_REPETITIONS : natural := 1000; -- Changing this value affects check_weight_distribution() C_MARGIN.
   constant C_NUM_CYCLIC_REPETITIONS : natural := 3;
+  constant C_TIME_RES               : time    := std.env.resolution_limit;
 
 begin
 
@@ -297,7 +298,7 @@ begin
       -- TB_ERROR: combination of different constraint types
       v_rand.add_range(0, 2);
       v_rand.add_range_real(0.0, 2.0);
-      v_rand.add_range_time(0 ps, 2 ps);
+      v_rand.add_range_time(0 * C_TIME_RES, 2 * C_TIME_RES);
       v_rand.add_range_unsigned(x"0", x"F");
       v_rand.add_range_signed(x"0", x"7");
       v_rand.clear_constraints(VOID);
@@ -305,25 +306,25 @@ begin
       -- TB_ERROR: combination of different constraint types
       v_rand.add_val((0, 2, 4));
       v_rand.add_val_real((0.0, 2.0, 4.0));
-      v_rand.add_val_time((0 ps, 2 ps, 4 ps));
+      v_rand.add_val_time((0 * C_TIME_RES, 2 * C_TIME_RES, 4 * C_TIME_RES));
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
       v_rand.excl_val(2);
       v_rand.excl_val_real(2.0);
-      v_rand.excl_val_time(2 ps);
+      v_rand.excl_val_time(2 * C_TIME_RES);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
       v_rand.add_val_weight(1, 10);
       v_rand.add_val_weight_real(1.0, 10);
-      v_rand.add_val_weight_time(1 ps, 10);
+      v_rand.add_val_weight_time(1 * C_TIME_RES, 10);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
       v_rand.add_range_weight(1, 5, 10);
       v_rand.add_range_weight_real(1.0, 5.0, 10);
-      v_rand.add_range_weight_time(1 ps, 5 ps, 10);
+      v_rand.add_range_weight_time(1 * C_TIME_RES, 5 * C_TIME_RES, 10);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: return wrong types
@@ -708,7 +709,7 @@ begin
       -- TB_ERROR: combination of different constraint types
       v_rand.add_range_real(0.0, 2.0);
       v_rand.add_range(0, 2);
-      v_rand.add_range_time(0 ps, 2 ps);
+      v_rand.add_range_time(0 * C_TIME_RES, 2 * C_TIME_RES);
       v_rand.add_range_unsigned(x"0", x"F");
       v_rand.add_range_signed(x"0", x"7");
       v_rand.clear_constraints(VOID);
@@ -716,25 +717,25 @@ begin
       -- TB_ERROR: combination of different constraint types
       v_rand.add_val_real((0.0, 2.0, 4.0));
       v_rand.add_val((0, 2, 4));
-      v_rand.add_val_time((0 ps, 2 ps, 4 ps));
+      v_rand.add_val_time((0 * C_TIME_RES, 2 * C_TIME_RES, 4 * C_TIME_RES));
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
       v_rand.excl_val_real(2.0);
       v_rand.excl_val(2);
-      v_rand.excl_val_time(2 ps);
+      v_rand.excl_val_time(2 * C_TIME_RES);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
       v_rand.add_val_weight_real(1.0, 10);
       v_rand.add_val_weight(1, 10);
-      v_rand.add_val_weight_time(1 ps, 10);
+      v_rand.add_val_weight_time(1 * C_TIME_RES, 10);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
       v_rand.add_range_weight_real(1.0, 5.0, 10);
       v_rand.add_range_weight(1, 5, 10);
-      v_rand.add_range_weight_time(1 ps, 5 ps, 10);
+      v_rand.add_range_weight_time(1 * C_TIME_RES, 5 * C_TIME_RES, 10);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: return wrong types
@@ -944,20 +945,20 @@ begin
 
       log(ID_LOG_HDR, "Testing time (range)");
       v_num_values := 3;
-      v_rand.add_range_time(-1 ps, 1 ps);
+      v_rand.add_range_time(-1 * C_TIME_RES, 1 * C_TIME_RES);
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, (0 => (-1 ps, 1 ps)));
+        check_rand_value(v_time, (0 => (-1 * C_TIME_RES, 1 * C_TIME_RES)));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 8;
-      v_rand.add_range_time(-5 ps, -3 ps);
-      v_rand.add_range_time(8 ps, 9 ps);
+      v_rand.add_range_time(-5 * C_TIME_RES, -3 * C_TIME_RES);
+      v_rand.add_range_time(8 * C_TIME_RES, 9 * C_TIME_RES);
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, ((-5 ps, -3 ps), (-1 ps, 1 ps), (8 ps, 9 ps)));
+        check_rand_value(v_time, ((-5 * C_TIME_RES, -3 * C_TIME_RES), (-1 * C_TIME_RES, 1 * C_TIME_RES), (8 * C_TIME_RES, 9 * C_TIME_RES)));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -966,12 +967,12 @@ begin
 
       log(ID_LOG_HDR, "Testing time (set of values)");
       v_num_values := 4;
-      v_rand.add_val_time(-2 ps);
-      v_rand.add_val_time((1 ps, 2 ps));
-      v_rand.add_val_time(5 ps);
+      v_rand.add_val_time(-2 * C_TIME_RES);
+      v_rand.add_val_time((1 * C_TIME_RES, 2 * C_TIME_RES));
+      v_rand.add_val_time(5 * C_TIME_RES);
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, ONLY, (-2 ps, 1 ps, 2 ps, 5 ps));
+        check_rand_value(v_time, ONLY, (-2 * C_TIME_RES, 1 * C_TIME_RES, 2 * C_TIME_RES, 5 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -980,28 +981,28 @@ begin
 
       log(ID_LOG_HDR, "Testing time (exclude values)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_rand.excl_val_time((-1 ps, 0 ps, 1 ps));
+      v_rand.excl_val_time((-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES));
       v_time := v_rand.randm(VOID);
 
       v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing time (range + set of values)");
       v_num_values := 4;
-      v_rand.add_range_time(-1 ps, 1 ps);
-      v_rand.add_val_time(10 ps);
+      v_rand.add_range_time(-1 * C_TIME_RES, 1 * C_TIME_RES);
+      v_rand.add_val_time(10 * C_TIME_RES);
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, (0 => (-1 ps, 1 ps)), ADD, (0 => 10 ps));
+        check_rand_value(v_time, (0 => (-1 * C_TIME_RES, 1 * C_TIME_RES)), ADD, (0 => 10 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 9;
-      v_rand.add_range_time(4 ps, 6 ps);
-      v_rand.add_val_time((11 ps, 13 ps));
+      v_rand.add_range_time(4 * C_TIME_RES, 6 * C_TIME_RES);
+      v_rand.add_val_time((11 * C_TIME_RES, 13 * C_TIME_RES));
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, ((-1 ps, 1 ps), (4 ps, 6 ps)), ADD, (10 ps, 11 ps, 13 ps));
+        check_rand_value(v_time, ((-1 * C_TIME_RES, 1 * C_TIME_RES), (4 * C_TIME_RES, 6 * C_TIME_RES)), ADD, (10 * C_TIME_RES, 11 * C_TIME_RES, 13 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1010,21 +1011,21 @@ begin
 
       log(ID_LOG_HDR, "Testing time (range + exclude values)");
       v_num_values := 2;
-      v_rand.add_range_time(-2 ps, 2 ps);
-      v_rand.excl_val_time((-1 ps, 0 ps, 1 ps));
+      v_rand.add_range_time(-2 * C_TIME_RES, 2 * C_TIME_RES);
+      v_rand.excl_val_time((-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES));
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, (0 => (-2 ps, 2 ps)), EXCL, (-1 ps, 0 ps, 1 ps));
+        check_rand_value(v_time, (0 => (-2 * C_TIME_RES, 2 * C_TIME_RES)), EXCL, (-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 4;
-      v_rand.add_range_time(4 ps, 6 ps);
-      v_rand.excl_val_time(5 ps);
+      v_rand.add_range_time(4 * C_TIME_RES, 6 * C_TIME_RES);
+      v_rand.excl_val_time(5 * C_TIME_RES);
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, ((-2 ps, 2 ps), (4 ps, 6 ps)), EXCL, (-1 ps, 0 ps, 1 ps, 5 ps));
+        check_rand_value(v_time, ((-2 * C_TIME_RES, 2 * C_TIME_RES), (4 * C_TIME_RES, 6 * C_TIME_RES)), EXCL, (-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES, 5 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1033,11 +1034,11 @@ begin
 
       log(ID_LOG_HDR, "Testing time (set of values + exclude values)");
       v_num_values := 3;
-      v_rand.add_val_time((10 ps, -2 ps, 0 ps, 2 ps, 6 ps));
-      v_rand.excl_val_time((-2 ps, 0 ps));
+      v_rand.add_val_time((10 * C_TIME_RES, -2 * C_TIME_RES, 0 * C_TIME_RES, 2 * C_TIME_RES, 6 * C_TIME_RES));
+      v_rand.excl_val_time((-2 * C_TIME_RES, 0 * C_TIME_RES));
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, ONLY, (10 ps, 2 ps, 6 ps));
+        check_rand_value(v_time, ONLY, (10 * C_TIME_RES, 2 * C_TIME_RES, 6 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1046,23 +1047,23 @@ begin
 
       log(ID_LOG_HDR, "Testing time (range + set of values + exclude values)");
       v_num_values := 3;
-      v_rand.add_range_time(-2 ps, 2 ps);
-      v_rand.add_val_time(10 ps);
-      v_rand.excl_val_time((-1 ps, 0 ps, 1 ps));
+      v_rand.add_range_time(-2 * C_TIME_RES, 2 * C_TIME_RES);
+      v_rand.add_val_time(10 * C_TIME_RES);
+      v_rand.excl_val_time((-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES));
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, (0 => (-2 ps, 2 ps)), ADD, (0 => 10 ps), EXCL, (-1 ps, 0 ps, 1 ps));
+        check_rand_value(v_time, (0 => (-2 * C_TIME_RES, 2 * C_TIME_RES)), ADD, (0 => 10 * C_TIME_RES), EXCL, (-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
 
       v_num_values := 7;
-      v_rand.add_range_time(4 ps, 6 ps);
-      v_rand.add_val_time((11 ps, 13 ps));
-      v_rand.excl_val_time(5 ps);
+      v_rand.add_range_time(4 * C_TIME_RES, 6 * C_TIME_RES);
+      v_rand.add_val_time((11 * C_TIME_RES, 13 * C_TIME_RES));
+      v_rand.excl_val_time(5 * C_TIME_RES);
       for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
         v_time := v_rand.randm(VOID);
-        check_rand_value(v_time, ((-2 ps, 2 ps), (4 ps, 6 ps)), ADD, (10 ps, 11 ps, 13 ps), EXCL, (-1 ps, 0 ps, 1 ps, 5 ps));
+        check_rand_value(v_time, ((-2 * C_TIME_RES, 2 * C_TIME_RES), (4 * C_TIME_RES, 6 * C_TIME_RES)), ADD, (10 * C_TIME_RES, 11 * C_TIME_RES, 13 * C_TIME_RES), EXCL, (-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES, 5 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1074,11 +1075,11 @@ begin
       increment_expected_alerts(TB_WARNING, 1);
 
       -- TB_ERROR: min_value >= max_value
-      v_rand.add_range_time(10 ps, 10 ps);
-      v_rand.add_range_time(10 ps, 0 ps);
+      v_rand.add_range_time(10 * C_TIME_RES, 10 * C_TIME_RES);
+      v_rand.add_range_time(10 * C_TIME_RES, 0 * C_TIME_RES);
 
       -- TB_ERROR: combination of different constraint types
-      v_rand.add_range_time(0 ps, 2 ps);
+      v_rand.add_range_time(0 * C_TIME_RES, 2 * C_TIME_RES);
       v_rand.add_range(0, 2);
       v_rand.add_range_real(0.0, 2.0);
       v_rand.add_range_unsigned(x"0", x"F");
@@ -1086,31 +1087,31 @@ begin
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
-      v_rand.add_val_time((0 ps, 2 ps, 4 ps));
+      v_rand.add_val_time((0 * C_TIME_RES, 2 * C_TIME_RES, 4 * C_TIME_RES));
       v_rand.add_val((0, 2, 4));
       v_rand.add_val_real((0.0, 2.0, 4.0));
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
-      v_rand.excl_val_time(2 ps);
+      v_rand.excl_val_time(2 * C_TIME_RES);
       v_rand.excl_val(2);
       v_rand.excl_val_real(2.0);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
-      v_rand.add_val_weight_time(1 ps, 10);
+      v_rand.add_val_weight_time(1 * C_TIME_RES, 10);
       v_rand.add_val_weight(1, 10);
       v_rand.add_val_weight_real(1.0, 10);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: combination of different constraint types
-      v_rand.add_range_weight_time(1 ps, 5 ps, 10);
+      v_rand.add_range_weight_time(1 * C_TIME_RES, 5 * C_TIME_RES, 10);
       v_rand.add_range_weight(1, 5, 10);
       v_rand.add_range_weight_real(1.0, 5.0, 10);
       v_rand.clear_constraints(VOID);
 
       -- TB_ERROR: return wrong types
-      v_rand.add_range_time(0 ps, 2 ps);
+      v_rand.add_range_time(0 * C_TIME_RES, 2 * C_TIME_RES);
       v_int      := v_rand.randm(VOID);
       v_real     := v_rand.randm(VOID);
       v_time     := v_rand.randm(VOID);
@@ -1123,7 +1124,7 @@ begin
       v_rand.clear_constraints(VOID);
 
       -- TB_WARNING: unsupported configuration
-      v_rand.add_range_time(0 ps, 2 ps);
+      v_rand.add_range_time(0 * C_TIME_RES, 2 * C_TIME_RES);
       v_rand.set_uniqueness(UNIQUE);
       v_time := v_rand.randm(VOID);
       v_rand.set_uniqueness(NON_UNIQUE);
@@ -1142,12 +1143,12 @@ begin
 
       log(ID_LOG_HDR, "Testing time_vector (range)");
       v_num_values := 6;
-      v_rand.add_range_time(-1 ps, 1 ps);
-      v_rand.add_range_time(8 ps, 10 ps);
+      v_rand.add_range_time(-1 * C_TIME_RES, 1 * C_TIME_RES);
+      v_rand.add_range_time(8 * C_TIME_RES, 10 * C_TIME_RES);
       v_rand.set_uniqueness(NON_UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-1 ps, 1 ps), (8 ps, 10 ps)));
+        check_rand_value(v_time_vec, ((-1 * C_TIME_RES, 1 * C_TIME_RES), (8 * C_TIME_RES, 10 * C_TIME_RES)));
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1155,7 +1156,7 @@ begin
       v_rand.set_uniqueness(UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-1 ps, 1 ps), (8 ps, 10 ps)));
+        check_rand_value(v_time_vec, ((-1 * C_TIME_RES, 1 * C_TIME_RES), (8 * C_TIME_RES, 10 * C_TIME_RES)));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -1165,12 +1166,12 @@ begin
 
       log(ID_LOG_HDR, "Testing time_vector (set of values)");
       v_num_values := 5;
-      v_rand.add_val_time((-1 ps, 0 ps, 1 ps));
-      v_rand.add_val_time((-2 ps, 2 ps));
+      v_rand.add_val_time((-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES));
+      v_rand.add_val_time((-2 * C_TIME_RES, 2 * C_TIME_RES));
       v_rand.set_uniqueness(NON_UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ONLY, (-2 ps, -1 ps, 0 ps, 1 ps, 2 ps));
+        check_rand_value(v_time_vec, ONLY, (-2 * C_TIME_RES, -1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES, 2 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1178,7 +1179,7 @@ begin
       v_rand.set_uniqueness(UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ONLY, (-2 ps, -1 ps, 0 ps, 1 ps, 2 ps));
+        check_rand_value(v_time_vec, ONLY, (-2 * C_TIME_RES, -1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES, 2 * C_TIME_RES));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -1188,7 +1189,7 @@ begin
 
       log(ID_LOG_HDR, "Testing time_vector (exclude values)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
-      v_rand.excl_val_time((0 ps, 2 ps, 4 ps));
+      v_rand.excl_val_time((0 * C_TIME_RES, 2 * C_TIME_RES, 4 * C_TIME_RES));
       v_rand.set_uniqueness(NON_UNIQUE);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.set_uniqueness(UNIQUE);
@@ -1198,14 +1199,14 @@ begin
 
       log(ID_LOG_HDR, "Testing time_vector (range + set of values)");
       v_num_values := 9;
-      v_rand.add_range_time(-1 ps, 1 ps);
-      v_rand.add_val_time((-5 ps));
-      v_rand.add_range_time(8 ps, 10 ps);
-      v_rand.add_val_time((4 ps, 11 ps));
+      v_rand.add_range_time(-1 * C_TIME_RES, 1 * C_TIME_RES);
+      v_rand.add_val_time((-5 * C_TIME_RES));
+      v_rand.add_range_time(8 * C_TIME_RES, 10 * C_TIME_RES);
+      v_rand.add_val_time((4 * C_TIME_RES, 11 * C_TIME_RES));
       v_rand.set_uniqueness(NON_UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-1 ps, 1 ps), (8 ps, 10 ps)), ADD, (-5 ps, 4 ps, 11 ps));
+        check_rand_value(v_time_vec, ((-1 * C_TIME_RES, 1 * C_TIME_RES), (8 * C_TIME_RES, 10 * C_TIME_RES)), ADD, (-5 * C_TIME_RES, 4 * C_TIME_RES, 11 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1213,7 +1214,7 @@ begin
       v_rand.set_uniqueness(UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-1 ps, 1 ps), (8 ps, 10 ps)), ADD, (-5 ps, 4 ps, 11 ps));
+        check_rand_value(v_time_vec, ((-1 * C_TIME_RES, 1 * C_TIME_RES), (8 * C_TIME_RES, 10 * C_TIME_RES)), ADD, (-5 * C_TIME_RES, 4 * C_TIME_RES, 11 * C_TIME_RES));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -1223,14 +1224,14 @@ begin
 
       log(ID_LOG_HDR, "Testing time_vector (range + exclude values)");
       v_num_values := 6;
-      v_rand.add_range_time(-3 ps, 3 ps);
-      v_rand.excl_val_time((-1 ps, 0 ps, 1 ps));
-      v_rand.add_range_time(8 ps, 10 ps);
-      v_rand.excl_val_time(9 ps);
+      v_rand.add_range_time(-3 * C_TIME_RES, 3 * C_TIME_RES);
+      v_rand.excl_val_time((-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES));
+      v_rand.add_range_time(8 * C_TIME_RES, 10 * C_TIME_RES);
+      v_rand.excl_val_time(9 * C_TIME_RES);
       v_rand.set_uniqueness(NON_UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-3 ps, 3 ps), (8 ps, 10 ps)), EXCL, (-1 ps, 0 ps, 1 ps, 9 ps));
+        check_rand_value(v_time_vec, ((-3 * C_TIME_RES, 3 * C_TIME_RES), (8 * C_TIME_RES, 10 * C_TIME_RES)), EXCL, (-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES, 9 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1238,7 +1239,7 @@ begin
       v_rand.set_uniqueness(UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-3 ps, 3 ps), (8 ps, 10 ps)), EXCL, (-1 ps, 0 ps, 1 ps, 9 ps));
+        check_rand_value(v_time_vec, ((-3 * C_TIME_RES, 3 * C_TIME_RES), (8 * C_TIME_RES, 10 * C_TIME_RES)), EXCL, (-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES, 9 * C_TIME_RES));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -1248,12 +1249,12 @@ begin
 
       log(ID_LOG_HDR, "Testing time_vector (set of values + exclude values)");
       v_num_values := 6;
-      v_rand.add_val_time((-8 ps, -6 ps, -4 ps, -2 ps, 0 ps, 2 ps, 4 ps, 6 ps, 8 ps));
-      v_rand.excl_val_time((-2 ps, 0 ps, 2 ps));
+      v_rand.add_val_time((-8 * C_TIME_RES, -6 * C_TIME_RES, -4 * C_TIME_RES, -2 * C_TIME_RES, 0 * C_TIME_RES, 2 * C_TIME_RES, 4 * C_TIME_RES, 6 * C_TIME_RES, 8 * C_TIME_RES));
+      v_rand.excl_val_time((-2 * C_TIME_RES, 0 * C_TIME_RES, 2 * C_TIME_RES));
       v_rand.set_uniqueness(NON_UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ONLY, (-8 ps, -6 ps, -4 ps, 4 ps, 6 ps, 8 ps));
+        check_rand_value(v_time_vec, ONLY, (-8 * C_TIME_RES, -6 * C_TIME_RES, -4 * C_TIME_RES, 4 * C_TIME_RES, 6 * C_TIME_RES, 8 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1261,7 +1262,7 @@ begin
       v_rand.set_uniqueness(UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ONLY, (-8 ps, -6 ps, -4 ps, 4 ps, 6 ps, 8 ps));
+        check_rand_value(v_time_vec, ONLY, (-8 * C_TIME_RES, -6 * C_TIME_RES, -4 * C_TIME_RES, 4 * C_TIME_RES, 6 * C_TIME_RES, 8 * C_TIME_RES));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -1271,16 +1272,16 @@ begin
 
       log(ID_LOG_HDR, "Testing time_vector (range + set of values + exclude values)");
       v_num_values := 8;
-      v_rand.add_range_time(-2 ps, 2 ps);
-      v_rand.add_val_time((-5 ps));
-      v_rand.excl_val_time((-1 ps, 1 ps));
-      v_rand.add_range_time(8 ps, 10 ps);
-      v_rand.add_val_time((4 ps, 11 ps));
-      v_rand.excl_val_time((4 ps));
+      v_rand.add_range_time(-2 * C_TIME_RES, 2 * C_TIME_RES);
+      v_rand.add_val_time((-5 * C_TIME_RES));
+      v_rand.excl_val_time((-1 * C_TIME_RES, 1 * C_TIME_RES));
+      v_rand.add_range_time(8 * C_TIME_RES, 10 * C_TIME_RES);
+      v_rand.add_val_time((4 * C_TIME_RES, 11 * C_TIME_RES));
+      v_rand.excl_val_time((4 * C_TIME_RES));
       v_rand.set_uniqueness(NON_UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-2 ps, 2 ps), (8 ps, 10 ps)), ADD, (-5 ps, 4 ps, 11 ps), EXCL, (-1 ps, 1 ps, 4 ps));
+        check_rand_value(v_time_vec, ((-2 * C_TIME_RES, 2 * C_TIME_RES), (8 * C_TIME_RES, 10 * C_TIME_RES)), ADD, (-5 * C_TIME_RES, 4 * C_TIME_RES, 11 * C_TIME_RES), EXCL, (-1 * C_TIME_RES, 1 * C_TIME_RES, 4 * C_TIME_RES));
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
       check_uniform_distribution(v_value_cnt, v_num_values);
@@ -1288,7 +1289,7 @@ begin
       v_rand.set_uniqueness(UNIQUE);
       for i in 1 to C_NUM_RAND_REPETITIONS loop
         v_time_vec := v_rand.randm(v_time_vec'length);
-        check_rand_value(v_time_vec, ((-2 ps, 2 ps), (8 ps, 10 ps)), ADD, (-5 ps, 4 ps, 11 ps), EXCL, (-1 ps, 1 ps, 4 ps));
+        check_rand_value(v_time_vec, ((-2 * C_TIME_RES, 2 * C_TIME_RES), (8 * C_TIME_RES, 10 * C_TIME_RES)), ADD, (-5 * C_TIME_RES, 4 * C_TIME_RES, 11 * C_TIME_RES), EXCL, (-1 * C_TIME_RES, 1 * C_TIME_RES, 4 * C_TIME_RES));
         check_uniqueness(v_time_vec);
         count_rand_value(v_value_cnt, v_time_vec);
       end loop;
@@ -1300,7 +1301,7 @@ begin
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
 
       -- TB_ERROR: not enough constraints
-      v_rand.add_val_time((0 ps, 1 ps));
+      v_rand.add_val_time((0 * C_TIME_RES, 1 * C_TIME_RES));
       v_rand.set_uniqueness(UNIQUE);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.set_uniqueness(NON_UNIQUE);
@@ -1555,7 +1556,7 @@ begin
       v_rand.add_range_unsigned(x"0", x"F");
       v_rand.add_range(0, 2);
       v_rand.add_range_real(0.0, 2.0);
-      v_rand.add_range_time(0 ps, 2 ps);
+      v_rand.add_range_time(0 * C_TIME_RES, 2 * C_TIME_RES);
       v_rand.add_range_signed(x"0", x"7");
       v_rand.clear_constraints(VOID);
 
@@ -1860,7 +1861,7 @@ begin
       v_rand.add_range_signed(x"0", x"7");
       v_rand.add_range(0, 2);
       v_rand.add_range_real(0.0, 2.0);
-      v_rand.add_range_time(0 ps, 2 ps);
+      v_rand.add_range_time(0 * C_TIME_RES, 2 * C_TIME_RES);
       v_rand.add_range_unsigned(x"0", x"F");
       v_rand.clear_constraints(VOID);
 
@@ -2149,28 +2150,28 @@ begin
 
       -- Time
       increment_expected_alerts_and_stop_limit(TB_ERROR, 9);
-      v_rand.excl_val_time((1 ps, 2 ps));
-      v_rand.add_range_time(1 ps, 2 ps);
+      v_rand.excl_val_time((1 * C_TIME_RES, 2 * C_TIME_RES));
+      v_rand.add_range_time(1 * C_TIME_RES, 2 * C_TIME_RES);
       v_time     := v_rand.randm(VOID);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.set_uniqueness(UNIQUE);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.clear_config(VOID);
 
-      v_rand.excl_val_time((1 ps, 2 ps, 3 ps, 4 ps));
-      v_rand.add_val_time((1 ps, 2 ps, 3 ps, 4 ps));
+      v_rand.excl_val_time((1 * C_TIME_RES, 2 * C_TIME_RES, 3 * C_TIME_RES, 4 * C_TIME_RES));
+      v_rand.add_val_time((1 * C_TIME_RES, 2 * C_TIME_RES, 3 * C_TIME_RES, 4 * C_TIME_RES));
       v_time     := v_rand.randm(VOID);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.set_uniqueness(UNIQUE);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.clear_config(VOID);
 
-      v_rand.excl_val_time((1 ps, 2 ps, 5 ps));
-      v_rand.add_range_time(1 ps, 2 ps);
-      v_rand.add_val_time(5 ps);
-      v_rand.excl_val_time((3 ps, 4 ps, 6 ps));
-      v_rand.add_range_time(3 ps, 4 ps);
-      v_rand.add_val_time(6 ps);
+      v_rand.excl_val_time((1 * C_TIME_RES, 2 * C_TIME_RES, 5 * C_TIME_RES));
+      v_rand.add_range_time(1 * C_TIME_RES, 2 * C_TIME_RES);
+      v_rand.add_val_time(5 * C_TIME_RES);
+      v_rand.excl_val_time((3 * C_TIME_RES, 4 * C_TIME_RES, 6 * C_TIME_RES));
+      v_rand.add_range_time(3 * C_TIME_RES, 4 * C_TIME_RES);
+      v_rand.add_val_time(6 * C_TIME_RES);
       v_time     := v_rand.randm(VOID);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.set_uniqueness(UNIQUE);
@@ -2207,9 +2208,9 @@ begin
       v_rand.clear_constraints(VOID);
 
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_rand.excl_val_time((1 ps, 2 ps));
-      v_rand.add_range_time(1 ps, 6 ps);
-      v_rand.add_range_time(1 ps, 6 ps);
+      v_rand.excl_val_time((1 * C_TIME_RES, 2 * C_TIME_RES));
+      v_rand.add_range_time(1 * C_TIME_RES, 6 * C_TIME_RES);
+      v_rand.add_range_time(1 * C_TIME_RES, 6 * C_TIME_RES);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.clear_constraints(VOID);
 
@@ -2523,8 +2524,8 @@ begin
       -- Weighted time
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing weighted time (single values) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      v_rand.add_val_weight_time(-5 ps, 1);
-      v_rand.add_val_weight_time(10 ps, 3);
+      v_rand.add_val_weight_time(-5 * C_TIME_RES, 1);
+      v_rand.add_val_weight_time(10 * C_TIME_RES, 3);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_time);
@@ -2537,8 +2538,8 @@ begin
 
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_val_weight_time(-5 ps, 1);
-      v_rand.add_val_weight_time(10 ps, 0);
+      v_rand.add_val_weight_time(-5 * C_TIME_RES, 1);
+      v_rand.add_val_weight_time(10 * C_TIME_RES, 0);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_time);
@@ -2551,9 +2552,9 @@ begin
 
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_val_weight_time(-5 ps, 10);
-      v_rand.add_val_weight_time(0 ps, 30);
-      v_rand.add_val_weight_time(10 ps, 60);
+      v_rand.add_val_weight_time(-5 * C_TIME_RES, 10);
+      v_rand.add_val_weight_time(0 * C_TIME_RES, 30);
+      v_rand.add_val_weight_time(10 * C_TIME_RES, 60);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_time);
@@ -2567,9 +2568,9 @@ begin
       v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing weighted time (ranges w/default mode=COMBINED_WEIGHT) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      v_rand.add_range_weight_time(-5 ps, -3 ps, 30);
-      v_rand.add_val_weight_time(0 ps, 20);
-      v_rand.add_range_weight_time(9 ps, 10 ps, 50);
+      v_rand.add_range_weight_time(-5 * C_TIME_RES, -3 * C_TIME_RES, 30);
+      v_rand.add_val_weight_time(0 * C_TIME_RES, 20);
+      v_rand.add_range_weight_time(9 * C_TIME_RES, 10 * C_TIME_RES, 50);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_time);
@@ -2584,9 +2585,9 @@ begin
 
       v_rand.set_range_weight_default_mode(INDIVIDUAL_WEIGHT);
       check_value(v_rand.get_range_weight_default_mode(VOID) = INDIVIDUAL_WEIGHT, ERROR, "Checking range_weight_default_mode");
-      v_rand.add_range_weight_time(-5 ps, -3 ps, 30);
-      v_rand.add_val_weight_time(0 ps, 20);
-      v_rand.add_range_weight_time(9 ps, 10 ps, 50);
+      v_rand.add_range_weight_time(-5 * C_TIME_RES, -3 * C_TIME_RES, 30);
+      v_rand.add_val_weight_time(0 * C_TIME_RES, 20);
+      v_rand.add_range_weight_time(9 * C_TIME_RES, 10 * C_TIME_RES, 50);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_time);
@@ -2600,10 +2601,10 @@ begin
       v_rand.clear_constraints(VOID);
 
       log(ID_LOG_HDR, "Testing weighted time (mixed with non-weighted constraint) - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
-      v_rand.add_val_time((20 ps, 30 ps));
-      v_rand.add_range_weight_time(-5 ps, -3 ps, 4);
-      v_rand.add_val_weight_time(0 ps, 2);
-      v_rand.add_range_weight_time(9 ps, 10 ps, 4);
+      v_rand.add_val_time((20 * C_TIME_RES, 30 * C_TIME_RES));
+      v_rand.add_range_weight_time(-5 * C_TIME_RES, -3 * C_TIME_RES, 4);
+      v_rand.add_val_weight_time(0 * C_TIME_RES, 2);
+      v_rand.add_range_weight_time(9 * C_TIME_RES, 10 * C_TIME_RES, 4);
       for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
         v_time := v_rand.randm(VOID);
         count_rand_value(v_value_cnt, v_time);
@@ -2621,30 +2622,30 @@ begin
       increment_expected_alerts(TB_WARNING, 3);
 
       -- TB_ERROR: min_value >= max_value
-      v_rand.add_range_weight_time(1 ps, 1 ps, 30);
-      v_rand.add_range_weight_time(10 ps, 5 ps, 30);
+      v_rand.add_range_weight_time(1 * C_TIME_RES, 1 * C_TIME_RES, 30);
+      v_rand.add_range_weight_time(10 * C_TIME_RES, 5 * C_TIME_RES, 30);
 
       -- TB_ERROR: total weight is zero
-      v_rand.add_val_weight_time(1 ps, 0);
-      v_rand.add_val_weight_time(2 ps, 0);
+      v_rand.add_val_weight_time(1 * C_TIME_RES, 0);
+      v_rand.add_val_weight_time(2 * C_TIME_RES, 0);
       v_time := v_rand.randm(VOID);
       v_rand.clear_constraints(VOID);
 
       -- TB_WARNING: unsupported combination of constraints
-      v_rand.add_range_weight_time(-5 ps, 3 ps, 30);
-      v_rand.excl_val_time((-4 ps));
+      v_rand.add_range_weight_time(-5 * C_TIME_RES, 3 * C_TIME_RES, 30);
+      v_rand.excl_val_time((-4 * C_TIME_RES));
       v_time := v_rand.randm(VOID);
       v_rand.clear_constraints(VOID);
 
       -- TB_WARNING: unsupported configuration
-      v_rand.add_range_weight_time(-5 ps, 3 ps, 30);
+      v_rand.add_range_weight_time(-5 * C_TIME_RES, 3 * C_TIME_RES, 30);
       v_rand.set_cyclic_mode(CYCLIC);
       v_time := v_rand.randm(VOID);
       v_rand.set_cyclic_mode(NON_CYCLIC);
       v_rand.clear_constraints(VOID);
 
       -- TB_WARNING: unsupported configuration
-      v_rand.add_range_weight_time(-5 ps, 3 ps, 30);
+      v_rand.add_range_weight_time(-5 * C_TIME_RES, 3 * C_TIME_RES, 30);
       v_rand.set_uniqueness(UNIQUE);
       v_time := v_rand.randm(VOID);
       v_rand.set_uniqueness(NON_UNIQUE);
@@ -2656,7 +2657,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing weighted time vector (not supported)");
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_rand.add_range_weight_time(1 ps, 3 ps, 30);
+      v_rand.add_range_weight_time(1 * C_TIME_RES, 3 * C_TIME_RES, 30);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.clear_config(VOID);
 
@@ -3418,7 +3419,7 @@ begin
 
       log(ID_LOG_HDR, "Testing time (not supported)");
       increment_expected_alerts(TB_WARNING, 2);
-      v_rand.add_range_time(1 ps, 5 ps);
+      v_rand.add_range_time(1 * C_TIME_RES, 5 * C_TIME_RES);
       v_time     := v_rand.randm(VOID);
       v_time_vec := v_rand.randm(v_time_vec'length);
 
@@ -4057,25 +4058,25 @@ begin
       log(ID_LOG_HDR, "Testing config report with time constraints");
       ------------------------------------------------------------
       v_rand.set_name("RAND_TIME_1");
-      v_rand.add_range_time(10 ps, 20 ps);
-      v_rand.add_range_time(30 ps, 40 ps);
-      v_rand.add_val_time(100 ps);
-      v_rand.excl_val_time((15 ps, 35 ps, 55 ps));
+      v_rand.add_range_time(10 * C_TIME_RES, 20 * C_TIME_RES);
+      v_rand.add_range_time(30 * C_TIME_RES, 40 * C_TIME_RES);
+      v_rand.add_val_time(100 * C_TIME_RES);
+      v_rand.excl_val_time((15 * C_TIME_RES, 35 * C_TIME_RES, 55 * C_TIME_RES));
       v_time := v_rand.randm(VOID);
       v_rand.report_config(VOID);
 
       v_rand.set_name("RAND_TIME_2");
-      v_rand.add_val_weight_time(200 ps, 8);
+      v_rand.add_val_weight_time(200 * C_TIME_RES, 8);
       v_rand.report_config(VOID);
 
       v_rand.clear_config(VOID);
 
       v_rand.set_name("RAND_TIME_3");
-      v_rand.add_range_time(10 ps, 20 ps);
-      v_rand.add_range_weight_time(30 ps, 40 ps, 5);
-      v_rand.add_range_weight_time(50 ps, 60 ps, 10);
-      v_rand.add_val_time(100 ps);
-      v_rand.add_val_weight_time(200 ps, 8);
+      v_rand.add_range_time(10 * C_TIME_RES, 20 * C_TIME_RES);
+      v_rand.add_range_weight_time(30 * C_TIME_RES, 40 * C_TIME_RES, 5);
+      v_rand.add_range_weight_time(50 * C_TIME_RES, 60 * C_TIME_RES, 10);
+      v_rand.add_val_time(100 * C_TIME_RES);
+      v_rand.add_val_weight_time(200 * C_TIME_RES, 8);
       v_time := v_rand.randm(VOID);
       v_rand.report_config(VOID);
 
@@ -4208,44 +4209,44 @@ begin
       v_rand.clear_config(VOID);
 
       log(ID_LOG_HDR, "Time");
-      v_rand.add_range_time(-2 ps, 2 ps);
+      v_rand.add_range_time(-2 * C_TIME_RES, 2 * C_TIME_RES);
       v_time := v_rand.randm(VOID);
-      v_rand.add_range_time(8 ps, 9 ps);
-      v_time := v_rand.randm(VOID);
-      v_rand.clear_constraints(VOID);
-
-      v_rand.add_val_time((-5 ps, 3 ps, 4 ps));
+      v_rand.add_range_time(8 * C_TIME_RES, 9 * C_TIME_RES);
       v_time := v_rand.randm(VOID);
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range_time(-1 ps, 1 ps);
-      v_rand.add_val_time(10 ps);
-      v_time := v_rand.randm(VOID);
-      v_rand.add_range_time(8 ps, 9 ps);
-      v_rand.add_val_time((-5 ps, 3 ps, 4 ps));
+      v_rand.add_val_time((-5 * C_TIME_RES, 3 * C_TIME_RES, 4 * C_TIME_RES));
       v_time := v_rand.randm(VOID);
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range_time(-2 ps, 2 ps);
-      v_rand.excl_val_time((-1 ps, 0 ps, 1 ps));
+      v_rand.add_range_time(-1 * C_TIME_RES, 1 * C_TIME_RES);
+      v_rand.add_val_time(10 * C_TIME_RES);
       v_time := v_rand.randm(VOID);
-      v_rand.add_range_time(8 ps, 10 ps);
-      v_rand.excl_val_time(10 ps);
-      v_time := v_rand.randm(VOID);
-      v_rand.clear_constraints(VOID);
-
-      v_rand.add_val_time((-6 ps, -4 ps, -2 ps, 0 ps, 2 ps, 4 ps, 6 ps));
-      v_rand.excl_val_time((-2 ps, 0 ps, 2 ps));
+      v_rand.add_range_time(8 * C_TIME_RES, 9 * C_TIME_RES);
+      v_rand.add_val_time((-5 * C_TIME_RES, 3 * C_TIME_RES, 4 * C_TIME_RES));
       v_time := v_rand.randm(VOID);
       v_rand.clear_constraints(VOID);
 
-      v_rand.add_range_time(-2 ps, 2 ps);
-      v_rand.add_val_time((-5 ps, 3 ps, 4 ps));
-      v_rand.excl_val_time((-5 ps, -1 ps, 1 ps));
+      v_rand.add_range_time(-2 * C_TIME_RES, 2 * C_TIME_RES);
+      v_rand.excl_val_time((-1 * C_TIME_RES, 0 * C_TIME_RES, 1 * C_TIME_RES));
       v_time := v_rand.randm(VOID);
-      v_rand.add_range_time(8 ps, 10 ps);
-      v_rand.add_val_time((20 ps, 30 ps, 40 ps));
-      v_rand.excl_val_time((9 ps, 30 ps, 40 ps));
+      v_rand.add_range_time(8 * C_TIME_RES, 10 * C_TIME_RES);
+      v_rand.excl_val_time(10 * C_TIME_RES);
+      v_time := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_val_time((-6 * C_TIME_RES, -4 * C_TIME_RES, -2 * C_TIME_RES, 0 * C_TIME_RES, 2 * C_TIME_RES, 4 * C_TIME_RES, 6 * C_TIME_RES));
+      v_rand.excl_val_time((-2 * C_TIME_RES, 0 * C_TIME_RES, 2 * C_TIME_RES));
+      v_time := v_rand.randm(VOID);
+      v_rand.clear_constraints(VOID);
+
+      v_rand.add_range_time(-2 * C_TIME_RES, 2 * C_TIME_RES);
+      v_rand.add_val_time((-5 * C_TIME_RES, 3 * C_TIME_RES, 4 * C_TIME_RES));
+      v_rand.excl_val_time((-5 * C_TIME_RES, -1 * C_TIME_RES, 1 * C_TIME_RES));
+      v_time := v_rand.randm(VOID);
+      v_rand.add_range_time(8 * C_TIME_RES, 10 * C_TIME_RES);
+      v_rand.add_val_time((20 * C_TIME_RES, 30 * C_TIME_RES, 40 * C_TIME_RES));
+      v_rand.excl_val_time((9 * C_TIME_RES, 30 * C_TIME_RES, 40 * C_TIME_RES));
       v_time := v_rand.randm(VOID);
       v_rand.clear_config(VOID);
 
@@ -4969,7 +4970,7 @@ begin
       increment_expected_alerts_and_stop_limit(TB_ERROR, 2);
 
       -- TB_ERROR: unsupported type
-      v_rand.add_range_time(-2 ps, 2 ps);
+      v_rand.add_range_time(-2 * C_TIME_RES, 2 * C_TIME_RES);
       v_time     := v_rand.randm(VOID);
       v_time_vec := v_rand.randm(v_time_vec'length);
       v_rand.clear_constraints(VOID);

@@ -12,7 +12,6 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing load and write database from a file - coverpoint
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): MY_SCOPE ***                                                                                                        
@@ -178,13 +177,10 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
-UVVM:                                                                           write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing load and write database from a file - cross
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE SUMMARY REPORT (NON VERBOSE): NEW_SCOPE ***                                                                                                       
@@ -346,12 +342,10 @@ UVVM:      transition: (50->51->52->53->54->55)x(1050->1051->1052->1053->1054->1
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross.txt)
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing load and write database from a file - max data
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross_max.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         
@@ -683,7 +677,6 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_3] write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross_max.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
@@ -704,7 +697,6 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing load database from a file - coverpoint
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
@@ -932,7 +924,6 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing load database from a file - cross
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: NEW_SCOPE ***                                                                                                                       
@@ -1053,7 +1044,6 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing load database from a file - max data
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross_max.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: TB seq. ***                                                                                                                         

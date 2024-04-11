@@ -60,9 +60,28 @@ architecture func of uart_simple_bfm_tb is
 
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
 
+  -- Config for 8-bit UART transactions
   constant C_UART_BFM_CONFIG_0 : t_uart_bfm_config := (
     bit_time                              => 160 ns,
     num_data_bits                         => 8,
+    idle_state                            => '1',
+    num_stop_bits                         => STOP_BITS_ONE,
+    parity                                => PARITY_ODD,
+    timeout                               => 0 ns,
+    timeout_severity                      => error,
+    match_strictness                      => MATCH_EXACT,
+    num_bytes_to_log_before_expected_data => 10,
+    id_for_bfm                            => ID_BFM,
+    id_for_bfm_wait                       => ID_BFM_WAIT,
+    id_for_bfm_poll                       => ID_BFM_POLL,
+    id_for_bfm_poll_summary               => ID_BFM_POLL_SUMMARY,
+    error_injection                       => C_BFM_ERROR_INJECTION_INACTIVE
+  );
+
+  -- Config for 7-bit UART transactions
+  constant C_UART_BFM_CONFIG_1 : t_uart_bfm_config := (
+    bit_time                              => 160 ns,
+    num_data_bits                         => 7,
     idle_state                            => '1',
     num_stop_bits                         => STOP_BITS_ONE,
     parity                                => PARITY_ODD,
@@ -240,6 +259,13 @@ begin
       uart_transmit(data_value, "", rx, C_UART_BFM_CONFIG_0, C_SCOPE);
     end;
 
+    procedure uart_transmit_7_bit(
+      constant data_value : in std_logic_vector(6 downto 0)
+    ) is
+    begin
+      uart_transmit(data_value, "", rx, C_UART_BFM_CONFIG_1, C_SCOPE);
+    end;
+
     procedure uart_receive(
       variable data_value : out std_logic_vector(7 downto 0)
     ) is
@@ -253,6 +279,13 @@ begin
     ) is
     begin
       uart_expect(data_exp, "", tx, terminate_loop, 1, 0 ns, ERROR, C_UART_BFM_CONFIG_0, C_SCOPE);
+    end;
+
+    procedure uart_expect_7_bit(
+      constant data_exp : in std_logic_vector(6 downto 0)
+    ) is 
+    begin
+      uart_expect(data_exp, "", tx, terminate_loop, 1, 0 ns, ERROR, C_UART_BFM_CONFIG_1, C_SCOPE);
     end;
 
     procedure set_inputs_passive(
@@ -410,6 +443,40 @@ begin
     sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY default");
     check_value(tx, '1', ERROR, "UART TX port must be default '1'", C_SCOPE);
 
+    log(ID_LOG_HDR, "Check 7-bit functionality", C_SCOPE);
+    ------------------------------------------------------------
+    sbi_check(C_ADDR_NUM_DATA_BITS, x"08", ERROR, "Checking NUM_DATA_BITS default = 8");
+    sbi_write(C_ADDR_NUM_DATA_BITS, x"07", "Writing NUM_DATA_BITS = 7");
+    sbi_check(C_ADDR_NUM_DATA_BITS, x"07", ERROR, "Checking NUM_DATA_BITS = 7");
+
+    log("\nChecking Register UART DUT transmission (BFM uart_expect) for 7-bit data");
+    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
+    uart_expect_7_bit(7x"55");
+    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, x"7A", "TX_DATA");
+    uart_expect_7_bit(7x"7A");
+    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
+    sbi_write(C_ADDR_TX_DATA, x"00", "TX_DATA");
+    uart_expect_7_bit(7x"00");
+    sbi_await_value(C_ADDR_TX_READY, x"01", 10, ERROR, "TX_READY active");
+
+    pulse(arst, clk, 1, "Pulse reset");
+    sbi_check(C_ADDR_TX_READY, x"01", ERROR, "TX_READY active");
+    sbi_check(C_ADDR_NUM_DATA_BITS, x"08", ERROR, "Checking NUM_DATA_BITS default = 8 after reset");
+    sbi_write(C_ADDR_NUM_DATA_BITS, x"07", "Writing NUM_DATA_BITS = 7");
+    sbi_check(C_ADDR_NUM_DATA_BITS, x"07", ERROR, "Checking NUM_DATA_BITS = 7");
+
+    log("\nChecking UART DUT reception (BFM uart_transmit)");
+    uart_transmit_7_bit(7x"55");
+    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
+    sbi_check(C_ADDR_RX_DATA, x"55", ERROR, "RX_DATA pure readback");
+    uart_transmit_7_bit(7x"7A");
+    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
+    sbi_check(C_ADDR_RX_DATA, x"7A", ERROR, "RX_DATA pure readback");
+    uart_transmit_7_bit(7x"00");
+    sbi_await_value(C_ADDR_RX_DATA_VALID, x"01", 10, ERROR, "RX_DATA_VALID enable");
+    sbi_check(C_ADDR_RX_DATA, x"00", ERROR, "RX_DATA pure readback");
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------

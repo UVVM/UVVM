@@ -183,8 +183,6 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
-UVVM:                                                                           write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing write database to a file - cross
@@ -343,7 +341,6 @@ UVVM:      transition: (50->51->52->53->54->55)x(1050->1051->1052->1053->1054->1
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  NEW_SCOPE                      [MY_CROSS] write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross.txt)
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing write database to a file - max data
@@ -493,7 +490,6 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_3] write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross_max.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** OVERALL COVERAGE REPORT (VERBOSE): TB seq. ***                                                                                                             
@@ -558,7 +554,6 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing adding bins after load_coverage_db()
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
@@ -594,7 +589,6 @@ UVVM: ID_FUNC_COV_BINS                   0.0 ns  MY_SCOPE                       
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  MY_SCOPE                         [MY_COVERPOINT] Adding bins: (10), min_hits:1, rand_weight:1, ""
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for int 8. 'Checking number of valid bins'
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_cross.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: NEW_SCOPE ***                                                                                                                       
@@ -640,7 +634,6 @@ UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_10] add_bins(bin(10), "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_10] Adding bins: (10), min_hits:1, rand_weight:1, ""
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_10] sample_coverage(10)
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_10] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM: 
 UVVM: ***  TB_WARNING #11  ***
 UVVM:             0 ns   TB seq.
@@ -670,7 +663,6 @@ UVVM:
 UVVM:      
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_bin => OK, for bin_0
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
@@ -692,8 +684,6 @@ UVVM:      ---------------------------------------------------------------------
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
-UVVM:                                                                           load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM: 
 UVVM: ***  TB_WARNING #12  ***
 UVVM:             0 ns   MY_SCOPE
@@ -726,7 +716,6 @@ UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_12] Adding bins: (10), min_hits:1, rand_weight:1, ""
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_12] sample_coverage(10)
 UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_12] clear_coverage()
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_12] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
@@ -753,7 +742,6 @@ UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_13] Adding bins: (10), min_hits:1, rand_weight:1, ""
 UVVM: ID_FUNC_COV_SAMPLE                 0.0 ns  TB seq.                        [Covpt_13] sample_coverage(10)
 UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_13] delete_coverpoint()
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
@@ -786,7 +774,6 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_15] add_cross(bin(1), bin(2), "")
 UVVM: ID_FUNC_COV_BINS_INFO              0.0 ns  TB seq.                          [Covpt_15] Adding cross: (1) x (2), min_hits:1, rand_weight:1, ""
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_15] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #2  ***
@@ -841,7 +828,6 @@ UVVM:                Covpt_3                   1                  25 / 100      
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
@@ -880,9 +866,6 @@ UVVM:             MY_COVERPOINT                5                    0 / 6       
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
-UVVM:                                                                           write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        
@@ -922,9 +905,6 @@ UVVM:             MY_COVERPOINT                5                    0 / 6       
 UVVM:      ====================================================================================================================================================================
 UVVM:      
 UVVM:      
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  MY_SCOPE                       [MY_COVERPOINT]
-UVVM:                                                                           write_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
-UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [] load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      0 ns *** COVERAGE HOLES REPORT: MY_SCOPE ***                                                                                                                        

@@ -86,6 +86,13 @@ begin
       rgmii_write(data_array, "", rgmii_tx_if, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
     end procedure;
 
+    procedure rgmii_write(
+      data_array : in t_byte_array;
+      action_when_transfer_is_done : in t_action_when_transfer_is_done) is
+    begin
+      rgmii_write(data_array, action_when_transfer_is_done, "", rgmii_tx_if, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
+    end procedure;
+
   begin
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
@@ -127,6 +134,17 @@ begin
         for i in 0 to 30 loop
         rgmii_write(data_array(0 to i));
         end loop;
+
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing multiple byte transfer in several transactions");
+        for i in 0 to 30 loop
+          if i < 30 then
+            rgmii_write(data_array(0 to i), HOLD_LINE_AFTER_TRANSFER);
+          else
+            rgmii_write(data_array(0 to i), RELEASE_LINE_AFTER_TRANSFER);
+          end if;
+        end loop;
+        check_stable(rgmii_tx_if.tx_ctl, C_CLK_PERIOD*30, error, "Checking that TXEN was held high during the complete transfer", c_scope);
 
         await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
         log(ID_LOG_HDR, "Testing error case: write() txc timeout");
@@ -253,6 +271,11 @@ begin
         rgmii_expect((x"01", x"23", x"45", x"67", x"89"));
 
         -- Testing data sizes
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        for i in 0 to 30 loop
+        rgmii_expect(data_array(0 to i));
+        end loop;
+
         await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
         for i in 0 to 30 loop
         rgmii_expect(data_array(0 to i));

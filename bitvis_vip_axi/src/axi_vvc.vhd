@@ -263,7 +263,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, read_data_channel_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
-            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
+            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
             work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
@@ -603,7 +603,7 @@ begin
                 exit;
               elsif i = v_queue_count then
                 -- We didn't find the correct RID
-                error("Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
+                alert(vvc_config.bfm_config.general_severity,"Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
               end if;
             end loop;
           else
@@ -657,7 +657,7 @@ begin
                 exit;
               elsif i = v_queue_count then
                 -- We didn't find the correct RID
-                error("Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
+                alert(vvc_config.bfm_config.general_severity,"Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
               end if;
             end loop;
           else
@@ -893,7 +893,7 @@ begin
                                      buser        => axi_vvc_master_if.write_response_channel.buser,
                                      bvalid       => axi_vvc_master_if.write_response_channel.bvalid,
                                      bready       => axi_vvc_master_if.write_response_channel.bready,
-                                     alert_level  => error,
+                                     alert_level  => vvc_config.bfm_config.general_severity,
                                      scope        => C_CHANNEL_SCOPE,
                                      msg_id_panel => v_msg_id_panel,
                                      config       => vvc_config.bfm_config);
@@ -910,7 +910,7 @@ begin
             exit;
           elsif i = v_queue_count then
             -- We didn't find the correct BID
-            error("Unexpected write response with BID: " & to_string(v_bid_value), C_CHANNEL_SCOPE);
+            alert(vvc_config.bfm_config.general_severity, "Unexpected write response with BID: " & to_string(v_bid_value), C_CHANNEL_SCOPE);
           end if;
         end loop;
       else
@@ -920,13 +920,15 @@ begin
 
       -- Checking response
       if v_normalized_bid'length > 0 then
-        check_value(v_bid_value, v_normalized_bid, vvc_config.bfm_config.match_strictness, error, "Checking BID value. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, HEX, KEEP_LEADING_0, ID_POS_ACK, v_msg_id_panel);
+        check_value(v_bid_value, v_normalized_bid, vvc_config.bfm_config.match_strictness, vvc_config.bfm_config.general_severity, "Checking BID value. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, HEX, KEEP_LEADING_0, ID_POS_ACK, v_msg_id_panel);
       end if;
       if v_normalized_buser'length > 0 then
         v_normalized_buser := normalize_and_check(v_cmd.user, v_normalized_buser, ALLOW_WIDER_NARROWER, "v_cmd.user", "v_normalized_buser", v_cmd.msg);
-        check_value(v_buser_value, v_normalized_buser, vvc_config.bfm_config.match_strictness, error, "Checking BUSER value. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, HEX, KEEP_LEADING_0, ID_POS_ACK, v_msg_id_panel);
+        check_value(v_buser_value, v_normalized_buser, vvc_config.bfm_config.match_strictness, vvc_config.bfm_config.general_severity, "Checking BUSER value. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, HEX, KEEP_LEADING_0, ID_POS_ACK, v_msg_id_panel);
       end if;
-      check_value(v_bresp_value = v_cmd.resp, error, "Checking BRESP value. " & add_msg_delimiter(format_msg(v_cmd)), C_CHANNEL_SCOPE, ID_POS_ACK, v_msg_id_panel);
+      if v_bresp_value /= v_cmd.resp then
+        alert(vvc_config.bfm_config.general_severity,"Unexpected BRESP value. Was " & to_string(v_bresp_value) & ". Expected " & to_string(v_cmd.resp) ,  C_CHANNEL_SCOPE);
+      end if;
 
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
 

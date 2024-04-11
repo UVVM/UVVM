@@ -4,7 +4,7 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 
 v5.0.0
 ----------
-Released: 202X-XX-XX
+Released: 2024-03-08
 - Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.
 - Added missing scope to alert in set_global_vvc_transaction_info procedure.
 - Removed unnecessary constraining in set_global_vvc_transaction_info procedure.
@@ -14,6 +14,8 @@ Released: 202X-XX-XX
 - Use the function get_scope_for_log() to generate VVC scope.
 - Fixed data length typo in Axistream BFM- and VVC Quick Reference.
 - Added functionality for extended error mismatch message for data.
+- Increased C_MAX_TUSER_BITS to 64 in BFM. (allows for higher GC_USER_WIDTH)
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
 v4.7.8
 ----------

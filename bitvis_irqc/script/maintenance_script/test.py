@@ -40,13 +40,11 @@ hr.set_testcase_identifier_name("GC_TESTCASE")
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
 hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
-hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd",
-             "bitvis_vip_scoreboard")
+hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 # Add other VIPs in the TB
 #  - SBI VIP
 hr.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
-hr.add_files(
-    "../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
 # Add DUT
 hr.add_files("../../../bitvis_irqc/src/*.vhd", "bitvis_irqc")
 # Add TB/TH

@@ -4,9 +4,10 @@ Bitvis VIP Clock Generator - Overview on Versions and Changes
 
 v1.5.4
 ----------
-Released: 202X-XX-XX
+Released: 2024-03-08
 - Fixed compilation warning vcom-1090.
 - Use the function get_scope_for_log() to generate VVC scope.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
 v1.5.3
 ----------

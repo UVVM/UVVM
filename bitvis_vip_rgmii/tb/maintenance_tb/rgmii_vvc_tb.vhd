@@ -147,6 +147,20 @@ begin
     end loop;
     await_completion(RGMII_VVCT, C_VVC_IDX, RX, 10 us);
 
+    log(ID_LOG_HDR, "Testing a multiple byte transfer in a single transaction");
+    for i in 0 to 30 loop
+      if i < 30 then
+        rgmii_write(RGMII_VVCT, C_VVC_IDX, TX, v_data_array(0 to i), HOLD_LINE_AFTER_TRANSFER, "");
+      else
+        rgmii_write(RGMII_VVCT, C_VVC_IDX, TX, v_data_array(0 to i), RELEASE_LINE_AFTER_TRANSFER, "");
+      end if;
+    end loop;
+    for i in 0 to 30 loop
+      rgmii_expect(RGMII_VVCT, C_VVC_IDX, RX, v_data_array(0 to i), "");
+    end loop;
+    await_completion(RGMII_VVCT, C_VVC_IDX, RX, 10 us);
+    check_stable(rgmii_tx_if.tx_ctl, 30 * C_CLK_PERIOD, ERROR, "Checking that TX_CTL was held high during the complete transfer", C_SCOPE);
+
     log(ID_LOG_HDR, "Testing read and fetch");
     rgmii_write(RGMII_VVCT, C_VVC_IDX, TX, v_data_array, "");
     rgmii_read(RGMII_VVCT, C_VVC_IDX, RX, "");

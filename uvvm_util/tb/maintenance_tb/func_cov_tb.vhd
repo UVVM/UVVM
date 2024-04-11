@@ -494,6 +494,27 @@ begin
       v_invalid_bin_idx := 0;
     end procedure;
 
+    procedure load_coverage_db_quiet (
+      variable coverpoint       : inout t_coverpoint;
+      constant path             : in string;
+      constant report_verbosity : in t_report_verbosity := HOLES_ONLY
+    ) is
+    begin
+      disable_log_msg(ID_FUNC_COV_CONFIG, QUIET);
+      coverpoint.load_coverage_db(path, report_verbosity => report_verbosity);
+      enable_log_msg(ID_FUNC_COV_CONFIG, QUIET);
+    end procedure;
+
+    procedure write_coverage_db_quiet (
+      variable coverpoint : inout t_coverpoint;
+      constant path       : in string
+    ) is
+    begin
+      disable_log_msg(ID_FUNC_COV_CONFIG, QUIET);
+      coverpoint.write_coverage_db(path);
+      enable_log_msg(ID_FUNC_COV_CONFIG, QUIET);
+    end procedure;
+
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
@@ -2607,7 +2628,7 @@ begin
       sample_bins(v_coverpoint_a, (231, 237, 237, 238, 235, 231), 1);
 
       v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 30.19% / 15.09%
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      write_coverage_db_quiet(v_coverpoint_a, GC_FILE_PATH & "db_coverpoint.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - cross");
@@ -2652,7 +2673,7 @@ begin
       sample_cross_bins(v_cross_x2, ((231, 1231), (237, 1237), (237, 1237)), 1);
 
       v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 30.19% / 40.25%
-      v_cross_x2.write_coverage_db(GC_FILE_PATH & "db_cross.txt");
+      write_coverage_db_quiet(v_cross_x2, GC_FILE_PATH & "db_cross.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing write database to a file - max data");
@@ -2666,7 +2687,7 @@ begin
       end loop;
 
       v_cross_x3.report_coverage(VERBOSE); -- Bins: 25.00%, Hits: 25.00%
-      v_cross_x3.write_coverage_db(GC_FILE_PATH & "db_cross_max.txt");
+      write_coverage_db_quiet(v_cross_x3, GC_FILE_PATH & "db_cross_max.txt");
 
       fc_report_overall_coverage(VERBOSE);
 
@@ -2706,7 +2727,7 @@ begin
       log(ID_LOG_HDR, "Testing adding bins after load_coverage_db()");
       ------------------------------------------------------------
       increment_expected_alerts(TB_WARNING, 1);
-      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_b, GC_FILE_PATH & "db_coverpoint.txt");
       v_coverpoint_b.add_bins(bin(10));
       check_value(v_coverpoint_b.get_num_valid_bins(VOID), 7, ERROR, "Checking number of valid bins");
 
@@ -2716,7 +2737,7 @@ begin
       check_value(v_coverpoint_b.get_num_valid_bins(VOID), 8, ERROR, "Checking number of valid bins");
 
       increment_expected_alerts(TB_WARNING, 1);
-      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_cross.txt");
+      load_coverage_db_quiet(v_cross_x2_b, GC_FILE_PATH & "db_cross.txt");
       v_cross_x2_b.add_cross(bin(10), bin(1010));
       check_value(v_cross_x2_b.get_num_valid_bins(VOID), 7, ERROR, "Checking number of valid bins");
 
@@ -2734,25 +2755,25 @@ begin
       increment_expected_alerts(TB_WARNING, 1);
       v_coverpoint_b.add_bins(bin(10));
       v_coverpoint_b.sample_coverage(10);
-      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_b, GC_FILE_PATH & "db_coverpoint.txt");
       v_bin_idx := 0;
       check_bin(v_coverpoint_b, v_bin_idx, VAL, 10, name => "bin_0", hits => 0);
 
       increment_expected_alerts(TB_WARNING, 1);
-      v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
-      v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_c, GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_c, GC_FILE_PATH & "db_coverpoint.txt");
 
       log(ID_SEQUENCER, "Check DB can be safely loaded after clearing the coverage");
       v_coverpoint_d.add_bins(bin(10));
       v_coverpoint_d.sample_coverage(10);
       v_coverpoint_d.clear_coverage(VOID);
-      v_coverpoint_d.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_d, GC_FILE_PATH & "db_coverpoint.txt");
 
       log(ID_SEQUENCER, "Check DB can be safely loaded after deleting the coverpoint");
       v_coverpoint_e.add_bins(bin(10));
       v_coverpoint_e.sample_coverage(10);
       v_coverpoint_e.delete_coverpoint(VOID);
-      v_coverpoint_e.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_e, GC_FILE_PATH & "db_coverpoint.txt");
 
       v_coverpoint_b.delete_coverpoint(VOID);
       v_coverpoint_c.delete_coverpoint(VOID);
@@ -2764,7 +2785,7 @@ begin
       ------------------------------------------------------------
       v_cross_x2_b.add_cross(bin(1), bin(2));
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
-      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_cross_x2_b, GC_FILE_PATH & "db_coverpoint.txt");
 
       v_cross_x2_b.delete_coverpoint(VOID);
 
@@ -2775,15 +2796,15 @@ begin
       v_coverpoint_a.report_coverage(VOID);
       fc_report_overall_coverage(VERBOSE);
 
-      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_b, GC_FILE_PATH & "db_coverpoint.txt");
       fc_report_overall_coverage(VERBOSE);
-      v_coverpoint_b.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      write_coverage_db_quiet(v_coverpoint_b, GC_FILE_PATH & "db_coverpoint.txt");
 
-      v_coverpoint_c.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_c, GC_FILE_PATH & "db_coverpoint.txt");
       fc_report_overall_coverage(VERBOSE);
-      v_coverpoint_c.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      write_coverage_db_quiet(v_coverpoint_c, GC_FILE_PATH & "db_coverpoint.txt");
 
-      v_coverpoint_d.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_d, GC_FILE_PATH & "db_coverpoint.txt");
       fc_report_overall_coverage(VERBOSE);
 
       log(ID_SEQUENCER, "Check accumulated testcases counter is reset after clearing the coverage");
@@ -2966,7 +2987,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint_a.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt", report_verbosity => NON_VERBOSE);
+      load_coverage_db_quiet(v_coverpoint_a, GC_FILE_PATH & "db_coverpoint.txt", report_verbosity => NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx         := 0;
@@ -3020,12 +3041,12 @@ begin
       sample_bins(v_coverpoint_a, (231, 237, 237, 238, 235, 231), 1);
 
       v_coverpoint_a.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 60.38% / 30.19%
-      v_coverpoint_a.write_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      write_coverage_db_quiet(v_coverpoint_a, GC_FILE_PATH & "db_coverpoint.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2.load_coverage_db(GC_FILE_PATH & "db_cross.txt", report_verbosity => NON_VERBOSE);
+      load_coverage_db_quiet(v_cross_x2, GC_FILE_PATH & "db_cross.txt", report_verbosity => NON_VERBOSE);
 
       -- Check bins and coverage
       v_bin_idx         := 0;
@@ -3079,12 +3100,12 @@ begin
       sample_cross_bins(v_cross_x2, ((231, 1231), (237, 1237), (237, 1237)), 1);
 
       v_cross_x2.report_coverage(VERBOSE); -- Bins: 0.0% / 0.0%, Hits: 60.38% / 80.50%
-      v_cross_x2.write_coverage_db(GC_FILE_PATH & "db_cross.txt");
+      write_coverage_db_quiet(v_cross_x2, GC_FILE_PATH & "db_cross.txt");
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load and write database from a file - max data");
       ------------------------------------------------------------
-      v_cross_x3.load_coverage_db(GC_FILE_PATH & "db_cross_max.txt");
+      load_coverage_db_quiet(v_cross_x3, GC_FILE_PATH & "db_cross_max.txt");
 
       -- Check bins and coverage
       v_bin_idx         := 0;
@@ -3109,14 +3130,14 @@ begin
       end loop;
 
       v_cross_x3.report_coverage(VERBOSE); -- Bins: 50.00%, Hits: 50.00%
-      v_cross_x3.write_coverage_db(GC_FILE_PATH & "db_cross_max.txt");
+      write_coverage_db_quiet(v_cross_x3, GC_FILE_PATH & "db_cross_max.txt");
 
       fc_report_overall_coverage(VERBOSE);
 
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - coverpoint");
       ------------------------------------------------------------
-      v_coverpoint_b.load_coverage_db(GC_FILE_PATH & "db_coverpoint.txt");
+      load_coverage_db_quiet(v_coverpoint_b, GC_FILE_PATH & "db_coverpoint.txt");
 
       -- Check bins and coverage
       v_bin_idx         := 0;
@@ -3160,7 +3181,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - cross");
       ------------------------------------------------------------
-      v_cross_x2_b.load_coverage_db(GC_FILE_PATH & "db_cross.txt");
+      load_coverage_db_quiet(v_cross_x2_b, GC_FILE_PATH & "db_cross.txt");
 
       -- Check bins and coverage
       v_bin_idx         := 0;
@@ -3204,7 +3225,7 @@ begin
       ------------------------------------------------------------
       log(ID_LOG_HDR, "Testing load database from a file - max data");
       ------------------------------------------------------------
-      v_cross_x3_b.load_coverage_db(GC_FILE_PATH & "db_cross_max.txt");
+      load_coverage_db_quiet(v_cross_x3_b, GC_FILE_PATH & "db_cross_max.txt");
 
       -- Check bins and coverage
       v_bin_idx         := 0;

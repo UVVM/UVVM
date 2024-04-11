@@ -208,7 +208,7 @@ UVVM:
 UVVM: 
 UVVM: ***  WARNING #7  ***
 UVVM:             1 ns   TB seq
-UVVM:                    check_value() => Failed. time  Was 15000 ps. Expected 14000 ps
+UVVM:                    check_value() => Failed. time  Was 15 ns. Expected 14 ns
 UVVM:                    My msg I, Fail
 UVVM: 
 UVVM: 

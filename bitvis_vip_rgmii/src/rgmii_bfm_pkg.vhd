@@ -94,6 +94,16 @@ package rgmii_bfm_pkg is
     constant config       : in t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
   );
 
+  procedure rgmii_write(
+    constant data_array                   : in t_byte_array;
+    constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
+    constant msg                          : in string             := "";
+    signal   rgmii_tx_if                  : inout t_rgmii_tx_if;
+    constant scope                        : in string             := C_BFM_SCOPE;
+    constant msg_id_panel                 : in t_msg_id_panel     := shared_msg_id_panel;
+    constant config                       : in t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
+  );
+
   ---------------------------------------------------------------------------------------------
   -- RGMII Read
   -- DUT -> BFM
@@ -160,6 +170,19 @@ package body rgmii_bfm_pkg is
     constant msg_id_panel : in t_msg_id_panel     := shared_msg_id_panel;
     constant config       : in t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
   ) is
+  begin
+    rgmii_write(data_array, RELEASE_LINE_AFTER_TRANSFER, msg, rgmii_tx_if, scope, msg_id_panel, config);
+  end procedure;
+
+  procedure rgmii_write(
+    constant data_array                   : in t_byte_array;
+    constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
+    constant msg                          : in string             := "";
+    signal   rgmii_tx_if                  : inout t_rgmii_tx_if;
+    constant scope                        : in string             := C_BFM_SCOPE;
+    constant msg_id_panel                 : in t_msg_id_panel     := shared_msg_id_panel;
+    constant config                       : in t_rgmii_bfm_config := C_RGMII_BFM_CONFIG_DEFAULT
+  ) is
     constant proc_name : string  := "rgmii_write";
     constant proc_call : string  := proc_name & "(" & to_string(data_array'length) & " bytes)";
     variable v_timeout : boolean := false;
@@ -168,9 +191,8 @@ package body rgmii_bfm_pkg is
     check_value(data_array'ascending, TB_FAILURE, "Sanity check: Check that data_array is ascending (defined with 'to'), for byte order clarity.", scope, ID_NEVER, msg_id_panel, proc_call);
     check_value(config.clock_period > -1 ns, TB_FAILURE, "Sanity check: Check that clock_period is set.", scope, ID_NEVER, msg_id_panel, proc_call);
 
-    rgmii_tx_if <= init_rgmii_if_signals;
+    rgmii_tx_if.txc <= 'Z';
     log(config.id_for_bfm, proc_call & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
-
     -- Wait for the first rising edge to enable the control line
     wait until rising_edge(rgmii_tx_if.txc) for config.clock_period * config.max_wait_cycles;
     if rgmii_tx_if.txc = '1' then
@@ -190,13 +212,23 @@ package body rgmii_bfm_pkg is
           wait until falling_edge(rgmii_tx_if.txc);
         end if; -- config.data_valid_on_both_clock_edges
 
-        wait until rising_edge(rgmii_tx_if.txc);
+        if i < data_array'high then
+          -- Wait for the next rising edge to send the next byte
+          wait until rising_edge(rgmii_tx_if.txc);
+          rgmii_tx_if.tx_ctl <= '1';
+        else
+          -- Last byte sent, release the control line
+          if action_when_transfer_is_done = RELEASE_LINE_AFTER_TRANSFER then
+            wait until rising_edge(rgmii_tx_if.txc);
+            rgmii_tx_if <= init_rgmii_if_signals;
+          end if;
+          -- else: Keep the control line active, and next byte is helt until next rgmii_write (first rising edge in this procedure)
+        end if;
       end loop;
     else
       v_timeout := true;
     end if;
 
-    rgmii_tx_if <= init_rgmii_if_signals;
     if v_timeout then
       alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout while waiting for txc. " & add_msg_delimiter(msg), scope);
     else

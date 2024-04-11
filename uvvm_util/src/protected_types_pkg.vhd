@@ -26,18 +26,9 @@ use work.string_methods_pkg.all;
 package protected_types_pkg is
 
   type t_protected_alert_attention_counters is protected
-    procedure increment(
-      alert_level : t_alert_level;
-      attention   : t_attention := REGARD; -- count, expect, ignore
-      number      : natural     := 1
-    );
-    impure function get(
-      alert_level : t_alert_level;
-      attention   : t_attention := REGARD
-    ) return natural;
-    procedure to_string(
-      order : t_order
-    );
+    procedure increment(alert_level : t_alert_level; attention : t_attention := REGARD; number : natural := 1);
+    impure function get(alert_level : t_alert_level; attention : t_attention := REGARD) return natural;
+    procedure to_string(order : t_order);
   end protected t_protected_alert_attention_counters;
 
   type t_protected_semaphore is protected
@@ -52,20 +43,10 @@ package protected_types_pkg is
   end protected t_protected_acknowledge_cmd_idx;
 
   type t_protected_check_counters is protected
-    procedure increment(
-      check_type : t_check_type;
-      number     : natural := 1
-    );
-    procedure decrement(
-      check_type : t_check_type;
-      number     : integer := 1
-    );
-    impure function get(
-      check_type : t_check_type
-    ) return natural;
-    procedure to_string(
-      order : t_order
-    );
+    procedure increment(check_type : t_check_type; number : natural := 1);
+    procedure decrement(check_type : t_check_type; number : integer := 1);
+    impure function get(check_type : t_check_type) return natural;
+    procedure to_string(order : t_order);
   end protected t_protected_check_counters;
 
   type t_protected_covergroup_status is protected
@@ -150,13 +131,13 @@ package body protected_types_pkg is
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   type t_protected_semaphore is protected body
-    variable v_priv_semaphore_taken : boolean := false;
+    variable priv_semaphore_taken : boolean := false;
 
     impure function get_semaphore return boolean is
     begin
-      if v_priv_semaphore_taken = false then
+      if priv_semaphore_taken = false then
         -- semaphore was free
-        v_priv_semaphore_taken := true;
+        priv_semaphore_taken := true;
         return true;
       else
         -- semaphore was not free
@@ -166,20 +147,20 @@ package body protected_types_pkg is
 
     procedure release_semaphore is
     begin
-      v_priv_semaphore_taken := false;
+      priv_semaphore_taken := false;
     end procedure;
   end protected body t_protected_semaphore;
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   type t_protected_acknowledge_cmd_idx is protected body
-    variable v_priv_idx : integer := -1;
+    variable priv_idx : integer := -1;
 
     impure function set_index(index : integer) return boolean is
     begin
       -- for broadcast
-      if v_priv_idx = -1 or v_priv_idx = index then
+      if priv_idx = -1 or priv_idx = index then
         -- index was now set
-        v_priv_idx := index;
+        priv_idx := index;
         return true;
       else
         -- index was set by another vvc
@@ -189,12 +170,12 @@ package body protected_types_pkg is
 
     impure function get_index return integer is
     begin
-      return v_priv_idx;
+      return priv_idx;
     end;
 
     procedure release_index is
     begin
-      v_priv_idx := -1;
+      priv_idx := -1;
     end procedure;
   end protected body t_protected_acknowledge_cmd_idx;
   --------------------------------------------------------------------------------

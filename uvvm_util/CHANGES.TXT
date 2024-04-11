@@ -3,9 +3,15 @@ UVVM Utility Library - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.19.5
+----------
+Released: 2024-XX-XX
+- Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
+- Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
+
 v2.19.4
 ----------
-Released: 202X-XX-XX
+Released: 2024-03-08
 - Moved t_transaction_status type to types_pkg and added COMPLETED.
 - Added function for extracting closest time unit for time type.
 - Changed check_value and check_value_in_ranged to print formatted time types with closest fitting time unit.

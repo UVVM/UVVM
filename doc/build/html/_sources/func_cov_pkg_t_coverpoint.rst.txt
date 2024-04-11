@@ -420,6 +420,8 @@ Deallocates the list of bins and resets all configuration settings to their defa
     my_coverpoint.delete_coverpoint(my_msg_id_panel);
 
 
+.. _add_bins:
+
 add_bins()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds bins to the coverpoint. Must be used together with the :ref:`bin functions <bin_functions>` which return a t_new_bin_array. 
@@ -589,6 +591,7 @@ Returns true if the coverpoint contains at least one bin. ::
     ...
     end if;
 
+.. _sample_coverage:
 
 sample_coverage()
 ----------------------------------------------------------------------------------------------------------------------------------

@@ -46,6 +46,8 @@ begin
 
   -- Delay the RX path
   gmii_tx_if.gtxclk <= clk;
+  gmii_tx_if.txd    <= (others => 'Z');
+  gmii_tx_if.txen   <= 'Z';
   gmii_rx_if.rxclk  <= clk;
   gmii_rx_if.rxd    <= transport gmii_tx_if.txd after GC_CLK_PERIOD * 5;
   gmii_rx_if.rxdv   <= transport gmii_tx_if.txen after GC_CLK_PERIOD * 5;

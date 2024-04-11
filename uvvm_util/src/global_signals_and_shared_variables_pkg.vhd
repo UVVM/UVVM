@@ -23,9 +23,17 @@ use work.adaptations_pkg.all;
 use work.protected_types_pkg.all;
 
 package global_signals_and_shared_variables_pkg is
+
+  -- Global signals
+  signal global_trigger : std_logic := 'L';
+  signal global_barrier : std_logic := 'X';
+
   -- Shared variables
+  shared variable shared_uvvm_status  : t_uvvm_status  := C_UVVM_STATUS_DEFAULT;
+  shared variable shared_msg_id_panel : t_msg_id_panel := C_MSG_ID_PANEL_DEFAULT;
+
+  -- UVVM internal shared variables
   shared variable shared_initialised_util        : boolean                                         := false;
-  shared variable shared_msg_id_panel            : t_msg_id_panel                                  := C_MSG_ID_PANEL_DEFAULT;
   shared variable shared_log_file_name_is_set    : boolean                                         := false;
   shared variable shared_alert_file_name_is_set  : boolean                                         := false;
   shared variable shared_warned_time_stamp_trunc : boolean                                         := false;
@@ -40,10 +48,6 @@ package global_signals_and_shared_variables_pkg is
   shared variable protected_semaphore            : t_protected_semaphore;
   shared variable protected_broadcast_semaphore  : t_protected_semaphore;
   shared variable protected_response_semaphore   : t_protected_semaphore;
-  shared variable shared_uvvm_status             : t_uvvm_status                                   := C_UVVM_STATUS_DEFAULT;
   shared variable protected_covergroup_status    : t_protected_covergroup_status;
 
-  -- Global signals
-  signal global_trigger : std_logic := 'L';
-  signal global_barrier : std_logic := 'X';
 end package global_signals_and_shared_variables_pkg;

@@ -26,18 +26,9 @@ use work.string_methods_pkg.all;
 package protected_types_pkg is
 
   type t_protected_alert_attention_counters is protected
-    procedure increment(
-      alert_level : t_alert_level;
-      attention   : t_attention := REGARD; -- count, expect, ignore
-      number      : natural     := 1
-    );
-    impure function get(
-      alert_level : t_alert_level;
-      attention   : t_attention := REGARD
-    ) return natural;
-    procedure to_string(
-      order : t_order
-    );
+    procedure increment(alert_level : t_alert_level; attention : t_attention := REGARD; number : natural := 1);
+    impure function get(alert_level : t_alert_level; attention : t_attention := REGARD) return natural;
+    procedure to_string(order : t_order);
   end protected t_protected_alert_attention_counters;
 
   type t_protected_semaphore is protected
@@ -52,20 +43,10 @@ package protected_types_pkg is
   end protected t_protected_acknowledge_cmd_idx;
 
   type t_protected_check_counters is protected
-    procedure increment(
-      check_type : t_check_type;
-      number     : natural := 1
-    );
-    procedure decrement(
-      check_type : t_check_type;
-      number     : integer := 1
-    );
-    impure function get(
-      check_type : t_check_type
-    ) return natural;
-    procedure to_string(
-      order : t_order
-    );
+    procedure increment(check_type : t_check_type; number : natural := 1);
+    procedure decrement(check_type : t_check_type; number : integer := 1);
+    impure function get(check_type : t_check_type) return natural;
+    procedure to_string(order : t_order);
   end protected t_protected_check_counters;
 
   type t_protected_covergroup_status is protected

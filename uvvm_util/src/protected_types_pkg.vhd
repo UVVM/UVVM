@@ -131,13 +131,13 @@ package body protected_types_pkg is
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   type t_protected_semaphore is protected body
-    variable v_priv_semaphore_taken : boolean := false;
+    variable priv_semaphore_taken : boolean := false;
 
     impure function get_semaphore return boolean is
     begin
-      if v_priv_semaphore_taken = false then
+      if priv_semaphore_taken = false then
         -- semaphore was free
-        v_priv_semaphore_taken := true;
+        priv_semaphore_taken := true;
         return true;
       else
         -- semaphore was not free
@@ -147,20 +147,20 @@ package body protected_types_pkg is
 
     procedure release_semaphore is
     begin
-      v_priv_semaphore_taken := false;
+      priv_semaphore_taken := false;
     end procedure;
   end protected body t_protected_semaphore;
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   type t_protected_acknowledge_cmd_idx is protected body
-    variable v_priv_idx : integer := -1;
+    variable priv_idx : integer := -1;
 
     impure function set_index(index : integer) return boolean is
     begin
       -- for broadcast
-      if v_priv_idx = -1 or v_priv_idx = index then
+      if priv_idx = -1 or priv_idx = index then
         -- index was now set
-        v_priv_idx := index;
+        priv_idx := index;
         return true;
       else
         -- index was set by another vvc
@@ -170,12 +170,12 @@ package body protected_types_pkg is
 
     impure function get_index return integer is
     begin
-      return v_priv_idx;
+      return priv_idx;
     end;
 
     procedure release_index is
     begin
-      v_priv_idx := -1;
+      priv_idx := -1;
     end procedure;
   end protected body t_protected_acknowledge_cmd_idx;
   --------------------------------------------------------------------------------

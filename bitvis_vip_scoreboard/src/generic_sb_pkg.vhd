@@ -540,22 +540,22 @@ package body generic_sb_pkg is
     ----------------------------------------------------------------------------------------------------
     -- Variables
     ----------------------------------------------------------------------------------------------------
-    variable v_scope            : string(1 to C_LOG_SCOPE_WIDTH)                := (1 to 4 => "?_SB", others => NUL);
-    variable v_config           : t_sb_config_array(0 to C_MAX_SB_INSTANCE_IDX) := (others => sb_config_default);
-    variable v_instance_enabled : boolean_vector(0 to C_MAX_SB_INSTANCE_IDX)    := (others => false);
-    variable v_sb_queue         : sb_queue_pkg.t_generic_queue;
+    variable priv_scope            : string(1 to C_LOG_SCOPE_WIDTH)                := (1 to 4 => "?_SB", others => NUL);
+    variable priv_config           : t_sb_config_array(0 to C_MAX_SB_INSTANCE_IDX) := (others => sb_config_default);
+    variable priv_instance_enabled : boolean_vector(0 to C_MAX_SB_INSTANCE_IDX)    := (others => false);
+    variable priv_sb_queue         : sb_queue_pkg.t_generic_queue;
 
     type t_msg_id_panel_array is array (0 to C_MAX_SB_INSTANCE_IDX) of t_msg_id_panel;
-    variable v_msg_id_panel_array : t_msg_id_panel_array := (others => C_SB_MSG_ID_PANEL_DEFAULT);
+    variable priv_msg_id_panel_array : t_msg_id_panel_array := (others => C_SB_MSG_ID_PANEL_DEFAULT);
 
     -- Counters
-    variable v_entered_cnt         : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
-    variable v_match_cnt           : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
-    variable v_mismatch_cnt        : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
-    variable v_drop_cnt            : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
-    variable v_initial_garbage_cnt : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
-    variable v_delete_cnt          : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
-    variable v_overdue_check_cnt   : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable priv_entered_cnt         : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable priv_match_cnt           : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable priv_mismatch_cnt        : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable priv_drop_cnt            : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable priv_initial_garbage_cnt : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable priv_delete_cnt          : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
+    variable priv_overdue_check_cnt   : integer_vector(0 to C_MAX_SB_INSTANCE_IDX) := (others => -1);
 
     --==================================================================================================
     -- NON PUBLIC METHODS
@@ -565,21 +565,21 @@ package body generic_sb_pkg is
     ) is
     begin
       check_value_in_range(instance, 0, C_MAX_SB_INSTANCE_IDX, TB_ERROR,
-                           "Instance must be within range 0 to C_MAX_SB_INSTANCE_IDX, " & to_string(C_MAX_SB_INSTANCE_IDX) & ".", v_scope, ID_NEVER);
+                           "Instance must be within range 0 to C_MAX_SB_INSTANCE_IDX, " & to_string(C_MAX_SB_INSTANCE_IDX) & ".", priv_scope, ID_NEVER);
     end procedure check_instance_in_range;
 
     procedure check_instance_enabled(
       constant instance : in integer
     ) is
     begin
-      check_value(v_instance_enabled(instance), TB_ERROR, "The instance is not enabled", v_scope, ID_NEVER);
+      check_value(priv_instance_enabled(instance), TB_ERROR, "The instance is not enabled", priv_scope, ID_NEVER);
     end procedure check_instance_enabled;
 
     procedure check_queue_empty(
       constant instance : in natural
     ) is
     begin
-      check_value(not v_sb_queue.is_empty(instance), TB_ERROR, "The queue is empty", v_scope, ID_NEVER);
+      check_value(not priv_sb_queue.is_empty(instance), TB_ERROR, "The queue is empty", priv_scope, ID_NEVER);
     end procedure check_queue_empty;
 
     procedure check_config_validity(
@@ -587,9 +587,9 @@ package body generic_sb_pkg is
     ) is
     begin
       check_value(config.allow_out_of_order and config.allow_lossy, false, TB_ERROR,
-                  "allow_out_of_order and allow_lossy cannot both be enabled. Se documentation for how to handle both modes.", v_scope, ID_NEVER);
+                  "allow_out_of_order and allow_lossy cannot both be enabled. Se documentation for how to handle both modes.", priv_scope, ID_NEVER);
       check_value(config.overdue_check_time_limit >= 0 ns, TB_ERROR,
-                  "overdue_check_time_limit cannot be less than 0 ns.", v_scope, ID_NEVER);
+                  "overdue_check_time_limit cannot be less than 0 ns.", priv_scope, ID_NEVER);
     end procedure;
 
     impure function match_received_vs_entry(
@@ -631,7 +631,7 @@ package body generic_sb_pkg is
       scope    : string
     ) is
     begin
-      if v_msg_id_panel_array(instance)(msg_id) = ENABLED then
+      if priv_msg_id_panel_array(instance)(msg_id) = ENABLED then
         log(msg_id, msg, scope, C_MSG_ID_PANEL_DEFAULT);
       end if;
     end procedure;
@@ -656,13 +656,13 @@ package body generic_sb_pkg is
 
       -- Check if range is within limits
       check_value(sb_config_array'low >= 0 and sb_config_array'high <= C_MAX_SB_INSTANCE_IDX, TB_ERROR,
-                  "Configuration array must be within range 0 to C_MAX_SB_INSTANCE_IDX, " & to_string(C_MAX_SB_INSTANCE_IDX) & ".", v_scope, ID_NEVER);
+                  "Configuration array must be within range 0 to C_MAX_SB_INSTANCE_IDX, " & to_string(C_MAX_SB_INSTANCE_IDX) & ".", priv_scope, ID_NEVER);
 
       -- Apply config to the defined range
       for i in sb_config_array'low to sb_config_array'high loop
         check_config_validity(sb_config_array(i));
-        log(i, ID_CTRL, proc_name & "() => config applied to SB. " & add_msg_delimiter(msg), v_scope & "," & to_string(i));
-        v_config(i) := sb_config_array(i);
+        log(i, ID_CTRL, proc_name & "() => config applied to SB. " & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
+        priv_config(i) := sb_config_array(i);
       end loop;
     end procedure config;
 
@@ -680,13 +680,13 @@ package body generic_sb_pkg is
 
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
-        log(instance, ID_CTRL, proc_name & "() => config applied to SB. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+        log(instance, ID_CTRL, proc_name & "() => config applied to SB. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       else
         -- Called from other SB method
-        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       end if;
 
-      v_config(instance) := sb_config;
+      priv_config(instance) := sb_config;
     end procedure config;
 
     procedure config(
@@ -715,48 +715,48 @@ package body generic_sb_pkg is
       -- Check if instance is within range and not already enabled
       if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
-        check_value(not v_instance_enabled(instance), TB_WARNING, "Instance " & to_string(instance) & " is already enabled", v_scope, ID_NEVER);
+        check_value(not priv_instance_enabled(instance), TB_WARNING, "Instance " & to_string(instance) & " is already enabled", priv_scope, ID_NEVER);
       end if;
 
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
         if instance = ALL_INSTANCES then
-          log(ID_CTRL, proc_name & "() => all instances enabled. " & add_msg_delimiter(msg), v_scope);
+          log(ID_CTRL, proc_name & "() => all instances enabled. " & add_msg_delimiter(msg), priv_scope);
         else
-          log(instance, ID_CTRL, proc_name & "() => SB enabled. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+          log(instance, ID_CTRL, proc_name & "() => SB enabled. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
       else
         -- Called from other SB method
-        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       end if;
 
       if instance = ALL_INSTANCES then
-        v_instance_enabled := (others => true);
+        priv_instance_enabled := (others => true);
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
-          if v_entered_cnt(i) = -1 then
-            v_entered_cnt(i)         := 0;
-            v_match_cnt(i)           := 0;
-            v_mismatch_cnt(i)        := 0;
-            v_drop_cnt(i)            := 0;
-            v_initial_garbage_cnt(i) := 0;
-            v_delete_cnt(i)          := 0;
-            v_overdue_check_cnt(i)   := 0;
+          if priv_entered_cnt(i) = -1 then
+            priv_entered_cnt(i)         := 0;
+            priv_match_cnt(i)           := 0;
+            priv_mismatch_cnt(i)        := 0;
+            priv_drop_cnt(i)            := 0;
+            priv_initial_garbage_cnt(i) := 0;
+            priv_delete_cnt(i)          := 0;
+            priv_overdue_check_cnt(i)   := 0;
           end if;
         end loop;
       else
-        v_instance_enabled(instance) := true;
-        if v_entered_cnt(instance) = -1 then
-          v_entered_cnt(instance)         := 0;
-          v_match_cnt(instance)           := 0;
-          v_mismatch_cnt(instance)        := 0;
-          v_drop_cnt(instance)            := 0;
-          v_initial_garbage_cnt(instance) := 0;
-          v_delete_cnt(instance)          := 0;
-          v_overdue_check_cnt(instance)   := 0;
+        priv_instance_enabled(instance) := true;
+        if priv_entered_cnt(instance) = -1 then
+          priv_entered_cnt(instance)         := 0;
+          priv_match_cnt(instance)           := 0;
+          priv_mismatch_cnt(instance)        := 0;
+          priv_drop_cnt(instance)            := 0;
+          priv_initial_garbage_cnt(instance) := 0;
+          priv_delete_cnt(instance)          := 0;
+          priv_overdue_check_cnt(instance)   := 0;
         end if;
       end if;
 
-      v_sb_queue.set_scope(instance, "SB queue");
+      priv_sb_queue.set_scope(instance, "SB queue");
     end procedure enable;
 
     procedure enable(
@@ -790,25 +790,25 @@ package body generic_sb_pkg is
       -- Check if instance is within range and not already disabled
       if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
-        check_value(v_instance_enabled(instance), TB_WARNING, "Instance " & to_string(instance) & " is already disabled", v_scope, ID_NEVER);
+        check_value(priv_instance_enabled(instance), TB_WARNING, "Instance " & to_string(instance) & " is already disabled", priv_scope, ID_NEVER);
       end if;
 
       if instance = ALL_INSTANCES then
-        v_instance_enabled := (others => false);
+        priv_instance_enabled := (others => false);
       else
-        v_instance_enabled(instance) := false;
+        priv_instance_enabled(instance) := false;
       end if;
 
       if ext_proc_call = "" then
         -- Called directly from sequencer/VVC.
         if instance = ALL_INSTANCES then
-          log(ID_CTRL, proc_name & "() => all instances disabled. " & add_msg_delimiter(msg), v_scope);
+          log(ID_CTRL, proc_name & "() => all instances disabled. " & add_msg_delimiter(msg), priv_scope);
         else
-          log(instance, ID_CTRL, proc_name & "() => SB disabled. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+          log(instance, ID_CTRL, proc_name & "() => SB disabled. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
       else
         -- Called from other SB method
-        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+        log(instance, ID_CTRL, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
       end if;
     end procedure disable;
 
@@ -853,16 +853,16 @@ package body generic_sb_pkg is
 
       if instance = ALL_INSTANCES then
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
-          if v_instance_enabled(i) then
+          if priv_instance_enabled(i) then
             -- add entry
-            v_sb_queue.add(i, v_sb_entry);
+            priv_sb_queue.add(i, v_sb_entry);
             -- increment counters
-            v_entered_cnt(i) := v_entered_cnt(i) + 1;
+            priv_entered_cnt(i) := priv_entered_cnt(i) + 1;
 
             if tag_usage = NO_TAG then
-              log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(i));
+              log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
             else
-              log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(i));
+              log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
             end if;
           end if;
         end loop;
@@ -872,19 +872,19 @@ package body generic_sb_pkg is
         check_instance_enabled(instance);
 
         -- add entry
-        v_sb_queue.add(instance, v_sb_entry);
+        priv_sb_queue.add(instance, v_sb_entry);
         -- increment counters
-        v_entered_cnt(instance) := v_entered_cnt(instance) + 1;
+        priv_entered_cnt(instance) := priv_entered_cnt(instance) + 1;
 
         if ext_proc_call = "" then
           if tag_usage = NO_TAG then
-            log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+            log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           else
-            log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+            log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: " & to_string(tag) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           end if;
         else
           -- Called from other SB method
-          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+          log(instance, ID_DATA, ext_proc_call & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
         end if;
       end if;
     end procedure add_expected;
@@ -945,7 +945,7 @@ package body generic_sb_pkg is
         constant instance : in integer
       ) is
       begin
-        check_value(not v_sb_queue.is_empty(instance), TB_ERROR, "No pending entries to check.", v_scope & "," & to_string(instance), ID_NEVER);
+        check_value(not priv_sb_queue.is_empty(instance), TB_ERROR, "No pending entries to check.", priv_scope & "," & to_string(instance), ID_NEVER);
       end procedure check_pending_exists;
 
       procedure check_received_instance(
@@ -958,33 +958,33 @@ package body generic_sb_pkg is
         check_pending_exists(instance);
 
         -- If OOB
-        if v_config(instance).allow_out_of_order then
+        if priv_config(instance).allow_out_of_order then
 
           -- Loop through entries in queue until match
           for i in 1 to get_pending_count(instance) loop
-            v_entry := v_sb_queue.peek(instance, POSITION, i);
+            v_entry := priv_sb_queue.peek(instance, POSITION, i);
             if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
               v_matched := true;
 
               -- Delete entry
-              v_sb_queue.delete(instance, POSITION, i, SINGLE);
+              priv_sb_queue.delete(instance, POSITION, i, SINGLE);
 
               exit;
             end if;
           end loop;
 
         -- If LOSSY
-        elsif v_config(instance).allow_lossy then
+        elsif priv_config(instance).allow_lossy then
 
           -- Loop through entries in queue until match
           for i in 1 to get_pending_count(instance) loop
-            v_entry := v_sb_queue.peek(instance, POSITION, i);
+            v_entry := priv_sb_queue.peek(instance, POSITION, i);
             if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
               v_matched := true;
 
               -- Delete matching entry and preceding entries
               for j in i downto 1 loop
-                v_sb_queue.delete(instance, POSITION, j, SINGLE);
+                priv_sb_queue.delete(instance, POSITION, j, SINGLE);
               end loop;
               v_dropped_num := i - 1;
               exit;
@@ -993,66 +993,66 @@ package body generic_sb_pkg is
 
         -- Not OOB or LOSSY
         else
-          v_entry := v_sb_queue.peek(instance);
+          v_entry := priv_sb_queue.peek(instance);
           if match_received_vs_entry(received_element, v_entry, tag_usage, tag) then
             v_matched := true;
             -- delete entry
-            v_sb_queue.delete(instance, POSITION, 1, SINGLE);
-          elsif not (v_match_cnt(instance) = 0 and v_config(instance).ignore_initial_garbage) then
-            v_sb_queue.delete(instance, POSITION, 1, SINGLE);
+            priv_sb_queue.delete(instance, POSITION, 1, SINGLE);
+          elsif not (priv_match_cnt(instance) = 0 and priv_config(instance).ignore_initial_garbage) then
+            priv_sb_queue.delete(instance, POSITION, 1, SINGLE);
           end if;
         end if;
 
         -- Update counters
-        v_drop_cnt(instance) := v_drop_cnt(instance) + v_dropped_num;
+        priv_drop_cnt(instance) := priv_drop_cnt(instance) + v_dropped_num;
         if v_matched then
-          v_match_cnt(instance) := v_match_cnt(instance) + 1;
-        elsif v_match_cnt(instance) = 0 and v_config(instance).ignore_initial_garbage then
-          v_initial_garbage_cnt(instance) := v_initial_garbage_cnt(instance) + 1;
+          priv_match_cnt(instance) := priv_match_cnt(instance) + 1;
+        elsif priv_match_cnt(instance) = 0 and priv_config(instance).ignore_initial_garbage then
+          priv_initial_garbage_cnt(instance) := priv_initial_garbage_cnt(instance) + 1;
         else
-          v_mismatch_cnt(instance) := v_mismatch_cnt(instance) + 1;
+          priv_mismatch_cnt(instance) := priv_mismatch_cnt(instance) + 1;
         end if;
 
         -- Check if overdue time
-        if v_matched and (v_config(instance).overdue_check_time_limit /= 0 ns) and (now - v_entry.entry_time > v_config(instance).overdue_check_time_limit) then
+        if v_matched and (priv_config(instance).overdue_check_time_limit /= 0 ns) and (now - v_entry.entry_time > priv_config(instance).overdue_check_time_limit) then
           if ext_proc_call = "" then
-            alert(v_config(instance).overdue_check_alert_level, proc_name & "() => TIME LIMIT OVERDUE: time limit is " & to_string(v_config(instance).overdue_check_time_limit) & ", time from entry is " & to_string(now - v_entry.entry_time) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+            alert(priv_config(instance).overdue_check_alert_level, proc_name & "() => TIME LIMIT OVERDUE: time limit is " & to_string(priv_config(instance).overdue_check_time_limit) & ", time from entry is " & to_string(now - v_entry.entry_time) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           else
-            alert(v_config(instance).overdue_check_alert_level, ext_proc_call & " => TIME LIMIT OVERDUE: time limit is " & to_string(v_config(instance).overdue_check_time_limit) & ", time from entry is " & to_string(now - v_entry.entry_time) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+            alert(priv_config(instance).overdue_check_alert_level, ext_proc_call & " => TIME LIMIT OVERDUE: time limit is " & to_string(priv_config(instance).overdue_check_time_limit) & ", time from entry is " & to_string(now - v_entry.entry_time) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
           end if;
           -- Update counter
-          v_overdue_check_cnt(instance) := v_overdue_check_cnt(instance) + 1;
+          priv_overdue_check_cnt(instance) := priv_overdue_check_cnt(instance) + 1;
         end if;
 
         -- Logging
         if v_matched then
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, proc_name & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+              log(instance, ID_DATA, proc_name & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
             else
-              log(instance, ID_DATA, proc_name & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) & ". tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+              log(instance, ID_DATA, proc_name & "() => MATCH, for value: " & to_string_element(v_entry.expected_element) & ". tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
             end if;
           -- Called from other SB method
           else
             if tag_usage = NO_TAG then
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
             else
-              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+              log(instance, ID_DATA, ext_proc_call & " => MATCH, for received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
             end if;
           end if;
         -- Initial garbage
-        elsif not (v_match_cnt(instance) = 0 and v_config(instance).ignore_initial_garbage) then
+        elsif not (priv_match_cnt(instance) = 0 and priv_config(instance).ignore_initial_garbage) then
           if ext_proc_call = "" then
             if tag_usage = NO_TAG then
-              alert(v_config(instance).mismatch_alert_level, proc_name & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & "; received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+              alert(priv_config(instance).mismatch_alert_level, proc_name & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & "; received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
             else
-              alert(v_config(instance).mismatch_alert_level, proc_name & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) & "'; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+              alert(priv_config(instance).mismatch_alert_level, proc_name & "() => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: '" & to_string(v_entry.tag) & "'; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
             end if;
           else
             if tag_usage = NO_TAG then
-              alert(v_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & "; received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+              alert(priv_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & "; received: " & to_string_element(received_element) & ". " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
             else
-              alert(v_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: " & to_string(v_entry.tag) & "; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
+              alert(priv_config(instance).mismatch_alert_level, ext_proc_call & " => MISMATCH, expected: " & to_string_element(v_entry.expected_element) & ", tag: " & to_string(v_entry.tag) & "; received: " & to_string_element(received_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
             end if;
           end if;
         end if;
@@ -1062,7 +1062,7 @@ package body generic_sb_pkg is
 
       if instance = ALL_INSTANCES then
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
-          if v_instance_enabled(i) then
+          if priv_instance_enabled(i) then
             check_received_instance(i);
           end if;
         end loop;
@@ -1119,9 +1119,9 @@ package body generic_sb_pkg is
         log(ID_DATA, proc_name & "() => flushing all instances. " & add_msg_delimiter(msg), v_scope);
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
           -- update counters
-          v_delete_cnt(i) := v_delete_cnt(i) + v_sb_queue.get_count(i);
+          priv_delete_cnt(i) := priv_delete_cnt(i) + priv_sb_queue.get_count(i);
           -- flush queue
-          v_sb_queue.flush(i);
+          priv_sb_queue.flush(i);
         end loop;
       else
         if ext_proc_call = "" then
@@ -1132,9 +1132,9 @@ package body generic_sb_pkg is
         check_instance_in_range(instance);
         check_instance_enabled(instance);
         -- update counters
-        v_delete_cnt(instance) := v_delete_cnt(instance) + v_sb_queue.get_count(instance);
+        priv_delete_cnt(instance) := priv_delete_cnt(instance) + priv_sb_queue.get_count(instance);
         -- flush queue
-        v_sb_queue.flush(instance);
+        priv_sb_queue.flush(instance);
       end if;
     end procedure flush;
 
@@ -1171,15 +1171,15 @@ package body generic_sb_pkg is
       ) is
       begin
         -- reset instance 0 only if it is used
-        if not (v_sb_queue.is_empty(0)) or (instance > 0) then
-          v_sb_queue.reset(instance);
-          v_entered_cnt(instance)         := 0;
-          v_match_cnt(instance)           := 0;
-          v_mismatch_cnt(instance)        := 0;
-          v_drop_cnt(instance)            := 0;
-          v_initial_garbage_cnt(instance) := 0;
-          v_delete_cnt(instance)          := 0;
-          v_overdue_check_cnt(instance)   := 0;
+        if not (priv_sb_queue.is_empty(0)) or (instance > 0) then
+          priv_sb_queue.reset(instance);
+          priv_entered_cnt(instance)         := 0;
+          priv_match_cnt(instance)           := 0;
+          priv_mismatch_cnt(instance)        := 0;
+          priv_drop_cnt(instance)            := 0;
+          priv_initial_garbage_cnt(instance) := 0;
+          priv_delete_cnt(instance)          := 0;
+          priv_overdue_check_cnt(instance)   := 0;
         end if;
       end procedure reset_instance;
 
@@ -1230,12 +1230,12 @@ package body generic_sb_pkg is
       if instance /= ALL_INSTANCES then
         check_instance_in_range(instance);
         check_instance_enabled(instance);
-        v_is_empty := v_sb_queue.is_empty(instance);
+        v_is_empty := priv_sb_queue.is_empty(instance);
       else
         for idx in 0 to C_MAX_SB_INSTANCE_IDX loop
           -- an instance is not empty
-          if v_instance_enabled(idx) then
-            if not (v_sb_queue.is_empty(idx)) then
+          if priv_instance_enabled(idx) then
+            if not (priv_sb_queue.is_empty(idx)) then
               v_is_empty := false;
             end if;
           end if;
@@ -1266,7 +1266,7 @@ package body generic_sb_pkg is
     begin
       check_instance_in_range(instance);
       check_instance_enabled(instance);
-      return v_entered_cnt(instance);
+      return priv_entered_cnt(instance);
     end function get_entered_count;
 
     impure function get_entered_count(
@@ -1288,12 +1288,12 @@ package body generic_sb_pkg is
       constant instance : in integer
     ) return integer is
     begin
-      if v_entered_cnt(instance) = -1 then
+      if priv_entered_cnt(instance) = -1 then
         return -1;
       else
         check_instance_in_range(instance);
         check_instance_enabled(instance);
-        return v_sb_queue.get_count(instance);
+        return priv_sb_queue.get_count(instance);
       end if;
     end function get_pending_count;
 
@@ -1317,7 +1317,7 @@ package body generic_sb_pkg is
     begin
       check_instance_in_range(instance);
       check_instance_enabled(instance);
-      return v_match_cnt(instance);
+      return priv_match_cnt(instance);
     end function get_match_count;
 
     impure function get_match_count(
@@ -1340,7 +1340,7 @@ package body generic_sb_pkg is
     begin
       check_instance_in_range(instance);
       check_instance_enabled(instance);
-      return v_mismatch_cnt(instance);
+      return priv_mismatch_cnt(instance);
     end function get_mismatch_count;
 
     impure function get_mismatch_count(
@@ -1364,7 +1364,7 @@ package body generic_sb_pkg is
     begin
       check_instance_in_range(instance);
       check_instance_enabled(instance);
-      return v_drop_cnt(instance);
+      return priv_drop_cnt(instance);
     end function get_drop_count;
 
     impure function get_drop_count(
@@ -1388,7 +1388,7 @@ package body generic_sb_pkg is
     begin
       check_instance_in_range(instance);
       check_instance_enabled(instance);
-      return v_initial_garbage_cnt(instance);
+      return priv_initial_garbage_cnt(instance);
     end function get_initial_garbage_count;
 
     impure function get_initial_garbage_count(
@@ -1412,7 +1412,7 @@ package body generic_sb_pkg is
     begin
       check_instance_in_range(instance);
       check_instance_enabled(instance);
-      return v_delete_cnt(instance);
+      return priv_delete_cnt(instance);
     end function get_delete_count;
 
     impure function get_delete_count(
@@ -1436,7 +1436,7 @@ package body generic_sb_pkg is
     begin
       check_instance_in_range(instance);
       check_instance_enabled(instance);
-      return v_overdue_check_cnt(instance);
+      return priv_overdue_check_cnt(instance);
     end function get_overdue_check_count;
 
     impure function get_overdue_check_count(
@@ -1484,7 +1484,7 @@ package body generic_sb_pkg is
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " enabled for all instances.", v_scope);
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
-          v_msg_id_panel_array(i)(msg_id) := ENABLED;
+          priv_msg_id_panel_array(i)(msg_id) := ENABLED;
         end loop;
       else
         check_instance_in_range(instance);
@@ -1494,7 +1494,7 @@ package body generic_sb_pkg is
         else
           log(instance, ID_CTRL, ext_proc_call, v_scope & "," & to_string(instance));
         end if;
-        v_msg_id_panel_array(instance)(msg_id) := ENABLED;
+        priv_msg_id_panel_array(instance)(msg_id) := ENABLED;
       end if;
     end procedure enable_log_msg;
 
@@ -1522,7 +1522,7 @@ package body generic_sb_pkg is
       if instance = ALL_INSTANCES then
         log(ID_CTRL, proc_name & "() => message id " & to_string(msg_id) & " disabled for all instances.", v_scope);
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
-          v_msg_id_panel_array(i)(msg_id) := DISABLED;
+          priv_msg_id_panel_array(i)(msg_id) := DISABLED;
         end loop;
       else
         check_instance_in_range(instance);
@@ -1532,7 +1532,7 @@ package body generic_sb_pkg is
         else
           log(instance, ID_CTRL, ext_proc_call, v_scope & "," & to_string(instance));
         end if;
-        v_msg_id_panel_array(instance)(msg_id) := DISABLED;
+        priv_msg_id_panel_array(instance)(msg_id) := DISABLED;
       end if;
     end procedure disable_log_msg;
 
@@ -1596,7 +1596,7 @@ package body generic_sb_pkg is
 
       if instance = ALL_INSTANCES THEN
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
-          if (instance = ALL_INSTANCES and v_instance_enabled(i)) then
+          if (instance = ALL_INSTANCES and priv_instance_enabled(i)) then
             v_no_enabled_instances := false;
 
             write(v_line,
@@ -1694,12 +1694,12 @@ package body generic_sb_pkg is
 
       if instance = ALL_INSTANCES then
         for i in 0 to C_MAX_SB_INSTANCE_IDX loop
-          if v_instance_enabled(i) then
+          if priv_instance_enabled(i) then
             check_queue_empty(i);
             -- add entry
-            v_sb_queue.insert(i, identifier_option, identifier, v_sb_entry);
+            priv_sb_queue.insert(i, identifier_option, identifier, v_sb_entry);
             -- increment counters
-            v_entered_cnt(i) := v_entered_cnt(i) + 1;
+            priv_entered_cnt(i) := priv_entered_cnt(i) + 1;
           end if;
         end loop;
       else
@@ -1711,9 +1711,9 @@ package body generic_sb_pkg is
           check_queue_empty(instance);
         end if;
         -- add entry
-        v_sb_queue.insert(instance, identifier_option, identifier, v_sb_entry);
+        priv_sb_queue.insert(instance, identifier_option, identifier, v_sb_entry);
         -- increment counters
-        v_entered_cnt(instance) := v_entered_cnt(instance) + 1;
+        priv_entered_cnt(instance) := priv_entered_cnt(instance) + 1;
       end if;
 
       -- Logging
@@ -1810,11 +1810,11 @@ package body generic_sb_pkg is
 
       for i in 1 to get_pending_count(instance) loop
         -- get entry i
-        v_sb_entry := v_sb_queue.peek(instance, POSITION, i);
+        v_sb_entry := priv_sb_queue.peek(instance, POSITION, i);
 
         -- check if match
         if match_expected_vs_entry(expected_element, v_sb_entry, tag_usage, tag) then
-          return v_sb_queue.get_entry_num(instance, i);
+          return priv_sb_queue.get_entry_num(instance, i);
         end if;
       end loop;
 
@@ -1859,11 +1859,11 @@ package body generic_sb_pkg is
 
       for i in 1 to get_pending_count(instance) loop
         -- get entry i
-        v_sb_entry := v_sb_queue.peek(instance, POSITION, i);
+        v_sb_entry := priv_sb_queue.peek(instance, POSITION, i);
 
         -- check if match
         if v_sb_entry.tag = pad_string(tag, NUL, C_SB_TAG_WIDTH) then
-          return v_sb_queue.get_entry_num(instance, i);
+          return priv_sb_queue.get_entry_num(instance, i);
         end if;
       end loop;
 
@@ -1900,7 +1900,7 @@ package body generic_sb_pkg is
 
       for i in 1 to get_pending_count(instance) loop
         -- get entry i
-        v_sb_entry := v_sb_queue.peek(instance, POSITION, i);
+        v_sb_entry := priv_sb_queue.peek(instance, POSITION, i);
 
         -- check if match
         if match_expected_vs_entry(expected_element, v_sb_entry, tag_usage, tag) then
@@ -1949,7 +1949,7 @@ package body generic_sb_pkg is
 
       for i in 1 to get_pending_count(instance) loop
         -- get entry i
-        v_sb_entry := v_sb_queue.peek(instance, POSITION, i);
+        v_sb_entry := priv_sb_queue.peek(instance, POSITION, i);
 
         -- check if match
         if v_sb_entry.tag = pad_string(tag, NUL, C_SB_TAG_WIDTH) then
@@ -1991,8 +1991,8 @@ package body generic_sb_pkg is
       v_position := find_expected_position(instance, expected_element, tag_usage, tag);
 
       if v_position /= -1 then
-        v_sb_queue.delete(instance, POSITION, v_position, SINGLE);
-        v_delete_cnt(instance) := v_delete_cnt(instance) + 1;
+        priv_sb_queue.delete(instance, POSITION, v_position, SINGLE);
+        priv_delete_cnt(instance) := priv_delete_cnt(instance) + 1;
 
         if ext_proc_call = "" then
           log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
@@ -2046,8 +2046,8 @@ package body generic_sb_pkg is
       v_position := find_expected_position(instance, tag_usage, tag);
 
       if v_position /= -1 then
-        v_sb_queue.delete(instance, POSITION, v_position, SINGLE);
-        v_delete_cnt(instance) := v_delete_cnt(instance) + 1;
+        priv_sb_queue.delete(instance, POSITION, v_position, SINGLE);
+        priv_delete_cnt(instance) := priv_delete_cnt(instance) + 1;
 
         if ext_proc_call = "" then
           log(instance, ID_DATA, proc_name & "() => tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), v_scope & "," & to_string(instance));
@@ -2077,7 +2077,7 @@ package body generic_sb_pkg is
       constant ext_proc_call     : in string := ""
     ) is
       constant proc_name                : string  := "delete_expected";
-      constant C_PRE_DELETE_PENDING_CNT : natural := v_sb_queue.get_count(instance);
+      constant C_PRE_DELETE_PENDING_CNT : natural := priv_sb_queue.get_count(instance);
       variable v_num_deleted            : natural;
     begin
       -- Sanity check
@@ -2086,9 +2086,9 @@ package body generic_sb_pkg is
       check_queue_empty(instance);
 
       -- Delete entries
-      v_sb_queue.delete(instance, identifier_option, identifier_min, identifier_max);
-      v_num_deleted          := C_PRE_DELETE_PENDING_CNT - v_sb_queue.get_count(instance);
-      v_delete_cnt(instance) := v_delete_cnt(instance) + v_num_deleted;
+      priv_sb_queue.delete(instance, identifier_option, identifier_min, identifier_max);
+      v_num_deleted             := C_PRE_DELETE_PENDING_CNT - priv_sb_queue.get_count(instance);
+      priv_delete_cnt(instance) := priv_delete_cnt(instance) + v_num_deleted;
 
       -- If error
       if v_num_deleted = 0 then
@@ -2121,7 +2121,7 @@ package body generic_sb_pkg is
       constant ext_proc_call     : in string := ""
     ) is
       constant proc_name                : string  := "delete_expected";
-      constant C_PRE_DELETE_PENDING_CNT : natural := v_sb_queue.get_count(instance);
+      constant C_PRE_DELETE_PENDING_CNT : natural := priv_sb_queue.get_count(instance);
       variable v_num_deleted            : natural;
     begin
       -- Sanity check
@@ -2130,9 +2130,9 @@ package body generic_sb_pkg is
       check_queue_empty(instance);
 
       -- Delete entries
-      v_sb_queue.delete(instance, identifier_option, identifier, range_option);
-      v_num_deleted          := C_PRE_DELETE_PENDING_CNT - v_sb_queue.get_count(instance);
-      v_delete_cnt(instance) := v_delete_cnt(instance) + v_num_deleted;
+      priv_sb_queue.delete(instance, identifier_option, identifier, range_option);
+      v_num_deleted             := C_PRE_DELETE_PENDING_CNT - priv_sb_queue.get_count(instance);
+      priv_delete_cnt(instance) := priv_delete_cnt(instance) + v_num_deleted;
 
       -- If error
       if v_num_deleted = 0 then
@@ -2179,7 +2179,7 @@ package body generic_sb_pkg is
       check_instance_enabled(instance);
       check_queue_empty(instance);
 
-      return v_sb_queue.peek(instance, identifier_option, identifier);
+      return priv_sb_queue.peek(instance, identifier_option, identifier);
 
     end function peek_entry;
 
@@ -2313,9 +2313,9 @@ package body generic_sb_pkg is
       check_instance_enabled(instance);
       check_queue_empty(instance);
 
-      v_sb_entry := v_sb_queue.fetch(instance, identifier_option, identifier);
+      v_sb_entry := priv_sb_queue.fetch(instance, identifier_option, identifier);
 
-      v_delete_cnt(instance) := v_delete_cnt(instance) + 1;
+      priv_delete_cnt(instance) := priv_delete_cnt(instance) + 1;
 
       return v_sb_entry;
 

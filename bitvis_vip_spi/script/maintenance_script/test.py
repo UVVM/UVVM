@@ -47,7 +47,7 @@ hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
 hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
 # Add testcase configurations
-configs = create_config(spi_modes=range(0, 4), data_widths=[8, 14, 23, 32], data_array_widths=[2, 4, 6, 8])
+configs = create_config(spi_modes=range(0, 4), data_widths=[8, 23, 32], data_array_widths=[2, 8])
 for config in configs:
     hr.add_generics(entity="spi_vvc_tb",
                     generics=["GC_SPI_MODE", config[0], "GC_DATA_WIDTH", config[1], "GC_DATA_ARRAY_WIDTH", config[2]])

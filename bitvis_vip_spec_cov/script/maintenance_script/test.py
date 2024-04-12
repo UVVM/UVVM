@@ -133,6 +133,29 @@ if ret_code != 0:
     print(ret_txt)
     num_failing_tests += 1
 
+# Run demos
+print("Running demos...")
+
+# Basic demo
+(ret_txt, num_errors) = hr.run_command(
+    find_python3_executable() + " ../script/run_basic_demo.py")
+if num_errors != 0:
+    print("Basic demo failed")
+    print(ret_txt)
+    num_failing_tests += 1
+else:
+    print("Basic demo ok")
+
+# Advanced demo
+(ret_txt, num_errors) = hr.run_command(
+    find_python3_executable() + " ../script/run_advanced_demo.py")
+if num_errors != 0:
+    print("Advanced demo failed")
+    print(ret_txt)
+    num_failing_tests += 1
+else:
+    print("Advanced demo ok")
+
 # No tests run error
 if num_passing_tests == 0:
     sys.exit(1)

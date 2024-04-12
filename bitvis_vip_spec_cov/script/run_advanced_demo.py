@@ -14,15 +14,21 @@
 from os.path import join, dirname
 import os
 import subprocess
+import sys
+
+num_errors = 0
 
 # Compile
-subprocess.call(['vsim', '-c', '-do', 'do ../script/compile_demo.do advanced' + ';exit'], stderr=subprocess.PIPE)
+num_errors += subprocess.call(['vsim', '-c', '-do', 'do ../script/compile_demo.do advanced' + ';exit'], stderr=subprocess.PIPE)
 
 # Run simulation
 C_NUM_TESTCASES = 4
 for i in range(C_NUM_TESTCASES):
   script_call = 'do ../script/simulate_demo.do ' + str(i)
-  subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stderr=subprocess.PIPE)
+  num_errors += subprocess.call(['vsim', '-c', '-do', script_call + ';exit'], stderr=subprocess.PIPE)
 
 # Run the specification coverage python script
-subprocess.call(['python', '../script/run_spec_cov.py', '--config', '../demo/advanced_usage/config_advanced_demo.txt'], stderr=subprocess.PIPE)
+num_errors += subprocess.call(['python', '../script/run_spec_cov.py', '--config', '../demo/advanced_usage/config_advanced_demo.txt'], stderr=subprocess.PIPE)
+
+if num_errors != 0:
+    sys.exit(num_errors)

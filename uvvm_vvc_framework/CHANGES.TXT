@@ -14,6 +14,7 @@ Released: 2024-03-08
 - Updated vvc_generator.py to move sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
 - Updated vvc_generator.py generation of vvc_context file.
 - Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
+- Added ti_vvc_framework_context.vhd to complile_order.txt (missing)
 
 v2.12.5
 ----------

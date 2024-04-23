@@ -18,7 +18,6 @@ Released: 2024-XX-XX
 - Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
 - Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt (missing)
 
-
 v2 2024.03.08
 --------------------
 Released: 2024-03-08
@@ -61,7 +60,6 @@ Released: 2024-03-08
 - Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
 - Added executor_is_busy to interpreter_terminate_current_command() missing in some VVCs.
 - Thanks to @m-kru, @malsheimer, @am9417 and @EMAZAC for PR and contributions.
-- Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt (missing)
 
 
 

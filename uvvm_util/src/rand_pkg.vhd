@@ -1949,24 +1949,21 @@ package body rand_pkg is
       constant proc_call     : string;
       constant signed_values : boolean)
     return boolean is
-      variable v_len : natural;
+      variable v_min : integer;
+      variable v_max : integer;
     begin
-      v_len := length when length < 32 else
-               31 when not (signed_values) else
-               32;                      -- Length is limited by integer size
+      -- Constraint length is limited by 32-bit integer size
       if signed_values then
-        if min_value < -2 ** (v_len - 1) or min_value > 2 ** (v_len - 1) - 1 or max_value < -2 ** (v_len - 1) or max_value > 2 ** (v_len - 1) - 1 then
-          alert(TB_ERROR, proc_call & "=> signed constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
-          return false;
-        end if;
+        v_min := -2 ** (length - 1)     when length < 32 else integer'low;
+        v_max :=  2 ** (length - 1) - 1 when length < 32 else integer'high;
       else
-        if min_value < 0 or max_value < 0 then
-          alert(TB_ERROR, proc_call & "=> constraints cannot be negative values when returning unsigned values", priv_scope);
-          return false;
-        elsif min_value > 2 ** v_len - 1 or max_value > 2 ** v_len - 1 then
-          alert(TB_ERROR, proc_call & "=> unsigned constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
-          return false;
-        end if;
+        v_min := 0;
+        v_max := 2 ** length - 1 when length < 31 else integer'high;
+      end if;
+
+      if (min_value < v_min or min_value > v_max) or (max_value < v_min or max_value > v_max) then
+        alert(TB_ERROR, proc_call & "=> constraints must be within range [" & to_string(v_min) & ":" & to_string(v_max) & "] due to length parameter", priv_scope);
+        return false;
       end if;
       return true;
     end function;
@@ -1978,25 +1975,22 @@ package body rand_pkg is
       constant proc_call     : string;
       constant signed_values : boolean)
     return boolean is
-      variable v_len : natural;
+      variable v_min : integer;
+      variable v_max : integer;
     begin
-      v_len := length when length < 32 else
-               31 when not (signed_values) else
-               32;                      -- Length is limited by integer size
+      -- Constraint length is limited by 32-bit integer size
+      if signed_values then
+        v_min := -2 ** (length - 1)     when length < 32 else integer'low;
+        v_max :=  2 ** (length - 1) - 1 when length < 32 else integer'high;
+      else
+        v_min := 0;
+        v_max := 2 ** length - 1 when length < 31 else integer'high;
+      end if;
+
       for i in set_of_values'range loop
-        if signed_values then
-          if set_of_values(i) < -2 ** (v_len - 1) or set_of_values(i) > 2 ** (v_len - 1) - 1 then
-            alert(TB_ERROR, proc_call & "=> signed constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
-            return false;
-          end if;
-        else
-          if set_of_values(i) < 0 then
-            alert(TB_ERROR, proc_call & "=> constraints cannot be negative values when returning unsigned values", priv_scope);
-            return false;
-          elsif set_of_values(i) > 2 ** v_len - 1 then
-            alert(TB_ERROR, proc_call & "=> unsigned constraint lengths must be less or equal than length (" & to_string(v_len) & " bits)", priv_scope);
-            return false;
-          end if;
+        if set_of_values(i) < v_min or set_of_values(i) > v_max then
+          alert(TB_ERROR, proc_call & "=> constraints must be within range [" & to_string(v_min) & ":" & to_string(v_max) & "] due to length parameter", priv_scope);
+          return false;
         end if;
       end loop;
       return true;
@@ -3927,12 +3921,14 @@ package body rand_pkg is
       variable v_proc_call     : line;
       variable v_ret_int       : integer;
       variable v_ret           : unsigned(length - 1 downto 0);
+      variable v_max           : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if length <= 31 then
         -- Generate a random value in the range [min_value:max_value]
-        v_ret_int := rand(0, 2 ** length - 1, cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_max     := 2 ** length - 1 when length < 31 else integer'high;
+        v_ret_int := rand(0, v_max, cyclic_mode, msg_id_panel, v_proc_call.all);
         v_ret     := to_unsigned(v_ret_int, length);
 
       -- Long vectors use different randomization (does not support distributions or cyclic)
@@ -4057,6 +4053,7 @@ package body rand_pkg is
       variable v_unsigned       : unsigned(length - 1 downto 0);
       variable v_ret_int        : integer;
       variable v_ret            : unsigned(length - 1 downto 0);
+      variable v_max            : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
@@ -4070,8 +4067,9 @@ package body rand_pkg is
       -- Generate a random value in the vector's range minus the set of values
       elsif specifier = EXCL then
         -- Check whether the vector's range can handle cyclic mode
-        if length < 32 then
-          v_ret_int := rand(0, 2 ** length - 1, EXCL, integer_vector(set_of_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+        if length <= 31 then
+          v_max     := 2 ** length - 1 when length < 31 else integer'high;
+          v_ret_int := rand(0, v_max, EXCL, integer_vector(set_of_values), cyclic_mode, msg_id_panel, v_proc_call.all);
           v_ret     := to_unsigned(v_ret_int, length);
         else
           if cyclic_mode = CYCLIC then
@@ -4218,12 +4216,16 @@ package body rand_pkg is
       variable v_ret_int    : integer;
       variable v_ret_uns    : unsigned(length - 1 downto 0);
       variable v_ret        : signed(length - 1 downto 0);
+      variable v_min        : integer;
+      variable v_max        : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
       if length <= 32 then
         -- Generate a random value in the range [min_value:max_value]
-        v_ret_int := rand(-2 ** (length - 1), 2 ** (length - 1) - 1, cyclic_mode, msg_id_panel, v_proc_call.all);
+        v_min     := -2 ** (length - 1)     when length < 32 else integer'low;
+        v_max     :=  2 ** (length - 1) - 1 when length < 32 else integer'high;
+        v_ret_int := rand(v_min, v_max, cyclic_mode, msg_id_panel, v_proc_call.all);
         v_ret     := to_signed(v_ret_int, length);
 
       -- Long vectors use different randomization (does not support distributions or cyclic)
@@ -4331,6 +4333,8 @@ package body rand_pkg is
       variable v_signed         : signed(length - 1 downto 0);
       variable v_ret_int        : integer;
       variable v_ret            : signed(length - 1 downto 0);
+      variable v_min            : integer;
+      variable v_max            : integer;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
 
@@ -4344,8 +4348,10 @@ package body rand_pkg is
       -- Generate a random value in the vector's range minus the set of values
       elsif specifier = EXCL then
         -- Check whether the vector's range can handle cyclic mode
-        if length < 33 then
-          v_ret_int := rand(-2 ** (length - 1), 2 ** (length - 1) - 1, EXCL, integer_vector(set_of_values), cyclic_mode, msg_id_panel, v_proc_call.all);
+        if length <= 32 then
+          v_min     := -2 ** (length - 1)     when length < 32 else integer'low;
+          v_max     :=  2 ** (length - 1) - 1 when length < 32 else integer'high;
+          v_ret_int := rand(v_min, v_max, EXCL, integer_vector(set_of_values), cyclic_mode, msg_id_panel, v_proc_call.all);
           v_ret     := to_signed(v_ret_int, length);
         else
           if cyclic_mode = CYCLIC then

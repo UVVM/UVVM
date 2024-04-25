@@ -8,6 +8,7 @@ v2.19.5
 Released: 2024-XX-XX
 - Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
 - Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
+- Fixed a GHDL exponentiation overflow error in rand_pkg.
 
 v2.19.4
 ----------

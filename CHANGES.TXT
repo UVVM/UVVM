@@ -17,6 +17,7 @@ Released: 2024-XX-XX
 - Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
 - Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
 - Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt (missing)
+- Fixed a GHDL exponentiation overflow error in rand_pkg.
 
 v2 2024.03.08
 --------------------

@@ -25,5 +25,5 @@ set tb_path "$root_path/bitvis_irqc/tb/maintenance_tb"
 
 echo "\n\n\n=== Compiling TB\n"
 
-echo "eval vcom  $compdirectives  $tb_path/maintenance_irqc_tb.vhd"
-eval vcom  $compdirectives  $tb_path/maintenance_irqc_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/irqc_tb.vhd"
+eval vcom  $compdirectives  $tb_path/irqc_tb.vhd

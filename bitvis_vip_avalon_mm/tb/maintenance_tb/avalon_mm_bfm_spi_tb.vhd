@@ -11,9 +11,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
--- VHDL unit     : Bitvis AVALON_MM Library : avalon_mm_spi_tb
---
--- Description   : See dedicated powerpoint presentation and README-file(s)
+-- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
 library IEEE;
@@ -31,14 +29,14 @@ use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
-entity avalon_mm_spi_tb is
+entity avalon_mm_bfm_spi_tb is
   generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
 -- Test case architecture
-architecture func of avalon_mm_spi_tb is
+architecture func of avalon_mm_bfm_spi_tb is
 
   constant C_CLK_PERIOD : time := 10 ns;
   signal clk            : std_logic;

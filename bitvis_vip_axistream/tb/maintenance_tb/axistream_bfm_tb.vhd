@@ -11,9 +11,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
--- VHDL unit     : Bitvis AXISTREAM library : axistream_simple_tb
---
--- Description   : See dedicated powerpoint presentation and README-file(s)
+-- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
 library IEEE;
@@ -29,7 +27,7 @@ use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
-entity axistream_simple_tb is
+entity axistream_bfm_tb is
   generic(
     GC_TESTCASE           : string  := "UVVM";
     GC_DATA_WIDTH         : natural := 32; -- number of bits in AXI-Stream IF tdata
@@ -41,7 +39,7 @@ entity axistream_simple_tb is
 end entity;
 
 -- Test case architecture
-architecture func of axistream_simple_tb is
+architecture func of axistream_bfm_tb is
 
   --------------------------------------------------------------------------------
   -- Types and constants declarations
@@ -85,7 +83,7 @@ begin
   -----------------------------
   -- Instantiate Testharness
   -----------------------------
-  i_axistream_test_harness : entity bitvis_vip_axistream.test_harness(struct_simple)
+  i_test_harness : entity work.axistream_th(struct_bfm)
     generic map(
       GC_DATA_WIDTH     => GC_DATA_WIDTH,
       GC_USER_WIDTH     => GC_USER_WIDTH,
@@ -180,7 +178,7 @@ begin
         -- use a default tuser
         axistream_transmit_bytes(v_data_array(0 to v_numBytes - 1), "transmit, default tuser, tstrb etc", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
       else
-        -- tstrb, tid, tdest are tested in axistream_vvc_simple_tb.
+        -- tstrb, tid, tdest are tested in axistream_vvc_tb.
         axistream_transmit_bytes(v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1), "transmit, setting tuser. Default tstrb etc", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, axistream_bfm_config);
       end if;
 
@@ -270,7 +268,7 @@ begin
                                "ready_low_at_word_num = " & to_string(axistream_bfm_config.ready_low_at_word_num) & "ready_low_duration = " & to_string(axistream_bfm_config.ready_low_duration) & "ready_default_value = " & to_string(axistream_bfm_config.ready_default_value) & "i=" & to_string(i), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config); --
       else
         -- Test the overload without exp_strb_array, exp_id_array, exp_dest_array
-        -- More tstrb, tid, tdest tests in axistream_vvc_simple_tb.
+        -- More tstrb, tid, tdest tests in axistream_vvc_tb.
         axistream_expect_bytes(v_data_array(0 to v_numBytes - 1), v_user_array(0 to v_numWords - 1),
                                "ready_low_at_word_num = " & to_string(axistream_bfm_config.ready_low_at_word_num) & "ready_low_duration = " & to_string(axistream_bfm_config.ready_low_duration) & "ready_default_value = " & to_string(axistream_bfm_config.ready_default_value) & "i=" & to_string(i), clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, axistream_bfm_config); --
       end if;

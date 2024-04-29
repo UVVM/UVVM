@@ -40,8 +40,8 @@ eval vcom  $compdirectives  $tb_path/axilite_slave.vhd
 echo "eval vcom  $compdirectives  $tb_path/axilite_th.vhd"
 eval vcom  $compdirectives  $tb_path/axilite_th.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/axilite_simple_tb.vhd"
-eval vcom  $compdirectives  $tb_path/axilite_simple_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/axilite_bfm_tb.vhd"
+eval vcom  $compdirectives  $tb_path/axilite_bfm_tb.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/axilite_vvc_simple_tb.vhd"
-eval vcom  $compdirectives  $tb_path/axilite_vvc_simple_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/axilite_vvc_tb.vhd"
+eval vcom  $compdirectives  $tb_path/axilite_vvc_tb.vhd

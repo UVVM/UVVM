@@ -67,7 +67,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity bitvis_vip_ethernet.ethernet_gmii_mac_master_th
+  i_test_harness : entity work.ethernet_gmii_mac_master_th
     generic map(
       GC_CLK_PERIOD  => C_CLK_PERIOD,
       GC_MAC_ADDRESS => C_MASTER_MAC_ADDR

@@ -25,16 +25,15 @@ library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
 library bitvis_vip_uart;
-use bitvis_vip_uart.monitor_cmd_pkg.all;
 
 library bitvis_uart;
 
 -- Test case entity
-entity monitor_test_harness is
+entity uart_vvc_th is
 end entity;
 
 -- Test case architecture
-architecture struct of monitor_test_harness is
+architecture struct of uart_vvc_th is
 
   -- DSP interface and general control signals
   signal clk  : std_logic := '0';
@@ -48,12 +47,11 @@ architecture struct of monitor_test_harness is
   signal rdata : std_logic_vector(7 downto 0);
   signal ready : std_logic;
 
-  signal uart_rx : std_logic;
-  signal uart_tx : std_logic;
+  signal uart_vvc_rx : std_logic;
+  signal uart_vvc_tx : std_logic;
 
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
   constant C_CLK_JITTER : time := 0.2 ns;
-  constant C_BIT_PERIOD : time := 16 * C_CLK_PERIOD;
 
   constant C_SBI_BFM_CONFIG : t_sbi_bfm_config := (
     max_wait_cycles            => 10000000,
@@ -71,21 +69,6 @@ architecture struct of monitor_test_harness is
     id_for_bfm_wait            => ID_BFM_WAIT,
     id_for_bfm_poll            => ID_BFM_POLL,
     use_ready_signal           => true
-    --error_injection          => C_ERROR_INJECTION_INACTIVE
-  );
-
-  constant C_UART_MONITOR_INTERFACE_CONFIG : t_uart_interface_config := (
-    bit_time      => C_BIT_PERIOD,
-    num_data_bits => 8,
-    parity        => PARITY_ODD,
-    num_stop_bits => STOP_BITS_ONE
-  );
-
-  constant C_UART_MONITOR_CONFIG : t_uart_monitor_config := (
-    scope_name               => (1 to 12 => "UART Monitor", others => NUL),
-    msg_id_panel             => C_UART_MONITOR_MSG_ID_PANEL_DEFAULT,
-    interface_config         => C_UART_MONITOR_INTERFACE_CONFIG,
-    transaction_display_time => 0 ns
   );
 
 begin
@@ -100,18 +83,18 @@ begin
     )
     port map(
       -- DSP interface and general control signals
-      clk   => clk,
-      arst  => arst,
+      clk   => clk,                     --
+      arst  => arst,                    --
       -- CPU interface
-      cs    => cs,
-      addr  => addr,
-      wr    => wr,
-      rd    => rd,
-      wdata => wdata,
-      rdata => rdata,
+      cs    => cs,                      --
+      addr  => addr,                    --
+      wr    => wr,                      --
+      rd    => rd,                      --
+      wdata => wdata,                   --
+      rdata => rdata,                   --
       -- Interrupt related signals
-      rx_a  => uart_tx,
-      tx    => uart_rx
+      rx_a  => uart_vvc_tx,
+      tx    => uart_vvc_rx
     );
 
   i1_sbi_vvc : entity bitvis_vip_sbi.sbi_vvc
@@ -122,14 +105,14 @@ begin
       GC_SBI_CONFIG   => C_SBI_BFM_CONFIG
     )
     port map(
-      clk                     => clk,
-      sbi_vvc_master_if.cs    => cs,
-      sbi_vvc_master_if.addr  => addr,
-      sbi_vvc_master_if.rena  => rd,
-      sbi_vvc_master_if.wena  => wr,
-      sbi_vvc_master_if.wdata => wdata,
-      sbi_vvc_master_if.ready => ready,
-      sbi_vvc_master_if.rdata => rdata
+      clk                     => clk,   -- in  std_logic;
+      sbi_vvc_master_if.cs    => cs,    -- out  std_logic;
+      sbi_vvc_master_if.addr  => addr,  -- out  unsigned(GC_ADDR_WIDTH-1 downto 0);
+      sbi_vvc_master_if.rena  => rd,    -- out  std_logic;
+      sbi_vvc_master_if.wena  => wr,    -- out  std_logic;
+      sbi_vvc_master_if.wdata => wdata, -- out  std_logic_vector(GC_DATA_WIDTH-1 downto 0);
+      sbi_vvc_master_if.ready => ready, -- in  std_logic; constant '1'
+      sbi_vvc_master_if.rdata => rdata  -- in std_logic_vector(GC_DATA_WIDTH-1 downto 0)
     );
 
   i1_uart_vvc : entity bitvis_vip_uart.uart_vvc
@@ -137,18 +120,8 @@ begin
       GC_INSTANCE_IDX => 1
     )
     port map(
-      uart_vvc_rx => uart_rx,
-      uart_vvc_tx => uart_tx
-    );
-
-  i1_uart_monitor : entity bitvis_vip_uart.uart_monitor
-    generic map(
-      GC_INSTANCE_IDX   => 1,
-      GC_MONITOR_CONFIG => C_UART_MONITOR_CONFIG
-    )
-    port map(
-      uart_dut_tx => uart_tx,
-      uart_dut_rx => uart_rx
+      uart_vvc_rx => uart_vvc_rx,
+      uart_vvc_tx => uart_vvc_tx
     );
 
   p_arst : arst <= '1', '0' after 5 * C_CLK_PERIOD;
@@ -156,7 +129,7 @@ begin
   p_clk : process
   begin
     clk <= '0', '1' after C_CLK_PERIOD / 2;
-    wait for C_CLK_PERIOD;              -- provoke jitter on the clock, half a clock period faster per 12 clock periods: - ((bit period/2) / (bit period*12/clk period)) / 2
+    wait for C_CLK_PERIOD - C_CLK_JITTER; -- provoke jitter on the clock, half a clock period faster per 12 clock periods: - ((bit period/2) / (bit period*12/clk period)) / 2
   end process;
 
 end struct;

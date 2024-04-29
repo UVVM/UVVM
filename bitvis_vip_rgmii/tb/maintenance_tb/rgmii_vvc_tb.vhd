@@ -69,7 +69,7 @@ begin
   --------------------------------------------------------------------------------
   -- Instantiate test harness
   --------------------------------------------------------------------------------
-  i_rgmii_test_harness : entity bitvis_vip_rgmii.test_harness(struct_vvc)
+  i_test_harness : entity work.rgmii_th(struct_vvc)
     generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     )

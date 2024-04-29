@@ -66,7 +66,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and VVCs
   -----------------------------------------------------------------------------
-  i_test_harness : entity bitvis_vip_ethernet.ethernet_sbi_gmii_demo_th
+  i_test_harness : entity work.ethernet_sbi_gmii_demo_th
     generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     );

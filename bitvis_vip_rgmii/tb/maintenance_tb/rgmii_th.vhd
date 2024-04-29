@@ -27,7 +27,7 @@ use bitvis_vip_rgmii.rgmii_bfm_pkg.all;
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
-entity test_harness is
+entity rgmii_th is
   generic(
     GC_CLK_PERIOD : time
   );
@@ -41,7 +41,7 @@ end entity;
 --=================================================================================================
 -- Test harness architectures
 --=================================================================================================
-architecture struct_bfm of test_harness is
+architecture struct_bfm of rgmii_th is
 begin
 
   -- Delay the RX path
@@ -54,7 +54,7 @@ begin
 
 end struct_bfm;
 
-architecture struct_vvc of test_harness is
+architecture struct_vvc of rgmii_th is
 begin
 
   -- Instantiate VVC

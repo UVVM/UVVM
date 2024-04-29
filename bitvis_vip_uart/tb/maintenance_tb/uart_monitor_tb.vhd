@@ -84,7 +84,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.monitor_test_harness;
+  i_test_harness : entity work.uart_monitor_th;
 
   i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 

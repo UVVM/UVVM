@@ -11,9 +11,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
--- VHDL unit     : Bitvis IRQC Library : irqc_demo_tb
---
--- Description   : See dedicated powerpoint presentation and README-file(s)
+-- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
 library IEEE;

@@ -37,8 +37,8 @@ eval vcom  $compdirectives  $tb_path/axi_slave_model.vhd
 echo "eval vcom  $compdirectives  $tb_path/axi_th.vhd"
 eval vcom  $compdirectives  $tb_path/axi_th.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/axi_simple_tb.vhd"
-eval vcom  $compdirectives  $tb_path/axi_simple_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/axi_bfm_tb.vhd"
+eval vcom  $compdirectives  $tb_path/axi_bfm_tb.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/axi_vvc_tb.vhd"
 eval vcom  $compdirectives  $tb_path/axi_vvc_tb.vhd

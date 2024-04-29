@@ -32,7 +32,7 @@ library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
 --=================================================================================================
-entity test_harness is
+entity i2c_th is
   generic(
     GC_CLK_PERIOD                 : time;
     GC_WISHBONE_DATA_WIDTH        : natural;
@@ -51,12 +51,12 @@ entity test_harness is
   port(
     arst : in std_logic
   );
-end entity test_harness;
+end entity i2c_th;
 
 --=================================================================================================
 --=================================================================================================
 
-architecture struct of test_harness is
+architecture struct of i2c_th is
 
   signal clk : std_logic;               -- 10 ns period
 

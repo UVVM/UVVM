@@ -11,9 +11,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
--- VHDL unit     : Bitvis AXILITE Library : axilite_simple_tb
---
--- Description   : See dedicated powerpoint presentation and README-file(s)
+-- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
 library IEEE;
@@ -28,14 +26,14 @@ use bitvis_vip_axilite.axilite_bfm_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
-entity axilite_simple_tb is
+entity axilite_bfm_tb is
   generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
 -- Test case architecture
-architecture func of axilite_simple_tb is
+architecture func of axilite_bfm_tb is
 
   constant C_CLK_PERIOD   : time    := 10 ns;
   constant C_ADDR_WIDTH_1 : natural := 32;
@@ -68,7 +66,7 @@ begin
   -----------------------------
   -- Instantiate Testharness
   -----------------------------
-  i_axilite_test_harness : entity bitvis_vip_axilite.test_harness(struct_simple)
+  i_test_harness : entity work.axilite_th(struct_bfm)
     generic map(
       C_DATA_WIDTH_1 => C_DATA_WIDTH_1,
       C_ADDR_WIDTH_1 => C_ADDR_WIDTH_1,

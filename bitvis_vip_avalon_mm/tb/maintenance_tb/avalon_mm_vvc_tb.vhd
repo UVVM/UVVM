@@ -46,7 +46,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.test_harness
+  i_test_harness : entity work.avalon_mm_vvc_th
     generic map(GC_CLK_PERIOD => C_CLK_PERIOD);
 
   i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;

@@ -30,7 +30,7 @@ context bitvis_vip_axistream.vvc_context;
 
 --hdlregression:tb
 -- Test case entity
-entity axistream_vvc_simple_tb is
+entity axistream_vvc_tb is
   generic(
     GC_TESTCASE           : string  := "UVVM";
     GC_DATA_WIDTH         : natural := 32; -- number of bits in the AXI-Stream IF data vector
@@ -43,7 +43,7 @@ entity axistream_vvc_simple_tb is
 end entity;
 
 -- Test case architecture
-architecture func of axistream_vvc_simple_tb is
+architecture func of axistream_vvc_tb is
 
   --------------------------------------------------------------------------------
   -- Types and constants declarations
@@ -90,7 +90,7 @@ begin
   -----------------------------
   -- Instantiate Testharness
   -----------------------------
-  i_axistream_test_harness : entity bitvis_vip_axistream.test_harness(struct_vvc)
+  i_test_harness : entity work.axistream_th(struct_vvc)
     generic map(
       GC_DATA_WIDTH     => GC_DATA_WIDTH,
       GC_USER_WIDTH     => GC_USER_WIDTH,

@@ -31,14 +31,14 @@ use bitvis_vip_gpio.vvc_sb_support_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
-entity gpio_vip_tb is
+entity gpio_vvc_tb is
   generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
 -- Test case architecture
-architecture func of gpio_vip_tb is
+architecture func of gpio_vvc_tb is
 
   constant C_CLK_PERIOD        : time    := 10 ns;
   constant C_SCOPE             : string  := C_TB_SCOPE_DEFAULT;

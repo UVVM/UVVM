@@ -22,7 +22,7 @@ library bitvis_vip_axistream;
 use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
 --=================================================================================================
-entity test_harness is
+entity axistream_th is
   generic(
     constant GC_DATA_WIDTH     : natural := 32;
     constant GC_USER_WIDTH     : natural := 1;
@@ -51,10 +51,10 @@ entity test_harness is
                                                          )
   );
 
-end entity test_harness;
+end entity axistream_th;
 
 --=================================================================================================
-architecture struct_simple of test_harness is
+architecture struct_bfm of axistream_th is
 
   signal s_axis_tready : std_logic;
   signal s_axis_tvalid : std_logic;
@@ -128,10 +128,10 @@ begin
       empty         => open
     );
 
-end architecture struct_simple;
+end architecture struct_bfm;
 
 --=================================================================================================
-architecture struct_vvc of test_harness is
+architecture struct_vvc of axistream_th is
 
   signal axistream_if_m_VVC2VVC : t_axistream_if(tdata(GC_DATA_WIDTH - 1 downto 0),
                                                  tkeep((GC_DATA_WIDTH / 8) - 1 downto 0),
@@ -237,7 +237,7 @@ begin
 end architecture struct_vvc;
 
 --=================================================================================================
-architecture struct_multiple_vvc of test_harness is
+architecture struct_multiple_vvc of axistream_th is
 
 begin
   -----------------------------
@@ -272,7 +272,7 @@ begin
 end architecture struct_multiple_vvc;
 
 --=================================================================================================
-architecture struct_width_vvc of test_harness is
+architecture struct_width_vvc of axistream_th is
 
   constant C_DATA_WIDTH_1 : natural := 32;
   constant C_DATA_WIDTH_2 : natural := 64;

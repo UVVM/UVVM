@@ -30,11 +30,11 @@ eval vcom  $compdirectives  $tb_path/sbi_fifo.vhd
 echo "eval vcom  $compdirectives  $tb_path/sbi_slave.vhd"
 eval vcom  $compdirectives  $tb_path/sbi_slave.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/sbi_tb_multi_cycle_read.vhd"
-eval vcom  $compdirectives  $tb_path/sbi_tb_multi_cycle_read.vhd
+echo "eval vcom  $compdirectives  $tb_path/sbi_vvc_multi_cycle_read_tb.vhd"
+eval vcom  $compdirectives  $tb_path/sbi_vvc_multi_cycle_read_tb.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/sbi_th.vhd"
 eval vcom  $compdirectives  $tb_path/sbi_th.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/sbi_tb.vhd"
-eval vcom  $compdirectives  $tb_path/sbi_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/sbi_vvc_tb.vhd"
+eval vcom  $compdirectives  $tb_path/sbi_vvc_tb.vhd

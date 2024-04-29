@@ -51,7 +51,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.test_harness
+  i_test_harness : entity work.clock_generator_th
     generic map(
       GC_CLOCK_1_PERIOD      => C_CLK_1_PERIOD,
       GC_CLOCK_1_HIGH_PERIOD => C_CLK_1_HIGH_PERIOD,

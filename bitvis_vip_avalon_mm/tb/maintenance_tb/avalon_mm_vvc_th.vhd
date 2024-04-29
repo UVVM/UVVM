@@ -25,14 +25,14 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_avalon_mm;
 use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
-entity test_harness is
+entity avalon_mm_vvc_th is
   generic(
     GC_CLK_PERIOD : time
   );
-end entity test_harness;
+end entity avalon_mm_vvc_th;
 
 -- Test case architecture
-architecture func of test_harness is
+architecture struct of avalon_mm_vvc_th is
 
   constant C_ADDR_WIDTH : integer := 32;
   constant C_DATA_WIDTH : integer := 32;
@@ -156,4 +156,4 @@ begin
 
   p_clk : clock_generator(clk, GC_CLK_PERIOD);
 
-end func;
+end struct;

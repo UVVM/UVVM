@@ -32,14 +32,14 @@ context bitvis_vip_uart.vvc_context;
 
 --hdlregression:tb
 -- Test case entity
-entity uart_vvc_new_tb is
+entity uart_vvc_tb is
   generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
 -- Test case architecture
-architecture func of uart_vvc_new_tb is
+architecture func of uart_vvc_tb is
 
   constant C_CLK_PERIOD : time := 10 ns;
   constant C_BIT_PERIOD : time := 16 * C_CLK_PERIOD; -- default in design and BFM
@@ -57,7 +57,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.test_harness;
+  i_test_harness : entity work.uart_vvc_th;
 
   i_ti_uvvm_engine : entity uvvm_vvc_framework.ti_uvvm_engine;
 

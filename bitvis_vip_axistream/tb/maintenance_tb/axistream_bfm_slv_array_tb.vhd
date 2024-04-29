@@ -92,7 +92,7 @@ begin
   -----------------------------
   -- Instantiate Testharness
   -----------------------------
-  i_axistream_test_harness : entity bitvis_vip_axistream.test_harness(struct_simple)
+  i_test_harness : entity work.axistream_th(struct_bfm)
     generic map(
       GC_DATA_WIDTH     => GC_DATA_WIDTH,
       GC_USER_WIDTH     => GC_USER_WIDTH,

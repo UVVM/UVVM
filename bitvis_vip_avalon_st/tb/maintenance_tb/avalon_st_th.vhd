@@ -27,7 +27,7 @@ use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
-entity test_harness is
+entity avalon_st_th is
   generic(
     GC_DATA_WIDTH    : natural := 32;
     GC_CHANNEL_WIDTH : natural := 8;
@@ -52,7 +52,7 @@ end entity;
 --=================================================================================================
 -- Test harness architectures
 --=================================================================================================
-architecture struct_bfm of test_harness is
+architecture struct_bfm of avalon_st_th is
   signal avalon_st_master_if_int : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
                                                   data(GC_DATA_WIDTH - 1 downto 0),
                                                   data_error(GC_ERROR_WIDTH - 1 downto 0),
@@ -126,7 +126,7 @@ begin
     );
 end architecture struct_bfm;
 
-architecture struct_vvc of test_harness is
+architecture struct_vvc of avalon_st_th is
   signal avalon_st_vvc2vvc_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
                                                data(GC_DATA_WIDTH - 1 downto 0),
                                                data_error(GC_ERROR_WIDTH - 1 downto 0),

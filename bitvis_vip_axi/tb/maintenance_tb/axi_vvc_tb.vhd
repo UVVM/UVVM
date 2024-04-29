@@ -60,7 +60,7 @@ begin
   -----------------------------
   -- Instantiate Test harness
   -----------------------------
-  i_axi_th : entity work.axi_th
+  i_test_harness : entity work.axi_th
     generic map(
       GC_ADDR_WIDTH_1 => C_ADDR_WIDTH_1,
       GC_DATA_WIDTH_1 => C_DATA_WIDTH_1,

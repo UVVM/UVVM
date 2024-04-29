@@ -30,14 +30,14 @@ use bitvis_vip_sbi.vvc_sb_support_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
-entity sbi_tb is
+entity sbi_vvc_tb is
   generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
 -- Test case architecture
-architecture func of sbi_tb is
+architecture func of sbi_vvc_tb is
 
   constant C_CLK_PERIOD : time   := 10 ns; -- **** Trenger metode for setting av clk period
   constant C_SCOPE      : string := "SBI_VVC_TB";
@@ -68,7 +68,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity work.test_harness
+  i_test_harness : entity work.sbi_th
     generic map(GC_CLK_PERIOD   => C_CLK_PERIOD,
                 GC_ADDR_WIDTH_1 => C_ADDR_WIDTH_1,
                 GC_DATA_WIDTH_1 => C_DATA_WIDTH_1,

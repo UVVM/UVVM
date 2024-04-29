@@ -30,14 +30,14 @@ use bitvis_vip_axilite.vvc_sb_support_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
-entity axilite_vvc_simple_tb is
+entity axilite_vvc_tb is
   generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
 -- Test case architecture
-architecture func of axilite_vvc_simple_tb is
+architecture func of axilite_vvc_tb is
 
   constant C_CLK_PERIOD   : time    := 10 ns;
   constant C_ADDR_WIDTH_1 : natural := 32;
@@ -71,7 +71,7 @@ begin
   -----------------------------
   -- Instantiate Testharness
   -----------------------------
-  i_axilite_test_harness : entity bitvis_vip_axilite.test_harness(struct_vvc)
+  i_test_harness : entity work.axilite_th(struct_vvc)
     generic map(
       C_DATA_WIDTH_1 => C_DATA_WIDTH_1,
       C_ADDR_WIDTH_1 => C_ADDR_WIDTH_1,

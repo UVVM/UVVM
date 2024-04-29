@@ -25,6 +25,6 @@ set tb_path "$root_path/bitvis_vip_gpio/tb/maintenance_tb"
 
 echo "\n\n\n=== Compiling TB\n"
 
-echo "eval vcom  $compdirectives  $tb_path/gpio_vip_tb.vhd"
-eval vcom  $compdirectives  $tb_path/gpio_vip_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/gpio_vvc_tb.vhd"
+eval vcom  $compdirectives  $tb_path/gpio_vvc_tb.vhd
 

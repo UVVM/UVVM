@@ -29,14 +29,14 @@ context bitvis_vip_sbi.vvc_context;
 
 --hdlregression:tb
 -- Test case entity
-entity sbi_tb_multi_cycle_read is
+entity sbi_vvc_multi_cycle_read_tb is
   generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
 -- Test case architecture
-architecture func of sbi_tb_multi_cycle_read is
+architecture func of sbi_vvc_multi_cycle_read_tb is
 
   constant C_CLK_PERIOD : time   := 10 ns; -- **** Trenger metode for setting av clk period
   constant C_SCOPE      : string := "SBI_VVC_TB";

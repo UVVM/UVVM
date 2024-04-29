@@ -25,7 +25,7 @@ library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
 --=================================================================================================
-entity test_harness is
+entity sbi_th is
   generic(
     GC_CLK_PERIOD   : time;
     GC_ADDR_WIDTH_1 : integer := 8;
@@ -38,12 +38,12 @@ entity test_harness is
     sbi_if_2 : inout t_sbi_if(addr(GC_ADDR_WIDTH_2 - 1 downto 0), wdata(GC_DATA_WIDTH_2 - 1 downto 0), rdata(GC_DATA_WIDTH_2 - 1 downto 0));
     clk      : out   std_logic
   );
-end entity test_harness;
+end entity sbi_th;
 
 --=================================================================================================
 --=================================================================================================
 
-architecture struct of test_harness is
+architecture struct of sbi_th is
 
 begin
 

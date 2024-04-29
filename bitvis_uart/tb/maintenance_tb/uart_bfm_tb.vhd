@@ -31,14 +31,14 @@ use work.uart_pif_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
-entity uart_simple_bfm_tb is
+entity uart_bfm_tb is
   generic(
     GC_TESTCASE : string := "UVVM"
   );
 end entity;
 
 -- Test case architecture
-architecture func of uart_simple_bfm_tb is
+architecture func of uart_bfm_tb is
 
   -- DSP interface and general control signals
   signal clk            : std_logic                    := '0';

@@ -196,7 +196,12 @@ def test_vvc_generator():
     hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_10")
 
     # Add a testbench to detect whether compilation passed or failed using get_num_pass_tests()
-    hr.add_files("../../tb/maintenance_tb/generic_queue_tb.vhd", "testbench_lib")
+    hr.add_files("../../../bitvis_vip_uart/src/*.vhd", "bitvis_vip_uart")
+    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_uart")
+    hr.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
+    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_sbi")
+    hr.add_files("../../../bitvis_uart/src/*.vhd", "bitvis_uart")
+    hr.add_files("../../../uvvm_util/tb/cr_fc_demo_tb.vhd", "testbench_lib")
 
     sim_options = None
     default_options = []

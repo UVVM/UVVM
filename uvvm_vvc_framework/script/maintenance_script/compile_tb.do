@@ -29,6 +29,3 @@ eval vcom  $compdirectives  $tb_path/vvc_th.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/vvc_tb.vhd"
 eval vcom  $compdirectives  $tb_path/vvc_tb.vhd
-
-echo "eval vcom  $compdirectives  $tb_path/generic_queue_tb.vhd"
-eval vcom  $compdirectives  $tb_path/generic_queue_tb.vhd

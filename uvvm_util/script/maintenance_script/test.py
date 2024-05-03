@@ -72,7 +72,15 @@ num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()
 
 # Check with golden reference
-(ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -modelsim")
+if simulator_name == 'MODELSIM':
+    (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -modelsim")
+elif simulator_name == 'RIVIERA':
+    (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -riviera")
+elif simulator_name == 'GHDL':
+    (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -ghdl")
+else:
+  print("Please specify simulator as argument: MODELSIM, RIVIERA or GHDL")
+  sys.exit(1)
 print(ret_txt.replace('\\', '/'))
 
 # Golden compare ok?

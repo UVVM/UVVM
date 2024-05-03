@@ -35,7 +35,8 @@ architecture func of func_cov_tb is
   type t_cov_bin_type_array is array (natural range <>) of t_cov_bin_type;
   type t_weight_type is (ADAPTIVE, EXPLICIT);
 
-  shared variable shared_coverpoint : t_coverpoint;
+  shared variable shared_coverpoint    : t_coverpoint;
+  signal shared_coverpoint_initialized : std_logic := '0';
 
   constant C_ADAPTIVE_WEIGHT : integer := -1;
   constant C_NULL            : integer := integer'left;
@@ -553,6 +554,7 @@ begin
       shared_coverpoint.add_bins(bin(-100));
       shared_coverpoint.add_bins(bin(100));
       shared_coverpoint.add_bins(bin(101));
+      gen_pulse(shared_coverpoint_initialized, 0 ns, "Unblocking p_sampling process", msg_id => ID_NEVER);
       wait for 0 ns;                    -- Wait a delta cycle so that p_sampling can finish
 
       check_bin(shared_coverpoint, v_bin_idx, VAL, -101);
@@ -4073,12 +4075,11 @@ begin
       set_log_file_name(GC_TESTCASE & "_Log.txt");
       set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
-      while not (shared_coverpoint.is_defined(VOID)) loop
-        log(ID_SEQUENCER, "Waiting for coverpoint to be initialized", C_SCOPE);
-        wait for C_CLK_PERIOD;
-      end loop;
+      log(ID_SEQUENCER, "Waiting for coverpoint to be initialized", C_SCOPE);
+      wait until shared_coverpoint_initialized'event;
       log(ID_SEQUENCER, "Coverpoint initialized, ready to sample", C_SCOPE);
       shared_coverpoint.sample_coverage(10000);
+      wait;
     end if;
     wait;
   end process p_sampling;

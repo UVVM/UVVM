@@ -1,0 +1,86 @@
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000000 fs. Watchdog D
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000000 fs. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000000 fs. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000000 fs. Watchdog A
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      8000.0 ns  TB seq.(uvvm)                  Testing watchdog timer A (8100 ns) - terminate command
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_WATCHDOG                     8000.0 ns  TB seq.                        Terminating general watchdog. Watchdog A
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      8000.0 ns  TB seq.(uvvm)                  Testing watchdog timer B (8200 ns) - initial timeout
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                    8199.0 ns  TB seq.(uvvm)                  Watchdog B still running
+UVVM: ID_UTIL_SETUP                   8199.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      8200.0 ns  TB seq.(uvvm)                  Testing watchdog timer C (8300 ns) - extend command
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:          8200 ns   TB seq.
+UVVM:                    General watchdog timer ended! Watchdog B
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_WATCHDOG                     8200.0 ns  TB seq.                        Extending general watchdog by 100000000 fs. Watchdog C
+UVVM: ID_SEQUENCER                    8399.0 ns  TB seq.(uvvm)                  Watchdog C still running
+UVVM: ID_WATCHDOG                     8399.0 ns  TB seq.                        Extending general watchdog by default value: 8300000000 fs. Watchdog C
+UVVM: ID_SEQUENCER                   13699.0 ns  TB seq.(uvvm)                  Watchdog C still running
+UVVM: ID_WATCHDOG                    13699.0 ns  TB seq.                        Extending general watchdog by 300000000 fs. Watchdog C
+UVVM: ID_SEQUENCER                   13999.0 ns  TB seq.(uvvm)                  Watchdog C still running
+UVVM: ID_WATCHDOG                    13999.0 ns  TB seq.                        Extending general watchdog by 300000000 fs. Watchdog C
+UVVM: ID_SEQUENCER                   14299.0 ns  TB seq.(uvvm)                  Watchdog C still running
+UVVM: ID_WATCHDOG                    14299.0 ns  TB seq.                        Extending general watchdog by default value: 8300000000 fs. Watchdog C
+UVVM: ID_WATCHDOG                    19599.0 ns  TB seq.                        Reinitializing general watchdog: 101000000 fs. Watchdog C
+UVVM: ID_SEQUENCER                   19699.0 ns  TB seq.(uvvm)                  Watchdog C still running
+UVVM: ID_WATCHDOG                    19699.0 ns  TB seq.                        Extending general watchdog by 300000000 fs. Watchdog C
+UVVM: ID_UTIL_SETUP                  19999.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     20000.0 ns  TB seq.(uvvm)                  Testing watchdog timer D (100 us) - reinitialize command
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:         20000 ns   TB seq.
+UVVM:                    General watchdog timer ended! Watchdog C
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_WATCHDOG                    20000.0 ns  TB seq.                        Reinitializing general watchdog: 100000000 fs. Watchdog D
+UVVM: ID_SEQUENCER                   20099.0 ns  TB seq.(uvvm)                  Watchdog D still running
+UVVM: ID_UTIL_SETUP                  20099.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:         20100 ns   TB seq.
+UVVM:                    General watchdog timer ended! Watchdog D
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      3         3         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     21100.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

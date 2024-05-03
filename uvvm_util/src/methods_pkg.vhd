@@ -7087,7 +7087,7 @@ package body methods_pkg is
     variable v_slv_idx_min : integer;
   begin
     -- Adjust value if there was no remainder
-    if (slv'length rem 8) = 0 then
+    if (slv'length mod 8) = 0 then
       v_num_bytes := v_num_bytes - 1;
     end if;
 

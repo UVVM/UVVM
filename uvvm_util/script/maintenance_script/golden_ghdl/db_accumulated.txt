@@ -1,0 +1,27 @@
+--UVVM_FUNCTIONAL_COVERAGE_FILE--
+Covpt_19
+TB seq.
+1
+true
+0
+92810 92910
+6
+0
+2
+2
+2
+6
+2
+2
+1
+100
+100
+80
+2
+bin_0
+3 1 -1
+0 1 1 
+bin_1
+3 1 -1
+0 1 2 
+0

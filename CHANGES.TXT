@@ -23,7 +23,8 @@ v2 2024.03.08
 --------------------
 Released: 2024-03-08
 - Updated vvc_transaction_info in all VVCs to also trigger after the BFM call with updated data and the status
-  COMPLETED. Updated vvc_generator.py script.
+  COMPLETED. Updated vvc_generator.py script. NOTE that this change can cause older testbenches to fail due to the extra trigger,
+  see the VVC Framework - Essential Mechanisms documentation for examples of the updated recommended usage.
 - Added missing scope to alert in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
 - Removed unnecessary constraining in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
 - Moved t_transaction_status type from all VVCs to types_pkg and added COMPLETED. Updated vvc_generator.py script.

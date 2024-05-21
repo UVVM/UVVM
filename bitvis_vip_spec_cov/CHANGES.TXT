@@ -1,6 +1,10 @@
-Bitvis VIP Specification vs Verification - Overview on Versions and Changes
+Bitvis VIP Specification Coverage - Overview on Versions and Changes
 ==============================================================
 
+v1.1.0
+----------
+Released: 2024-XX-XX
+ - Fixed support for combination of AND- and OR-listed testcases
 
 v1.0.1
 ----------

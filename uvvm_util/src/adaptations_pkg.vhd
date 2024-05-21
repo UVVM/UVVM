@@ -295,6 +295,8 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_MAX                : natural       := 1000; -- (VVC Result queue)  May be overwritten for dedicated VVC
   constant C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := WARNING;
   constant C_RESULT_QUEUE_COUNT_THRESHOLD          : natural       := 950;
+  constant C_SCOREBOARD_QUEUE_COUNT_MAX            : natural       := 1000; -- (Internal VVC scoreboard queue). May be overwritten for dedicated VVC
+  constant C_SCOREBOARD_QUEUE_COUNT_THRESHOLD      : natural       := 950;
   constant C_MAX_VVC_INSTANCE_NUM                  : natural       := 10;
   constant C_MAX_NUM_SEQUENCERS                    : natural       := 10; -- Max number of sequencers
   constant C_MAX_TB_VVC_NUM                        : natural       := 20; -- Max number of VVCs in testbench (including all channels)

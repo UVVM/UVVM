@@ -20,6 +20,7 @@ Released: 2024-XX-XX
 - Fixed a GHDL exponentiation overflow error in rand_pkg.
 - Reset addr and wdata signals when sbi_write() finishes.
 - Reset addr signal and wait a delta cycle when sbi_read() finishes.
+- Wait until rising edge of the clock before exiting rgmii_read() so that the interface is idle when it happens.
 
 
 v2 2024.03.08

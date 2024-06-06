@@ -222,7 +222,7 @@ package body rgmii_bfm_pkg is
             wait until rising_edge(rgmii_tx_if.txc);
             rgmii_tx_if <= init_rgmii_if_signals;
           end if;
-          -- else: Keep the control line active, and next byte is helt until next rgmii_write (first rising edge in this procedure)
+          -- else: Keep the control line active, and next byte is held until next rgmii_write (first rising edge in this procedure)
         end if;
       end loop;
     else
@@ -275,8 +275,12 @@ package body rgmii_bfm_pkg is
     rgmii_rx_if <= init_rgmii_if_signals;
     log(config.id_for_bfm, v_proc_call.all & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
+    -- Wait for the first rising edge
+    if rgmii_rx_if.rxc /= '1' then
+      wait until rising_edge(rgmii_rx_if.rxc) for config.clock_period * config.max_wait_cycles;
+    end if;
+
     -- Sample the data using the RX clock edges and a skew
-    wait until rising_edge(rgmii_rx_if.rxc) for config.clock_period * config.max_wait_cycles;
     if rgmii_rx_if.rxc = '1' then
       wait for config.rx_clock_skew;
 
@@ -326,6 +330,8 @@ package body rgmii_bfm_pkg is
 
     data_array := v_normalized_data;
     data_len   := v_byte_cnt;
+
+    wait until rising_edge(rgmii_rx_if.rxc); -- Wait until rising edge so that the procedure exits after the interface is idle
 
     if v_timeout then
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for rxc or rx_ctl. " & add_msg_delimiter(msg), scope);

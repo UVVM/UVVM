@@ -58,7 +58,6 @@ class Requirement():
         self.__super_requirement_list     = []
         self.__requirement_description    = None
         self.__req_compliance             = not_tested_compliant_string
-        self.__testcases_are_or_listed    = False
         self.__req_is_defined_in_req_file = False
         self.__req_file_idx               = 0
         self.__req_is_user_omitted        = False
@@ -84,11 +83,6 @@ class Requirement():
         # Add if not already in list
         if not(testcase in self.__expected_testcase_list):
            self.__expected_testcase_list.append(testcase)
-        # Update testcase result if testcase already exists
-        else:
-            for actual_testcase in self.__actual_testcase_list:
-                if actual_testcase.name.upper() == testcase.name.upper():
-                    actual_testcase.result = testcase.result
 
         # Update for any super-requirement
         for super_requirement in self.__super_requirement_list:
@@ -136,7 +130,18 @@ class Requirement():
         failing_testcase_list = []
         not_run_testcase_list = []
 
-        testcase_list = self.__actual_testcase_list + self.__expected_testcase_list
+        # Make one-dimensional version of expected_testcase_list
+        expected_testcase_list_local = []
+        for expected_testcase in self.__expected_testcase_list:
+            if isinstance(expected_testcase, list): # Check if the element is a list of or-listed testcases
+                for or_listed_testcase in expected_testcase:
+                    if not(or_listed_testcase in expected_testcase_list_local):
+                        expected_testcase_list_local.append(or_listed_testcase)
+            else:
+                if not(expected_testcase in expected_testcase_list_local):
+                    expected_testcase_list_local.append(expected_testcase)
+
+        testcase_list = self.__actual_testcase_list + expected_testcase_list_local
         for testcase in testcase_list:
             if (testcase.result == testcase_pass_string) and not(testcase in passing_testcase_list):
                 passing_testcase_list.append(testcase)
@@ -202,14 +207,6 @@ class Requirement():
         for requirement in self.__super_requirement_list:
             requirement.compliance = req_compliance
 
-
-    @property
-    def is_or_listed(self) -> bool :
-        return self.__testcases_are_or_listed
-
-    @is_or_listed.setter
-    def is_or_listed(self, set) -> None :
-        self.__testcases_are_or_listed = set
 
 
     def is_super_requirement(self) -> bool :
@@ -731,7 +728,7 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
     strictness = run_configuration.get("strictness")
 
     #==========================================================================
-    # Strictness = 0 : testcase can be run with any requirement
+    # Strictness = 0 : Requirement can be tested in any testcase
     #==========================================================================
     if strictness == '0':
         for requirement in container.get_requirement_list():
@@ -746,8 +743,8 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
                 requirement.compliance = sub_requirement.compliance
 
     #==========================================================================
-    # Strictness = 1 : testcase has to be run with specified requirement,
-    #                  any other requirement is also OK.
+    # Strictness = 1 : Requirement has to be tested in specified testcase(s).
+    #                  Any other testcase is also OK.
     #==========================================================================
     elif strictness == '1':
 
@@ -755,12 +752,18 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
             if requirement.is_user_omitted:
                 continue
 
-            if requirement.is_or_listed:
-                # One of the listed testcases for the requirement has been run
-                ok = any(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
-            else:
-                # All of the listed testcases for the requirement has been run
-                ok =  all(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
+            # Check each element in the list of expected testcases.
+            # If the element is a single testcase, that testcase must be run for the requirement ot be compliant.
+            # If the element is a list of testcases, at least one of them must be run for the requirement to be compliant.
+            ok = True
+            for tc_element in requirement.get_expected_testcase_list():
+                if isinstance(tc_element, list): # Or-listed testcases. On of them must be in actual-list
+                    if not(any(or_listed_tc in requirement.get_actual_testcase_list() for or_listed_tc in tc_element)):
+                        ok = False
+                else: # Single testcase
+                    if not(tc_element in requirement.get_actual_testcase_list()):
+                        ok = False
+
             if not(ok):
                 requirement.compliance = not_tested_compliant_string
 
@@ -769,31 +772,44 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
 
 
     #==========================================================================
-    # Strictness = 2 : all expected testcase should only be run, and
-    #                  only with specified requirement.
+    # Strictness = 2 : Requirement is non-compliant if tested in a testcase
+    #                  that is not specified for that requirement.
     #==========================================================================
     elif strictness == '2':
         for requirement in container.get_requirement_list():
             if requirement.is_user_omitted:
                 continue
 
-            # Verify that required testcases have been run
-            if requirement.is_or_listed:
-                # One of the listed testcases for the requirement has been run
-                ok =  any(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
-            else:
-                # All of the listed testcases for the requirement has been run
-                ok =  all(tc in requirement.get_actual_testcase_list() for tc in requirement.get_expected_testcase_list())
+            # Check each element in the list of expected testcases.
+            # If the element is a single testcase, that testcase must be run for the requirement ot be compliant.
+            # If the element is a list of testcases, at least one of them must be run for the requirement to be compliant.
+            ok = True
+            for tc_element in requirement.get_expected_testcase_list():
+                if isinstance(tc_element, list): # Or-listed testcases. On of them must be in actual-list
+                    if not(any(or_listed_tc in requirement.get_actual_testcase_list()) for or_listed_tc in tc_element):
+                        ok = False
+                else: # Single testcase
+                    if not(tc_element in requirement.get_actual_testcase_list()):
+                        ok = False
+
             if not(ok):
                 requirement.compliance = not_tested_compliant_string
 
-            # Verify that only this requirement has run this testcase
-            for testcase in requirement.get_expected_testcase_list():               
-                # All requirements that have been run with this testcase
-                for testcase_requirement in testcase.get_actual_requirement_list():
-                    # Check if any other requirements have been run with this testcase
-                    if not(requirement.name.upper() == testcase_requirement.name.upper()):
-                        requirement.compliance = non_compliant_string
+            # Verify that requirement hasn't been tested in non-specified testcase
+            # Go through all testcases that have ticked off this requirement
+            for actual_testcase in requirement.get_actual_testcase_list():
+                ok = False # Initial value. Will be set to true if tested TC found in expected TC list.
+                # Check if actual testcase is in list of specified testcases
+                for expected_testcase in requirement.get_expected_testcase_list():
+                    if isinstance(expected_testcase, list): # Element is list of or-listed TCs
+                        for or_listed_tc in expected_testcase: # Check each testcase
+                            if actual_testcase.name.upper() == or_listed_tc.name.upper():
+                                ok = True # Testcase found in list of expected testcases
+                    else: # Element is single testcase
+                        if actual_testcase.name.upper() == expected_testcase.name.upper():
+                            ok = True # Testcase found in list of expected testcases
+                if not(ok): # Set as non-compliant if tested testcase not found in list of expected testcases
+                    requirement.compliance = non_compliant_string
 
             # Super/sub-requirement(s) are updated automatically in the Requirement Object
 
@@ -888,9 +904,21 @@ def build_req_list(run_configuration, container, delimiter):
             csv_reader = csv.reader(req_file, delimiter=delimiter)
             
             num_req_found = 0
+            or_listed_tc_list = []
+            or_listed_testcases = False
 
             for row in csv_reader:
                 num_req_found += 1
+                or_listed_tc_list.clear()
+
+                # OR-listed requirements
+                if len(row) > 3: # Two or more TCs listed
+                    or_listed_testcases = True
+                # AND-listed requirements
+                elif len(row) == 3: # Single TC listed
+                    or_listed_testcases = False
+                #else: # No TCs listed
+
                 for idx, cell in enumerate(row):
                     user_omitted = False
 
@@ -925,17 +953,21 @@ def build_req_list(run_configuration, container, delimiter):
                         # Will get an existing or a new testcase object
                         testcase = container.get_testcase(testcase_name)            
 
-                        # OR-listed requirements
-                        if len(row) > 3:
-                            requirement.is_or_listed = False
-                        # AND-listed requirements
-                        else:
-                            requirement.is_or_listed = True
-
                         # Connect: requirement <-> testcase
                         if not(requirement.is_user_omitted):
-                            requirement.add_expected_testcase(testcase)
                             testcase.add_expected_requirement(requirement)
+                            if or_listed_testcases == True:
+                                # Add to or_listed_tc_list. This list will be added to expected_testcase_list later
+                                or_listed_tc_list.append(testcase)
+                            else:
+                                # Add testcase to TC list
+                                requirement.add_expected_testcase(testcase)
+
+                # If requirement line had or-listed TCs, add list of these TCs to expected_testcase_list
+                if not(requirement.is_user_omitted):
+                    if or_listed_testcases == True:
+                        requirement.add_expected_testcase(or_listed_tc_list.copy())
+
 
         container.organize_requirements()
     except:

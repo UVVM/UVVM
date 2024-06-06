@@ -18,6 +18,7 @@ Released: 2024-XX-XX
 - Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
 - Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt (missing)
 - Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Added support for combination of AND- and OR-listed testcases in spec cov.
 
 v2 2024.03.08
 --------------------

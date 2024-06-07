@@ -941,6 +941,11 @@ def build_req_list(run_configuration, container, delimiter):
                         # Add requirement to the container
                         container.add_requirement_to_organized_list(requirement)
 
+                        # If strictness 2, check that testcases are defined for requirement. Otherwise, exit with error message.
+                        if run_configuration.get("strictness") == '2':
+                            if len(row) < 3: # No TCs listed
+                                abort(error_code = 1, msg = "Error: At least one testcase must be defined for each requirement when using strictness 2")
+
                     # Requirement description
                     elif idx == 1:
                         requirement.description = row[idx]

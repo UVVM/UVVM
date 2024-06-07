@@ -313,6 +313,25 @@ test_list = [
     [
         python_exe,
         "../script/run_spec_cov.py",
+        "--config",
+        "../tb/maintenance_tb/cfg_3_strict_0.txt",
+    ],
+    [
+        python_exe,
+        "../script/run_spec_cov.py",
+        "--config",
+        "../tb/maintenance_tb/cfg_3_strict_1.txt",
+    ],
+    [
+        python_exe,
+        "../script/run_spec_cov.py",
+        "--config",
+        "../tb/maintenance_tb/cfg_3_strict_2.txt",
+    ],
+
+    [
+        python_exe,
+        "../script/run_spec_cov.py",
         "--strictness",
         "1",
         "-r",

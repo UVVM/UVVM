@@ -497,6 +497,30 @@ begin
           -- End testcase
           finalize_req_cov(VOID);
         end if;
+
+    elsif GC_TESTCASE = "test_strictness" then
+        --
+        -- This test will tick of requirements specified with the same TC, different TC and no TC
+        -- For post-processing with various strictness levels
+        --
+        log(ID_LOG_HDR, "Testing tickoff in various TCs, for strictness testing.", C_SCOPE);
+        if GC_SUB_REQ_FILE = "" then
+            alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
+        else
+            -- Run testcase
+            initialize_req_cov("TC_1", GC_REQ_FILE, "pc_20a.csv");
+            tick_off_req_cov("REQ_1");  -- TC_1 specified -> Correct TC
+            tick_off_req_cov("REQ_2");  -- TC_2 specified -> Wrong TC
+            tick_off_req_cov("REQ_3");  -- TC_3 specified -> Wrong TC
+            -- End testcase
+            finalize_req_cov(VOID);
+
+            -- Run different testcase
+            initialize_req_cov("TC_2", GC_REQ_FILE, "pc_20b.csv");
+            tick_off_req_cov("REQ_2"); -- TC_2 specified -> Correct TC
+            -- End testcase
+            finalize_req_cov(VOID);
+        end if;
     end if;
 
     -----------------------------------------------------------------------------

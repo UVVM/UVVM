@@ -5,6 +5,7 @@ v1.1.0
 ----------
 Released: 2024-XX-XX
  - Fixed support for combination of AND- and OR-listed testcases
+ - Fixed strictness 2 functionality
 
 v1.0.1
 ----------

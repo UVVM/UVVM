@@ -5,7 +5,7 @@ UVVM VVC Framework - Overview on Versions and Changes
 v2.12.7
 ----------
 Released: 202X-XX-XX
-- Added ti_vvc_framework_context.vhd to complile_order.txt (missing)
+- Added ti_vvc_framework_context.vhd to compile_order.txt
 
 v2.12.6
 ----------

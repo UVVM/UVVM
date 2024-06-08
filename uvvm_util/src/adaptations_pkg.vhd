@@ -14,9 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use std.textio.all;
 
 use work.types_pkg.all;
@@ -370,9 +370,97 @@ package adaptations_pkg is
   );
 
   --------------------------------------------------------------------------------------------------------------------------------
+  -- BFM Adaptations
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- Constants for the maximum sizes to use in the BFMs.
+  constant C_AVALON_ST_BFM_MAX_BITS_PER_SYMBOL  : positive := 512; -- Recommended maximum in protocol specification (MNL-AVABUSREF)
+  constant C_AVALON_ST_BFM_MAX_SYMBOLS_PER_BEAT : positive := 32;  -- Recommended maximum in protocol specification (MNL-AVABUSREF)
+
+  constant C_AXISTREAM_BFM_MAX_TUSER_BITS : positive := 64;
+  constant C_AXISTREAM_BFM_MAX_TSTRB_BITS : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
+  constant C_AXISTREAM_BFM_MAX_TID_BITS   : positive := 8;  -- Recommended maximum in protocol specification (ARM IHI0051A)
+  constant C_AXISTREAM_BFM_MAX_TDEST_BITS : positive := 4;  -- Recommended maximum in protocol specification (ARM IHI0051A)
+
+  --------------------------------------------------------------------------------------------------------------------------------
   -- VVC Adaptations
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_SPI_VVC_DATA_ARRAY_WIDTH : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
+  -- Constants for the maximum sizes to use in the VVCs.
+  constant C_COMMON_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+
+  -- Avalon-MM
+  constant C_AVALON_MM_VVC_CMD_DATA_MAX_LENGTH        : natural := 1024;
+  constant C_AVALON_MM_VVC_CMD_ADDR_MAX_LENGTH        : natural := 64;
+  constant C_AVALON_MM_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := 128;
+  constant C_AVALON_MM_VVC_CMD_STRING_MAX_LENGTH      : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- Avalon-ST
+  constant C_AVALON_ST_VVC_CMD_CHAN_MAX_LENGTH   : natural := 8;
+  constant C_AVALON_ST_VVC_CMD_WORD_MAX_LENGTH   : natural := 512;
+  constant C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS    : natural := 1024;
+  constant C_AVALON_ST_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- AXI
+  constant C_AXI_VVC_CMD_MAX_BURST_WORDS        : natural := 256;
+  constant C_AXI_VVC_CMD_DATA_MAX_LENGTH        : natural := 256;
+  constant C_AXI_VVC_CMD_ADDR_MAX_LENGTH        : natural := 32;
+  constant C_AXI_VVC_CMD_ID_MAX_LENGTH          : natural := 32;
+  constant C_AXI_VVC_CMD_USER_MAX_LENGTH        : natural := 128;
+  constant C_AXI_VVC_CMD_STRING_MAX_LENGTH      : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- AXI-Lite
+  constant C_AXILITE_VVC_CMD_DATA_MAX_LENGTH    : natural := 256;
+  constant C_AXILITE_VVC_CMD_ADDR_MAX_LENGTH    : natural := 32;
+  constant C_AXILITE_VVC_CMD_STRING_MAX_LENGTH  : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- AXI-Stream
+  constant C_AXISTREAM_VVC_CMD_DATA_MAX_BYTES    : natural := 16 * 1024;
+  constant C_AXISTREAM_VVC_CMD_MAX_WORD_LENGTH   : natural := 32; -- 4 bytes
+  constant C_AXISTREAM_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- Clock Generator
+  constant C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH   : natural := 8;
+  constant C_CLOCK_GEN_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- Error injection
+  constant C_EI_VVC_MAX_INSTANCE_NUM : natural := 100;
+
+  -- Ethernet
+  constant C_ETHERNET_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- GMII
+  constant C_GMII_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;
+  constant C_GMII_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- GPIO
+  constant C_GPIO_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
+  constant C_GPIO_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- I2C
+  constant C_I2C_VVC_CMD_DATA_MAX_LENGTH   : natural := 64;
+  constant C_I2C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 10;
+  constant C_I2C_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- RGMII
+  constant C_RGMII_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;
+  constant C_RGMII_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- SBI
+  constant C_SBI_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
+  constant C_SBI_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;
+  constant C_SBI_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- SPI
+  constant C_SPI_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
+  constant C_SPI_VVC_DATA_ARRAY_WIDTH      : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
+  constant C_SPI_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- UART
+  constant C_UART_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+
+  -- WISHBONE
+  constant C_WISHBONE_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
+  constant C_WISHBONE_VVC_CMD_ADDR_MAX_LENGTH   : natural := 64;
+  constant C_WISHBONE_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Hierarchical-VVCs

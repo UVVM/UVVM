@@ -60,7 +60,7 @@ package error_injection_pkg is
     randomization_seed2 => 2
   );
 
-  constant C_MAX_EI_INSTANCE_NUM : natural := 100;
+  constant C_MAX_EI_INSTANCE_NUM : natural := C_EI_VVC_MAX_INSTANCE_NUM;
 
   type t_error_injection_config_array is array (natural range <>) of t_error_injection_config;
 

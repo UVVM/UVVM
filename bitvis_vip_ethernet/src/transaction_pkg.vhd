@@ -42,14 +42,11 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    TRANSMIT,
-    RECEIVE,
-    EXPECT
+    TRANSMIT, RECEIVE, EXPECT
   );
 
-  -- Constants for the maximum sizes to use in this VVC.
-  -- You can create VVCs with smaller sizes than these constants, but not larger.
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_ETHERNET_VVC_CMD_STRING_MAX_LENGTH;
 
   --==========================================================================================
   --

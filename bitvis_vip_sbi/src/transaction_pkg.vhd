@@ -42,11 +42,13 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- Transaction
-    WRITE, READ, CHECK, POLL_UNTIL);
+    WRITE, READ, CHECK, POLL_UNTIL
+  );
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_SBI_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := C_SBI_VVC_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_SBI_VVC_CMD_STRING_MAX_LENGTH;
 
   --==========================================================================================
   --

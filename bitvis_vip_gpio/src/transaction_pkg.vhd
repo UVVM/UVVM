@@ -45,8 +45,9 @@ package transaction_pkg is
     SET, GET, CHECK, CHECK_STABLE, EXPECT, EXPECT_STABLE
   );
 
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_GPIO_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_GPIO_VVC_CMD_STRING_MAX_LENGTH;
 
   --==========================================================================================
   --

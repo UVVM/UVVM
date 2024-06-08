@@ -36,8 +36,7 @@ use work.vvc_sb_pkg.all;
 --=================================================================================================
 package vvc_methods_pkg is
 
-  constant C_VVC_NAME                    : string  := "UART_VVC";
-  constant C_EXECUTOR_RESULT_ARRAY_DEPTH : natural := 3;
+  constant C_VVC_NAME : string  := "UART_VVC";
 
   signal UART_VVCT : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias THIS_VVCT  : t_vvc_target_record is UART_VVCT;

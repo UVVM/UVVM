@@ -21,8 +21,6 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-use work.local_adaptations_pkg.all;
-
 --================================================================================================================================
 --================================================================================================================================
 package transaction_pkg is
@@ -43,17 +41,14 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    TRANSMIT,
-    RECEIVE,
-    EXPECT
+    TRANSMIT, RECEIVE, EXPECT
   );
 
-  -- Constants for the maximum sizes to use in this VVC.
-  -- You can create VVCs with smaller sizes than these constants, but not larger.
-  constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := C_AVALON_ST_CHANNEL_MAX_LENGTH;
-  constant C_VVC_CMD_WORD_MAX_LENGTH   : natural := C_AVALON_ST_WORD_MAX_LENGTH;
-  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := C_AVALON_ST_DATA_MAX_WORDS;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := C_AVALON_ST_VVC_CMD_CHAN_MAX_LENGTH;
+  constant C_VVC_CMD_WORD_MAX_LENGTH   : natural := C_AVALON_ST_VVC_CMD_WORD_MAX_LENGTH;
+  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_AVALON_ST_VVC_CMD_STRING_MAX_LENGTH;
 
   --==========================================================================================
   --

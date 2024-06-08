@@ -42,12 +42,14 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    WRITE, READ, CHECK, RESET, LOCK, UNLOCK);
+    WRITE, READ, CHECK, RESET, LOCK, UNLOCK
+  );
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := 1024;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := 64;
-  constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := 128;
-  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := C_AVALON_MM_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := C_AVALON_MM_VVC_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := C_AVALON_MM_VVC_CMD_BYTE_ENABLE_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := C_AVALON_MM_VVC_CMD_STRING_MAX_LENGTH;
 
   --==========================================================================================
   --

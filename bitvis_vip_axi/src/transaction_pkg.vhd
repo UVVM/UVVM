@@ -44,16 +44,17 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    WRITE, READ, CHECK);
+    WRITE, READ, CHECK
+  );
 
-  constant C_VVC_CMD_MAX_BURST_WORDS : natural := 256;
-
-  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := 256;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := 32;
-  constant C_VVC_CMD_ID_MAX_LENGTH          : natural := 32;
-  constant C_VVC_CMD_USER_MAX_LENGTH        : natural := 128;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_MAX_BURST_WORDS        : natural := C_AXI_VVC_CMD_MAX_BURST_WORDS;
+  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := C_AXI_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := C_AXI_VVC_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_ID_MAX_LENGTH          : natural := C_AXI_VVC_CMD_ID_MAX_LENGTH;
+  constant C_VVC_CMD_USER_MAX_LENGTH        : natural := C_AXI_VVC_CMD_USER_MAX_LENGTH;
   constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := C_VVC_CMD_DATA_MAX_LENGTH / 8;
-  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := 300;
+  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := C_AXI_VVC_CMD_STRING_MAX_LENGTH;
 
   --==========================================================================================
   --

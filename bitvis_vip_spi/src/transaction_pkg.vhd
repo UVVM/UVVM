@@ -45,9 +45,10 @@ package transaction_pkg is
     MASTER_TRANSMIT_AND_RECEIVE, MASTER_TRANSMIT_AND_CHECK, MASTER_TRANSMIT_ONLY, MASTER_RECEIVE_ONLY, MASTER_CHECK_ONLY,
     SLAVE_TRANSMIT_AND_RECEIVE, SLAVE_TRANSMIT_AND_CHECK, SLAVE_TRANSMIT_ONLY, SLAVE_RECEIVE_ONLY, SLAVE_CHECK_ONLY);
 
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_SPI_VVC_CMD_DATA_MAX_LENGTH;
   constant C_VVC_CMD_MAX_WORDS         : natural := C_SPI_VVC_DATA_ARRAY_WIDTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_SPI_VVC_CMD_STRING_MAX_LENGTH;
 
   --==========================================================================================
   --

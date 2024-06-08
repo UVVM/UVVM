@@ -46,9 +46,10 @@ package transaction_pkg is
     SLAVE_TRANSMIT, SLAVE_RECEIVE, SLAVE_CHECK,
     MASTER_QUICK_CMD);
 
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 64;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 10;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_I2C_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := C_I2C_VVC_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_I2C_VVC_CMD_STRING_MAX_LENGTH;
 
   --==========================================================================================
   --

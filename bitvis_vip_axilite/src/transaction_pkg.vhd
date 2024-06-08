@@ -28,7 +28,7 @@ package transaction_pkg is
 
   --===============================================================================================
   -- t_operation
-  -- - Bitvis defined BFM operations
+  -- - VVC and BFM operations
   --===============================================================================================
   type t_operation is (
     -- UVVM common

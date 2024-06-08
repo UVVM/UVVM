@@ -28,9 +28,10 @@ package transaction_pkg is
 
   --===============================================================================================
   -- t_operation
-  -- - Bitvis defined operations
+  -- - VVC and BFM operations
   --===============================================================================================
   type t_operation is (
+    -- UVVM common
     NO_OPERATION,
     AWAIT_COMPLETION,
     AWAIT_ANY_COMPLETION,
@@ -40,7 +41,7 @@ package transaction_pkg is
     FETCH_RESULT,
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
-    -- Transaction
+    -- VVC local
     TRANSMIT, RECEIVE, EXPECT
   );
 

@@ -29,6 +29,7 @@ package vvc_cmd_pkg is
   -- - VVC and BFM operations
   --========================================================================================================================
   type t_operation is (
+    -- UVVM common
     NO_OPERATION,
     AWAIT_COMPLETION,
     AWAIT_ANY_COMPLETION,

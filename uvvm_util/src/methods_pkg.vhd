@@ -4416,8 +4416,6 @@ package body methods_pkg is
 
     alias a_value : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_exp   : std_logic_vector(exp'length - 1 downto 0)   is exp;
-    constant C_VALUE_STR : string := to_string(a_value, radix, format, INCL_RADIX);
-    constant C_EXP_STR   : string := to_string(a_exp, radix, format, INCL_RADIX);
     variable v_check_ok      : boolean := true;  -- as default prior to checking
     variable v_trigger_alert : boolean := false; -- trigger alert and log message
 
@@ -4444,8 +4442,8 @@ package body methods_pkg is
       end if;
     end function signed_string_check;
 
-    constant v_value_str     : string := signed_string_check(a_value, radix, format, value_type);
-    constant v_exp_str       : string := signed_string_check(a_exp, radix, format, value_type);
+    constant C_VALUE_STR : string := signed_string_check(a_value, radix, format, value_type);
+    constant C_EXP_STR   : string := signed_string_check(a_exp, radix, format, value_type);
 
   begin
     protected_check_counters.increment(CHECK_VALUE);

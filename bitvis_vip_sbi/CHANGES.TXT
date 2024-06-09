@@ -2,6 +2,12 @@ Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
 
+v3.0.1
+----------
+Released: 2024-XX-XX
+- Reset addr and wdata signals when sbi_write() finishes.
+- Reset addr signal and wait a delta cycle when sbi_read() finishes.
+
 v3.0.0
 ----------
 Released: 2024-03-08

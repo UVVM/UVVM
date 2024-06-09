@@ -128,6 +128,15 @@ package vvc_methods_pkg is
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
+  procedure gpio_set(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data                : in std_logic;
+    constant msg                 : in string         := "";
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
   procedure gpio_get(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -149,6 +158,16 @@ package vvc_methods_pkg is
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
     constant data_exp            : in std_logic_vector;
+    constant msg                 : in string         := "";
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure gpio_check(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_exp            : in std_logic;
     constant msg                 : in string         := "";
     constant alert_level         : in t_alert_level  := error;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
@@ -259,6 +278,21 @@ package body vvc_methods_pkg is
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
   end procedure;
 
+  procedure gpio_set(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data                : in std_logic;
+    constant msg                 : in string         := "";
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    variable v_data_slv : std_logic_vector(0 downto 0);
+  begin
+    v_data_slv(0) := data;  -- Convert std_logic to slv.
+    gpio_set(VVCT, vvc_instance_idx, v_data_slv, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+
   procedure gpio_get(
     signal   VVCT                : inout t_vvc_target_record;
     constant vvc_instance_idx    : in integer;
@@ -323,6 +357,21 @@ package body vvc_methods_pkg is
       v_msg_id_panel := parent_msg_id_panel;
     end if;
     send_command_to_vvc(VVCT, std.env.resolution_limit, scope, v_msg_id_panel);
+  end procedure;
+
+  procedure gpio_check(
+    signal   VVCT                : inout t_vvc_target_record;
+    constant vvc_instance_idx    : in integer;
+    constant data_exp            : in std_logic;
+    constant msg                 : in string         := "";
+    constant alert_level         : in t_alert_level  := error;
+    constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
+    variable v_data_exp_slv : std_logic_vector(0 downto 0);
+  begin
+    v_data_exp_slv(0) := data_exp;  -- Convert std_logic to slv.
+    gpio_check(VVCT, vvc_instance_idx, v_data_exp_slv, msg, alert_level, scope, parent_msg_id_panel);
   end procedure;
 
   procedure gpio_check_stable(

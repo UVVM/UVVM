@@ -195,7 +195,26 @@ begin
     variable v_is_ok         : boolean;
     
     -- Procedure / Functions
+
+    -- set_and_check_gpio for singe std_logic signal
+    procedure set_and_check_gpio(
+      constant vvc_instance_idx : natural;
+      signal   vvc_input        : out std_logic_vector;
+      constant data             : std_logic
+      ) is
+        variable v_data_slv : std_logic_vector(0 downto 0);
+    begin
+      v_data_slv(0) := data;
+      log(ID_SEQUENCER_SUB, "Testing check on GPIO VVC " & to_string(vvc_instance_idx));
+      set_gpio(vvc_input, v_data_slv, "GPIO " & to_string(vvc_instance_idx) & " input");
+      wait for C_CLK_PERIOD;
       
+      -- Perform get, which stores the data in the VVC
+      gpio_check(GPIO_VVCT, vvc_instance_idx, data, "Readback inside VVC", error);
+      await_completion(GPIO_VVCT, vvc_instance_idx, 100 ns, "Wait for gpio_check to finish");
+      wait for C_CLK_PERIOD * 4;
+    end procedure set_and_check_gpio;
+    
     ----------------------------------------------------------------------
     -- Test GPIO VVC Set method
     ----------------------------------------------------------------------
@@ -209,6 +228,20 @@ begin
       log(ID_SEQUENCER_SUB, "xxx Testing get on GPIO VVC " & to_string(vvc_instance_idx));
       -- Set GPIO setting to 0xAA. Check GPIO setting
       gpio_set(GPIO_VVCT, vvc_instance_idx, data, "Setting gpio " & to_string(vvc_instance_idx) & " to 0x" & to_string(data, HEX) & ").");
+      await_completion(GPIO_VVCT, vvc_instance_idx, C_GPIO_SET_MAX_TIME);
+      check_value(vvc_output, expected_data, error, "Checking value of GPIO VVC " & to_string(vvc_instance_idx));
+      wait for C_CLK_PERIOD * 4;              -- Margin
+    end procedure set_and_check_gpio;
+    
+    -- Set_and_check_gpio for singe std_logic signal
+    procedure set_and_check_gpio(
+      constant vvc_instance_idx : natural;
+      signal   vvc_output       : std_logic_vector;
+      constant data             : std_logic; -- Singe signal
+      constant expected_data    : std_logic_vector
+      ) is
+    begin
+      gpio_set(GPIO_VVCT, vvc_instance_idx, data, "Setting gpio " & to_string(vvc_instance_idx) & " to " & to_string(data) & ").");
       await_completion(GPIO_VVCT, vvc_instance_idx, C_GPIO_SET_MAX_TIME);
       check_value(vvc_output, expected_data, error, "Checking value of GPIO VVC " & to_string(vvc_instance_idx));
       wait for C_CLK_PERIOD * 4;              -- Margin
@@ -350,7 +383,7 @@ begin
 
     -- Set GPIO  to all 1's. Check GPIO setting
     v_data_1024 := (others => '1');
-    set_and_check_gpio(5, gpio_5_output, "1", "1");
+    set_and_check_gpio(5, gpio_5_output, '1', "1");
     set_and_check_gpio(6, gpio_6_output, "11", "11");
     set_and_check_gpio(7, gpio_7_output, "11111111", "11111111");
     set_and_check_gpio(8, gpio_8_output, v_data_1024, v_data_1024);
@@ -361,13 +394,13 @@ begin
     set_and_check_gpio(8, gpio_8_output, "10101010101", "10101010101");
     
     -- Set GPIO setting to all 0's. Check GPIO setting
-    set_and_check_gpio(5, gpio_5_output, "0", "0");
+    set_and_check_gpio(5, gpio_5_output, '0', "0");
     set_and_check_gpio(6, gpio_6_output, "00", "00");
     set_and_check_gpio(7, gpio_7_output, "00000000", "00000000");
     set_and_check_gpio(8, gpio_8_output, "00000000000", "00000000000");
     
     -- Set GPIO setting to all 1's. Check GPIO setting
-    set_and_check_gpio(5, gpio_5_output, "1", "1");
+    set_and_check_gpio(5, gpio_5_output, '1', "1");
     set_and_check_gpio(6, gpio_6_output, "11", "11");
     set_and_check_gpio(7, gpio_7_output, "11111111", "11111111");
     set_and_check_gpio(8, gpio_8_output, "11111111111", "11111111111");
@@ -379,17 +412,17 @@ begin
     log(ID_LOG_HDR, "Test of GPIO Set with don't care", C_SCOPE);
 
     -- GPIO status is all 1's. Test by setting bits to don't care with '-'
-    set_and_check_gpio(5, gpio_5_output, "-", "1");
+    set_and_check_gpio(5, gpio_5_output, '-', "1");
     set_and_check_gpio(6, gpio_6_output, "1-", "11");
     set_and_check_gpio(7, gpio_7_output, "0101----", "01011111");
     set_and_check_gpio(8, gpio_8_output, "010--------", "01011111111");
     
-    set_and_check_gpio(5, gpio_5_output, "0", "0");
+    set_and_check_gpio(5, gpio_5_output, '0', "0");
     set_and_check_gpio(6, gpio_6_output, "-0", "10");
     set_and_check_gpio(7, gpio_7_output, "----1010", "01011010");
     set_and_check_gpio(8, gpio_8_output, "---10101010", "01010101010");
     
-    set_and_check_gpio(5, gpio_5_output, "1", "-"); --?
+    set_and_check_gpio(5, gpio_5_output, '1', "-");
     set_and_check_gpio(6, gpio_6_output, "01", "-1");
     set_and_check_gpio(7, gpio_7_output, "01010101", "---1---1");
     set_and_check_gpio(8, gpio_8_output, "10101010101", "--1---1---1");
@@ -398,7 +431,7 @@ begin
     set_and_check_gpio(7, gpio_7_output, "101-101-", "---1---1");
     set_and_check_gpio(8, gpio_8_output, "01-101-101-", "--1---1---1");
     
-    set_and_check_gpio(5, gpio_5_output, "Z", "-"); --?
+    set_and_check_gpio(5, gpio_5_output, 'Z', "-"); --?
     set_and_check_gpio(6, gpio_6_output, "1Z", "1-");
     set_and_check_gpio(7, gpio_7_output, "1010ZZZZ", "1010----");
     set_and_check_gpio(8, gpio_8_output, "101ZZZZZZZZ", "101--------");
@@ -432,7 +465,7 @@ begin
     --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of GPIO Check", C_SCOPE);
     v_data_exp_1024 := (others => '1');
-    set_and_check_gpio(1, gpio_1_input, "1");
+    set_and_check_gpio(1, gpio_1_input, '1');
     set_and_check_gpio(2, gpio_2_input, "11");
     set_and_check_gpio(3, gpio_3_input, "00000000");
     set_and_check_gpio(4, gpio_4_input, v_data_exp_1024);

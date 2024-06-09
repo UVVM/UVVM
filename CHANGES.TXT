@@ -16,9 +16,13 @@ Released: 2024-XX-XX
 - Updated Scoreboard documentation to mention in every method that instance 1 is used as default.
 - Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
 - Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
-- Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt (missing)
+- Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt
 - Fixed a GHDL exponentiation overflow error in rand_pkg.
 - Added support for combination of AND- and OR-listed testcases in spec cov.
+- Reset addr and wdata signals when sbi_write() finishes.
+- Reset addr signal and wait a delta cycle when sbi_read() finishes.
+- Wait until rising edge of the clock before exiting rgmii_read() so that the interface is idle when it happens.
+- Add support for set/check single std_logic (instead of std_logic_vector) in bitvis_vip_gpio.
 
 v2 2024.03.08
 --------------------
@@ -63,7 +67,6 @@ Released: 2024-03-08
 - Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
 - Added executor_is_busy to interpreter_terminate_current_command() missing in some VVCs.
 - Thanks to @m-kru, @malsheimer, @am9417 and @EMAZAC for PR and contributions.
-
 
 
 v2 2023.09.16

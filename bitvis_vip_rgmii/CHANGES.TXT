@@ -2,6 +2,11 @@ Bitvis VIP RGMII (Reduced Gigabit Media-Independent Interface) - Overview on Ver
 ==============================================================
 
 
+v3.0.1
+----------
+Released: 2024-XX-XX
+- Wait until rising edge of the clock before exiting rgmii_read() so that the interface is idle when it happens.
+
 v3.0.0
 ----------
 Released: 2024-03-08

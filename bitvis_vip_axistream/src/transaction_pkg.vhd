@@ -52,6 +52,7 @@ package transaction_pkg is
   constant C_VVC_CMD_MAX_WORD_LENGTH   : natural := C_AXISTREAM_VVC_CMD_MAX_WORD_LENGTH;
   constant C_VVC_CMD_DATA_MAX_WORDS    : natural := C_VVC_CMD_DATA_MAX_BYTES;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_AXISTREAM_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_AXISTREAM_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
@@ -106,11 +107,11 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_axistream_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_axistream_vvc_transaction_trigger : t_axistream_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
+  signal global_axistream_vvc_transaction_trigger : t_axistream_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_axistream_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_axistream_vvc_transaction_info : t_axistream_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_axistream_vvc_transaction_info : t_axistream_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

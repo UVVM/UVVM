@@ -133,9 +133,9 @@ package vvc_methods_pkg is
     msg       => (others => ' ')
   );
 
-  shared variable shared_uart_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => (others => C_UART_VVC_CONFIG_DEFAULT));
-  shared variable shared_uart_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
+  shared variable shared_uart_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => (others => C_UART_VVC_CONFIG_DEFAULT));
+  shared variable shared_uart_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
   shared variable UART_VVC_SB                  : t_generic_sb;
 
   --==========================================================================================

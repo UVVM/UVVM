@@ -490,7 +490,8 @@ def add_vvc_constructor(file_handle, vvc_name):
     file_handle.write("  work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_" +vvc_name.upper() +
                       "_BFM_CONFIG,\n")
     file_handle.write("                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,\n")
-    file_handle.write("                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);\n")
+    file_handle.write("                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,\n")
+    file_handle.write("                  C_VVC_MAX_INSTANCE_NUM);\n")
     file_handle.write(division_line + "\n")
 
     print_linefeed(file_handle)
@@ -1116,6 +1117,7 @@ def add_vvc_cmd_pkg_header(file_handle, features):
         file_handle.write("  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;\n")
         file_handle.write("  --constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;\n")
         file_handle.write("  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;\n")
+        file_handle.write("  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;\n")
         print_linefeed(file_handle)
 
     file_handle.write("  " + division_line + "\n")
@@ -1211,7 +1213,7 @@ def add_vvc_cmd_pkg_header(file_handle, features):
     file_handle.write("  --  - Shared variable used to get last queued index from VVC to sequencer\n")
     file_handle.write("  " + division_line + "\n")
     file_handle.write("  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to" +
-                      " C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => -1));\n")
+                      " C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => -1));\n")
     print_linefeed(file_handle)
     file_handle.write("  " + division_line + "\n")
     file_handle.write("  -- Procedures\n")
@@ -1336,14 +1338,14 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     print_linefeed(file_handle)
     if vvc_channels.__len__() == 1:
         file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_config : t_vvc_config_array(0 to "
-                          "C_MAX_VVC_INSTANCE_NUM-1) := (others => C_" + vvc_name.upper() + "_VVC_CONFIG_DEFAULT);\n")
+                          "C_VVC_MAX_INSTANCE_NUM-1) := (others => C_" + vvc_name.upper() + "_VVC_CONFIG_DEFAULT);\n")
         file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_status : t_vvc_status_array(0 to "
-                          "C_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);\n")
+                          "C_VVC_MAX_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);\n")
     else:
         file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_config : t_vvc_config_array(t_channel'left"
-                          " to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_" + vvc_name.upper() + "_VVC_CONFIG_DEFAULT));\n")
+                          " to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => C_" + vvc_name.upper() + "_VVC_CONFIG_DEFAULT));\n")
         file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_status : t_vvc_status_array(t_channel'left"
-                          " to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));\n")
+                          " to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));\n")
     if features["scoreboard"]:
         file_handle.write("  shared variable " + vvc_name.upper() + "_VVC_SB            : t_generic_sb;\n")
         print_linefeed(file_handle)
@@ -1759,6 +1761,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;\n")
     file_handle.write("  --constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;\n")
     file_handle.write("  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;\n")
+    file_handle.write("  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;\n")
     print_linefeed(file_handle)
     print_linefeed(file_handle)
 
@@ -1813,12 +1816,12 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
             file_handle.write("  -- Global vvc_transaction_info trigger signal\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_trigger_array is array (natural range <>) of std_logic;\n")
             file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() +
-                              "_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => '0');\n")
+                              "_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => '0');\n")
             print_linefeed(file_handle)
             file_handle.write("  -- Shared vvc_transaction_info info variable\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_group_array is array (natural range <>) of t_transaction_group;\n")
             file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_transaction_info : t_" + vvc_name.lower() +
-                              "_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_GROUP_DEFAULT);\n")
+                              "_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => C_TRANSACTION_GROUP_DEFAULT);\n")
         else:
             first_channel = vvc_channels[0].name.upper()
             last_channel = vvc_channels[len(vvc_channels) - 1].name.upper()
@@ -1827,12 +1830,12 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
             file_handle.write("  -- Global vvc_transaction_info trigger signal\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;\n")
             file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() +
-                              "_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => '0'));\n")
+                              "_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => '0'));\n")
             print_linefeed(file_handle)
             file_handle.write("  -- Shared vvc_transaction_info info variable\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;\n")
             file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_transaction_info : t_" + vvc_name.lower() +
-                              "_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));\n")
+                              "_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));\n")
 
     print_linefeed(file_handle)
     file_handle.write("end package transaction_pkg;\n")

@@ -47,6 +47,7 @@ package vvc_cmd_pkg is
   constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_WISHBONE_VVC_CMD_DATA_MAX_LENGTH;
   constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := C_WISHBONE_VVC_CMD_ADDR_MAX_LENGTH;
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_WISHBONE_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_WISHBONE_VVC_MAX_INSTANCE_NUM;
 
   --========================================================================================================================
   -- t_vvc_cmd_record
@@ -135,7 +136,7 @@ package vvc_cmd_pkg is
   -- shared_vvc_last_received_cmd_idx
   --  - Shared variable used to get last queued index from vvc to sequencer
   --===============================================================================================
-  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => -1));
+  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => -1));
 
 end package vvc_cmd_pkg;
 

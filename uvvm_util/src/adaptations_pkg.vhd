@@ -22,6 +22,14 @@ use std.textio.all;
 use work.types_pkg.all;
 
 package adaptations_pkg is
+  -- =============================================================================================================================
+  -- *****************************************************************************************************************************
+  --  Utility Library
+  -- *****************************************************************************************************************************
+  -- =============================================================================================================================
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- Alert and Log files
+  --------------------------------------------------------------------------------------------------------------------------------
   constant C_ALERT_FILE_NAME : string := "_Alert.txt";
   constant C_LOG_FILE_NAME   : string := "_Log.txt";
 
@@ -295,7 +303,7 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_MAX                : natural       := 1000; -- (VVC Result queue)  May be overwritten for dedicated VVC
   constant C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := WARNING;
   constant C_RESULT_QUEUE_COUNT_THRESHOLD          : natural       := 950;
-  constant C_MAX_VVC_INSTANCE_NUM                  : natural       := 10;
+  constant C_MAX_VVC_INSTANCE_NUM                  : natural       := 10; -- May be overwritten for dedicated VVCs using constants below
   constant C_MAX_NUM_SEQUENCERS                    : natural       := 10; -- Max number of sequencers
   constant C_MAX_TB_VVC_NUM                        : natural       := 20; -- Max number of VVCs in testbench (including all channels)
 
@@ -392,12 +400,14 @@ package adaptations_pkg is
   constant C_AVALON_MM_VVC_CMD_ADDR_MAX_LENGTH        : natural := 64;
   constant C_AVALON_MM_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := 128;
   constant C_AVALON_MM_VVC_CMD_STRING_MAX_LENGTH      : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AVALON_MM_VVC_MAX_INSTANCE_NUM           : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- Avalon-ST
   constant C_AVALON_ST_VVC_CMD_CHAN_MAX_LENGTH   : natural := 8;
   constant C_AVALON_ST_VVC_CMD_WORD_MAX_LENGTH   : natural := 512;
   constant C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS    : natural := 1024;
   constant C_AVALON_ST_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AVALON_ST_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- AXI
   constant C_AXI_VVC_CMD_MAX_BURST_WORDS        : natural := 256;
@@ -406,61 +416,74 @@ package adaptations_pkg is
   constant C_AXI_VVC_CMD_ID_MAX_LENGTH          : natural := 32;
   constant C_AXI_VVC_CMD_USER_MAX_LENGTH        : natural := 128;
   constant C_AXI_VVC_CMD_STRING_MAX_LENGTH      : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AXI_VVC_MAX_INSTANCE_NUM           : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- AXI-Lite
   constant C_AXILITE_VVC_CMD_DATA_MAX_LENGTH    : natural := 256;
   constant C_AXILITE_VVC_CMD_ADDR_MAX_LENGTH    : natural := 32;
   constant C_AXILITE_VVC_CMD_STRING_MAX_LENGTH  : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AXILITE_VVC_MAX_INSTANCE_NUM       : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- AXI-Stream
   constant C_AXISTREAM_VVC_CMD_DATA_MAX_BYTES    : natural := 16 * 1024;
   constant C_AXISTREAM_VVC_CMD_MAX_WORD_LENGTH   : natural := 32; -- 4 bytes
   constant C_AXISTREAM_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AXISTREAM_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- Clock Generator
   constant C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH   : natural := 8;
   constant C_CLOCK_GEN_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_CLOCK_GEN_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- Error injection
   constant C_EI_VVC_MAX_INSTANCE_NUM : natural := 100;
 
   -- Ethernet
   constant C_ETHERNET_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_ETHERNET_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- GMII
   constant C_GMII_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;
   constant C_GMII_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_GMII_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- GPIO
   constant C_GPIO_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
   constant C_GPIO_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_GPIO_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- I2C
   constant C_I2C_VVC_CMD_DATA_MAX_LENGTH   : natural := 64;
   constant C_I2C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 10;
   constant C_I2C_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_I2C_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- RGMII
   constant C_RGMII_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;
   constant C_RGMII_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_RGMII_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- SBI
   constant C_SBI_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
   constant C_SBI_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;
   constant C_SBI_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_SBI_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- SPI
   constant C_SPI_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
   constant C_SPI_VVC_DATA_ARRAY_WIDTH      : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
   constant C_SPI_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_SPI_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- UART
   constant C_UART_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_UART_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- WISHBONE
   constant C_WISHBONE_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
   constant C_WISHBONE_VVC_CMD_ADDR_MAX_LENGTH   : natural := 64;
   constant C_WISHBONE_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_WISHBONE_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Hierarchical-VVCs

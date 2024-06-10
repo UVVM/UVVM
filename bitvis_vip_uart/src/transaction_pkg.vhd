@@ -49,6 +49,7 @@ package transaction_pkg is
 
   -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
   constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_UART_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_UART_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
@@ -108,17 +109,17 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_uart_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;
-  signal global_uart_vvc_transaction_trigger : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => '0'));
+  signal global_uart_vvc_transaction_trigger : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => '0'));
 
   -- Shared transaction info variable
   type t_uart_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;
-  shared variable shared_uart_vvc_transaction_info : t_uart_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));
+  shared variable shared_uart_vvc_transaction_info : t_uart_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
   -- Global monitor transaction info trigger signal
-  signal global_uart_monitor_transaction_trigger : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => '0'));
+  signal global_uart_monitor_transaction_trigger : t_uart_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => '0'));
 
   -- Shared monitor transaction info variable
-  shared variable shared_uart_monitor_transaction_info : t_uart_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));
+  shared variable shared_uart_monitor_transaction_info : t_uart_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
   alias t_uart_operation is t_operation;
   alias t_uart_transaction is t_base_transaction;

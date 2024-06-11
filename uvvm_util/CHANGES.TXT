@@ -9,6 +9,9 @@ Released: 2024-XX-XX
 - Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
 - Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
 - Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
+- Added individual constants to configure the VVCs max instance number from adaptations_pkg.
+- Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
 
 v2.19.4
 ----------

@@ -23,6 +23,12 @@ Released: 2024-XX-XX
 - Reset addr signal and wait a delta cycle when sbi_read() finishes.
 - Wait until rising edge of the clock before exiting rgmii_read() so that the interface is idle when it happens.
 - Add support for set/check single std_logic (instead of std_logic_vector) in bitvis_vip_gpio.
+- Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
+- Added individual constants to configure the VVCs max instance number from adaptations_pkg. Updated vvc_generator.py script.
+- Removed Avalon-ST local_adaptations_pkg and moved content to adaptations_pkg.
+- Deprecated Spec Cov local_adaptations_pkg and moved content to adaptations_pkg.
+- Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+
 
 v2 2024.03.08
 --------------------

@@ -19,6 +19,7 @@ Released: 2024-03-08
 - Updated vvc_generator.py to move sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
 - Updated vvc_generator.py generation of vvc_context file.
 - Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
+- Updated vvc_generator.py to use an individual constant to configure the VVC max instance number.
 
 v2.12.5
 ----------

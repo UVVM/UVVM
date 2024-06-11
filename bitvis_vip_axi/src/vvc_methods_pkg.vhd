@@ -113,8 +113,8 @@ package vvc_methods_pkg is
     msg         : string(1 to C_VVC_CMD_STRING_MAX_LENGTH);
   end record;
 
-  shared variable shared_axi_vvc_config : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_AXI_VVC_CONFIG_DEFAULT);
-  shared variable shared_axi_vvc_status : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_VVC_STATUS_DEFAULT);
+  shared variable shared_axi_vvc_config : t_vvc_config_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_AXI_VVC_CONFIG_DEFAULT);
+  shared variable shared_axi_vvc_status : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_VVC_STATUS_DEFAULT);
   shared variable AXI_VVC_SB            : t_generic_sb;
 
   --==========================================================================================

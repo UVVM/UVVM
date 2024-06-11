@@ -24,7 +24,6 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-use work.local_adaptations_pkg.all;
 use work.avalon_st_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
@@ -92,8 +91,8 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
-  shared variable shared_avalon_st_vvc_config : t_vvc_config_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM - 1) := (others => C_AVALON_ST_VVC_CONFIG_DEFAULT);
-  shared variable shared_avalon_st_vvc_status : t_vvc_status_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM - 1) := (others => C_VVC_STATUS_DEFAULT);
+  shared variable shared_avalon_st_vvc_config : t_vvc_config_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_AVALON_ST_VVC_CONFIG_DEFAULT);
+  shared variable shared_avalon_st_vvc_status : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_VVC_STATUS_DEFAULT);
 
   --==========================================================================================
   -- Methods dedicated to this VVC 

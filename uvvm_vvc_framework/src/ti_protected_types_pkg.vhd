@@ -175,6 +175,16 @@ package body ti_protected_types_pkg is
   ------------------------------------------------------------
   type t_vvc_activity is protected body
 
+    type t_vvc_id is record
+      name     : string(1 to C_MAX_VVC_NAME_LENGTH);
+      instance : natural;
+      channel  : t_channel;
+    end record;
+    constant C_VVC_ID_DEFAULT : t_vvc_id := (
+      name     => (others => NUL),
+      instance => 0,
+      channel  => NA
+    );
     type t_vvc_item is record
       vvc_id    : t_vvc_id;
       vvc_state : t_vvc_state;

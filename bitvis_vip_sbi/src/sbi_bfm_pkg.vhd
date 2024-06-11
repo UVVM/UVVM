@@ -385,8 +385,8 @@ package body sbi_bfm_pkg is
 
     cs    <= '0';
     wena  <= '0';
-    addr  <= (others => '0');
-    wdata <= (others => '0');
+    addr  <= (addr'range => '0');
+    wdata <= (wdata'range => '0');
     log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure;
 
@@ -498,7 +498,7 @@ package body sbi_bfm_pkg is
 
     cs   <= '0';
     rena <= '0';
-    addr <= (others => '0');
+    addr <= (addr'range => '0');
     wait for 0 ns; -- Wait a delta cycle so that the rdata port can be updated before exiting the procedure
 
     if ext_proc_call = "" then

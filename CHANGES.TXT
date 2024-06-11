@@ -18,12 +18,18 @@ Released: 2024-XX-XX
 - Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
 - Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt
 - Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Added support for combination of AND- and OR-listed testcases in spec cov.
 - Reset addr and wdata signals when sbi_write() finishes.
 - Reset addr signal and wait a delta cycle when sbi_read() finishes.
 - Wait until rising edge of the clock before exiting rgmii_read() so that the interface is idle when it happens.
 - Add support for set/check single std_logic (instead of std_logic_vector) in bitvis_vip_gpio.
-- Added support for combination of AND- and OR-listed testcases in spec cov.
-- Fixed strictness 2 functionality in spec cov.
+- Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
+- Added individual constants to configure the VVCs max instance number from adaptations_pkg. Updated vvc_generator.py script.
+- Removed Avalon-ST local_adaptations_pkg and moved content to adaptations_pkg.
+- Deprecated Spec Cov local_adaptations_pkg and moved content to adaptations_pkg.
+- Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+- Fixed strictness 2 in spec cov
+
 
 v2 2024.03.08
 --------------------

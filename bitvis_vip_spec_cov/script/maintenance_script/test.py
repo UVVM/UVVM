@@ -106,6 +106,7 @@ hr.add_generics(
         "GC_REQ_FILE", ("../../tb/maintenance_tb/req_file.csv", "PATH"),
         "GC_REQ_FILE_EMPTY", ("../../tb/maintenance_tb/req_file_empty.csv", "PATH"),
         "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
+        "GC_UART_REQ_FILE", ("../../tb/maintenance_tb/uart_req_file.csv", "PATH"),
         "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")
     ],
 )

@@ -20,17 +20,17 @@
 # req_file.csv              |                      | TC_7             | pc_7.csv  |                       | Testing initialize_req_cov() with non-existing         |               |                             | sc_7.csv
 #                           |                      |                  |           |                       | requirement file.                                      |               |                             |
 # ---------------------------|----------------------|------------------|-----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# sub_req_file.csv          | UART_REQ_GENERAL     | TC_SUB_REQ       | pc_8.csv  | sub_req_map_file.csv  | Testing passing sub-requirement with test_status=NA,   | UART_REQ_BR_A | cfg_1_strict_0.txt          | sc_8_0.csv
+# uart_req_file.csv          | UART_REQ_GENERAL     | TC_SUB_REQ       | pc_8.csv  | uart_map_file.csv  | Testing passing sub-requirement with test_status=NA,   | UART_REQ_BR_A | cfg_1_strict_0.txt          | sc_8_0.csv
 #                           |                      |                  |           |                       | msg and SCOPE.                                         | UART_REQ_BR_B | cfg_1_strict_1.txt          | sc_8_1.csv
 #                           |                      |                  |           |                       |                                                        | UART_REQ_ODD  | cfg_1_strict_2.txt          | sc_8_2.csv
 #                           |                      |                  |           |                       |                                                        | UART_REQ_EVEN |                             |
 # ---------------------------|----------------------|------------------|-----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# sub_req_file.csv          | UART_REQ_GENERAL     | TC_SUB_REQ       | pc_9.csv  | sub_req_map_file.csv  | Testing failing sub-requirement with test_status=NA,   | UART_REQ_BR_A | cfg_2_strict_0.txt          | sc_9_0.csv
+# uart_req_file.csv          | UART_REQ_GENERAL     | TC_SUB_REQ       | pc_9.csv  | uart_map_file.csv  | Testing failing sub-requirement with test_status=NA,   | UART_REQ_BR_A | cfg_2_strict_0.txt          | sc_9_0.csv
 #                           |                      |                  |           |                       | msg and SCOPE.                                         | UART_REQ_BR_B | cfg_2_strict_1.txt          | sc_9_1.csv
 #                           |                      |                  |           |                       |                                                        | UART_REQ_ODD  | cfg_2_strict_2.txt          | sc_9_2.csv
 #                           |                      |                  |           |                       |                                                        | UART_REQ_EVEN |                             |
 # ---------------------------|----------------------|------------------|-----------------------------------|--------------------------------------------------------|---------------|-----------------------------|-------------
-# sub_req_file.csv          |UART_REQ_GENERAL_OMIT | TC_SUB_REQ_OMIT  | pc_16.csv | sub_req_map_file.csv  | Testing omitted sub-requirement.                       | UART_REQ_BR_A |                             | sc_16.csv
+# uart_req_file.csv          |UART_REQ_GENERAL_OMIT | TC_SUB_REQ_OMIT  | pc_16.csv | uart_map_file.csv  | Testing omitted sub-requirement.                       | UART_REQ_BR_A |                             | sc_16.csv
 #                           |                      |                  | pc_17.csv |                       |                                                        | UART_REQ_BR_B |                             | sc_17.csv
 #                           |                      |                  | pc_18.cav |                       |                                                        | UART_REQ_ODD  |                             | sc_18.csv
 #                           |                      |                  |           |                       |                                                        | UART_REQ_EVEN |                             |
@@ -260,9 +260,9 @@ test_list = [
         "--strictness",
         "0",
         "-r",
-        "../tb/maintenance_tb/sub_req_file.csv",
+        "../tb/maintenance_tb/uart_req_file.csv",
         "-m",
-        "../tb/maintenance_tb/sub_req_omit_map_file.csv",
+        "../tb/maintenance_tb/uart_omit_map_file.csv",
         "-p",
         "../sim/pc_16.csv",
         "-s",
@@ -274,9 +274,9 @@ test_list = [
         "--strictness",
         "0",
         "-r",
-        "../tb/maintenance_tb/sub_req_file.csv",
+        "../tb/maintenance_tb/uart_req_file.csv",
         "-m",
-        "../tb/maintenance_tb/sub_req_omit_map_file.csv",
+        "../tb/maintenance_tb/uart_omit_map_file.csv",
         "-p",
         "../sim/pc_17.csv",
         "-s",
@@ -288,9 +288,9 @@ test_list = [
         "--strictness",
         "0",
         "-r",
-        "../tb/maintenance_tb/sub_req_file.csv",
+        "../tb/maintenance_tb/uart_req_file.csv",
         "-m",
-        "../tb/maintenance_tb/sub_req_omit_map_file.csv",
+        "../tb/maintenance_tb/uart_omit_map_file.csv",
         "-p",
         "../sim/pc_18.csv",
         "-s",
@@ -302,9 +302,9 @@ test_list = [
         "--strictness",
         "0",
         "-r",
-        "../tb/maintenance_tb/sub_req_file.csv",
+        "../tb/maintenance_tb/uart_req_file.csv",
         "-m",
-        "../tb/maintenance_tb/sub_req_omit_map_file.csv",
+        "../tb/maintenance_tb/uart_omit_map_file.csv",
         "-p",
         "../sim/pc_19.csv",
         "-s",

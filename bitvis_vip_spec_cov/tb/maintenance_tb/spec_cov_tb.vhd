@@ -23,7 +23,6 @@ context uvvm_util.uvvm_util_context;
 
 library bitvis_vip_spec_cov;
 use bitvis_vip_spec_cov.spec_cov_pkg.all;
-use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 
 --hdlregression:tb
 entity spec_cov_tb is

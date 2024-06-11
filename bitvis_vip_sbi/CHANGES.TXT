@@ -7,6 +7,8 @@ v3.0.1
 Released: 2024-XX-XX
 - Reset addr and wdata signals when sbi_write() finishes.
 - Reset addr signal and wait a delta cycle when sbi_read() finishes.
+- Changed max constants used in VVC to be adjustable from adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
 
 v3.0.0
 ----------

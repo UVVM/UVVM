@@ -10,8 +10,6 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-use work.local_adaptations_pkg.all;
-
 -- Define operations to read formatted data from a comma-separated-values file
 -- (CSV file). To use this package:
 --    1. Create a csv_file_reader:      variable csv: csv_file_reader_type;
@@ -158,7 +156,7 @@ package body csv_file_reader_pkg is
           v_index                   := v_index + 1;
           v_skip_leading_whitespace := false;
         else
-          alert(FAILURE, "A line length in the CSV file is greater than C_CSV_FILE_MAX_LINE_LENGTH defined in local_adaptations_pkg.vhd", C_CSV_READER_SCOPE);
+          alert(FAILURE, "A line length in the CSV file is greater than C_CSV_FILE_MAX_LINE_LENGTH defined in adaptations_pkg.vhd", C_CSV_READER_SCOPE);
         end if;
         read(priv_current_line, v_read_char, v_read_ok);
       end loop l_read_char;

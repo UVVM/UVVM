@@ -487,10 +487,11 @@ package adaptations_pkg is
   constant C_SBI_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- Specification Coverage
-  constant C_CSV_FILE_MAX_LINE_LENGTH : positive  := 256;  -- Max length of line read from CSV file, used in csv_file_reader_pkg.vhd
-  constant C_CSV_DELIMITER            : character := ',';  -- Delimiter when reading and writing CSV files.
-  constant C_MAX_REQUIREMENTS         : positive  := 1000; -- Maximum number of requirements in the req_map file used in initialize_req_cov().
-  constant C_MAX_TESTCASES_PER_REQ    : positive  := 20;   -- Max number of testcases allowed per requirement.
+  constant C_CSV_FILE_MAX_LINE_LENGTH   : positive      := 256;  -- Max length of line read from CSV file, used in csv_file_reader_pkg.vhd
+  constant C_CSV_DELIMITER              : character     := ',';  -- Delimiter when reading and writing CSV files.
+  constant C_MAX_REQUIREMENTS           : positive      := 1000; -- Maximum number of requirements in the req_map file used in initialize_req_cov().
+  constant C_MAX_TESTCASES_PER_REQ      : positive      := 20;   -- Max number of testcases allowed per requirement.
+  constant C_MISSING_REQ_LABEL_SEVERITY : t_alert_level := TB_WARNING;
 
   -- SPI
   -- Constants for the maximum sizes to use in the VVC.

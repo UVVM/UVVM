@@ -37,7 +37,7 @@ package spec_cov_pkg is
   end record;
 
   constant C_SPEC_COV_CONFIG_DEFAULT : t_spec_cov_config := (
-    missing_req_label_severity => TB_WARNING,
+    missing_req_label_severity => C_MISSING_REQ_LABEL_SEVERITY,
     csv_delimiter              => C_CSV_DELIMITER,
     max_requirements           => C_MAX_REQUIREMENTS,
     max_testcases_per_req      => C_MAX_TESTCASES_PER_REQ,

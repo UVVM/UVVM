@@ -485,6 +485,13 @@ package adaptations_pkg is
   constant C_WISHBONE_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
   constant C_WISHBONE_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
+
+  -- SPECIFICATION COVERAGE
+  constant C_CSV_FILE_MAX_LINE_LENGTH : positive  := 256;  -- Max length of line read from CSV file, used in csv_file_reader_pkg.vhd
+  constant C_CSV_DELIMITER            : character := ',';  -- Delimiter when reading and writing CSV files.
+  constant C_MAX_REQUIREMENTS         : positive  := 1000; -- Maximum number of requirements in the req_map file used in initialize_req_cov().
+  constant C_MAX_TESTCASES_PER_REQ    : positive  := 20;   -- Max number of testcases allowed per requirement.
+
   --------------------------------------------------------------------------------------------------------------------------------
   -- Hierarchical-VVCs
   --------------------------------------------------------------------------------------------------------------------------------

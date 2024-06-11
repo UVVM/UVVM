@@ -33,7 +33,6 @@ context bitvis_vip_uart.vvc_context;
 
 library bitvis_vip_spec_cov;
 use bitvis_vip_spec_cov.spec_cov_pkg.all;
-use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 
 --hdlregression:tb
 -- Test bench entity

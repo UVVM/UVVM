@@ -555,6 +555,12 @@ package body avalon_mm_bfm_pkg is
 
     -- Handle read with waitrequests
     if config.use_waitrequest then
+      -- Wait until the next rising edge of the clock to check the wait request.
+      -- This will cause the avalon_mm_read_response and avalon_mm_check_response to sample
+      -- the data on the next rising edge of the clock.
+      -- Otherwise, those functions will read the data on the same clock edge as the read signal
+      -- is sampled by the DUT which is obviously too early.
+      wait until rising_edge(clk);
       for cycle in 1 to config.max_wait_cycles loop
         if is_waitrequest_active(avalon_mm_if, config) then
           wait until rising_edge(clk);

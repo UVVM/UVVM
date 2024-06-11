@@ -310,6 +310,18 @@ test_list = [
         "-s",
         "../sim/sc_19.csv",
     ],
+    [
+        python_exe,
+        "../script/run_spec_cov.py",
+        "--strictness",
+        "1",
+        "-r",
+        "../tb/maintenance_tb/combi_req_file.csv",
+        "-p",
+        "../sim/pc_combi.csv",
+        "-s",
+        "../sim/sc_combi.csv",
+    ],
 ]
 
 

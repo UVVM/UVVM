@@ -478,6 +478,24 @@ begin
         -- End testcase
         finalize_req_cov(VOID);
       end if;
+
+    elsif GC_TESTCASE = "test_combined_and_or_listed_testcases" then
+        --
+        -- This test will test requirements listed with a combination AND-listed and OR-listed testcases
+        --
+        log(ID_LOG_HDR, "Testing combination of AND- and OR- listed testcases.", C_SCOPE);
+        if GC_REQ_FILE = "" then
+          alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
+        else
+          -- Run testcase
+          initialize_req_cov("TC_1", GC_REQ_FILE, "pc_combi.csv");
+          tick_off_req_cov("REQ_1");
+          tick_off_req_cov("REQ_2");
+          tick_off_req_cov("REQ_3");
+          tick_off_req_cov("REQ_4");
+          -- End testcase
+          finalize_req_cov(VOID);
+        end if;
     end if;
 
     -----------------------------------------------------------------------------

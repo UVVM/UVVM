@@ -18,11 +18,11 @@ Released: 2024-XX-XX
 - Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
 - Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt
 - Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Added support for combination of AND- and OR-listed testcases in spec cov.
 - Reset addr and wdata signals when sbi_write() finishes.
 - Reset addr signal and wait a delta cycle when sbi_read() finishes.
 - Wait until rising edge of the clock before exiting rgmii_read() so that the interface is idle when it happens.
 - Add support for set/check single std_logic (instead of std_logic_vector) in bitvis_vip_gpio.
-
 
 v2 2024.03.08
 --------------------

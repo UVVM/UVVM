@@ -28,6 +28,7 @@ Released: 2024-XX-XX
 - Removed Avalon-ST local_adaptations_pkg and moved content to adaptations_pkg.
 - Deprecated Spec Cov local_adaptations_pkg and moved content to adaptations_pkg.
 - Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+- Fixed strictness 2 in spec cov
 
 
 v2 2024.03.08

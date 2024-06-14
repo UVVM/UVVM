@@ -510,6 +510,8 @@ package body avalon_mm_bfm_pkg is
     constant local_proc_call   : string                                                     := local_proc_name & "(A:" & to_string(addr_value, HEX, AS_IS, INCL_RADIX) & ")";
     variable timeout           : boolean                                                    := false;
     variable v_proc_call       : line;  -- Current proc_call, external or local
+    -- set to false if wait request is used but it is not asserted on the first rising edge of the clock after read is asserted
+    variable v_add_wait_request_delay : boolean                                               := false; 
     variable v_normalized_addr : std_logic_vector(avalon_mm_if.address'length - 1 downto 0) := normalize_and_check(std_logic_vector(addr_value), avalon_mm_if.address, ALLOW_NARROWER, "addr", "avalon_mm_if.address", msg);
 
     variable v_time_of_rising_edge  : time := -1 ns; -- time stamp for clk period checking
@@ -559,6 +561,9 @@ package body avalon_mm_bfm_pkg is
         if is_waitrequest_active(avalon_mm_if, config) then
           wait until rising_edge(clk);
         else
+          if cycle = 1 then
+            v_add_wait_request_delay := true;
+          end if;
           exit;
         end if;
         if cycle = config.max_wait_cycles then
@@ -578,7 +583,13 @@ package body avalon_mm_bfm_pkg is
     end if;
 
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after v_clock_period / 4;
-
+    -- if wait request is not asserted on the first cycle, wait until the next
+    -- rising edge until data becomes available by the agent
+    if v_add_wait_request_delay then
+        log(config.id_for_bfm, v_proc_call.all & " inserting one cycle delay for agent to drive readdata"& add_msg_delimiter(msg), scope, msg_id_panel);
+        wait until rising_edge(clk);
+    end if;
+          
     if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
     else

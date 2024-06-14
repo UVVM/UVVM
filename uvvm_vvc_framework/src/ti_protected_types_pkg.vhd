@@ -121,14 +121,18 @@ package ti_protected_types_pkg is
   type t_prot_vvc_list is protected
 
     procedure add(
-      constant name     : in string;
-      constant instance : in integer;
-      constant channel  : in t_channel := NA
+      constant name         : in string;
+      constant instance     : in integer;
+      constant channel      : in t_channel := NA;
+      constant scope        : in string;
+      constant msg_id_panel : in t_msg_id_panel
     );
 
     procedure add(
-      constant name     : in string;
-      constant instance : in integer
+      constant name         : in string;
+      constant instance     : in integer;
+      constant scope        : in string;
+      constant msg_id_panel : in t_msg_id_panel
     );
 
     procedure clear_list(
@@ -415,14 +419,16 @@ package body ti_protected_types_pkg is
     variable priv_last_added_vvc_idx : integer                                 := -1;
 
     procedure add(
-      constant name     : in string;
-      constant instance : in integer;
-      constant channel  : in t_channel := NA
+      constant name         : in string;
+      constant instance     : in integer;
+      constant channel      : in t_channel := NA;
+      constant scope        : in string;
+      constant msg_id_panel : in t_msg_id_panel
     ) is
       variable v_duplicate : boolean := false;
     begin
       if priv_last_added_vvc_idx >= C_MAX_TB_VVC_NUM then
-        alert(TB_ERROR, "Number of VVCs in the list exceed C_MAX_TB_VVC_NUM.\n" & "Increase C_MAX_TB_VVC_NUM in adaptations package.");
+        alert(TB_ERROR, "Number of VVCs in the list exceed C_MAX_TB_VVC_NUM.\n" & "Increase C_MAX_TB_VVC_NUM in adaptations package.", scope);
       end if;
 
       -- Check if VVC was previously added
@@ -444,19 +450,21 @@ package body ti_protected_types_pkg is
         priv_vvc_list(priv_last_added_vvc_idx).channel                := channel;
 
         if channel = NA then
-          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & " to the list.");
+          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & " to the list.", scope, msg_id_panel);
         else
-          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " to the list.");
+          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " to the list.", scope, msg_id_panel);
         end if;
       end if;
     end procedure;
 
     procedure add(
-      constant name     : in string;
-      constant instance : in integer
+      constant name         : in string;
+      constant instance     : in integer;
+      constant scope        : in string;
+      constant msg_id_panel : in t_msg_id_panel
     ) is
     begin
-      add(name, instance, NA);
+      add(name, instance, NA, scope, msg_id_panel);
     end procedure;
 
     procedure clear_list(

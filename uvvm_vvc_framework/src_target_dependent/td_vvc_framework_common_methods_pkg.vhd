@@ -47,13 +47,17 @@ package td_vvc_framework_common_methods_pkg is
     signal   vvc_target       : inout t_vvc_target_record;
     constant vvc_instance_idx : in integer;
     constant vvc_channel      : in t_channel;
-    variable vvc_list         : inout t_prot_vvc_list
+    variable vvc_list         : inout t_prot_vvc_list;
+    constant scope            : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant msg_id_panel     : in t_msg_id_panel := shared_msg_id_panel
   );
 
   procedure add_to_vvc_list(
     signal   vvc_target       : inout t_vvc_target_record;
     constant vvc_instance_idx : in integer;
-    variable vvc_list         : inout t_prot_vvc_list
+    variable vvc_list         : inout t_prot_vvc_list;
+    constant scope            : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant msg_id_panel     : in t_msg_id_panel := shared_msg_id_panel
   );
 
   -------------------------------------------
@@ -452,19 +456,23 @@ package body td_vvc_framework_common_methods_pkg is
     signal   vvc_target       : inout t_vvc_target_record;
     constant vvc_instance_idx : in integer;
     constant vvc_channel      : in t_channel;
-    variable vvc_list         : inout t_prot_vvc_list
+    variable vvc_list         : inout t_prot_vvc_list;
+    constant scope            : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant msg_id_panel     : in t_msg_id_panel := shared_msg_id_panel
   ) is
   begin
-    vvc_list.add(vvc_target.vvc_name, vvc_instance_idx, vvc_channel);
+    vvc_list.add(vvc_target.vvc_name, vvc_instance_idx, vvc_channel, scope, msg_id_panel);
   end procedure add_to_vvc_list;
 
   procedure add_to_vvc_list(
     signal   vvc_target       : inout t_vvc_target_record;
     constant vvc_instance_idx : in integer;
-    variable vvc_list         : inout t_prot_vvc_list
+    variable vvc_list         : inout t_prot_vvc_list;
+    constant scope            : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant msg_id_panel     : in t_msg_id_panel := shared_msg_id_panel
   ) is
   begin
-    vvc_list.add(vvc_target.vvc_name, vvc_instance_idx, NA);
+    vvc_list.add(vvc_target.vvc_name, vvc_instance_idx, NA, scope, msg_id_panel);
   end procedure add_to_vvc_list;
 
   procedure await_completion(
@@ -520,8 +528,8 @@ package body td_vvc_framework_common_methods_pkg is
 
     -- If the VVC is registered use the new mechanism
     if v_num_vvc_instances > 0 then
-      add_to_vvc_list(vvc_target, vvc_instance_idx, vvc_channel, v_vvc_list);
-      await_completion(ALL_OF, v_vvc_list, wanted_idx, timeout, CLEAR_LIST, msg, scope);
+      add_to_vvc_list(vvc_target, vvc_instance_idx, vvc_channel, v_vvc_list, scope, v_msg_id_panel);
+      await_completion(ALL_OF, v_vvc_list, wanted_idx, timeout, CLEAR_LIST, msg, scope, v_msg_id_panel);
     -- If the VVC is not registered use the old mechanism
     else
       log(ID_OLD_AWAIT_COMPLETION, vvc_target.vvc_name & " is not supporting the VVC activity register, using old await_completion() method.", scope, v_msg_id_panel);

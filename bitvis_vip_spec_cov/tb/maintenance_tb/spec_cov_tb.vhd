@@ -328,7 +328,7 @@ begin
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
       log(ID_LOG_HDR, "Testing passing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);
-      if GC_UART_REQ_FILE = "" then
+      if GC_SUB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
@@ -346,7 +346,7 @@ begin
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
       log(ID_LOG_HDR, "Testing failing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);
-      if GC_UART_REQ_FILE = "" then
+      if GC_SUB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase

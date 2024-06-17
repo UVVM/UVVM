@@ -102,7 +102,8 @@ test_list = [
     [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_3_strict_0.txt"],
     [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_3_strict_1.txt"],
     [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_3_strict_2.txt"],
-    [python_exe, "../script/run_spec_cov.py", "--strictness", "1", "-r", "../tb/maintenance_tb/combi_req_file.csv", "-p", "../sim/pc_combi.csv", "-s", "../sim/sc_combi.csv"]
+    [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_combi_strict_1.txt"],
+    [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_combi_strict_2.txt"]
 ]
 
 

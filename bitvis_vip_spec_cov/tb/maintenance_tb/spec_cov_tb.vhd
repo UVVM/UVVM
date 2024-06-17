@@ -32,6 +32,7 @@ entity spec_cov_tb is
     GC_REQ_FILE_EMPTY : string := "";     -- "../tb/maintenance_tb/req_file_empty.csv"
     GC_SUB_REQ_FILE   : string := "";     -- "../tb/maintenance_tb/sub_req_file.csv";
     GC_UART_REQ_FILE  : string := "";     -- "../tb/maintenance_tb/uart_req_file.csv";
+    GC_COMBI_REQ_FILE : string := "";     -- "../tb/maintenance_tb/combi_req_file.csv";
     GC_REQ_OMIT_MAP   : string := ""      -- "../tb/maintenance_tb/uart_omit_map_file.csv"
   );
 end entity spec_cov_tb;
@@ -328,7 +329,7 @@ begin
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
       log(ID_LOG_HDR, "Testing passing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);
-      if GC_UART_REQ_FILE = "" then
+      if GC_SUB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
@@ -346,7 +347,7 @@ begin
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
       log(ID_LOG_HDR, "Testing failing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);
-      if GC_UART_REQ_FILE = "" then
+      if GC_SUB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
@@ -485,11 +486,11 @@ begin
         -- This test will test requirements listed with a combination AND-listed and OR-listed testcases
         --
         log(ID_LOG_HDR, "Testing combination of AND- and OR- listed testcases.", C_SCOPE);
-        if GC_REQ_FILE = "" then
+        if GC_COMBI_REQ_FILE = "" then
           alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
         else
           -- Run testcase
-          initialize_req_cov("TC_1", GC_REQ_FILE, "pc_combi.csv");
+          initialize_req_cov("TC_1", GC_COMBI_REQ_FILE, "pc_combi.csv");
           tick_off_req_cov("REQ_1");
           tick_off_req_cov("REQ_2");
           tick_off_req_cov("REQ_3");

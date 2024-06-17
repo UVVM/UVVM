@@ -1,0 +1,4 @@
+-r ../tb/maintenance_tb/combi_req_file.csv 
+-p ../sim/pc_combi.csv
+-s ../sim/sc_combi_2.csv
+--strictness 2

@@ -28,9 +28,10 @@ Released: 2024-XX-XX
 - Removed Avalon-ST local_adaptations_pkg and moved content to adaptations_pkg.
 - Deprecated Spec Cov local_adaptations_pkg and moved content to adaptations_pkg.
 - Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
-- Fixed strictness 2 in spec cov
+- Fixed strictness 2 in spec cov.
 - Decreased C_MAX_TUSER_BITS to 32 in Axistream BFM which allows GHDL to run without storage errors.
 - Updated Utility Library documentation on how to enable report_check_counters().
+- Added comment support and updated handling of omitted requirements in spec cov.
 
 
 v2 2024.03.08

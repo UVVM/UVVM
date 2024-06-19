@@ -422,15 +422,36 @@ def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
             csv_writer = csv.writer(to_file, delimiter=delimiter)
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
             for req, tc in (run_req_list + not_run_req_list):
-                if tc:
-                    csv_writer.writerow([req.name, tc.name, req.compliance])
-                else:
-                    if req.is_super_requirement() and req.compliance == "COMPLIANT":
-                        csv_writer.writerow([req.name, "", compliant_string])
-                    elif req.is_super_requirement() and req.compliance == "NON_COMPLIANT":
-                        csv_writer.writerow([req.name, "", non_compliant_string])
+                if not(req.is_user_omitted):
+                    if tc:
+                        csv_writer.writerow([req.name, tc.name, req.compliance])
                     else:
-                        csv_writer.writerow([req.name, "", not_tested_compliant_string])
+                        if req.is_super_requirement() and req.compliance == "COMPLIANT":
+                            csv_writer.writerow([req.name, "", compliant_string])
+                        elif req.is_super_requirement() and req.compliance == "NON_COMPLIANT":
+                            csv_writer.writerow([req.name, "", non_compliant_string])
+                        else:
+                            csv_writer.writerow([req.name, "", not_tested_compliant_string])
+
+            # Create a table with the super-requirement mapping to sub-requirements
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+            csv_writer.writerow(["Requirement", "Sub-Requirement(s)"])
+            for requirement in container.get_requirement_list():
+                sub_requirement_string = ""
+                for sub_requirement in requirement.get_sub_requirement_list():
+                    sub_requirement_string += " " + sub_requirement.name
+                if sub_requirement_string:
+                    csv_writer.writerow([requirement.name, sub_requirement_string])
+            if reporting_dict.get("not_listed_requirements"):
+                csv_writer.writerow(["Not listed requirement(s)"])
+                for requirement in reporting_dict.get("not_listed_requirements"):
+                    csv_writer.writerow([requirement.name])
+            if reporting_dict.get("omitted_requirements"):
+                csv_writer.writerow(["User omitted requirement(s)"])
+                for requirement in reporting_dict.get("omitted_requirements"):
+                    csv_writer.writerow([requirement.name])
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_single_req_vs_single_tc_filename))
         abort(error_code = 1, msg = error_msg)
@@ -616,8 +637,9 @@ def write_spec_cov_files(run_configuration, container, delimiter):
 
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
             for requirement in container.get_requirement_list():
-                for testcase in requirement.get_sorted_testcase_list():
-                    csv_writer.writerow([requirement.name, testcase.name, requirement.compliance])
+                if not(requirement.is_user_omitted):
+                    for testcase in requirement.get_sorted_testcase_list():
+                        csv_writer.writerow([requirement.name, testcase.name, requirement.compliance])
             # Create a table with the super-requirement mapping to sub-requirements
             csv_writer.writerow([])
             csv_writer.writerow([])
@@ -651,17 +673,18 @@ def write_spec_cov_files(run_configuration, container, delimiter):
 
             csv_writer.writerow(["Requirement", "Testcase(s)", "Compliance"])
             for requirement in container.get_requirement_list():
-                testcase_string = ""
-                for testcase in requirement.get_sorted_testcase_list():
-                    testcase_string += testcase.name + " "
+                if not(requirement.is_user_omitted):
+                    testcase_string = ""
+                    for testcase in requirement.get_sorted_testcase_list():
+                        testcase_string += testcase.name + " "
 
-                if not(testcase_string) and requirement.is_super_requirement():
-                    for sub_requirement in requirement.get_sub_requirement_list():
-                        for testcase in sub_requirement.get_sorted_testcase_list():
-                            if not testcase.name in testcase_string:
-                                testcase_string += testcase.name + " "
+                    if not(testcase_string) and requirement.is_super_requirement():
+                        for sub_requirement in requirement.get_sub_requirement_list():
+                            for testcase in sub_requirement.get_sorted_testcase_list():
+                                if not testcase.name in testcase_string:
+                                    testcase_string += testcase.name + " "
 
-                csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
+                    csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
 
             # Create a table with the super-requirement mapping to sub-requirements
             csv_writer.writerow([])
@@ -849,23 +872,34 @@ def build_mapping_req_list(run_configuration, container, delimiter):
             csv_reader = csv.reader(csv_map_file, delimiter=delimiter)
 
             for row in csv_reader:
+                user_omitted = False
                 for idx, cell_item in enumerate(row):
 
-                    # Firs cell is the super-requirement
+                    # First cell is the super-requirement
                     if idx == 0:
                         super_requirement_name = cell_item.strip()
-                        
+
+                        if super_requirement_name.startswith('#'):
+                            user_omitted = True
+                            super_requirement_name = super_requirement_name.replace('#', '')
+                        elif super_requirement_name.startswith('--'): # Comment
+                            break # Ignore row if it starts with comment symbol (--)
                         super_requirement = container.get_requirement(super_requirement_name)
                         super_requirement.found_in_requirement_file = True
 
+                        #Check, and mark, if user has chosen to omit this requirement.
+                        if user_omitted:
+                            super_requirement.is_user_omitted = True
+
                     # Rest of the cells are sub-requirements
                     else:
-                        # Get the requirement (if it exists)
-                        sub_requirement_name = cell_item.strip()
-                        sub_requirement = container.get_requirement(sub_requirement_name)
+                        if user_omitted == False: # Ignore sub-requirements of omitted requirements
+                            # Get the requirement (if it exists)
+                            sub_requirement_name = cell_item.strip()
+                            sub_requirement = container.get_requirement(sub_requirement_name)
 
-                        super_requirement.add_sub_requirement(sub_requirement)
-                        sub_requirement.add_super_requirement(super_requirement)
+                            super_requirement.add_sub_requirement(sub_requirement)
+                            sub_requirement.add_super_requirement(super_requirement)
             
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], requirement_map_file))
@@ -910,6 +944,7 @@ def build_req_list(run_configuration, container, delimiter):
             for row in csv_reader:
                 num_req_found += 1
                 or_listed_tc_list.clear()
+                comment_line = False
 
                 # OR-listed requirements
                 if len(row) > 3: # Two or more TCs listed
@@ -928,6 +963,9 @@ def build_req_list(run_configuration, container, delimiter):
                         if requirement_name.startswith('#'): 
                             user_omitted = True
                             requirement_name = requirement_name.replace('#', '')
+                        elif requirement_name.startswith('--'): # Comment
+                            comment_line = True
+                            break # Ignore row if it starts with comment symbol (--)
 
                         # Will get an existing or a new requirement object
                         requirement = container.get_requirement(requirement_name)
@@ -951,7 +989,7 @@ def build_req_list(run_configuration, container, delimiter):
                         requirement.description = row[idx]
 
                     # Testcase(s)
-                    elif idx >= 2:
+                    elif idx >= 2 and not(requirement.is_user_omitted):
                         # Get testcase name
                         testcase_name = row[idx].strip()
 
@@ -959,18 +997,17 @@ def build_req_list(run_configuration, container, delimiter):
                         testcase = container.get_testcase(testcase_name)            
 
                         # Connect: requirement <-> testcase
-                        if not(requirement.is_user_omitted):
-                            testcase.add_expected_requirement(requirement)
-                            if or_listed_testcases == True:
-                                # Add to or_listed_tc_list. This list will be added to expected_testcase_list later
-                                or_listed_tc_list.append(testcase)
-                            else:
-                                # Add testcase to TC list
-                                requirement.add_expected_testcase(testcase)
+                        testcase.add_expected_requirement(requirement)
+                        if or_listed_testcases == True:
+                            # Add to or_listed_tc_list. This list will be added to expected_testcase_list later
+                            or_listed_tc_list.append(testcase)
+                        else:
+                            # Add testcase to TC list
+                            requirement.add_expected_testcase(testcase)
 
                 # If requirement line had or-listed TCs, add list of these TCs to expected_testcase_list
-                if not(requirement.is_user_omitted):
-                    if or_listed_testcases == True:
+                if not(comment_line): # Need to check first is line is a comment line. Otherwise, there is no requirement object to check
+                    if (or_listed_testcases == True) and not(requirement.is_user_omitted):
                         requirement.add_expected_testcase(or_listed_tc_list.copy())
 
 

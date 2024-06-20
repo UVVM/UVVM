@@ -790,7 +790,9 @@ gives same result as FINAL. ::
 
 report_check_counters()
 ----------------------------------------------------------------------------------------------------------------------------------
-Logs the status of all check counters, typically at the end of simulation. VOID parameter gives same result as FINAL. ::
+Logs the number of all check counters in the testbench, typically to be used at the end of simulation. Note that this functionality 
+is disabled by default to avoid possible decreased performance, set C_ENABLE_CHECK_COUNTER to true in adaptations_pkg to enable it. 
+The VOID parameter gives same result as FINAL. ::
 
     report_check_counters(order)
     report_check_counters(VOID)

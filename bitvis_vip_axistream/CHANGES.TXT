@@ -7,6 +7,7 @@ v5.0.1
 Released: 2024-XX-XX
 - Changed max constants used in BFM and VVC to be adjustable from adaptations_pkg.
 - Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Decreased C_MAX_TUSER_BITS to 32 which allows GHDL to run without storage errors.
 
 v5.0.0
 ----------

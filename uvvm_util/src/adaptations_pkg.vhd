@@ -321,7 +321,7 @@ package adaptations_pkg is
 
   -- AXI-Stream
   -- Constants for the maximum sizes to use in the BFM.
-  constant C_AXISTREAM_BFM_MAX_TUSER_BITS : positive := 64;
+  constant C_AXISTREAM_BFM_MAX_TUSER_BITS : positive := 32;
   constant C_AXISTREAM_BFM_MAX_TSTRB_BITS : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
   constant C_AXISTREAM_BFM_MAX_TID_BITS   : positive := 8;  -- Recommended maximum in protocol specification (ARM IHI0051A)
   constant C_AXISTREAM_BFM_MAX_TDEST_BITS : positive := 4;  -- Recommended maximum in protocol specification (ARM IHI0051A)

@@ -32,6 +32,7 @@ Released: 2024-XX-XX
 - Decreased C_MAX_TUSER_BITS to 32 in Axistream BFM which allows GHDL to run without storage errors.
 - Updated Utility Library documentation on how to enable report_check_counters().
 - Added comment support and updated handling of omitted requirements in spec cov.
+- Various changes to spec cov output files.
 
 
 v2 2024.03.08

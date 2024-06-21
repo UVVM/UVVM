@@ -59,6 +59,7 @@ class Requirement():
         self.__requirement_description    = None
         self.__req_compliance             = not_tested_compliant_string
         self.__req_is_defined_in_req_file = False
+        self.__req_is_defined_in_map_file = False
         self.__req_file_idx               = 0
         self.__req_is_user_omitted        = False
 
@@ -161,7 +162,7 @@ class Requirement():
             self.__super_requirement_list.append(super_requirement)
 
 
-    def get_supert_requirement_list(self) -> list :
+    def get_super_requirement_list(self) -> list :
         return self.__super_requirement_list
 
 
@@ -218,6 +219,14 @@ class Requirement():
         if self.__super_requirement_list:
             return True
         return False
+
+    @property
+    def found_in_map_file(self) -> bool :
+        return self.__req_is_defined_in_map_file
+
+    @found_in_map_file.setter
+    def found_in_map_file(self, found) -> None :
+        self.__req_is_defined_in_map_file = found
 
     @property
     def found_in_requirement_file(self) -> bool :
@@ -377,6 +386,7 @@ testcase_not_run_string             = "NOT_EXECUTED"
 compliant_string                    = "COMPLIANT"
 non_compliant_string                = "NON_COMPLIANT"
 not_tested_compliant_string         = "NOT_TESTED"
+tested_ok_compliant_string          = "TESTED_OK"
 parsed_string                       = "Has been parsed by run_spec_cov.py script for total coverage"
 delimiter                           = "," # Default delimiter - will be updated from partial coverage file
 
@@ -422,33 +432,43 @@ def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
             csv_writer = csv.writer(to_file, delimiter=delimiter)
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
             for req, tc in (run_req_list + not_run_req_list):
-                if not(req.is_user_omitted):
-                    if tc:
-                        csv_writer.writerow([req.name, tc.name, req.compliance])
+                if req.is_user_omitted or req.is_super_requirement():
+                    continue # Don't list omitted requirements, or requirements defiend in map file (super reqs)
+
+                if tc:
+                    csv_writer.writerow([req.name, tc.name, req.compliance])
+                else:
+                    if req.is_super_requirement() and req.compliance == "COMPLIANT":
+                        csv_writer.writerow([req.name, "", compliant_string])
+                    elif req.is_super_requirement() and req.compliance == "NON_COMPLIANT":
+                        csv_writer.writerow([req.name, "", non_compliant_string])
                     else:
-                        if req.is_super_requirement() and req.compliance == "COMPLIANT":
-                            csv_writer.writerow([req.name, "", compliant_string])
-                        elif req.is_super_requirement() and req.compliance == "NON_COMPLIANT":
-                            csv_writer.writerow([req.name, "", non_compliant_string])
-                        else:
-                            csv_writer.writerow([req.name, "", not_tested_compliant_string])
+                        csv_writer.writerow([req.name, "", not_tested_compliant_string])
 
             # Create a table with the super-requirement mapping to sub-requirements
+            first_mapping_line = True
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)"])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
+                first_item = True
                 for sub_requirement in requirement.get_sub_requirement_list():
-                    sub_requirement_string += " " + sub_requirement.name
+                    if first_item:
+                        sub_requirement_string = sub_requirement.name
+                    sub_requirement_string += " & " + sub_requirement.name
                 if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, sub_requirement_string])
+                    if first_mapping_line == True: # Print headings before first line
+                        csv_writer.writerow([])
+                        csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
+                        first_mapping_line = False
+                    csv_writer.writerow([requirement.name, sub_requirement_string, requirement.compliance])
             if reporting_dict.get("not_listed_requirements"):
+                csv_writer.writerow([])
                 csv_writer.writerow(["Not listed requirement(s)"])
                 for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
             if reporting_dict.get("omitted_requirements"):
+                csv_writer.writerow([])
                 csv_writer.writerow(["User omitted requirement(s)"])
                 for requirement in reporting_dict.get("omitted_requirements"):
                     csv_writer.writerow([requirement.name])
@@ -506,7 +526,7 @@ def terminal_present_results(container, delimiter) -> dict:
         else:
             print("WARNING! Unknown result for requirement : %s." %(requirement.name))
             requirement_non_compliant_list.append(requirement)
-        if not(requirement.found_in_requirement_file) or not(requirement.is_sub_requirement):
+        if not(requirement.found_in_requirement_file) and not(requirement.found_in_map_file):
             requirement_not_listed_list.append(requirement)
 
 
@@ -620,6 +640,7 @@ def write_spec_cov_files(run_configuration, container, delimiter):
     # Write the results to CSVs
     #==========================================================================
     filename = run_configuration.get("spec_cov")
+    strictness = run_configuration.get("strictness")
 
     # Check if specification coverage file has been specified
     if not(filename):
@@ -637,26 +658,71 @@ def write_spec_cov_files(run_configuration, container, delimiter):
 
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
             for requirement in container.get_requirement_list():
-                if not(requirement.is_user_omitted):
-                    for testcase in requirement.get_sorted_testcase_list():
+                if requirement.is_user_omitted or requirement.is_super_requirement():
+                    continue # Don't list omitted requirements, or requirements defiend in map file (super reqs)
+                sorted_testcase_list = requirement.get_sorted_testcase_list()
+
+                if not sorted_testcase_list: # Req. listed without TC, not tested
+                    csv_writer.writerow([requirement.name, testcase.name, requirement.compliance]) # Expect NOT_TESTED
+                    if not (requirement.compliance == not_tested_compliant_string):
+                        print("ERROR: Expected result to be NOT_TESTED, was " + requirement.compliance)
+                    continue
+
+                for testcase in sorted_testcase_list:
+                    actual_testcase_list = requirement.get_actual_testcase_list()
+                    expected_testcase_list = requirement.get_expected_testcase_list()
+                    compliance = requirement.compliance
+
+                    if strictness == '1':
+                        # In strictness 1, if req tested only in non-speced TC, mark as TESTED_OK on line for this TC.
+                        # If compliant (i.e. tested in correct TC), don't list lines with non-speced TCs.
+                        # If non-compliant, write NON_COMPLIANT on all lines for this req.
+
+                        if (testcase in actual_testcase_list) and not(expected_testcase_list):
+                            # No expected testcases exist -> Req is unlisted, or listed without TC
+                            csv_writer.writerow([requirement.name, testcase.name, requirement.compliance])
+
+                        elif (testcase in actual_testcase_list) and not(testcase in expected_testcase_list):
+                            # Expected testcase(s) exist. Requirement tested in other testcase.
+                            if compliance == not_tested_compliant_string: # Req only tested in non-listed TC
+                                csv_writer.writerow([requirement.name, testcase.name, tested_ok_compliant_string])
+                            elif compliance == non_compliant_string:
+                                csv_writer.writerow([requirement.name, testcase.name, requirement.compliance])
+                            # else, req is compliant from specified TC -> don't list lines with non-speced TCs
+
+                        else:
+                            # Testcase in expected TC list
+                            csv_writer.writerow([requirement.name, testcase.name, requirement.compliance])
+
+                    else: # Other strictnesses
                         csv_writer.writerow([requirement.name, testcase.name, requirement.compliance])
+
+
             # Create a table with the super-requirement mapping to sub-requirements
+            first_mapping_line = True
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)"])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
+                first_item = True
                 for sub_requirement in requirement.get_sub_requirement_list():
-                    sub_requirement_string += " " + sub_requirement.name
+                    if first_item:
+                        sub_requirement_string = sub_requirement.name
+                    sub_requirement_string += " & " + sub_requirement.name
                 if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, sub_requirement_string])
+                    if first_mapping_line == True: # Print headings before first line
+                        csv_writer.writerow([])
+                        csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
+                        first_mapping_line = False
+                    csv_writer.writerow([requirement.name, sub_requirement_string, requirement.compliance])
             if reporting_dict.get("not_listed_requirements"):
+                csv_writer.writerow([])
                 csv_writer.writerow(["Not listed requirement(s)"])
                 for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
 
             if reporting_dict.get("omitted_requirements"):
+                csv_writer.writerow([])
                 csv_writer.writerow(["User omitted requirement(s)"])
                 for requirement in reporting_dict.get("omitted_requirements"):
                     csv_writer.writerow([requirement.name])
@@ -673,35 +739,43 @@ def write_spec_cov_files(run_configuration, container, delimiter):
 
             csv_writer.writerow(["Requirement", "Testcase(s)", "Compliance"])
             for requirement in container.get_requirement_list():
-                if not(requirement.is_user_omitted):
-                    testcase_string = ""
-                    for testcase in requirement.get_sorted_testcase_list():
-                        testcase_string += testcase.name + " "
+                if requirement.is_user_omitted or requirement.is_super_requirement():
+                    continue # Don't list omitted requirements, or requirements defiend in map file (super reqs)
+                testcase_string = ""
+                first_item = True
+                for testcase in requirement.get_sorted_testcase_list():
+                    if first_item:
+                        testcase_string = testcase.name
+                        first_item = False
+                    else:
+                        testcase_string += " & " + testcase.name
 
-                    if not(testcase_string) and requirement.is_super_requirement():
-                        for sub_requirement in requirement.get_sub_requirement_list():
-                            for testcase in sub_requirement.get_sorted_testcase_list():
-                                if not testcase.name in testcase_string:
-                                    testcase_string += testcase.name + " "
-
-                    csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
+                csv_writer.writerow([requirement.name, testcase_string, requirement.compliance])
 
             # Create a table with the super-requirement mapping to sub-requirements
+            first_mapping_line = True
             csv_writer.writerow([])
             csv_writer.writerow([])
-            csv_writer.writerow([])
-            csv_writer.writerow(["Requirement", "Sub-Requirement(s)"])
             for requirement in container.get_requirement_list():
                 sub_requirement_string = ""
+                first_item = True
                 for sub_requirement in requirement.get_sub_requirement_list():
-                    sub_requirement_string += " " + sub_requirement.name
+                    if first_item:
+                        sub_requirement_string = sub_requirement.name
+                    sub_requirement_string += " & " + sub_requirement.name
                 if sub_requirement_string:
-                    csv_writer.writerow([requirement.name, sub_requirement_string])
+                    if first_mapping_line == True: # Print headings before first line
+                        csv_writer.writerow([])
+                        csv_writer.writerow(["Requirement", "Sub-Requirement(s)", "Compliance"])
+                        first_mapping_line = False
+                    csv_writer.writerow([requirement.name, sub_requirement_string, requirement.compliance])
             if reporting_dict.get("not_listed_requirements"):
+                csv_writer.writerow([])
                 csv_writer.writerow(["Not listed requirement(s)"])
                 for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
             if reporting_dict.get("omitted_requirements"):
+                csv_writer.writerow([])
                 csv_writer.writerow(["User omitted requirement(s)"])
                 for requirement in reporting_dict.get("omitted_requirements"):
                     csv_writer.writerow([requirement.name])
@@ -720,8 +794,13 @@ def write_spec_cov_files(run_configuration, container, delimiter):
 
             for testcase in container.get_testcase_list():
                 requirement_string = ""
+                first_item = True
                 for requirement in testcase.get_all_requirement_list():
-                    requirement_string += requirement.name + " "
+                    if first_item:
+                        requirement_string = requirement.name
+                        first_item = False
+                    else:
+                        requirement_string += " & " + requirement.name
                 csv_writer.writerow([testcase.name, requirement_string, testcase.result])
                 
     except:
@@ -878,12 +957,12 @@ def build_mapping_req_list(run_configuration, container, delimiter):
                     # First cell is the super-requirement
                     if idx == 0:
                         super_requirement_name = cell_item.strip()
-
                         if super_requirement_name.startswith('#'):
                             user_omitted = True
                             super_requirement_name = super_requirement_name.replace('#', '')
                         elif super_requirement_name.startswith('--'): # Comment
                             break # Ignore row if it starts with comment symbol (--)
+
                         super_requirement = container.get_requirement(super_requirement_name)
                         super_requirement.found_in_requirement_file = True
 
@@ -982,7 +1061,7 @@ def build_req_list(run_configuration, container, delimiter):
                         # If strictness 2, check that testcases are defined for requirement. Otherwise, exit with error message.
                         if run_configuration.get("strictness") == '2':
                             if len(row) < 3: # No TCs listed
-                                abort(error_code = 1, msg = "Error: At least one testcase must be defined for each requirement when using strictness 2")
+                                abort(error_code = 1, msg = "Error: At least one testcase must be defined for each requirement when using strictness 2.")
 
                     # Requirement description
                     elif idx == 1:

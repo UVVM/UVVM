@@ -410,6 +410,7 @@ package body spec_cov_pkg is
   ) is
     variable v_tc_valid : boolean;
     variable v_file_ok  : boolean;
+    variable v_requirement : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
   begin
     if priv_requirements_in_array > 0 then
       alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
@@ -427,28 +428,31 @@ package body spec_cov_pkg is
       priv_csv_file.readline;
 
       -- Read requirement
-      priv_requirement_array(priv_requirements_in_array).requirement := new string'(priv_csv_file.read_string);
-      -- Read description
-      priv_requirement_array(priv_requirements_in_array).description := new string'(priv_csv_file.read_string);
-      -- Read testcases
-      v_tc_valid                                                     := true;
-      priv_requirement_array(priv_requirements_in_array).num_tcs     := 0;
-      while v_tc_valid loop
-        priv_requirement_array(priv_requirements_in_array).tc_list(priv_requirement_array(priv_requirements_in_array).num_tcs) := new string'(priv_csv_file.read_string);
-        if (priv_requirement_array(priv_requirements_in_array).tc_list(priv_requirement_array(priv_requirements_in_array).num_tcs).all(1) /= NUL) then
-          priv_requirement_array(priv_requirements_in_array).num_tcs := priv_requirement_array(priv_requirements_in_array).num_tcs + 1;
-        else
-          v_tc_valid := false;
-        end if;
-      end loop;
-      -- Validate entry
-      priv_requirement_array(priv_requirements_in_array).valid       := true;
+      v_requirement := priv_csv_file.read_string;
+      if v_requirement(1 to 2) /= "--" then
+        priv_requirement_array(priv_requirements_in_array).requirement := new string'(v_requirement);
+        -- Read description
+        priv_requirement_array(priv_requirements_in_array).description := new string'(priv_csv_file.read_string);
+        -- Read testcases
+        v_tc_valid                                                     := true;
+        priv_requirement_array(priv_requirements_in_array).num_tcs     := 0;
+        while v_tc_valid loop
+          priv_requirement_array(priv_requirements_in_array).tc_list(priv_requirement_array(priv_requirements_in_array).num_tcs) := new string'(priv_csv_file.read_string);
+          if (priv_requirement_array(priv_requirements_in_array).tc_list(priv_requirement_array(priv_requirements_in_array).num_tcs).all(1) /= NUL) then
+            priv_requirement_array(priv_requirements_in_array).num_tcs := priv_requirement_array(priv_requirements_in_array).num_tcs + 1;
+          else
+            v_tc_valid := false;
+          end if;
+        end loop;
+        -- Validate entry
+        priv_requirement_array(priv_requirements_in_array).valid       := true;
 
-      -- Set number of tickoffs for this requirement to 0
-      priv_requirement_array(priv_requirements_in_array).num_tickoffs := 0;
+        -- Set number of tickoffs for this requirement to 0
+        priv_requirement_array(priv_requirements_in_array).num_tickoffs := 0;
 
-      priv_log_entry(priv_requirements_in_array);
-      priv_requirements_in_array := priv_requirements_in_array + 1;
+        priv_log_entry(priv_requirements_in_array);
+        priv_requirements_in_array := priv_requirements_in_array + 1;
+      end if;
     end loop;
 
     priv_csv_file.dispose;

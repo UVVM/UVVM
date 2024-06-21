@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UVVM FIFO Collection &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -27,12 +30,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #F5F5F5" >
-            <a href="index.html">
-            <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -99,8 +106,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>UVVM FIFO Collection</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">UVVM FIFO Collection</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/fifo_collection.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -111,17 +118,12 @@
            <div itemprop="articleBody">
              
   <section id="uvvm-fifo-collection">
-<span id="id1"></span><h1>UVVM FIFO Collection<a class="headerlink" href="#uvvm-fifo-collection" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>UVVM FIFO Collection<a class="headerlink" href="#uvvm-fifo-collection" title="Link to this heading"></a></h1>
 <p>The FIFO Collection is a memory buffer that can be used to hold one or more FIFOs. Each FIFO will be allocated a chosen size and
 ID number. This allows a selectable number of FIFOs to operate individually and be independently accessed.</p>
 <section id="functional-parameters">
-<h2>Functional Parameters<a class="headerlink" href="#functional-parameters" title="Permalink to this headline"></a></h2>
+<h2>Functional Parameters<a class="headerlink" href="#functional-parameters" title="Link to this heading"></a></h2>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 27%" />
-<col style="width: 51%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
 <th class="head"><p>Type</p></th>
@@ -153,116 +155,116 @@ ID number. This allows a selectable number of FIFOs to operate individually and 
 </table>
 </section>
 <section id="methods">
-<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline"></a></h2>
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>All FIFO functions and procedures are defined in data_fifo_pkg.vhd</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
 <section id="uvvm-fifo-init">
-<h3>uvvm_fifo_init()<a class="headerlink" href="#uvvm-fifo-init" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_init()<a class="headerlink" href="#uvvm-fifo-init" title="Link to this heading"></a></h3>
 <p>This UVVM FIFO call will allocate space in the FIFO buffer. If no buffer_idx is given, the call will return a buffer index for use
 when addressing the FIFO. Note that 0 will be returned on error. If a buffer_idx is given, the FIFO is initialized with this
 index.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uvvm_fifo_init</span><span class="p">([</span><span class="n">buffer_idx</span><span class="p">],</span><span class="w"> </span><span class="n">buffer_size_in_bits</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uvvm_fifo_init</span><span class="p">([</span><span class="n">buffer_idx</span><span class="p">],</span><span class="w"> </span><span class="n">buffer_size_in_bits</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">uvvm_fifo_init</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_BUFFER_SIZE</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="c1">-- initialize buffer with index C_BUFFER_IDX_1</span><span class="w"></span>
-<span class="n">v_fifo_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_init</span><span class="p">(</span><span class="n">C_BUFFER_SIZE</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uvvm_fifo_init</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_BUFFER_SIZE</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="c1">-- initialize buffer with index C_BUFFER_IDX_1</span>
+<span class="n">v_fifo_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_init</span><span class="p">(</span><span class="n">C_BUFFER_SIZE</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uvvm-fifo-put">
-<h3>uvvm_fifo_put()<a class="headerlink" href="#uvvm-fifo-put" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_put()<a class="headerlink" href="#uvvm-fifo-put" title="Link to this heading"></a></h3>
 <p>This procedure puts data into a FIFO with index buffer_idx. The size of the data is unconstrained, meaning that it can be any
 size. Pushing data with a size that is larger than the FIFO size results in wrapping, i.e., that when reaching the end that data
 remaining will overwrite the data that was first written.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uvvm_fifo_put</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uvvm_fifo_put</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">uvvm_fifo_put</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_rx_data</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uvvm_fifo_put</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">,</span><span class="w"> </span><span class="n">v_rx_data</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uvvm-fifo-get">
-<h3>uvvm_fifo_get()<a class="headerlink" href="#uvvm-fifo-get" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_get()<a class="headerlink" href="#uvvm-fifo-get" title="Link to this heading"></a></h3>
 <p>This function returns the data from the FIFO and removes the returned data from the FIFO. Note that buffer_idx is the index of the
 FIFO that shall be read, and that entry_size_in_bits is the size of the returned data as SLV. Attempting to get data from an empty
 FIFO is allowed but triggers a TB_WARNING and returns garbage data. Attempting to get a larger value than the FIFO size is allowed
 but triggers a TB_WARNING.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">,</span><span class="w"> </span><span class="n">entry_size_in_bits</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">,</span><span class="w"> </span><span class="n">entry_size_in_bits</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">v_rx_data</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_ENTRY_SIZE</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_rx_data</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_ENTRY_SIZE</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uvvm-fifo-flush">
-<h3>uvvm_fifo_flush()<a class="headerlink" href="#uvvm-fifo-flush" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_flush()<a class="headerlink" href="#uvvm-fifo-flush" title="Link to this heading"></a></h3>
 <p>This procedure empties the FIFO given by buffer_idx.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uvvm_fifo_flush</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uvvm_fifo_flush</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">uvvm_fifo_flush</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uvvm_fifo_flush</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uvvm-fifo-peek">
-<h3>uvvm_fifo_peek()<a class="headerlink" href="#uvvm-fifo-peek" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_peek()<a class="headerlink" href="#uvvm-fifo-peek" title="Link to this heading"></a></h3>
 <p>This function returns the data from the FIFO without removing it. Note that apart from not removing the data, this function will
 behave in the same way as the uvvm_fifo_get() function.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_peek</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">,</span><span class="w"> </span><span class="n">entry_size_in_bits</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">std_logic_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_peek</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">,</span><span class="w"> </span><span class="n">entry_size_in_bits</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">v_rx_data</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_peek</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_ENTRY_SIZE</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_rx_data</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_peek</span><span class="p">(</span><span class="n">C_BUFFER_IDX_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_ENTRY_SIZE</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uvvm-fifo-get-count">
-<h3>uvvm_fifo_get_count()<a class="headerlink" href="#uvvm-fifo-get-count" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_get_count()<a class="headerlink" href="#uvvm-fifo-get-count" title="Link to this heading"></a></h3>
 <p>This function returns a natural indicating the number of elements currently occupying the FIFO given by buffer_idx.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get_count</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get_count</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">v_num_elements</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get_count</span><span class="p">(</span><span class="n">C_BUFFER_IDX</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_num_elements</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get_count</span><span class="p">(</span><span class="n">C_BUFFER_IDX</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uvvm-fifo-get-max-count">
-<h3>uvvm_fifo_get_max_count()<a class="headerlink" href="#uvvm-fifo-get-max-count" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_get_max_count()<a class="headerlink" href="#uvvm-fifo-get-max-count" title="Link to this heading"></a></h3>
 <p>This function returns a natural indicating the maximum number of elements that can occupy the FIFO given by buffer_idx.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get_max_count</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get_max_count</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">v_max_elements</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get_max_count</span><span class="p">(</span><span class="n">C_BUFFER_IDX</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_max_elements</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_get_max_count</span><span class="p">(</span><span class="n">C_BUFFER_IDX</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uvvm-fifo-is-full">
-<h3>uvvm_fifo_is_full()<a class="headerlink" href="#uvvm-fifo-is-full" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_is_full()<a class="headerlink" href="#uvvm-fifo-is-full" title="Link to this heading"></a></h3>
 <p>This function returns a boolean indicating if the FIFO is full or not.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_is_full</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_is_full</span><span class="p">(</span><span class="n">buffer_idx</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">v_fifo_is_full</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_is_full</span><span class="p">(</span><span class="n">C_BUFFER_IDX</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_fifo_is_full</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uvvm_fifo_is_full</span><span class="p">(</span><span class="n">C_BUFFER_IDX</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uvvm-fifo-deallocate">
-<h3>uvvm_fifo_deallocate()<a class="headerlink" href="#uvvm-fifo-deallocate" title="Permalink to this headline"></a></h3>
+<h3>uvvm_fifo_deallocate()<a class="headerlink" href="#uvvm-fifo-deallocate" title="Link to this heading"></a></h3>
 <p>This function deallocates the FIFO buffer, all the FIFO pointers are reset.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uvvm_fifo_deallocate</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">uvvm_fifo_deallocate</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">uvvm_fifo_deallocate</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uvvm_fifo_deallocate</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition note">

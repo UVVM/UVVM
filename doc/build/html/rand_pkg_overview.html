@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enhanced Randomization &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -27,12 +30,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #F5F5F5" >
-            <a href="index.html">
-            <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -114,8 +121,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Enhanced Randomization</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Enhanced Randomization</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/rand_pkg_overview.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -126,9 +133,9 @@
            <div itemprop="articleBody">
              
   <section id="enhanced-randomization">
-<span id="rand-pkg-overview"></span><h1>Enhanced Randomization<a class="headerlink" href="#enhanced-randomization" title="Permalink to this headline"></a></h1>
+<span id="rand-pkg-overview"></span><h1>Enhanced Randomization<a class="headerlink" href="#enhanced-randomization" title="Link to this heading"></a></h1>
 <section id="getting-started">
-<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h2>
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
 <p>All the functionality for <strong>Enhanced Randomization</strong>, using protected types, can be found in <em>uvvm_util/src/rand_pkg.vhd</em>. For
 more information on protected types see <a class="reference internal" href="protected_types.html#protected-types"><span class="std std-ref">Protected types</span></a>.</p>
 <p>For more simple functionality, not using protected types, refer to the <a class="reference internal" href="utility_library.html#basic-randomization"><span class="std std-ref">Basic Randomization</span></a>.</p>
@@ -139,44 +146,44 @@ protected type <em>t_rand</em> and call either the <code class="docutils literal
 is being used:</p>
 <p><strong>1. Single-method approach:</strong> The <code class="docutils literal notranslate"><span class="pre">rand()</span></code> function is constrained by the parameters it receives plus additional configuration
 values. This approach is useful for simple constraints or constraints which are not repeated constantly throughout the code.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span><span class="w"></span>
-<span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span><span class="w"></span>
-<span class="p">...</span><span class="w"></span>
-<span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span><span class="w"></span>
-<span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">my_rand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_rand</span><span class="p">;</span><span class="w"></span>
-<span class="k">begin</span><span class="w"></span>
-<span class="w">  </span><span class="c1">-- Generate a random value in the range [0:255]</span><span class="w"></span>
-<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">255</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span>
+<span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
+<span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">my_rand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_rand</span><span class="p">;</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="c1">-- Generate a random value in the range [0:255]</span>
+<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">255</span><span class="p">);</span>
 
-<span class="w">  </span><span class="c1">-- Generate a random value in the range [0:64] and either 128 or 256, except for 32</span><span class="w"></span>
-<span class="w">  </span><span class="n">size</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">32</span><span class="p">));</span><span class="w"></span>
-<span class="w">  </span><span class="p">...</span><span class="w"></span>
+<span class="w">  </span><span class="c1">-- Generate a random value in the range [0:64] and either 128 or 256, except for 32</span>
+<span class="w">  </span><span class="n">size</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">32</span><span class="p">));</span>
+<span class="w">  </span><span class="p">...</span>
 </pre></div>
 </div>
 <p><strong>2. Multi-method approach:</strong> The constraints for the <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function need to be previously configured by using different
 procedures. The benefit of this approach is that the constraints only need to be defined once, instead of being repeated on every
 <code class="docutils literal notranslate"><span class="pre">randm()</span></code> call, resulting in a code which is more structured and easier to read for complex constraints. It also supports more
 combinations of different constraints, such as multiple ranges.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span><span class="w"></span>
-<span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span><span class="w"></span>
-<span class="p">...</span><span class="w"></span>
-<span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span><span class="w"></span>
-<span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">my_rand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_rand</span><span class="p">;</span><span class="w"></span>
-<span class="k">begin</span><span class="w"></span>
-<span class="w">  </span><span class="c1">-- Generate a random value in the range [0:255] and [500:511]</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">255</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mi">511</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">uvvm_util</span><span class="p">;</span>
+<span class="n">context</span><span class="w"> </span><span class="n">uvvm_util</span><span class="p">.</span><span class="n">uvvm_util_context</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">p_main</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
+<span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">my_rand</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_rand</span><span class="p">;</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="c1">-- Generate a random value in the range [0:255] and [500:511]</span>
+<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">255</span><span class="p">);</span>
+<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mi">511</span><span class="p">);</span>
+<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 
-<span class="w">  </span><span class="c1">-- Clear the constraints so we can reuse the random generator variable</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="c1">-- Clear the constraints so we can reuse the random generator variable</span>
+<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 
-<span class="w">  </span><span class="c1">-- Generate a random value in the range [0:64] and either 128 or 256, except for 32</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">));</span><span class="w"></span>
-<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">size</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">...</span><span class="w"></span>
+<span class="w">  </span><span class="c1">-- Generate a random value in the range [0:64] and either 128 or 256, except for 32</span>
+<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span><span class="mi">256</span><span class="p">));</span>
+<span class="w">  </span><span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
+<span class="w">  </span><span class="n">size</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="w">  </span><span class="p">...</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -185,34 +192,34 @@ combinations of different constraints, such as multiple ranges.</p>
 </div>
 </section>
 <section id="single-method-approach">
-<h2>Single-method approach<a class="headerlink" href="#single-method-approach" title="Permalink to this headline"></a></h2>
+<h2>Single-method approach<a class="headerlink" href="#single-method-approach" title="Link to this heading"></a></h2>
 <section id="constraints">
-<h3>Constraints<a class="headerlink" href="#constraints" title="Permalink to this headline"></a></h3>
+<h3>Constraints<a class="headerlink" href="#constraints" title="Link to this heading"></a></h3>
 <p>There are different ways of constraining the random value in a clear and consistent manner when using the <code class="docutils literal notranslate"><span class="pre">rand()</span></code> function.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Range</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:99]</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Range</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:99]</span>
 
-<span class="c1">-- 2. Set of values</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">ONLY</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span><span class="w"> </span><span class="c1">-- Generates a value which is either 0, 5 or 10</span><span class="w"></span>
+<span class="c1">-- 2. Set of values</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">ONLY</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span><span class="w"> </span><span class="c1">-- Generates a value which is either 0, 5 or 10</span>
 
-<span class="c1">-- 3. Range and set of values</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">100</span><span class="p">));</span><span class="w">      </span><span class="c1">-- Generates a value in the range [0:50] or 100</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">80</span><span class="p">));</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:50] and either 60, 70 or 80</span><span class="w"></span>
+<span class="c1">-- 3. Range and set of values</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">100</span><span class="p">));</span><span class="w">      </span><span class="c1">-- Generates a value in the range [0:50] or 100</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">80</span><span class="p">));</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:50] and either 60, 70 or 80</span>
 
-<span class="c1">-- 4. Range and exclude values</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">25</span><span class="p">));</span><span class="w">      </span><span class="c1">-- Generates a value in the range [0:50] except for 25</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w">   </span><span class="c1">-- Generates a value in the range [0:50] except for 20 and 30</span><span class="w"></span>
+<span class="c1">-- 4. Range and exclude values</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">25</span><span class="p">));</span><span class="w">      </span><span class="c1">-- Generates a value in the range [0:50] except for 25</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w">   </span><span class="c1">-- Generates a value in the range [0:50] except for 20 and 30</span>
 
-<span class="c1">-- 5. Range, set of values and exclude values</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">25</span><span class="p">));</span><span class="w">         </span><span class="c1">-- Generates a value in the range [0:50] or 100, except for 25</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w">      </span><span class="c1">-- Generates a value in the range [0:50] or 100, except for 20 and 30</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">80</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:50] and either 60, 70 or 80, except for 20 and 30</span><span class="w"></span>
+<span class="c1">-- 5. Range, set of values and exclude values</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">25</span><span class="p">));</span><span class="w">         </span><span class="c1">-- Generates a value in the range [0:50] or 100, except for 25</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w">      </span><span class="c1">-- Generates a value in the range [0:50] or 100, except for 20 and 30</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">80</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:50] and either 60, 70 or 80, except for 20 and 30</span>
 </pre></div>
 </div>
 <p>For more information on the probability distribution click <a class="reference internal" href="#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 </section>
 <section id="return-types">
-<h3>Return types<a class="headerlink" href="#return-types" title="Permalink to this headline"></a></h3>
+<h3>Return types<a class="headerlink" href="#return-types" title="Link to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">rand()</span></code> function can return the following types:</p>
 <blockquote>
 <div><ul class="simple">
@@ -229,17 +236,17 @@ combinations of different constraints, such as multiple ranges.</p>
 <li><p><a class="reference internal" href="rand_pkg_t_rand.html#rand-bool"><span class="std std-ref">boolean</span></a></p></li>
 </ul>
 </div></blockquote>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">rand_int</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_int_vec</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_int_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_real</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">ONLY</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">.</span><span class="mi">0</span><span class="p">));</span><span class="w"></span>
-<span class="n">rand_real_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_real_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">.</span><span class="mi">99</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_time</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_uns</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">60</span><span class="p">));</span><span class="w"></span>
-<span class="n">rand_sign</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span><span class="mi">25</span><span class="p">));</span><span class="w"></span>
-<span class="n">rand_slv</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">60</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">25</span><span class="p">,</span><span class="mi">35</span><span class="p">));</span><span class="w"> </span><span class="c1">-- SLV is interpreted as unsigned</span><span class="w"></span>
-<span class="n">rand_sl</span><span class="w">       </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_bool</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">rand_int</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">rand_int_vec</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_int_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">rand_real</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">ONLY</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">.</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">rand_real_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_real_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">.</span><span class="mi">99</span><span class="p">);</span>
+<span class="n">rand_time</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
+<span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
+<span class="n">rand_uns</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">60</span><span class="p">));</span>
+<span class="n">rand_sign</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span><span class="mi">25</span><span class="p">));</span>
+<span class="n">rand_slv</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">ADD</span><span class="p">,(</span><span class="mi">60</span><span class="p">),</span><span class="w"> </span><span class="n">EXCL</span><span class="p">,(</span><span class="mi">25</span><span class="p">,</span><span class="mi">35</span><span class="p">));</span><span class="w"> </span><span class="c1">-- SLV is interpreted as unsigned</span>
+<span class="n">rand_sl</span><span class="w">       </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">rand_bool</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The unsigned, signed and std_logic_vector functions can return vectors of any length, however the min and max constraints are
@@ -252,84 +259,84 @@ min and max constraints are provided as well.</p>
 <li><p><a class="reference internal" href="rand_pkg_t_rand.html#rand-slv-long"><span class="std std-ref">std_logic_vector</span></a></p></li>
 </ul>
 </div></blockquote>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">rand_uns</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span><span class="w">  </span><span class="c1">-- SLV is interpreted as unsigned</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">rand_uns</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span><span class="w">  </span><span class="c1">-- SLV is interpreted as unsigned</span>
 
-<span class="c1">-- In the following overloads, the length of the return value is equal to the largest length of the 2 parameters</span><span class="w"></span>
-<span class="n">rand_uns</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span><span class="w"> </span><span class="c1">-- SLV is interpreted as unsigned</span><span class="w"></span>
+<span class="c1">-- In the following overloads, the length of the return value is equal to the largest length of the 2 parameters</span>
+<span class="n">rand_uns</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span>
+<span class="n">rand_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">C_MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">v_max_value</span><span class="p">);</span><span class="w"> </span><span class="c1">-- SLV is interpreted as unsigned</span>
 </pre></div>
 </div>
 </section>
 </section>
 <section id="multi-method-approach">
-<h2>Multi-method approach<a class="headerlink" href="#multi-method-approach" title="Permalink to this headline"></a></h2>
+<h2>Multi-method approach<a class="headerlink" href="#multi-method-approach" title="Link to this heading"></a></h2>
 <p>Using the single-method approach does not have any effect on the multi-method approach or vice-versa. However, for readability it
 is not recommended to mix them.</p>
 <section id="id1">
-<h3>Constraints<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
+<h3>Constraints<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>By using the following procedures, different combinations of constraints can be added for the <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function. Note that when
 reusing the same <em>my_rand</em> variable, the <code class="docutils literal notranslate"><span class="pre">clear_constraints()</span></code> procedure must be called to remove any previous constraints.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Single range</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:99]</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- 1. Single range</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the range [0:99]</span>
 
-<span class="c1">-- 2. Multiple ranges</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">299</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span><span class="w"> </span><span class="mi">499</span><span class="p">);</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the ranges [0:99], [200:299] and [400:499]</span><span class="w"></span>
+<span class="c1">-- 2. Multiple ranges</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">299</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span><span class="w"> </span><span class="mi">499</span><span class="p">);</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the ranges [0:99], [200:299] and [400:499]</span>
 
-<span class="c1">-- 3. Set of values</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value which is either 0, 5 or 10</span><span class="w"></span>
+<span class="c1">-- 3. Set of values</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value which is either 0, 5 or 10</span>
 
-<span class="c1">-- 4. Exclude values (only for integer, unsigned, signed and std_logic_vector return types)</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">));</span><span class="w"></span>
-<span class="n">addr</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value from the complete integer range except for 0, 10 and 15</span><span class="w"></span>
-<span class="n">data_uns</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span><span class="w">    </span><span class="c1">-- Generates a 4-bit unsigned random value except for 0, 10 and 15</span><span class="w"></span>
+<span class="c1">-- 4. Exclude values (only for integer, unsigned, signed and std_logic_vector return types)</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">));</span>
+<span class="n">addr</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value from the complete integer range except for 0, 10 and 15</span>
+<span class="n">data_uns</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span><span class="w">    </span><span class="c1">-- Generates a 4-bit unsigned random value except for 0, 10 and 15</span>
 
-<span class="c1">-- 5. Range and set of values</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">160</span><span class="p">,</span><span class="mi">170</span><span class="p">,</span><span class="mi">180</span><span class="p">));</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the ranges [0:50], [100:150] and either 60, 160, 170 or 180</span><span class="w"></span>
+<span class="c1">-- 5. Range and set of values</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">160</span><span class="p">,</span><span class="mi">170</span><span class="p">,</span><span class="mi">180</span><span class="p">));</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the ranges [0:50], [100:150] and either 60, 160, 170 or 180</span>
 
-<span class="c1">-- 6. Range and exclude values</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">25</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the ranges [0:50], [100:150] except for 20, 25 and 30</span><span class="w"></span>
+<span class="c1">-- 6. Range and exclude values</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">25</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the ranges [0:50], [100:150] except for 20, 25 and 30</span>
 
-<span class="c1">-- 7. Set of values and exclude values</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">60</span><span class="p">));</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value which is either 10, 30, 50 or 70</span><span class="w"></span>
+<span class="c1">-- 7. Set of values and exclude values</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">60</span><span class="p">));</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value which is either 10, 30, 50 or 70</span>
 
-<span class="c1">-- 8. Range, set of values and exclude values</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">160</span><span class="p">,</span><span class="mi">170</span><span class="p">,</span><span class="mi">180</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">25</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the ranges [0:50], [100:150] and either 60, 160, 170 or 180, except for 20, 25 and 30</span><span class="w"></span>
+<span class="c1">-- 8. Range, set of values and exclude values</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">160</span><span class="p">,</span><span class="mi">170</span><span class="p">,</span><span class="mi">180</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">25</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the ranges [0:50], [100:150] and either 60, 160, 170 or 180, except for 20, 25 and 30</span>
 
-<span class="c1">-- 9. No constraints (only for integer, unsigned, signed and std_logic_vector return types)</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">addr</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the complete integer range</span><span class="w"></span>
-<span class="n">data_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">16</span><span class="p">);</span><span class="w">   </span><span class="c1">-- Generates a 16-bit signed random value</span><span class="w"></span>
+<span class="c1">-- 9. No constraints (only for integer, unsigned, signed and std_logic_vector return types)</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">addr</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Generates a value in the complete integer range</span>
+<span class="n">data_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">16</span><span class="p">);</span><span class="w">   </span><span class="c1">-- Generates a 16-bit signed random value</span>
 </pre></div>
 </div>
 <p>Similar procedures exist for real constraints: <code class="docutils literal notranslate"><span class="pre">add_range_real()</span></code>, <code class="docutils literal notranslate"><span class="pre">add_val_real()</span></code> and <code class="docutils literal notranslate"><span class="pre">excl_val_real()</span></code>, and for time
@@ -350,7 +357,7 @@ generated. The procedure <code class="docutils literal notranslate"><span class=
 <p>For more information on the probability distribution click <a class="reference internal" href="#rand-pkg-distributions"><span class="std std-ref">here</span></a>.</p>
 </section>
 <section id="id2">
-<h3>Return types<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
+<h3>Return types<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">randm()</span></code> function can return the following types:</p>
 <blockquote>
 <div><ul class="simple">
@@ -366,33 +373,33 @@ generated. The procedure <code class="docutils literal notranslate"><span class=
 </ul>
 </div></blockquote>
 <p>For <em>std_logic</em> and <em>boolean</em> types use the <code class="docutils literal notranslate"><span class="pre">rand(VOID)</span></code> function, since they do not require any constraints.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_int</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_int_vec</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_int_vec</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">rand_int</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">rand_int_vec</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_int_vec</span><span class="na">&#39;length</span><span class="p">);</span>
 
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_real</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">.</span><span class="mi">2</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_real</span><span class="p">((</span><span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">.</span><span class="mi">0</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val_real</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_real</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_real_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_real_vec</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"></span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_real</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">.</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_real</span><span class="p">((</span><span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">.</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val_real</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">rand_real</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">rand_real_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_real_vec</span><span class="na">&#39;length</span><span class="p">);</span>
 
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_time</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_time</span><span class="p">((</span><span class="mi">160</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="mi">170</span><span class="w"> </span><span class="n">ps</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val_time</span><span class="p">(</span><span class="mi">50</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_time</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"></span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_time</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_time</span><span class="p">((</span><span class="mi">160</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="mi">170</span><span class="w"> </span><span class="n">ps</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val_time</span><span class="p">(</span><span class="mi">50</span><span class="w"> </span><span class="n">ps</span><span class="p">);</span>
+<span class="n">rand_time</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">rand_time_vec</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_time_vec</span><span class="na">&#39;length</span><span class="p">);</span>
 
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">(</span><span class="mi">25</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_uns</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_sign</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"></span>
-<span class="n">rand_slv</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"> </span><span class="c1">-- SLV is interpreted as unsigned</span><span class="w"></span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span><span class="mi">70</span><span class="p">));</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">excl_val</span><span class="p">(</span><span class="mi">25</span><span class="p">);</span>
+<span class="n">rand_uns</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">);</span>
+<span class="n">rand_sign</span><span class="w">     </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">);</span>
+<span class="n">rand_slv</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"> </span><span class="c1">-- SLV is interpreted as unsigned</span>
 </pre></div>
 </div>
 <p>The unsigned, signed and std_logic_vector functions can return vectors of any length, however the integer constraints are limited
@@ -404,16 +411,16 @@ maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENG
 <li><p><a class="reference internal" href="rand_pkg_t_rand.html#add-range-signed"><span class="std std-ref">signed</span></a></p></li>
 </ul>
 </div></blockquote>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_unsigned</span><span class="p">(</span><span class="mh">x&quot;0000000000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FFFF000000000000&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- [0:18446462598732840960]</span><span class="w"></span>
-<span class="n">rand_uns</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_unsigned</span><span class="p">(</span><span class="mh">x&quot;0000000000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FFFF000000000000&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- [0:18446462598732840960]</span>
+<span class="n">rand_uns</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_uns</span><span class="na">&#39;length</span><span class="p">);</span>
 
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_signed</span><span class="p">(</span><span class="mh">x&quot;F000000000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0000000000000005&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">-- [-1152921504606846976:5]</span><span class="w"></span>
-<span class="n">rand_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"></span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_signed</span><span class="p">(</span><span class="mh">x&quot;F000000000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0000000000000005&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">-- [-1152921504606846976:5]</span>
+<span class="n">rand_sign</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_sign</span><span class="na">&#39;length</span><span class="p">);</span>
 
-<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_unsigned</span><span class="p">(</span><span class="mh">x&quot;000000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FF0000000000&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- [0:280375465082880]</span><span class="w"></span>
-<span class="n">rand_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">);</span><span class="w">  </span><span class="c1">-- SLV is interpreted as unsigned</span><span class="w"></span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">clear_constraints</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_unsigned</span><span class="p">(</span><span class="mh">x&quot;000000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FF0000000000&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- [0:280375465082880]</span>
+<span class="n">rand_slv</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">rand_slv</span><span class="na">&#39;length</span><span class="p">);</span><span class="w">  </span><span class="c1">-- SLV is interpreted as unsigned</span>
 </pre></div>
 </div>
 <div class="admonition caution">
@@ -423,52 +430,52 @@ maximum length of these constraints is defined by C_RAND_MM_MAX_LONG_VECTOR_LENG
 </section>
 </section>
 <section id="seeds">
-<h2>Seeds<a class="headerlink" href="#seeds" title="Permalink to this headline"></a></h2>
+<h2>Seeds<a class="headerlink" href="#seeds" title="Link to this heading"></a></h2>
 <p>Initializing the seeds to a unique value guarantees that two processes will not generate the same sequence of random values. They
 can be initialized using any string or two positive integers (when using a string, it will be converted into two positive integers).</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>It is recommended to set the seed to the path of the actual variable in order to ensure uniqueness throughout the testbench.</p>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">set_rand_seeds</span><span class="p">(</span><span class="n">my_rand</span><span class="na">&#39;instance_name</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_rand_seeds</span><span class="p">(</span><span class="n">my_rand</span><span class="na">&#39;instance_name</span><span class="p">);</span>
 
-<span class="c1">-- Example 2</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">set_rand_seeds</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span><span class="w"></span>
+<span class="c1">-- Example 2</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_rand_seeds</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The current seeds can be printed out, for instance when needing to recreate a certain random sequence, by using <code class="docutils literal notranslate"><span class="pre">get_rand_seeds()</span></code>.
 This method will return the seeds as two positive integers or a positive integer vector.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">get_rand_seeds</span><span class="p">(</span><span class="n">seed1</span><span class="p">,</span><span class="w"> </span><span class="n">seed2</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example 1</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">get_rand_seeds</span><span class="p">(</span><span class="n">seed1</span><span class="p">,</span><span class="w"> </span><span class="n">seed2</span><span class="p">);</span>
 
-<span class="c1">-- Example 2</span><span class="w"></span>
-<span class="n">seed_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">get_rand_seeds</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<span class="c1">-- Example 2</span>
+<span class="n">seed_vector</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">get_rand_seeds</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="uniqueness">
-<span id="rand-pkg-uniqueness"></span><h2>Uniqueness<a class="headerlink" href="#uniqueness" title="Permalink to this headline"></a></h2>
+<span id="rand-pkg-uniqueness"></span><h2>Uniqueness<a class="headerlink" href="#uniqueness" title="Link to this heading"></a></h2>
 <p>When returning a vector type (integer_vector, real_vector or time_vector) it is possible to generate unique random values for each
 element of the vector by using <em>uniqueness = UNIQUE</em>. The uniqueness applies only within the values returned from a single
 <code class="docutils literal notranslate"><span class="pre">rand()/randm()</span></code> call, i.e. unique values may not generated across two or more <code class="docutils literal notranslate"><span class="pre">rand()/randm()</span></code> calls.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Single-method approach</span><span class="w"></span>
-<span class="n">unique_addresses</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">unique_addresses</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">UNIQUE</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Single-method approach</span>
+<span class="n">unique_addresses</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">unique_addresses</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">UNIQUE</span><span class="p">);</span>
 
-<span class="c1">-- Multi-method approach</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">set_uniqueness</span><span class="p">(</span><span class="n">UNIQUE</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">unique_addresses</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">unique_addresses</span><span class="na">&#39;length</span><span class="p">);</span><span class="w"></span>
+<span class="c1">-- Multi-method approach</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_uniqueness</span><span class="p">(</span><span class="n">UNIQUE</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">unique_addresses</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">unique_addresses</span><span class="na">&#39;length</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>If the constraints are not enough to generate unique values for the whole vector, an error will be reported.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Single-method approach</span><span class="w"></span>
-<span class="n">unique_addresses</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">63</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">UNIQUE</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Single-method approach</span>
+<span class="n">unique_addresses</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">63</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">UNIQUE</span><span class="p">);</span>
 
-<span class="c1">-- Multi-method approach</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">set_uniqueness</span><span class="p">(</span><span class="n">UNIQUE</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">unique_addresses</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">63</span><span class="p">);</span><span class="w"></span>
+<span class="c1">-- Multi-method approach</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_uniqueness</span><span class="p">(</span><span class="n">UNIQUE</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
+<span class="n">unique_addresses</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="mi">63</span><span class="p">);</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -478,22 +485,22 @@ element of the vector by using <em>uniqueness = UNIQUE</em>. The uniqueness appl
 </ul>
 </section>
 <section id="cyclic-generation">
-<span id="rand-pkg-cyclic"></span><h2>Cyclic generation<a class="headerlink" href="#cyclic-generation" title="Permalink to this headline"></a></h2>
+<span id="rand-pkg-cyclic"></span><h2>Cyclic generation<a class="headerlink" href="#cyclic-generation" title="Link to this heading"></a></h2>
 <p>By using <em>cyclic_mode = CYCLIC</em>, it is possible to generate random values which will not repeat until all the values within the
 constraints have been generated. Once this happens, the process starts over.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Single-method approach</span><span class="w"></span>
-<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">num_addr</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">loop</span><span class="w"></span>
-<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">63</span><span class="p">,</span><span class="w"> </span><span class="n">CYCLIC</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">...</span><span class="w"></span>
-<span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Single-method approach</span>
+<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">num_addr</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">loop</span>
+<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">63</span><span class="p">,</span><span class="w"> </span><span class="n">CYCLIC</span><span class="p">);</span>
+<span class="w">  </span><span class="p">...</span>
+<span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span>
 
-<span class="c1">-- Multi-method approach</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">set_cyclic_mode</span><span class="p">(</span><span class="n">CYCLIC</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">63</span><span class="p">);</span><span class="w"></span>
-<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">num_addr</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">loop</span><span class="w"></span>
-<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">...</span><span class="w"></span>
-<span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
+<span class="c1">-- Multi-method approach</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_cyclic_mode</span><span class="p">(</span><span class="n">CYCLIC</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">63</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">num_addr</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">loop</span>
+<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="w">  </span><span class="p">...</span>
+<span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -519,11 +526,11 @@ list/queue.</p>
 </div>
 </section>
 <section id="distributions">
-<span id="rand-pkg-distributions"></span><h2>Distributions<a class="headerlink" href="#distributions" title="Permalink to this headline"></a></h2>
+<span id="rand-pkg-distributions"></span><h2>Distributions<a class="headerlink" href="#distributions" title="Link to this heading"></a></h2>
 <p>By default, the Uniform distribution is used with the <code class="docutils literal notranslate"><span class="pre">rand()/randm()</span></code> functions, however it is also possible to select other
 distributions with the procedure <code class="docutils literal notranslate"><span class="pre">set_rand_dist()</span></code>.</p>
 <section id="uniform">
-<h3>Uniform<a class="headerlink" href="#uniform" title="Permalink to this headline"></a></h3>
+<h3>Uniform<a class="headerlink" href="#uniform" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Default distribution.</p></li>
 <li><p>The supported types are integer, integer_vector, real, real_vector, time, time_vector, unsigned, signed, std_logic_vector,
@@ -537,7 +544,7 @@ of values would be rarely generated due to the large number of values within a r
 </ul>
 </section>
 <section id="gaussian-normal">
-<h3>Gaussian (Normal)<a class="headerlink" href="#gaussian-normal" title="Permalink to this headline"></a></h3>
+<h3>Gaussian (Normal)<a class="headerlink" href="#gaussian-normal" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>The supported types are integer, integer_vector, real, real_vector, unsigned, signed and std_logic_vector. Note that unsigned,
 signed and std_logic_vector lengths bigger than 32 bits are not supported however.</p></li>
@@ -552,23 +559,23 @@ values have no special meaning other than giving a fair distribution curve.</p><
 <li><p>To clear the configured mean and std_deviation and go back to the default, use <code class="docutils literal notranslate"><span class="pre">clear_rand_dist_mean()</span></code> and
 <code class="docutils literal notranslate"><span class="pre">clear_rand_dist_std_deviation()</span></code> procedures respectively.</p></li>
 </ul>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Single-method approach</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">set_rand_dist</span><span class="p">(</span><span class="n">GAUSSIAN</span><span class="p">);</span><span class="w"></span>
-<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">5000</span><span class="w"> </span><span class="k">loop</span><span class="w"></span>
-<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
-<span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Single-method approach</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_rand_dist</span><span class="p">(</span><span class="n">GAUSSIAN</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">5000</span><span class="w"> </span><span class="k">loop</span>
+<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+<span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span>
 
-<span class="c1">-- Multi-method approach</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">set_rand_dist</span><span class="p">(</span><span class="n">GAUSSIAN</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
-<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">5000</span><span class="w"> </span><span class="k">loop</span><span class="w"></span>
-<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span><span class="w"></span>
+<span class="c1">-- Multi-method approach</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">set_rand_dist</span><span class="p">(</span><span class="n">GAUSSIAN</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">5000</span><span class="w"> </span><span class="k">loop</span>
+<span class="w">  </span><span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="k">end</span><span class="w"> </span><span class="k">loop</span><span class="p">;</span>
 </pre></div>
 </div>
 </section>
 <section id="weighted">
-<span id="rand-pkg-weighted"></span><h3>Weighted<a class="headerlink" href="#weighted" title="Permalink to this headline"></a></h3>
+<span id="rand-pkg-weighted"></span><h3>Weighted<a class="headerlink" href="#weighted" title="Link to this heading"></a></h3>
 <p>This distribution does NOT use the <code class="docutils literal notranslate"><span class="pre">set_rand_dist()</span></code> procedure, but instead uses different methods with parameters of
 (value + weight) or (range of values + weight). The method names contain the order of the parameters for better readability.</p>
 <dl class="simple">
@@ -613,44 +620,44 @@ weight higher than the given weight.</p></li>
 </ol>
 <p>The default mode is COMBINED_WEIGHT, however this can be changed using the <code class="docutils literal notranslate"><span class="pre">set_range_weight_default_mode()</span></code> procedure.
 Alternatively, it is possible to explicitly define the mode when using <code class="docutils literal notranslate"><span class="pre">rand_range_weight_mode()</span></code> or <code class="docutils literal notranslate"><span class="pre">add_range_weight()</span></code>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">--------------------------------------------------------------------------------------------------------------------</span><span class="w"></span>
-<span class="c1">-- Example 1: value, weight</span><span class="w"></span>
-<span class="c1">-- Generate a value which is either -5, 0 or 5 with their corresponding weights</span><span class="w"></span>
-<span class="c1">--------------------------------------------------------------------------------------------------------------------</span><span class="w"></span>
-<span class="c1">-- Single-method approach</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_val_weight</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">)));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">--------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">-- Example 1: value, weight</span>
+<span class="c1">-- Generate a value which is either -5, 0 or 5 with their corresponding weights</span>
+<span class="c1">--------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">-- Single-method approach</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_val_weight</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">)));</span>
 
-<span class="c1">-- Multi-method approach</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<span class="c1">-- Multi-method approach</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 
-<span class="c1">--------------------------------------------------------------------------------------------------------------------</span><span class="w"></span>
-<span class="c1">-- Example 2: range(min/max), weight</span><span class="w"></span>
-<span class="c1">-- Generate a value in the range [-5:-3], 0 and the range [1:5] with their corresponding weights and default mode</span><span class="w"></span>
-<span class="c1">--------------------------------------------------------------------------------------------------------------------</span><span class="w"></span>
-<span class="c1">-- Single-method approach</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">)));</span><span class="w"></span>
+<span class="c1">--------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">-- Example 2: range(min/max), weight</span>
+<span class="c1">-- Generate a value in the range [-5:-3], 0 and the range [1:5] with their corresponding weights and default mode</span>
+<span class="c1">--------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">-- Single-method approach</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">)));</span>
 
-<span class="c1">-- Multi-method approach</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<span class="c1">-- Multi-method approach</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">);</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 
-<span class="c1">--------------------------------------------------------------------------------------------------------------------</span><span class="w"></span>
-<span class="c1">-- Example 3: range(min/max), weight, weight mode</span><span class="w"></span>
-<span class="c1">-- Generate a value in the range [-5:-3], 0 and the range [1:5] with their corresponding weights and explicit modes</span><span class="w"></span>
-<span class="c1">--------------------------------------------------------------------------------------------------------------------</span><span class="w"></span>
-<span class="c1">-- Single-method approach</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">)));</span><span class="w"></span>
+<span class="c1">--------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">-- Example 3: range(min/max), weight, weight mode</span>
+<span class="c1">-- Generate a value in the range [-5:-3], 0 and the range [1:5] with their corresponding weights and explicit modes</span>
+<span class="c1">--------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1">-- Single-method approach</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">rand_range_weight_mode</span><span class="p">(((</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">NA</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">)));</span>
 
-<span class="c1">-- Multi-method approach</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">);</span><span class="w"></span>
-<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">);</span><span class="w"></span>
-<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<span class="c1">-- Multi-method approach</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_val_weight</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">);</span>
+<span class="n">my_rand</span><span class="p">.</span><span class="n">add_range_weight</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="n">COMBINED_WEIGHT</span><span class="p">);</span>
+<span class="n">addr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">my_rand</span><span class="p">.</span><span class="n">randm</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -666,12 +673,12 @@ within a real/time range.</p>
 </section>
 </section>
 <section id="configuration-report">
-<span id="rand-pkg-config-report"></span><h2>Configuration report<a class="headerlink" href="#configuration-report" title="Permalink to this headline"></a></h2>
+<span id="rand-pkg-config-report"></span><h2>Configuration report<a class="headerlink" href="#configuration-report" title="Link to this heading"></a></h2>
 <p>A report containing all the configuration parameters can be printed using the <code class="docutils literal notranslate"><span class="pre">report_config()</span></code> procedure.</p>
 <p>A name can be given to the random generator by calling the <code class="docutils literal notranslate"><span class="pre">set_name()</span></code> procedure. This is useful when printing reports for
 several random generator instances.
 The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined in adaptations_pkg.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_rand</span><span class="p">.</span><span class="n">report_config</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">my_rand</span><span class="p">.</span><span class="n">report_config</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span># UVVM:  =================================================================================================================
@@ -739,11 +746,11 @@ The maximum length of the name is determined by C_RAND_MAX_NAME_LENGTH defined i
 </div>
 </section>
 <section id="clearing-configuration">
-<h2>Clearing configuration<a class="headerlink" href="#clearing-configuration" title="Permalink to this headline"></a></h2>
+<h2>Clearing configuration<a class="headerlink" href="#clearing-configuration" title="Link to this heading"></a></h2>
 <p>To clear the complete configuration in the random generator use the <code class="docutils literal notranslate"><span class="pre">clear_config()</span></code> procedure.</p>
 </section>
 <section id="additional-info">
-<h2>Additional info<a class="headerlink" href="#additional-info" title="Permalink to this headline"></a></h2>
+<h2>Additional info<a class="headerlink" href="#additional-info" title="Link to this heading"></a></h2>
 <p>Log messages within the procedures and functions in the <em>rand_pkg</em> use the following message IDs (disabled by default):</p>
 <ul class="simple">
 <li><p>ID_RAND_GEN: Used for logging “Enhanced Randomization” values returned by <code class="docutils literal notranslate"><span class="pre">rand()/randm()</span></code>.</p></li>
@@ -759,7 +766,7 @@ functionality in SystemVerilog and OSVVM.</p>
 </div>
 </section>
 <section id="rand-pkg">
-<span id="id3"></span><h2>rand_pkg<a class="headerlink" href="#rand-pkg" title="Permalink to this headline"></a></h2>
+<span id="id3"></span><h2>rand_pkg<a class="headerlink" href="#rand-pkg" title="Link to this heading"></a></h2>
 <p>The following links contain information regarding the API of the protected type <em>t_rand</em> and all the type definitions inside
 <em>rand_pkg</em>.</p>
 <div class="toctree-wrapper compound">

@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>t_alert_level &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -27,12 +30,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #F5F5F5" >
-            <a href="index.html">
-            <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -124,9 +131,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="utility_library.html">Utility Library</a> &raquo;</li>
-      <li>t_alert_level</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="utility_library.html">Utility Library</a></li>
+      <li class="breadcrumb-item active">t_alert_level</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/types_pkg.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -138,98 +145,94 @@
              
   <p>Type definitions used in the Utility Library, defined in types_pkg.vhd</p>
 <section id="t-alert-level">
-<span id="id1"></span><h1>t_alert_level<a class="headerlink" href="#t-alert-level" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>t_alert_level<a class="headerlink" href="#t-alert-level" title="Link to this heading"></a></h1>
 <p>NO_ALERT, NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK, ERROR, TB_ERROR, FAILURE, TB_FAILURE</p>
 </section>
 <section id="t-attention">
-<span id="id2"></span><h1>t_attention<a class="headerlink" href="#t-attention" title="Permalink to this headline"></a></h1>
+<span id="id2"></span><h1>t_attention<a class="headerlink" href="#t-attention" title="Link to this heading"></a></h1>
 <p>REGARD, EXPECT, IGNORE</p>
 </section>
 <section id="t-match-strictness">
-<span id="id3"></span><h1>t_match_strictness<a class="headerlink" href="#t-match-strictness" title="Permalink to this headline"></a></h1>
+<span id="id3"></span><h1>t_match_strictness<a class="headerlink" href="#t-match-strictness" title="Link to this heading"></a></h1>
 <p>MATCH_STD, MATCH_STD_INCL_Z, MATCH_EXACT, MATCH_STD_INCL_ZXUW</p>
 </section>
 <section id="t-format-spaces">
-<span id="id4"></span><h1>t_format_spaces<a class="headerlink" href="#t-format-spaces" title="Permalink to this headline"></a></h1>
+<span id="id4"></span><h1>t_format_spaces<a class="headerlink" href="#t-format-spaces" title="Link to this heading"></a></h1>
 <p>KEEP_LEADING_SPACE, SKIP_LEADING_SPACE</p>
 </section>
 <section id="t-truncate-string">
-<span id="id5"></span><h1>t_truncate_string<a class="headerlink" href="#t-truncate-string" title="Permalink to this headline"></a></h1>
+<span id="id5"></span><h1>t_truncate_string<a class="headerlink" href="#t-truncate-string" title="Link to this heading"></a></h1>
 <p>ALLOW_TRUNCATE, DISALLOW_TRUNCATE</p>
 </section>
 <section id="t-radix">
-<span id="id6"></span><h1>t_radix<a class="headerlink" href="#t-radix" title="Permalink to this headline"></a></h1>
+<span id="id6"></span><h1>t_radix<a class="headerlink" href="#t-radix" title="Link to this heading"></a></h1>
 <p>BIN, HEX, DEC, HEX_BIN_IF_INVALID</p>
 <p>HEX_BIN_IF_INVALID means hexadecimal, unless there are the vector contains any U, X, Z or W, in which case it is also logged in
 binary radix.</p>
 </section>
 <section id="t-radix-prefix">
-<span id="id7"></span><h1>t_radix_prefix<a class="headerlink" href="#t-radix-prefix" title="Permalink to this headline"></a></h1>
+<span id="id7"></span><h1>t_radix_prefix<a class="headerlink" href="#t-radix-prefix" title="Link to this heading"></a></h1>
 <p>EXCL_RADIX, INCL_RADIX</p>
 </section>
 <section id="t-ascii-allow">
-<span id="id8"></span><h1>t_ascii_allow<a class="headerlink" href="#t-ascii-allow" title="Permalink to this headline"></a></h1>
+<span id="id8"></span><h1>t_ascii_allow<a class="headerlink" href="#t-ascii-allow" title="Link to this heading"></a></h1>
 <p>ALLOW_ALL, ALLOW_PRINTABLE_ONLY</p>
 </section>
 <section id="t-blocking-mode">
-<span id="id9"></span><h1>t_blocking_mode<a class="headerlink" href="#t-blocking-mode" title="Permalink to this headline"></a></h1>
+<span id="id9"></span><h1>t_blocking_mode<a class="headerlink" href="#t-blocking-mode" title="Link to this heading"></a></h1>
 <p>BLOCKING, NON_BLOCKING</p>
 </section>
 <section id="t-format-zeros">
-<span id="id10"></span><h1>t_format_zeros<a class="headerlink" href="#t-format-zeros" title="Permalink to this headline"></a></h1>
+<span id="id10"></span><h1>t_format_zeros<a class="headerlink" href="#t-format-zeros" title="Link to this heading"></a></h1>
 <p>KEEP_LEADING_0, SKIP_LEADING_0</p>
 </section>
 <section id="t-from-point-in-time">
-<span id="id11"></span><h1>t_from_point_in_time<a class="headerlink" href="#t-from-point-in-time" title="Permalink to this headline"></a></h1>
+<span id="id11"></span><h1>t_from_point_in_time<a class="headerlink" href="#t-from-point-in-time" title="Link to this heading"></a></h1>
 <p>FROM_NOW, FROM_LAST_EVENT</p>
 </section>
 <section id="t-log-destination">
-<span id="id12"></span><h1>t_log_destination<a class="headerlink" href="#t-log-destination" title="Permalink to this headline"></a></h1>
+<span id="id12"></span><h1>t_log_destination<a class="headerlink" href="#t-log-destination" title="Link to this heading"></a></h1>
 <p>CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY</p>
 </section>
 <section id="t-log-format">
-<span id="id13"></span><h1>t_log_format<a class="headerlink" href="#t-log-format" title="Permalink to this headline"></a></h1>
+<span id="id13"></span><h1>t_log_format<a class="headerlink" href="#t-log-format" title="Link to this heading"></a></h1>
 <p>FORMATTED, UNFORMATTED</p>
 </section>
 <section id="t-log-if-block-empty">
-<span id="id14"></span><h1>t_log_if_block_empty<a class="headerlink" href="#t-log-if-block-empty" title="Permalink to this headline"></a></h1>
+<span id="id14"></span><h1>t_log_if_block_empty<a class="headerlink" href="#t-log-if-block-empty" title="Link to this heading"></a></h1>
 <p>WRITE_HDR_IF_BLOCK_EMPTY, SKIP_LOG_IF_BLOCK_EMPTY, NOTIFY_IF_BLOCK_EMPTY</p>
 </section>
 <section id="t-quietness">
-<span id="id15"></span><h1>t_quietness<a class="headerlink" href="#t-quietness" title="Permalink to this headline"></a></h1>
+<span id="id15"></span><h1>t_quietness<a class="headerlink" href="#t-quietness" title="Link to this heading"></a></h1>
 <p>NON_QUIET, QUIET</p>
 </section>
 <section id="t-identifier-option">
-<span id="id16"></span><h1>t_identifier_option<a class="headerlink" href="#t-identifier-option" title="Permalink to this headline"></a></h1>
+<span id="id16"></span><h1>t_identifier_option<a class="headerlink" href="#t-identifier-option" title="Link to this heading"></a></h1>
 <p>ENTRY_NUM, POSITION</p>
 </section>
 <section id="t-range-option">
-<span id="id17"></span><h1>t_range_option<a class="headerlink" href="#t-range-option" title="Permalink to this headline"></a></h1>
+<span id="id17"></span><h1>t_range_option<a class="headerlink" href="#t-range-option" title="Link to this heading"></a></h1>
 <p>SINGLE, AND_LOWER, AND_HIGHER</p>
 </section>
 <section id="t-vvc-select">
-<span id="id18"></span><h1>t_vvc_select<a class="headerlink" href="#t-vvc-select" title="Permalink to this headline"></a></h1>
+<span id="id18"></span><h1>t_vvc_select<a class="headerlink" href="#t-vvc-select" title="Link to this heading"></a></h1>
 <p>ANY_OF, ALL_OF, ALL_VVCS</p>
 </section>
 <section id="t-list-action">
-<span id="id19"></span><h1>t_list_action<a class="headerlink" href="#t-list-action" title="Permalink to this headline"></a></h1>
+<span id="id19"></span><h1>t_list_action<a class="headerlink" href="#t-list-action" title="Link to this heading"></a></h1>
 <p>KEEP_LIST, CLEAR_LIST</p>
 </section>
 <section id="t-bfm-sync">
-<span id="id20"></span><h1>t_bfm_sync<a class="headerlink" href="#t-bfm-sync" title="Permalink to this headline"></a></h1>
+<span id="id20"></span><h1>t_bfm_sync<a class="headerlink" href="#t-bfm-sync" title="Link to this heading"></a></h1>
 <p>SYNC_ON_CLOCK_ONLY, SYNC_WITH_SETUP_AND_HOLD</p>
 </section>
 <section id="t-bfm-delay-type">
-<span id="id21"></span><h1>t_bfm_delay_type<a class="headerlink" href="#t-bfm-delay-type" title="Permalink to this headline"></a></h1>
+<span id="id21"></span><h1>t_bfm_delay_type<a class="headerlink" href="#t-bfm-delay-type" title="Link to this heading"></a></h1>
 <p>NO_DELAY, TIME_FINISH2START, TIME_START2START</p>
 </section>
 <section id="t-inter-bfm-delay">
-<span id="id22"></span><h1>t_inter_bfm_delay<a class="headerlink" href="#t-inter-bfm-delay" title="Permalink to this headline"></a></h1>
+<span id="id22"></span><h1>t_inter_bfm_delay<a class="headerlink" href="#t-inter-bfm-delay" title="Link to this heading"></a></h1>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 59%" />
-<col style="width: 41%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Record element</p></th>
 <th class="head"><p>Type</p></th>
@@ -249,20 +252,16 @@ binary radix.</p>
 </table>
 </section>
 <section id="t-order">
-<span id="id23"></span><h1>t_order<a class="headerlink" href="#t-order" title="Permalink to this headline"></a></h1>
+<span id="id23"></span><h1>t_order<a class="headerlink" href="#t-order" title="Link to this heading"></a></h1>
 <p>INTERMEDIATE, FINAL</p>
 </section>
 <section id="t-flag-returning">
-<span id="id24"></span><h1>t_flag_returning<a class="headerlink" href="#t-flag-returning" title="Permalink to this headline"></a></h1>
+<span id="id24"></span><h1>t_flag_returning<a class="headerlink" href="#t-flag-returning" title="Link to this heading"></a></h1>
 <p>KEEP_UNBLOCKED, RETURN_TO_BLOCK</p>
 </section>
 <section id="t-watchdog-ctrl">
-<span id="id25"></span><h1>t_watchdog_ctrl<a class="headerlink" href="#t-watchdog-ctrl" title="Permalink to this headline"></a></h1>
+<span id="id25"></span><h1>t_watchdog_ctrl<a class="headerlink" href="#t-watchdog-ctrl" title="Link to this heading"></a></h1>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 59%" />
-<col style="width: 41%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Record element</p></th>
 <th class="head"><p>Type</p></th>
@@ -288,11 +287,11 @@ binary radix.</p>
 </table>
 </section>
 <section id="t-alert-counters">
-<span id="id26"></span><h1>t_alert_counters<a class="headerlink" href="#t-alert-counters" title="Permalink to this headline"></a></h1>
+<span id="id26"></span><h1>t_alert_counters<a class="headerlink" href="#t-alert-counters" title="Link to this heading"></a></h1>
 <p>array (NOTE to <a class="reference internal" href="#t-alert-level"><span class="std std-ref">t_alert_level</span></a>’right) of natural;</p>
 </section>
 <section id="t-normalization-mode">
-<span id="id27"></span><h1>t_normalization_mode<a class="headerlink" href="#t-normalization-mode" title="Permalink to this headline"></a></h1>
+<span id="id27"></span><h1>t_normalization_mode<a class="headerlink" href="#t-normalization-mode" title="Link to this heading"></a></h1>
 <p>ALLOW_WIDER, ALLOW_NARROWER, ALLOW_WIDER_NARROWER, ALLOW_EXACT_ONLY</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -300,7 +299,7 @@ binary radix.</p>
 </div>
 </section>
 <section id="t-data-routing">
-<span id="id28"></span><h1>t_data_routing<a class="headerlink" href="#t-data-routing" title="Permalink to this headline"></a></h1>
+<span id="id28"></span><h1>t_data_routing<a class="headerlink" href="#t-data-routing" title="Link to this heading"></a></h1>
 <p>NA, TO_SB, TO_BUFFER, FROM_BUFFER, TO_RECEIVE_BUFFER</p>
 </section>
 

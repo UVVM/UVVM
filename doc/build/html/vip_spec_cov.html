@@ -74,16 +74,15 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_scoreboard.html">Bitvis VIP Scoreboard</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Specification Coverage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#specification-coverage-concept">Specification Coverage Concept</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#definitions">Definitions</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#testcase">Testcase</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#specification-coverage">Specification coverage</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#partial-coverage">Partial coverage</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#simplest-possible-usage-with-a-single-testcase">Simplest possible usage, with a single testcase</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#conceptual-introduction-and-the-simplest-possible-usage-with-a-single-testcase">Conceptual introduction and the simplest possible usage, with a single testcase</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#simple-usage">Simple usage</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#shortcut-with-no-requirement-list">Shortcut with no requirement list</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#simple-usage-with-multiple-testcases">Simple usage, with multiple testcases</a></li>
@@ -91,9 +90,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced usage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#advanced-usage-only-one-of-multiple-testcases-for-a-given-requirement-must-pass">Advanced usage - Only one of multiple testcases for a given requirement must pass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#advanced-usage-all-or-some-of-multiple-testcases-for-a-given-requirement-must-pass">Advanced usage - All (or some) of multiple testcases for a given requirement must pass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#advanced-usage-requirement-mapping">Advanced usage - Requirement mapping</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#only-one-of-multiple-testcases-for-a-given-requirement-must-pass">Only one of multiple testcases for a given requirement must pass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#all-or-some-of-multiple-testcases-for-a-given-requirement-must-pass">All (or some) of multiple testcases for a given requirement must pass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#requirement-mapping">Requirement mapping</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#mapping-of-project-requirements-to-ip-or-legacy-requirements">Mapping of project requirements to IP or legacy requirements</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mapping-of-project-requirements-to-multiple-sub-requirements">Mapping of project requirements to multiple sub-requirements</a></li>
 </ul>
@@ -194,19 +193,9 @@
              
   <section id="bitvis-vip-specification-coverage">
 <span id="vip-spec-cov"></span><h1>Bitvis VIP Specification Coverage<a class="headerlink" href="#bitvis-vip-specification-coverage" title="Link to this heading"></a></h1>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_spec_cov/doc/Spec_Coverage_QuickRef.pdf">Spec_Coverage_QuickRef.pdf</a></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
-not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the
-authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
-otherwise, arising from, out of or in connection with this IP.</p>
-</div>
 <p>The Specification Coverage feature (aka Requirements Coverage) is an efficient method for verifying the requirement specification.</p>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
-<section id="specification-coverage-concept">
-<h3>Specification Coverage Concept<a class="headerlink" href="#specification-coverage-concept" title="Link to this heading"></a></h3>
 <p>An important step of design verification is to check that all requirements have been met. Requirements can be defined very differently
 depending on application, project management, quality requirements, etc. In some projects, requirements barely exist, and the
 functionality is based on a brief description. However, in projects where safety and reliability are key the requirement handling is an
@@ -248,7 +237,6 @@ simplest case and add step-by-step on that until we have built a full advanced s
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-</section>
 <section id="definitions">
 <h3>Definitions<a class="headerlink" href="#definitions" title="Link to this heading"></a></h3>
 <section id="testcase">
@@ -288,9 +276,8 @@ specification coverage -&gt; ‘Partial Coverage’, and Test suite overall spec
 </div>
 </section>
 </section>
-</section>
-<section id="conceptual-introduction-and-the-simplest-possible-usage-with-a-single-testcase">
-<h2>Conceptual introduction and the simplest possible usage, with a single testcase<a class="headerlink" href="#conceptual-introduction-and-the-simplest-possible-usage-with-a-single-testcase" title="Link to this heading"></a></h2>
+<section id="simplest-possible-usage-with-a-single-testcase">
+<h3>Simplest possible usage, with a single testcase<a class="headerlink" href="#simplest-possible-usage-with-a-single-testcase" title="Link to this heading"></a></h3>
 <p>For any FPGA / ASIC it is always important to properly specify the design requirements and check that they have all been tested.
 Normally it is often just ticked off somewhere that a particular requirement is tested – often only once during the development phase,
 and sometimes just as a mental exercise. It is always better to use a written, repeatable and automated approach. This VIP
@@ -332,6 +319,7 @@ For a simple scenario with a single testcase, the partial coverage <code class="
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
+</section>
 </section>
 <section id="simple-usage">
 <h2>Simple usage<a class="headerlink" href="#simple-usage" title="Link to this heading"></a></h2>
@@ -390,8 +378,8 @@ initialize_req_cov() and the requirement label from the tick_off_req_cov().</p>
 </section>
 <section id="advanced-usage">
 <h2>Advanced usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h2>
-<section id="advanced-usage-only-one-of-multiple-testcases-for-a-given-requirement-must-pass">
-<h3>Advanced usage - Only one of multiple testcases for a given requirement must pass<a class="headerlink" href="#advanced-usage-only-one-of-multiple-testcases-for-a-given-requirement-must-pass" title="Link to this heading"></a></h3>
+<section id="only-one-of-multiple-testcases-for-a-given-requirement-must-pass">
+<h3>Only one of multiple testcases for a given requirement must pass<a class="headerlink" href="#only-one-of-multiple-testcases-for-a-given-requirement-must-pass" title="Link to this heading"></a></h3>
 <p>In the previous example all tests in all testcases had to pass for the overall specification coverage to pass. There may however be
 situations where a given requirement is tested in multiple testcases and it is sufficient that only any one of these pass - given of
 course that none of the others have failed, but just haven’t been executed. A fail in any executed testcase will always result in a
@@ -410,8 +398,8 @@ for instance be left out of from a reduced test suite to qualify for lab test on
 <div class="line"><br /></div>
 </div>
 </section>
-<section id="advanced-usage-all-or-some-of-multiple-testcases-for-a-given-requirement-must-pass">
-<h3>Advanced usage - All (or some) of multiple testcases for a given requirement must pass<a class="headerlink" href="#advanced-usage-all-or-some-of-multiple-testcases-for-a-given-requirement-must-pass" title="Link to this heading"></a></h3>
+<section id="all-or-some-of-multiple-testcases-for-a-given-requirement-must-pass">
+<h3>All (or some) of multiple testcases for a given requirement must pass<a class="headerlink" href="#all-or-some-of-multiple-testcases-for-a-given-requirement-must-pass" title="Link to this heading"></a></h3>
 <p>This is basically the opposite of the above and is easy to achieve by just adding lines in the requirement list for all wanted
 combinations of requirements and testcases. The example below states that UART_REQ_3 must pass in both tc_basic and tc_19k2.</p>
 <figure class="align-center">
@@ -421,8 +409,8 @@ combinations of requirements and testcases. The example below states that UART_R
 <div class="line"><br /></div>
 </div>
 </section>
-<section id="advanced-usage-requirement-mapping">
-<h3>Advanced usage - Requirement mapping<a class="headerlink" href="#advanced-usage-requirement-mapping" title="Link to this heading"></a></h3>
+<section id="requirement-mapping">
+<h3>Requirement mapping<a class="headerlink" href="#requirement-mapping" title="Link to this heading"></a></h3>
 <p>Requirement mapping just maps one or more requirements to another requirement. This is intended for two different use cases: Mapping of
 project requirements to IP or legacy requirements or mapping of requirements to multiple sub-requirements.</p>
 <section id="mapping-of-project-requirements-to-ip-or-legacy-requirements">
@@ -532,8 +520,8 @@ REQ_2, Requirement 2, TC_2
 </section>
 <section id="vhdl-package">
 <h2>VHDL Package<a class="headerlink" href="#vhdl-package" title="Link to this heading"></a></h2>
-<p>A vital part of the specification coverage concept is the VHDL testbench methods. These methods are described in Table 2. The methods
-are located inside the spec_cov_pkg.vhd file in the src/ directory of this VIP.</p>
+<p>A vital part of the specification coverage concept is the VHDL testbench methods. These methods are described in the following section.
+The methods are located inside the spec_cov_pkg.vhd file in the src/ directory of this VIP.</p>
 <section id="vhdl-methods">
 <h3>VHDL Methods<a class="headerlink" href="#vhdl-methods" title="Link to this heading"></a></h3>
 <section id="initialize-req-cov">
@@ -903,12 +891,12 @@ For required simulator setup see UVVM-Util Quick reference.</p>
 <section id="post-processing-script">
 <h2>Post-processing script<a class="headerlink" href="#post-processing-script" title="Link to this heading"></a></h2>
 <p>The final step of the Specification Coverage usage is to run a post-processing script to evaluate all the simulation results. This
-script is called run_spec_cov.py. The script requires Python 3.x. The script can be called with the arguments listed in Table 6 from
-the command line. The CSV delimiter is fetched by the Python script from the partial coverage file headers.</p>
-<p>Note 1: All files may be referenced with absolute paths or relative to working directory.
-Note 2: Requirements can be omitted from the Specification Coverage by adding a ‘#’ in front of the requirement name in the
-requirement- or requirement map list, e.g. ‘#FPGA_REQ_1’.</p>
-<table class="docutils align-default" id="id3">
+script is called run_spec_cov.py. The script requires Python 3.x. The script can be called with the arguments listed in the table below
+from the command line. The CSV delimiter is fetched by the Python script from the partial coverage file headers.</p>
+<p><em>Note 1: All files may be referenced with absolute paths or relative to working directory.</em></p>
+<p><em>Note 2: Requirements can be omitted from the Specification Coverage by adding a ‘#’ in front of the requirement name in the
+requirement- or requirement map list, e.g. ‘#FPGA_REQ_1’.</em></p>
+<span id="script-arguments-table"></span><table class="docutils align-default" id="id3">
 <caption><span class="caption-text">run_spec_cov.py script arguments</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 15.4%" />
@@ -937,7 +925,7 @@ requirement- or requirement map list, e.g. ‘#FPGA_REQ_1’.</p>
 </tr>
 <tr class="row-even"><td><p>–requirement_map_list (-m)</p></td>
 <td><p>–requirement_map_list path/subrequirements.csv</p></td>
-<td><p>Optional: Points to the requirement map file, (see <a class="reference internal" href="#advanced-usage-requirement-mapping">Advanced usage - Requirement mapping</a>). If this argument is omitted, the</p>
+<td><p>Optional: Points to the requirement map file, (see <a class="reference internal" href="#requirement-mapping">Requirement mapping</a>). If this argument is omitted, the</p>
 <p>script assumes that no sub-requirements exist.</p>
 </td>
 </tr>
@@ -1275,7 +1263,7 @@ cond_tick_off_req_cov(“UART_REQ_4”, PASS, “Monitor”, LIST_SINGLE_TICKOFF
 </section>
 <section id="script-usage-run-spec-cov-py">
 <h3>Script Usage - run_spec_cov.py<a class="headerlink" href="#script-usage-run-spec-cov-py" title="Link to this heading"></a></h3>
-<p>Call the run_spec_cov.py from a terminal, using e.g.:      python run_spec_cov.py &lt;see Table 6 for script arguments&gt;</p>
+<p>Call the run_spec_cov.py from a terminal, using e.g.:      python run_spec_cov.py &lt;see <a class="reference internal" href="#script-arguments-table">script_arguments_table</a> for script arguments&gt;</p>
 </section>
 <section id="formats-of-input-and-intermediate-files">
 <h3>Formats of Input and Intermediate Files<a class="headerlink" href="#formats-of-input-and-intermediate-files" title="Link to this heading"></a></h3>
@@ -1440,6 +1428,13 @@ SUMMARY,&lt;Testcase&gt;,&lt;PASS/FAIL&gt;
 <h2>Example demos<a class="headerlink" href="#example-demos" title="Link to this heading"></a></h2>
 <p>There are two examples demos provided under the demo directory, one with the most basic usage and one with a more complete
 functionality.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
+not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
+otherwise, arising from, out of or in connection with this IP.</p>
+</div>
 </section>
 </section>
 

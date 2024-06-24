@@ -4,18 +4,12 @@
 Bitvis VIP Specification Coverage
 #######################################################################################################################
 
-See `Spec_Coverage_QuickRef.pdf <https://github.com/UVVM/UVVM/tree/master/bitvis_vip_spec_cov/doc/Spec_Coverage_QuickRef.pdf>`_
-
-.. include:: rst_snippets/ip_disclaimer.rst
-
 The Specification Coverage feature (aka Requirements Coverage) is an efficient method for verifying the requirement specification.    
 
 **********************************************************************************************************************************
 Introduction
 **********************************************************************************************************************************
 
-Specification Coverage Concept
-=================================================================================================================================
 An important step of design verification is to check that all requirements have been met. Requirements can be defined very differently 
 depending on application, project management, quality requirements, etc. In some projects, requirements barely exist, and the 
 functionality is based on a brief description. However, in projects where safety and reliability are key the requirement handling is an 
@@ -85,9 +79,8 @@ Partial coverage
 
 |
 
-**********************************************************************************************************************************
-Conceptual introduction and the simplest possible usage, with a single testcase
-**********************************************************************************************************************************
+Simplest possible usage, with a single testcase
+=================================================================================================================================
 For any FPGA / ASIC it is always important to properly specify the design requirements and check that they have all been tested. 
 Normally it is often just ticked off somewhere that a particular requirement is tested – often only once during the development phase, 
 and sometimes just as a mental exercise. It is always better to use a written, repeatable and automated approach. This VIP 
@@ -202,7 +195,7 @@ initialize_req_cov() and the requirement label from the tick_off_req_cov().
 Advanced usage
 **********************************************************************************************************************************
 
-Advanced usage - Only one of multiple testcases for a given requirement must pass
+Only one of multiple testcases for a given requirement must pass
 =================================================================================================================================
 In the previous example all tests in all testcases had to pass for the overall specification coverage to pass. There may however be
 situations where a given requirement is tested in multiple testcases and it is sufficient that only any one of these pass - given of
@@ -225,7 +218,7 @@ for instance be left out of from a reduced test suite to qualify for lab test on
 
 |
 
-Advanced usage - All (or some) of multiple testcases for a given requirement must pass
+All (or some) of multiple testcases for a given requirement must pass
 =================================================================================================================================
 
 This is basically the opposite of the above and is easy to achieve by just adding lines in the requirement list for all wanted
@@ -238,7 +231,7 @@ combinations of requirements and testcases. The example below states that UART_R
 
 |
 
-Advanced usage - Requirement mapping
+Requirement mapping
 =================================================================================================================================
 Requirement mapping just maps one or more requirements to another requirement. This is intended for two different use cases: Mapping of
 project requirements to IP or legacy requirements or mapping of requirements to multiple sub-requirements. 
@@ -383,8 +376,8 @@ Example of how an output file from this scenario might look:
 **********************************************************************************************************************************
 VHDL Package
 **********************************************************************************************************************************
-A vital part of the specification coverage concept is the VHDL testbench methods. These methods are described in Table 2. The methods
-are located inside the spec_cov_pkg.vhd file in the src/ directory of this VIP. 
+A vital part of the specification coverage concept is the VHDL testbench methods. These methods are described in the following section.
+The methods are located inside the spec_cov_pkg.vhd file in the src/ directory of this VIP. 
 
 
 VHDL Methods
@@ -641,13 +634,15 @@ Post-processing script
 **********************************************************************************************************************************
 
 The final step of the Specification Coverage usage is to run a post-processing script to evaluate all the simulation results. This
-script is called run_spec_cov.py. The script requires Python 3.x. The script can be called with the arguments listed in Table 6 from
-the command line. The CSV delimiter is fetched by the Python script from the partial coverage file headers.
+script is called run_spec_cov.py. The script requires Python 3.x. The script can be called with the arguments listed in the table below
+from the command line. The CSV delimiter is fetched by the Python script from the partial coverage file headers.
 
-Note 1: All files may be referenced with absolute paths or relative to working directory. 
-Note 2: Requirements can be omitted from the Specification Coverage by adding a '#' in front of the requirement name in the 
-requirement- or requirement map list, e.g. '#FPGA_REQ_1'.
+*Note 1: All files may be referenced with absolute paths or relative to working directory.*
 
+*Note 2: Requirements can be omitted from the Specification Coverage by adding a '#' in front of the requirement name in the 
+requirement- or requirement map list, e.g. '#FPGA_REQ_1'.*
+
+.. _script_arguments_table:
 
 .. list-table:: run_spec_cov.py script arguments
    :header-rows: 1
@@ -670,7 +665,7 @@ requirement- or requirement map list, e.g. '#FPGA_REQ_1'.
        each file on a separate line - potentially prefixed by a relative or absolute path.
    * - --requirement_map_list (-m)
      - --requirement_map_list path/subrequirements.csv
-     - Optional: Points to the requirement map file, (see `Advanced usage - Requirement mapping`_). If this argument is omitted, the
+     - Optional: Points to the requirement map file, (see `Requirement mapping`_). If this argument is omitted, the
        
        script assumes that no sub-requirements exist.
    * - --spec_cov (-s)
@@ -980,7 +975,7 @@ The following table shows the specification coverage procedures used in the VHDL
 
 Script Usage - run_spec_cov.py
 =================================================================================================================================
-Call the run_spec_cov.py from a terminal, using e.g.:      python run_spec_cov.py <see Table 6 for script arguments>
+Call the run_spec_cov.py from a terminal, using e.g.:      python run_spec_cov.py <see script_arguments_table_ for script arguments>
 
 
 
@@ -1131,3 +1126,6 @@ Example demos
 
 There are two examples demos provided under the demo directory, one with the most basic usage and one with a more complete
 functionality. 
+
+
+.. include:: rst_snippets/ip_disclaimer.rst

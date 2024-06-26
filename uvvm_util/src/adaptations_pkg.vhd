@@ -160,6 +160,7 @@ package adaptations_pkg is
     ID_AWAIT_COMPLETION_LIST,           -- Used for logging modifications to the list of VVCs waiting for completion
     ID_AWAIT_COMPLETION_WAIT,           -- Used for logging when the procedure starts waiting for completion
     ID_AWAIT_COMPLETION_END,            -- Used for logging when the procedure has finished waiting for completion
+    ID_AWAIT_UVVM_COMPLETION,           -- Used for logging the procedure calls waiting for scoreboards or UVVM completion
     -- Distributed data
     ID_UVVM_DATA_QUEUE,                 -- Information about UVVM data FIFO/stack (initialization, put, get, etc)
     -- VVC system
@@ -298,6 +299,8 @@ package adaptations_pkg is
   -- Scoreboard
   --------------------------------------------------------------------------------------------------------------------------------
   alias C_MAX_SB_INSTANCE_IDX is C_MAX_QUEUE_INSTANCE_NUM; -- Maximum number of SB instances
+  constant C_MAX_TB_SB_NUM   : positive := 20;             -- Maximum number of scoreboard data types in testbench
+  constant C_MAX_SB_INDEX    : positive := C_MAX_TB_SB_NUM * C_MAX_SB_INSTANCE_IDX;
   constant C_SB_TAG_WIDTH    : positive := 128; -- Number of characters in SB tag
   constant C_SB_SOURCE_WIDTH : positive := 128; -- Number of characters in SB source element
   constant C_SB_SLV_WIDTH    : positive := 128; -- Width of the SLV in the predefined SLV SB

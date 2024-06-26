@@ -108,10 +108,14 @@ package ti_protected_types_pkg is
     ) return natural;
 
     -- Get the total number of registered VVCs
-    impure function priv_get_num_registered_vvcs return natural;
+    impure function priv_get_num_registered_vvcs(
+      constant void : t_void
+    ) return natural;
 
     -- Check if all registered VVCs are INACTIVE
-    impure function priv_are_all_vvc_inactive return boolean;
+    impure function priv_are_all_vvc_inactive(
+      constant void : t_void
+    ) return boolean;
 
   end protected;
 
@@ -357,7 +361,7 @@ package body ti_protected_types_pkg is
       if priv_registered_vvc(vvc_idx).vvc_id.channel = NA then
         return priv_registered_vvc(vvc_idx).vvc_id.name & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.instance);
       else
-        return priv_registered_vvc(vvc_idx).vvc_id.name & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.instance) & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.channel);
+        return priv_registered_vvc(vvc_idx).vvc_id.name & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.instance) & "," & to_upper(to_string(priv_registered_vvc(vvc_idx).vvc_id.channel));
       end if;
     end function;
 
@@ -377,12 +381,16 @@ package body ti_protected_types_pkg is
       return v_num_instances;
     end function;
 
-    impure function priv_get_num_registered_vvcs return natural is
+    impure function priv_get_num_registered_vvcs(
+      constant void : t_void
+    ) return natural is
     begin
       return priv_last_registered_vvc_idx + 1;
     end function;
 
-    impure function priv_are_all_vvc_inactive return boolean is
+    impure function priv_are_all_vvc_inactive(
+      constant void : t_void
+    ) return boolean is
     begin
       check_value(priv_last_registered_vvc_idx /= -1, TB_ERROR, "No VVCs in activity register", C_TB_SCOPE_DEFAULT, ID_NEVER);
 

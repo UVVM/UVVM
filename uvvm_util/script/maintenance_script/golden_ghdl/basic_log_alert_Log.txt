@@ -89,6 +89,7 @@ UVVM:                ID_AWAIT_COMPLETION          : ENABLED
 UVVM:                ID_AWAIT_COMPLETION_LIST     : ENABLED
 UVVM:                ID_AWAIT_COMPLETION_WAIT     : ENABLED
 UVVM:                ID_AWAIT_COMPLETION_END      : ENABLED
+UVVM:                ID_AWAIT_UVVM_COMPLETION     : ENABLED
 UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
 UVVM:                ID_CONSTRUCTOR               : ENABLED
 UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED

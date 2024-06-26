@@ -17,7 +17,7 @@
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-package record_queue_pkg is new work.generic_queue_pkg
+package record_queue_pkg is new uvvm_util.generic_queue_pkg
   generic map(
     t_generic_element        => t_sync_flag_record,
     GC_QUEUE_COUNT_MAX       => 1000,
@@ -152,7 +152,6 @@ begin
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
-    report_msg_id_panel(VOID);
     set_alert_stop_limit(TB_ERROR, 0);  -- 0 = Never stop
 
     enable_log_msg(ALL_MESSAGES);

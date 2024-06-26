@@ -54,6 +54,9 @@ def test_vvc_framework():
     hr.add_files("../../../bitvis_vip_avalon_mm/src/*.vhd", "bitvis_vip_avalon_mm")
     hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_avalon_mm")
 
+    hr.add_files("../../../bitvis_vip_axistream/src/*.vhd", "bitvis_vip_axistream")
+    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_axistream")
+
     hr.add_files("../../tb/maintenance_tb/reference_vvcs/src/*sbi*.vhd", "bitvis_vip_sbi")
     hr.add_files("../../tb/maintenance_tb/reference_vvcs/src/*uart*.vhd", "bitvis_vip_uart")
     hr.add_files("../../tb/maintenance_tb/*.vhd", "testbench_lib")

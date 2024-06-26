@@ -14,6 +14,10 @@
 -- Description : See library quick reference (under 'doc') and README-file(s)
 ---------------------------------------------------------------------------------------------
 
+library bitvis_vip_scoreboard;
+use bitvis_vip_scoreboard.slv8_sb_pkg.all;
+use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
+
 architecture await_arch of methods_tb is
   signal bool   : boolean                      := false;
   signal slv8   : std_logic_vector(7 downto 0) := (others => '0');
@@ -22,14 +26,45 @@ architecture await_arch of methods_tb is
   signal int    : integer                      := 0;
   signal real_a : real                         := 0.0;
   signal sl     : std_logic                    := '0';
+
+  -- Used in the await_sb_completion testcase
+  shared variable v_sb   : t_generic_sb;
+  shared variable v_sb_2 : t_generic_sb;
+  signal barrier_a : std_logic := 'X';
+  -- 1. Default config (error on mismatch)
+  constant C_SB_CONFIG_1 : t_sb_config := C_SB_CONFIG_DEFAULT;
+  -- 2. Warning on mismatch
+  constant C_SB_CONFIG_2 : t_sb_config := (
+    mismatch_alert_level      => WARNING,
+    allow_lossy               => false,
+    allow_out_of_order        => false,
+    overdue_check_alert_level => ERROR,
+    overdue_check_time_limit  => 0 ns,
+    ignore_initial_garbage    => false
+  );
+
 begin
 
+  -- Used in the await_sb_completion testcase
+  p_sb_delayed_check_received : process
+    constant C_SLV8 : std_logic_vector(7 downto 0) := "01010101";
+  begin
+    wait until barrier_a = '1';
+    v_sb.check_received(C_SLV8, "checking received 1");
+    wait until barrier_a = '0';
+  end process p_sb_delayed_check_received;
+
   p_main : process
+    variable v_slv8   : std_logic_vector(7 downto 0) := (others => '0');
+    variable v_slv8_2 : std_logic_vector(7 downto 0) := (others => '0');
+    variable v_int    : integer := 0;
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
     set_log_file_name(GC_TESTCASE & "_Log.txt");
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
+
+    log(ID_LOG_HDR_LARGE, "Starting testcase: " & GC_TESTCASE, C_SCOPE);
 
     ------------------------------------------------------------------------------------------------------------------------------
     if GC_TESTCASE = "await_stable" then
@@ -1600,6 +1635,208 @@ begin
       real_a <= 17.0;
       wait for 0 ns;
       await_value(real_a, 17.0, 1 ns, 2 ns, "Val=exp already, Min_time>0ns, Fail. ", C_SCOPE);
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    elsif GC_TESTCASE = "await_sb_completion" then
+    ------------------------------------------------------------------------------------------------------------------------------
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection [without SB]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE); -- Should show no SB to report
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection with SB [enabling/disabling]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      v_sb.set_scope("DEMO SB 1");
+      v_sb.config(C_SB_CONFIG_1); -- Config with error on mismatch
+      v_sb.enable(VOID);
+      v_sb.enable_log_msg(ID_DATA);
+
+      log(ID_SEQUENCER, "Testing completion detection with SB (enabled, no expected)", C_SCOPE);
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE); -- Should show 1-SB enabled
+
+      log(ID_SEQUENCER, "Testing completion detection with SB (disabled, no expected)", C_SCOPE);
+      v_sb.disable(VOID);
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE); -- Should show 1-SB disabled
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection with SB [without received, then with received]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      v_sb.set_scope("DEMO SB 2");
+      v_sb.config(C_SB_CONFIG_2); -- Config with warning on mismatch
+      v_sb.enable(VOID);
+
+      log(ID_SEQUENCER, "Testing completion detection with SB (without received)", C_SCOPE);
+      v_slv8 := "01010101";
+      v_sb.add_expected(v_slv8, "adding expected");
+      increment_expected_alerts(TB_WARNING, 1, "Increment for await sb completion alert");
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, NO_REPORT, C_SCOPE); -- Should give an alert as it never got expected
+
+      log(ID_SEQUENCER, "Testing completion detection with SB (with received)", C_SCOPE);
+      v_slv8_2 := "01010101";
+      v_sb.check_received(v_slv8_2, "checking received");
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, NO_REPORT, C_SCOPE);
+
+      v_sb.disable(VOID); -- Will remove the SB for the next test
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection with SB [delayed received check]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      v_sb.set_scope("DEMO SB 3");
+      v_sb.config(C_SB_CONFIG_2); -- Config with warning on mismatch
+      v_sb.enable(VOID);
+
+      log(ID_SEQUENCER, "Testing completion detection with SB (delayed received check)", C_SCOPE);
+      v_slv8 := "01010101";
+      v_sb.add_expected(v_slv8, "adding expected");
+      increment_expected_alerts(TB_WARNING, 1, "Increment for await sb completion alert");
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, NO_REPORT, C_SCOPE); -- Should give an alert as it never got expected
+
+      -- Delayed check of received
+      barrier_a <= '0', '1' after 50 ns, '0' after 200 ns;
+      await_sb_completion(100 ns, TB_WARNING, 10 ns, NO_REPORT, NO_REPORT, C_SCOPE);
+      wait for 200 ns; -- Just to make sure the helper process has finished
+
+      v_sb.disable(VOID); -- Will remove the SB for the next test
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection with SB [reset/flush]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      v_sb.set_scope("DEMO SB 4");
+      v_sb.config(C_SB_CONFIG_2); -- Config with warning on mismatch
+      v_sb.enable(VOID);
+
+      -- Two mismatching values for testing
+      v_slv8   := "01010101";
+      v_slv8_2 := "10101010";
+
+      log(ID_SEQUENCER, "Resetting Scoreboard", C_SCOPE);
+      v_sb.add_expected(v_slv8_2, "adding expected 1");
+      v_sb.reset(VOID); -- Reset the scoreboard (this will remove all expected and received data)
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE); -- Should show 1-SB enabled
+
+      increment_expected_alerts(WARNING, 1, "Increment for await sb completion alert"); -- Increment alert to check reset worked as expected
+      v_sb.add_expected(v_slv8, "adding expected 2");
+      v_sb.check_received(v_slv8_2, "checking received"); -- Should give an alert (still on config set before reset)
+
+      log(ID_SEQUENCER, "Flushing Scoreboard", C_SCOPE);
+      v_sb.add_expected(v_slv8, "adding expected 3");
+      v_sb.flush(VOID); -- Flush the scoreboard (this will remove all received data, and config)
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE); -- Should show 1-SB enabled
+
+      v_sb.disable(VOID); -- Will remove the SB for the next test
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection with SB [pending entries (alert), disabled]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      v_sb.set_scope("DEMO SB 5");
+      v_sb.config(C_SB_CONFIG_2); -- Config with warning on mismatch
+      v_sb.enable(VOID);
+
+      log(ID_SEQUENCER, "Testing completion detection with SB (pending entries, disabled)", C_SCOPE);
+      v_sb.add_expected(v_slv8, "adding expected");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1, "Increment for await sb completion alert");
+      await_sb_completion(1 ms, TB_ERROR, 1 us, NO_REPORT, NO_REPORT, C_SCOPE); -- Should give an alert as it never got expected
+
+      v_sb.disable(VOID); -- Disable the SB (this will keep the pending entries, but no alerts will be given)
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE); -- Should show 1-SB disabled
+
+      v_sb.enable(VOID); -- The SB is enabled again for the next test (the pending entries are still there)
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1, "Increment for await sb completion alert");
+      await_sb_completion(1 ms, TB_ERROR, 1 us, NO_REPORT, NO_REPORT, C_SCOPE); -- Should give an alert as it never got expected
+
+      v_sb.flush(VOID); -- Flush the scoreboard (this will remove all received data, and config)
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE); -- Should show 1-SB enabled
+
+      v_sb.disable(VOID); -- Will remove the SB for the next test
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection with SB [different SB methods (insert_expected, delete_expected, fetch_expected)]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      v_sb.set_scope("DEMO SB 6");
+      v_sb.config(C_SB_CONFIG_1); -- Config default with error on mismatch
+      v_sb.enable(VOID);
+
+      log(ID_SEQUENCER, "Inserting expected to SB", C_SCOPE);
+      v_slv8   := "01010101";
+      v_slv8_2 := "10101010";
+      v_sb.add_expected(v_slv8,   "adding expected 1");
+      v_sb.add_expected(v_slv8_2, "adding expected 2");
+      v_int    := v_sb.find_expected_entry_num(v_slv8);
+      v_slv8   := "11111111";
+      v_slv8_2 := "00000001";
+      v_sb.insert_expected(ENTRY_NUM, v_int, v_slv8,   "inserting expected 3 after 1, but before 2");
+      v_sb.insert_expected(ENTRY_NUM, v_int, v_slv8_2, "inserting expected 4 after 1, but before 3 and 2");
+      increment_expected_alerts(TB_WARNING, 1, "Increment for await sb completion alert");
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, NO_REPORT, C_SCOPE); -- Should give an alert as it never got expected
+
+      log(ID_SEQUENCER, "Deleting expected from SB", C_SCOPE);
+      v_slv8 := v_sb.fetch_expected(1, POSITION, 2, "fetching expected 4");
+      v_sb.delete_expected(1, POSITION, 2, SINGLE); -- so only pos 2 is deleted
+      check_value(v_slv8, v_slv8_2, "checking fetched value 4");
+      log(ID_SEQUENCER, "Remove both 1 and 2 by use of check_received", C_SCOPE);
+      v_slv8   := "01010101";
+      v_slv8_2 := "10101010";
+      v_sb.check_received(v_slv8,   "checking received 1");
+      v_sb.check_received(v_slv8_2, "checking received 2");
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, NO_REPORT, C_SCOPE);
+
+      v_sb.disable(VOID); -- Will remove the SB for the next test
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection with SB [multiple instances, multiple SBs]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      -- SB 1
+      v_sb.set_scope("DEMO SB 7");
+      v_sb.config(C_SB_CONFIG_2); -- Config with warning on mismatch
+      v_sb.enable(VOID);
+
+      -- SB 2
+      v_sb_2.set_scope("DEMO SB 8");
+      v_sb_2.config(C_SB_CONFIG_2); -- Config with warning on mismatch
+      v_sb_2.enable(VOID);
+      v_sb_2.enable_log_msg(ID_DATA);
+
+      -- SB 1 (adding instances)
+      v_sb.enable(2);
+      v_sb.enable(3);
+      v_sb.enable_log_msg(ALL_INSTANCES, ID_DATA);
+
+      await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE); -- Should show 4-SB enabled
+
+      v_sb.add_expected(2, v_slv8, "adding expected 1");
+      v_sb.add_expected(3, v_slv8, "adding expected 2");
+      v_sb_2.add_expected( v_slv8, "adding expected 3");
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1, "Increment for await sb completion alert");
+      await_sb_completion(1 ms, TB_ERROR, 1 us, NO_REPORT, NO_REPORT, C_SCOPE); -- Should give a single alert as it never got expected
+
+      -- Will remove the SB for the next test
+      v_sb.disable(1);
+      v_sb.disable(2);
+      v_sb.disable(3);
+      v_sb_2.disable(VOID);
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection with SB [0 ns timeout/poll interval]", C_SCOPE);
+      -----------------------------------------------------------------------------
+      v_sb.set_scope("DEMO SB 9");
+      v_sb.config(C_SB_CONFIG_2); -- Config with warning on mismatch
+      v_sb.enable(VOID);
+
+      increment_expected_alerts_and_stop_limit(TB_FAILURE, 1, "Increment for await sb completion alert");
+      await_sb_completion(0 ns, TB_WARNING, 1 ns, NO_REPORT, NO_REPORT, C_SCOPE); -- Should give TB_FAILURE
+      wait for 0 ns; -- just to seperate the two calls in two delta cycles
+      increment_expected_alerts_and_stop_limit(TB_FAILURE, 1, "Increment for await sb completion alert");
+      await_sb_completion(1 ms, ERROR, 0 ns, NO_REPORT, NO_REPORT, C_SCOPE); -- Should give TB_FAILURE
+
+      v_sb.disable(VOID); -- Will remove the SB for the next test
+
+      -----------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing completion detection alert counter reports", C_SCOPE);
+      -----------------------------------------------------------------------------
+      await_sb_completion(1 ms, TB_WARNING, 1 ns, REPORT_ALERT_COUNTERS, NO_REPORT, C_SCOPE);
+      await_sb_completion(1 ms, TB_WARNING, 1 ns, REPORT_ALERT_COUNTERS_FINAL, NO_REPORT, C_SCOPE);
+
     end if;
 
     -----------------------------------------------------------------------------

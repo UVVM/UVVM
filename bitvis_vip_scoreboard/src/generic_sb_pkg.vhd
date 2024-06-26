@@ -544,6 +544,7 @@ package body generic_sb_pkg is
     variable priv_config           : t_sb_config_array(0 to C_MAX_SB_INSTANCE_IDX) := (others => sb_config_default);
     variable priv_instance_enabled : boolean_vector(0 to C_MAX_SB_INSTANCE_IDX)    := (others => false);
     variable priv_sb_queue         : sb_queue_pkg.t_generic_queue;
+    variable priv_index            : integer_vector(0 to C_MAX_SB_INSTANCE_IDX)    := (others => -1);
 
     type t_msg_id_panel_array is array (0 to C_MAX_SB_INSTANCE_IDX) of t_msg_id_panel;
     variable priv_msg_id_panel_array : t_msg_id_panel_array := (others => C_SB_MSG_ID_PANEL_DEFAULT);
@@ -741,7 +742,10 @@ package body generic_sb_pkg is
             priv_initial_garbage_cnt(i) := 0;
             priv_delete_cnt(i)          := 0;
             priv_overdue_check_cnt(i)   := 0;
+            priv_index(i)               := protected_sb_activity_register.register_sb(priv_scope, i);
+            check_value(priv_index(i) /= -1, TB_ERROR, "Number of registered Scoreboards exceed C_MAX_SB_INDEX.\n" & "Increase C_MAX_TB_SB_NUM in adaptations package.", priv_scope, ID_NEVER);
           end if;
+          protected_sb_activity_register.enable_sb(priv_index(i));
         end loop;
       else
         priv_instance_enabled(instance) := true;
@@ -753,7 +757,10 @@ package body generic_sb_pkg is
           priv_initial_garbage_cnt(instance) := 0;
           priv_delete_cnt(instance)          := 0;
           priv_overdue_check_cnt(instance)   := 0;
+          priv_index(instance)               := protected_sb_activity_register.register_sb(priv_scope, instance);
+          check_value(priv_index(instance) /= -1, TB_ERROR, "Number of registered Scoreboards exceed C_MAX_SB_INDEX.\n" & "Increase C_MAX_TB_SB_NUM in adaptations package.", priv_scope, ID_NEVER);
         end if;
+        protected_sb_activity_register.enable_sb(priv_index(instance));
       end if;
 
       priv_sb_queue.set_scope(instance, "SB queue");
@@ -795,8 +802,12 @@ package body generic_sb_pkg is
 
       if instance = ALL_INSTANCES then
         priv_instance_enabled := (others => false);
+        for i in 0 to C_MAX_SB_INSTANCE_IDX loop
+          protected_sb_activity_register.disable_sb(priv_index(i));
+        end loop;
       else
         priv_instance_enabled(instance) := false;
+        protected_sb_activity_register.disable_sb(priv_index(instance));
       end if;
 
       if ext_proc_call = "" then
@@ -858,6 +869,7 @@ package body generic_sb_pkg is
             priv_sb_queue.add(i, v_sb_entry);
             -- increment counters
             priv_entered_cnt(i) := priv_entered_cnt(i) + 1;
+            protected_sb_activity_register.increment_sb_element_cnt(priv_index(i));
 
             if tag_usage = NO_TAG then
               log(i, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ". " & add_msg_delimiter(msg), priv_scope & "," & to_string(i));
@@ -875,6 +887,7 @@ package body generic_sb_pkg is
         priv_sb_queue.add(instance, v_sb_entry);
         -- increment counters
         priv_entered_cnt(instance) := priv_entered_cnt(instance) + 1;
+        protected_sb_activity_register.increment_sb_element_cnt(priv_index(instance));
 
         if ext_proc_call = "" then
           if tag_usage = NO_TAG then
@@ -968,6 +981,7 @@ package body generic_sb_pkg is
 
               -- Delete entry
               priv_sb_queue.delete(instance, POSITION, i, SINGLE);
+              protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
 
               exit;
             end if;
@@ -985,6 +999,7 @@ package body generic_sb_pkg is
               -- Delete matching entry and preceding entries
               for j in i downto 1 loop
                 priv_sb_queue.delete(instance, POSITION, j, SINGLE);
+                protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
               end loop;
               v_dropped_num := i - 1;
               exit;
@@ -998,8 +1013,10 @@ package body generic_sb_pkg is
             v_matched := true;
             -- delete entry
             priv_sb_queue.delete(instance, POSITION, 1, SINGLE);
+            protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
           elsif not (priv_match_cnt(instance) = 0 and priv_config(instance).ignore_initial_garbage) then
             priv_sb_queue.delete(instance, POSITION, 1, SINGLE);
+            protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
           end if;
         end if;
 
@@ -1122,6 +1139,7 @@ package body generic_sb_pkg is
           priv_delete_cnt(i) := priv_delete_cnt(i) + priv_sb_queue.get_count(i);
           -- flush queue
           priv_sb_queue.flush(i);
+          protected_sb_activity_register.reset_sb_element_cnt(priv_index(i));
         end loop;
       else
         if ext_proc_call = "" then
@@ -1135,6 +1153,7 @@ package body generic_sb_pkg is
         priv_delete_cnt(instance) := priv_delete_cnt(instance) + priv_sb_queue.get_count(instance);
         -- flush queue
         priv_sb_queue.flush(instance);
+        protected_sb_activity_register.reset_sb_element_cnt(priv_index(instance));
       end if;
     end procedure flush;
 
@@ -1180,6 +1199,7 @@ package body generic_sb_pkg is
           priv_initial_garbage_cnt(instance) := 0;
           priv_delete_cnt(instance)          := 0;
           priv_overdue_check_cnt(instance)   := 0;
+          protected_sb_activity_register.reset_sb_element_cnt(priv_index(instance));
         end if;
       end procedure reset_instance;
 
@@ -1700,6 +1720,7 @@ package body generic_sb_pkg is
             priv_sb_queue.insert(i, identifier_option, identifier, v_sb_entry);
             -- increment counters
             priv_entered_cnt(i) := priv_entered_cnt(i) + 1;
+            protected_sb_activity_register.increment_sb_element_cnt(priv_index(i));
           end if;
         end loop;
       else
@@ -1714,6 +1735,7 @@ package body generic_sb_pkg is
         priv_sb_queue.insert(instance, identifier_option, identifier, v_sb_entry);
         -- increment counters
         priv_entered_cnt(instance) := priv_entered_cnt(instance) + 1;
+        protected_sb_activity_register.increment_sb_element_cnt(priv_index(instance));
       end if;
 
       -- Logging
@@ -1993,6 +2015,7 @@ package body generic_sb_pkg is
       if v_position /= -1 then
         priv_sb_queue.delete(instance, POSITION, v_position, SINGLE);
         priv_delete_cnt(instance) := priv_delete_cnt(instance) + 1;
+        protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
 
         if ext_proc_call = "" then
           log(instance, ID_DATA, proc_name & "() => value: " & to_string_element(expected_element) & ", tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
@@ -2048,6 +2071,7 @@ package body generic_sb_pkg is
       if v_position /= -1 then
         priv_sb_queue.delete(instance, POSITION, v_position, SINGLE);
         priv_delete_cnt(instance) := priv_delete_cnt(instance) + 1;
+        protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
 
         if ext_proc_call = "" then
           log(instance, ID_DATA, proc_name & "() => tag: '" & to_string(tag) & "'. " & add_msg_delimiter(msg), priv_scope & "," & to_string(instance));
@@ -2089,6 +2113,7 @@ package body generic_sb_pkg is
       priv_sb_queue.delete(instance, identifier_option, identifier_min, identifier_max);
       v_num_deleted             := C_PRE_DELETE_PENDING_CNT - priv_sb_queue.get_count(instance);
       priv_delete_cnt(instance) := priv_delete_cnt(instance) + v_num_deleted;
+      protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance), v_num_deleted);
 
       -- If error
       if v_num_deleted = 0 then
@@ -2133,6 +2158,7 @@ package body generic_sb_pkg is
       priv_sb_queue.delete(instance, identifier_option, identifier, range_option);
       v_num_deleted             := C_PRE_DELETE_PENDING_CNT - priv_sb_queue.get_count(instance);
       priv_delete_cnt(instance) := priv_delete_cnt(instance) + v_num_deleted;
+      protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance), v_num_deleted);
 
       -- If error
       if v_num_deleted = 0 then
@@ -2316,6 +2342,7 @@ package body generic_sb_pkg is
       v_sb_entry := priv_sb_queue.fetch(instance, identifier_option, identifier);
 
       priv_delete_cnt(instance) := priv_delete_cnt(instance) + 1;
+      protected_sb_activity_register.decrement_sb_element_cnt(priv_index(instance));
 
       return v_sb_entry;
 

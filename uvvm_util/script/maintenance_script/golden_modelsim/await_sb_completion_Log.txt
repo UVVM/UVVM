@@ -1,0 +1,339 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.(uvvm)                  Starting testcase: await_sb_completion
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Testing completion detection [without SB]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_AWAIT_UVVM_COMPLETION           0.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. There are no UVVM scoreboards enabled.
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                                  
+UVVM:      ====================================================================================================================================================================
+UVVM:           No UVVM scoreboards to report.
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Testing completion detection with SB [enabling/disabling]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_CTRL                            0.0 ns  DEMO SB 1,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                            0.0 ns  DEMO SB 1,1                    enable() => SB enabled. 
+UVVM: ID_CTRL                            0.0 ns  DEMO SB 1,1                    enable_log_msg() => message id id_data enabled. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Testing completion detection with SB (enabled, no expected)
+UVVM: ID_AWAIT_UVVM_COMPLETION           0.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 ps
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                                  
+UVVM:      ====================================================================================================================================================================
+UVVM:           DEMO SB 1,1,ENABLED
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Testing completion detection with SB (disabled, no expected)
+UVVM: ID_CTRL                            0.0 ns  DEMO SB 1,1                    disable() => SB disabled. 
+UVVM: ID_AWAIT_UVVM_COMPLETION           0.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. There are no UVVM scoreboards enabled.
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      0 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                                  
+UVVM:      ====================================================================================================================================================================
+UVVM:           DEMO SB 1,1,DISABLED
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Testing completion detection with SB [without received, then with received]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_CTRL                            0.0 ns  DEMO SB 2,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                            0.0 ns  DEMO SB 2,1                    enable() => SB enabled. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Testing completion detection with SB (without received)
+UVVM: ID_DATA                            0.0 ns  DEMO SB 2,1                    add_expected() => expected: x"55". 'adding expected'
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 'Increment for await sb completion alert'
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:       1000000 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: ID_SEQUENCER                 1000000.0 ns  TB seq.(uvvm)                  Testing completion detection with SB (with received)
+UVVM: ID_DATA                      1000000.0 ns  DEMO SB 2,1                    check_received() => MATCH, for received: x"55". 'checking received'
+UVVM: ID_AWAIT_UVVM_COMPLETION     1000000.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 ps
+UVVM: ID_CTRL                      1000000.0 ns  DEMO SB 2,1                    disable() => SB disabled. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                   1000000.0 ns  TB seq.(uvvm)                  Testing completion detection with SB [delayed received check]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_CTRL                      1000000.0 ns  DEMO SB 3,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                      1000000.0 ns  DEMO SB 3,1                    enable() => SB enabled. 
+UVVM: ID_SEQUENCER                 1000000.0 ns  TB seq.(uvvm)                  Testing completion detection with SB (delayed received check)
+UVVM: ID_DATA                      1000000.0 ns  DEMO SB 3,1                    add_expected() => expected: x"55". 'adding expected'
+UVVM: ID_UTIL_SETUP                1000000.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 'Increment for await sb completion alert'
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:       2000000 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: ID_DATA                      2000050.0 ns  DEMO SB 3,1                    check_received() => MATCH, for received: x"55". 'checking received 1'
+UVVM: ID_AWAIT_UVVM_COMPLETION     2000050.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 50 ns
+UVVM: ID_CTRL                      2000250.0 ns  DEMO SB 3,1                    disable() => SB disabled. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                   2000250.0 ns  TB seq.(uvvm)                  Testing completion detection with SB [reset/flush]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_CTRL                      2000250.0 ns  DEMO SB 4,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                      2000250.0 ns  DEMO SB 4,1                    enable() => SB enabled. 
+UVVM: ID_SEQUENCER                 2000250.0 ns  TB seq.(uvvm)                  Resetting Scoreboard
+UVVM: ID_DATA                      2000250.0 ns  DEMO SB 4,1                    add_expected() => expected: x"AA". 'adding expected 1'
+UVVM: ID_CTRL                      2000250.0 ns  DEMO SB 4,1                    reset() => reseting SB. 
+UVVM: ID_AWAIT_UVVM_COMPLETION     2000250.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 ps
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      2000250 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            
+UVVM:      ====================================================================================================================================================================
+UVVM:           DEMO SB 1,1,ENABLED
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                2000250.0 ns  TB seq.                        incremented expected WARNINGs by 1. 'Increment for await sb completion alert'
+UVVM: ID_DATA                      2000250.0 ns  DEMO SB 4,1                    add_expected() => expected: x"55". 'adding expected 2'
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:       2000250 ns   DEMO SB 4,1
+UVVM:                    check_received() => MISMATCH, expected: x"55"; received: x"AA". 'checking received'
+UVVM: 
+UVVM: ID_SEQUENCER                 2000250.0 ns  TB seq.(uvvm)                  Flushing Scoreboard
+UVVM: ID_DATA                      2000250.0 ns  DEMO SB 4,1                    add_expected() => expected: x"55". 'adding expected 3'
+UVVM: ID_DATA                      2000250.0 ns  DEMO SB 4,1                    flush() => flushing SB. 
+UVVM: ID_AWAIT_UVVM_COMPLETION     2000250.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 ps
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      2000250 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            
+UVVM:      ====================================================================================================================================================================
+UVVM:           DEMO SB 1,1,ENABLED
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_CTRL                      2000250.0 ns  DEMO SB 4,1                    disable() => SB disabled. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                   2000250.0 ns  TB seq.(uvvm)                  Testing completion detection with SB [pending entries (alert), disabled]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_CTRL                      2000250.0 ns  DEMO SB 5,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                      2000250.0 ns  DEMO SB 5,1                    enable() => SB enabled. 
+UVVM: ID_SEQUENCER                 2000250.0 ns  TB seq.(uvvm)                  Testing completion detection with SB (pending entries, disabled)
+UVVM: ID_DATA                      2000250.0 ns  DEMO SB 5,1                    add_expected() => expected: x"55". 'adding expected'
+UVVM: ID_UTIL_SETUP                2000250.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 'Increment for await sb completion alert'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:       3000250 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_CTRL                      3000250.0 ns  DEMO SB 5,1                    disable() => SB disabled. 
+UVVM: ID_AWAIT_UVVM_COMPLETION     3000250.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. There are no UVVM scoreboards enabled.
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      3000250 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            
+UVVM:      ====================================================================================================================================================================
+UVVM:           DEMO SB 1,1,DISABLED
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_CTRL                      3000250.0 ns  DEMO SB 5,1                    enable() => SB enabled. 
+UVVM: ID_UTIL_SETUP                3000250.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 'Increment for await sb completion alert'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:       4000250 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_DATA                      4000250.0 ns  DEMO SB 5,1                    flush() => flushing SB. 
+UVVM: ID_AWAIT_UVVM_COMPLETION     4000250.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 ps
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      4000250 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            
+UVVM:      ====================================================================================================================================================================
+UVVM:           DEMO SB 1,1,ENABLED
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_CTRL                      4000250.0 ns  DEMO SB 5,1                    disable() => SB disabled. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                   4000250.0 ns  TB seq.(uvvm)                  Testing completion detection with SB [different SB methods (insert_expected, delete_expected,
+UVVM:                                                                           fetch_expected)]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_CTRL                      4000250.0 ns  DEMO SB 6,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                      4000250.0 ns  DEMO SB 6,1                    enable() => SB enabled. 
+UVVM: ID_SEQUENCER                 4000250.0 ns  TB seq.(uvvm)                  Inserting expected to SB
+UVVM: ID_DATA                      4000250.0 ns  DEMO SB 6,1                    add_expected() => expected: x"55". 'adding expected 1'
+UVVM: ID_DATA                      4000250.0 ns  DEMO SB 6,1                    add_expected() => expected: x"AA". 'adding expected 2'
+UVVM: ID_DATA                      4000250.0 ns  DEMO SB 6,1                    insert_expected() => inserted expected without TAG in position 4.  Expected: x"FF". 'inserting
+UVVM:                                                                           expected 3 after 1, but before 2'
+UVVM: ID_DATA                      4000250.0 ns  DEMO SB 6,1                    insert_expected() => inserted expected without TAG in position 4.  Expected: x"01". 'inserting
+UVVM:                                                                           expected 4 after 1, but before 3 and 2'
+UVVM: ID_UTIL_SETUP                4000250.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 'Increment for await sb completion alert'
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:       5000250 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: ID_SEQUENCER                 5000250.0 ns  TB seq.(uvvm)                  Deleting expected from SB
+UVVM: ID_DATA                      5000250.0 ns  DEMO SB 6,1                    fetch_expected() => fetching expected by position 2. 'fetching expected 4'
+UVVM: ID_DATA                      5000250.0 ns  DEMO SB 6,1                    delete_expected() => entry with identifier position 2. 
+UVVM: ID_POS_ACK                   5000250.0 ns  TB seq.                        check_value() => OK, for slv x"01"'. 'checking fetched value 4'
+UVVM: ID_SEQUENCER                 5000250.0 ns  TB seq.(uvvm)                  Remove both 1 and 2 by use of check_received
+UVVM: ID_DATA                      5000250.0 ns  DEMO SB 6,1                    check_received() => MATCH, for received: x"55". 'checking received 1'
+UVVM: ID_DATA                      5000250.0 ns  DEMO SB 6,1                    check_received() => MATCH, for received: x"AA". 'checking received 2'
+UVVM: ID_AWAIT_UVVM_COMPLETION     5000250.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 ps
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 6,1                    disable() => SB disabled. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                   5000250.0 ns  TB seq.(uvvm)                  Testing completion detection with SB [multiple instances, multiple SBs]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 7,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 7,1                    enable() => SB enabled. 
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 8,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 8,1                    enable() => SB enabled. 
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 8,1                    enable_log_msg() => message id id_data enabled. 
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 7,2                    enable() => SB enabled. 
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 7,3                    enable() => SB enabled. 
+UVVM: ID_CTRL                      5000250.0 ns  DEMO SB 7                      enable_log_msg() => message id id_data enabled for all instances.
+UVVM: ID_AWAIT_UVVM_COMPLETION     5000250.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. All UVVM scoreboards are empty. Condition occurred after 0 ps
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      5000250 ns *** SUMMARY OF SCOREBOARDS***                                                                                                                            
+UVVM:      ====================================================================================================================================================================
+UVVM:           DEMO SB 1,1,ENABLED
+UVVM:           DEMO SB 8,1,ENABLED
+UVVM:           DEMO SB 7,2,ENABLED
+UVVM:           DEMO SB 7,3,ENABLED
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_DATA                      5000250.0 ns  DEMO SB 7,2                    add_expected() => value: x"55". 'adding expected 1'
+UVVM: ID_DATA                      5000250.0 ns  DEMO SB 7,3                    add_expected() => value: x"55". 'adding expected 2'
+UVVM: ID_DATA                      5000250.0 ns  DEMO SB 8,1                    add_expected() => expected: x"55". 'adding expected 3'
+UVVM: ID_UTIL_SETUP                5000250.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 'Increment for await sb completion alert'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:       6000250 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 8,1
+UVVM:                      DEMO SB 7,2
+UVVM:                      DEMO SB 7,3
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_CTRL                      6000250.0 ns  DEMO SB 7,1                    disable() => SB disabled. 
+UVVM: ID_CTRL                      6000250.0 ns  DEMO SB 7,2                    disable() => SB disabled. 
+UVVM: ID_CTRL                      6000250.0 ns  DEMO SB 7,3                    disable() => SB disabled. 
+UVVM: ID_CTRL                      6000250.0 ns  DEMO SB 8,1                    disable() => SB disabled. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                   6000250.0 ns  TB seq.(uvvm)                  Testing completion detection with SB [0 ns timeout/poll interval]
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_CTRL                      6000250.0 ns  DEMO SB 9,1                    config() => config applied to SB. 
+UVVM: ID_CTRL                      6000250.0 ns  DEMO SB 9,1                    enable() => SB enabled. 
+UVVM: ID_UTIL_SETUP                6000250.0 ns  TB seq.                        incremented expected TB_FAILUREs by 1. 'Increment for await sb completion alert'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #1  ***
+UVVM:       6000250 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. Boolean was false. 'timeout must be greater than 0'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                6000250.0 ns  TB seq.                        incremented expected TB_FAILUREs by 1. 'Increment for await sb completion alert'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #2  ***
+UVVM:       6000250 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. Boolean was false. 'sb_poll_time must be greater than 0'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_CTRL                      6000250.0 ns  DEMO SB 9,1                    disable() => SB disabled. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                   6000250.0 ns  TB seq.(uvvm)                  Testing completion detection alert counter reports
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_AWAIT_UVVM_COMPLETION     6000250.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. There are no UVVM scoreboards enabled.
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      3         3         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      3         3         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      2         2         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM: ID_AWAIT_UVVM_COMPLETION     6000250.0 ns  TB seq.(uvvm)                  await_sb_completion() => OK. There are no UVVM scoreboards enabled.
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      3         3         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      3         3         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      2         2         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      3         3         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      3         3         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      2         2         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                   6001250.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

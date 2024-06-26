@@ -49,5 +49,6 @@ package global_signals_and_shared_variables_pkg is
   shared variable protected_broadcast_semaphore  : t_protected_semaphore;
   shared variable protected_response_semaphore   : t_protected_semaphore;
   shared variable protected_covergroup_status    : t_protected_covergroup_status;
+  shared variable protected_sb_activity_register : t_sb_activity;
 
 end package global_signals_and_shared_variables_pkg;

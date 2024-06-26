@@ -35,8 +35,9 @@ hr = HDLRegression(simulator='modelsim')
 # Add Util src
 hr.add_files("../../src/*.vhd", "uvvm_util")
 
-# Add Util TB
-hr.add_files("../../tb/maintenance_tb/*.vhd", "uvvm_util")
+# Add Util TB and dependencies
+hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+hr.add_files("../../tb/maintenance_tb/*.vhd", "uvvm_util_tb")
 
 # Define testcase names with generics for GC_TESTCASE
 hr.add_generics(entity="generic_queue_array_tb",

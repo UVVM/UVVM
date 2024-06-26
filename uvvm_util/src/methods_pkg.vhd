@@ -295,6 +295,10 @@ package methods_pkg is
       constant order : in t_order
     );
 
+  procedure report_scoreboards(
+    constant void : in t_void
+  );
+
   -- ============================================================================
   -- Deprecate message
   -- ============================================================================
@@ -2576,6 +2580,42 @@ package methods_pkg is
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
     );
 
+  impure function check_sb_completion(
+    constant alert_level          : t_alert_level;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
+    constant ext_proc_call        : string                  := ""
+  ) return boolean;
+
+  impure function check_sb_completion(
+    constant void : t_void
+  ) return boolean;
+
+  procedure check_sb_completion(
+    constant alert_level          : t_alert_level;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel
+  );
+
+  procedure check_sb_completion(
+    constant void : t_void
+  );
+
+  procedure await_sb_completion(
+    constant timeout              : time;
+    constant alert_level          : t_alert_level           := TB_ERROR;
+    constant sb_poll_time         : time                    := 100 us;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
+    constant ext_proc_call        : string                  := ""
+  );
+
   -----------------------------------------------------
   -- Pulse Generation Procedures
   -----------------------------------------------------
@@ -4113,6 +4153,38 @@ package body methods_pkg is
     ) is
   begin
     report_check_counters(FINAL);
+  end procedure;
+
+  -- Lists all the scoreboards and whether they are enabled or not
+  procedure report_scoreboards(
+    constant void : in t_void
+  ) is
+    constant C_PREFIX : string := C_LOG_PREFIX & "     ";
+    variable v_line   : line;
+  begin
+    -- Print report header
+    write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+    write(v_line, timestamp_header(now, justify("*** SUMMARY OF SCOREBOARDS***", LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+
+    -- Print scoreboards
+    if protected_sb_activity_register.get_num_registered_sb(void) = 0 then
+      write(v_line, "     " & "No UVVM scoreboards to report." & LF);
+    else
+      for idx in 0 to protected_sb_activity_register.get_num_registered_sb(void) - 1 loop
+        write(v_line, "     " & to_string(protected_sb_activity_register.get_sb_name(idx)) & "," & to_string(protected_sb_activity_register.get_sb_instance(idx)) &
+              "," & return_string1_if_true_otherwise_string2("ENABLED", "DISABLED", protected_sb_activity_register.is_enabled(idx)) & LF);
+      end loop;
+    end if;
+
+    -- Print report bottom line
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+
+    -- Write the info string to transcript
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+    prefix_lines(v_line, C_PREFIX);
+    write_line_to_log_destination(v_line);
+    DEALLOCATE(v_line);
   end procedure;
 
   -- ============================================================================
@@ -8674,6 +8746,160 @@ package body methods_pkg is
     ) is
   begin
     await_stable(target, stable_req, stable_req_from, timeout, timeout_from, error, msg, scope, msg_id, msg_id_panel);
+  end procedure;
+
+  -- Checks whether the enabled scoreboards still have pending data, returns true if none of them have pending data
+  impure function check_sb_completion(
+    constant alert_level          : t_alert_level;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
+    constant ext_proc_call        : string                  := ""
+  ) return boolean is
+    constant C_NAME      : string  := "check_sb_completion()";
+    constant C_PRINT_LOG : boolean := ext_proc_call = ""; -- Only print log messages when called directly from sequencer
+    variable v_line      : line;
+    variable v_check_ok  : boolean := true;
+  begin
+    -- Iterate through all the enabled scoreboards
+    for idx in 0 to protected_sb_activity_register.get_num_registered_sb(void) - 1 loop
+      if protected_sb_activity_register.is_enabled(idx) and protected_sb_activity_register.get_sb_element_cnt(idx) > 0 then
+        if C_PRINT_LOG then
+          write(v_line, "  " & to_string(protected_sb_activity_register.get_sb_name(idx)) & "," & to_string(protected_sb_activity_register.get_sb_instance(idx)) & LF);
+          v_check_ok := false;
+        else
+          return false;
+        end if;
+      end if;
+    end loop;
+
+    if C_PRINT_LOG then
+      if not v_check_ok then
+        alert(alert_level, C_NAME & " => Failed. The following UVVM scoreboard(s) still have pending data:\n" & v_line.all, scope);
+        DEALLOCATE(v_line);
+        return false;
+      else
+        if protected_sb_activity_register.get_num_enabled_sb(void) = 0 then
+          log(ID_POS_ACK, C_NAME & " => OK. There are no UVVM scoreboards enabled.", scope, msg_id_panel);
+        else
+          log(ID_POS_ACK, C_NAME & " => OK. All UVVM scoreboards are empty.", scope, msg_id_panel);
+        end if;
+
+        -- Print reports
+        if print_alert_counters = REPORT_ALERT_COUNTERS then
+          report_alert_counters(INTERMEDIATE);
+        elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
+          report_alert_counters(FINAL);
+        end if;
+        if print_sbs = REPORT_SCOREBOARDS then
+          report_scoreboards(void);
+        end if;
+        return true;
+      end if;
+    else
+      return true;
+    end if;
+  end function;
+
+  -- Overload
+  impure function check_sb_completion(
+    constant void : t_void
+  ) return boolean is
+  begin
+    return check_sb_completion(TB_ERROR);
+  end function;
+
+  -- Overload
+  procedure check_sb_completion(
+    constant alert_level          : t_alert_level;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel
+  ) is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_sb_completion(alert_level, print_alert_counters, print_sbs, scope, msg_id_panel);
+  end procedure;
+
+  -- Overload
+  procedure check_sb_completion(
+    constant void : t_void
+  ) is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_sb_completion(void);
+  end procedure;
+
+  -- Waits until all the enabled scoreboards have no pending data or a timeout occurs
+  procedure await_sb_completion(
+    constant timeout              : time;
+    constant alert_level          : t_alert_level           := TB_ERROR;
+    constant sb_poll_time         : time                    := 100 us;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
+    constant ext_proc_call        : string                  := ""
+  ) is
+    constant C_NAME         : string := "await_sb_completion()";
+    variable v_elapsed_time : time   := 0 ns;
+    variable v_line         : line;
+    variable v_proc_call    : line;
+  begin
+    -- Called directly from sequencer
+    if ext_proc_call = "" then
+      write(v_proc_call, C_NAME);
+    -- Called from another procedure
+    else
+      write(v_proc_call, ext_proc_call);
+    end if;
+
+    -- Sanity checks
+    check_value(timeout > 0 ns, TB_FAILURE, "timeout must be greater than 0", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(sb_poll_time > 0 ns, TB_FAILURE, "sb_poll_time must be greater than 0", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if timeout <= 0 ns or sb_poll_time <= 0 ns then
+      return;
+    end if;
+
+    -- Wait until the scoreboards are empty or a timeout occurs
+    loop
+      if check_sb_completion(TB_ERROR, ext_proc_call => v_proc_call.all) or v_elapsed_time >= timeout then
+        exit;
+      else
+        wait for sb_poll_time;
+        v_elapsed_time := v_elapsed_time + sb_poll_time;
+      end if;
+    end loop;
+
+    -- Print success/fail log message
+    if v_elapsed_time >= timeout then
+      for idx in 0 to protected_sb_activity_register.get_num_registered_sb(void) - 1 loop
+        if protected_sb_activity_register.is_enabled(idx) and protected_sb_activity_register.get_sb_element_cnt(idx) > 0 then
+          write(v_line, "  " & to_string(protected_sb_activity_register.get_sb_name(idx)) & "," & to_string(protected_sb_activity_register.get_sb_instance(idx)) & LF);
+        end if;
+      end loop;
+      alert(alert_level, v_proc_call.all & " => Failed. The following UVVM scoreboard(s) still have pending data after " & to_string(v_elapsed_time, get_time_unit(v_elapsed_time)) & ":\n" & v_line.all, scope);
+    else
+      if protected_sb_activity_register.get_num_enabled_sb(void) = 0 then
+        log(ID_AWAIT_UVVM_COMPLETION, v_proc_call.all & " => OK. There are no UVVM scoreboards enabled.", scope, msg_id_panel);
+      else
+        log(ID_AWAIT_UVVM_COMPLETION, v_proc_call.all & " => OK. All UVVM scoreboards are empty. Condition occurred after " & to_string(v_elapsed_time, get_time_unit(v_elapsed_time)), scope, msg_id_panel);
+      end if;
+
+      -- Print reports
+      if print_alert_counters = REPORT_ALERT_COUNTERS then
+        report_alert_counters(INTERMEDIATE);
+      elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
+        report_alert_counters(FINAL);
+      end if;
+      if print_sbs = REPORT_SCOREBOARDS then
+        report_scoreboards(void);
+      end if;
+    end if;
+    DEALLOCATE(v_line);
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   -----------------------------------------------------------------------------------

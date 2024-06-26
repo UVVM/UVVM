@@ -166,6 +166,47 @@ Checks if the target signal has been stable in stable_req time. If not, an alert
     check_stable(slv8, 9 ns, "Checking if SLV is stable");
 
 
+check_sb_completion()
+----------------------------------------------------------------------------------------------------------------------------------
+This procedure checks that all the enabled scoreboards are empty, i.e. all expected values checked. The result of the check is 
+returned as a boolean if the method is called as a function.
+
+If an enabled scoreboard has expected values to be checked, an alert will be generated. Otherwise, a successful completion message 
+and the optional reports will be printed in the log.
+
+.. code-block::
+
+    [boolean :=] check_sb_completion(VOID)
+    [boolean :=] check_sb_completion(alert_level, [print_alert_counters, [print_sbs, [scope, [msg_id_panel]]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is       |
+|          |                    |        |                              | TB_ERROR.                                               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_alert_counte\| in     | :ref:`t_report_alert_counter\| Whether to print a report of alert counters. Default    |
+|          | rs                 |        | s`                           | value is NO_REPORT.                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_sbs          | in     | :ref:`t_report_sb`           | Whether to print a report with all the scoreboards in   |
+|          |                    |        |                              | the testbench. Default value is NO_REPORT.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    v_check := check_sb_completion(VOID);
+    check_sb_completion(TB_WARNING, REPORT_ALERT_COUNTERS, REPORT_SCOREBOARDS, C_SCOPE);
+
+
 await_change()
 ----------------------------------------------------------------------------------------------------------------------------------
 Waits until the target signal changes, or times out after max_time. An alert is asserted if the signal does not change between 
@@ -298,6 +339,58 @@ specified by timeout. Note that **stable** refers to that the signal has not had
 
     -- Examples:
     await_stable(u8, 20 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, ERROR, "Waiting for u8 to stabilize");
+
+
+.. _await_sb_completion:
+
+await_sb_completion()
+----------------------------------------------------------------------------------------------------------------------------------
+This procedure waits for all the enabled scoreboards to be empty, i.e. all expected values checked.
+
+If an enabled scoreboard still has expected values to be checked when the timeout occurs, an alert will be generated. Otherwise, a 
+successful completion message and the optional reports will be printed in the log.
+
+.. code-block::
+
+    await_sb_completion(timeout, [alert_level, [sb_poll_time, [print_alert_counters, [print_sbs, [scope, [msg_id_panel]]]]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | timeout            | in     | time                         | Timeout for the VVCs to be inactive and the scoreboards |
+|          |                    |        |                              | to be empty. Must be greater than 0.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is       |
+|          |                    |        |                              | TB_ERROR.                                               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | sb_poll_time       | in     | time                         | Time to wait until checking again whether the           |
+|          |                    |        |                              | scoreboards have been emptied. Must be greater than 0.  |
+|          |                    |        |                              | Default value is 100 us.                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_alert_counte\| in     | :ref:`t_report_alert_counter\| Whether to print a report of alert counters. Default    |
+|          | rs                 |        | s`                           | value is NO_REPORT.                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_sbs          | in     | :ref:`t_report_sb`           | Whether to print a report with all the scoreboards in   |
+|          |                    |        |                              | the testbench. Default value is NO_REPORT.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Example: Wait for all Scoreboards to be empty
+    await_sb_completion(1 ms);
+
+    -- Example: Wait for all Scoreboards to be empty and report the alert counters and scoreboards
+    await_sb_completion(1 ms, TB_WARNING, 1 us, REPORT_ALERT_COUNTERS, REPORT_SCOREBOARDS, C_SCOPE);
+
+.. note::
+
+    This procedure is called within :ref:`await_uvvm_completion`, which is recommended to use when there are VVCs in the testbench.
 
 
 Logging and verbosity control
@@ -1608,6 +1701,8 @@ the timeout. The flag can be re-blocked when leaving the process by setting flag
     await_unblock_flag("my_flag", 10 us, "waiting for my_flag to be unblocked", RETURN_TO_BLOCK, WARNING);
     await_unblock_flag(C_MY_FLAG_1, 10 us, "waiting for " & C_MY_FLAG_1 & " to be unblocked", RETURN_TO_BLOCK, WARNING, "My Scope");
 
+
+.. _await_barrier:
 
 await_barrier()
 ----------------------------------------------------------------------------------------------------------------------------------

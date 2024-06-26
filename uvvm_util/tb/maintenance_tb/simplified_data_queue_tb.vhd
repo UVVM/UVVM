@@ -21,9 +21,9 @@ use IEEE.math_real.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
-use work.data_queue_pkg.all;
-use work.data_fifo_pkg.all;
-use work.data_stack_pkg.all;
+use uvvm_util.data_queue_pkg.all;
+use uvvm_util.data_fifo_pkg.all;
+use uvvm_util.data_stack_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
@@ -82,7 +82,6 @@ begin
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
-    report_msg_id_panel(VOID);
     set_alert_stop_limit(TB_ERROR, 0);  -- 0 = Never stop
 
     enable_log_msg(ALL_MESSAGES);

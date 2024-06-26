@@ -232,6 +232,12 @@ package types_pkg is
 
   type t_error_report_extent is (EXTENDED, BRIEF);
 
+  type t_report_alert_counters is (NO_REPORT, REPORT_ALERT_COUNTERS, REPORT_ALERT_COUNTERS_FINAL);
+
+  type t_report_vvc is (NO_REPORT, REPORT_VVCS);
+
+  type t_report_sb is (NO_REPORT, REPORT_SCOREBOARDS);
+
   constant C_CMD_IDX_PREFIX : string := " [";
   constant C_CMD_IDX_SUFFIX : string := "]";
 

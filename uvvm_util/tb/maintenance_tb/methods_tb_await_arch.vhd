@@ -1637,6 +1637,304 @@ begin
       await_value(real_a, 17.0, 1 ns, 2 ns, "Val=exp already, Min_time>0ns, Fail. ", C_SCOPE);
 
     ------------------------------------------------------------------------------------------------------------------------------
+    elsif GC_TESTCASE = "await_change_to_value" then
+    ------------------------------------------------------------------------------------------------------------------------------
+
+      log(ID_LOG_HDR, "Verifying await_change_to_value", C_SCOPE);
+
+      set_alert_stop_limit(error, 0);     -- 0 = Never stop
+      set_alert_stop_limit(warning, 0);
+      wait for 1 ns;
+
+      log(ID_SEQUENCER, "Testing await_change_to_value with std_logic", C_SCOPE);
+
+      -- testing await_change_to_value with to late change
+      increment_expected_alerts(error, 1);
+      sl <= '0';
+      sl <= transport '1' after 4 ns;
+      await_change_to_value(sl, '1', 0 ns, 3 ns, error, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change but not to value specified
+      increment_expected_alerts(warning, 1);
+      sl <= transport '0' after 1 ns;
+      await_change_to_value(sl, '1', 0 ns, 3 ns, warning, "Change but not to value specified, Fail", C_SCOPE);
+      -- testing await_change_to_value with change to value specified within limit
+      sl <= transport '1' after 2 ns;
+      await_change_to_value(sl, '1', 0 ns, 3 ns, error, "Change to value specified within limit, OK", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value before min_time
+      increment_expected_alerts(error, 1);
+      sl <= transport '0' after 1 ns;
+      await_change_to_value(sl, '0', 2 ns, 3 ns, error, "Change to value before min_time, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value after max_time
+      increment_expected_alerts(error, 1);
+      sl <= transport '1' after 8 ns; -- change too late (will not be detected if max_time does not subtract min_time change)
+      await_change_to_value(sl, '1', 5 ns, 7 ns, error, "Time Check Failed", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change (first to wrong value, then to correct value) within time window
+      sl <= transport '0' after 2 ns;
+      sl <= transport '1' after 4 ns;
+      await_change_to_value(sl, '1', 3 ns, 5 ns, error, "Change only (not correct) triggered", C_SCOPE);
+      wait for 10 ns;
+      -- Testing different t_match_strictness values (bc t_match_strictness is sometimes handled in procedure and not only matching_values())
+      sl <= transport 'L' after 2 ns; -- L = 0 on MATCH_STD
+      await_change_to_value(sl, '0', MATCH_STD, 1 ns, 3 ns, error, "Change to acceptable STD value within timeframe", C_SCOPE);
+      wait for 5 ns;
+      sl <= transport 'Z' after 2 ns; -- this should cause a fail since Z = Z is not a match in MATCH_STD
+      increment_expected_alerts(error, 1);
+      await_change_to_value(sl, 'Z', MATCH_STD, 1 ns, 3 ns, error, "Change to correct STD but outside t_match_strictness scope should give error", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '0' after 1 ns;
+      sl <= transport 'Z' after 2 ns; -- this should pass since Z = Z is a match in MATCH_STD_INCL_Z
+      await_change_to_value(sl, 'Z', MATCH_STD_INCL_Z, 1 ns, 3 ns, error, "Change to acceptable STD value within timeframe", C_SCOPE);
+      wait for 5 ns;
+      sl <= transport 'X' after 2 ns; -- this should cause a fail since X = X is not a match in MATCH_STD_INCL_Z
+      increment_expected_alerts(error, 1);
+      await_change_to_value(sl, 'X', MATCH_STD_INCL_Z, 1 ns, 3 ns, error, "Change to correct STD but outside t_match_strictness scope should give error", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport '1' after 2 ns; -- 1 != H on MATCH_EXACT
+      increment_expected_alerts(error, 1);
+      await_change_to_value(sl, 'H', MATCH_EXACT, 1 ns, 3 ns, error, "Change to similar STD but outside t_match_strictness scope should give error", C_SCOPE);
+      wait for 10 ns;
+      sl <= transport 'X' after 2 ns;
+      -- checking X = X gives false on all match strictnesses except MATCH_STD_INCL_ZXUW
+      await_change_to_value(sl, 'X', MATCH_STD_INCL_ZXUW, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE);
+      wait for 10 ns;
+      -- Testing different overloads
+      sl <= transport '0' after 1 ns;
+      sl <= transport 'H' after 2 ns;
+      increment_expected_alerts(error, 1);
+      -- should get the default value of MATCH_EXACT and ERROR.
+      await_change_to_value(sl, '1', 1 ns, 3 ns, "Change to acceptable value within timeframe", C_SCOPE);
+      wait for 10 ns;
+      -- Testing different overloads [scope, [msg_id, [msg_id_panel]] w/ and w/o error and t_match_strictness
+      sl <= transport '0' after 2 ns;
+      await_change_to_value(sl, '0', MATCH_EXACT, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      sl <= transport '1' after 2 ns;
+      await_change_to_value(sl, '1', MATCH_EXACT, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK);
+      sl <= transport '0' after 2 ns;
+      await_change_to_value(sl, '0', MATCH_EXACT, 1 ns, 3 ns, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      sl <= transport '1' after 2 ns;
+      await_change_to_value(sl, '1', 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      wait for 10 ns;
+
+      log(ID_SEQUENCER, "Testing await_change_to_value with unsigned", C_SCOPE);
+
+      -- testing await_change_to_value with to late change
+      increment_expected_alerts(error, 1);
+      uns8 <= "00000000";
+      uns8 <= transport "00000001" after 4 ns;
+      await_change_to_value(uns8, "00000001", 0 ns, 3 ns, error, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change but not to value specified
+      increment_expected_alerts(warning, 1);
+      uns8 <= transport "00000000" after 1 ns;
+      await_change_to_value(uns8, "00000001", 0 ns, 3 ns, warning, "Change but not to value specified, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to value specified within limit
+      uns8 <= transport "00000001" after 2 ns;
+      await_change_to_value(uns8, "00000001", 0 ns, 3 ns, error, "Change to value specified within limit, OK", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value before min_time
+      increment_expected_alerts(error, 1);
+      uns8 <= transport "00000000" after 1 ns;
+      await_change_to_value(uns8, "00000000", 2 ns, 3 ns, error, "Change to value before min_time, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value after max_time
+      increment_expected_alerts(error, 1);
+      uns8 <= transport "00000001" after 8 ns;
+      await_change_to_value(uns8, "00000001", 5 ns, 7 ns, error, "Time Check Failed", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change (first to wrong value, then to correct value) within time window
+      uns8 <= transport "00000000" after 2 ns;
+      uns8 <= transport "00000001" after 4 ns;
+      await_change_to_value(uns8, "00000001", 3 ns, 5 ns, error, "Change only (not correct) triggered", C_SCOPE);
+      wait for 10 ns;
+      -- Testing different overloads [scope, [msg_id, [msg_id_panel]] w/ and w/o error and t_match_strictness
+      uns8 <= transport "00000000" after 2 ns;
+      await_change_to_value(uns8, "00000000", 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_SEQUENCER_SUB, shared_msg_id_panel);
+      uns8 <= transport "00000010" after 2 ns;
+      await_change_to_value(uns8, "00000010", 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_SEQUENCER_SUB);
+      uns8 <= transport "00000000" after 2 ns;
+      await_change_to_value(uns8, "00000000", 1 ns, 3 ns, "Change to acceptable value within timeframe", C_SCOPE, ID_SEQUENCER_SUB, shared_msg_id_panel);
+      uns8 <= transport "00000010" after 2 ns;
+      await_change_to_value(uns8, "00000010", 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_SEQUENCER_SUB, shared_msg_id_panel);
+      wait for 10 ns;
+
+      log(ID_SEQUENCER, "Testing await_change_to_value with signed", C_SCOPE);
+
+      -- testing await_change_to_value with to late change
+      increment_expected_alerts(error, 1);
+      sig8 <= "00000000";
+      sig8 <= transport "00000001" after 4 ns;
+      await_change_to_value(sig8, "00000001", 0 ns, 3 ns, error, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change but not to value specified
+      increment_expected_alerts(warning, 1);
+      sig8 <= transport "00000000" after 1 ns;
+      await_change_to_value(sig8, "00000001", 0 ns, 3 ns, warning, "Change but not to value specified, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to value specified within limit
+      sig8 <= transport "00000001" after 2 ns;
+      await_change_to_value(sig8, "00000001", 0 ns, 3 ns, error, "Change to value specified within limit, OK", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value before min_time
+      increment_expected_alerts(error, 1);
+      sig8 <= transport "00000000" after 1 ns;
+      await_change_to_value(sig8, "00000000", 2 ns, 3 ns, error, "Change to value before min_time, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value after max_time
+      increment_expected_alerts(error, 1);
+      sig8 <= transport "00000001" after 8 ns;
+      await_change_to_value(sig8, "00000001", 5 ns, 7 ns, error, "Time Check Failed", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change (first to wrong value, then to correct value) within time window
+      sig8 <= transport "00000000" after 2 ns;
+      sig8 <= transport "00000001" after 4 ns;
+      await_change_to_value(sig8, "00000001", 3 ns, 5 ns, error, "Change only (not correct) triggered", C_SCOPE);
+      wait for 10 ns;
+      -- Testing different overloads [scope, [msg_id, [msg_id_panel]] w/ and w/o error and t_match_strictness
+      sig8 <= transport "00000000" after 2 ns;
+      await_change_to_value(sig8, "00000000", 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      sig8 <= transport "00000010" after 2 ns;
+      await_change_to_value(sig8, "00000010", 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK);
+      sig8 <= transport "00000000" after 2 ns;
+      await_change_to_value(sig8, "00000000", 1 ns, 3 ns, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      sig8 <= transport "00000010" after 2 ns;
+      await_change_to_value(sig8, "00000010", 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      wait for 10 ns;
+
+      log(ID_SEQUENCER, "Testing await_change_to_value with boolean", C_SCOPE);
+
+      -- testing await_change_to_value with to late change
+      increment_expected_alerts(error, 1);
+      bool <= false;
+      bool <= transport true after 4 ns;
+      await_change_to_value(bool, true, 0 ns, 3 ns, error, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change but not to value specified
+      increment_expected_alerts(warning, 1);
+      bool <= transport false after 1 ns;
+      await_change_to_value(bool, true, 0 ns, 3 ns, warning, "Change but not to value specified, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to value specified within limit
+      bool <= transport true after 2 ns;
+      await_change_to_value(bool, true, 0 ns, 3 ns, error, "Change to value specified within limit, OK", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value before min_time
+      increment_expected_alerts(error, 1);
+      bool <= transport false after 1 ns;
+      await_change_to_value(bool, false, 2 ns, 3 ns, error, "Change to value before min_time, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value after max_time
+      increment_expected_alerts(error, 1);
+      bool <= transport true after 8 ns;
+      await_change_to_value(bool, true, 5 ns, 7 ns, error, "Time Check Failed", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change (first to wrong value, then to correct value) within time window
+      bool <= transport false after 2 ns;
+      bool <= transport true after 4 ns;
+      await_change_to_value(bool, true, 3 ns, 5 ns, error, "Change only (not correct) triggered", C_SCOPE);
+      wait for 10 ns;
+      -- Testing different overloads (no need to check t_match_strictness since it is not used in boolean)
+      bool <= transport false after 2 ns;
+      await_change_to_value(bool, false, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      bool <= transport true after 2 ns;
+      await_change_to_value(bool, true, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK);
+      bool <= transport false after 2 ns;
+      await_change_to_value(bool, false, 1 ns, 3 ns, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      bool <= transport true after 2 ns;
+      await_change_to_value(bool, true, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK);
+      wait for 10 ns;
+
+      log(ID_SEQUENCER, "Testing await_change_to_value with integer", C_SCOPE);
+
+      -- testing await_change_to_value with to late change
+      increment_expected_alerts(error, 1);
+      int <= 0;
+      int <= transport 1 after 4 ns;
+      await_change_to_value(int, 1, 0 ns, 3 ns, error, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change but not to value specified
+      increment_expected_alerts(warning, 1);
+      int <= transport 0 after 1 ns;
+      await_change_to_value(int, 1, 0 ns, 3 ns, warning, "Change but not to value specified, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to value specified within limit
+      int <= transport 1 after 2 ns;
+      await_change_to_value(int, 1, 0 ns, 3 ns, error, "Change to value specified within limit, OK", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value before min_time
+      increment_expected_alerts(error, 1);
+      int <= transport 0 after 1 ns;
+      await_change_to_value(int, 0, 2 ns, 3 ns, error, "Change to value before min_time, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value after max_time
+      increment_expected_alerts(error, 1);
+      int <= transport 1 after 8 ns;
+      await_change_to_value(int, 1, 5 ns, 7 ns, error, "Time Check Failed", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change (first to wrong value, then to correct value) within time window
+      int <= transport 0 after 2 ns;
+      int <= transport 1 after 4 ns;
+      await_change_to_value(int, 1, 3 ns, 5 ns, error, "Change only (not correct) triggered", C_SCOPE);
+      wait for 10 ns;
+      -- Testing different overloads (no need to check t_match_strictness since it is not used in integer)
+      int <= transport 0 after 2 ns;
+      await_change_to_value(int, 0, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      int <= transport 1 after 2 ns;
+      await_change_to_value(int, 1, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK);
+      int <= transport 0 after 2 ns;
+      await_change_to_value(int, 0, 1 ns, 3 ns, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      int <= transport 1 after 2 ns;
+      await_change_to_value(int, 1, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK);
+      wait for 10 ns;
+
+      log(ID_SEQUENCER, "Testing await_change_to_value with real", C_SCOPE);
+
+      -- testing await_change_to_value with to late change
+      increment_expected_alerts(error, 1);
+      real_a <= 0.0;
+      real_a <= transport 1.0 after 4 ns;
+      await_change_to_value(real_a, 1.0, 0 ns, 3 ns, error, "Change too late, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change but not to value specified
+      increment_expected_alerts(warning, 1);
+      real_a <= transport 0.0 after 1 ns;
+      await_change_to_value(real_a, 1.0, 0 ns, 3 ns, warning, "Change but not to value specified, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to value specified within limit
+      real_a <= transport 1.0 after 2 ns;
+      await_change_to_value(real_a, 1.0, 0 ns, 3 ns, error, "Change to value specified within limit, OK", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value before min_time
+      increment_expected_alerts(error, 1);
+      real_a <= transport 0.0 after 1 ns;
+      await_change_to_value(real_a, 0.0, 2 ns, 3 ns, error, "Change to value before min_time, Fail", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change to correct value after max_time
+      increment_expected_alerts(error, 1);
+      real_a <= transport 1.0 after 8 ns;
+      await_change_to_value(real_a, 1.0, 5 ns, 7 ns, error, "Time Check Failed", C_SCOPE);
+      wait for 10 ns;
+      -- testing await_change_to_value with change (first to wrong value, then to correct value) within time window
+      real_a <= transport 0.0 after 2 ns;
+      real_a <= transport 1.0 after 4 ns;
+      await_change_to_value(real_a, 1.0, 3 ns, 5 ns, error, "Change only (not correct) triggered", C_SCOPE);
+      wait for 10 ns;
+      -- Testing different overloads (no need to check t_match_strictness since it is not used in real)
+      real_a <= transport 0.0 after 2 ns;
+      await_change_to_value(real_a, 0.0, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      real_a <= transport 1.0 after 2 ns;
+      await_change_to_value(real_a, 1.0, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK);
+      real_a <= transport 0.0 after 2 ns;
+      await_change_to_value(real_a, 0.0, 1 ns, 3 ns, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK, shared_msg_id_panel);
+      real_a <= transport 1.0 after 2 ns;
+      await_change_to_value(real_a, 1.0, 1 ns, 3 ns, error, "Change to acceptable value within timeframe", C_SCOPE, ID_POS_ACK);
+      wait for 10 ns;
+
+    ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "await_sb_completion" then
     ------------------------------------------------------------------------------------------------------------------------------
       -----------------------------------------------------------------------------

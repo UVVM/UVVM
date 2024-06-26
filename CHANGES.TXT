@@ -33,6 +33,7 @@ Released: 2024-XX-XX
 - Updated Utility Library documentation on how to enable report_check_counters().
 - Added comment support and updated handling of omitted requirements in spec cov.
 - Various changes to spec cov output files.
+- Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
 
 
 v2 2024.03.08

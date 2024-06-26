@@ -12,6 +12,7 @@ Released: 2024-XX-XX
 - Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
 - Added individual constants to configure the VVCs max instance number from adaptations_pkg.
 - Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+- Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
 
 v2.19.4
 ----------

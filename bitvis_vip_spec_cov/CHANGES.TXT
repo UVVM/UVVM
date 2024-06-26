@@ -8,7 +8,8 @@ Released: 2024-XX-XX
 - Deprecated local_adaptations_pkg and moved content to adaptations_pkg.
 - Fixed strictness 2 functionality.
 - Added comment support and updated handling of omitted requirements.
-- Various changes to output files
+- Various changes to output files.
+- Don't fail testcase and other requirements if requirement is explicitly failed at tickoff
 
 v1.0.1
 ----------

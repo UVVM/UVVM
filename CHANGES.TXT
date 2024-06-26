@@ -38,6 +38,7 @@ Released: 2024-XX-XX
   for all the enabled scoreboards to be empty: await_uvvm_completion(), await_sb_completion(), check_sb_completion().
 - Added completion detection test to UVVM demo tb.
 - Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
+- Changed behavior for explicit fail at tickoff in spec cov.
 
 
 v2 2024.03.08

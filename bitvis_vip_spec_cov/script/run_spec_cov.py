@@ -1315,15 +1315,15 @@ def build_partial_cov_list(run_configuration, container):
                     # empty line, summary line, and parsed string (if these exist)
                     if (idx > 3) and (row != []) and (row[0].upper() != "SUMMARY") and (row[0] != parsed_string):
 
-                        # Read 3 cells: requirement name, testcase name, testcase result
+                        # Read 3 cells: requirement name, testcase name, tickoff result
                         requirement_name = row[0]
                         testcase_name    = row[1]
-                        testcase_result  = row[2]
+                        tickoff_result   = row[2]
 
                         # Will get an existing or a new requirement object
                         requirement = container.get_requirement(requirement_name)
                         # Set the requirement intermediate compliance.
-                        if partial_coverage_pass:
+                        if tickoff_result == testcase_pass_string:
                             requirement.compliance = compliant_string
                         else:
                             requirement.compliance = non_compliant_string
@@ -1331,7 +1331,7 @@ def build_partial_cov_list(run_configuration, container):
                         # Will get an existing or a new testcase object
                         testcase = container.get_testcase(testcase_name)
                         if partial_coverage_pass:
-                            testcase.result = testcase_result
+                            testcase.result = testcase_pass_string
                         else:
                             testcase.result = testcase_fail_string
                         

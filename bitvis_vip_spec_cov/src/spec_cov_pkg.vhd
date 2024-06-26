@@ -245,10 +245,12 @@ package body spec_cov_pkg is
     end if;
 
     ---- Check if there were any errors globally or testcase was explicit set to FAIL
-    if (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1) or (test_status = FAIL) then
+    if shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1 then
       v_requirement_status := FAIL;
       -- Set failing testcase for finishing summary line
       priv_testcase_passed := false;
+    elsif test_status = FAIL then
+        v_requirement_status := FAIL;
     else
       v_requirement_status := PASS;
     end if;

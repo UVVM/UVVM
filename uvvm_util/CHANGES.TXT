@@ -13,6 +13,8 @@ Released: 2024-XX-XX
 - Added individual constants to configure the VVCs max instance number from adaptations_pkg.
 - Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
 - Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
+- Added completion detection functionality to wait for all the enabled scoreboards to be empty: await_sb_completion(), check_sb_completion().
+- Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
 
 v2.19.4
 ----------

@@ -34,6 +34,10 @@ Released: 2024-XX-XX
 - Added comment support and updated handling of omitted requirements in spec cov.
 - Various changes to spec cov output files.
 - Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
+- Added completion detection functionality to wait for all the VVCs to be inactive with no pending commands to be executed, and
+  for all the enabled scoreboards to be empty: await_uvvm_completion(), await_sb_completion(), check_sb_completion().
+- Added completion detection test to UVVM demo tb.
+- Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
 
 
 v2 2024.03.08

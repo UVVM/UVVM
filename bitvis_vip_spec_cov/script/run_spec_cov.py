@@ -455,7 +455,9 @@ def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
                 for sub_requirement in requirement.get_sub_requirement_list():
                     if first_item:
                         sub_requirement_string = sub_requirement.name
-                    sub_requirement_string += " & " + sub_requirement.name
+                        first_item = False
+                    else:
+                        sub_requirement_string += " & " + sub_requirement.name
                 if sub_requirement_string:
                     if first_mapping_line == True: # Print headings before first line
                         csv_writer.writerow([])
@@ -708,7 +710,9 @@ def write_spec_cov_files(run_configuration, container, delimiter):
                 for sub_requirement in requirement.get_sub_requirement_list():
                     if first_item:
                         sub_requirement_string = sub_requirement.name
-                    sub_requirement_string += " & " + sub_requirement.name
+                        first_item = False
+                    else:
+                        sub_requirement_string += " & " + sub_requirement.name
                 if sub_requirement_string:
                     if first_mapping_line == True: # Print headings before first line
                         csv_writer.writerow([])
@@ -762,7 +766,9 @@ def write_spec_cov_files(run_configuration, container, delimiter):
                 for sub_requirement in requirement.get_sub_requirement_list():
                     if first_item:
                         sub_requirement_string = sub_requirement.name
-                    sub_requirement_string += " & " + sub_requirement.name
+                        first_item = False
+                    else:
+                        sub_requirement_string += " & " + sub_requirement.name
                 if sub_requirement_string:
                     if first_mapping_line == True: # Print headings before first line
                         csv_writer.writerow([])

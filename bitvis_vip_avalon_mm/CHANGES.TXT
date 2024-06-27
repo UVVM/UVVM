@@ -10,6 +10,7 @@ Released: 2024-XX-XX
 - Added an individual constant to configure the VVC max instance number from adaptations_pkg.
 - Fixed avalon_mm_read_response() sampling the data one cycle too early when using sequential commands and sampling the same data
   in pipelined commands.
+- Use dedicated scope in VVC pipeline processes.
 
 v3.0.0
 ----------

@@ -40,6 +40,7 @@ Released: 2024-XX-XX
 - Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
 - Fixed avalon_mm_read_response() sampling the data one cycle too early when using sequential commands and sampling the same data
   in pipelined commands.
+- Use dedicated scope in Avalon-MM, AXI and AXI-Lite VVC pipeline processes.
 
 
 v2 2024.03.08

@@ -550,9 +550,11 @@ begin
     variable v_read_data            : t_vvc_result; -- See vvc_cmd_pkg
     variable v_normalised_addr      : unsigned(GC_ADDR_WIDTH - 1 downto 0)         := (others => '0');
     variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
+    constant C_READ_RESP_SCOPE      : string                                       := get_scope_for_log(C_VVC_NAME & "_RR", GC_INSTANCE_IDX);
+    constant C_READ_RESP_VVC_LABELS : t_vvc_labels                                 := assign_vvc_labels(C_READ_RESP_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
-    command_response_queue.set_scope(C_SCOPE & ":RQ");
+    command_response_queue.set_scope(C_READ_RESP_SCOPE & ":Q");
     command_response_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
     command_response_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
     command_response_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
@@ -563,7 +565,7 @@ begin
 
     loop
       -- Fetch commands
-      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_response_queue, vvc_config, vvc_status, response_queue_is_increasing, read_response_is_busy, C_VVC_LABELS);
+      work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_response_queue, vvc_config, vvc_status, response_queue_is_increasing, read_response_is_busy, C_READ_RESP_VVC_LABELS);
 
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
@@ -576,7 +578,7 @@ begin
       case v_cmd.operation is
         when READ =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_READ_RESP_SCOPE);
 
           -- Initiate read response
           avalon_mm_read_response(addr_value   => v_normalised_addr,
@@ -584,7 +586,7 @@ begin
                                   msg          => format_msg(v_cmd),
                                   clk          => clk,
                                   avalon_mm_if => avalon_mm_vvc_master_if,
-                                  scope        => C_SCOPE,
+                                  scope        => C_READ_RESP_SCOPE,
                                   msg_id_panel => v_msg_id_panel,
                                   config       => vvc_config.bfm_config);
           -- Request SB check result
@@ -599,11 +601,11 @@ begin
           end if;
 
           -- Update vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_SCOPE);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_READ_RESP_SCOPE);
 
         when CHECK =>
           -- Set vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_READ_RESP_SCOPE);
 
           -- Initiate check response
           avalon_mm_check_response(addr_value   => v_normalised_addr,
@@ -612,15 +614,15 @@ begin
                                    clk          => clk,
                                    avalon_mm_if => avalon_mm_vvc_master_if,
                                    alert_level  => v_cmd.alert_level,
-                                   scope        => C_SCOPE,
+                                   scope        => C_READ_RESP_SCOPE,
                                    msg_id_panel => v_msg_id_panel,
                                    config       => vvc_config.bfm_config);
 
           -- Update vvc transaction info
-          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_READ_RESP_SCOPE);
 
         when others =>
-          tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_SCOPE);
+          tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_READ_RESP_SCOPE);
 
       end case;
 

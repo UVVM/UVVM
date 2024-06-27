@@ -70,10 +70,10 @@ architecture behave of avalon_mm_vvc is
   constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
-  signal vvc_is_active                   : boolean := false;
   signal executor_is_busy                : boolean := false;
-  signal queue_is_increasing             : boolean := false;
   signal read_response_is_busy           : boolean := false;
+  signal any_executors_busy              : boolean := false;
+  signal queue_is_increasing             : boolean := false;
   signal response_queue_is_increasing    : boolean := false;
   signal last_cmd_idx_executed           : natural := 0;
   signal last_read_response_idx_executed : natural := 0;
@@ -93,12 +93,6 @@ architecture behave of avalon_mm_vvc is
   -- VVC Activity
   signal entry_num_in_vvc_activity_register : integer;
 
-  -- Propagation delayed interface signal used when reading data from the slave in the read_response process.
-  signal avalon_mm_vvc_master_if_pd : t_avalon_mm_if(address(GC_ADDR_WIDTH - 1 downto 0),
-                                                     byte_enable((GC_DATA_WIDTH / 8) - 1 downto 0),
-                                                     writedata(GC_DATA_WIDTH - 1 downto 0),
-                                                     readdata(GC_DATA_WIDTH - 1 downto 0)) := init_avalon_mm_if_signals(GC_ADDR_WIDTH, GC_DATA_WIDTH);
-
   --UVVM: temporary fix for HVVC, remove function below in v3.0
   function get_msg_id_panel(
     constant command    : in t_vvc_cmd_record;
@@ -114,6 +108,14 @@ architecture behave of avalon_mm_vvc is
     end if;
   end function;
 
+  impure function queues_are_empty(
+    constant void : t_void
+  ) return boolean is
+    variable v_return : boolean := false;
+  begin
+    return command_queue.is_empty(VOID) and command_response_queue.is_empty(VOID);
+  end function;
+
 begin
 
   --===============================================================================================
@@ -124,6 +126,12 @@ begin
                                                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
                                                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
                                                  C_VVC_MAX_INSTANCE_NUM);
+  --===============================================================================================
+
+  --===============================================================================================
+  -- Set if any of the executors are busy
+  --===============================================================================================
+  any_executors_busy <= executor_is_busy or read_response_is_busy;
   --===============================================================================================
 
   --===============================================================================================
@@ -178,10 +186,7 @@ begin
         case v_local_vvc_cmd.operation is
 
           when AWAIT_COMPLETION =>
-            -- Await completion of all commands in the cmd_executor queue
-            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, ID_IMMEDIATE_CMD_WAIT, ID_NEVER);
-            -- Await completion of all commands in the read_response queue
-            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_response_queue, vvc_config, read_response_is_busy, C_VVC_LABELS, last_read_response_idx_executed, ID_NEVER, ID_IMMEDIATE_CMD);
+            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, any_executors_busy, C_VVC_LABELS, last_cmd_idx_executed, ID_IMMEDIATE_CMD_WAIT, ID_NEVER);
 
           when AWAIT_ANY_COMPLETION =>
             if not v_local_vvc_cmd.gen_boolean then
@@ -189,7 +194,7 @@ begin
               work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
               v_cmd_has_been_acked := true;
             end if;
-            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
+            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, any_executors_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
 
           when DISABLE_LOG_MSG =>
             uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
@@ -199,6 +204,7 @@ begin
 
           when FLUSH_COMMAND_QUEUE =>
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
+            work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_response_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
             work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
@@ -232,6 +238,28 @@ begin
   --===============================================================================================
 
   --===============================================================================================
+  -- Updating the activity register
+  --===============================================================================================
+  p_activity_register_update : process
+    variable v_cmd_queues_are_empty : boolean;
+  begin
+    -- Wait until active and set the activity register to ACTIVE
+    if not any_executors_busy then
+      wait until any_executors_busy;
+    end if;
+    v_cmd_queues_are_empty := queues_are_empty(VOID);
+    update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
+    -- Wait until inactive and set the activity register to INACTIVE
+    while any_executors_busy loop
+      wait until not any_executors_busy;
+      wait for 0 ps;
+      exit when not any_executors_busy;
+    end loop;
+    v_cmd_queues_are_empty := queues_are_empty(VOID);
+    update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
+  end process p_activity_register_update;
+
+  --===============================================================================================
   -- Command executor
   -- - Fetch and execute the commands.
   -- - Note that the read response is handled in the read_response process.
@@ -248,7 +276,6 @@ begin
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH - 1 downto 0)               := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH - 1 downto 0)       := (others => '0');
     variable v_normalised_byte_ena                   : std_logic_vector((GC_DATA_WIDTH / 8) - 1 downto 0) := (others => '0');
-    variable v_cmd_queues_are_empty                  : boolean;
 
   begin
     -- 0. Initialize the process prior to first command
@@ -265,19 +292,9 @@ begin
 
     loop
 
-      -- update vvc activity
-      v_cmd_queues_are_empty := (command_queue.is_empty(VOID) and command_response_queue.is_empty(VOID));
-      if not (read_response_is_busy) and v_cmd_queues_are_empty then
-        update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
-      end if;
-
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
-
-      -- update vvc activity
-      v_cmd_queues_are_empty := (command_queue.is_empty(VOID) and command_response_queue.is_empty(VOID));
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
 
       -- Set the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;
@@ -522,11 +539,6 @@ begin
   --===============================================================================================
 
   --===============================================================================================
-  -- Add a delta cycle to the read response interface signals to avoid reading wrong data.
-  --===============================================================================================
-  avalon_mm_vvc_master_if_pd <= transport avalon_mm_vvc_master_if after std.env.resolution_limit;
-
-  --===============================================================================================
   -- Read response command execution.
   -- - READ (and CHECK) data received from the slave after the command executor has issued an
   --   read request (or check).
@@ -538,35 +550,20 @@ begin
     variable v_read_data            : t_vvc_result; -- See vvc_cmd_pkg
     variable v_normalised_addr      : unsigned(GC_ADDR_WIDTH - 1 downto 0)         := (others => '0');
     variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
-    -- check if command_queue and command_response_queue is empty
-    variable v_cmd_queues_are_empty : boolean;
-
   begin
     -- Set the command response queue up to the same settings as the command queue
     command_response_queue.set_scope(C_SCOPE & ":RQ");
     command_response_queue.set_queue_count_max(GC_CMD_QUEUE_COUNT_MAX);
     command_response_queue.set_queue_count_threshold(GC_CMD_QUEUE_COUNT_THRESHOLD);
     command_response_queue.set_queue_count_threshold_severity(GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY);
-
     -- Wait until VVC is registered in vvc activity register in the interpreter
     wait until entry_num_in_vvc_activity_register >= 0;
-
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
 
     loop
-      -- update vvc activity
-      v_cmd_queues_are_empty := command_queue.is_empty(VOID) and command_response_queue.is_empty(VOID);
-      if not (executor_is_busy) and v_cmd_queues_are_empty then
-        update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
-      end if;
-
       -- Fetch commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_response_queue, vvc_config, vvc_status, response_queue_is_increasing, read_response_is_busy, C_VVC_LABELS);
-
-      ---- response executor follows executor, thus VVC activity is already set to ACTIVE
-      --v_cmd_queues_are_empty := (command_queue.is_empty(VOID) and command_response_queue.is_empty(VOID));
-      --update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
 
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
@@ -586,7 +583,7 @@ begin
                                   data_value   => v_read_data(GC_DATA_WIDTH - 1 downto 0),
                                   msg          => format_msg(v_cmd),
                                   clk          => clk,
-                                  avalon_mm_if => avalon_mm_vvc_master_if_pd,
+                                  avalon_mm_if => avalon_mm_vvc_master_if,
                                   scope        => C_SCOPE,
                                   msg_id_panel => v_msg_id_panel,
                                   config       => vvc_config.bfm_config);
@@ -613,7 +610,7 @@ begin
                                    data_exp     => v_normalised_data,
                                    msg          => format_msg(v_cmd),
                                    clk          => clk,
-                                   avalon_mm_if => avalon_mm_vvc_master_if_pd,
+                                   avalon_mm_if => avalon_mm_vvc_master_if,
                                    alert_level  => v_cmd.alert_level,
                                    scope        => C_SCOPE,
                                    msg_id_panel => v_msg_id_panel,

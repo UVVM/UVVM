@@ -55,10 +55,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#check-value">check_value()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-value-in-range">check_value_in_range()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-stable">check_stable()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-sb-completion">check_sb_completion()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#await-change">await_change()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#await-value">await_value()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#await-change-to-value">await_change_to_value()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#await-stable">await_stable()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#await-sb-completion">await_sb_completion()</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#logging-and-verbosity-control">Logging and verbosity control</a><ul>
@@ -181,13 +183,16 @@
 <li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-alert-counters">t_alert_counters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-normalization-mode">t_normalization_mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-data-routing">t_data_routing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-report-alert-counters">t_report_alert_counters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-report-sb">t_report_sb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="types_pkg.html#t-report-vvc">t_report_vvc</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#message-ids">Message IDs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-hierarchical-alert-reporting">Using Hierarchical Alert Reporting</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id6">Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-to-alert-hierarchy">add_to_alert_hierarchy()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id7">increment_expected_alerts()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">increment_expected_alerts()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#set-expected-alerts">set_expected_alerts()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#increment-stop-limit">increment_stop_limit()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#set-stop-limit">set_stop_limit()</a></li>
@@ -230,6 +235,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 </ul>
 
         </div>
@@ -539,6 +545,75 @@ value is shared_msg_id_panel.</p></td>
 </pre></div>
 </div>
 </section>
+<section id="check-sb-completion">
+<h4>check_sb_completion()<a class="headerlink" href="#check-sb-completion" title="Link to this heading"></a></h4>
+<p>This procedure checks that all the enabled scoreboards are empty, i.e. all expected values checked. The result of the check is
+returned as a boolean if the method is called as a function.</p>
+<p>If an enabled scoreboard has expected values to be checked, an alert will be generated. Otherwise, a successful completion message
+and the optional reports will be printed in the log.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="p">]</span><span class="w"> </span><span class="n">check_sb_completion</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="p">[</span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="p">]</span><span class="w"> </span><span class="n">check_sb_completion</span><span class="p">(</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">print_alert_counters</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">print_sbs</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is
+TB_ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>print_alert_counters</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-report-alert-counters"><span class="std std-ref">t_report_alert_counters</span></a></p></td>
+<td><p>Whether to print a report of alert counters. Default
+value is NO_REPORT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>print_sbs</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-report-sb"><span class="std std-ref">t_report_sb</span></a></p></td>
+<td><p>Whether to print a report with all the scoreboards in
+the testbench. Default value is NO_REPORT.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_TB_SCOPE_DEFAULT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_check</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">check_sb_completion</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">check_sb_completion</span><span class="p">(</span><span class="n">TB_WARNING</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_ALERT_COUNTERS</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_SCOREBOARDS</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
 <section id="await-change">
 <h4>await_change()<a class="headerlink" href="#await-change" title="Link to this heading"></a></h4>
 <p>Waits until the target signal changes, or times out after max_time. An alert is asserted if the signal does not change between
@@ -719,7 +794,7 @@ value is shared_msg_id_panel.</p></td>
 </div>
 </section>
 <section id="await-change-to-value">
-<h4>await_change_to_value()<a class="headerlink" href="#await-change-to-value" title="Permalink to this headline"></a></h4>
+<h4>await_change_to_value()<a class="headerlink" href="#await-change-to-value" title="Link to this heading"></a></h4>
 <p>Waits until the target signal changes to the exp signal, or times out after max_time.
 If the signal changes to the expected value before min_time, or the signal does not change to the expected value between min_time and max_time, an alert is asserted.</p>
 <div class="admonition note">
@@ -729,23 +804,16 @@ If the signal changes to the expected value before min_time, or the signal does 
 <li><p>If the value changes to the expected value at exactly max_time, the timeout gets precedence.</p></li>
 </ul>
 </div>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">match_strictness</span><span class="p">],</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span><span class="w"></span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">match_strictness</span><span class="p">],</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span><span class="w"></span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">bool</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">bool</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span><span class="w"></span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span><span class="w"></span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span><span class="w"></span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span><span class="w"></span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">sl</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">match_strictness</span><span class="p">],</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">slv</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">match_strictness</span><span class="p">],</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">bool</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">bool</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">u</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">int</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="w"> </span><span class="n">min_time</span><span class="p">,</span><span class="w"> </span><span class="n">max_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">],</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 7%" />
-<col style="width: 14%" />
-<col style="width: 6%" />
-<col style="width: 22%" />
-<col style="width: 51%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -821,9 +889,9 @@ value is shared_msg_id_panel.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">bol</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for bol to change to true for min 10 ns and max 20 ns&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;10101010&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for slv8 to change to value&quot;</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">bol</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for bol to change to true for min 10 ns and max 20 ns&quot;</span><span class="p">);</span>
+<span class="n">await_change_to_value</span><span class="p">(</span><span class="n">slv8</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;10101010&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">MATCH_STD</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">WARNING</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for slv8 to change to value&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -919,6 +987,88 @@ value is shared_msg_id_panel.</p></td>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
 <span class="n">await_stable</span><span class="p">(</span><span class="n">u8</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_LAST_EVENT</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Waiting for u8 to stabilize&quot;</span><span class="p">);</span>
 </pre></div>
+</div>
+</section>
+<section id="await-sb-completion">
+<span id="id2"></span><h4>await_sb_completion()<a class="headerlink" href="#await-sb-completion" title="Link to this heading"></a></h4>
+<p>This procedure waits for all the enabled scoreboards to be empty, i.e. all expected values checked.</p>
+<p>If an enabled scoreboard still has expected values to be checked when the timeout occurs, an alert will be generated. Otherwise, a
+successful completion message and the optional reports will be printed in the log.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">await_sb_completion</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">sb_poll_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">print_alert_counters</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">print_sbs</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Timeout for the VVCs to be inactive and the scoreboards
+to be empty. Must be greater than 0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is
+TB_ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>sb_poll_time</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Time to wait until checking again whether the
+scoreboards have been emptied. Must be greater than 0.
+Default value is 100 us.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>print_alert_counters</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-report-alert-counters"><span class="std std-ref">t_report_alert_counters</span></a></p></td>
+<td><p>Whether to print a report of alert counters. Default
+value is NO_REPORT.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>print_sbs</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-report-sb"><span class="std std-ref">t_report_sb</span></a></p></td>
+<td><p>Whether to print a report with all the scoreboards in
+the testbench. Default value is NO_REPORT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_TB_SCOPE_DEFAULT.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example: Wait for all Scoreboards to be empty</span>
+<span class="n">await_sb_completion</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
+
+<span class="c1">-- Example: Wait for all Scoreboards to be empty and report the alert counters and scoreboards</span>
+<span class="n">await_sb_completion</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">TB_WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_ALERT_COUNTERS</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_SCOREBOARDS</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This procedure is called within <a class="reference internal" href="vvc_framework.html#await-uvvm-completion"><span class="std std-ref">await_uvvm_completion()</span></a>, which is recommended to use when there are VVCs in the testbench.</p>
 </div>
 </section>
 </section>
@@ -1848,7 +1998,7 @@ at the end</p></td>
 </section>
 </section>
 <section id="basic-randomization">
-<span id="id2"></span><h3>Basic Randomization<a class="headerlink" href="#basic-randomization" title="Link to this heading"></a></h3>
+<span id="id3"></span><h3>Basic Randomization<a class="headerlink" href="#basic-randomization" title="Link to this heading"></a></h3>
 <section id="random-function">
 <h4>random() - function<a class="headerlink" href="#random-function" title="Link to this heading"></a></h4>
 <p>Returns a random value. The function uses and updates a global seed.</p>
@@ -2039,7 +2189,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 <span id="util-string-handling"></span><h3>String handling<a class="headerlink" href="#string-handling" title="Link to this heading"></a></h3>
 <p>Methods are defined in string_methods_pkg.vhd</p>
 <section id="to-string-ieee">
-<h4>to_string() - IEEE <a class="footnote-reference brackets" href="#f1" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#to-string-ieee" title="Link to this heading"></a></h4>
+<h4>to_string() - IEEE <a class="footnote-reference brackets" href="#f1" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#to-string-ieee" title="Link to this heading"></a></h4>
 <p>IEEE defined to_string functions. Return a string with the value of the argument ‘value’.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">(</span><span class="n">ANY_SCALAR_TYPE</span><span class="p">))</span>
 <span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">(</span><span class="n">slv</span><span class="p">))</span>
@@ -2239,7 +2389,7 @@ it is printable.</div>
 </div>
 </section>
 <section id="justify-ieee">
-<h4>justify() - IEEE <a class="footnote-reference brackets" href="#f1" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#justify-ieee" title="Link to this heading"></a></h4>
+<h4>justify() - IEEE <a class="footnote-reference brackets" href="#f1" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#justify-ieee" title="Link to this heading"></a></h4>
 <p>IEEE implementation of justify. Returns a string where ‘value’ is justified to the side given by ‘justified’.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">justify</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">justified</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">field</span><span class="p">])</span>
 </pre></div>
@@ -3217,7 +3367,7 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 </div>
 </section>
 <section id="await-barrier">
-<h4>await_barrier()<a class="headerlink" href="#await-barrier" title="Link to this heading"></a></h4>
+<span id="id6"></span><h4>await_barrier()<a class="headerlink" href="#await-barrier" title="Link to this heading"></a></h4>
 <p>The procedure can be used to synchronise between several sequencers. When the procedure is called, it waits for all sequencers
 using the same barrier_signal to reach their call of await_barrier().</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">await_barrier</span><span class="p">(</span><span class="n">barrier_signal</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout_severity</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
@@ -3901,11 +4051,14 @@ This should normally be called at the end of the simulation.</p>
 <li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-alert-counters">t_alert_counters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-normalization-mode">t_normalization_mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-data-routing">t_data_routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-report-alert-counters">t_report_alert_counters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-report-sb">t_report_sb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types_pkg.html#t-report-vvc">t_report_vvc</a></li>
 </ul>
 </div>
 </section>
 <section id="message-ids">
-<span id="id5"></span><h2>Message IDs<a class="headerlink" href="#message-ids" title="Link to this heading"></a></h2>
+<span id="id7"></span><h2>Message IDs<a class="headerlink" href="#message-ids" title="Link to this heading"></a></h2>
 <p>The predefined message IDs are listed in the table below. All the message IDs are defined in adaptations_pkg.vhd</p>
 <table class="docutils align-default">
 <thead>
@@ -4238,8 +4391,8 @@ correct parent.</p></li>
 <figure class="align-default">
 <img alt="Example output" src="_images/hierarchical_alerts.png" />
 </figure>
-<section id="id6">
-<h3>Methods<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<section id="id8">
+<h3>Methods<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <p>TODO:
 procedure initialize_hierarchy(
 constant base_scope : string := C_BASE_HIERARCHY_LEVEL;
@@ -4302,8 +4455,8 @@ constant scope : string;
 constant attention : t_attention
 );</p>
 </section>
-<section id="id7">
-<h4>increment_expected_alerts()<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<section id="id9">
+<h4>increment_expected_alerts()<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
 <p>Increment the expected alert counter for a scope.</p>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">increment_expected_alerts</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">amount</span><span class="p">])</span>
 </pre></div>
@@ -4547,13 +4700,13 @@ msg_id ID_UVVM_SEND_CMD will be shown</p></td>
 <li><p>UVVM Utility Library – Concepts and Usage (PPT)</p></li>
 </ul>
 </div></blockquote>
-<p>There is also a webinar available on ‘Making a simple, structured and efficient VHDL testbench – Step-by-step’ (via Aldec <a class="footnote-reference brackets" href="#f2" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>)</p>
+<p>There is also a webinar available on ‘Making a simple, structured and efficient VHDL testbench – Step-by-step’ (via Aldec <a class="footnote-reference brackets" href="#f2" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>)</p>
 </section>
 <section id="compilation">
 <h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h2>
 <p>The UVVM Utility Library must be compiled with VHDL 2008.</p>
-<table class="docutils align-default" id="id9">
-<caption><span class="caption-text">Compile order for the UVVM Utility Library</span><a class="headerlink" href="#id9" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id11">
+<caption><span class="caption-text">Compile order for the UVVM Utility Library</span><a class="headerlink" href="#id11" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Compile to library</p></th>
 <th class="head"><p>File</p></th>
@@ -4653,11 +4806,11 @@ otherwise, arising from, out of or in connection with this IP.</p>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="f1" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
 <p>IEEE = Method is native for VHDL2008 (method is listed here for completeness).</p>
 </aside>
 <aside class="footnote brackets" id="f2" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">2</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://www.aldec.com/en/support/resources/multimedia/webinars/1673">https://www.aldec.com/en/support/resources/multimedia/webinars/1673</a></p>
 </aside>
 </aside>

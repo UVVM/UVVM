@@ -50,3 +50,4 @@ UVVM consists currently of the following elements:
    vip_spi.rst
    vip_uart.rst
    vip_wishbone.rst
+   tool_compatibility.rst

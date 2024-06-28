@@ -43,6 +43,7 @@ Released: 2024-XX-XX
 - Use dedicated scope in Avalon-MM, AXI and AXI-Lite VVC pipeline processes.
 - Fixed initialization check in tickoff procedure in spec cov.
 - Changed behavior for explicit fail at tickoff in spec cov.
+- Removed "omitted requirement"-functionality in spec cov.
 
 
 v2 2024.03.08

@@ -4,6 +4,84 @@
 VVC Framework
 ##################################################################################################################################
 
+**********************************************************************************************************************************
+UVVM Methods
+**********************************************************************************************************************************
+
+.. _await_uvvm_completion:
+
+await_uvvm_completion()
+==================================================================================================================================
+This procedure waits for all the VVCs to be inactive with no pending commands to be executed, and for all the enabled scoreboards
+to be empty, i.e. all expected values checked. It is therefore meant to be used at the end of the test sequencer.
+
+If any VVC is still active and/or an enabled scoreboard still has expected values to be checked when the timeout occurs, an alert
+will be generated. Otherwise, a successful completion message and the optional reports will be printed in the log.
+
+.. code-block::
+
+    await_uvvm_completion(timeout, [alert_level, [sb_poll_time, [print_alert_counters, [print_sbs, [print_vvcs, [scope, [msg_id_panel]]]]]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | timeout            | in     | time                         | Timeout for the VVCs to be inactive and the scoreboards |
+|          |                    |        |                              | to be empty. Must be greater than 0.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is       |
+|          |                    |        |                              | TB_ERROR.                                               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | sb_poll_time       | in     | time                         | Time to wait until checking again whether the           |
+|          |                    |        |                              | scoreboards have been emptied. Must be greater than 0.  |
+|          |                    |        |                              | Default value is 100 us.                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_alert_counte\| in     | :ref:`t_report_alert_counter\| Whether to print a report of alert counters. Default    |
+|          | rs                 |        | s`                           | value is NO_REPORT.                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_sbs          | in     | :ref:`t_report_sb`           | Whether to print a report with all the scoreboards in   |
+|          |                    |        |                              | the testbench. Default value is NO_REPORT.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_vvcs         | in     | :ref:`t_report_vvc`          | Whether to print a report with all the VVCs in the      |
+|          |                    |        |                              | testbench. Default value is NO_REPORT.                  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Example: Wait for all transactions to finish
+    await_uvvm_completion(1 ms);
+
+    -- Example: Wait for all transactions to finish and report the alert counters, VVCs and scoreboards
+    await_uvvm_completion(1 ms, TB_WARNING, 1 us, REPORT_ALERT_COUNTERS, REPORT_SCOREBOARDS, REPORT_VVCS, C_SCOPE);
+
+.. note::
+
+    * It is recommended to use a single sequencer to control all the VVCs in the testbench, this way the code is more organized 
+      and easier to follow, but it also ensures that by using `await_uvvm_completion()` the testbench has truly finished.
+    * However, if several sequencers or processes are used to control the VVCs, it is the user's responsibility to terminate 
+      correctly the testbench, perhaps by using synchronization mechanisms such as :ref:`await_barrier`, to ensure all the 
+      sequencers or processes have finished before calling `await_uvvm_completion()` in the main sequencer.
+
+.. hint::
+
+    If there is only need to check for VVCs to be inactive with no pending commands to be executed, one can also use the 
+    :ref:`await_completion` procedure: ::
+
+        -- Example: Wait for all VVCs to finish
+        await_completion(ALL_VVCS, 1 ms, "Wait for all the VVCs to finish", C_SCOPE);
+
+    If there are no VVCs in the testbench and only want to check for scoreboards to be empty, one can also use the 
+    :ref:`await_sb_completion` procedure: ::
+
+        -- Example: Wait for all Scoreboards to be empty
+        await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE);
+
+
 .. _vvc_framework_methods:
 
 **********************************************************************************************************************************
@@ -11,6 +89,8 @@ Common VVC Methods
 **********************************************************************************************************************************
 * All VVC procedures are defined in td_vvc_framework_common_methods_pkg.vhd and ti_vvc_framework_support_pkg.vhd
 * All parameters in brackets are optional.
+
+.. _await_completion:
 
 await_completion()
 ==================================================================================================================================

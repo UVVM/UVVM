@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 </ul>
 
         </div>
@@ -212,18 +213,16 @@ checkers.</p>
 </section>
 <section id="prerequisites">
 <span id="uvvm-prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
-<p>UVVM is tool and library independent, but it must be compiled with VHDL 2008.
-UVVM has been tested with the following simulators:</p>
+<p>UVVM is tool and library independent, but it must be compiled with VHDL-2008.
+The latest release of UVVM has been tested with the following simulators:</p>
 <ul class="simple">
-<li><p>Modelsim version 19.1</p></li>
-<li><p>Riviera-PRO version: 2018.10.137.7135</p></li>
-<li><p>Questa Sim version 19.1</p></li>
-<li><p>GHDL version 0.36</p></li>
+<li><p>ModelSim</p></li>
+<li><p>Riviera-PRO</p></li>
+<li><p>Questa</p></li>
+<li><p>GHDL</p></li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Questa Sim version 19.2 and Modelsim version 19.2 have known bugs that might prevent UVVM from working properly.</p>
-</div>
+<p>UVVM will work with all VHDL-2008 compatible simulators.</p>
+<p>See <a class="reference internal" href="tool_compatibility.html#tool-compatibility"><span class="std std-ref">Tool Compatibility</span></a> for known issues.</p>
 <p>Python is required <strong>if</strong> you want to execute the VVC generation scripts</p>
 </section>
 <section id="introduction-to-vvc-framework-including-manuals">
@@ -248,7 +247,7 @@ governing permissions and limitations under the License.</p>
 </section>
 <section id="uvvm-maintainers">
 <h2>UVVM Maintainers<a class="headerlink" href="#uvvm-maintainers" title="Link to this heading"></a></h2>
-<p><a class="reference external" href="http://bitvis.no">Bitvis</a> (Norway) has released UVVM as open source and we are committed to develop this system further. We do
+<p><a class="reference external" href="http://uvvm.org">UVVM steering group</a> has released UVVM as open source and we are committed to develop this system further. We do
 however appreciate contributions and suggestions from users.</p>
 <p>Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch
 and handle any required verification and documentation.</p>

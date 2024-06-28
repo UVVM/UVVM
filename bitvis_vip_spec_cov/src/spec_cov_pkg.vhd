@@ -61,19 +61,19 @@ package spec_cov_pkg is
   );
 
   procedure tick_off_req_cov(
-    constant requirement    : string;
-    constant test_status    : t_test_status    := NA;
-    constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
-    constant scope          : string           := C_SCOPE
+    constant requirement        : string;
+    constant requirement_status : t_test_status    := NA;
+    constant msg                : string           := "";
+    constant tickoff_extent     : t_extent_tickoff := LIST_SINGLE_TICKOFF;
+    constant scope              : string           := C_SCOPE
   );
 
   procedure cond_tick_off_req_cov(
-    constant requirement    : string;
-    constant test_status    : t_test_status    := NA;
-    constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
-    constant scope          : string           := C_SCOPE
+    constant requirement        : string;
+    constant requirement_status : t_test_status    := NA;
+    constant msg                : string           := "";
+    constant tickoff_extent     : t_extent_tickoff := LIST_SINGLE_TICKOFF;
+    constant scope              : string           := C_SCOPE
   );
 
   procedure disable_cond_tick_off_req_cov(
@@ -115,6 +115,15 @@ package spec_cov_pkg is
   impure function priv_get_num_requirement_tick_offs(
     requirement : string
   ) return natural;
+
+  impure function priv_get_requirement_status(
+    requirement : string
+  ) return t_test_status;
+
+  procedure priv_set_requirement_status(
+    requirement : string;
+    status      : t_test_status
+  );
 
   procedure priv_inc_num_requirement_tick_offs(
     requirement : string
@@ -165,6 +174,7 @@ package body spec_cov_pkg is
     num_tcs      : natural;
     tc_list      : t_line_vector;
     num_tickoffs : natural;
+    status       : t_test_status;
   end record;
   type t_requirement_entry_array is array (natural range <>) of t_requirement_entry;
 
@@ -229,15 +239,15 @@ package body spec_cov_pkg is
   -- Log the requirement and testcase
   --
   procedure tick_off_req_cov(
-    constant requirement    : string;
-    constant test_status    : t_test_status    := NA;
-    constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
-    constant scope          : string           := C_SCOPE
+    constant requirement        : string;
+    constant requirement_status : t_test_status    := NA;
+    constant msg                : string           := "";
+    constant tickoff_extent     : t_extent_tickoff := LIST_SINGLE_TICKOFF;
+    constant scope              : string           := C_SCOPE
   ) is
     variable v_requirement_to_file_line : line;
     variable v_requirement_status       : t_test_status;
-    variable v_prev_test_status         : t_test_status;
+    variable v_prev_requirement_status  : t_test_status;
   begin
     -- Raise TB_ERROR alert if tick_off_req_cov() is called before initialize_req_cov()
     if not priv_req_cov_initialized  then
@@ -250,24 +260,25 @@ package body spec_cov_pkg is
       alert(shared_spec_cov_config.missing_req_label_severity, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
     end if;
 
-    -- Save testcase status
-    if priv_testcase_passed then
-      v_prev_test_status := PASS;
-    else
-      v_prev_test_status := FAIL;
-    end if;
-
     ---- Check if there were any errors globally or testcase was explicit set to FAIL
-    if (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1) or (test_status = FAIL) then
+    if shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1 then
       v_requirement_status := FAIL;
       -- Set failing testcase for finishing summary line
       priv_testcase_passed := false;
+    elsif requirement_status = FAIL then
+        v_requirement_status := FAIL;
     else
       v_requirement_status := PASS;
     end if;
 
+    -- Get previous requirement status (used for checking for PASS to FAIL transition)
+    v_prev_requirement_status := priv_get_requirement_status(requirement);   
+
+    -- Save requirement status
+    priv_set_requirement_status(requirement, v_requirement_status);
+
     -- Check if requirement tick-off should be written
-    if (tickoff_extent = LIST_EVERY_TICKOFF) or (priv_get_num_requirement_tick_offs(requirement) = 0) or (v_prev_test_status = PASS and test_status = FAIL) then
+    if (tickoff_extent = LIST_EVERY_TICKOFF) or (priv_get_num_requirement_tick_offs(requirement) = 0) or (v_prev_requirement_status = PASS and v_requirement_status = FAIL) then
       -- Log result to transcript
       log(ID_SPEC_COV, "Logging requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & priv_get_description(requirement) & "'. " & msg, scope);
       -- Log to file
@@ -285,17 +296,17 @@ package body spec_cov_pkg is
   --   If the requirement has been enabled for conditional tick_off_req_cov()
   --   with enable_cond_tick_off_req_cov() it will not be ticked off.
   procedure cond_tick_off_req_cov(
-    constant requirement    : string;
-    constant test_status    : t_test_status    := NA;
-    constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
-    constant scope          : string           := C_SCOPE
+    constant requirement        : string;
+    constant requirement_status : t_test_status    := NA;
+    constant msg                : string           := "";
+    constant tickoff_extent     : t_extent_tickoff := LIST_SINGLE_TICKOFF;
+    constant scope              : string           := C_SCOPE
   ) is
   begin
     -- Check: is requirement listed in the conditional tick off array?
     if priv_req_listed_in_disabled_tick_off_array(requirement) = false then
       -- requirement was not listed, call tick off method.
-      tick_off_req_cov(requirement, test_status, msg, tickoff_extent, scope);
+      tick_off_req_cov(requirement, requirement_status, msg, tickoff_extent, scope);
     end if;
   end procedure cond_tick_off_req_cov;
 
@@ -535,6 +546,40 @@ package body spec_cov_pkg is
     end loop;
     return 0;
   end function priv_get_num_requirement_tick_offs;
+
+  -- 
+  -- Set tick off status for requirement
+  --
+  procedure priv_set_requirement_status(
+    constant requirement : string;
+    constant status      : t_test_status
+  ) is
+  begin
+    for i in 0 to priv_requirements_in_array - 1 loop
+      if priv_get_requirement_name_length(priv_requirement_array(i).requirement.all) = requirement'length then
+        if to_upper(priv_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
+          priv_requirement_array(i).status := status;
+        end if;
+      end if;
+    end loop;    
+  end procedure priv_set_requirement_status;
+
+  --
+  -- Get the most recent tick off status for requirement
+  --
+  impure function priv_get_requirement_status(
+    requirement : string
+  ) return t_test_status is
+  begin 
+    for i in 0 to priv_requirements_in_array - 1 loop
+      if priv_get_requirement_name_length(priv_requirement_array(i).requirement.all) = requirement'length then
+        if to_upper(priv_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
+          return priv_requirement_array(i).status;
+        end if;
+      end if;
+    end loop;
+    return FAIL;  
+  end function priv_get_requirement_status;
 
   --
   -- Increment number of tick offs for requirement

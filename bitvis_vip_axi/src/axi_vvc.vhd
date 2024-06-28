@@ -331,7 +331,6 @@ begin
     variable v_msg_id_panel                          : t_msg_id_panel;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH - 1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
-    variable v_cmd_queues_are_empty                  : boolean;
     variable v_finish2start_warning_triggered        : boolean                                      := false;
   begin
     -- 0. Initialize the process prior to first command
@@ -472,7 +471,7 @@ begin
     variable v_msg_id_panel       : t_msg_id_panel;
     variable v_normalized_arid    : std_logic_vector(GC_ID_WIDTH - 1 downto 0) := (others => '0');
     variable v_normalized_araddr  : unsigned(GC_ADDR_WIDTH - 1 downto 0)       := (others => '0');
-    constant C_CHANNEL_SCOPE      : string                                     := C_VVC_NAME & "_AR" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE      : string                                     := get_scope_for_log(C_VVC_NAME & "_AR", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS : t_vvc_labels                               := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -497,7 +496,7 @@ begin
       end if;
       v_normalized_araddr := normalize_and_check(v_cmd.addr, v_normalized_araddr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalized_araddr", "Function called with too wide araddr. " & v_cmd.msg);
       -- Set vvc transaction info
-      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
       -- Start transaction
       read_address_channel_write(arid_value     => v_normalized_arid,
                                  araddr_value   => v_normalized_araddr,
@@ -530,7 +529,7 @@ begin
                                  config         => vvc_config.bfm_config);
 
       -- Update vvc transaction info
-      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
@@ -545,13 +544,12 @@ begin
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_result               : t_vvc_result := C_EMPTY_VVC_RESULT; -- See vvc_cmd_pkg
     variable v_msg_id_panel         : t_msg_id_panel;
-    variable v_cmd_queues_are_empty : boolean;
     variable v_read_data_queue      : t_axi_read_data_queue;
     variable v_queue_count          : natural;
     variable v_cmd_len              : natural;
     variable v_normalized_rid       : std_logic_vector(GC_ID_WIDTH - 1 downto 0);
     variable v_check_ok             : boolean      := true;
-    constant C_CHANNEL_SCOPE        : string       := C_VVC_NAME & "_R" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE        : string       := get_scope_for_log(C_VVC_NAME & "_R", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -575,7 +573,7 @@ begin
       case v_cmd.operation is
         when READ =>
           -- Set vvc transaction info
-          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
           -- Start transaction
           read_data_channel_receive(read_result     => v_result,
                                     read_data_queue => v_read_data_queue,
@@ -624,11 +622,11 @@ begin
           end if;
 
           -- Update vvc transaction info
-          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_SCOPE);
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_result, COMPLETED, C_CHANNEL_SCOPE);
 
         when CHECK =>
           -- Set vvc transaction info
-          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
           -- Start transaction
           read_data_channel_receive(read_result     => v_result,
                                     read_data_queue => v_read_data_queue,
@@ -690,7 +688,7 @@ begin
           end if;
 
           -- Update vvc transaction info
-          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
 
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
@@ -699,7 +697,7 @@ begin
       last_read_data_channel_idx_executed <= v_cmd.cmd_idx;
 
       -- Update vvc transaction info
-      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_r_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
@@ -716,7 +714,7 @@ begin
     variable v_msg_id_panel       : t_msg_id_panel;
     variable v_normalized_awid    : std_logic_vector(GC_ID_WIDTH - 1 downto 0) := (others => '0');
     variable v_normalized_awaddr  : unsigned(GC_ADDR_WIDTH - 1 downto 0)       := (others => '0');
-    constant C_CHANNEL_SCOPE      : string                                     := C_VVC_NAME & "_AW" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE      : string                                     := get_scope_for_log(C_VVC_NAME & "_AW", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS : t_vvc_labels                               := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -741,7 +739,7 @@ begin
       end if;
       v_normalized_awaddr := normalize_and_check(v_cmd.addr, v_normalized_awaddr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalized_awaddr", "Function called with too wide awaddr. " & v_cmd.msg);
       -- Set vvc transaction info
-      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
       -- Start transaction
       write_address_channel_write(awid_value     => v_normalized_awid,
                                   awaddr_value   => v_normalized_awaddr,
@@ -774,7 +772,7 @@ begin
                                   config         => vvc_config.bfm_config);
 
       -- Update vvc transaction info
-      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
@@ -791,7 +789,7 @@ begin
     variable v_wdata_array_ptr    : t_slv_array_ptr;
     variable v_wstrb_array_ptr    : t_slv_array_ptr;
     variable v_wuser_array_ptr    : t_slv_array_ptr;
-    constant C_CHANNEL_SCOPE      : string       := C_VVC_NAME & "_W" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE      : string       := get_scope_for_log(C_VVC_NAME & "_W", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -820,7 +818,7 @@ begin
         v_wuser_array_ptr(i) := v_cmd.user_array(i)(GC_USER_WIDTH - 1 downto 0);
       end loop;
       -- Set vvc transaction info
-      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
       -- Start transaction
       write_data_channel_write(wdata_value  => v_wdata_array_ptr.all,
                                wstrb_value  => v_wstrb_array_ptr.all,
@@ -842,7 +840,7 @@ begin
       deallocate(v_wuser_array_ptr);
 
       -- Update vvc transaction info
-      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_w_vvc_transaction_info(vvc_transaction_info);
     end loop;
@@ -861,9 +859,8 @@ begin
     variable v_bid_value            : std_logic_vector(GC_ID_WIDTH - 1 downto 0);
     variable v_bresp_value          : t_xresp;
     variable v_buser_value          : std_logic_vector(GC_USER_WIDTH - 1 downto 0);
-    variable v_cmd_queues_are_empty : boolean;
     variable v_queue_count          : integer;
-    constant C_CHANNEL_SCOPE        : string       := C_VVC_NAME & "_B" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE        : string       := get_scope_for_log(C_VVC_NAME & "_B", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -882,7 +879,7 @@ begin
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
       -- Set vvc transaction info
-      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
       -- Receiving a write response
       write_response_channel_receive(bid_value    => v_bid_value,
                                      bresp_value  => v_bresp_value,
@@ -934,8 +931,8 @@ begin
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
 
       -- Update vvc transaction info
-      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
-      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
+      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_b_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);

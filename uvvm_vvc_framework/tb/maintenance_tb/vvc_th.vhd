@@ -397,7 +397,7 @@ begin
   avalon_mm_if.waitrequest   <= '0';
   avalon_mm_if.irq           <= '0';
   -- Simulate a delay in the read response
-  avalon_mm_if.readdatavalid <= transport avalon_mm_if.read after C_CLK_PERIOD * 5;
+  avalon_mm_if.readdatavalid <= transport avalon_mm_if.read after (C_CLK_PERIOD * 5 + C_CLK_PERIOD / 4);
 
   -----------------------------------------------------------------------------
   -- AXI-Stream VVC

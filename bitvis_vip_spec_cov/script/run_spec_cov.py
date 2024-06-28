@@ -518,9 +518,10 @@ def terminal_present_results(container, delimiter) -> dict:
 
     # Build requirement lists
     for requirement in container.get_requirement_list():
+        if requirement.is_user_omitted:
+            requirement_omitted_list.append(requirement)
         if requirement.compliance == not_tested_compliant_string:
-            if requirement.is_user_omitted: requirement_omitted_list.append(requirement)
-            else: requirement_not_run_list.append(requirement)
+            requirement_not_run_list.append(requirement)
         elif requirement.compliance == non_compliant_string:
             requirement_non_compliant_list.append(requirement)
         elif requirement.compliance == compliant_string:

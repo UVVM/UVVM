@@ -530,16 +530,16 @@ package body ti_vvc_framework_support_pkg is
       end if;
 
       -- Print reports
-      if print_alert_counters = REPORT_ALERT_COUNTERS then
-        report_alert_counters(INTERMEDIATE);
-      elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
-        report_alert_counters(FINAL);
-      end if;
       if print_sbs = REPORT_SCOREBOARDS then
         report_scoreboards(void);
       end if;
       if print_vvcs = REPORT_VVCS then
         report_vvcs(void);
+      end if;
+      if print_alert_counters = REPORT_ALERT_COUNTERS then
+        report_alert_counters(INTERMEDIATE);
+      elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
+        report_alert_counters(FINAL);
       end if;
     end if;
     DEALLOCATE(v_line);

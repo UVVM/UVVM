@@ -442,6 +442,7 @@ begin
     enable_log_msg(ID_SEQUENCER);
     enable_log_msg(ID_SEQUENCER_SUB);
     enable_log_msg(ID_UVVM_SEND_CMD);
+    enable_log_msg(ID_AWAIT_UVVM_COMPLETION);
     --enable_log_msg(ID_BFM);
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);

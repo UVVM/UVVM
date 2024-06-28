@@ -41,6 +41,7 @@ Released: 2024-XX-XX
 - Fixed avalon_mm_read_response() sampling the data one cycle too early when using sequential commands and sampling the same data
   in pipelined commands.
 - Use dedicated scope in Avalon-MM, AXI and AXI-Lite VVC pipeline processes.
+- Fixed initialization check in tickoff procedure in spec cov.
 
 
 v2 2024.03.08

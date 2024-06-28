@@ -94,17 +94,17 @@ package protected_types_pkg is
 
   type t_sb_activity is protected
     impure function register_sb(constant name : string; constant instance : natural) return integer;
-    procedure increment_sb_element_cnt(constant sb_index : in natural);
-    procedure decrement_sb_element_cnt(constant sb_index : in natural; constant value : in positive := 1);
-    procedure reset_sb_element_cnt(constant sb_index : in natural);
-    procedure enable_sb(constant sb_index : in natural);
-    procedure disable_sb(constant sb_index : in natural);
+    procedure increment_sb_element_cnt(constant sb_index : in integer);
+    procedure decrement_sb_element_cnt(constant sb_index : in integer; constant value : in natural := 1);
+    procedure reset_sb_element_cnt(constant sb_index : in integer);
+    procedure enable_sb(constant sb_index : in integer);
+    procedure disable_sb(constant sb_index : in integer);
     impure function get_num_registered_sb(constant void : t_void) return natural;
     impure function get_num_enabled_sb(constant void : t_void) return natural;
-    impure function get_sb_name(constant sb_index : natural) return string;
-    impure function get_sb_instance(constant sb_index : natural) return natural;
-    impure function get_sb_element_cnt(constant sb_index : natural) return natural;
-    impure function is_enabled(constant sb_index : natural) return boolean;
+    impure function get_sb_name(constant sb_index : integer) return string;
+    impure function get_sb_instance(constant sb_index : integer) return natural;
+    impure function get_sb_element_cnt(constant sb_index : integer) return natural;
+    impure function is_enabled(constant sb_index : integer) return boolean;
   end protected t_sb_activity;
 
 end package protected_types_pkg;
@@ -695,45 +695,55 @@ package body protected_types_pkg is
     end function;
 
     procedure increment_sb_element_cnt(
-      constant sb_index : in natural
+      constant sb_index : in integer
     ) is
     begin
-      priv_sb_array(sb_index).num_elements := priv_sb_array(sb_index).num_elements + 1;
+      if sb_index >= 0 then
+        priv_sb_array(sb_index).num_elements := priv_sb_array(sb_index).num_elements + 1;
+      end if;
     end procedure;
 
     procedure decrement_sb_element_cnt(
-      constant sb_index : in natural;
-      constant value    : in positive := 1
+      constant sb_index : in integer;
+      constant value    : in natural := 1
     ) is
     begin
-      for i in 1 to value loop
-        if priv_sb_array(sb_index).num_elements > 0 then
-          priv_sb_array(sb_index).num_elements := priv_sb_array(sb_index).num_elements - 1;
-        end if;
-      end loop;
+      if sb_index >= 0 then
+        for i in 1 to value loop
+          if priv_sb_array(sb_index).num_elements > 0 then
+            priv_sb_array(sb_index).num_elements := priv_sb_array(sb_index).num_elements - 1;
+          end if;
+        end loop;
+      end if;
     end procedure;
 
     procedure reset_sb_element_cnt(
-      constant sb_index : in natural
+      constant sb_index : in integer
     ) is
     begin
-      priv_sb_array(sb_index).num_elements := 0;
+      if sb_index >= 0 then
+        priv_sb_array(sb_index).num_elements := 0;
+      end if;
     end procedure;
 
     procedure enable_sb(
-      constant sb_index : in natural
+      constant sb_index : in integer
     ) is
     begin
-      priv_sb_array(sb_index).enabled := true;
-      priv_num_enabled_sb             := priv_num_enabled_sb + 1;
+      if sb_index >= 0 then
+        priv_sb_array(sb_index).enabled := true;
+        priv_num_enabled_sb             := priv_num_enabled_sb + 1;
+      end if;
     end procedure;
 
     procedure disable_sb(
-      constant sb_index : in natural
+      constant sb_index : in integer
     ) is
     begin
-      priv_sb_array(sb_index).enabled := false;
-      priv_num_enabled_sb             := priv_num_enabled_sb - 1;
+      if sb_index >= 0 then
+        priv_sb_array(sb_index).enabled := false;
+        priv_num_enabled_sb             := priv_num_enabled_sb - 1;
+      end if;
     end procedure;
 
     impure function get_num_registered_sb(
@@ -751,31 +761,47 @@ package body protected_types_pkg is
     end function;
 
     impure function get_sb_name(
-      constant sb_index : natural
+      constant sb_index : integer
     ) return string is
     begin
-      return to_string(priv_sb_array(sb_index).name);
+      if sb_index >= 0 then
+        return to_string(priv_sb_array(sb_index).name);
+      else
+        return "";
+      end if;
     end function;
 
     impure function get_sb_instance(
-      constant sb_index : natural
+      constant sb_index : integer
     ) return natural is
     begin
-      return priv_sb_array(sb_index).instance;
+      if sb_index >= 0 then
+        return priv_sb_array(sb_index).instance;
+      else
+        return 0;
+      end if;
     end function;
 
     impure function get_sb_element_cnt(
-      constant sb_index : natural
+      constant sb_index : integer
     ) return natural is
     begin
-      return priv_sb_array(sb_index).num_elements;
+      if sb_index >= 0 then
+        return priv_sb_array(sb_index).num_elements;
+      else
+        return 0;
+      end if;
     end function;
 
     impure function is_enabled(
-      constant sb_index : natural
+      constant sb_index : integer
     ) return boolean is
     begin
-      return priv_sb_array(sb_index).enabled;
+      if sb_index >= 0 then
+        return priv_sb_array(sb_index).enabled;
+      else
+        return false;
+      end if;
     end function;
 
   end protected body t_sb_activity;

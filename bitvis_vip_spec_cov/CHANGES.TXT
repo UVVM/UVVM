@@ -9,6 +9,7 @@ Released: 2024-XX-XX
 - Fixed strictness 2 functionality.
 - Added comment support and updated handling of omitted requirements.
 - Various changes to output files.
+- Fixed initialization check in tick_off_req_cov().
 - Don't fail testcase and other requirements if requirement is explicitly failed at tickoff
 
 v1.0.1

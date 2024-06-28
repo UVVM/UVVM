@@ -372,7 +372,7 @@ package body avalon_mm_bfm_pkg is
 
     -- Release the begintransfer signal after one clock cycle, if waitrequest is in use
     if config.use_begintransfer then
-      avalon_mm_if.begintransfer <= '0' after config.clock_period / 4;
+      avalon_mm_if.begintransfer <= '0';
     end if;
 
     -- use wait request?
@@ -577,7 +577,7 @@ package body avalon_mm_bfm_pkg is
       end loop;
     end if;
 
-    avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after v_clock_period / 4;
+    avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock);
 
     if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -615,6 +615,9 @@ package body avalon_mm_bfm_pkg is
       check_value(config.hold_time < config.clock_period / 2, TB_FAILURE, "Sanity check: Check that hold_time do not exceed clock_period/2.", scope, ID_NEVER, msg_id_panel, proc_name);
     end if;
 
+    -- Data must be read on the next rising edge after read was asserted
+    wait until rising_edge(clk);
+
     -- Handle read with readdatavalid.
     if config.use_readdatavalid then
       for cycle in 1 to config.max_wait_cycles loop
@@ -634,7 +637,7 @@ package body avalon_mm_bfm_pkg is
 
       -- did we timeout?
       if timeout then
-        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for readdatavalid" & add_msg_delimiter(msg), scope);
+        alert(config.max_wait_cycles_severity, proc_call & "=> Failed. Timeout waiting for readdatavalid. " & add_msg_delimiter(msg), scope);
       end if;
     end if;
 

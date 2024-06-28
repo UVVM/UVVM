@@ -186,6 +186,7 @@ package body spec_cov_pkg is
   shared variable priv_testcase_passed         : boolean;
   shared variable priv_requirement_file_exists : boolean;
   shared variable priv_result_file_exists      : boolean;
+  shared variable priv_req_cov_initialized     : boolean                                 := false;
 
   type t_disabled_tick_off_array is array (0 to shared_spec_cov_config.max_requirements) of string(1 to C_CSV_FILE_MAX_LINE_LENGTH);
   shared variable priv_disabled_tick_off_array : t_disabled_tick_off_array := (others => (others => NUL));
@@ -201,13 +202,21 @@ package body spec_cov_pkg is
   begin
     log(ID_SPEC_COV_INIT, "Initializing requirement coverage with requirement file: " & req_list_file, C_SCOPE);
     priv_set_default_testcase_name(testcase);
-    -- update pkg local variables
+
+    -- Update pkg local variables
     priv_testcase_passed         := true;
     priv_requirement_file_exists := true;
 
+    -- Read requirements from CSV file and save to array. TB_ERROR alert will be raised if file is emtpy.
     priv_read_and_parse_csv_file(req_list_file);
+
+    -- Initialize PC file (open file and write info/settings to top of file)
     priv_initialize_result_file(partial_cov_file);
+
+    -- Flag that initialization has been done
+    priv_req_cov_initialized := true;
   end procedure initialize_req_cov;
+
   -- Overloading procedure
   procedure initialize_req_cov(
     constant testcase         : string;
@@ -221,6 +230,9 @@ package body spec_cov_pkg is
     priv_requirement_file_exists := false;
 
     priv_initialize_result_file(partial_cov_file);
+
+    -- Flag that initialization has been done
+    priv_req_cov_initialized     := true;
   end procedure initialize_req_cov;
 
   --
@@ -237,13 +249,14 @@ package body spec_cov_pkg is
     variable v_requirement_status       : t_test_status;
     variable v_prev_requirement_status  : t_test_status;
   begin
-    if priv_requirements_in_array = 0 and priv_requirement_file_exists = true then
-      alert(TB_ERROR, "Requirements have not been parsed. Please use initialize_req_cov() with a requirement file before calling tick_off_req_cov().", scope);
+    -- Raise TB_ERROR alert if tick_off_req_cov() is called before initialize_req_cov()
+    if not priv_req_cov_initialized  then
+      alert(TB_ERROR, "Requirement coverage has not been initialized. Please use initialize_req_cov() before calling tick_off_req_cov().", scope);
       return;
     end if;
 
     -- Check if requirement exists
-    if (priv_requirement_exists(requirement) = false) and (priv_requirement_file_exists = true) then
+    if priv_requirement_file_exists and not priv_requirement_exists(requirement) then
       alert(shared_spec_cov_config.missing_req_label_severity, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
     end if;
 
@@ -380,6 +393,9 @@ package body spec_cov_pkg is
     end if;
 
     file_close(RESULT_FILE);
+
+    -- Clear initialization flag. initialize_req_cov() must be called again before another tickoff can be done
+    priv_req_cov_initialized := false;
   end procedure finalize_req_cov;
 
   --=================================================================================================  

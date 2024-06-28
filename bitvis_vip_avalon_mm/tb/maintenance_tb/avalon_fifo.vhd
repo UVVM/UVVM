@@ -82,7 +82,7 @@ begin
       add_ram_output_register => "OFF",
       intended_device_family  => "CYCLONEIVGX",
       lpm_numwords            => 16,
-      lpm_showahead           => "ON",
+      lpm_showahead           => "OFF", -- OFF: The rdreq port is treated as a normal read request that only performs read operation when the port is asserted.
       lpm_type                => "scfifo",
       lpm_width               => 32,
       lpm_widthu              => 4,

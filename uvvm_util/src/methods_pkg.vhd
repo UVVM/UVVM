@@ -9479,13 +9479,13 @@ package body methods_pkg is
         end if;
 
         -- Print reports
+        if print_sbs = REPORT_SCOREBOARDS then
+          report_scoreboards(void);
+        end if;
         if print_alert_counters = REPORT_ALERT_COUNTERS then
           report_alert_counters(INTERMEDIATE);
         elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
           report_alert_counters(FINAL);
-        end if;
-        if print_sbs = REPORT_SCOREBOARDS then
-          report_scoreboards(void);
         end if;
         return true;
       end if;
@@ -9581,13 +9581,13 @@ package body methods_pkg is
       end if;
 
       -- Print reports
+      if print_sbs = REPORT_SCOREBOARDS then
+        report_scoreboards(void);
+      end if;
       if print_alert_counters = REPORT_ALERT_COUNTERS then
         report_alert_counters(INTERMEDIATE);
       elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
         report_alert_counters(FINAL);
-      end if;
-      if print_sbs = REPORT_SCOREBOARDS then
-        report_scoreboards(void);
       end if;
     end if;
     DEALLOCATE(v_line);

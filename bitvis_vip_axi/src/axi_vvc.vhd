@@ -50,8 +50,6 @@ entity axi_vvc is
     GC_CMD_QUEUE_COUNT_MAX                   : natural                                      := C_CMD_QUEUE_COUNT_MAX;
     GC_CMD_QUEUE_COUNT_THRESHOLD             : natural                                      := C_CMD_QUEUE_COUNT_THRESHOLD;
     GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level                                := C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY;
-    GC_SCOREBOARD_QUEUE_COUNT_MAX            : natural                                      := C_SCOREBOARD_QUEUE_COUNT_MAX;
-    GC_SCOREBOARD_QUEUE_COUNT_THRESHOLD      : natural                                      := C_SCOREBOARD_QUEUE_COUNT_THRESHOLD;
     GC_RESULT_QUEUE_COUNT_MAX                : natural                                      := C_RESULT_QUEUE_COUNT_MAX;
     GC_RESULT_QUEUE_COUNT_THRESHOLD          : natural                                      := C_RESULT_QUEUE_COUNT_THRESHOLD;
     GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level                                := C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY
@@ -346,8 +344,6 @@ begin
     AXI_VVC_SB.enable(GC_INSTANCE_IDX, "AXI VVC SB Enabled");
     AXI_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
     AXI_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
-    AXI_VVC_SB.set_queue_count_max(GC_INSTANCE_IDX, GC_SCOREBOARD_QUEUE_COUNT_MAX);
-    AXI_VVC_SB.set_queue_count_threshold(GC_INSTANCE_IDX, GC_SCOREBOARD_QUEUE_COUNT_THRESHOLD);
 
     loop
 

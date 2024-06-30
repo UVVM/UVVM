@@ -3,7 +3,7 @@ Bitvis VIP Avalon MM (Memory Mapped) - Overview of Versions and Changes
 ----------------------------------------------------------------------
 
 
-v3.0.1
+v4.0.0
 ----------
 Released: 2024-XX-XX
 - Changed max constants used in VVC to be adjustable from adaptations_pkg.
@@ -11,6 +11,7 @@ Released: 2024-XX-XX
 - Fixed avalon_mm_read_response() sampling the data one cycle too early when using sequential commands and sampling the same data
   in pipelined commands.
 - Use dedicated scope in VVC pipeline processes.
+- Added unwanted activity detection functionality to the VVC to give an alert if the DUT generates any unexpected bus activity.
 
 v3.0.0
 ----------

@@ -180,9 +180,7 @@ begin
     report_msg_id_panel(VOID);
 
     -- Configure logging
-
     disable_log_msg(ID_PACKET_DATA);
-
     disable_log_msg(ID_PACKET_PAYLOAD);
 
     log(ID_LOG_HDR, "Start Simulation of TB for AXISTREAM 1", C_SCOPE);

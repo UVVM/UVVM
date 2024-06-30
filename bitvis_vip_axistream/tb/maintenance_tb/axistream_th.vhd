@@ -140,6 +140,9 @@ architecture struct_vvc of axistream_th is
                                                  tid(GC_ID_WIDTH - 1 downto 0),
                                                  tdest(GC_DEST_WIDTH - 1 downto 0)
                                                 );
+  signal dut_m_axis_tstrb : std_logic_vector((GC_DATA_WIDTH / 8) - 1 downto 0);
+  signal dut_m_axis_tid   : std_logic_vector(GC_ID_WIDTH - 1 downto 0);
+  signal dut_m_axis_tdest : std_logic_vector(GC_DEST_WIDTH - 1 downto 0);
 
 begin
   -----------------------------
@@ -168,6 +171,14 @@ begin
       m_axis_tlast  => axistream_if_s_FIFO2VVC.tlast,
       empty         => open
     );
+
+  -- Use non-record signals to be able to force them from the tb
+  dut_m_axis_tstrb <= (others => '0');
+  dut_m_axis_tid   <= (others => '0');
+  dut_m_axis_tdest <= (others => '0');
+  axistream_if_s_FIFO2VVC.tstrb <= dut_m_axis_tstrb;
+  axistream_if_s_FIFO2VVC.tid   <= dut_m_axis_tid;
+  axistream_if_s_FIFO2VVC.tdest <= dut_m_axis_tdest;
 
   -----------------------------
   -- vvc/executors

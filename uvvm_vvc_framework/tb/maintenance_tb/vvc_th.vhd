@@ -118,6 +118,7 @@ architecture struct of vvc_th is
 
   -- Avalon-MM signals
   signal avalon_mm_if : t_avalon_mm_if(address(31 downto 0), byte_enable(3 downto 0), writedata(31 downto 0), readdata(31 downto 0));
+  signal avalon_mm_if_read : std_logic := '0';
 
   signal axistream_if : t_axistream_if(tdata(31 downto 0),
                                        tkeep((32 / 8) - 1 downto 0),
@@ -396,8 +397,9 @@ begin
   avalon_mm_if.response      <= (others => '0');
   avalon_mm_if.waitrequest   <= '0';
   avalon_mm_if.irq           <= '0';
-  -- Simulate a delay in the read response
-  avalon_mm_if.readdatavalid <= transport avalon_mm_if.read after (C_CLK_PERIOD * 5 + C_CLK_PERIOD / 4);
+  -- Simulate a delay in the read response (use a separate signal to set default value to '0')
+  avalon_mm_if_read          <= transport avalon_mm_if.read after (C_CLK_PERIOD * 5 + C_CLK_PERIOD / 4);
+  avalon_mm_if.readdatavalid <= avalon_mm_if_read;
 
   -----------------------------------------------------------------------------
   -- AXI-Stream VVC

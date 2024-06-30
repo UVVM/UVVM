@@ -164,6 +164,7 @@ begin
     ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, TO_SB, "Receive a frame in the PHY and put it in the Scoreboard.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
+    wait for 1 us; -- Wait so that interface goes idle before the next test
 
     ---------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "TEST DIRECT ACCESS TO INTERFACE VVCs");

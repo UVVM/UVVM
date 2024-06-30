@@ -72,6 +72,7 @@ architecture behave of wishbone_vvc is
   signal queue_is_increasing   : boolean := false;
   signal last_cmd_idx_executed : natural := 0;
   signal terminate_current_cmd : t_flag_record;
+  signal clock_period          : time;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -80,7 +81,7 @@ architecture behave of wishbone_vvc is
   alias vvc_config                          : t_vvc_config is shared_wishbone_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status                          : t_vvc_status is shared_wishbone_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info                    : t_transaction_info is shared_wishbone_transaction_info(GC_INSTANCE_IDX);
-  -- VVC Activity 
+  -- VVC Activity
   signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
@@ -395,6 +396,55 @@ begin
   -- - Handles the termination request record (sets and resets terminate flag on request)
   --========================================================================================================================
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --========================================================================================================================
+
+  --===============================================================================================
+  -- Clock period
+  -- - Finds the clock period
+  --===============================================================================================
+  p_clock_period : process
+  begin
+    wait until rising_edge(clk);
+    clock_period <= now;
+    wait until rising_edge(clk);
+    clock_period <= now - clock_period;
+    wait;
+  end process;
+  --===============================================================================================
+
+  --========================================================================================================================
+  -- Unwanted activity detection
+  -- - Monitors unwanted activity from the DUT
+  --========================================================================================================================
+  p_unwanted_activity : process
+  begin
+    -- Add a delay to avoid detecting the first transition from the undefined value to initial value
+    wait for std.env.resolution_limit;
+
+    loop
+      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then
+        -- Wait until the vvc is inactive
+        loop
+          wait on global_trigger_vvc_activity_register;
+          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+            exit;
+          end if;
+        end loop;
+      end if;
+
+      wait on wishbone_vvc_master_if.dat_i, wishbone_vvc_master_if.ack_i, global_trigger_vvc_activity_register;
+
+      -- Check the changes on the DUT outputs only when the vvc is inactive
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+        -- Skip checking the changes if the acknowledge signal goes low within one clock period after the VVC becomes inactive
+        if not (wishbone_vvc_master_if.ack_i = '0' and global_trigger_vvc_activity_register'last_event < clock_period) then
+          check_value(not wishbone_vvc_master_if.dat_i'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on dat_i", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not wishbone_vvc_master_if.ack_i'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on ack_i", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+        end if;
+      end if;
+    end loop;
+  end process p_unwanted_activity;
   --========================================================================================================================
 
 end behave;

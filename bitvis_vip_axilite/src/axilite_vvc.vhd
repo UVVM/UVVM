@@ -90,6 +90,7 @@ architecture behave of axilite_vvc is
   signal last_write_response_channel_idx_executed   : natural := 0;
   signal last_read_data_channel_idx_executed        : natural := 0;
   signal terminate_current_cmd                      : t_flag_record;
+  signal clock_period                               : time;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue                : work.td_cmd_queue_pkg.t_generic_queue;
@@ -723,6 +724,64 @@ begin
   -- - Handles the termination request record (sets and resets terminate flag on request)
   --===============================================================================================
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --===============================================================================================
+
+  --===============================================================================================
+  -- Clock period
+  -- - Finds the clock period
+  --===============================================================================================
+  p_clock_period : process
+  begin
+    wait until rising_edge(clk);
+    clock_period <= now;
+    wait until rising_edge(clk);
+    clock_period <= now - clock_period;
+    wait;
+  end process;
+  --===============================================================================================
+
+  --===============================================================================================
+  -- Unwanted activity detection
+  -- - Monitors unwanted activity from the DUT
+  --===============================================================================================
+  p_unwanted_activity : process
+  begin
+    -- Add a delay to avoid detecting the first transition from the undefined value to initial value
+    wait for std.env.resolution_limit;
+
+    loop
+      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then
+        -- Wait until the vvc is inactive
+        loop
+          wait on global_trigger_vvc_activity_register;
+          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+            exit;
+          end if;
+        end loop;
+      end if;
+
+      -- All ready signals are not monitored. See AXI-Lite VVC QuickRef.
+      wait on axilite_vvc_master_if.write_response_channel.bresp, axilite_vvc_master_if.write_response_channel.bvalid, axilite_vvc_master_if.read_data_channel.rdata,
+              axilite_vvc_master_if.read_data_channel.rresp, axilite_vvc_master_if.read_data_channel.rvalid, global_trigger_vvc_activity_register;
+
+      -- Check the changes on the DUT outputs only when the vvc is inactive
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+        -- Skip checking the changes if the bvalid signal goes low within one clock period after the VVC becomes inactive
+        if not (falling_edge(axilite_vvc_master_if.write_response_channel.bvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+          check_value(not axilite_vvc_master_if.write_response_channel.bvalid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on bvalid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.write_response_channel.bresp'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on bresp", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+        end if;
+
+        -- Skip checking the changes if the rvalid signal goes low within one clock period after the VVC becomes inactive
+        if not (falling_edge(axilite_vvc_master_if.read_data_channel.rvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+          check_value(not axilite_vvc_master_if.read_data_channel.rvalid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rvalid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.read_data_channel.rdata'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rdata", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.read_data_channel.rresp'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rresp", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+        end if;
+      end if;
+    end loop;
+  end process p_unwanted_activity;
   --===============================================================================================
 
 end behave;

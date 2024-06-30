@@ -109,29 +109,49 @@ def test_4(mock_choice):
 def test_5(mock_choice):
     vvc_generator.main()
 
-# Test 6: name, extended_features, scoreboard, transaction_info, concurrent_channels, vvc_multiple_executors
-@mock.patch('vvc_generator.input', side_effect=['test_6', 'y', 'n', 'n', 1, 'n'])
+# Test 6: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+@mock.patch('vvc_generator.input', side_effect=['test_6', 'y', 'n', 'n', 'n', 1, 'n'])
 def test_6(mock_choice):
     vvc_generator.main()
 
-# Test 7: name, extended_features, scoreboard, transaction_info, concurrent_channels, vvc_multiple_executors
-@mock.patch('vvc_generator.input', side_effect=['test_7', 'y', 'n', 'y', 1, 'n'])
+# Test 7: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+@mock.patch('vvc_generator.input', side_effect=['test_7', 'y', 'n', 'y', 'n', 1, 'n'])
 def test_7(mock_choice):
     vvc_generator.main()
 
-# Test 8: name, extended_features, scoreboard, transaction_info, concurrent_channels, vvc_multiple_executors
-@mock.patch('vvc_generator.input', side_effect=['test_8', 'y', 'y', 'n', 1, 'n'])
+# Test 8: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+@mock.patch('vvc_generator.input', side_effect=['test_8', 'y', 'y', 'n', 'n', 1, 'n'])
 def test_8(mock_choice):
     vvc_generator.main()
 
-# Test 9: name, extended_features, scoreboard, transaction_info, concurrent_channels, vvc_multiple_executors
-@mock.patch('vvc_generator.input', side_effect=['test_9', 'y', 'y', 'y', 1, 'n'])
+# Test 9: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+@mock.patch('vvc_generator.input', side_effect=['test_9', 'y', 'y', 'y', 'n', 1, 'n'])
 def test_9(mock_choice):
     vvc_generator.main()
 
-# Test 10: name, extended_features, scoreboard, transaction_info, concurrent_channels, ch_0_name, ch_1_name, ch_num_executors, ch_0_exec, ch_0_num_exec, ch_0_exec_name
-@mock.patch('vvc_generator.input', side_effect=['test_10', 'y', 'y', 'y', 2, 'RX', 'TX', 1, 'y', 3, 'response', 'request'])
+# Test 10: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, ch_0_name, ch_1_name, ch_num_executors, ch_0_exec, ch_0_num_exec, ch_0_exec_name
+@mock.patch('vvc_generator.input', side_effect=['test_10', 'y', 'y', 'y', 'n', 2, 'RX', 'TX', 1, 'y', 3, 'response', 'request'])
 def test_10(mock_choice):
+    vvc_generator.main()
+
+# Test 11: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+@mock.patch('vvc_generator.input', side_effect=['test_11', 'y', 'n', 'n', 'y', 1, 'n'])
+def test_11(mock_choice):
+    vvc_generator.main()
+
+# Test 12: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+@mock.patch('vvc_generator.input', side_effect=['test_12', 'y', 'y', 'n', 'y', 1, 'n'])
+def test_12(mock_choice):
+    vvc_generator.main()
+
+# Test 13: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, vvc_multiple_executors
+@mock.patch('vvc_generator.input', side_effect=['test_13', 'y', 'y', 'y', 'y', 1, 'n'])
+def test_13(mock_choice):
+    vvc_generator.main()
+
+# Test 14: name, extended_features, scoreboard, transaction_info, unwanted_activity, concurrent_channels, ch_0_name, ch_1_name, ch_num_executors, ch_0_exec, ch_0_num_exec, ch_0_exec_name
+@mock.patch('vvc_generator.input', side_effect=['test_14', 'y', 'y', 'y', 'y', 2, 'RX', 'TX', 1, 'y', 3, 'response', 'request'])
+def test_14(mock_choice):
     vvc_generator.main()
 
 
@@ -159,6 +179,14 @@ def test_vvc_generator():
     os.rename("output", "generated_vip_9")
     test_10()
     os.rename("output", "generated_vip_10")
+    test_11()
+    os.rename("output", "generated_vip_11")
+    test_12()
+    os.rename("output", "generated_vip_12")
+    test_13()
+    os.rename("output", "generated_vip_13")
+    test_14()
+    os.rename("output", "generated_vip_14")
 
     hr = HDLRegression(simulator='modelsim')
 

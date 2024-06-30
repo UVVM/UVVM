@@ -36,7 +36,7 @@ use work.vvc_sb_pkg.all;
 package vvc_methods_pkg is
 
   --===============================================================================================
-  -- Types and constants for the SBI VVC 
+  -- Types and constants for the AVALON_MM VVC
   --===============================================================================================
   constant C_VVC_NAME : string := "AVALON_MM_VVC";
 
@@ -64,6 +64,7 @@ package vvc_methods_pkg is
     num_pipeline_stages                   : natural; -- Max read_requests in pipeline
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
+    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -80,7 +81,8 @@ package vvc_methods_pkg is
     use_read_pipeline                     => TRUE,
     num_pipeline_stages                   => 5,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
+    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
   );
 
   type t_vvc_status is record

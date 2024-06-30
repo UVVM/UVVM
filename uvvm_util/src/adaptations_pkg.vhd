@@ -349,6 +349,11 @@ package adaptations_pkg is
   constant C_MAX_NUM_SEQUENCERS                    : natural       := 10; -- Max number of sequencers
   constant C_MAX_TB_VVC_NUM                        : natural       := 20; -- Max number of VVCs in testbench (including all channels)
 
+  -- Default severity for the unwanted activity detection.
+  -- All VVCs have the unwanted activity detection enabled (ERROR) by default, except:
+  -- For GPIO VVC, the unwanted activity detection is disabled (NO_ALERT) by default. See constant C_GPIO_VVC_CONFIG_DEFAULT in the GPIO VVC methods package.
+  constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
+
   -- Maximum allowed length of VVC names
   constant C_MAX_VVC_NAME_LENGTH : positive := 20;
 

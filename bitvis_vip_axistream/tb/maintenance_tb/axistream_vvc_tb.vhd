@@ -58,7 +58,7 @@ architecture func of axistream_vvc_tb is
   constant C_VVC2VVC_SLAVE   : natural := 3;
 
   constant c_max_bytes       : natural   := 100; -- max bytes per packet to send
-  constant GC_DUT_FIFO_DEPTH : natural   := 4;
+  constant C_DUT_FIFO_DEPTH  : natural   := 4;
   --------------------------------------------------------------------------------
   -- Signal declarations
   --------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ begin
       GC_USER_WIDTH     => GC_USER_WIDTH,
       GC_ID_WIDTH       => GC_ID_WIDTH,
       GC_DEST_WIDTH     => GC_DEST_WIDTH,
-      GC_DUT_FIFO_DEPTH => GC_DUT_FIFO_DEPTH,
+      GC_DUT_FIFO_DEPTH => C_DUT_FIFO_DEPTH,
       GC_INCLUDE_TUSER  => GC_INCLUDE_TUSER
     )
     port map(
@@ -116,21 +116,96 @@ begin
   ------------------------------------------------
   p_main : process
     -- BFM config
-    variable axistream_bfm_config : t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
+    variable v_axistream_bfm_config : t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT;
+    variable v_cnt                  : integer                          := 0;
+    variable v_idx                  : integer                          := 0;
+    variable v_numBytes             : integer                          := 0;
+    variable v_numWords             : integer                          := 0;
+    variable v_data_array           : t_byte_array(0 to c_max_bytes - 1);
+    variable v_user_array           : t_user_array(v_data_array'range) := (others => (others => '0'));
+    variable v_strb_array           : t_strb_array(v_data_array'range) := (others => (others => '0'));
+    variable v_id_array             : t_id_array(v_data_array'range)   := (others => (others => '0'));
+    variable v_dest_array           : t_dest_array(v_data_array'range) := (others => (others => '0'));
+    variable v_cmd_idx              : natural;
+    variable v_result_from_fetch    : bitvis_vip_axistream.vvc_cmd_pkg.t_vvc_result;
+    variable v_alert_level          : t_alert_level;
 
-    variable v_cnt        : integer                          := 0;
-    variable v_idx        : integer                          := 0;
-    variable v_numBytes   : integer                          := 0;
-    variable v_numWords   : integer                          := 0;
-    variable v_data_array : t_byte_array(0 to c_max_bytes - 1);
-    variable v_user_array : t_user_array(v_data_array'range) := (others => (others => '0'));
-    variable v_strb_array : t_strb_array(v_data_array'range) := (others => (others => '0'));
-    variable v_id_array   : t_id_array(v_data_array'range)   := (others => (others => '0'));
-    variable v_dest_array : t_dest_array(v_data_array'range) := (others => (others => '0'));
+    -- DUT ports towards VVC interface
+    constant C_NUM_VVC_SIGNALS : natural := 8;
+    alias dut_m_tdata  is << signal i_test_harness.i_axis_fifo.m_axis_tdata  : std_logic_vector >>;
+    alias dut_m_tkeep  is << signal i_test_harness.i_axis_fifo.m_axis_tkeep  : std_logic_vector >>;
+    alias dut_m_tuser  is << signal i_test_harness.i_axis_fifo.m_axis_tuser  : std_logic_vector >>;
+    alias dut_m_tvalid is << signal i_test_harness.i_axis_fifo.m_axis_tvalid : std_logic >>;
+    alias dut_m_tlast  is << signal i_test_harness.i_axis_fifo.m_axis_tlast  : std_logic >>;
+    alias dut_m_tstrb  is << signal i_test_harness.dut_m_axis_tstrb          : std_logic_vector >>;
+    alias dut_m_tid    is << signal i_test_harness.dut_m_axis_tid            : std_logic_vector >>;
+    alias dut_m_tdest  is << signal i_test_harness.dut_m_axis_tdest          : std_logic_vector >>;
 
-    variable v_cmd_idx           : natural;
-    variable v_fetch_is_accepted : boolean;
-    variable v_result_from_fetch : bitvis_vip_axistream.vvc_cmd_pkg.t_vvc_result;
+    -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
+    procedure toggle_vvc_if (
+      constant alert_level : in t_alert_level
+    ) is
+      variable v_num_expected_alerts : natural;
+      variable v_rand                : t_rand;
+    begin
+      -- Number of total expected alerts: (number of signals tested individually + number of signals tested together) x 1 toggle
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, (C_NUM_VVC_SIGNALS + C_NUM_VVC_SIGNALS) * 2);
+      end if;
+      for i in 0 to C_NUM_VVC_SIGNALS loop
+        -- Force new value
+        v_num_expected_alerts := get_alert_counter(alert_level);
+        case i is
+          when 0 => dut_m_tdata  <= force not dut_m_tdata;
+                    dut_m_tkeep  <= force not dut_m_tkeep;
+                    dut_m_tuser  <= force not dut_m_tuser;
+                    dut_m_tvalid <= force not dut_m_tvalid;
+                    dut_m_tlast  <= force not dut_m_tlast;
+                    dut_m_tstrb  <= force not dut_m_tstrb;
+                    dut_m_tid    <= force not dut_m_tid;
+                    dut_m_tdest  <= force not dut_m_tdest;
+          when 1 => dut_m_tdata  <= force not dut_m_tdata;
+          when 2 => dut_m_tkeep  <= force not dut_m_tkeep;
+          when 3 => dut_m_tuser  <= force not dut_m_tuser;
+          when 4 => dut_m_tvalid <= force not dut_m_tvalid;
+          when 5 => dut_m_tlast  <= force not dut_m_tlast;
+          when 6 => dut_m_tstrb  <= force not dut_m_tstrb;
+          when 7 => dut_m_tid    <= force not dut_m_tid;
+          when 8 => dut_m_tdest  <= force not dut_m_tdest;
+        end case;
+        wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
+        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
+                                 v_num_expected_alerts + 1;
+        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Set back original value
+        v_num_expected_alerts := get_alert_counter(alert_level);
+        case i is
+          when 0 => dut_m_tdata  <= release;
+                    dut_m_tkeep  <= release;
+                    dut_m_tuser  <= release;
+                    dut_m_tvalid <= release;
+                    dut_m_tlast  <= release;
+                    dut_m_tstrb  <= release;
+                    dut_m_tid    <= release;
+                    dut_m_tdest  <= release;
+          when 1 => dut_m_tdata  <= release;
+          when 2 => dut_m_tkeep  <= release;
+          when 3 => dut_m_tuser  <= release;
+          when 4 => dut_m_tvalid <= release;
+          when 5 => dut_m_tlast  <= release;
+          when 6 => dut_m_tstrb  <= release;
+          when 7 => dut_m_tid    <= release;
+          when 8 => dut_m_tdest  <= release;
+        end case;
+        wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+        wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
+        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
+                                 v_num_expected_alerts + 1;
+        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      end loop;
+    end procedure;
 
   begin
     -- To avoid that log files from different test cases (run in separate
@@ -141,21 +216,21 @@ begin
     await_uvvm_initialization(VOID);
 
     -- override default config with settings for this testbench
-    axistream_bfm_config.max_wait_cycles          := 1000;
-    axistream_bfm_config.max_wait_cycles_severity := error;
-    axistream_bfm_config.check_packet_length      := true;
+    v_axistream_bfm_config.max_wait_cycles          := 1000;
+    v_axistream_bfm_config.max_wait_cycles_severity := error;
+    v_axistream_bfm_config.check_packet_length      := true;
     if GC_USE_SETUP_AND_HOLD then
-      axistream_bfm_config.clock_period := C_CLK_PERIOD;
-      axistream_bfm_config.setup_time   := C_CLK_PERIOD / 4;
-      axistream_bfm_config.hold_time    := C_CLK_PERIOD / 4;
-      axistream_bfm_config.bfm_sync     := SYNC_WITH_SETUP_AND_HOLD;
+      v_axistream_bfm_config.clock_period := C_CLK_PERIOD;
+      v_axistream_bfm_config.setup_time   := C_CLK_PERIOD / 4;
+      v_axistream_bfm_config.hold_time    := C_CLK_PERIOD / 4;
+      v_axistream_bfm_config.bfm_sync     := SYNC_WITH_SETUP_AND_HOLD;
     end if;
 
     -- Default: use same config for both the master and slave VVC
-    shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config := axistream_bfm_config; -- vvc_methods_pkg
-    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config  := axistream_bfm_config; -- vvc_methods_pkg
-    shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config  := axistream_bfm_config; -- vvc_methods_pkg
-    shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config   := axistream_bfm_config; -- vvc_methods_pkg
+    shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config := v_axistream_bfm_config;
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config  := v_axistream_bfm_config;
+    shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config  := v_axistream_bfm_config;
+    shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config   := v_axistream_bfm_config;
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -326,22 +401,23 @@ begin
     ------------------------------------------------------------
     log(ID_LOG_HDR, "TC: axistream transmit when tready=0 from DUT at start of transfer  ");
     ------------------------------------------------------------
-
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to transmit with inactive slave
     -- Fill DUT FIFO to provoke tready=0
     v_numBytes := 1;
-    for i in 0 to GC_DUT_FIFO_DEPTH - 1 loop
+    for i in 0 to C_DUT_FIFO_DEPTH - 1 loop
       v_data_array(0) := std_logic_vector(to_unsigned(i, v_data_array(0)'length));
       axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes - 1), "transmit to fill DUT,i=" & to_string(i));
     end loop;
     await_completion(AXISTREAM_VVCT, 0, 1 ms);
     wait for 100 ns;
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
 
     -- DUT FIFO is now full. Schedule the transmit which will wait for tready until DUT is read from later
     v_data_array(0) := x"D0";
     axistream_transmit_bytes(AXISTREAM_VVCT, 0, v_data_array(0 to v_numBytes - 1), "start transmit while tready=0");
 
     -- Make DUT not full anymore. Check data from DUT equals transmitted data
-    for i in 0 to GC_DUT_FIFO_DEPTH - 1 loop
+    for i in 0 to C_DUT_FIFO_DEPTH - 1 loop
       v_data_array(0) := std_logic_vector(to_unsigned(i, v_data_array(0)'length));
       axistream_expect_bytes(AXISTREAM_VVCT, 1, v_data_array(0 to v_numBytes - 1), "expect ");
     end loop;
@@ -560,6 +636,40 @@ begin
       axistream_transmit_bytes(AXISTREAM_VVCT, C_VVC2VVC_MASTER, v_data_array(0 to 15), "transmit 16 bytes");
       axistream_expect_bytes(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, v_data_array(0 to 15), "expect 16 bytes");
       await_completion(AXISTREAM_VVCT, C_VVC2VVC_SLAVE, 1 ms);
+    end loop;
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+    ------------------------------------------------------------------------------------------------------------------------------
+    for i in 0 to 2 loop
+      -- Test different alert severity configurations
+      if i = 0 then
+        v_alert_level := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+      elsif i = 1 then
+        v_alert_level := FAILURE;
+      else
+        v_alert_level := NO_ALERT;
+      end if;
+      log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
+      shared_axistream_vvc_config(C_FIFO2VVC_MASTER).unwanted_activity_severity := v_alert_level;
+      shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity  := v_alert_level;
+
+      log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
+      for byte in 0 to 7 loop
+        v_data_array(byte) := random(v_data_array(0)'length);
+      end loop;
+      axistream_transmit_bytes(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, v_data_array(0 to 7), "Transmit data");
+      axistream_expect_bytes(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, v_data_array(0 to 7), "Expect data");
+      await_completion(AXISTREAM_VVCT, C_FIFO2VVC_SLAVE, 1 ms);
+
+      -- Test with and without a time gap between await_completion and unexpected data transmission
+      if i = 0 then
+        log(ID_SEQUENCER, "Wait 100 ns", C_SCOPE);
+        wait for 100 ns;
+      end if;
+
+      log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
+      toggle_vvc_if(v_alert_level);
     end loop;
 
     -----------------------------------------------------------------------------

@@ -524,5 +524,45 @@ begin
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
   --===============================================================================================
 
+  --===============================================================================================
+  -- Unwanted activity detection
+  -- - Monitors unwanted activity from the DUT
+  --===============================================================================================
+  p_unwanted_activity : process
+  begin
+    -- Add a delay to avoid detecting the first transition from the undefined value to initial value
+    wait for std.env.resolution_limit;
+
+    loop
+      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then
+        -- Wait until the vvc is inactive
+        loop
+          wait on global_trigger_vvc_activity_register;
+          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+            exit;
+          end if;
+        end loop;
+      end if;
+
+      if GC_MASTER_MODE then
+        wait on i2c_vvc_if.sda, global_trigger_vvc_activity_register;
+      else
+        wait on i2c_vvc_if.scl, i2c_vvc_if.sda, global_trigger_vvc_activity_register;
+      end if;
+
+      -- Check the changes on the DUT outputs only when the vvc is inactive
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+        if GC_MASTER_MODE then
+          check_value(not i2c_vvc_if.sda'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on sda", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+        else
+          check_value(not i2c_vvc_if.scl'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on scl. This can be caused by multiple slave VVCs with a common bus connected to the same DUT. See documentation.", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not i2c_vvc_if.sda'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on sda. This can be caused by multiple slave VVCs with a common bus connected to the same DUT. See documentation.", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+        end if;
+      end if;
+    end loop;
+  end process p_unwanted_activity;
+  --===============================================================================================
+
 end behave;
 

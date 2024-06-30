@@ -95,14 +95,74 @@ begin
   ------------------------------------------------
   p_main : process
     constant C_SCOPE         : string := C_TB_SCOPE_DEFAULT;
-    variable v_irq_mask      : std_logic_vector(7 downto 0);
-    variable v_irq_mask_inv  : std_logic_vector(7 downto 0);
-    variable i               : integer;
     variable v_timestamp     : time;
     variable v_measured_time : time;
     variable v_cmd_idx       : natural;
     variable v_is_ok         : boolean;
     variable v_data          : work.vvc_cmd_pkg.t_vvc_result;
+    variable v_alert_level   : t_alert_level;
+
+    -- DUT ports towards VVC interface
+    constant C_NUM_VVC_SIGNALS : natural := 5;
+    alias dut_bresp  is << signal i_test_harness.i_axilite_slave_1.S_AXI_BRESP  : std_logic_vector >>;
+    alias dut_bvalid is << signal i_test_harness.i_axilite_slave_1.S_AXI_BVALID : std_logic >>;
+    alias dut_rdata  is << signal i_test_harness.i_axilite_slave_1.S_AXI_RDATA  : std_logic_vector >>;
+    alias dut_rresp  is << signal i_test_harness.i_axilite_slave_1.S_AXI_RRESP  : std_logic_vector >>;
+    alias dut_rvalid is << signal i_test_harness.i_axilite_slave_1.S_AXI_RVALID : std_logic >>;
+
+    -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
+    procedure toggle_vvc_if (
+      constant alert_level : in t_alert_level
+    ) is
+      variable v_num_expected_alerts : natural;
+      variable v_rand                : t_rand;
+    begin
+      -- Number of total expected alerts: (number of signals tested individually + number of signals tested together) x 1 toggle
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, (C_NUM_VVC_SIGNALS + C_NUM_VVC_SIGNALS) * 2);
+      end if;
+      for i in 0 to C_NUM_VVC_SIGNALS loop
+        -- Force new value
+        v_num_expected_alerts := get_alert_counter(alert_level);
+        case i is
+          when 0 => dut_bresp  <= force not dut_bresp;
+                    dut_bvalid <= force not dut_bvalid;
+                    dut_rdata  <= force not dut_rdata;
+                    dut_rresp  <= force not dut_rresp;
+                    dut_rvalid <= force not dut_rvalid;
+          when 1 => dut_bresp  <= force not dut_bresp;
+          when 2 => dut_bvalid <= force not dut_bvalid;
+          when 3 => dut_rdata  <= force not dut_rdata;
+          when 4 => dut_rresp  <= force not dut_rresp;
+          when 5 => dut_rvalid <= force not dut_rvalid;
+        end case;
+        wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
+        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
+                                 v_num_expected_alerts + 1;
+        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Set back original value
+        v_num_expected_alerts := get_alert_counter(alert_level);
+        case i is
+          when 0 => dut_bresp  <= release;
+                    dut_bvalid <= release;
+                    dut_rdata  <= release;
+                    dut_rresp  <= release;
+                    dut_rvalid <= release;
+          when 1 => dut_bresp  <= release;
+          when 2 => dut_bvalid <= release;
+          when 3 => dut_rdata  <= release;
+          when 4 => dut_rresp  <= release;
+          when 5 => dut_rvalid <= release;
+        end case;
+        wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
+                                 v_num_expected_alerts + 1;
+        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      end loop;
+    end procedure;
+
   begin
     -- To avoid that log files from different test cases (run in separate
     -- simulations) overwrite each other.
@@ -401,6 +461,37 @@ begin
     await_completion(AXILITE_VVCT, 2, 100 us, "Waiting for commands to finish");
     -- Checking that it takes twice as long (+- 20 %)
     check_value_in_range(now - v_timestamp, v_measured_time * 1.8, v_measured_time * 2.2, ERROR, "Checking that it takes longer time to force a single pending transaction");
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+    ------------------------------------------------------------------------------------------------------------------------------
+    for i in 0 to 2 loop
+      -- Test different alert severity configurations
+      if i = 0 then
+        v_alert_level := C_AXILITE_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+      elsif i = 1 then
+        v_alert_level := FAILURE;
+      else
+        v_alert_level := NO_ALERT;
+      end if;
+      log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
+      shared_axilite_vvc_config(1).unwanted_activity_severity := v_alert_level;
+
+      log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
+      axilite_write(AXILITE_VVCT, 1, x"6000", x"54321", "Write");
+      await_completion(AXILITE_VVCT, 1, 1000 ns);
+      axilite_check(AXILITE_VVCT, 1, x"0006000", x"54321", "Check");
+      await_completion(AXILITE_VVCT, 1, 1000 ns);
+
+      -- Test with and without a time gap between await_completion and unexpected data transmission
+      if i = 0 then
+        log(ID_SEQUENCER, "Wait 100 ns", C_SCOPE);
+        wait for 100 ns;
+      end if;
+
+      log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
+      toggle_vvc_if(v_alert_level);
+    end loop;
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

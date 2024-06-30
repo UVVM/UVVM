@@ -127,10 +127,10 @@ begin
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
 
-    -- Set that ready signal is not in use
-    shared_sbi_vvc_config(1).bfm_config.use_ready_signal           := false;
+    shared_sbi_vvc_config(1).bfm_config.use_ready_signal           := false; -- Set that ready signal is not in use
     shared_sbi_vvc_config(1).bfm_config.use_fixed_wait_cycles_read := true;
     shared_sbi_vvc_config(1).bfm_config.fixed_wait_cycles_read     := 2;
+
     wait for 3 * C_CLK_PERIOD;          -- Wait for reset being released in test harness
 
     -- release reset to DUT

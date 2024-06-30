@@ -98,7 +98,7 @@ begin
     port map(
       gpio_vvc_if => gpio_2_input
     );
-    
+
   -- GPIO as input
   i3_gpio_vvc : entity work.gpio_vvc
     generic map(
@@ -190,71 +190,81 @@ begin
     variable v_expect_data   : std_logic_vector(7 downto 0);
     variable v_data_1024     : std_logic_vector(1023 downto 0);
     variable v_data_exp_1024 : std_logic_vector(1023 downto 0);
-    variable v_vvc_id        : natural;
     variable v_cmd_idx       : natural;
     variable v_is_ok         : boolean;
+    variable v_alert_level   : t_alert_level;
     
-    -- Procedure / Functions
-
-    -- set_and_check_gpio for singe std_logic signal
-    procedure set_and_check_gpio(
-      constant vvc_instance_idx : natural;
-      signal   vvc_input        : out std_logic_vector;
-      constant data             : std_logic
-      ) is
-        variable v_data_slv : std_logic_vector(0 downto 0);
+    --------------------------------------------------------------------------------------------------
+    -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
+    --------------------------------------------------------------------------------------------------
+    procedure toggle_vvc_if (
+      constant alert_level : in t_alert_level
+    ) is
+      variable v_num_expected_alerts : natural;
+      variable v_rand                : t_rand;
     begin
-      v_data_slv(0) := data;
-      log(ID_SEQUENCER_SUB, "Testing check on GPIO VVC " & to_string(vvc_instance_idx));
-      set_gpio(vvc_input, v_data_slv, "GPIO " & to_string(vvc_instance_idx) & " input");
-      wait for C_CLK_PERIOD;
-      
-      -- Perform get, which stores the data in the VVC
-      gpio_check(GPIO_VVCT, vvc_instance_idx, data, "Readback inside VVC", error);
-      await_completion(GPIO_VVCT, vvc_instance_idx, 100 ns, "Wait for gpio_check to finish");
-      wait for C_CLK_PERIOD * 4;
-    end procedure set_and_check_gpio;
-    
+      -- Number of total expected alerts: 1 signal x 1 toggle
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, 2);
+      end if;
+      -- Force new value
+      v_num_expected_alerts := get_alert_counter(alert_level);
+      gpio_3_input <= force not gpio_3_input;
+      wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
+      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                               v_num_expected_alerts + 1;
+      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      -- Set back original value
+      v_num_expected_alerts := get_alert_counter(alert_level);
+      gpio_3_input <= release;
+      wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                               v_num_expected_alerts + 1;
+      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+    end procedure;
+
     ----------------------------------------------------------------------
     -- Test GPIO VVC Set method
+    -- Set data via VVC command and verify pins (VVC output port)
     ----------------------------------------------------------------------
-    procedure set_and_check_gpio(
-      constant vvc_instance_idx : natural;
-      signal   vvc_output       : std_logic_vector;
-      constant data             : std_logic_vector;
-      constant expected_data    : std_logic_vector
+    procedure set_and_verify_gpio(
+      constant vvc_instance_idx : in  natural;
+      signal   vvc_output       : in  std_logic_vector;
+      constant data             : in  std_logic_vector;
+      constant expected_data    : in  std_logic_vector
       ) is
     begin
-      log(ID_SEQUENCER_SUB, "xxx Testing get on GPIO VVC " & to_string(vvc_instance_idx));
-      -- Set GPIO setting to 0xAA. Check GPIO setting
+      log(ID_SEQUENCER_SUB, "Testing set on GPIO VVC " & to_string(vvc_instance_idx));
       gpio_set(GPIO_VVCT, vvc_instance_idx, data, "Setting gpio " & to_string(vvc_instance_idx) & " to 0x" & to_string(data, HEX) & ").");
       await_completion(GPIO_VVCT, vvc_instance_idx, C_GPIO_SET_MAX_TIME);
       check_value(vvc_output, expected_data, error, "Checking value of GPIO VVC " & to_string(vvc_instance_idx));
-      wait for C_CLK_PERIOD * 4;              -- Margin
-    end procedure set_and_check_gpio;
-    
-    -- Set_and_check_gpio for singe std_logic signal
-    procedure set_and_check_gpio(
-      constant vvc_instance_idx : natural;
-      signal   vvc_output       : std_logic_vector;
-      constant data             : std_logic; -- Singe signal
-      constant expected_data    : std_logic_vector
+      wait for C_CLK_PERIOD * 4; -- Margin
+    end procedure set_and_verify_gpio;
+
+    -- Overload for std_logic signal
+    procedure set_and_verify_gpio(
+      constant vvc_instance_idx : in  natural;
+      signal   vvc_output       : in  std_logic_vector;
+      constant data             : in  std_logic;
+      constant expected_data    : in  std_logic_vector
       ) is
     begin
+      log(ID_SEQUENCER_SUB, "Testing set on GPIO VVC " & to_string(vvc_instance_idx));
       gpio_set(GPIO_VVCT, vvc_instance_idx, data, "Setting gpio " & to_string(vvc_instance_idx) & " to " & to_string(data) & ").");
       await_completion(GPIO_VVCT, vvc_instance_idx, C_GPIO_SET_MAX_TIME);
       check_value(vvc_output, expected_data, error, "Checking value of GPIO VVC " & to_string(vvc_instance_idx));
-      wait for C_CLK_PERIOD * 4;              -- Margin
-    end procedure set_and_check_gpio;
+      wait for C_CLK_PERIOD * 4; -- Margin
+    end procedure set_and_verify_gpio;
    
     ----------------------------------------------------------------------
     -- Test of GPIO VVC Get method
+    -- Set data via pins (VVC input port) and verify data via VVC command
     ----------------------------------------------------------------------
-    procedure get_and_check_gpio(
-      constant vvc_instance_idx : natural;
+    procedure get_and_verify_gpio(
+      constant vvc_instance_idx : in  natural;
       signal   vvc_input        : out std_logic_vector;
-      constant data             : std_logic_vector
-      ) is
+      constant data             : in  std_logic_vector
+    ) is
       variable v_cmd_idx        : natural;
       variable v_received_data  : bitvis_vip_gpio.vvc_cmd_pkg.t_vvc_result;
       variable v_is_ok          : boolean;
@@ -265,55 +275,73 @@ begin
       gpio_get(GPIO_VVCT, vvc_instance_idx, "Readback inside VVC");
       v_cmd_idx := get_last_received_cmd_idx(GPIO_VVCT, vvc_instance_idx);  -- for last get
       await_completion(GPIO_VVCT, vvc_instance_idx, v_cmd_idx, 100 ns, "Wait for gpio_get to finish");
+
       -- Fetch the result from index v_cmd_idx (last index set above)
       fetch_result(GPIO_VVCT, vvc_instance_idx, v_cmd_idx, v_received_data, v_is_ok, "Fetching get-result");
-
       -- Check if get was OK and that data is correct
       check_value(v_is_ok, error,"Readback OK via fetch_result()");
       check_value(v_received_data, data, error, "Readback data via fetch_result()");
-      wait for C_CLK_PERIOD * 4;    -- margin
-    end procedure get_and_check_gpio;
+      wait for C_CLK_PERIOD * 4; -- Margin
+    end procedure get_and_verify_gpio;
     
     ----------------------------------------------------------------------
     -- Test of GPIO VVC Get method using Scoreboard to check received data
+    -- Set data via pins (VVC input port) and verify data via scoreboard
     ----------------------------------------------------------------------
-    procedure get_and_check_gpio_sb(
-      constant vvc_instance_idx : natural;
+    procedure get_and_verify_gpio_sb(
+      constant vvc_instance_idx : in  natural;
       signal   vvc_input        : out std_logic_vector;
-      constant data             : std_logic_vector
+      constant data             : in  std_logic_vector
       ) is
       variable v_cmd_idx        : natural;
     begin
       log(ID_SEQUENCER_SUB, "Testing get on GPIO VVC " & to_string(vvc_instance_idx) & " using SB");
       set_gpio(vvc_input, data, "GPIO " & to_string(vvc_instance_idx) & " input");
       GPIO_VVC_SB.add_expected(vvc_instance_idx, pad_gpio_sb(data));
-      
       -- Perform get, which stores the data in the VVC's Scoreboard
       gpio_get(GPIO_VVCT, vvc_instance_idx, TO_SB, "Readback inside VVC using SB");
       v_cmd_idx := get_last_received_cmd_idx(GPIO_VVCT, vvc_instance_idx);  -- for last get
       await_completion(GPIO_VVCT, vvc_instance_idx, v_cmd_idx, 100 ns, "Wait for gpio_get to finish");
-      wait for C_CLK_PERIOD * 4;          -- Margin
-    end procedure get_and_check_gpio_sb;
+      wait for C_CLK_PERIOD * 4; -- Margin
+    end procedure get_and_verify_gpio_sb;
     
     ----------------------------------------------------------------------
     -- Test of GPIO VVC Check method
+    -- Set data via pins (VVC input port) and verify data via VVC command
     ----------------------------------------------------------------------
-    procedure set_and_check_gpio(
-      constant vvc_instance_idx : natural;
+    procedure check_and_verify_gpio(
+      constant vvc_instance_idx : in  natural;
       signal   vvc_input        : out std_logic_vector;
-      constant data             : std_logic_vector
-      ) is
+      constant data             : in  std_logic_vector
+    ) is
     begin
       log(ID_SEQUENCER_SUB, "Testing check on GPIO VVC " & to_string(vvc_instance_idx));
       set_gpio(vvc_input, data, "GPIO " & to_string(vvc_instance_idx) & " input");
       wait for C_CLK_PERIOD;
-      
       -- Perform get, which stores the data in the VVC
       gpio_check(GPIO_VVCT, vvc_instance_idx, data, "Readback inside VVC", error);
       await_completion(GPIO_VVCT, vvc_instance_idx, 100 ns, "Wait for gpio_check to finish");
       wait for C_CLK_PERIOD * 4;
-    end procedure set_and_check_gpio;
-    
+    end procedure check_and_verify_gpio;
+
+    -- Overload for std_logic signal
+    procedure check_and_verify_gpio(
+      constant vvc_instance_idx : in  natural;
+      signal   vvc_input        : out std_logic_vector;
+      constant data             : in  std_logic
+      ) is
+      variable v_data_slv : std_logic_vector(0 downto 0);
+    begin
+      v_data_slv(0) := data;
+      log(ID_SEQUENCER_SUB, "Testing check on GPIO VVC " & to_string(vvc_instance_idx));
+      set_gpio(vvc_input, v_data_slv, "GPIO " & to_string(vvc_instance_idx) & " input");
+      wait for C_CLK_PERIOD;
+      -- Perform get, which stores the data in the VVC
+      gpio_check(GPIO_VVCT, vvc_instance_idx, data, "Readback inside VVC", error);
+      await_completion(GPIO_VVCT, vvc_instance_idx, 100 ns, "Wait for gpio_check to finish");
+      wait for C_CLK_PERIOD * 4;
+    end procedure check_and_verify_gpio;
+
     ----------------------------------------------------------------------
     -- Test of GPIO VVC Check Stable method
       -- Set GPIO input and call GPIO Check Stable and check actual GPIO
@@ -348,16 +376,13 @@ begin
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
 
-    -- disable_log_msg(ALL_MESSAGES);
-    enable_log_msg(ALL_MESSAGES);
-    enable_log_msg(ID_SEQUENCER);
-    enable_log_msg(ID_LOG_HDR);
+    disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR_LARGE);
-    enable_log_msg(ID_BFM);
+    enable_log_msg(ID_LOG_HDR);
+    enable_log_msg(ID_SEQUENCER);
 
     disable_log_msg(GPIO_VVCT, ALL_INSTANCES, ALL_MESSAGES);
     enable_log_msg(GPIO_VVCT, ALL_INSTANCES, ID_BFM);
-
 
     log(ID_LOG_HDR_LARGE, "Verifying TLM + GPIO executor + BFM", C_SCOPE);
     wait for C_CLK_PERIOD * 10;
@@ -383,27 +408,27 @@ begin
 
     -- Set GPIO  to all 1's. Check GPIO setting
     v_data_1024 := (others => '1');
-    set_and_check_gpio(5, gpio_5_output, '1', "1");
-    set_and_check_gpio(6, gpio_6_output, "11", "11");
-    set_and_check_gpio(7, gpio_7_output, "11111111", "11111111");
-    set_and_check_gpio(8, gpio_8_output, v_data_1024, v_data_1024);
+    set_and_verify_gpio(5, gpio_5_output, '1', "1");
+    set_and_verify_gpio(6, gpio_6_output, "11", "11");
+    set_and_verify_gpio(7, gpio_7_output, "11111111", "11111111");
+    set_and_verify_gpio(8, gpio_8_output, v_data_1024, v_data_1024);
 
     -- Set GPIO setting to 0xAA etc. Check GPIO setting
-    set_and_check_gpio(6, gpio_6_output, "01", "01");
-    set_and_check_gpio(7, gpio_7_output, "10101010", "10101010");
-    set_and_check_gpio(8, gpio_8_output, "10101010101", "10101010101");
+    set_and_verify_gpio(6, gpio_6_output, "01", "01");
+    set_and_verify_gpio(7, gpio_7_output, "10101010", "10101010");
+    set_and_verify_gpio(8, gpio_8_output, "10101010101", "10101010101");
     
     -- Set GPIO setting to all 0's. Check GPIO setting
-    set_and_check_gpio(5, gpio_5_output, '0', "0");
-    set_and_check_gpio(6, gpio_6_output, "00", "00");
-    set_and_check_gpio(7, gpio_7_output, "00000000", "00000000");
-    set_and_check_gpio(8, gpio_8_output, "00000000000", "00000000000");
-    
+    set_and_verify_gpio(5, gpio_5_output, '0', "0");
+    set_and_verify_gpio(6, gpio_6_output, "00", "00");
+    set_and_verify_gpio(7, gpio_7_output, "00000000", "00000000");
+    set_and_verify_gpio(8, gpio_8_output, "00000000000", "00000000000");
+
     -- Set GPIO setting to all 1's. Check GPIO setting
-    set_and_check_gpio(5, gpio_5_output, '1', "1");
-    set_and_check_gpio(6, gpio_6_output, "11", "11");
-    set_and_check_gpio(7, gpio_7_output, "11111111", "11111111");
-    set_and_check_gpio(8, gpio_8_output, "11111111111", "11111111111");
+    set_and_verify_gpio(5, gpio_5_output, '1', "1");
+    set_and_verify_gpio(6, gpio_6_output, "11", "11");
+    set_and_verify_gpio(7, gpio_7_output, "11111111", "11111111");
+    set_and_verify_gpio(8, gpio_8_output, "11111111111", "11111111111");
 
 
     --------------------------------------------------------------------------------------
@@ -412,29 +437,29 @@ begin
     log(ID_LOG_HDR, "Test of GPIO Set with don't care", C_SCOPE);
 
     -- GPIO status is all 1's. Test by setting bits to don't care with '-'
-    set_and_check_gpio(5, gpio_5_output, '-', "1");
-    set_and_check_gpio(6, gpio_6_output, "1-", "11");
-    set_and_check_gpio(7, gpio_7_output, "0101----", "01011111");
-    set_and_check_gpio(8, gpio_8_output, "010--------", "01011111111");
-    
-    set_and_check_gpio(5, gpio_5_output, '0', "0");
-    set_and_check_gpio(6, gpio_6_output, "-0", "10");
-    set_and_check_gpio(7, gpio_7_output, "----1010", "01011010");
-    set_and_check_gpio(8, gpio_8_output, "---10101010", "01010101010");
-    
-    set_and_check_gpio(5, gpio_5_output, '1', "-");
-    set_and_check_gpio(6, gpio_6_output, "01", "-1");
-    set_and_check_gpio(7, gpio_7_output, "01010101", "---1---1");
-    set_and_check_gpio(8, gpio_8_output, "10101010101", "--1---1---1");
+    set_and_verify_gpio(5, gpio_5_output, '-', "1");
+    set_and_verify_gpio(6, gpio_6_output, "1-", "11");
+    set_and_verify_gpio(7, gpio_7_output, "0101----", "01011111");
+    set_and_verify_gpio(8, gpio_8_output, "010--------", "01011111111");
 
-    set_and_check_gpio(6, gpio_6_output, "1-", "-1");
-    set_and_check_gpio(7, gpio_7_output, "101-101-", "---1---1");
-    set_and_check_gpio(8, gpio_8_output, "01-101-101-", "--1---1---1");
-    
-    set_and_check_gpio(5, gpio_5_output, 'Z', "-"); --?
-    set_and_check_gpio(6, gpio_6_output, "1Z", "1-");
-    set_and_check_gpio(7, gpio_7_output, "1010ZZZZ", "1010----");
-    set_and_check_gpio(8, gpio_8_output, "101ZZZZZZZZ", "101--------");
+    set_and_verify_gpio(5, gpio_5_output, '0', "0");
+    set_and_verify_gpio(6, gpio_6_output, "-0", "10");
+    set_and_verify_gpio(7, gpio_7_output, "----1010", "01011010");
+    set_and_verify_gpio(8, gpio_8_output, "---10101010", "01010101010");
+
+    set_and_verify_gpio(5, gpio_5_output, '1', "-");
+    set_and_verify_gpio(6, gpio_6_output, "01", "-1");
+    set_and_verify_gpio(7, gpio_7_output, "01010101", "---1---1");
+    set_and_verify_gpio(8, gpio_8_output, "10101010101", "--1---1---1");
+
+    set_and_verify_gpio(6, gpio_6_output, "1-", "-1");
+    set_and_verify_gpio(7, gpio_7_output, "101-101-", "---1---1");
+    set_and_verify_gpio(8, gpio_8_output, "01-101-101-", "--1---1---1");
+
+    set_and_verify_gpio(5, gpio_5_output, 'Z', "-"); --?
+    set_and_verify_gpio(6, gpio_6_output, "1Z", "1-");
+    set_and_verify_gpio(7, gpio_7_output, "1010ZZZZ", "1010----");
+    set_and_verify_gpio(8, gpio_8_output, "101ZZZZZZZZ", "101--------");
 
 
     --------------------------------------------------------------------------------------
@@ -442,20 +467,20 @@ begin
     --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of GPIO Get", C_SCOPE);
     v_data_exp_1024 := (others => '1');
-    get_and_check_gpio(1, gpio_1_input, "1");
-    get_and_check_gpio(2, gpio_2_input, "11");
-    get_and_check_gpio(3, gpio_3_input, "00011101");
-    get_and_check_gpio(4, gpio_4_input, v_data_exp_1024);
+    get_and_verify_gpio(1, gpio_1_input, "1");
+    get_and_verify_gpio(2, gpio_2_input, "11");
+    get_and_verify_gpio(3, gpio_3_input, "00011101");
+    get_and_verify_gpio(4, gpio_4_input, v_data_exp_1024);
     
     
     --------------------------------------------------------------------------------------
     -- Test GPIO Get method using Scoreboard to check received data.
     --------------------------------------------------------------------------------------
     v_data_exp_1024 := (others => '0');
-    get_and_check_gpio_sb(1, gpio_1_input, "0");
-    get_and_check_gpio_sb(2, gpio_2_input, "00");
-    get_and_check_gpio_sb(3, gpio_3_input, "11111111");
-    get_and_check_gpio_sb(4, gpio_4_input, v_data_exp_1024);
+    get_and_verify_gpio_sb(1, gpio_1_input, "0");
+    get_and_verify_gpio_sb(2, gpio_2_input, "00");
+    get_and_verify_gpio_sb(3, gpio_3_input, "11111111");
+    get_and_verify_gpio_sb(4, gpio_4_input, v_data_exp_1024);
 
     GPIO_VVC_SB.report_counters(ALL_INSTANCES);
 
@@ -465,10 +490,10 @@ begin
     --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of GPIO Check", C_SCOPE);
     v_data_exp_1024 := (others => '1');
-    set_and_check_gpio(1, gpio_1_input, '1');
-    set_and_check_gpio(2, gpio_2_input, "11");
-    set_and_check_gpio(3, gpio_3_input, "00000000");
-    set_and_check_gpio(4, gpio_4_input, v_data_exp_1024);
+    check_and_verify_gpio(1, gpio_1_input, '1');
+    check_and_verify_gpio(2, gpio_2_input, "11");
+    check_and_verify_gpio(3, gpio_3_input, "00000000");
+    check_and_verify_gpio(4, gpio_4_input, v_data_exp_1024);
 
 
     --------------------------------------------------------------------------------------
@@ -615,6 +640,38 @@ begin
       gpio_set(GPIO_VVCT, 9, v_set_data, "Releasing the port");
       await_completion(GPIO_VVCT, 9, C_GPIO_SET_MAX_TIME);
       wait for C_CLK_PERIOD;
+    end loop;
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+    ------------------------------------------------------------------------------------------------------------------------------
+    for i in 0 to 2 loop
+      -- Test different alert severity configurations
+      if i = 0 then
+        v_alert_level := C_GPIO_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+      elsif i = 1 then
+        v_alert_level := FAILURE;
+      else
+        v_alert_level := NO_ALERT;
+      end if;
+      log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
+      shared_gpio_vvc_config(3).unwanted_activity_severity := v_alert_level;
+
+      log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
+      v_expect_data := random(8);
+      gpio_expect(GPIO_VVCT, 3, v_expect_data, 100 ns, "Expect data");
+      wait for 80 ns;
+      set_gpio(gpio_3_input, v_expect_data, "Set data");
+      await_completion(GPIO_VVCT, 3, 100 ns);
+
+      -- Test with and without a time gap between await_completion and unexpected data transmission
+      if i = 0 then
+        log(ID_SEQUENCER, "Wait 100 ns", C_SCOPE);
+        wait for 100 ns;
+      end if;
+
+      log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
+      toggle_vvc_if(v_alert_level);
     end loop;
 
     -----------------------------------------------------------------------------

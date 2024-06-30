@@ -4300,7 +4300,11 @@ package body methods_pkg is
       attention   : t_attention := REGARD
     ) return natural is
   begin
-    return protected_alert_attention_counters.get(alert_level, attention);
+    if alert_level = NO_ALERT then
+      return 0;
+    else
+      return protected_alert_attention_counters.get(alert_level, attention);
+    end if;
   end function;
 
   procedure increment_alert_counter(

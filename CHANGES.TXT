@@ -43,6 +43,9 @@ Released: 2024-XX-XX
 - Use dedicated scope in Avalon-MM, AXI and AXI-Lite VVC pipeline processes.
 - Fixed initialization check in tickoff procedure in spec cov.
 - Changed behavior for explicit fail at tickoff in spec cov.
+- Added unwanted activity detection functionality to VVCs to give an alert if the DUT generates any unexpected bus activity.
+- Added unwanted activity detection test to UVVM demo tb.
+- Added unwanted activity detection in VVC generator.
 
 
 v2 2024.03.08

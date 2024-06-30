@@ -476,5 +476,37 @@ begin
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
   --===============================================================================================
 
+  --===============================================================================================
+  -- Unwanted activity detection
+  -- - Monitors unwanted activity from the DUT
+  --===============================================================================================
+  p_unwanted_activity : process
+  begin
+    -- Add a delay to avoid detecting the first transition from the undefined value to initial value
+    wait for std.env.resolution_limit;
+
+    loop
+      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then
+        -- Wait until the vvc is inactive
+        loop
+          wait on global_trigger_vvc_activity_register;
+          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+            exit;
+          end if;
+        end loop;
+      end if;
+
+      -- The ready signal is not monitored. See SBI VVC QuickRef.
+      wait on sbi_vvc_master_if.rdata, global_trigger_vvc_activity_register;
+
+      -- Check the changes on the DUT outputs only when the vvc is inactive
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+        check_value(not sbi_vvc_master_if.rdata'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rdata", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+      end if;
+    end loop;
+  end process p_unwanted_activity;
+  --===============================================================================================
+
 end behave;
 

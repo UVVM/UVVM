@@ -55,6 +55,8 @@ begin
 end struct_bfm;
 
 architecture struct_vvc of rgmii_th is
+  signal dut_txd    : std_logic_vector(3 downto 0);
+  signal dut_tx_ctl : std_logic;
 begin
 
   -- Instantiate VVC
@@ -69,7 +71,10 @@ begin
 
   rgmii_tx_if.txc    <= clk;
   rgmii_rx_if.rxc    <= clk;
-  rgmii_rx_if.rxd    <= rgmii_tx_if.txd;
-  rgmii_rx_if.rx_ctl <= rgmii_tx_if.tx_ctl;
+  -- Use non-record signals to be able to force them from the tb
+  dut_txd            <= rgmii_tx_if.txd;
+  dut_tx_ctl         <= rgmii_tx_if.tx_ctl;
+  rgmii_rx_if.rxd    <= dut_txd;
+  rgmii_rx_if.rx_ctl <= dut_tx_ctl;
 
 end struct_vvc;

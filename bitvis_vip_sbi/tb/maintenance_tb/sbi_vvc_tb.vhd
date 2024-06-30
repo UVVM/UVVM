@@ -87,12 +87,43 @@ begin
   ------------------------------------------------
   p_main : process
     -- BFM config
-    variable sbi_bfm_config : t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
+    variable v_sbi_bfm_config : t_sbi_bfm_config := C_SBI_BFM_CONFIG_DEFAULT;
+    variable v_cmd_idx        : integer;
+    variable v_data           : work.vvc_cmd_pkg.t_vvc_result;
+    variable v_is_ok          : boolean := false;
+    variable v_timestamp      : time;
+    variable v_alert_level    : t_alert_level;
 
-    variable v_cmd_idx   : integer;
-    variable v_data      : work.vvc_cmd_pkg.t_vvc_result;
-    variable v_is_ok     : boolean := false;
-    variable v_timestamp : time;
+    -- DUT ports towards VVC interface
+    alias dut_rdata is << signal i_test_harness.dut_rdata : std_logic_vector >>;
+
+    -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
+    procedure toggle_vvc_if (
+      constant alert_level : in t_alert_level
+    ) is
+      variable v_num_expected_alerts : natural;
+      variable v_rand                : t_rand;
+    begin
+      -- Number of total expected alerts: 1 signal x 1 toggle
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, 2);
+      end if;
+      -- Force new value
+      v_num_expected_alerts := get_alert_counter(alert_level);
+      dut_rdata <= force not dut_rdata;
+      wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
+      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                               v_num_expected_alerts + 1;
+      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      -- Set back original value
+      v_num_expected_alerts := get_alert_counter(alert_level);
+      dut_rdata <= release;
+      wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+      wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
+      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                               v_num_expected_alerts + 1;
+      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+    end procedure;
 
   begin
     -- To avoid that log files from different test cases (run in separate
@@ -101,8 +132,6 @@ begin
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
     await_uvvm_initialization(VOID);
-
-    set_alert_stop_limit(TB_ERROR, 4);
 
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_SEQUENCER);
@@ -114,34 +143,22 @@ begin
     enable_log_msg(VVC_BROADCAST, ID_BFM);
     enable_log_msg(VVC_BROADCAST, ID_BFM_POLL);
 
-    --disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
-    --enable_log_msg(SBI_VVCT, 1, ID_BFM);
-    --enable_log_msg(SBI_VVCT, 1, ID_BFM_POLL);
-    --
-    --disable_log_msg(SBI_VVCT, 2, ALL_MESSAGES);
-    --enable_log_msg(SBI_VVCT, 2, ID_BFM);
-    --enable_log_msg(SBI_VVCT, 2, ID_BFM_POLL);
-
     -- Print the configuration to the log
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
 
-    -- Set that ready signal is not in use
-    shared_sbi_vvc_config(1).bfm_config.use_ready_signal := false;
-    shared_sbi_vvc_config(2).bfm_config.use_ready_signal := false;
+    shared_sbi_vvc_config(1).bfm_config.use_ready_signal := false; -- Set that ready signal is not in use
+    shared_sbi_vvc_config(2).bfm_config.use_ready_signal := false; -- Set that ready signal is not in use
 
-    sbi_bfm_config.clock_period := C_CLK_PERIOD;
-    sbi_bfm_config.setup_time   := C_CLK_PERIOD / 4;
-    sbi_bfm_config.hold_time    := C_CLK_PERIOD / 4;
     wait for 3 * C_CLK_PERIOD;          -- Wait for reset being released in test harness
 
     --------------------------------------------------------------------------------------
     -- Verifying
     --------------------------------------------------------------------------------------
     if GC_TESTCASE = "simple_write_and_check" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Test of simple write and check", C_SCOPE);
-      --==========================================================================
-
+      ----------------------------------------------------------------------------------------------------------------------------
       log("Write with both interfaces");
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"AA", "Write PUT on FIFO 1");
       sbi_write(SBI_VVCT, 2, C_ADDR_FIFO_PUT, x"FF", "Write PUT on FIFO 2");
@@ -153,8 +170,9 @@ begin
       await_completion(SBI_VVCT, 1, 16 ns, "Await execution");
 
     elsif GC_TESTCASE = "simple_write_and_read" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Test of simple write and read", C_SCOPE);
-      --==========================================================================
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Write to FIFO
       log("Write with both interfaces");
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"12", "Write PUT on FIFO 1");
@@ -182,8 +200,9 @@ begin
       await_completion(SBI_VVCT, 2, 100 ns, "Await execution");
 
     elsif GC_TESTCASE = "scoreboard_test" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Scoreboard test", C_SCOPE);
-      --==========================================================================
+      ----------------------------------------------------------------------------------------------------------------------------
       log("Write with both interfaces");
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"85", "Write on FIFO 1");
       SBI_VVC_SB.add_expected(2, pad_sbi_sb(x"85"));
@@ -202,9 +221,9 @@ begin
       SBI_VVC_SB.report_counters(ALL_INSTANCES);
 
     elsif GC_TESTCASE = "test_of_poll_until" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Test of poll until", C_SCOPE);
-      --==========================================================================
-
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Fill FIFO 1
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"01", "Write PUT on FIFO 1");
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"56", "Write PUT on FIFO 1");
@@ -233,9 +252,9 @@ begin
       await_completion(SBI_VVCT, 2, 1000 ns, "Await execution");
 
     elsif GC_TESTCASE = "extended_write_and_read" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Test of write and read from other addresses on both VVCs", C_SCOPE);
-      --==========================================================================
-
+      ----------------------------------------------------------------------------------------------------------------------------
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_FLUSH, C_DATA_DONTCARE, "Flush FIFO 1");
       sbi_write(SBI_VVCT, 2, C_ADDR_FIFO_FLUSH, C_DATA_DONTCARE, "Flush FIFO 2");
 
@@ -267,13 +286,13 @@ begin
       await_completion(SBI_VVCT, 2, 1000 ns, "Await execution");
 
     elsif GC_TESTCASE = "read_of_previous_value" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Test read of a previous value");
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Configure BFM clock_period for insert_delay() command in this test
       shared_sbi_vvc_config(1).bfm_config.clock_period := C_CLK_PERIOD;
       shared_sbi_vvc_config(2).bfm_config.clock_period := C_CLK_PERIOD;
 
-      -- Test DIVERSE
-      log(ID_LOG_HDR, "Test read of a previous value");
-      ------------------------------------------------------
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"A0", "Write PUT on FIFO 1");
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"B1", "Write PUT on FIFO 1");
       sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"C2", "Write PUT on FIFO 1");
@@ -313,8 +332,9 @@ begin
       shared_sbi_vvc_config(2).bfm_config.clock_period := -1 ns;
 
     elsif GC_TESTCASE = "read_of_executor_status_and_inter_bfm_delay" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Test of reading executor status");
-
+      ----------------------------------------------------------------------------------------------------------------------------
       log("current_cmd_idx: " & to_string(shared_sbi_vvc_status(1).current_cmd_idx));
       log("previous_cmd_idx: " & to_string(shared_sbi_vvc_status(1).previous_cmd_idx));
       log("pending_cmd_cnt: " & to_string(shared_sbi_vvc_status(1).pending_cmd_cnt));
@@ -383,20 +403,23 @@ begin
       shared_sbi_vvc_config(1).inter_bfm_delay.inter_bfm_delay_violation_severity := WARNING;
 
     elsif GC_TESTCASE = "distribution_of_vvc_commands" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Check that commands are distributed to the correct VVC channel");
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Calling an invalid channel will yield a TB_WARNING from each of the UART channels
       -- We will also get another TB_WARNING from the timeout, related to having more decimals in the log time than we can display
       increment_expected_alerts(TB_WARNING, 3);
       -- Calling an invalid channel will also cause a timeout, since the target VVC does not exist. This results in an ERROR
-      increment_expected_alerts(TB_ERROR, 3);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 3);
       insert_delay(SBI_VVCT, 1, TX, C_CLK_PERIOD, "Inserting delay on SBI TX channel, expecting tb warning and tb error");
       insert_delay(SBI_VVCT, 1, RX, C_CLK_PERIOD, "Inserting delay on SBI RX channel, expecting tb warning and tb error");
       insert_delay(SBI_VVCT, 42, C_CLK_PERIOD, "Inserting delay on SBI VVC 42, expecting tb error");
       log("Logging a message to provoke the tb warning due to truncated timestamp");
 
     elsif GC_TESTCASE = "vvc_broadcast_test" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Check that commands are distributed to the correct VVC channel");
-
+      ----------------------------------------------------------------------------------------------------------------------------
       enable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
 
       -- Fill FIFO 1
@@ -443,8 +466,9 @@ begin
       await_completion(SBI_VVCT, 2, 1000 ns, "Await execution");
 
     elsif GC_TESTCASE = "vvc_setup_and_hold_time_test" then
+      ----------------------------------------------------------------------------------------------------------------------------
       log(ID_LOG_HDR, "Checking setup and hold time");
-
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Set setup and hold times
       log("Setup time: 2 ns, hold time: 1 ns");
       shared_sbi_vvc_config(1).bfm_config.setup_time   := 2 ns;
@@ -491,6 +515,41 @@ begin
       check_value(clk'last_event, 3 ns, ERROR, "Check hold time", C_SCOPE, ID_SEQUENCER);
 
       shared_sbi_vvc_config(1).bfm_config.bfm_sync := SYNC_ON_CLOCK_ONLY;
+
+    elsif GC_TESTCASE = "test_unwanted_activity" then
+      ------------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+      ------------------------------------------------------------------------------------------------------------------------------
+      for i in 0 to 2 loop
+        -- Test different alert severity configurations
+        if i = 0 then
+          v_alert_level := C_SBI_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+        elsif i = 1 then
+          v_alert_level := FAILURE;
+        else
+          v_alert_level := NO_ALERT;
+        end if;
+        log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
+        shared_sbi_vvc_config(1).unwanted_activity_severity := v_alert_level;
+
+        log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
+        sbi_write(SBI_VVCT, 1, C_ADDR_FIFO_PUT, x"AA", "Write PUT on FIFO 1");
+        sbi_write(SBI_VVCT, 2, C_ADDR_FIFO_PUT, x"FF", "Write PUT on FIFO 2");
+        await_completion(SBI_VVCT, 1, 16 ns);
+        sbi_check(SBI_VVCT, 1, C_ADDR_FIFO_GET, x"FF", "Check GET data on FIFO 2");
+        sbi_check(SBI_VVCT, 2, C_ADDR_FIFO_GET, x"AA", "Check GET data on FIFO 1");
+        await_completion(SBI_VVCT, 1, 16 ns);
+
+        -- Test with and without a time gap between await_completion and unexpected data transmission
+        if i = 0 then
+          log(ID_SEQUENCER, "Wait 100 ns", C_SCOPE);
+          wait for 100 ns;
+        end if;
+
+        log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
+        toggle_vvc_if(v_alert_level);
+      end loop;
+
     end if;
 
     -----------------------------------------------------------------------------

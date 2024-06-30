@@ -2,11 +2,12 @@ Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
 
-v3.0.1
+v4.0.0
 ----------
 Released: 2024-XX-XX
 - Changed max constants used in VVC to be adjustable from adaptations_pkg.
 - Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Added unwanted activity detection functionality to the VVC to give an alert if the DUT generates any unexpected bus activity.
 
 v3.0.0
 ----------

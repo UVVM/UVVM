@@ -220,6 +220,8 @@ begin
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
 
+    shared_uart_vvc_config(RX, 3).unwanted_activity_severity  := NO_ALERT; -- Unwanted activity errors due to transmission without receive commands
+
     log(ID_LOG_HDR, "Starting simulation using several sequencers", C_SCOPE_MAIN);
     enable_log_msg(ALL_MESSAGES, scope => C_SCOPE_MAIN);
 

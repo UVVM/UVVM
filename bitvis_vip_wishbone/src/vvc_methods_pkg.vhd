@@ -33,7 +33,7 @@ use work.vvc_sb_pkg.all;
 package vvc_methods_pkg is
 
   --========================================================================================================================
-  -- Types and constants for the WISHBONE VVC 
+  -- Types and constants for the WISHBONE VVC
   --========================================================================================================================
   constant C_VVC_NAME : string := "WISHBONE_VVC";
 
@@ -56,9 +56,10 @@ package vvc_methods_pkg is
     result_queue_count_max                : natural;
     result_queue_count_threshold_severity : t_alert_level;
     result_queue_count_threshold          : natural;
-    bfm_config                            : t_wishbone_bfm_config; -- Configuration for the BFM. See BFM quick reference                                                                                                                                                   
+    bfm_config                            : t_wishbone_bfm_config; -- Configuration for the BFM. See BFM quick reference
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
+    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -73,7 +74,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,
     bfm_config                            => C_WISHBONE_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
+    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
   );
 
   type t_vvc_status is record

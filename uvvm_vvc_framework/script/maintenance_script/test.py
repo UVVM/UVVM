@@ -226,6 +226,18 @@ def test_vvc_generator():
     hr.add_files('../../sim/generated_vip_10/*.vhd', 'bitvis_vip_test_10')
     hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_10")
 
+    hr.add_files('../../sim/generated_vip_11/*.vhd', 'bitvis_vip_test_11')
+    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_11")
+
+    hr.add_files('../../sim/generated_vip_12/*.vhd', 'bitvis_vip_test_12')
+    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_12")
+
+    hr.add_files('../../sim/generated_vip_13/*.vhd', 'bitvis_vip_test_13')
+    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_13")
+
+    hr.add_files('../../sim/generated_vip_14/*.vhd', 'bitvis_vip_test_14')
+    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_14")
+
     # Add a testbench to detect whether compilation passed or failed using get_num_pass_tests()
     hr.add_files("../../../bitvis_vip_uart/src/*.vhd", "bitvis_vip_uart")
     hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_uart")

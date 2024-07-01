@@ -111,17 +111,17 @@ to handle just the AXI4-Lite interface with everything else being your proprieta
 **********************************************************************************************************************************
 Prerequisites
 **********************************************************************************************************************************
-UVVM is tool and library independent, but it must be compiled with VHDL 2008.
-UVVM has been tested with the following simulators:
+UVVM is tool and library independent, but it must be compiled with VHDL-2008.
+The latest release of UVVM has been tested with the following simulators:
 
-* Modelsim version 19.1
-* Riviera-PRO version: 2018.10.137.7135
-* Questa Sim version 19.1
-* GHDL version 0.36
+* ModelSim
+* Riviera-PRO
+* Questa
+* GHDL
 
-.. note::
+UVVM will work with all VHDL-2008 compatible simulators.
 
-    Questa Sim version 19.2 and Modelsim version 19.2 have known bugs that might prevent UVVM from working properly.
+See :ref:`tool_compatibility` for known issues.
 
 Python is required **if** you want to execute the VVC generation scripts
 
@@ -148,7 +148,7 @@ governing permissions and limitations under the License.
 **********************************************************************************************************************************
 UVVM Maintainers
 **********************************************************************************************************************************
-`Bitvis <http://bitvis.no>`_ (Norway) has released UVVM as open source and we are committed to develop this system further. We do 
+`UVVM steering group <http://uvvm.org>`_ has released UVVM as open source and we are committed to develop this system further. We do 
 however appreciate contributions and suggestions from users.
 
 Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch 

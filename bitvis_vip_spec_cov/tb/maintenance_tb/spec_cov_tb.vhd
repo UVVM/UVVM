@@ -385,7 +385,7 @@ begin
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
-      log(ID_LOG_HDR, "Testing omitted sub-requirement: UART_REQ_OMIT.", C_SCOPE);
+      log(ID_LOG_HDR, "Testing req file with out-commented sub-requirement: UART_REQ_OMIT.", C_SCOPE);
       if GC_UART_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
@@ -403,7 +403,7 @@ begin
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
-      log(ID_LOG_HDR, "Testing omitted sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
+      log(ID_LOG_HDR, "Testing out-commented sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
       if GC_UART_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
@@ -426,7 +426,7 @@ begin
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
-      log(ID_LOG_HDR, "Testing omitted sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
+      log(ID_LOG_HDR, "Testing out-commented sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
       if GC_UART_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
@@ -505,7 +505,7 @@ begin
         -- For post-processing with various strictness levels
         --
         log(ID_LOG_HDR, "Testing tickoff in various TCs, for strictness testing.", C_SCOPE);
-        if GC_UART_REQ_FILE = "" then
+        if GC_REQ_FILE = "" then
             alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
         else
             -- Run testcase

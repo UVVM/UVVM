@@ -109,7 +109,7 @@ want to do is the following - as illustrated in the diagram below:
    Finally when finalize_req_cov() :samp:`(T3)` is executed, a closing check of the alert counters is made. If ok, then 
    'SUMMARY, <Testcase name>, PASS' is written at the end of the Partial coverage file. Otherwise FAIL rather than PASS 
    (provided testcase does not stop on the alert). If a testcase fails before reaching finalize_req_cov(), then no SUMMARY line will 
-   be written. This is interpreted as FAIL.Note that a given requirement may be tested and reported several times, so that for 
+   be written. This is interpreted as FAIL. Note that a given requirement may be tested and reported several times, so that for 
    instance UART_REQ_3 may be listed multiple times in the Partial coverage file :samp:`(PC)`.    
 #. After the testcase has been executed, the overall Specification coverage :samp:`(SC)` can be found by executing the Python script 
    run_spec_cov.py (see `Post-processing script`_). This script traverses the requirement list (RL) and Partial coverage file  
@@ -328,50 +328,30 @@ is defined in the requirement map file.
 
 See the section `Formats of input and intermediate files`_ for more information about the syntax of the requirement- and map files.
 
+.. note::
+
+    If tickoff is done on a requirement that was not listed in the requirement list, a TB_WARNING will be issued during simulation.
+    However, the requirement will still be included in the partial coverage file. The final compliance of the requirement will depend
+    on the strictness level specified when running the run_spec_cov.py post-processing script.
+
+|
+
 
 Comments
 =================================================================================================================================
-Any line in the requirement- or map files beginning with '--' will be treated as a comment, meaning it will be ignored by the VHDL and
+Any line in the requirement- or map files beginning with '#' will be treated as a comment, meaning it will be ignored by the VHDL and
 python scripts. Note that in-line comments are not supported. 
 
 Example of valid and invalid usage in requirement list file:
 
 .. code-block:: none
 
-    -- This line will be treated as a comment
+    # This line will be treated as a comment
     REQ_1, Description 1, TC_1
-    REQ_2, Description 2, TC_2 -- This will NOT be interpreted as a comment!
+    REQ_2, Description 2, TC_2 # This will NOT be interpreted as a comment!
 
 |
 
-Omitted requirements
-=================================================================================================================================
-Adding a '#' in front of the requirement name in the requirement- or map file will mark the requirement as omitted. Omitted
-requirements will not be processed, and will not influence the compliance of other requirements (for instance, if a sub-requirement is
-marked as omitted, the compliance of its super requirement will not depend on the omitted sub-requirement).
-
-Omitted requirements will not be listed in the main compliance matrix in the output files, but will be listed in the "User omitted
-requirement(s)" section of the output files. 
-
-Example of omitted requirement in requirement list (REQ_3 is omitted):
-
-.. code-block:: none
-
-    REQ_1, Requirement 1, TC_1
-    REQ_2, Requirement 2, TC_2
-    #REQ_3, Requirement 3, TC_3
-
-Example of how an output file from this scenario might look: 
-
-.. code-block::
-
-    REQ_1,TC_1,COMPLIANT
-    REQ_2,TC_2,COMPLIANT
-
-    User omitted requirement(s)
-    REQ_3
-
-|
 
 **********************************************************************************************************************************
 VHDL Package
@@ -416,12 +396,21 @@ tick_off_req_cov()
 ---------------------------------------------------------------------------------------------------------------------------------
 This procedure evaluates and logs the specified requirement. The procedure checks the global alert mismatch status, and if an alert
 mismatch is present on ERROR, FAILURE, TB_ERROR or TB_FAILURE the requirement will be marked as FAIL. If there are no such alert
-mismatches, the requirement will be marked as PASS, unless the test_status is explicitly set to FAIL. The result is written to both the
-transcript (and log) and the partial coverage file (specified in the initialize_req_cov() command). The tick_off_req_cov() will look up
-the specified requirement and testcase in the requirement list specified in initialize_req_cov(), and use the description from this
-entry as a minimum log message. The procedure will also issue a TB_WARNING if the specified requirement was not found. ::
+mismatches, the requirement will be marked as PASS, unless the requirement_status is explicitly set to FAIL. The result is written to
+both the transcript (and log) and the partial coverage file (specified in the initialize_req_cov() command). The tick_off_req_cov()
+will look up the specified requirement and testcase in the requirement list specified in initialize_req_cov(), and use the description
+from this entry as a minimum log message. The procedure will also issue a TB_WARNING if the specified requirement was not found in the
+requirement list. ::
 
-    tick_off_req_cov(requirement, [test_status], [msg], [tickoff_extent], [scope])
+.. note::
+
+    If tickoff is performed on a requirement that was not listed in the requirement list, a TB_WARNING will be issued. However, the
+    requirement will still be included in the partial coverage file. The final compliance of the requirement will depend on the
+    strictness level specified when running the run_spec_cov.py script.
+
+|
+
+    tick_off_req_cov(requirement, [requirement_status], [msg], [tickoff_extent], [scope])
 
 +----------+-------------------+------------------------+---------------------------------------------------------------+
 | Object   | Name              | Type                   | Description                                                   |
@@ -429,10 +418,10 @@ entry as a minimum log message. The procedure will also issue a TB_WARNING if th
 | constant | requirement       | string                 | String with the requirement label. Must as default            |
 |          |                   |                        | match a requirement label in the given requirement list.      |
 +----------+-------------------+------------------------+---------------------------------------------------------------+
-| constant | test_status       | t_test_status          | Optional: Enter FAIL to explicitly fail the requirement.      |
+| constant | requirement_status| t_test_status          | Optional: Enter FAIL to explicitly fail the requirement.      |
 +----------+-------------------+------------------------+---------------------------------------------------------------+
-| constant | msg               | string                 | Optional message. Only possible after preceding test_status   |
-|          |                   |                        | (use NA unless FAIL).                                         |
+| constant | msg               | string                 | Optional message. Only possible after preceding               |
+|          |                   |                        | requirement_status (use NA unless FAIL).                      |
 +----------+-------------------+------------------------+---------------------------------------------------------------+
 | constant | tickoff_extent    | t_extent_tickoff       | Optional: Partial coverage output file name.                  |
 +----------+-------------------+------------------------+---------------------------------------------------------------+
@@ -448,7 +437,7 @@ entry as a minimum log message. The procedure will also issue a TB_WARNING if th
     -- Will fail since passed argument is set to false
     tick_off_req_cov("UART_REQ_1", FAIL);
 
-    -- In order to include msg and scope test_status and tickoff_extent must be included
+    -- In order to include msg and scope requirement_status and tickoff_extent must be included
     tick_off_req_cov("UART_REQ_1", NA, "my_msg");
     -- or 
     tick_off_req_cov"“UART_REQ_1", NA, "my_msg", LIST_EVERY_TICKOFF, "my_scope");
@@ -479,7 +468,7 @@ conditional tick off (through the disable_cond_tick_off_req_cov() procedure) wil
 Note 1: All requirements are by default enabled for conditional tick off, i.e. will act as being called using the tick_off_req_cov()
 procedure. ::
 
-    cond_tick_off_req_cov(requirement, [test_status], [msg], [tickoff_extent], [scope])
+    cond_tick_off_req_cov(requirement, [requirement_status], [msg], [tickoff_extent], [scope])
 
 +----------+-------------------+------------------------+---------------------------------------------------------------+
 | Object   | Name              | Type                   | Description                                                   |
@@ -487,10 +476,10 @@ procedure. ::
 | constant | requirement       | string                 | String with the requirement label. Must as default            |
 |          |                   |                        | match a requirement label in the given requirement list.      |
 +----------+-------------------+------------------------+---------------------------------------------------------------+
-| constant | test_status       | t_test_status          | Optional: Enter FAIL to explicitly fail the requirement.      |
+| constant | requirement_status| t_test_status          | Optional: Enter FAIL to explicitly fail the requirement.      |
 +----------+-------------------+------------------------+---------------------------------------------------------------+
-| constant | msg               | string                 | Optional message. Only possible after preceding test_status   |
-|          |                   |                        | (use NA unless FAIL).                                         |
+| constant | msg               | string                 | Optional message. Only possible after preceding               |
+|          |                   |                        | requirement_status (use NA unless FAIL).                      |
 +----------+-------------------+------------------------+---------------------------------------------------------------+
 | constant | tickoff_extent    | t_extent_tickoff       | Partial coverage output file name.                            |
 +----------+-------------------+------------------------+---------------------------------------------------------------+
@@ -566,7 +555,8 @@ set the complete record as required - or even just parts of it like shared_spec_
 | csv_delimiter             | character        | ','        | Character used as delimiter in the CSV files. This will  |
 |                           |                  |            | also be written into all partial coverage files.         |
 |                           |                  |            | run_spec_cov.py will find the delimiter there.           |
-|                           |                  |            | NOTE: The '&' symbol can not be used as delimiter.       |
+|                           |                  |            | NOTE: The '&' and ' ' (space) symbols can not be used as |
+|                           |                  |            | delimiter.                                               |
 +---------------------------+------------------+------------+----------------------------------------------------------+
 | max_requirements          | natural          | 1000       | Maximum number of requirements in the req_map file used  |
 |                           |                  |            | in initialize_req_cov(). Increase this number if the     |
@@ -639,8 +629,6 @@ from the command line. The CSV delimiter is fetched by the Python script from th
 
 *Note 1: All files may be referenced with absolute paths or relative to working directory.*
 
-*Note 2: Requirements can be omitted from the Specification Coverage by adding a '#' in front of the requirement name in the 
-requirement- or requirement map list, e.g. '#FPGA_REQ_1'.*
 
 .. _script_arguments_table:
 
@@ -751,7 +739,7 @@ With this strictness a requirement will be NON_COMPLIANT if it is tested (ticked
 not specified as testcase for that requirement. In that case it will be NON_COMPLIANT even if it has passed in one or more testcases
 specified for that requirement. E.g. if UART_REQ_1 is tested in testcase tc_basic, but also in tc_reset.
 
-.. note:: 
+.. note::
 
     Strictness 2 requires that all requirements must be specified with at least one testcase.
 
@@ -792,8 +780,6 @@ Example:
     Not listed requirement(s)
     REQ_6
 
-    User omitted requirement(s)
-    REQ_4
 
 
 
@@ -828,8 +814,6 @@ Example:
     Not listed requirement(s)
     REQ_6
 
-    User omitted requirement(s)
-    REQ_4
 
 
 .single_req_vs_single_tc.csv
@@ -857,8 +841,6 @@ Example:
     Not listed requirement(s)
     REQ_6
 
-    User omitted requirement(s)
-    REQ_4
 
 Testcase vs. requirement listing
 ---------------------------------------------------------------------------------------------------------------------------------

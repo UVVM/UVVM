@@ -54,6 +54,10 @@
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">VVC Framework</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#uvvm-methods">UVVM Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#await-uvvm-completion">await_uvvm_completion()</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#common-vvc-methods">Common VVC Methods</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#await-completion">await_completion()</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-to-vvc-list">add_to_vvc_list()</a></li>
@@ -132,7 +136,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#to-from-buffer">To/from Buffer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#to-scoreboard">To Scoreboard</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#data-routing-options">Data routing options</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id9">VVC Command Syntax</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">VVC Command Syntax</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#controlling-property-checkers">Controlling Property Checkers</a><ul>
@@ -227,6 +231,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 </ul>
 
         </div>
@@ -255,6 +260,120 @@
              
   <section id="vvc-framework">
 <span id="id1"></span><h1>VVC Framework<a class="headerlink" href="#vvc-framework" title="Link to this heading"></a></h1>
+<section id="uvvm-methods">
+<h2>UVVM Methods<a class="headerlink" href="#uvvm-methods" title="Link to this heading"></a></h2>
+<section id="await-uvvm-completion">
+<span id="id2"></span><h3>await_uvvm_completion()<a class="headerlink" href="#await-uvvm-completion" title="Link to this heading"></a></h3>
+<p>This procedure waits for all the VVCs to be inactive with no pending commands to be executed, and for all the enabled scoreboards
+to be empty, i.e. all expected values checked. It is therefore meant to be used at the end of the test sequencer.</p>
+<p>If any VVC is still active and/or an enabled scoreboard still has expected values to be checked when the timeout occurs, an alert
+will be generated. Otherwise, a successful completion message and the optional reports will be printed in the log.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">await_uvvm_completion</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">sb_poll_time</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">print_alert_counters</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">print_sbs</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">print_vvcs</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]]]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Timeout for the VVCs to be inactive and the scoreboards
+to be empty. Must be greater than 0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is
+TB_ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>sb_poll_time</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Time to wait until checking again whether the
+scoreboards have been emptied. Must be greater than 0.
+Default value is 100 us.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>print_alert_counters</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-report-alert-counters"><span class="std std-ref">t_report_alert_counters</span></a></p></td>
+<td><p>Whether to print a report of alert counters. Default
+value is NO_REPORT.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>print_sbs</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-report-sb"><span class="std std-ref">t_report_sb</span></a></p></td>
+<td><p>Whether to print a report with all the scoreboards in
+the testbench. Default value is NO_REPORT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>print_vvcs</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-report-vvc"><span class="std std-ref">t_report_vvc</span></a></p></td>
+<td><p>Whether to print a report with all the VVCs in the
+testbench. Default value is NO_REPORT.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_TB_SCOPE_DEFAULT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example: Wait for all transactions to finish</span>
+<span class="n">await_uvvm_completion</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
+
+<span class="c1">-- Example: Wait for all transactions to finish and report the alert counters, VVCs and scoreboards</span>
+<span class="n">await_uvvm_completion</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">TB_WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_ALERT_COUNTERS</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_SCOREBOARDS</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_VVCS</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>It is recommended to use a single sequencer to control all the VVCs in the testbench, this way the code is more organized
+and easier to follow, but it also ensures that by using <cite>await_uvvm_completion()</cite> the testbench has truly finished.</p></li>
+<li><p>However, if several sequencers or processes are used to control the VVCs, it is the user’s responsibility to terminate
+correctly the testbench, perhaps by using synchronization mechanisms such as <a class="reference internal" href="utility_library.html#await-barrier"><span class="std std-ref">await_barrier()</span></a>, to ensure all the
+sequencers or processes have finished before calling <cite>await_uvvm_completion()</cite> in the main sequencer.</p></li>
+</ul>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>If there is only need to check for VVCs to be inactive with no pending commands to be executed, one can also use the
+<a class="reference internal" href="#await-completion"><span class="std std-ref">await_completion()</span></a> procedure:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example: Wait for all VVCs to finish</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">ALL_VVCS</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for all the VVCs to finish&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If there are no VVCs in the testbench and only want to check for scoreboards to be empty, one can also use the
+<a class="reference internal" href="utility_library.html#await-sb-completion"><span class="std std-ref">await_sb_completion()</span></a> procedure:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example: Wait for all Scoreboards to be empty</span>
+<span class="n">await_sb_completion</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">TB_WARNING</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">NO_REPORT</span><span class="p">,</span><span class="w"> </span><span class="n">REPORT_SCOREBOARDS</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
 <section id="common-vvc-methods">
 <span id="vvc-framework-methods"></span><h2>Common VVC Methods<a class="headerlink" href="#common-vvc-methods" title="Link to this heading"></a></h2>
 <ul class="simple">
@@ -262,7 +381,7 @@
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
 <section id="await-completion">
-<h3>await_completion()<a class="headerlink" href="#await-completion" title="Link to this heading"></a></h3>
+<span id="id3"></span><h3>await_completion()<a class="headerlink" href="#await-completion" title="Link to this heading"></a></h3>
 <p>Tells the VVC to await the completion of either all pending commands or a specified command index. A message will be logged before
 and at the end of the wait. The procedure will report an alert if not all commands have completed within the specified timeout.
 The severity of this alert will be TB_ERROR. It is also possible to broadcast by setting vvc_select to ALL_VVCS (<a class="reference internal" href="types_pkg.html#t-vvc-select"><span class="std std-ref">t_vvc_select</span></a>)
@@ -1094,7 +1213,7 @@ different VVCs.</p>
 </pre></div>
 </div>
 <section id="t-vvc-result">
-<span id="id2"></span><h4>t_vvc_result<a class="headerlink" href="#t-vvc-result" title="Link to this heading"></a></h4>
+<span id="id4"></span><h4>t_vvc_result<a class="headerlink" href="#t-vvc-result" title="Link to this heading"></a></h4>
 <p>The common type t_vvc_result is always defined with the max length of fetched data that the VVC supports (see the definition of
 t_vvc_result in its corresponding vvc_cmd_pkg). Therefore it is recommended to define the range of the desired data output after
 the fetch_result method has been completed.</p>
@@ -1205,10 +1324,10 @@ synchronizing VVCs in the test sequencer using the await_completion() or await_a
 <p>When using a wave viewer during simulation, the transaction shared variable provides helpful information regarding current VVC
 operation and transaction information such as address and data. Note that the accessible fields depend on the VVC and its
 implementation. An example of two SBI VVCs performing FIFO write operations, followed by check operations, is shown in Figure 1.</p>
-<figure class="align-center" id="id10">
+<figure class="align-center" id="id12">
 <a class="reference internal image-reference" href="_images/transaction_info_wave_view.png"><img alt="VVC transaction info waveview" src="_images/transaction_info_wave_view.png" style="width: 800pt;" /></a>
 <figcaption>
-<p><span class="caption-text">Figure 1 VVC Transaction info example</span><a class="headerlink" href="#id10" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 1 VVC Transaction info example</span><a class="headerlink" href="#id12" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </section>
@@ -1315,24 +1434,24 @@ least for anything above medium simple verification challenges.</p>
 simulation transcripts.</p>
 <table class="docutils align-default">
 <tbody>
-<tr class="row-odd"><td><figure class="align-center" id="id11">
+<tr class="row-odd"><td><figure class="align-center" id="id13">
 <img alt="Direct transaction transfer A" src="_images/direct_transaction_transfer_example_A.png" />
 <figcaption>
-<p><span class="caption-text">Figure 2 Distribution of Transaction Info Approach A</span><a class="headerlink" href="#id11" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 2 Distribution of Transaction Info Approach A</span><a class="headerlink" href="#id13" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </td>
-<td><figure class="align-center" id="id12">
+<td><figure class="align-center" id="id14">
 <img alt="Direct transaction transfer B" src="_images/direct_transaction_transfer_example_B.png" />
 <figcaption>
-<p><span class="caption-text">Figure 3 Distribution of Transaction Info Approach B</span><a class="headerlink" href="#id12" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 3 Distribution of Transaction Info Approach B</span><a class="headerlink" href="#id14" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </td>
-<td><figure class="align-center" id="id13">
+<td><figure class="align-center" id="id15">
 <img alt="Direct transaction transfer C" src="_images/direct_transaction_transfer_example_C.png" />
 <figcaption>
-<p><span class="caption-text">Figure 4 Distribution of Transaction Info Approach C</span><a class="headerlink" href="#id13" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 4 Distribution of Transaction Info Approach C</span><a class="headerlink" href="#id15" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </td>
@@ -1377,8 +1496,8 @@ progress viewing and debugging.</p>
 general transaction record, whereas table 2 shows a concrete example for the SBI.</p>
 <p>Note that for a given interface/protocol, the VVC and the Monitor will use the same interface dedicated transaction record type -
 with some fields potentially unused.</p>
-<table class="docutils align-default" id="id14">
-<caption><span class="caption-text">Table 1 - General transaction record t_base_transaction. The fields in bold indicate optional or protocol dedicated fields</span><a class="headerlink" href="#id14" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id16">
+<caption><span class="caption-text">Table 1 - General transaction record t_base_transaction. The fields in bold indicate optional or protocol dedicated fields</span><a class="headerlink" href="#id16" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Field</p></th>
 <th class="head"><p>Type</p></th>
@@ -1455,8 +1574,8 @@ from read/receive operations.</em></div>
 </tr>
 </tbody>
 </table>
-<table class="docutils align-default" id="id15">
-<caption><span class="caption-text">Table 2 - SBI specific transaction record t_base_transaction. The fields in bold indicate protocol dedicated fields</span><a class="headerlink" href="#id15" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id17">
+<caption><span class="caption-text">Table 2 - SBI specific transaction record t_base_transaction. The fields in bold indicate protocol dedicated fields</span><a class="headerlink" href="#id17" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Field</p></th>
 <th class="head"><p>Type</p></th>
@@ -1527,8 +1646,8 @@ recommended that the model triggers on the VVC/Monitor trigger signal and checks
 and then samples the transaction value.</p></li>
 </ul>
 </div>
-<table class="docutils align-default" id="id16">
-<caption><span class="caption-text">Table 3 - Maximum transaction group record t_transaction_group - for an SBI interface</span><a class="headerlink" href="#id16" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id18">
+<caption><span class="caption-text">Table 3 - Maximum transaction group record t_transaction_group - for an SBI interface</span><a class="headerlink" href="#id18" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Field</p></th>
 <th class="head"><p>Type</p></th>
@@ -1546,8 +1665,8 @@ and then samples the transaction value.</p></li>
 </tr>
 </tbody>
 </table>
-<table class="docutils align-default" id="id17">
-<caption><span class="caption-text">Table 4 - Maximum transaction group record t_transaction_group - for an Avalon MM interface</span><a class="headerlink" href="#id17" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id19">
+<caption><span class="caption-text">Table 4 - Maximum transaction group record t_transaction_group - for an Avalon MM interface</span><a class="headerlink" href="#id19" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Field</p></th>
 <th class="head"><p>Type</p></th>
@@ -1588,9 +1707,9 @@ t_transaction_status type, which is defined in types_pkg).</p>
 also responsible for filling out the vvc_meta record field.</p></li>
 </ul>
 </div></blockquote>
-<table class="docutils align-default" id="id18">
+<table class="docutils align-default" id="id20">
 <caption><span class="caption-text">Table 5 - Transaction Info record <strong>t_&lt;if&gt;_transaction_group</strong> for an UART interface - accessible via
-       <strong>shared_uart_vvc_transaction_info(vvc_idx)</strong> t_uart_transaction_group_array</span><a class="headerlink" href="#id18" title="Link to this table"></a></caption>
+       <strong>shared_uart_vvc_transaction_info(vvc_idx)</strong> t_uart_transaction_group_array</span><a class="headerlink" href="#id20" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
 <th class="head"><p>Type</p></th>
@@ -1610,7 +1729,7 @@ also responsible for filling out the vvc_meta record field.</p></li>
 <td><p>Equal to VVC transaction operation, e.g. TRANSMIT, RECEIVE and
 EXPECT (UART)</p></td>
 </tr>
-<tr class="row-even"><td><p>-&gt; address <a class="footnote-reference brackets" href="#f1" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></td>
+<tr class="row-even"><td><p>-&gt; address <a class="footnote-reference brackets" href="#f1" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></td>
 <td><p>unsigned</p></td>
 <td><p>0x0</p></td>
 <td><p>DUT access read or write address</p></td>
@@ -1641,28 +1760,28 @@ transaction</p></td>
 <td><p>t_transaction_status</p></td>
 <td><p>INACTIVE</p></td>
 <td><p>The current status of transaction. Available statuses are
-INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED and COMPLETED <a class="footnote-reference brackets" href="#f2" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED and COMPLETED <a class="footnote-reference brackets" href="#f2" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
 </tr>
 <tr class="row-even"><td><p>-&gt; error_info
-<a class="footnote-reference brackets" href="#f3" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
+<a class="footnote-reference brackets" href="#f3" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
 <td><p>t_error_info</p></td>
 <td><p>C_ERROR_INFO_DEFAULT</p></td>
 <td><p>Record entry of errors that will be injected to the DUT access
 transaction</p></td>
 </tr>
-<tr class="row-odd"><td><p>—&gt; parity_bit_error <a class="footnote-reference brackets" href="#f4" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></td>
+<tr class="row-odd"><td><p>—&gt; parity_bit_error <a class="footnote-reference brackets" href="#f4" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></td>
 <td><p>boolean</p></td>
 <td><p>False</p></td>
 <td><p>The DUT transaction will have a parity bit error if entry is
 set to true</p></td>
 </tr>
-<tr class="row-even"><td><p>—&gt; stop_bir_error <a class="footnote-reference brackets" href="#f4" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></td>
+<tr class="row-even"><td><p>—&gt; stop_bir_error <a class="footnote-reference brackets" href="#f4" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></td>
 <td><p>boolean</p></td>
 <td><p>False</p></td>
 <td><p>The DUT transaction will have a stop bit error if entry is set
 to true</p></td>
 </tr>
-<tr class="row-odd"><td><p>ct <a class="footnote-reference brackets" href="#f5" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p></td>
+<tr class="row-odd"><td><p>ct <a class="footnote-reference brackets" href="#f5" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p></td>
 <td><p>t_compound_transaction</p></td>
 <td><p>C_COMPOUND_TRANSACTION_SET_DEFAULT</p></td>
 <td><div class="line-block">
@@ -1680,26 +1799,26 @@ records.</div>
 <p class="admonition-title">Note</p>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="f1" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">1</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">1</a><span class="fn-bracket">]</span></span>
 <p>Record field <strong>address</strong> is not applicable for all interface types, e.g. UART, and is only shown here for
 informational purposes.</p>
 </aside>
 <aside class="footnote brackets" id="f2" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">2</a><span class="fn-bracket">]</span></span>
 <p>Transaction status <strong>FAILED</strong> and <strong>SUCCEEDED</strong> are only applicable for Monitor Transaction Info records and not for
 VVC Transaction Info records. Whereas <strong>COMPLETED</strong> is applicable only for VVCs and not Monitors.</p>
 </aside>
 <aside class="footnote brackets" id="f3" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">3</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">3</a><span class="fn-bracket">]</span></span>
 <p>Record field <strong>error_info</strong> and its sub-record fields can be omitted if no error injection is implemented in the BFM.</p>
 </aside>
 <aside class="footnote brackets" id="f4" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id7">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id8">1</a>,<a role="doc-backlink" href="#id9">2</a>)</span>
 <p><strong>error_info</strong> sub-record fields <strong>parity_bit_error</strong> and <strong>stop_bit_error</strong> are examples of UART error injection.</p>
 </aside>
 <aside class="footnote brackets" id="f5" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">5</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">5</a><span class="fn-bracket">]</span></span>
 <p>Record entry <strong>ct</strong> will consist of similar record fields as <strong>bt</strong>, and might not always be necessary. This applies
 to record entry <strong>st</strong> as well (not shown here).</p>
 </aside>
@@ -1752,8 +1871,8 @@ involves the following 3 steps:</p>
 using transaction info and a stand-alone process when not performed by a VVC. The same approach is shown in Figure 6 with a simple
 DUT Model process, demonstrating how DUT modelling can be accomplished using transaction info and a stand-alone process. Note that
 Figure 5 uses aliasing to simplify and improve code readability, while Figure 6 uses full transaction info names.</p>
-<div class="literal-block-wrapper docutils container" id="id19">
-<div class="code-block-caption"><span class="caption-text">Figure 5 VVC Scoreboard Support – with aliasing</span><a class="headerlink" href="#id19" title="Link to this code"></a></div>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">Figure 5 VVC Scoreboard Support – with aliasing</span><a class="headerlink" href="#id21" title="Link to this code"></a></div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">p_vvc_sb_support</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
 <span class="w">  </span><span class="c1">-- transaction info handles</span>
 <span class="w">  </span><span class="k">alias</span><span class="w"> </span><span class="n">sbi_transaction_trigger</span><span class="w">     </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">global_sbi_vvc_transaction_trigger</span><span class="p">(</span><span class="n">C_SBI_VVC_1</span><span class="p">);</span>
@@ -1790,8 +1909,8 @@ Figure 5 uses aliasing to simplify and improve code readability, while Figure 6 
 <p>Figure 5 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in
 <a class="reference internal" href="#vvc-framework-transaction-info-mechanism"><span class="std std-ref">Transaction Info Mechanism</span></a>. For simple scoreboard elements, such as std_logic_vector,
 these scoreboard approaches are already performed by the VVCs.</p>
-<div class="literal-block-wrapper docutils container" id="id20">
-<div class="code-block-caption"><span class="caption-text">Figure 6 DUT Model – no aliasing</span><a class="headerlink" href="#id20" title="Link to this code"></a></div>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">Figure 6 DUT Model – no aliasing</span><a class="headerlink" href="#id22" title="Link to this code"></a></div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">p_dut_model</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">process</span>
 <span class="k">begin</span>
 <span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="n">true</span><span class="w"> </span><span class="k">loop</span><span class="o">:</span>
@@ -1826,8 +1945,8 @@ these scoreboard approaches are already performed by the VVCs.</p>
 <a class="reference internal" href="#vvc-framework-transaction-info-mechanism"><span class="std std-ref">Transaction Info Mechanism</span></a> applies. The only difference is that the scoreboard
 element is of a more complex type, i.e. a record element. Figure 7 demonstrates a VVC scoreboard support approach using a complex
 record element.</p>
-<div class="literal-block-wrapper docutils container" id="id21">
-<div class="code-block-caption"><span class="caption-text">Figure 7 VVC Scoreboard Support – complex scoreboard element</span><a class="headerlink" href="#id21" title="Link to this code"></a></div>
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">Figure 7 VVC Scoreboard Support – complex scoreboard element</span><a class="headerlink" href="#id23" title="Link to this code"></a></div>
 <div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- define complex Avalon ST scoreboard type</span>
 <span class="k">type</span><span class="w"> </span><span class="n">t_avalon_st_element</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">record</span>
 <span class="w">  </span><span class="n">channel_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="n">C_CH_WIDTH</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
@@ -2111,8 +2230,8 @@ UART_VVC, use the receive-command (and not the expect-command) to forward receiv
 </tbody>
 </table>
 </section>
-<section id="id9">
-<h4>VVC Command Syntax<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<section id="id11">
+<h4>VVC Command Syntax<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
 <p>See <a class="reference internal" href="#vvc-framework-vvc-parameters-and-sequence"><span class="std std-ref">VVC Parameters and Sequence for Randomization, Sources and Destinations</span></a> for parameter sequence and options.</p>
 </section>
 </section>
@@ -2322,10 +2441,10 @@ connected to the DUT.</p>
 referred to only as the VVC. Communications between the HVVC and VVC is handled by the HVVC-to-VVC Bridge. Data is transferred
 between the HVVC and HVVC-to-VVC Bridge on a common interface and converted in the HVVC-to-VVC Bridge to/from the specific
 interface of the VVC used. An example of this concept used on Ethernet is seen in Figure 8.</p>
-<figure class="align-center" id="id22">
+<figure class="align-center" id="id24">
 <a class="reference internal image-reference" href="_images/hvvc_to_vvc_bridge.png"><img alt="HVVC-to-VVC Bridge" src="_images/hvvc_to_vvc_bridge.png" style="width: 550pt;" /></a>
 <figcaption>
-<p><span class="caption-text">Figure 8 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC</span><a class="headerlink" href="#id22" title="Link to this image"></a></p>
+<p><span class="caption-text">Figure 8 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC</span><a class="headerlink" href="#id24" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <section id="hvvc-usage">

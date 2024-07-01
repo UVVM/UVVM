@@ -101,7 +101,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#requirement-and-map-files">Requirement and map files</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#comments">Comments</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#omitted-requirements">Omitted requirements</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vhdl-package">VHDL Package</a><ul>
@@ -165,6 +164,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
 </ul>
 
         </div>
@@ -303,7 +303,7 @@ FAIL.
 Finally when finalize_req_cov() <code class="samp docutils literal notranslate"><span class="pre">(T3)</span></code> is executed, a closing check of the alert counters is made. If ok, then
 ‘SUMMARY, &lt;Testcase name&gt;, PASS’ is written at the end of the Partial coverage file. Otherwise FAIL rather than PASS
 (provided testcase does not stop on the alert). If a testcase fails before reaching finalize_req_cov(), then no SUMMARY line will
-be written. This is interpreted as FAIL.Note that a given requirement may be tested and reported several times, so that for
+be written. This is interpreted as FAIL. Note that a given requirement may be tested and reported several times, so that for
 instance UART_REQ_3 may be listed multiple times in the Partial coverage file <code class="samp docutils literal notranslate"><span class="pre">(PC)</span></code>.</p></li>
 <li><p>After the testcase has been executed, the overall Specification coverage <code class="samp docutils literal notranslate"><span class="pre">(SC)</span></code> can be found by executing the Python script
 run_spec_cov.py (see <a class="reference internal" href="#post-processing-script">Post-processing script</a>). This script traverses the requirement list (RL) and Partial coverage file
@@ -478,39 +478,23 @@ requirements to multiple sub-requirements</a>, some requirements from the specif
 directly, and might therefore need to be divided into testable sub-requirements. This relationship between super- and sub-requirements
 is defined in the requirement map file.</p>
 <p>See the section <a class="reference internal" href="#formats-of-input-and-intermediate-files">Formats of input and intermediate files</a> for more information about the syntax of the requirement- and map files.</p>
-<section id="comments">
-<h3>Comments<a class="headerlink" href="#comments" title="Link to this heading"></a></h3>
-<p>Any line in the requirement- or map files beginning with ‘–’ will be treated as a comment, meaning it will be ignored by the VHDL and
-python scripts. Note that in-line comments are not supported.</p>
-<p>Example of valid and invalid usage in requirement list file:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>-- This line will be treated as a comment
-REQ_1, Description 1, TC_1
-REQ_2, Description 2, TC_2 -- This will NOT be interpreted as a comment!
-</pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If tickoff is done on a requirement that was not listed in the requirement list, a TB_WARNING will be issued during simulation.
+However, the requirement will still be included in the partial coverage file. The final compliance of the requirement will depend
+on the strictness level specified when running the run_spec_cov.py post-processing script.</p>
 </div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-</section>
-<section id="omitted-requirements">
-<h3>Omitted requirements<a class="headerlink" href="#omitted-requirements" title="Link to this heading"></a></h3>
-<p>Adding a ‘#’ in front of the requirement name in the requirement- or map file will mark the requirement as omitted. Omitted
-requirements will not be processed, and will not influence the compliance of other requirements (for instance, if a sub-requirement is
-marked as omitted, the compliance of its super requirement will not depend on the omitted sub-requirement).</p>
-<p>Omitted requirements will not be listed in the main compliance matrix in the output files, but will be listed in the “User omitted
-requirement(s)” section of the output files.</p>
-<p>Example of omitted requirement in requirement list (REQ_3 is omitted):</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQ_1, Requirement 1, TC_1
-REQ_2, Requirement 2, TC_2
-#REQ_3, Requirement 3, TC_3
-</pre></div>
-</div>
-<p>Example of how an output file from this scenario might look:</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">REQ_1</span><span class="p">,</span><span class="n">TC_1</span><span class="p">,</span><span class="n">COMPLIANT</span>
-<span class="n">REQ_2</span><span class="p">,</span><span class="n">TC_2</span><span class="p">,</span><span class="n">COMPLIANT</span>
-
-<span class="n">User</span><span class="w"> </span><span class="n">omitted</span><span class="w"> </span><span class="n">requirement</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="n">REQ_3</span>
+<section id="comments">
+<h3>Comments<a class="headerlink" href="#comments" title="Link to this heading"></a></h3>
+<p>Any line in the requirement- or map files beginning with ‘#’ will be treated as a comment, meaning it will be ignored by the VHDL and
+python scripts. Note that in-line comments are not supported.</p>
+<p>Example of valid and invalid usage in requirement list file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># This line will be treated as a comment
+REQ_1, Description 1, TC_1
+REQ_2, Description 2, TC_2 # This will NOT be interpreted as a comment!
 </pre></div>
 </div>
 <div class="line-block">
@@ -574,13 +558,25 @@ file already exists, it will be overwritten.</p>
 <h4>tick_off_req_cov()<a class="headerlink" href="#tick-off-req-cov" title="Link to this heading"></a></h4>
 <p>This procedure evaluates and logs the specified requirement. The procedure checks the global alert mismatch status, and if an alert
 mismatch is present on ERROR, FAILURE, TB_ERROR or TB_FAILURE the requirement will be marked as FAIL. If there are no such alert
-mismatches, the requirement will be marked as PASS, unless the test_status is explicitly set to FAIL. The result is written to both the
-transcript (and log) and the partial coverage file (specified in the initialize_req_cov() command). The tick_off_req_cov() will look up
-the specified requirement and testcase in the requirement list specified in initialize_req_cov(), and use the description from this
-entry as a minimum log message. The procedure will also issue a TB_WARNING if the specified requirement was not found.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">tick_off_req_cov</span><span class="p">(</span><span class="n">requirement</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">test_status</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">tickoff_extent</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+mismatches, the requirement will be marked as PASS, unless the requirement_status is explicitly set to FAIL. The result is written to
+both the transcript (and log) and the partial coverage file (specified in the initialize_req_cov() command). The tick_off_req_cov()
+will look up the specified requirement and testcase in the requirement list specified in initialize_req_cov(), and use the description
+from this entry as a minimum log message. The procedure will also issue a TB_WARNING if the specified requirement was not found in the
+requirement list.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="p">..</span><span class="w"> </span><span class="n">note</span><span class="o">::</span>
 </pre></div>
 </div>
+<blockquote>
+<div><p>If tickoff is performed on a requirement that was not listed in the requirement list, a TB_WARNING will be issued. However, the
+requirement will still be included in the partial coverage file. The final compliance of the requirement will depend on the
+strictness level specified when running the run_spec_cov.py script.</p>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><p>tick_off_req_cov(requirement, [requirement_status], [msg], [tickoff_extent], [scope])</p>
+</div></blockquote>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
@@ -597,15 +593,15 @@ entry as a minimum log message. The procedure will also issue a TB_WARNING if th
 match a requirement label in the given requirement list.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
-<td><p>test_status</p></td>
+<td><p>requirement_status</p></td>
 <td><p>t_test_status</p></td>
 <td><p>Optional: Enter FAIL to explicitly fail the requirement.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg</p></td>
 <td><p>string</p></td>
-<td><p>Optional message. Only possible after preceding test_status
-(use NA unless FAIL).</p></td>
+<td><p>Optional message. Only possible after preceding
+requirement_status (use NA unless FAIL).</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>tickoff_extent</p></td>
@@ -626,7 +622,7 @@ match a requirement label in the given requirement list.</p></td>
 <span class="c1">-- Will fail since passed argument is set to false</span>
 <span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">FAIL</span><span class="p">);</span>
 
-<span class="c1">-- In order to include msg and scope test_status and tickoff_extent must be included</span>
+<span class="c1">-- In order to include msg and scope requirement_status and tickoff_extent must be included</span>
 <span class="n">tick_off_req_cov</span><span class="p">(</span><span class="s">&quot;UART_REQ_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_msg&quot;</span><span class="p">);</span>
 <span class="c1">-- or</span>
 <span class="n">tick_off_req_cov</span><span class="s">&quot;“UART_REQ_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">NA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_msg&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">LIST_EVERY_TICKOFF</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_scope&quot;</span><span class="p">);</span>
@@ -654,7 +650,7 @@ This line is used later by the run_spec_cov.py script.
 conditional tick off (through the disable_cond_tick_off_req_cov() procedure) will be ignored (no tick off will be performed).</p>
 <p>Note 1: All requirements are by default enabled for conditional tick off, i.e. will act as being called using the tick_off_req_cov()
 procedure.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">cond_tick_off_req_cov</span><span class="p">(</span><span class="n">requirement</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">test_status</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">tickoff_extent</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">cond_tick_off_req_cov</span><span class="p">(</span><span class="n">requirement</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">requirement_status</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">tickoff_extent</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
@@ -673,15 +669,15 @@ procedure.</p>
 match a requirement label in the given requirement list.</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
-<td><p>test_status</p></td>
+<td><p>requirement_status</p></td>
 <td><p>t_test_status</p></td>
 <td><p>Optional: Enter FAIL to explicitly fail the requirement.</p></td>
 </tr>
 <tr class="row-even"><td><p>constant</p></td>
 <td><p>msg</p></td>
 <td><p>string</p></td>
-<td><p>Optional message. Only possible after preceding test_status
-(use NA unless FAIL).</p></td>
+<td><p>Optional message. Only possible after preceding
+requirement_status (use NA unless FAIL).</p></td>
 </tr>
 <tr class="row-odd"><td><p>constant</p></td>
 <td><p>tickoff_extent</p></td>
@@ -796,7 +792,8 @@ in the initialize_req_cov() command.</p></td>
 <td><p>Character used as delimiter in the CSV files. This will
 also be written into all partial coverage files.
 run_spec_cov.py will find the delimiter there.
-NOTE: The ‘&amp;’ symbol can not be used as delimiter.</p></td>
+NOTE: The ‘&amp;’ and ‘ ‘ (space) symbols can not be used as
+delimiter.</p></td>
 </tr>
 <tr class="row-even"><td><p>max_requirements</p></td>
 <td><p>natural</p></td>
@@ -894,8 +891,6 @@ For required simulator setup see UVVM-Util Quick reference.</p>
 script is called run_spec_cov.py. The script requires Python 3.x. The script can be called with the arguments listed in the table below
 from the command line. The CSV delimiter is fetched by the Python script from the partial coverage file headers.</p>
 <p><em>Note 1: All files may be referenced with absolute paths or relative to working directory.</em></p>
-<p><em>Note 2: Requirements can be omitted from the Specification Coverage by adding a ‘#’ in front of the requirement name in the
-requirement- or requirement map list, e.g. ‘#FPGA_REQ_1’.</em></p>
 <span id="script-arguments-table"></span><table class="docutils align-default" id="id3">
 <caption><span class="caption-text">run_spec_cov.py script arguments</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
 <colgroup>
@@ -1047,9 +1042,6 @@ REQ_5,REQ_5B &amp; REQ_5B,COMPLIANT
 
 Not listed requirement(s)
 REQ_6
-
-User omitted requirement(s)
-REQ_4
 </pre></div>
 </div>
 </section>
@@ -1077,9 +1069,6 @@ REQ_5,REQ_5B &amp; REQ_5B,COMPLIANT
 
 Not listed requirement(s)
 REQ_6
-
-User omitted requirement(s)
-REQ_4
 </pre></div>
 </div>
 </section>
@@ -1103,9 +1092,6 @@ REQ_5,REQ_5B &amp; REQ_5B,COMPLIANT
 
 Not listed requirement(s)
 REQ_6
-
-User omitted requirement(s)
-REQ_4
 </pre></div>
 </div>
 </section>

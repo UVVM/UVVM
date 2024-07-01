@@ -61,7 +61,6 @@ class Requirement():
         self.__req_is_defined_in_req_file = False
         self.__req_is_defined_in_map_file = False
         self.__req_file_idx               = 0
-        self.__req_is_user_omitted        = False
 
 
     @property
@@ -156,8 +155,6 @@ class Requirement():
 
         
     def add_super_requirement(self, super_requirement) -> None :
-        if self.is_user_omitted: return
-        
         if not(super_requirement in self.__super_requirement_list):
             self.__super_requirement_list.append(super_requirement)
 
@@ -167,8 +164,6 @@ class Requirement():
 
 
     def add_sub_requirement(self, sub_requirement) -> None :
-        if self.is_user_omitted: return
-
         if not(sub_requirement in self.__sub_requirement_list):
             self.__sub_requirement_list.append(sub_requirement)
 
@@ -178,29 +173,19 @@ class Requirement():
 
 
     @property
-    def is_user_omitted(self) -> bool:
-        return self.__req_is_user_omitted
-    @is_user_omitted.setter
-    def is_user_omitted(self, is_omitted):
-        self.__req_is_user_omitted = is_omitted
-
-    @property
     def compliance(self) -> str :
         # Update if dependent on any sub-requirements
         for sub_requirement in self.__sub_requirement_list:
             # Do not overwrite NON_COMPLIANT
             if not(self.__req_compliance == non_compliant_string):
-                if not(sub_requirement.is_user_omitted):
-                    if sub_requirement.compliance == not_tested_compliant_string:
-                        self.__req_compliance = not_tested_compliant_string
-                    else:    
-                        self.__req_compliance = sub_requirement.compliance
+                if sub_requirement.compliance == not_tested_compliant_string:
+                    self.__req_compliance = not_tested_compliant_string
+                else:
+                    self.__req_compliance = sub_requirement.compliance
         return self.__req_compliance
 
     @compliance.setter
     def compliance(self, req_compliance) -> None :
-        if self.is_user_omitted: return
-
         # COMPLIANT should not be allowed to overwrite a NON_COMPLIANT
         if not(self.__req_compliance == non_compliant_string):
             self.__req_compliance = req_compliance
@@ -432,9 +417,6 @@ def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
             csv_writer = csv.writer(to_file, delimiter=delimiter)
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
             for req, tc in (run_req_list + not_run_req_list):
-                if req.is_user_omitted or req.is_super_requirement():
-                    continue # Don't list omitted requirements, or requirements defiend in map file (super reqs)
-
                 if tc:
                     csv_writer.writerow([req.name, tc.name, req.compliance])
                 else:
@@ -469,11 +451,7 @@ def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
                 csv_writer.writerow(["Not listed requirement(s)"])
                 for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
-            if reporting_dict.get("omitted_requirements"):
-                csv_writer.writerow([])
-                csv_writer.writerow(["User omitted requirement(s)"])
-                for requirement in reporting_dict.get("omitted_requirements"):
-                    csv_writer.writerow([requirement.name])
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_single_req_vs_single_tc_filename))
         abort(error_code = 1, msg = error_msg)
@@ -501,7 +479,6 @@ def terminal_present_results(container, delimiter) -> dict:
     requirement_compliant_list = []
     requirement_non_compliant_list = []
     requirement_not_run_list = []
-    requirement_omitted_list = []
     requirement_not_listed_list = []
 
     # Build testcase lists
@@ -518,8 +495,6 @@ def terminal_present_results(container, delimiter) -> dict:
 
     # Build requirement lists
     for requirement in container.get_requirement_list():
-        if requirement.is_user_omitted:
-            requirement_omitted_list.append(requirement)
         if requirement.compliance == not_tested_compliant_string:
             requirement_not_run_list.append(requirement)
         elif requirement.compliance == non_compliant_string:
@@ -540,8 +515,6 @@ def terminal_present_results(container, delimiter) -> dict:
     reporting_dict["non_compliant_requirements"] = requirement_non_compliant_list
     reporting_dict["num_non_verified_requirements"] = str(len(requirement_not_run_list))
     reporting_dict["non_verified_requirements"] = requirement_not_run_list
-    reporting_dict["num_omitted_requirements"] = str(len(requirement_omitted_list))
-    reporting_dict["omitted_requirements"] = requirement_omitted_list
     reporting_dict["num_not_listed_requirements"] = str(len(requirement_not_listed_list))
     reporting_dict["not_listed_requirements"] = requirement_not_listed_list
 
@@ -561,7 +534,6 @@ def terminal_present_results(container, delimiter) -> dict:
     print("Number of non compliant requirements : %d" %(len(requirement_non_compliant_list)))
     print("Number of non verified requirements  : %d" %(len(requirement_not_run_list)))
     print("Number of not listed requirements    : %s" %(len(requirement_not_listed_list)))
-    print("Number of user omitted requirements  : %s" %(len(requirement_omitted_list)))
     print("Number of passing testcases : %d" %(len(testcase_pass_list)))
     print("Number of failing testcases : %d" %(len(testcase_fail_list)))
     print("Number of not run testcases : %d" %(len(testcase_not_run_list)))
@@ -580,11 +552,6 @@ def terminal_present_results(container, delimiter) -> dict:
     if requirement_not_run_list:
         print("Not verified requirement(s) :")
         for item in requirement_not_run_list:
-            print("%s%s " %(item.name, delimiter), end='')
-        print("\n")
-    if requirement_omitted_list:
-        print("User omitted requirement(s) :")
-        for item in requirement_omitted_list:
             print("%s%s " %(item.name, delimiter), end='')
         print("\n")
     if requirement_not_listed_list:
@@ -661,8 +628,8 @@ def write_spec_cov_files(run_configuration, container, delimiter):
 
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
             for requirement in container.get_requirement_list():
-                if requirement.is_user_omitted or requirement.is_super_requirement():
-                    continue # Don't list omitted requirements, or requirements defiend in map file (super reqs)
+                if requirement.is_super_requirement():
+                    continue # Don't list requirements defined in map file (super reqs)
                 sorted_testcase_list = requirement.get_sorted_testcase_list()
 
                 if not sorted_testcase_list: # Req. listed without TC, not tested
@@ -726,11 +693,6 @@ def write_spec_cov_files(run_configuration, container, delimiter):
                 for requirement in reporting_dict.get("not_listed_requirements"):
                     csv_writer.writerow([requirement.name])
 
-            if reporting_dict.get("omitted_requirements"):
-                csv_writer.writerow([])
-                csv_writer.writerow(["User omitted requirement(s)"])
-                for requirement in reporting_dict.get("omitted_requirements"):
-                    csv_writer.writerow([requirement.name])
 
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_req_vs_single_tc_filename))
@@ -744,8 +706,8 @@ def write_spec_cov_files(run_configuration, container, delimiter):
 
             csv_writer.writerow(["Requirement", "Testcase(s)", "Compliance"])
             for requirement in container.get_requirement_list():
-                if requirement.is_user_omitted or requirement.is_super_requirement():
-                    continue # Don't list omitted requirements, or requirements defiend in map file (super reqs)
+                if requirement.is_super_requirement():
+                    continue # Don't list requirements defiend in map file (super reqs)
                 testcase_string = ""
                 first_item = True
                 for testcase in requirement.get_sorted_testcase_list():
@@ -780,11 +742,6 @@ def write_spec_cov_files(run_configuration, container, delimiter):
                 csv_writer.writerow([])
                 csv_writer.writerow(["Not listed requirement(s)"])
                 for requirement in reporting_dict.get("not_listed_requirements"):
-                    csv_writer.writerow([requirement.name])
-            if reporting_dict.get("omitted_requirements"):
-                csv_writer.writerow([])
-                csv_writer.writerow(["User omitted requirement(s)"])
-                for requirement in reporting_dict.get("omitted_requirements"):
                     csv_writer.writerow([requirement.name])
 
     except:
@@ -841,8 +798,6 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
     #==========================================================================
     if strictness == '0':
         for requirement in container.get_requirement_list():
-            if requirement.is_user_omitted:
-                continue
 
             for testcase in requirement.get_actual_testcase_list():
                 if testcase.result == testcase_fail_string:
@@ -858,8 +813,6 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
     elif strictness == '1':
 
         for requirement in container.get_requirement_list():
-            if requirement.is_user_omitted:
-                continue
 
             # Check each element in the list of expected testcases.
             # If the element is a single testcase, that testcase must be run for the requirement ot be compliant.
@@ -886,8 +839,6 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
     #==========================================================================
     elif strictness == '2':
         for requirement in container.get_requirement_list():
-            if requirement.is_user_omitted:
-                continue
 
             # Check each element in the list of expected testcases.
             # If the element is a single testcase, that testcase must be run for the requirement ot be compliant.
@@ -958,34 +909,26 @@ def build_mapping_req_list(run_configuration, container, delimiter):
             csv_reader = csv.reader(csv_map_file, delimiter=delimiter)
 
             for row in csv_reader:
-                user_omitted = False
                 for idx, cell_item in enumerate(row):
 
                     # First cell is the super-requirement
                     if idx == 0:
                         super_requirement_name = cell_item.strip()
-                        if super_requirement_name.startswith('#'):
-                            user_omitted = True
-                            super_requirement_name = super_requirement_name.replace('#', '')
-                        elif super_requirement_name.startswith('--'): # Comment
+                        if super_requirement_name.startswith('#'): # Comment
                             break # Ignore row if it starts with comment symbol (--)
 
                         super_requirement = container.get_requirement(super_requirement_name)
                         super_requirement.found_in_requirement_file = True
 
-                        #Check, and mark, if user has chosen to omit this requirement.
-                        if user_omitted:
-                            super_requirement.is_user_omitted = True
 
                     # Rest of the cells are sub-requirements
                     else:
-                        if user_omitted == False: # Ignore sub-requirements of omitted requirements
-                            # Get the requirement (if it exists)
-                            sub_requirement_name = cell_item.strip()
-                            sub_requirement = container.get_requirement(sub_requirement_name)
+                        # Get the requirement (if it exists)
+                        sub_requirement_name = cell_item.strip()
+                        sub_requirement = container.get_requirement(sub_requirement_name)
 
-                            super_requirement.add_sub_requirement(sub_requirement)
-                            sub_requirement.add_super_requirement(super_requirement)
+                        super_requirement.add_sub_requirement(sub_requirement)
+                        sub_requirement.add_super_requirement(super_requirement)
             
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], requirement_map_file))
@@ -1041,15 +984,11 @@ def build_req_list(run_configuration, container, delimiter):
                 #else: # No TCs listed
 
                 for idx, cell in enumerate(row):
-                    user_omitted = False
 
                     # Requirement name
                     if idx == 0:
                         requirement_name = cell.strip()
-                        if requirement_name.startswith('#'): 
-                            user_omitted = True
-                            requirement_name = requirement_name.replace('#', '')
-                        elif requirement_name.startswith('--'): # Comment
+                        if requirement_name.startswith('#'): # Comment
                             comment_line = True
                             break # Ignore row if it starts with comment symbol (--)
 
@@ -1057,10 +996,6 @@ def build_req_list(run_configuration, container, delimiter):
                         requirement = container.get_requirement(requirement_name)
                         requirement.found_in_requirement_file = True
                         requirement.requirement_file_idx = row
-
-                        # Check, and mark, if user has chosen to omit this requirement.
-                        if user_omitted: 
-                            requirement.is_user_omitted = True
 
                         # Add requirement to the container
                         container.add_requirement_to_organized_list(requirement)
@@ -1075,7 +1010,7 @@ def build_req_list(run_configuration, container, delimiter):
                         requirement.description = row[idx]
 
                     # Testcase(s)
-                    elif idx >= 2 and not(requirement.is_user_omitted):
+                    elif idx >= 2:
                         # Get testcase name
                         testcase_name = row[idx].strip()
 
@@ -1093,7 +1028,7 @@ def build_req_list(run_configuration, container, delimiter):
 
                 # If requirement line had or-listed TCs, add list of these TCs to expected_testcase_list
                 if not(comment_line): # Need to check first is line is a comment line. Otherwise, there is no requirement object to check
-                    if (or_listed_testcases == True) and not(requirement.is_user_omitted):
+                    if (or_listed_testcases == True):
                         requirement.add_expected_testcase(or_listed_tc_list.copy())
 
 

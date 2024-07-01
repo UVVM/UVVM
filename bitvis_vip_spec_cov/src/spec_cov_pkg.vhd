@@ -456,7 +456,7 @@ package body spec_cov_pkg is
 
       -- Read requirement
       v_requirement := priv_csv_file.read_string;
-      if v_requirement(1 to 2) /= "--" then
+      if v_requirement(1) /= '#' then -- Ignore if comment line
         priv_requirement_array(priv_requirements_in_array).requirement := new string'(v_requirement);
         -- Read description
         priv_requirement_array(priv_requirements_in_array).description := new string'(priv_csv_file.read_string);

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -74,6 +74,7 @@ architecture behave of axistream_vvc is
   signal queue_is_increasing   : boolean := false;
   signal last_cmd_idx_executed : natural := 0;
   signal terminate_current_cmd : t_flag_record;
+  signal clock_period          : time;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -422,6 +423,66 @@ begin
   -- - Handles the termination request record (sets and resets terminate flag on request)
   --========================================================================================================================
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --========================================================================================================================
+
+  --===============================================================================================
+  -- Clock period
+  -- - Finds the clock period
+  --===============================================================================================
+  p_clock_period : process
+  begin
+    wait until rising_edge(clk);
+    clock_period <= now;
+    wait until rising_edge(clk);
+    clock_period <= now - clock_period;
+    wait;
+  end process;
+  --===============================================================================================
+
+  --========================================================================================================================
+  -- Unwanted activity detection
+  -- - Monitors unwanted activity from the DUT
+  --========================================================================================================================
+  g_unwanted_activity : if not GC_VVC_IS_MASTER generate
+    p_unwanted_activity : process
+    begin
+      -- Add a delay to avoid detecting the first transition from the undefined value to initial value
+      wait for std.env.resolution_limit;
+
+      loop
+        -- Skip if the vvc is inactive to avoid waiting for an inactive activity register
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then
+          -- Wait until the vvc is inactive
+          loop
+            wait on global_trigger_vvc_activity_register;
+            if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+              exit;
+            end if;
+          end loop;
+        end if;
+
+        -- The tready signal is not monitored. See AXI-Stream VVC QuickRef.
+        wait on axistream_vvc_if.tdata, axistream_vvc_if.tkeep, axistream_vvc_if.tuser,
+                axistream_vvc_if.tvalid, axistream_vvc_if.tlast, axistream_vvc_if.tstrb,
+                axistream_vvc_if.tid, axistream_vvc_if.tdest, global_trigger_vvc_activity_register;
+
+        -- Check the changes on the DUT outputs only when the vvc is inactive
+        if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+          -- Skip checking the changes if the tvalid signal goes low within one clock period after the VVC becomes inactive
+          if not (falling_edge(axistream_vvc_if.tvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+            check_value(not axistream_vvc_if.tvalid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tvalid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+            check_value(not axistream_vvc_if.tdata'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tdata", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+            check_value(not axistream_vvc_if.tkeep'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tkeep", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+            check_value(not axistream_vvc_if.tuser'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tuser", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+            check_value(not axistream_vvc_if.tlast'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tlast", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+            check_value(not axistream_vvc_if.tstrb'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tstrb", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+            check_value(not axistream_vvc_if.tid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+            check_value(not axistream_vvc_if.tdest'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tdest", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          end if;
+        end if;
+      end loop;
+    end process p_unwanted_activity;
+  end generate g_unwanted_activity;
   --========================================================================================================================
 
 end behave;

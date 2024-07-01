@@ -90,6 +90,7 @@ begin
 		if tx_reset_i = '1' then
 			tx_state    <= TX_INIT;
 			mii_tx_en_o <= '0';
+			mii_txd_o   <= (others => '0');
 		elsif rising_edge(tx_clock_i) then
 			mii_tx_en_o <= '0';
 			mii_txd_o   <= (others => '0');

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -121,6 +121,21 @@ architecture struct of axi_th is
                                                rdata(GC_DATA_WIDTH_2 - 1 downto 0),
                                                ruser(GC_USER_WIDTH_2 - 1 downto 0)));
 
+  -- AXI Interface signals
+  signal axi_if_1_awready  : std_logic;
+  signal axi_if_1_wready   : std_logic;
+  signal axi_if_1_bid      : std_logic_vector(GC_ID_WIDTH_1 - 1 downto 0);
+  signal axi_if_1_bresp    : std_logic_vector(1 downto 0);
+  signal axi_if_1_buser    : std_logic_vector(GC_USER_WIDTH_1 - 1 downto 0);
+  signal axi_if_1_bvalid   : std_logic;
+  signal axi_if_1_arready  : std_logic;
+  signal axi_if_1_rid      : std_logic_vector(GC_ID_WIDTH_1 - 1 downto 0);
+  signal axi_if_1_rdata    : std_logic_vector(GC_DATA_WIDTH_1 - 1 downto 0);
+  signal axi_if_1_rresp    : std_logic_vector(1 downto 0);
+  signal axi_if_1_rlast    : std_logic;
+  signal axi_if_1_ruser    : std_logic_vector(GC_USER_WIDTH_1 - 1 downto 0);
+  signal axi_if_1_rvalid   : std_logic;
+
 begin
 
   -----------------------------
@@ -173,24 +188,39 @@ begin
       rd_port_in.rready   => axi_if_1.read_data_channel.rready,
       -- Outputs
       -- write address channel
-      wr_port_out.awready => axi_if_1.write_address_channel.awready,
+      wr_port_out.awready => axi_if_1_awready,
       -- write data channel
-      wr_port_out.wready  => axi_if_1.write_data_channel.wready,
+      wr_port_out.wready  => axi_if_1_wready,
       -- write response channel
-      wr_port_out.bid     => axi_if_1.write_response_channel.bid,
-      wr_port_out.bresp   => axi_if_1.write_response_channel.bresp,
-      wr_port_out.buser   => axi_if_1.write_response_channel.buser,
-      wr_port_out.bvalid  => axi_if_1.write_response_channel.bvalid,
+      wr_port_out.bid     => axi_if_1_bid,
+      wr_port_out.bresp   => axi_if_1_bresp,
+      wr_port_out.buser   => axi_if_1_buser,
+      wr_port_out.bvalid  => axi_if_1_bvalid,
       -- read address channel
-      rd_port_out.arready => axi_if_1.read_address_channel.arready,
+      rd_port_out.arready => axi_if_1_arready,
       -- read data channel
-      rd_port_out.rid     => axi_if_1.read_data_channel.rid,
-      rd_port_out.rdata   => axi_if_1.read_data_channel.rdata,
-      rd_port_out.rresp   => axi_if_1.read_data_channel.rresp,
-      rd_port_out.rlast   => axi_if_1.read_data_channel.rlast,
-      rd_port_out.ruser   => axi_if_1.read_data_channel.ruser,
-      rd_port_out.rvalid  => axi_if_1.read_data_channel.rvalid
+      rd_port_out.rid     => axi_if_1_rid,
+      rd_port_out.rdata   => axi_if_1_rdata,
+      rd_port_out.rresp   => axi_if_1_rresp,
+      rd_port_out.rlast   => axi_if_1_rlast,
+      rd_port_out.ruser   => axi_if_1_ruser,
+      rd_port_out.rvalid  => axi_if_1_rvalid
     );
+
+  -- Use non-record signals to be able to force them from the tb
+  axi_if_1.write_address_channel.awready <= axi_if_1_awready;
+  axi_if_1.write_data_channel.wready     <= axi_if_1_wready;
+  axi_if_1.write_response_channel.bid    <= axi_if_1_bid;
+  axi_if_1.write_response_channel.bresp  <= axi_if_1_bresp;
+  axi_if_1.write_response_channel.buser  <= axi_if_1_buser;
+  axi_if_1.write_response_channel.bvalid <= axi_if_1_bvalid;
+  axi_if_1.read_address_channel.arready  <= axi_if_1_arready;
+  axi_if_1.read_data_channel.rid         <= axi_if_1_rid;
+  axi_if_1.read_data_channel.rdata       <= axi_if_1_rdata;
+  axi_if_1.read_data_channel.rresp       <= axi_if_1_rresp;
+  axi_if_1.read_data_channel.rlast       <= axi_if_1_rlast;
+  axi_if_1.read_data_channel.ruser       <= axi_if_1_ruser;
+  axi_if_1.read_data_channel.rvalid      <= axi_if_1_rvalid;
 
   i_axi_slave_2 : entity work.axi_slave_model
     generic map(

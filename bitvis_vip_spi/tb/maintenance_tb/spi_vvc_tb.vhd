@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -18,7 +18,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
--- uses UVVM
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -54,6 +53,10 @@ architecture behav of spi_vvc_tb is
   -- VVC indexes
   constant C_VVC_IDX_MASTER_1 : natural := 0;
   constant C_VVC_IDX_SLAVE_1  : natural := 1;
+  constant C_SPI_VVC_2        : natural := 2;
+  constant C_SPI_VVC_3        : natural := 3;
+
+  constant C_SBI_VVC_0        : natural := 0;
 
   constant C_SPI_BFM_CONFIG_MODE0 : t_spi_bfm_config := (
     CPOL             => '0',
@@ -131,18 +134,6 @@ architecture behav of spi_vvc_tb is
     use_ready_signal           => true
   );
 
-  -- component generics
-  constant C_CMD_QUEUE_COUNT_MAX                : natural       := 1000;
-  constant C_CMD_QUEUE_COUNT_THRESHOLD          : natural       := 950;
-  constant C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := warning;
-
-  constant C_SPI_VVC_0 : natural := 0;
-  constant C_SPI_VVC_1 : natural := 1;
-  constant C_SPI_VVC_2 : natural := 2;
-  constant C_SPI_VVC_3 : natural := 3;
-
-  constant C_SBI_VVC_0 : natural := 0;
-
   -- component ports
   signal spi_vvc_if_1 : t_spi_if;       -- used for inter-vvc communication, basic tests/
   signal spi_vvc_if_2 : t_spi_if;       -- used for spi_master to slave vvc
@@ -175,30 +166,19 @@ architecture behav of spi_vvc_tb is
   signal clk_ena : boolean   := false;
   signal arst    : std_logic := '0';
 
-begin                                   -- architecture behav
+begin
 
   -- clock generator
   clock_generator(clk, clk_ena, C_CLK_PERIOD, "system_clock");
-
-  -- Pull-downs on mosi and miso
-  -- spi_vvc_if_1.mosi <= 'L';
-  -- spi_vvc_if_1.miso <= 'L';
-  -- spi_vvc_if_2.mosi <= 'L';
-  -- spi_vvc_if_2.miso <= 'L';
-  -- spi_vvc_if_3.mosi <= 'L';
-  -- spi_vvc_if_3.miso <= 'L';
 
   -- component instantiations
   i_master_vvc_1 : entity work.spi_vvc
     generic map(
       GC_DATA_WIDTH                         => GC_DATA_WIDTH,
       GC_DATA_ARRAY_WIDTH                   => GC_DATA_ARRAY_WIDTH,
-      GC_INSTANCE_IDX                       => C_SPI_VVC_0,
+      GC_INSTANCE_IDX                       => C_VVC_IDX_MASTER_1,
       GC_MASTER_MODE                        => true,
-      GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE),
-      GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => C_CMD_QUEUE_COUNT_THRESHOLD,
-      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY)
+      GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE))
     port map(
       spi_vvc_if => spi_vvc_if_1);
 
@@ -206,12 +186,9 @@ begin                                   -- architecture behav
     generic map(
       GC_DATA_WIDTH                         => GC_DATA_WIDTH,
       GC_DATA_ARRAY_WIDTH                   => GC_DATA_ARRAY_WIDTH,
-      GC_INSTANCE_IDX                       => C_SPI_VVC_1,
+      GC_INSTANCE_IDX                       => C_VVC_IDX_SLAVE_1,
       GC_MASTER_MODE                        => false,
-      GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE),
-      GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => C_CMD_QUEUE_COUNT_THRESHOLD,
-      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY)
+      GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE))
     port map(
       spi_vvc_if => spi_vvc_if_1);
 
@@ -221,10 +198,7 @@ begin                                   -- architecture behav
       GC_DATA_ARRAY_WIDTH                   => GC_DATA_ARRAY_WIDTH,
       GC_INSTANCE_IDX                       => C_SPI_VVC_2,
       GC_MASTER_MODE                        => false,
-      GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE),
-      GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => C_CMD_QUEUE_COUNT_THRESHOLD,
-      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY)
+      GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE))
     port map(
       spi_vvc_if => spi_vvc_if_2);
 
@@ -234,10 +208,7 @@ begin                                   -- architecture behav
       GC_DATA_ARRAY_WIDTH                   => GC_DATA_ARRAY_WIDTH,
       GC_INSTANCE_IDX                       => C_SPI_VVC_3,
       GC_MASTER_MODE                        => true,
-      GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE),
-      GC_CMD_QUEUE_COUNT_MAX                => C_CMD_QUEUE_COUNT_MAX,
-      GC_CMD_QUEUE_COUNT_THRESHOLD          => C_CMD_QUEUE_COUNT_THRESHOLD,
-      GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY)
+      GC_SPI_CONFIG                         => C_SPI_BFM_CONFIG_ARRAY(GC_SPI_MODE))
     port map(
       spi_vvc_if => spi_vvc_if_3);
 
@@ -303,7 +274,6 @@ begin                                   -- architecture behav
       GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY => C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY)
     port map(
       clk                     => clk,
-      -- sbi_vvc_master_if      => sbi_vvc_if
       sbi_vvc_master_if.cs    => sbi_vvc_if.cs,
       sbi_vvc_master_if.addr  => sbi_vvc_if.addr,
       sbi_vvc_master_if.rena  => sbi_vvc_if.rena,
@@ -322,7 +292,6 @@ begin                                   -- architecture behav
     port map(
       clk          => clk,
       arst         => arst,
-      -- sbi_if       => sbi_vvc_if,
       sbi_if.cs    => sbi_vvc_if.cs,
       sbi_if.addr  => sbi_vvc_if.addr,
       sbi_if.rena  => sbi_vvc_if.rena,
@@ -369,25 +338,73 @@ begin                                   -- architecture behav
   -- PROCESS: p_main
   ------------------------------------------------
   p_main : process
-    variable v_alert_num_mismatch       : boolean := false;
-    variable tx_word                    : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    variable rx_word                    : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    variable tx_word_2                  : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    variable rx_word_2                  : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    variable data_word                  : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    variable data_exp_word              : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    variable master_word_array          : t_slv_array(GC_DATA_ARRAY_WIDTH - 1 downto 0)(GC_DATA_WIDTH - 1 downto 0);
-    variable slave_word_array           : t_slv_array(GC_DATA_ARRAY_WIDTH - 1 downto 0)(GC_DATA_WIDTH - 1 downto 0);
-    variable slave_tx_data_word         : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    variable master_tx_data_word        : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    variable master_tx_slv_word         : t_slv_array(GC_DATA_ARRAY_WIDTH - 1 downto 0)(GC_DATA_WIDTH - 1 downto 0);
-    variable result                     : std_logic_vector(bitvis_vip_spi.transaction_pkg.C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
-    variable v_cmd_idx                  : natural;
-    variable v_inter_bfm_delay          : time    := 0 ns;
-    variable v_vvc_delay                : integer := 0;
-    variable v_vvc_delay_sync           : integer := 0;
-    variable v_num_words                : positive;
-    constant C_BIT_TRANSFER_SCLK_CYCLES : natural := ((GC_DATA_WIDTH + 8) * GC_DATA_ARRAY_WIDTH);
+    variable tx_word             : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+    variable rx_word             : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+    variable tx_word_2           : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+    variable master_word_array   : t_slv_array(GC_DATA_ARRAY_WIDTH - 1 downto 0)(GC_DATA_WIDTH - 1 downto 0);
+    variable slave_word_array    : t_slv_array(GC_DATA_ARRAY_WIDTH - 1 downto 0)(GC_DATA_WIDTH - 1 downto 0);
+    variable slave_tx_data_word  : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+    variable master_tx_data_word : std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+    variable result              : std_logic_vector(bitvis_vip_spi.transaction_pkg.C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
+    variable v_cmd_idx           : natural;
+    variable v_num_words         : positive;
+    variable v_alert_level       : t_alert_level;
+
+    -- DUT ports towards VVC interface
+    constant C_NUM_VVC_SIGNALS : natural := 4;
+    alias dut_ss_n is << signal i_spi_master.spi_ssel_o : std_logic >>;
+    alias dut_sclk is << signal i_spi_master.spi_sck_o  : std_logic >>;
+    alias dut_mosi is << signal i_spi_master.spi_mosi_o : std_logic >>;
+    alias dut_miso is << signal i_spi_slave.spi_miso_o  : std_logic >>;
+
+    -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
+    procedure toggle_vvc_if (
+      constant alert_level : in t_alert_level
+    ) is
+      variable v_num_expected_alerts : natural;
+      variable v_rand                : t_rand;
+    begin
+      -- Number of total expected alerts: (number of signals tested individually + number of signals tested together) x 1 toggle
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, (C_NUM_VVC_SIGNALS + C_NUM_VVC_SIGNALS) * 2);
+      end if;
+      for i in 0 to C_NUM_VVC_SIGNALS loop
+        -- Force new value
+        v_num_expected_alerts := get_alert_counter(alert_level);
+        case i is
+          when 0 => dut_ss_n <= force not dut_ss_n;
+                    dut_sclk <= force not dut_sclk;
+                    dut_mosi <= force not dut_mosi;
+                    dut_miso <= force not dut_miso;
+          when 1 => dut_ss_n <= force not dut_ss_n;
+          when 2 => dut_sclk <= force not dut_sclk;
+          when 3 => dut_mosi <= force not dut_mosi;
+          when 4 => dut_miso <= force not dut_miso;
+        end case;
+        wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
+        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
+                                 v_num_expected_alerts + 1;
+        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Set back original value
+        v_num_expected_alerts := get_alert_counter(alert_level);
+        case i is
+          when 0 => dut_ss_n <= release;
+                    dut_sclk <= release;
+                    dut_mosi <= release;
+                    dut_miso <= release;
+          when 1 => dut_ss_n <= release;
+          when 2 => dut_sclk <= release;
+          when 3 => dut_mosi <= release;
+          when 4 => dut_miso <= release;
+        end case;
+        wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
+                                 v_num_expected_alerts + 1;
+        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      end loop;
+    end procedure;
 
     procedure powerup is
     begin
@@ -670,7 +687,7 @@ begin                                   -- architecture behav
 
     procedure set_single_word_inter_bfm_delay is
     begin
-      log("\rSetting inter bfm delay for single-word transfer");
+      log(ID_SEQUENCER, "Setting inter bfm delay for single-word transfer", C_SCOPE);
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).inter_bfm_delay.delay_type    := TIME_START2START;
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).inter_bfm_delay.delay_in_time := ((3 + GC_DATA_WIDTH) * C_SPI_BFM_CONFIG_MODE0.spi_bit_time);
       shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).inter_bfm_delay.delay_type     := TIME_START2START;
@@ -679,7 +696,7 @@ begin                                   -- architecture behav
 
     procedure set_multi_word_inter_bfm_delay is
     begin
-      log("\rSetting inter bfm delay for multi-word transfer");
+      log(ID_SEQUENCER, "Setting inter bfm delay for multi-word transfer", C_SCOPE);
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).inter_bfm_delay.delay_type    := TIME_START2START;
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).inter_bfm_delay.delay_in_time := 2 * GC_DATA_ARRAY_WIDTH * ((6 + GC_DATA_WIDTH) * C_SPI_BFM_CONFIG_MODE0.spi_bit_time);
       shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).inter_bfm_delay.delay_type     := TIME_START2START;
@@ -706,33 +723,32 @@ begin                                   -- architecture behav
 
     await_uvvm_initialization(VOID);
 
-    disable_log_msg(ALL_MESSAGES, "Disables all messages");
-    enable_log_msg(ID_SEQUENCER, "Enable ID_SEQUENCER");
-    enable_log_msg(ID_SEQUENCER_SUB, "Enable ID_SEQUENCER_SUB");
-    disable_log_msg(VVC_BROADCAST, ALL_MESSAGES, "Disables all messages in all VVCs");
-    for i in 0 to 3 loop
-      enable_log_msg(SPI_VVCT, i, ID_LOG_HDR, "Enabling SBI BFM logging");
-      enable_log_msg(SPI_VVCT, i, ID_BFM, "Enabling SBI BFM logging");
-      enable_log_msg(SPI_VVCT, i, ID_BFM_WAIT, "Enabling SBI BFM logging");
-      enable_log_msg(SPI_VVCT, i, ID_SEQUENCER, "Enabling SBI logging");
-      enable_log_msg(SPI_VVCT, i, ID_SEQUENCER_SUB, "Enabling SBI logging");
-    end loop;
+    disable_log_msg(ALL_MESSAGES);
+    enable_log_msg(ID_LOG_HDR_LARGE);
+    enable_log_msg(ID_LOG_HDR);
+    enable_log_msg(ID_SEQUENCER);
+    disable_log_msg(VVC_BROADCAST, ALL_MESSAGES);
+    enable_log_msg(SPI_VVCT, ALL_INSTANCES, ID_BFM);
 
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
 
     wait for 1 ms;
 
+    increment_expected_alerts_and_stop_limit(ERROR, 1); -- Unwanted activity errors: scl goes from uninitialized to idle value during powerup
     powerup;
     randomize(GC_DATA_WIDTH, GC_DATA_WIDTH + 10, "Setting global seeds");
 
     if GC_TESTCASE = "VVC-to-VVC" then
-      -- configure single-word inter_bfm_delay
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Testing VVC to VVC", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
+      -- Configure single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
-      --
-      -- Single-word transfer
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Single-word transfer", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 5 loop
         slave_tx_data_word  := random(GC_DATA_WIDTH);
         master_tx_data_word := random(GC_DATA_WIDTH);
@@ -740,9 +756,6 @@ begin                                   -- architecture behav
         spi_master_transmit_and_check(master_tx_data_word, slave_tx_data_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER);
       end loop;
 
-      --
-      -- Single-word transfer
-      --
       for iteration in 0 to 5 loop
         tx_word := random(GC_DATA_WIDTH);
         rx_word := random(GC_DATA_WIDTH);
@@ -753,9 +766,9 @@ begin                                   -- architecture behav
         spi_master_check_only(rx_word, 0);
       end loop;
 
-      --
-      -- Slave start on next SS
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Slave start on next SS", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for idx in 1 to 5 loop
         tx_word := random(GC_DATA_WIDTH); --std_logic_vector(to_unsigned(idx, GC_DATA_WIDTH)); --random(GC_DATA_WIDTH);
         -- transfer missed word
@@ -768,23 +781,6 @@ begin                                   -- architecture behav
         spi_master_transmit_only(tx_word, C_VVC_IDX_MASTER_1, RELEASE_LINE_AFTER_TRANSFER); -- next transfer, slave will receive this
       end loop;
 
-      --      --
-      --      -- Master and slave transmit and receive
-      --      --
-      --      for idx in 1 to 5 loop
-      --        tx_word := random(GC_DATA_WIDTH);
-      --        tx_word_2 := random(GC_DATA_WIDTH);
-      --
-      --        SPI_VVC_SB.add_expected(C_SPI_VVC_0, pad_spi_sb(tx_word_2));
-      --        SPI_VVC_SB.add_expected(C_SPI_VVC_1, pad_spi_sb(tx_word));
-      --
-      --        spi_master_transmit_and_receive(SPI_VVCT, C_VVC_IDX_MASTER_1, TO_SB, "SPI Master Tx and Rx. Rx data will be sent to the SPI scoreboard for checking.", RELEASE_LINE_AFTER_TRANSFER, HOLD_LINE_BETWEEN_WORDS, C_SCOPE);
-      --        spi_slave_transmit_and_receive(SPI_VVCT, C_VVC_IDX_SLAVE_1, TO_SB, "SPI Slave Tx and Rx. Rx data will be sent to the SPI scoreboard for checking", RELEASE_LINE_AFTER_TRANSFER, HOLD_LINE_BETWEEN_WORDS, C_SCOPE);
-      --
-      --        await_master_rx_completion(50 ms);
-      --        await_slave_rx_completion(50 ms);
-      --      end loop;
-
       await_master_tx_completion(50 ms);
       await_slave_rx_completion(50 ms);
       await_slave_tx_completion(50 ms);
@@ -793,9 +789,9 @@ begin                                   -- architecture behav
       -- Set inter_bfm_delay for multi-word transfer
       set_multi_word_inter_bfm_delay;
 
-      --
-      -- Multi-word transfer
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Multi-word transfer", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 5 loop
         -- Generate word array
         for idx in 0 to GC_DATA_ARRAY_WIDTH - 1 loop
@@ -807,9 +803,9 @@ begin                                   -- architecture behav
         spi_slave_transmit_and_check(slave_word_array, master_word_array, C_VVC_IDX_SLAVE_1, START_TRANSFER_IMMEDIATE);
       end loop;
 
-      --
-      -- Multi-word transfer with different number of words
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Multi-word transfer with different number of words", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 5 loop
         v_num_words := random(1, GC_DATA_ARRAY_WIDTH);
         -- Generate word array
@@ -827,9 +823,9 @@ begin                                   -- architecture behav
       await_slave_tx_completion(50 ms);
       await_master_rx_completion(50 ms);
 
-      --
-      -- Transfer array of words with SS_N deasserted between each word
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Transfer array of words with SS_N deasserted between each word", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 250 ns;
 
       for iteration in 0 to 5 loop
@@ -852,9 +848,9 @@ begin                                   -- architecture behav
       await_slave_tx_completion(50 ms);
       await_master_rx_completion(50 ms);
 
-      --
-      -- Transfer array with different number of words with SS_N deasserted between each word
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Transfer array with different number of words with SS_N deasserted between each word", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 150 ns;
 
       for iteration in 0 to 5 loop
@@ -878,9 +874,9 @@ begin                                   -- architecture behav
       await_slave_tx_completion(50 ms);
       await_master_rx_completion(50 ms);
 
-      --
-      -- Receive only, one word
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Receive only, one word", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       -- master --> slave
       tx_word   := random(GC_DATA_WIDTH);
       spi_slave_receive_only(1, C_VVC_IDX_SLAVE_1);
@@ -901,9 +897,9 @@ begin                                   -- architecture behav
       fetch_result(SPI_VVCT, C_VVC_IDX_MASTER_1, v_cmd_idx, result);
       check_value(tx_word, result(GC_DATA_WIDTH - 1 downto 0), ERROR, "check received data");
 
-      --
-      -- Receive only, multi-word
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Receive only, multi-word", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       -- master --> slave
       for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
         for i in 1 to iteration loop
@@ -936,7 +932,10 @@ begin                                   -- architecture behav
         end loop;
       end loop;
 
-      -- Testing functionality of terminate_access for slave side, one word
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing functionality of terminate_access for slave side, one word", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
+      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to terminate command
       for iteration in 1 to 10 loop
         tx_word := std_logic_vector(to_unsigned(iteration, GC_DATA_WIDTH)); --Making individual tx words per loop
         spi_master_transmit_and_check(not(tx_word), tx_word);
@@ -953,8 +952,12 @@ begin                                   -- architecture behav
         await_slave_tx_completion(50 ms);
         await_master_tx_completion(50 ms);
       end loop;
+      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_activity_severity := C_SPI_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
 
-      -- Testing functionality of terminate_access for slave side, multi-word
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing functionality of terminate_access for slave side, multi-word", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
+      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to terminate command
       for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
         for i in 1 to iteration loop
           master_word_array(i - 1) := random(GC_DATA_WIDTH);
@@ -971,8 +974,11 @@ begin                                   -- architecture behav
           check_value(master_word_array(i - 1), result(GC_DATA_WIDTH - 1 downto 0), ERROR, "check received data");
         end loop;
       end loop;
+      shared_spi_vvc_config(C_VVC_IDX_SLAVE_1).unwanted_activity_severity := C_SPI_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
 
-      --Verifying correct function of multi-word transaction from slave after previous terminated access
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Verifying correct function of multi-word transaction from slave after previous terminated access", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 5 loop
         -- Generate word array
         for idx in 0 to GC_DATA_ARRAY_WIDTH - 1 loop
@@ -987,110 +993,113 @@ begin                                   -- architecture behav
       shared_spi_vvc_config(C_VVC_IDX_MASTER_1).bfm_config.inter_word_delay := 0 ns;
 
     elsif GC_TESTCASE = "spi_master_dut_to_slave_VVC" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Testing master DUT to slave VVC", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
-      --
-      -- Single-word transfer
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Single-word transfer", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 10 loop
         tx_word := random(GC_DATA_WIDTH);
         -- Master TX must be active for any transactions to occur; drives sclk and ss_n
         sbi_master_write(tx_word);      -- this will cause dut to write on SPI
-        spi_slave_check_only(tx_word, 2);
+        spi_slave_check_only(tx_word, C_SPI_VVC_2);
       end loop;
 
       sbi_await_completion(50 ms);
-      await_slave_rx_completion(50 ms, 2);
+      await_slave_rx_completion(50 ms, C_SPI_VVC_2);
 
       -- Set multi-word inter_bfm_delay
       set_multi_word_inter_bfm_delay;
 
-      --
-      -- Multi-word transfer
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Multi-word transfer", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 10 loop
         -- generate word array
         for idx in 0 to master_word_array'length - 1 loop
           master_word_array(idx) := random(GC_DATA_WIDTH);
         end loop;
-        spi_slave_check_only(master_word_array, 2);
+        spi_slave_check_only(master_word_array, C_SPI_VVC_2);
         for idx in 0 to master_word_array'length - 1 loop
           sbi_master_write(master_word_array(idx)); -- this will cause dut to write on SPI
         end loop;
       end loop;
 
-      --
-      -- Multi-word transfer with different number of words
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Multi-word transfer with different number of words", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 10 loop
         v_num_words := random(1, GC_DATA_ARRAY_WIDTH);
         -- generate word array
         for idx in 0 to v_num_words - 1 loop
           master_word_array(idx) := random(GC_DATA_WIDTH);
         end loop;
-        spi_slave_check_only(master_word_array(v_num_words - 1 downto 0), 2);
+        spi_slave_check_only(master_word_array(v_num_words - 1 downto 0), C_SPI_VVC_2);
         for idx in 0 to v_num_words - 1 loop
           sbi_master_write(master_word_array(idx)); -- this will cause dut to write on SPI
         end loop;
       end loop;
 
       sbi_await_completion(50 ms);
-      await_slave_rx_completion(50 ms, 2);
+      await_slave_rx_completion(50 ms, C_SPI_VVC_2);
 
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
-      --
-      -- Single-word transfer
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Single-word transfer", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       if GC_DATA_WIDTH = 32 then
         tx_word := x"5555_5555";
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
         sbi_master_write(tx_word);      -- this will cause dut to write on SPI
-        spi_slave_check_only(tx_word, 2);
+        spi_slave_check_only(tx_word, C_SPI_VVC_2);
 
         tx_word := x"AAAA_AAAA";
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
         sbi_master_write(tx_word);      -- this will cause dut to write on SPI
-        spi_slave_check_only(tx_word, 2);
+        spi_slave_check_only(tx_word, C_SPI_VVC_2);
 
         tx_word := x"FFFF_FFFF";
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
         sbi_master_write(tx_word);      -- this will cause dut to write on SPI
-        spi_slave_check_only(tx_word, 2);
+        spi_slave_check_only(tx_word, C_SPI_VVC_2);
 
         tx_word := x"0000_0000";
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
         sbi_master_write(tx_word);      -- this will cause dut to write on SPI
-        spi_slave_check_only(tx_word, 2);
+        spi_slave_check_only(tx_word, C_SPI_VVC_2);
       end if;
 
       sbi_await_completion(50 ms);
-      await_slave_rx_completion(50 ms, 2);
+      await_slave_rx_completion(50 ms, C_SPI_VVC_2);
 
       -- Set multi-word inter_bfm_delay
       set_multi_word_inter_bfm_delay;
 
-      --
-      -- Master DUT to slave VVC multi-word transfer
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Master DUT to slave VVC multi-word transfer", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 5 loop
         -- generate word array
         for idx in 0 to GC_DATA_ARRAY_WIDTH - 1 loop
           master_word_array(idx) := random(GC_DATA_WIDTH);
         end loop;
         -- start slave
-        spi_slave_check_only(master_word_array, 2, START_TRANSFER_IMMEDIATE);
+        spi_slave_check_only(master_word_array, C_SPI_VVC_2, START_TRANSFER_IMMEDIATE);
         -- master DUT start multi-word transfer
         for idx in 0 to GC_DATA_ARRAY_WIDTH - 1 loop
           sbi_master_write(master_word_array(idx));
         end loop;
       end loop;
 
-      --
-      -- Master DUT to slave VVC multi-word transfer with different number of words
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Master DUT to slave VVC multi-word transfer with different number of words", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 0 to 5 loop
         v_num_words := random(1, GC_DATA_ARRAY_WIDTH);
         -- generate word array
@@ -1098,7 +1107,7 @@ begin                                   -- architecture behav
           master_word_array(idx) := random(GC_DATA_WIDTH);
         end loop;
         -- start slave
-        spi_slave_check_only(master_word_array(v_num_words - 1 downto 0), 2, START_TRANSFER_IMMEDIATE);
+        spi_slave_check_only(master_word_array(v_num_words - 1 downto 0), C_SPI_VVC_2, START_TRANSFER_IMMEDIATE);
         -- master DUT start multi-word transfer
         for idx in 0 to v_num_words - 1 loop
           sbi_master_write(master_word_array(idx));
@@ -1106,210 +1115,218 @@ begin                                   -- architecture behav
       end loop;
 
       sbi_await_completion(50 ms);
-      await_slave_rx_completion(50 ms, 2);
+      await_slave_rx_completion(50 ms, C_SPI_VVC_2);
 
-      --
-      -- Slave start on next SS
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Slave start on next SS", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for idx in 0 to 5 loop
         tx_word := random(GC_DATA_WIDTH);
         sbi_master_write(not (tx_word)); -- missed transfer
-        insert_delay(SPI_VVCT, 2, random(2, GC_DATA_WIDTH - 1)); -- delay slave
-        spi_slave_check_only(tx_word, 2, START_TRANSFER_ON_NEXT_SS); -- start slave
+        insert_delay(SPI_VVCT, C_SPI_VVC_2, random(2, GC_DATA_WIDTH - 1)); -- delay slave
+        spi_slave_check_only(tx_word, C_SPI_VVC_2, START_TRANSFER_ON_NEXT_SS); -- start slave
         sbi_master_write(tx_word);      -- received transfer
       end loop;
 
       sbi_await_completion(50 ms);
-      await_slave_rx_completion(50 ms, 2);
+      await_slave_rx_completion(50 ms, C_SPI_VVC_2);
 
-      --
-      -- Receive only, one word
-      --
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Receive only, one word", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       tx_word   := random(GC_DATA_WIDTH);
-      spi_slave_receive_only(1, 2, START_TRANSFER_IMMEDIATE);
-      v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, 2);
+      spi_slave_receive_only(1, C_SPI_VVC_2, START_TRANSFER_IMMEDIATE);
+      v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_SPI_VVC_2);
       sbi_master_write(tx_word);
       sbi_await_completion(50 ms);
-      await_slave_rx_completion(50 ms, 2);
-      fetch_result(SPI_VVCT, 2, v_cmd_idx, result);
+      await_slave_rx_completion(50 ms, C_SPI_VVC_2);
+      fetch_result(SPI_VVCT, C_SPI_VVC_2, v_cmd_idx, result);
       check_value(tx_word, result(GC_DATA_WIDTH - 1 downto 0), ERROR, "check received data");
-      --
-      -- Receive only, multi-word
-      --
+
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Receive only, multi-word", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       for iteration in 2 to GC_DATA_ARRAY_WIDTH loop
-        spi_slave_receive_only(iteration, 2, START_TRANSFER_IMMEDIATE);
-        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, 2);
+        spi_slave_receive_only(iteration, C_SPI_VVC_2, START_TRANSFER_IMMEDIATE);
+        v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_SPI_VVC_2);
         for i in 1 to iteration loop
           master_word_array(i - 1) := random(GC_DATA_WIDTH);
           sbi_master_write(master_word_array(i - 1));
         end loop;
         sbi_await_completion(50 ms);
-        await_slave_rx_completion(50 ms, 2);
-        --await_slave_rx_completion(50 ms);
+        await_slave_rx_completion(50 ms, C_SPI_VVC_2);
         for i in 1 to iteration loop
-          fetch_result(SPI_VVCT, 2, v_cmd_idx, result);
+          fetch_result(SPI_VVCT, C_SPI_VVC_2, v_cmd_idx, result);
           check_value(master_word_array(i - 1), result(GC_DATA_WIDTH - 1 downto 0), ERROR, "check received data");
         end loop;
       end loop;
 
     elsif GC_TESTCASE = "spi_slave_vvc_to_master_dut" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Testing slave VVC to master DUT", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
       for iteration in 0 to 10 loop
         tx_word := random(GC_DATA_WIDTH);
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
-        spi_slave_transmit_only(tx_word, 2);
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        spi_slave_transmit_only(tx_word, C_SPI_VVC_2);
         sbi_master_write(std_logic_vector(to_unsigned(iteration, 8))); -- transmit dummy byte from master DUT to allow slave VVC to transmit to master DUT
-        await_slave_tx_completion(50 ms, 2);
+        await_slave_tx_completion(50 ms, C_SPI_VVC_2);
         sbi_master_check(tx_word);      -- this will cause dut to receive on SPI
         sbi_await_completion(50 ms);
       end loop;
 
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Verify corner cases", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       if GC_DATA_WIDTH = 32 then
         tx_word := x"5555_5555";
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
-        spi_slave_transmit_only(tx_word, 2);
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        spi_slave_transmit_only(tx_word, C_SPI_VVC_2);
         sbi_master_write(std_logic_vector(to_unsigned(0, 8))); -- transmit dummy byte from master DUT to allow slave VVC to transmit to master DUT
-        await_slave_tx_completion(50 ms, 2);
+        await_slave_tx_completion(50 ms, C_SPI_VVC_2);
         sbi_master_check(tx_word);      -- this will cause dut to receive on SPI
         sbi_await_completion(50 ms);
 
         tx_word := x"AAAA_AAAA";
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
-        spi_slave_transmit_only(tx_word, 2);
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        spi_slave_transmit_only(tx_word, C_SPI_VVC_2);
         sbi_master_write(std_logic_vector(to_unsigned(0, 8))); -- transmit dummy byte from master DUT to allow slave VVC to transmit to master DUT
-        await_slave_tx_completion(50 ms, 2);
+        await_slave_tx_completion(50 ms, C_SPI_VVC_2);
         sbi_master_check(tx_word);      -- this will cause dut to receive on SPI
         sbi_await_completion(50 ms);
 
         tx_word := x"FFFF_FFFF";
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
-        spi_slave_transmit_only(tx_word, 2);
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        spi_slave_transmit_only(tx_word, C_SPI_VVC_2);
         sbi_master_write(std_logic_vector(to_unsigned(0, 8))); -- transmit dummy byte from master DUT to allow slave VVC to transmit to master DUT
-        await_slave_tx_completion(50 ms, 2);
+        await_slave_tx_completion(50 ms, C_SPI_VVC_2);
         sbi_master_check(tx_word);      -- this will cause dut to receive on SPI
         sbi_await_completion(50 ms);
 
         tx_word := x"0000_0000";
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
-        spi_slave_transmit_only(tx_word, 2);
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        spi_slave_transmit_only(tx_word, C_SPI_VVC_2);
         sbi_master_write(std_logic_vector(to_unsigned(0, 8))); -- transmit dummy byte from master DUT to allow slave VVC to transmit to master DUT
-        await_slave_tx_completion(50 ms, 2);
+        await_slave_tx_completion(50 ms, C_SPI_VVC_2);
         sbi_master_check(tx_word);      -- this will cause dut to receive on SPI
         sbi_await_completion(50 ms);
       end if;
 
     elsif GC_TESTCASE = "spi_master_vvc_to_slave_dut" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Testing master VVC to slave DUT", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
       tx_word := random(GC_DATA_WIDTH);
       log("Transmit: " & to_string(tx_word), C_SCOPE);
-      ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
-      spi_master_transmit_only(tx_word, 3);
-      await_master_tx_completion(50 ms, 3);
+      -- Master TX must be active for any transactions to occur; drives sclk and ss_n
+      spi_master_transmit_only(tx_word, C_SPI_VVC_3);
+      await_master_tx_completion(50 ms, C_SPI_VVC_3);
       sbi_slave_check(tx_word);         -- this will read what the DUT just received via SPI
       sbi_await_completion(50 ms);
 
-    -- for iteration in 0 to 10 loop
-    --   tx_word := random(GC_DATA_WIDTH);
-    --   ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
-    --   spi_master_transmit_only(tx_word, 3);
-    --   await_master_tx_completion(50 ms, 3);
-    --   sbi_slave_check(tx_word);  -- this will read what the DUT just received via SPI
-    --   sbi_await_completion(50 ms);
-    -- end loop;
+     for iteration in 0 to 10 loop
+       tx_word := random(GC_DATA_WIDTH);
+       -- Master TX must be active for any transactions to occur; drives sclk and ss_n
+       spi_master_transmit_only(tx_word, C_SPI_VVC_3);
+       await_master_tx_completion(50 ms, C_SPI_VVC_3);
+       sbi_slave_check(tx_word);  -- this will read what the DUT just received via SPI
+       sbi_await_completion(50 ms);
+     end loop;
 
-    -- -- Verify corner cases
-    -- if GC_DATA_WIDTH = 32 then
-    --   tx_word := x"5555_5555";
-    --   spi_master_transmit_only(tx_word, 3);
-    --   await_master_tx_completion(50 ms, 3);
-    --   sbi_slave_check(tx_word);
-    --   sbi_await_completion(50 ms);
+     ----------------------------------------------------------------------------------------------------------------------------
+     log(ID_LOG_HDR_LARGE, "Verify corner cases", C_SCOPE);
+     ----------------------------------------------------------------------------------------------------------------------------
+     if GC_DATA_WIDTH = 32 then
+       tx_word := x"5555_5555";
+       spi_master_transmit_only(tx_word, C_SPI_VVC_3);
+       await_master_tx_completion(50 ms, C_SPI_VVC_3);
+       sbi_slave_check(tx_word);
+       sbi_await_completion(50 ms);
 
-    --   tx_word := x"AAAA_AAAA";
-    --   spi_master_transmit_only(tx_word, 3);
-    --   await_master_tx_completion(50 ms, 3);
-    --   sbi_slave_check(tx_word);
-    --   sbi_await_completion(50 ms);
+       tx_word := x"AAAA_AAAA";
+       spi_master_transmit_only(tx_word, C_SPI_VVC_3);
+       await_master_tx_completion(50 ms, C_SPI_VVC_3);
+       sbi_slave_check(tx_word);
+       sbi_await_completion(50 ms);
 
-    --   tx_word := x"FFFF_FFFF";
-    --   spi_master_transmit_only(tx_word, 3);
-    --   await_master_tx_completion(50 ms, 3);
-    --   sbi_slave_check(tx_word);
-    --   sbi_await_completion(50 ms);
+       tx_word := x"FFFF_FFFF";
+       spi_master_transmit_only(tx_word, C_SPI_VVC_3);
+       await_master_tx_completion(50 ms, C_SPI_VVC_3);
+       sbi_slave_check(tx_word);
+       sbi_await_completion(50 ms);
 
-    --   tx_word := x"0000_0000";
-    --   spi_master_transmit_only(tx_word, 3);
-    --   await_master_tx_completion(50 ms, 3);
-    --   sbi_slave_check(tx_word);
-    --   sbi_await_completion(50 ms);
-    -- end if;
+       tx_word := x"0000_0000";
+       spi_master_transmit_only(tx_word, C_SPI_VVC_3);
+       await_master_tx_completion(50 ms, C_SPI_VVC_3);
+       sbi_slave_check(tx_word);
+       sbi_await_completion(50 ms);
+     end if;
 
     elsif GC_TESTCASE = "spi_slave_dut_to_master_vvc" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Testing slave DUT to master VVC", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
       for iteration in 0 to 10 loop
         tx_word := random(GC_DATA_WIDTH);
-        ---- Master TX must be active for any transactions to occur; drives sclk and ss_n
+        -- Master TX must be active for any transactions to occur; drives sclk and ss_n
         sbi_slave_write(tx_word);
-        sbi_await_completion(50 ms);
-        wait for C_CLK_PERIOD;          -- to allow the tx_word to be applied in the SPI slave dut.
-        spi_master_transmit_only(std_logic_vector(to_unsigned(iteration, GC_DATA_WIDTH)), 3); -- transmit dummy byte to allow slave to transmit.
-        spi_master_check_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
+        insert_delay(SPI_VVCT, C_SPI_VVC_3, 2 * C_CLK_PERIOD, "Delay check to allow the tx_word to be applied in the SPI slave DUT", C_SCOPE);
+        spi_master_transmit_only(std_logic_vector(to_unsigned(iteration, GC_DATA_WIDTH)), C_SPI_VVC_3); -- transmit dummy byte to allow slave to transmit.
+        spi_master_check_only(tx_word, C_SPI_VVC_3);
+        await_master_tx_completion(50 ms, C_SPI_VVC_3);
       end loop;
 
-      -- Verify corner cases
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Verify corner cases", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       if GC_DATA_WIDTH = 32 then
         tx_word := x"5555_5555";
         sbi_slave_write(tx_word);
-        sbi_await_completion(50 ms);
-        wait for C_CLK_PERIOD;          -- to allow the tx_word to be applied in the SPI slave dut.
-        spi_master_transmit_only(std_logic_vector(to_unsigned(0, GC_DATA_WIDTH)), 3); -- transmit dummy byte to allow slave to transmit.
-        spi_master_check_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
+        insert_delay(SPI_VVCT, C_SPI_VVC_3, 2 * C_CLK_PERIOD, "Delay check to allow the tx_word to be applied in the SPI slave DUT", C_SCOPE);
+        spi_master_transmit_only(std_logic_vector(to_unsigned(0, GC_DATA_WIDTH)), C_SPI_VVC_3); -- transmit dummy byte to allow slave to transmit.
+        spi_master_check_only(tx_word, C_SPI_VVC_3);
+        await_master_tx_completion(50 ms, C_SPI_VVC_3);
 
         tx_word := x"AAAA_AAAA";
         sbi_slave_write(tx_word);
-        sbi_await_completion(50 ms);
-        wait for C_CLK_PERIOD;          -- to allow the tx_word to be applied in the SPI slave dut.
-        spi_master_transmit_only(std_logic_vector(to_unsigned(0, GC_DATA_WIDTH)), 3); -- transmit dummy byte to allow slave to transmit.
-        spi_master_check_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
+        insert_delay(SPI_VVCT, C_SPI_VVC_3, 2 * C_CLK_PERIOD, "Delay check to allow the tx_word to be applied in the SPI slave DUT", C_SCOPE);
+        spi_master_transmit_only(std_logic_vector(to_unsigned(0, GC_DATA_WIDTH)), C_SPI_VVC_3); -- transmit dummy byte to allow slave to transmit.
+        spi_master_check_only(tx_word, C_SPI_VVC_3);
+        await_master_tx_completion(50 ms, C_SPI_VVC_3);
 
         tx_word := x"0000_0000";
         sbi_slave_write(tx_word);
-        sbi_await_completion(50 ms);
-        wait for C_CLK_PERIOD;          -- to allow the tx_word to be applied in the SPI slave dut.
-        spi_master_transmit_only(x"FFFF_FFFF", 3); -- transmit dummy byte to allow slave to transmit.
-        spi_master_check_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
+        insert_delay(SPI_VVCT, C_SPI_VVC_3, 2 * C_CLK_PERIOD, "Delay check to allow the tx_word to be applied in the SPI slave DUT", C_SCOPE);
+        spi_master_transmit_only(x"FFFF_FFFF", C_SPI_VVC_3); -- transmit dummy byte to allow slave to transmit.
+        spi_master_check_only(tx_word, C_SPI_VVC_3);
+        await_master_tx_completion(50 ms, C_SPI_VVC_3);
 
         tx_word := x"FFFF_FFFF";
         sbi_slave_write(tx_word);
-        sbi_await_completion(50 ms);
-        wait for C_CLK_PERIOD;          -- to allow the tx_word to be applied in the SPI slave dut.
-        spi_master_transmit_only(x"FFFF_FFFF", 3); -- transmit dummy byte to allow slave to transmit.
-        spi_master_check_only(tx_word, 3);
-        await_master_tx_completion(50 ms, 3);
+        insert_delay(SPI_VVCT, C_SPI_VVC_3, 2 * C_CLK_PERIOD, "Delay check to allow the tx_word to be applied in the SPI slave DUT", C_SCOPE);
+        spi_master_transmit_only(x"FFFF_FFFF", C_SPI_VVC_3); -- transmit dummy byte to allow slave to transmit.
+        spi_master_check_only(tx_word, C_SPI_VVC_3);
+        await_master_tx_completion(50 ms, C_SPI_VVC_3);
       end if;
 
-      --
-      -- Receive only, one word
-      --
+      log(ID_LOG_HDR_LARGE, "Receive only, one word", C_SCOPE);
       tx_word   := random(GC_DATA_WIDTH);
       sbi_slave_write(tx_word);
-      sbi_await_completion(50 ms);
-      wait for C_CLK_PERIOD;            -- to allow the tx_word to be applied in the SPI slave dut.
-      spi_master_transmit_only(not (tx_word), 3); -- transmit dummy byte to allow slave to transmit.
-      spi_master_receive_only(1, 3, RELEASE_LINE_AFTER_TRANSFER);
-      v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, 3);
-      await_master_tx_completion(50 ms, 3);
-      fetch_result(SPI_VVCT, 3, v_cmd_idx, result);
+      insert_delay(SPI_VVCT, C_SPI_VVC_3, 2 * C_CLK_PERIOD, "Delay check to allow the tx_word to be applied in the SPI slave DUT", C_SCOPE);
+      spi_master_transmit_only(not (tx_word), C_SPI_VVC_3); -- transmit dummy byte to allow slave to transmit.
+      spi_master_receive_only(1, C_SPI_VVC_3, RELEASE_LINE_AFTER_TRANSFER);
+      v_cmd_idx := get_last_received_cmd_idx(SPI_VVCT, C_SPI_VVC_3);
+      await_master_tx_completion(50 ms, C_SPI_VVC_3);
+      fetch_result(SPI_VVCT, C_SPI_VVC_3, v_cmd_idx, result);
       check_value(result(GC_DATA_WIDTH - 1 downto 0), tx_word, ERROR, "check received data");
 
     --
@@ -1318,22 +1335,65 @@ begin                                   -- architecture behav
     -- Not posible with DUT
 
     elsif GC_TESTCASE = "scoreboard_test" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Testing Scoreboard", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
       -- Set single-word inter_bfm_delay
       set_single_word_inter_bfm_delay;
 
       tx_word := random(GC_DATA_WIDTH);
-      spi_master_transmit_only(SPI_VVCT, C_SPI_VVC_0, tx_word, "SPI Master transmit");
-      SPI_VVC_SB.add_expected(C_SPI_VVC_1, pad_spi_sb(tx_word));
-      spi_slave_receive_only(SPI_VVCT, C_SPI_VVC_1, TO_SB, "SPI Slave receive data and send to SB");
+      SPI_VVC_SB.add_expected(C_VVC_IDX_SLAVE_1, pad_spi_sb(tx_word));
+      spi_slave_receive_only(SPI_VVCT, C_VVC_IDX_SLAVE_1, TO_SB, "SPI Slave receive data and send to SB");
+      spi_master_transmit_only(SPI_VVCT, C_VVC_IDX_MASTER_1, tx_word, "SPI Master transmit");
       await_slave_rx_completion(50 ms);
 
       tx_word := random(GC_DATA_WIDTH);
-      spi_slave_transmit_only(SPI_VVCT, C_SPI_VVC_1, tx_word, "SPI Slave transmit");
-      SPI_VVC_SB.add_expected(C_SPI_VVC_0, pad_spi_sb(tx_word));
-      spi_master_receive_only(SPI_VVCT, C_SPI_VVC_0, TO_SB, "SPI Master receive data and send to SB");
+      SPI_VVC_SB.add_expected(C_VVC_IDX_MASTER_1, pad_spi_sb(tx_word));
+      spi_master_receive_only(SPI_VVCT, C_VVC_IDX_MASTER_1, TO_SB, "SPI Master receive data and send to SB");
+      spi_slave_transmit_only(SPI_VVCT, C_VVC_IDX_SLAVE_1, tx_word, "SPI Slave transmit");
       await_master_rx_completion(50 ms);
 
       SPI_VVC_SB.report_counters(ALL_INSTANCES);
+
+    elsif GC_TESTCASE = "test_unwanted_activity" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR_LARGE, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
+      for i in 0 to 2 loop
+        -- Test different alert severity configurations
+        if i = 0 then
+          v_alert_level := C_SPI_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+        elsif i = 1 then
+          v_alert_level := FAILURE;
+        else
+          v_alert_level := NO_ALERT;
+        end if;
+        log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
+        shared_spi_vvc_config(C_SPI_VVC_2).unwanted_activity_severity := v_alert_level;
+        shared_spi_vvc_config(C_SPI_VVC_3).unwanted_activity_severity := v_alert_level;
+
+        log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
+        tx_word := random(GC_DATA_WIDTH);
+        sbi_master_write(tx_word);
+        spi_slave_check_only(tx_word, C_SPI_VVC_2);
+        await_slave_rx_completion(50 ms, C_SPI_VVC_2);
+
+        tx_word := random(GC_DATA_WIDTH);
+        sbi_slave_write(tx_word);
+        wait for C_CLK_PERIOD; -- to allow the tx_word to be applied in the SPI slave dut.
+        spi_master_check_only(tx_word, C_SPI_VVC_3);
+        await_master_tx_completion(50 ms, C_SPI_VVC_3);
+
+        -- Test with and without a time gap between await_completion and unexpected data transmission
+        if i = 0 then
+          log(ID_SEQUENCER, "Wait 100 ns", C_SCOPE);
+          wait for 100 ns;
+        end if;
+
+        log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
+        toggle_vvc_if(v_alert_level);
+      end loop;
+
     end if;
 
     -----------------------------------------------------------------------------

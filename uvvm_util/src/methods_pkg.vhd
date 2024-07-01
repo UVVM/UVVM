@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -4300,7 +4300,11 @@ package body methods_pkg is
       attention   : t_attention := REGARD
     ) return natural is
   begin
-    return protected_alert_attention_counters.get(alert_level, attention);
+    if alert_level = NO_ALERT then
+      return 0;
+    else
+      return protected_alert_attention_counters.get(alert_level, attention);
+    end if;
   end function;
 
   procedure increment_alert_counter(

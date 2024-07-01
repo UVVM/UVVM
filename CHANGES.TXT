@@ -38,11 +38,14 @@ Released: 2024-XX-XX
   for all the enabled scoreboards to be empty: await_uvvm_completion(), await_sb_completion(), check_sb_completion().
 - Added completion detection test to UVVM demo tb.
 - Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
-- Fixed avalon_mm_read_response() sampling the data one cycle too early when using sequential commands and sampling the same data
-  in pipelined commands.
+- Added PR from @aghoras fixing a problem with Avalon-MM BFM sampling readdata one cycle too early when waitrequest is not asserted.
+- Fixed avalon_mm_read_response() sampling the same data in several pipelined commands.
 - Use dedicated scope in Avalon-MM, AXI and AXI-Lite VVC pipeline processes.
 - Fixed initialization check in tickoff procedure in spec cov.
 - Changed behavior for explicit fail at tickoff in spec cov.
+- Added unwanted activity detection functionality to VVCs to give an alert if the DUT generates any unexpected bus activity.
+- Added unwanted activity detection test to UVVM demo tb.
+- Added unwanted activity detection in VVC generator.
 - Removed "omitted requirement"-functionality in spec cov.
 
 

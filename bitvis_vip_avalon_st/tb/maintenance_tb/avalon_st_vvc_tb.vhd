@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -111,6 +111,7 @@ begin
     variable v_data_stream       : t_slv_array(0 to 99)(GC_DATA_WIDTH - 1 downto 0);
     variable v_cmd_idx           : natural;
     variable v_result            : bitvis_vip_avalon_st.vvc_cmd_pkg.t_vvc_result;
+    variable v_alert_level       : t_alert_level;
 
     procedure new_random_data(
       data_array : inout t_slv_array) is
@@ -120,11 +121,76 @@ begin
       end loop;
     end procedure;
 
-    constant c_debug : t_vvc_result := (
-      channel_value        => (others => '0'),
-      data_array           => (others => (others => '0')),
-      data_array_length    => C_VVC_CMD_DATA_MAX_WORDS,
-      data_array_word_size => C_VVC_CMD_WORD_MAX_LENGTH);
+    -- DUT ports towards VVC interface
+    constant C_NUM_VVC_SIGNALS : natural := 7;
+    alias dut_m_channel is << signal i_test_harness.i_avalon_st_fifo.master_channel_o : std_logic_vector >>;
+    alias dut_m_data    is << signal i_test_harness.i_avalon_st_fifo.master_data_o    : std_logic_vector >>;
+    alias dut_m_error   is << signal i_test_harness.i_avalon_st_fifo.master_error_o   : std_logic_vector >>;
+    alias dut_m_valid   is << signal i_test_harness.i_avalon_st_fifo.master_valid_o   : std_logic >>;
+    alias dut_m_empty   is << signal i_test_harness.i_avalon_st_fifo.master_empty_o   : std_logic_vector >>;
+    alias dut_m_eop     is << signal i_test_harness.i_avalon_st_fifo.master_eop_o     : std_logic >>;
+    alias dut_m_sop     is << signal i_test_harness.i_avalon_st_fifo.master_sop_o     : std_logic >>;
+
+    -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
+    procedure toggle_vvc_if (
+      constant alert_level : in t_alert_level
+    ) is
+      variable v_num_expected_alerts : natural;
+      variable v_rand                : t_rand;
+    begin
+      -- Number of total expected alerts: (number of signals tested individually + number of signals tested together) x 1 toggle
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, (C_NUM_VVC_SIGNALS + C_NUM_VVC_SIGNALS) * 2);
+      end if;
+      for i in 0 to C_NUM_VVC_SIGNALS loop
+        -- Force new value
+        v_num_expected_alerts := get_alert_counter(alert_level);
+        case i is
+          when 0 => dut_m_channel <= force not dut_m_channel;
+                    dut_m_data    <= force not dut_m_data;
+                    dut_m_error   <= force not dut_m_error;
+                    dut_m_valid   <= force not dut_m_valid;
+                    dut_m_empty   <= force not dut_m_empty;
+                    dut_m_eop     <= force not dut_m_eop;
+                    dut_m_sop     <= force not dut_m_sop;
+          when 1 => dut_m_channel <= force not dut_m_channel;
+          when 2 => dut_m_data    <= force not dut_m_data;
+          when 3 => dut_m_error   <= force not dut_m_error;
+          when 4 => dut_m_valid   <= force not dut_m_valid;
+          when 5 => dut_m_empty   <= force not dut_m_empty;
+          when 6 => dut_m_eop     <= force not dut_m_eop;
+          when 7 => dut_m_sop     <= force not dut_m_sop;
+        end case;
+        wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
+        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
+                                 v_num_expected_alerts + 1;
+        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+        -- Set back original value
+        v_num_expected_alerts := get_alert_counter(alert_level);
+        case i is
+          when 0 => dut_m_channel <= release;
+                    dut_m_data    <= release;
+                    dut_m_error   <= release;
+                    dut_m_valid   <= release;
+                    dut_m_empty   <= release;
+                    dut_m_eop     <= release;
+                    dut_m_sop     <= release;
+          when 1 => dut_m_channel <= release;
+          when 2 => dut_m_data    <= release;
+          when 3 => dut_m_error   <= release;
+          when 4 => dut_m_valid   <= release;
+          when 5 => dut_m_empty   <= release;
+          when 6 => dut_m_eop     <= release;
+          when 7 => dut_m_sop     <= release;
+        end case;
+        wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+        v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                                 v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
+                                 v_num_expected_alerts + 1;
+        check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      end loop;
+    end procedure;
 
   begin
     -- To avoid that log files from different test cases (run in separate simulations) overwrite each other.
@@ -148,7 +214,6 @@ begin
     report_msg_id_panel(VOID);
 
     -- Verbosity control
-    enable_log_msg(ALL_MESSAGES);
     disable_log_msg(ID_CMD_INTERPRETER_WAIT);
     disable_log_msg(ID_UVVM_CMD_ACK);
     disable_log_msg(AVALON_ST_VVCT, ALL_INSTANCES, ID_CMD_INTERPRETER);
@@ -240,15 +305,17 @@ begin
       avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet'length, v_data_packet(0)'length, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       << signal i_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
-      wait for 0 ns;                    -- Riviera Pro needs a delta cycle to use the force command again on the same signal
+      wait for 0 ns; -- Riviera Pro needs a delta cycle to use the force command again on the same signal
 
       log(ID_LOG_HDR, "Testing error case: receive() with start of packet in wrong position");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
+      increment_expected_alerts_and_stop_limit(ERROR, 2); -- Unwanted activity errors: forcing and releasing SOP
       << signal i_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '1';
       avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 2 * GC_DATA_WIDTH / C_SYMBOL_WIDTH - 1), "");
       avalon_st_receive(AVALON_ST_VVCT, C_VVC_SLAVE, 2 * GC_DATA_WIDTH / C_SYMBOL_WIDTH, v_data_packet(0)'length, "");
       await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
       << signal i_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
+      wait for 0 ns; -- Delta cycle so that the error message is printed before the next test
 
       log(ID_LOG_HDR, "Testing error case: receive() with missing end of packet");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
@@ -322,6 +389,7 @@ begin
 
       log(ID_LOG_HDR, "Testing error case: transmit() timeout - slave not ready");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
+      increment_expected_alerts_and_stop_limit(ERROR, 3); -- Unwanted activity errors: data, valid and SOP change in inactive slave
       avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_packet, "");
       wait for (v_avl_st_bfm_config.max_wait_cycles + 1) * C_CLK_PERIOD;
 
@@ -461,6 +529,7 @@ begin
 
       log(ID_LOG_HDR, "Testing error case: transmit() timeout - slave not ready");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
+      increment_expected_alerts_and_stop_limit(ERROR, 2); -- Unwanted activity errors: data and valid change in inactive slave
       avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_stream, "");
       wait for (v_avl_st_bfm_config.max_wait_cycles + 1) * C_CLK_PERIOD;
 
@@ -511,6 +580,39 @@ begin
         avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
       await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
+
+    elsif GC_TESTCASE = "test_unwanted_activity" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+      ----------------------------------------------------------------------------------------------------------------------------
+      for i in 0 to 2 loop
+        -- Test different alert severity configurations
+        if i = 0 then
+          v_alert_level := C_AVALON_ST_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+        elsif i = 1 then
+          v_alert_level := FAILURE;
+        else
+          v_alert_level := NO_ALERT;
+        end if;
+        log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
+        shared_avalon_st_vvc_config(C_VVC_MASTER).unwanted_activity_severity := v_alert_level;
+        shared_avalon_st_vvc_config(C_VVC_SLAVE).unwanted_activity_severity  := v_alert_level;
+
+        log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
+        new_random_data(v_data_packet);
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 3), "Transmit data");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet(0 to 3), "Expect data");
+        await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 10 us);
+
+        -- Test with and without a time gap between await_completion and unexpected data transmission
+        if i = 0 then
+          log(ID_SEQUENCER, "Wait 100 ns", C_SCOPE);
+          wait for 100 ns;
+        end if;
+
+        log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
+        toggle_vvc_if(v_alert_level);
+      end loop;
 
     end if;
 

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -55,6 +55,8 @@ begin
 end struct_bfm;
 
 architecture struct_vvc of gmii_th is
+  signal dut_txd  : std_logic_vector(7 downto 0);
+  signal dut_txen : std_logic;
 begin
 
   -- Instantiate VVC
@@ -69,7 +71,10 @@ begin
 
   gmii_tx_if.gtxclk <= clk;
   gmii_rx_if.rxclk  <= clk;
-  gmii_rx_if.rxd    <= gmii_tx_if.txd;
-  gmii_rx_if.rxdv   <= gmii_tx_if.txen;
+  -- Use non-record signals to be able to force them from the tb
+  dut_txd           <= gmii_tx_if.txd;
+  dut_txen          <= gmii_tx_if.txen;
+  gmii_rx_if.rxd    <= dut_txd;
+  gmii_rx_if.rxdv   <= dut_txen;
 
 end struct_vvc;

@@ -82,4 +82,4 @@ If the VIP was already in use in a test environment before it was renamed, remem
                
 Support
 ---------------------------------------------------------
-For support, please contact Bitvis Support at support@bitvis.no
+For support, please contact UVVM Support at info@uvvm.org

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -65,15 +65,42 @@ begin
   -- PROCESS: p_main
   ------------------------------------------------
   p_main : process
-    -- Helper variables
     variable v_received_data : bitvis_vip_uart.vvc_cmd_pkg.t_vvc_result;
-    variable i               : natural;
     variable v_cmd_idx       : natural;
     variable v_is_ok         : boolean;
     variable v_timestamp     : time;
     variable v_timeout       : time;
+    variable v_alert_level   : t_alert_level;
 
-    variable v_alert_num_mismatch : boolean := false;
+    -- DUT ports towards VVC interface
+    alias dut_tx is << signal i_test_harness.i_uart.tx : std_logic >>;
+
+    -- Toggles all the signals in the VVC interface and checks that the expected alerts are generated
+    procedure toggle_vvc_if (
+      constant alert_level : in t_alert_level
+    ) is
+      variable v_num_expected_alerts : natural;
+      variable v_rand                : t_rand;
+    begin
+      -- Number of total expected alerts: 1 signal x 1 toggle
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, 2);
+      end if;
+      -- Force new value
+      v_num_expected_alerts := get_alert_counter(alert_level);
+      dut_tx <= force not dut_tx;
+      wait for v_rand.rand(ONLY, (C_LOG_TIME_BASE, C_LOG_TIME_BASE * 5, C_LOG_TIME_BASE * 10)); -- Hold the value a random time
+      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                               v_num_expected_alerts + 1;
+      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+      -- Set back original value
+      v_num_expected_alerts := get_alert_counter(alert_level);
+      dut_tx <= release;
+      wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+      v_num_expected_alerts := 0 when alert_level = NO_ALERT else
+                               v_num_expected_alerts + 1;
+      check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+    end procedure;
 
   begin
     -- To avoid that log files from different test cases (run in separate
@@ -83,10 +110,6 @@ begin
 
     await_uvvm_initialization(VOID);
 
-    set_alert_stop_limit(ERROR, 0);
-    set_alert_stop_limit(TB_ERROR, 6);
-    set_alert_stop_limit(FAILURE, 2);
-
     -- Print the configuration to the log
     report_global_ctrl(VOID);
     report_msg_id_panel(VOID);
@@ -94,6 +117,7 @@ begin
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
+    enable_log_msg(ID_UTIL_SETUP);
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
     enable_log_msg(SBI_VVCT, 1, ID_BFM);
@@ -255,7 +279,7 @@ begin
     log("Test detection of parity error");
     -- Configure VVC to expect the opposite parity
     shared_uart_vvc_config(RX, 1).bfm_config.parity := PARITY_EVEN;
-    increment_expected_alerts(ERROR);
+    increment_expected_alerts_and_stop_limit(ERROR);
 
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"56", "TX_DATA");
     uart_expect(UART_VVCT, 1, RX, x"56", "Expecting TX data");
@@ -281,7 +305,7 @@ begin
     ------------------------------------------------------------
 
     log("Testing uart_expect with wrong data and one occurence. The wrong data received shall be printed in error message when only expecting one occurance.");
-    increment_expected_alerts(ERROR);
+    increment_expected_alerts_and_stop_limit(ERROR);
     uart_expect(UART_VVCT, 1, RX, x"32", "Provoking failure by expecting wrong data.", 1, 0 ns, ERROR);
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"31", "TX_DATA");
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD * 2);
@@ -289,26 +313,30 @@ begin
     wait for 10 * C_BIT_PERIOD;         -- margin
 
     log("Testing uart_expect with too many occurrences before expected data");
-    increment_expected_alerts(ERROR);
+    increment_expected_alerts_and_stop_limit(ERROR);
     uart_expect(UART_VVCT, 1, RX, x"42", "Provoking failure due to too many occurrences before expected data", 2, 0 ns, ERROR);
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"ab", "TX_DATA");
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"ee", "TX_DATA");
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"42", "TX_DATA");
+    shared_uart_vvc_config(RX, 1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to activity on RX after timeout
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD * 4);
     await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD * 4);
     wait for 10 * C_BIT_PERIOD;         -- margin
+    shared_uart_vvc_config(RX, 1).unwanted_activity_severity := C_UART_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
 
     log("Testing uart_expect with delay and timeout error");
-    increment_expected_alerts(ERROR);   -- Will result in failure ERROR in uart_expect()
+    increment_expected_alerts_and_stop_limit(ERROR);   -- Will result in failure ERROR in uart_expect()
     uart_expect(UART_VVCT, 1, RX, x"af", "Provoking failure due to timeout", 0, 4000 ns);
     wait for 6000 ns;
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"af", "TX_DATA");
+    shared_uart_vvc_config(RX, 1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to activity on RX after timeout
     await_completion(UART_VVCT, 1, RX, 10000 ns);
     await_completion(SBI_VVCT, 1, 10000 ns);
     wait for 10 * C_BIT_PERIOD;         -- margin
+    shared_uart_vvc_config(RX, 1).unwanted_activity_severity := C_UART_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
 
     log("Testing error due to timeout=0 and max_receptions=0");
-    increment_expected_alerts(ERROR);
+    increment_expected_alerts_and_stop_limit(ERROR);
     uart_expect(UART_VVCT, 1, RX, x"01", "Provoking failure due to timeout", 0, 0 ns, ERROR);
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"01", "TX_DATA"); -- resetting
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
@@ -324,8 +352,10 @@ begin
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"aa", "TX_DATA");
     await_completion(SBI_VVCT, 1, 50 * C_BIT_PERIOD);
     terminate_current_command(UART_VVCT, 1, RX);
+    shared_uart_vvc_config(RX, 1).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to activity on RX after terminate command
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
     wait for 100 * C_BIT_PERIOD;        -- margin
+    shared_uart_vvc_config(RX, 1).unwanted_activity_severity := C_UART_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
 
     log("Check that terminate flag has been reset");
     sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "TX_DATA");
@@ -337,8 +367,10 @@ begin
     log(ID_LOG_HDR, "Check that commands are distributed to the correct VVC channel");
     -- Calling an invalid channel will yield a TB_WARNING from each of the UART channels
     increment_expected_alerts(TB_WARNING, 4);
+    -- We will also get another TB_WARNING from the timeout, related to having more decimals in the log time than we can display
+    increment_expected_alerts(TB_WARNING, 1);
     -- Calling an invalid channel will also cause a timeout, since the target VVC does not exist. This results in an ERROR
-    increment_expected_alerts(TB_ERROR, 4);
+    increment_expected_alerts_and_stop_limit(TB_ERROR, 4);
     insert_delay(UART_VVCT, 1, C_BIT_PERIOD, "Inserting delay without specifying UART channel, expecting tb warning and tb error");
     insert_delay(UART_VVCT, 1, NA, C_BIT_PERIOD, "Inserting delay on NA UART channel, expecting tb warning and tb error");
     insert_delay(UART_VVCT, 5, TX, C_BIT_PERIOD, "Inserting delay on UART 5 TX channel, expecting tb error");
@@ -424,13 +456,43 @@ begin
     v_timeout                                        := v_timeout;
     log("Setting config.timeout to transfer time (" & to_string(v_timeout) & "). Expecting TB_ERROR from BFM and ERROR from VVC.");
     shared_uart_vvc_config(RX, 1).bfm_config.timeout := v_timeout;
-    increment_expected_alerts(TB_ERROR);
-    increment_expected_alerts(ERROR);
+    increment_expected_alerts_and_stop_limit(TB_ERROR);
+    increment_expected_alerts_and_stop_limit(ERROR);
     uart_receive(UART_VVCT, 1, RX, "Receive inside VVC", ERROR);
     await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
 
     -- Cleanup after test
     shared_uart_vvc_config(RX, 1).bfm_config.timeout := 0 ns;
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Testing Unwanted Activity Detection in VVC", C_SCOPE);
+    ------------------------------------------------------------------------------------------------------------------------------
+    for i in 0 to 2 loop
+      -- Test different alert severity configurations
+      if i = 0 then
+        v_alert_level := C_UART_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+      elsif i = 1 then
+        v_alert_level := FAILURE;
+      else
+        v_alert_level := NO_ALERT;
+      end if;
+      log(ID_SEQUENCER, "Setting unwanted_activity_severity to " & to_upper(to_string(v_alert_level)), C_SCOPE);
+      shared_uart_vvc_config(RX, 1).unwanted_activity_severity := v_alert_level;
+
+      log(ID_SEQUENCER, "Testing normal data transmission", C_SCOPE);
+      sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "Transmit data");
+      uart_expect(UART_VVCT, 1, RX, x"55", "Expect data");
+      await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+
+      -- Test with and without a time gap between await_completion and unexpected data transmission
+      if i = 0 then
+        log(ID_SEQUENCER, "Wait 100 ns", C_SCOPE);
+        wait for 100 ns;
+      end if;
+
+      log(ID_SEQUENCER, "Testing unexpected data transmission", C_SCOPE);
+      toggle_vvc_if(v_alert_level);
+    end loop;
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

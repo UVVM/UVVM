@@ -8,6 +8,7 @@ Released: 202X-XX-XX
 - Added ti_vvc_framework_context.vhd to compile_order.txt
 - Added completion detection functionality to wait for all the VVCs to be inactive with no pending commands to be executed, and
   for all the enabled scoreboards to be empty: await_uvvm_completion().
+- Updated vvc_generator.py to add unwanted activity detection.
 
 v2.12.6
 ----------

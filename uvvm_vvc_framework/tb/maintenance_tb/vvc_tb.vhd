@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -219,6 +219,8 @@ begin
 
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
+
+    shared_uart_vvc_config(RX, 3).unwanted_activity_severity  := NO_ALERT; -- Unwanted activity errors due to transmission without receive commands
 
     log(ID_LOG_HDR, "Starting simulation using several sequencers", C_SCOPE_MAIN);
     enable_log_msg(ALL_MESSAGES, scope => C_SCOPE_MAIN);

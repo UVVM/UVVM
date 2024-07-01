@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -75,7 +75,7 @@ package adaptations_pkg is
   -- NOTE: Do not enter new IDs without proper evaluation:
   --       1. Is it - or could it be covered by an existing ID
   --       2. Could it be combined with other needs for a more general new ID
-  --       Feel free to suggest new ID for future versions of UVVM Utility Library (support@bitvis.no)
+  --       Feel free to suggest new ID for future versions of UVVM Utility Library (info@uvvm.org)
   --------------------------------------------------------------------------------------------------------------------------------
   type t_msg_id is (
     -- Bitvis utility methods
@@ -348,6 +348,11 @@ package adaptations_pkg is
   constant C_MAX_VVC_INSTANCE_NUM                  : natural       := 10; -- May be overwritten for dedicated VVCs using constants below
   constant C_MAX_NUM_SEQUENCERS                    : natural       := 10; -- Max number of sequencers
   constant C_MAX_TB_VVC_NUM                        : natural       := 20; -- Max number of VVCs in testbench (including all channels)
+
+  -- Default severity for the unwanted activity detection.
+  -- All VVCs have the unwanted activity detection enabled (ERROR) by default, except:
+  -- For GPIO VVC, the unwanted activity detection is disabled (NO_ALERT) by default. See constant C_GPIO_VVC_CONFIG_DEFAULT in the GPIO VVC methods package.
+  constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
 
   -- Maximum allowed length of VVC names
   constant C_MAX_VVC_NAME_LENGTH : positive := 20;

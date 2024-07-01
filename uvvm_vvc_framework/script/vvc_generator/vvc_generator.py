@@ -1,5 +1,5 @@
 # ================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -11,7 +11,7 @@
 # --------------------------------------------------------------------------------------------------------------------------------
 
 __author__ = 'UVVM'
-__copyright__ = "Copyright 2020, UVVM"
+__copyright__ = "Copyright 2024, UVVM"
 __version__ = "1.1.2"
 __email__ = "info@uvvm.org"
 
@@ -21,7 +21,8 @@ division_line = "--=============================================================
 
 extended_features = {"scoreboard": False,
                      "transaction_pkg": False,
-                     "transaction_info": False}
+                     "transaction_info": False,
+                     "unwanted_activity": False}
 
 
 class Channel:
@@ -110,6 +111,8 @@ def get_generating_level():
         if get_user_input("\rAdd transaction info to VVC? [y/n]: ") == 'y':
             selected_features["transaction_pkg"] = True
             selected_features["transaction_info"] = True
+        if get_user_input("\rAdd unwanted activity detection to VVC? [y/n]: ") == 'y':
+            selected_features["unwanted_activity"] = True
 
     return selected_features
 
@@ -425,6 +428,9 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, n
             file_handle.write("  signal last_" + vvc_channel.executor_names[i] + "_idx_executed  : natural := 0;\n")
 
     file_handle.write("  signal terminate_current_cmd  : t_flag_record;\n")
+    if features["unwanted_activity"]:
+        file_handle.write("  --<USER_INPUT> Uncomment if the VVC has a valid signal, e.g. tvalid in AXI-Stream\n")
+        file_handle.write("  -- signal clock_period           : time;\n")
     print_linefeed(file_handle)
     file_handle.write("  -- Instantiation of the element dedicated executor\n")
     file_handle.write("  shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;\n")
@@ -1024,6 +1030,86 @@ def add_vvc_terminator(file_handle):
     print_linefeed(file_handle)
 
 
+def add_clock_period(file_handle):
+    file_handle.write(division_line + "\n")
+    file_handle.write("-- Clock period\n")
+    file_handle.write("-- - Finds the clock period\n")
+    file_handle.write(division_line + "\n")
+    file_handle.write("  --<USER_INPUT> Uncomment if the VVC has a valid signal, e.g. tvalid in AXI-Stream\n")
+    file_handle.write("  -- p_clock_period : process\n")
+    file_handle.write("  -- begin\n")
+    file_handle.write("  --   wait until rising_edge(clk);\n")
+    file_handle.write("  --   clock_period <= now;\n")
+    file_handle.write("  --   wait until rising_edge(clk);\n")
+    file_handle.write("  --   clock_period <= now - clock_period;\n")
+    file_handle.write("  --   wait;\n")
+    file_handle.write("  -- end process;\n")
+    file_handle.write(division_line + "\n")
+    print_linefeed(file_handle)
+    print_linefeed(file_handle)
+
+
+def add_unwanted_activity_detection(file_handle, vvc_name, vvc_channel):
+    file_handle.write(division_line + "\n")
+    file_handle.write("-- Unwanted activity detection\n")
+    file_handle.write("-- - Monitors unwanted activity from the DUT\n")
+    file_handle.write(division_line + "\n")
+    file_handle.write("  p_unwanted_activity : process\n")
+    file_handle.write("  begin\n")
+    file_handle.write("    -- Add a delay to avoid detecting the first transition from the undefined value to initial value\n") 
+    file_handle.write("    wait for std.env.resolution_limit;\n")
+    print_linefeed(file_handle)
+    file_handle.write("    loop\n")
+    file_handle.write("      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register\n")
+    file_handle.write("      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then\n")
+    file_handle.write("        -- Wait until the vvc is inactive\n")
+    file_handle.write("        loop\n")
+    file_handle.write("          wait on global_trigger_vvc_activity_register;\n")
+    file_handle.write("          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then\n")
+    file_handle.write("            exit;\n")
+    file_handle.write("          end if;\n")
+    file_handle.write("        end loop;\n")
+    file_handle.write("      end if;\n")
+    print_linefeed(file_handle)
+    file_handle.write("      --<USER_INPUT> Insert all DUT outputs to be monitored in the Wait On statement, except ready signal\n")
+    file_handle.write("      -- Note: ready signal, e.g. tready in AXI-Stream, shall not be monitored when the VVC is a master VVC\n")
+    file_handle.write("      -- Example:\n")
+    if vvc_channel != "NA":
+        file_handle.write("      -- wait on t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid, t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data, global_trigger_vvc_activity_register;\n")
+    else:
+        file_handle.write("      -- wait on t_" + vvc_name.lower() + "_if.valid, t_" + vvc_name.lower() + "_if.data, global_trigger_vvc_activity_register;\n")
+    print_linefeed(file_handle)
+    file_handle.write("      -- Check the changes on the DUT outputs only when the vvc is inactive\n")
+    file_handle.write("      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then\n")
+    file_handle.write("        --<USER_INPUT> Use the check_value() method to check the changes on the DUT outputs\n")
+    file_handle.write("        -- Example:\n")
+    if vvc_channel != "NA":
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.last'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on last\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+    else:
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_if.last'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on last\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+    print_linefeed(file_handle)
+    file_handle.write("        -- Note: Use the following example instead if the interface has a valid signal, e.g. tvalid in AXI-Stream\n")
+    file_handle.write("        -- Example:\n")
+    file_handle.write("        -- Skip checking the changes if the valid signal goes low within one clock period after the VVC becomes inactive\n")
+    if vvc_channel != "NA":
+        file_handle.write("        -- if not (falling_edge(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on valid\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+    else:
+        file_handle.write("        -- if not (falling_edge(" + vvc_name.lower() + "_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_if.valid'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on valid\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+    file_handle.write("        -- end if;\n")
+    file_handle.write("      end if;\n")
+    file_handle.write("    end loop;\n")
+    file_handle.write("  end process p_unwanted_activity;\n")
+    file_handle.write(division_line + "\n")
+    print_linefeed(file_handle)
+    print_linefeed(file_handle)
+
+
 def add_end_of_architecture(file_handle):
     file_handle.write("end behave;\n")
     print_linefeed(file_handle)
@@ -1299,6 +1385,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    result_queue_count_threshold_severity : t_alert_level;\n")
     file_handle.write("    bfm_config                            : t_" + vvc_name.lower() + "_bfm_config; -- Configuration for the BFM. See BFM quick reference.\n")
     file_handle.write("    msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel.\n")
+    file_handle.write("    unwanted_activity_severity            : t_alert_level;     -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected.\n")
     file_handle.write("  end record;\n")
     print_linefeed(file_handle)
     if vvc_channels.__len__() == 1:
@@ -1315,7 +1402,8 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,\n")
     file_handle.write("    result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,\n")
     file_handle.write("    bfm_config                            => C_" + vvc_name.upper() + "_BFM_CONFIG_DEFAULT,\n")
-    file_handle.write("    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT\n")
+    file_handle.write("    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,\n")
+    file_handle.write("    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
     file_handle.write("  type t_vvc_status is record\n")
@@ -1957,6 +2045,9 @@ def generate_vvc_file(vvc_name, vvc_channels, features):
                 add_vvc_pipeline_step(f, vvc_name, channel.executor_names[i], features)
 
         add_vvc_terminator(f)
+        if features["unwanted_activity"]:
+            add_clock_period(f)
+            add_unwanted_activity_detection(f, vvc_name, channel.name)
         add_end_of_architecture(f)
 
         f.close()

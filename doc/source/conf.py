@@ -19,7 +19,7 @@ import os
 
 project = 'UVVM'
 author = 'UVVM'
-copyright = '2021, UVVM'
+copyright = '2024, UVVM'
 
 # The full version, including alpha/beta/rc tags
 def read_uvvm_version(fname):

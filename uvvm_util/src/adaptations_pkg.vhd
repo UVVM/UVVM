@@ -75,7 +75,7 @@ package adaptations_pkg is
   -- NOTE: Do not enter new IDs without proper evaluation:
   --       1. Is it - or could it be covered by an existing ID
   --       2. Could it be combined with other needs for a more general new ID
-  --       Feel free to suggest new ID for future versions of UVVM Utility Library (support@bitvis.no)
+  --       Feel free to suggest new ID for future versions of UVVM Utility Library (info@uvvm.org)
   --------------------------------------------------------------------------------------------------------------------------------
   type t_msg_id is (
     -- Bitvis utility methods

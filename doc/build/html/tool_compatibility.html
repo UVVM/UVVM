@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bitvis VIP AXI-Lite &mdash; UVVM  documentation</title>
+  <title>Tool Compatibility &mdash; UVVM  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,8 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bitvis VIP AXI-Stream" href="vip_axistream.html" />
-    <link rel="prev" title="Bitvis VIP AXI" href="vip_axi.html" /> 
+    <link rel="prev" title="Bitvis VIP Wishbone" href="vip_wishbone.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,11 +52,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP AXI-Lite</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI-Lite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI-Stream</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
@@ -73,7 +68,12 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tool Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ghdl">GHDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modelsim-questa">Modelsim / Questa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#riviera-pro">Riviera-PRO</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -90,9 +90,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Bitvis VIP AXI-Lite</li>
+      <li>Tool Compatibility</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/vip_axilite.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/tool_compatibility.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -100,22 +100,71 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="bitvis-vip-axi-lite">
-<h1>Bitvis VIP AXI-Lite<a class="headerlink" href="#bitvis-vip-axi-lite" title="Permalink to this headline"></a></h1>
-<section id="bfm">
-<span id="vip-axilite-bfm"></span><h2>BFM<a class="headerlink" href="#bfm" title="Permalink to this headline"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_axilite/doc/axilite_bfm_QuickRef.pdf">axilite_bfm_QuickRef.pdf</a></p>
-</section>
-<section id="vvc">
-<span id="vip-axilite-vvc"></span><h2>VVC<a class="headerlink" href="#vvc" title="Permalink to this headline"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_axilite/doc/axilite_vvc_QuickRef.pdf">axilite_vvc_QuickRef.pdf</a></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
-not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the
-authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
-otherwise, arising from, out of or in connection with this IP.</p>
+  <section id="tool-compatibility">
+<span id="id1"></span><h1>Tool Compatibility<a class="headerlink" href="#tool-compatibility" title="Permalink to this headline"></a></h1>
+<p>This section presents an overview of known issues with different simulators.</p>
+<section id="ghdl">
+<h2>GHDL<a class="headerlink" href="#ghdl" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>AXI-Stream: GHDL crashes due to a memory allocation error when instantiating an AXI-Stream VVC.</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Detected in version</p></th>
+<th class="head"><p>Fixed in</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">GHDL 5.0.0-dev (4.0.0.r24.g14b411c57)</div>
+<div class="line">UVVM v2 2024.03.08</div>
 </div>
+</td>
+<td></td>
+<td><p>Workaround in UVVM v2 2024.07.03</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="modelsim-questa">
+<h2>Modelsim / Questa<a class="headerlink" href="#modelsim-questa" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>Functional Coverage: Using sample_coverage() with transition bins can cause a false match.</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Detected in version</p></th>
+<th class="head"><p>Fixed in</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Modelsim PE 2023.1</p></td>
+<td><p>Modelsim PE 2024.2</p></td>
+<td><p>Workaround in UVVM v2 2024.03.08</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Questa Sim version 19.2 and Modelsim version 19.2 have known bugs that might prevent UVVM from working properly.</p></li>
+</ul>
+</section>
+<section id="riviera-pro">
+<h2>Riviera-PRO<a class="headerlink" href="#riviera-pro" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>.</p></li>
+</ul>
 </section>
 </section>
 
@@ -123,8 +172,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="vip_axi.html" class="btn btn-neutral float-left" title="Bitvis VIP AXI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="vip_axistream.html" class="btn btn-neutral float-right" title="Bitvis VIP AXI-Stream" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="vip_wishbone.html" class="btn btn-neutral float-left" title="Bitvis VIP Wishbone" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

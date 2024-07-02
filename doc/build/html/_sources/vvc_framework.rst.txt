@@ -786,6 +786,80 @@ of expected VVCs registered in the VVC activity register but will not have any e
     p_activity_watchdog:
         activity_watchdog(num_exp_vvc => 3, timeout => C_ACTIVITY_WATCHDOG_TIMEOUT);
 
+.. _vvc_framework_unwanted_activity:
+
+Unwanted Activity Detection
+==================================================================================================================================
+The UVVM VVCs support detection of unwanted or unexpected activity from the DUT. This mechanism will give an alert if the DUT 
+generates any unexpected bus activity. It assures that no data is output from the DUT when it is not expected, 
+e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, they start to monitor continuously on the 
+DUT outputs. When unwanted activity is detected, the VVCs issue an alert of severity.
+
+All VVC method packages contain a configuration in the t_vvc_config type for setting the severity level for alerting unwanted 
+activity. The default value for this configuration is set to ERROR in the adaptations_pkg.vhd, e.g. ::
+
+    constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
+
+The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be 
+changed to a different value. To disable this feature in the testbench, e.g. for UART VVC: ::
+
+    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+
+If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted activity detection 
+will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be 
+initiated from I2C slave VVC 2 and 3.
+
+.. figure:: /images/vvc_framework/multiple_slave_VVCs_example.png
+   :alt: False unwanted activity detection
+   :width: 550pt
+   :align: center
+
+   Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT
+
+In order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive VVCs 
+as shown below example. Note that the unwanted activity detection must be enabled again after the data transfer is complete.
+
+.. code-block::
+
+    -- Example:
+    -- Expect data on I2C slave VVC 1.
+    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 1, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 1, 50 ms);
+    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
+
+    -- Expect data on I2C slave VVC 2
+    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 2, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 2, 50 ms);
+    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
+
+    -- Expect data on I2C slave VVC 3
+    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 3, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 3, 50 ms);
+    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
+
+For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.
+
+.. note::
+
+    * For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period 
+      after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge, 
+      causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more infomation.
+    * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the 
+      VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to 
+      differenciate between the unwanted activity and intended activity. See each VVC QuickRef for more information.
+
 .. _vvc_framework_transaction_info:
 
 Distribution of Transaction Info - From VVCs and/or Monitors
@@ -812,11 +886,11 @@ UART TX register, and then it must be checked that the data byte is transmitted 
     a. A simple testbench approach could be to have the test sequencer also telling the receiving UART BFM or VVC exactly what to 
        expect. This is a straightforward approach, but requires more action and data control inside the test sequencer. This could 
        of course all be handled in a super-procedure, but for any undetermined behaviour inside the BFM or VVC, like random data 
-       generation or error injection, that would not work. See Figure 2.
+       generation or error injection, that would not work. See Figure 3.
     b. A more advanced approach is to have a model overlooking the DUT accesses, generate the expected data and tell the receiving 
-       BFM or VVC to check for that data. See Figure 3.
+       BFM or VVC to check for that data. See Figure 4.
     c. An even more advanced approach would be to use a Scoreboard to check received data (from DUT via VVC) against expected data 
-       from a model. See Figure 4.
+       from a model. See Figure 5.
 
 However, for the two latter approaches the model needs information about exactly what happened (the transaction) on the various 
 DUT interfaces, so that it can generate the correct expected data. For the model it doesn’t matter if the transaction info comes 
@@ -835,19 +909,19 @@ simulation transcripts.
            :alt: Direct transaction transfer A
            :align: center
 
-           Figure 2 Distribution of Transaction Info Approach A
+           Figure 3 Distribution of Transaction Info Approach A
 
       - .. figure:: /images/vvc_framework/direct_transaction_transfer_example_B.png
            :alt: Direct transaction transfer B
            :align: center
 
-           Figure 3 Distribution of Transaction Info Approach B
+           Figure 4 Distribution of Transaction Info Approach B
 
       - .. figure:: /images/vvc_framework/direct_transaction_transfer_example_C.png
            :alt: Direct transaction transfer C
            :align: center
 
-           Figure 4 Distribution of Transaction Info Approach C
+           Figure 5 Distribution of Transaction Info Approach C
 
 .. _vvc_framework_transaction_info_definitions:
 
@@ -1124,13 +1198,13 @@ involves the following 3 steps:
     #. Decode the base transaction info operation.
     #. Execute wanted operation from the obtained transaction info.
 
-A simple VVC Scoreboard Support process is presented in Figure 5, demonstrating how VVC scoreboard actions can be accomplished 
-using transaction info and a stand-alone process when not performed by a VVC. The same approach is shown in Figure 6 with a simple 
+A simple VVC Scoreboard Support process is presented in Figure 6, demonstrating how VVC scoreboard actions can be accomplished 
+using transaction info and a stand-alone process when not performed by a VVC. The same approach is shown in Figure 7 with a simple 
 DUT Model process, demonstrating how DUT modelling can be accomplished using transaction info and a stand-alone process. Note that 
-Figure 5 uses aliasing to simplify and improve code readability, while Figure 6 uses full transaction info names.
+Figure 6 uses aliasing to simplify and improve code readability, while Figure 7 uses full transaction info names.
 
 .. code-block::
-    :caption: Figure 5 VVC Scoreboard Support – with aliasing
+    :caption: Figure 6 VVC Scoreboard Support – with aliasing
 
     p_vvc_sb_support : process
       -- transaction info handles
@@ -1163,12 +1237,12 @@ Figure 5 uses aliasing to simplify and improve code readability, while Figure 6 
       end loop;
     end process p_vvc_sb_support;
 
-Figure 5 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in 
+Figure 6 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in 
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>`. For simple scoreboard elements, such as std_logic_vector, 
 these scoreboard approaches are already performed by the VVCs.
 
 .. code-block::
-    :caption: Figure 6 DUT Model – no aliasing
+    :caption: Figure 7 DUT Model – no aliasing
 
     p_dut_model : process
     begin
@@ -1192,7 +1266,7 @@ these scoreboard approaches are already performed by the VVCs.
       end loop;
     end process p_dut_model;
 
-Figure 6 demonstrates the setup of a DUT Model process that operates with the 3 steps listed in 
+Figure 7 demonstrates the setup of a DUT Model process that operates with the 3 steps listed in 
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>`. For simple scoreboard elements, such as std_logic_vector, 
 these scoreboard approaches are already performed by the VVCs.
 
@@ -1200,11 +1274,11 @@ Complex Protocols
 ^^^^^^^^^^^^^^^^^
 For scoreboards with complex protocols, e.g. AXI Stream and Avalon ST, the same approach as listed in 
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>` applies. The only difference is that the scoreboard 
-element is of a more complex type, i.e. a record element. Figure 7 demonstrates a VVC scoreboard support approach using a complex 
+element is of a more complex type, i.e. a record element. Figure 8 demonstrates a VVC scoreboard support approach using a complex 
 record element.
 
 .. code-block::
-    :caption: Figure 7 VVC Scoreboard Support – complex scoreboard element
+    :caption: Figure 8 VVC Scoreboard Support – complex scoreboard element
 
     -- define complex Avalon ST scoreboard type
     type t_avalon_st_element is record
@@ -1253,7 +1327,7 @@ record element.
       end loop;
     end process p_vvc_sb_support;
 
-Figure 7 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in 
+Figure 8 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in 
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>`. For complex scoreboard elements, such as records, the 
 scoreboard package declaration, defining the shared variable and scoreboard approaches have to be performed outside the VVC.
 
@@ -1638,14 +1712,14 @@ connected to the DUT.
 The HVVC-to-VVC Bridge is the connection between a hierarchical VVC (HVVC) and the VVC at a lower protocol level, in this context 
 referred to only as the VVC. Communications between the HVVC and VVC is handled by the HVVC-to-VVC Bridge. Data is transferred 
 between the HVVC and HVVC-to-VVC Bridge on a common interface and converted in the HVVC-to-VVC Bridge to/from the specific 
-interface of the VVC used. An example of this concept used on Ethernet is seen in Figure 8.
+interface of the VVC used. An example of this concept used on Ethernet is seen in Figure 9.
 
 .. figure:: /images/vvc_framework/hvvc_to_vvc_bridge.png
    :alt: HVVC-to-VVC Bridge
    :width: 550pt
    :align: center
 
-   Figure 8 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC
+   Figure 9 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC
 
 HVVC usage
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1921,8 +1995,10 @@ the VVC/BFM configuration will differ for each VVC. The record contents are:
     * inter_bfm_delay: A record containing the potential inter-bfm delay specifications, e.g. if BFM accesses shall be separated 
       with a given time.
     * cmd_queue_count_*: Command queue specifications.
-    * msg_id_panel: The ID panel that the VVC shall use.
+    * result_queue_count_*: Result queue specifications.
     * bfm_config: A record containing all settings for the BFM, e.g. clock periods, message IDs etc.
+    * msg_id_panel: The ID panel that the VVC shall use.
+    * unwanted_activity_severity: Severity of alert for the unwanted activity detection.
 
 | A constant C_<name>_VVC_CONFIG_DEFAULT is defined for this type to use as default value.
 | A shared variable array of t_vvc_config *shared_<name>_vvc_config* is declared and all elements are set to the default value.

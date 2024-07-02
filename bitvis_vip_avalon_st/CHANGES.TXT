@@ -4,7 +4,7 @@ Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 
 v3.0.0
 ----------
-Released: 2024-XX-XX
+Released: 2024-07-03
 - Changed max constants used in BFM and VVC to be adjustable from adaptations_pkg.
 - Removed local_adaptations_pkg and moved content to adaptations_pkg.
 - Added an individual constant to configure the VVC max instance number from adaptations_pkg.

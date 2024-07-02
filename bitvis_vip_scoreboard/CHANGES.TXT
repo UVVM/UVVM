@@ -4,7 +4,7 @@ Bitvis VIP Scoreboard - Overview on Versions and Changes
 
 v2.3.2
 ----------
-Released: 2024-XX-XX
+Released: 2024-07-03
 - Updated documentation to mention in every method that instance 1 is used as default.
 
 v2.3.1

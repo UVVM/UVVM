@@ -1,0 +1,509 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.(uvvm)                  Starting testcase: await_stable_default_alert
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Verifying await_stable with default alert level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                        50.0 ns  TB seq.(uvvm)                  await_stable(boolean, 50 ns, 51 ns) => OK. Condition occurred after 50 ns. 'bool: No 'event,
+UVVM:                                                                           Stable FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                       130.0 ns  TB seq.(uvvm)                  await_stable(boolean, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'bool: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
+UVVM: ID_UTIL_SETUP                    130.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:           160 ns   TB seq.(uvvm)
+UVVM:                    await_stable(boolean, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last event
+UVVM:                    = 0 ns. 'bool: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    160.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:           160 ns   TB seq.(uvvm)
+UVVM:                    await_stable(boolean, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'bool: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       160.0 ns  TB seq.(uvvm)                  await_stable(boolean, 0 ns, 0 ns) => OK. Condition occurred immediately. 'bool: stable for 0
+UVVM:                                                                           ns, FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                       210.0 ns  TB seq.(uvvm)                  await_stable(boolean, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'bool: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                       260.0 ns  TB seq.(uvvm)                  await_stable(boolean, 50 ns, 100 ns) => OK. Condition occurred immediately. 'bool: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                       280.0 ns  TB seq.(uvvm)                  await_stable(boolean, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'bool: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
+UVVM: ID_UTIL_SETUP                    290.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:           300 ns   TB seq.(uvvm)
+UVVM:                    await_stable(boolean, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last event
+UVVM:                    = 0 ns. 'bool: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    400.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #4  ***
+UVVM:           400 ns   TB seq.(uvvm)
+UVVM:                    await_stable(boolean, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'bool: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       550.0 ns  TB seq.(uvvm)                  await_stable(boolean, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'bool: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                       600.0 ns  TB seq.(uvvm)                  await_stable(boolean, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'bool: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                       650.0 ns  TB seq.(uvvm)                  await_stable(boolean, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'bool: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_UTIL_SETUP                    660.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #5  ***
+UVVM:           660 ns   TB seq.(uvvm)
+UVVM:                    await_stable(boolean, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'bool: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       710.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'sl: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                       790.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'sl: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
+UVVM: ID_UTIL_SETUP                    790.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #6  ***
+UVVM:           820 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last
+UVVM:                    event = 0 ns. 'sl: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    820.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #7  ***
+UVVM:           820 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'sl: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       820.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 0 ns, 0 ns) => OK. Condition occurred immediately. 'sl: stable for 0
+UVVM:                                                                           ns, FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                       870.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                       920.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred immediately. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                       940.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
+UVVM: ID_UTIL_SETUP                    950.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #8  ***
+UVVM:           960 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last
+UVVM:                    event = 0 ns. 'sl: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   1060.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #9  ***
+UVVM:          1060 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'sl: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      1210.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'sl: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      1260.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      1310.0 ns  TB seq.(uvvm)                  await_stable(std_logic, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'sl: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_UTIL_SETUP                   1320.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #10  ***
+UVVM:          1320 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'sl: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      1370.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'slv8:
+UVVM:                                                                           Stable FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      1450.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'slv8:
+UVVM:                                                                           Stable FROM_NOW, FROM_NOW, OK after 80 ns'
+UVVM: ID_UTIL_SETUP                   1450.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #11  ***
+UVVM:          1480 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic_vector, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since
+UVVM:                    last event = 0 ns. 'slv8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   1480.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #12  ***
+UVVM:          1480 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic_vector, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'slv8: Timeout
+UVVM:                    before stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      1480.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 0 ns, 0 ns) => OK. Condition occurred immediately. 'slv8: stable
+UVVM:                                                                           for 0 ns, FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      1530.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      1580.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred immediately. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta
+UVVM:                                                                           cycle)'
+UVVM: ID_POS_ACK                      1600.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
+UVVM: ID_UTIL_SETUP                   1610.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #13  ***
+UVVM:          1620 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic_vector, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since
+UVVM:                    last event = 0 ns. 'slv8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   1720.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #14  ***
+UVVM:          1720 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic_vector, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'slv8:
+UVVM:                    FROM_NOW, FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      1870.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'slv8:
+UVVM:                                                                           FROM_NOW, FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      1920.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      1970.0 ns  TB seq.(uvvm)                  await_stable(std_logic_vector, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'slv8:
+UVVM:                                                                           Stable FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_UTIL_SETUP                   1980.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #15  ***
+UVVM:          1980 ns   TB seq.(uvvm)
+UVVM:                    await_stable(std_logic_vector, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'slv8:
+UVVM:                    Stable FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      2030.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'uns8: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      2110.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'uns8: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
+UVVM: ID_UTIL_SETUP                   2110.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #16  ***
+UVVM:          2140 ns   TB seq.(uvvm)
+UVVM:                    await_stable(unsigned, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last
+UVVM:                    event = 0 ns. 'uns8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   2140.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #17  ***
+UVVM:          2140 ns   TB seq.(uvvm)
+UVVM:                    await_stable(unsigned, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'uns8: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      2140.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 0 ns, 0 ns) => OK. Condition occurred immediately. 'uns8: stable for 0
+UVVM:                                                                           ns, FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      2190.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'uns8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      2240.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred immediately. 'uns8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      2260.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'uns8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
+UVVM: ID_UTIL_SETUP                   2270.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #18  ***
+UVVM:          2280 ns   TB seq.(uvvm)
+UVVM:                    await_stable(unsigned, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last
+UVVM:                    event = 0 ns. 'uns8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   2380.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #19  ***
+UVVM:          2380 ns   TB seq.(uvvm)
+UVVM:                    await_stable(unsigned, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'uns8: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      2530.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'uns8: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      2580.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'uns8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      2630.0 ns  TB seq.(uvvm)                  await_stable(unsigned, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'uns8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_UTIL_SETUP                   2640.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #20  ***
+UVVM:          2640 ns   TB seq.(uvvm)
+UVVM:                    await_stable(unsigned, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'uns8: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      2690.0 ns  TB seq.(uvvm)                  await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'sig8: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      2770.0 ns  TB seq.(uvvm)                  await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'sig8: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
+UVVM: ID_UTIL_SETUP                   2770.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #21  ***
+UVVM:          2800 ns   TB seq.(uvvm)
+UVVM:                    await_stable(signed, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last event
+UVVM:                    = 0 ns. 'sig8: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   2800.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #22  ***
+UVVM:          2800 ns   TB seq.(uvvm)
+UVVM:                    await_stable(signed, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'sig8: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      2800.0 ns  TB seq.(uvvm)                  await_stable(signed, 0 ns, 0 ns) => OK. Condition occurred immediately. 'sig8: stable for 0 ns,
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      2850.0 ns  TB seq.(uvvm)                  await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'sig8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      2900.0 ns  TB seq.(uvvm)                  await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred immediately. 'sig8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      2920.0 ns  TB seq.(uvvm)                  await_stable(signed, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'sig8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
+UVVM: ID_UTIL_SETUP                   2930.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #23  ***
+UVVM:          2940 ns   TB seq.(uvvm)
+UVVM:                    await_stable(signed, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last event
+UVVM:                    = 0 ns. 'sig8: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   3040.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #24  ***
+UVVM:          3040 ns   TB seq.(uvvm)
+UVVM:                    await_stable(signed, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'sig8: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      3190.0 ns  TB seq.(uvvm)                  await_stable(signed, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'sig8: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      3240.0 ns  TB seq.(uvvm)                  await_stable(signed, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'sig8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      3290.0 ns  TB seq.(uvvm)                  await_stable(signed, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'sig8: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_UTIL_SETUP                   3300.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #25  ***
+UVVM:          3300 ns   TB seq.(uvvm)
+UVVM:                    await_stable(signed, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'sig8: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      3350.0 ns  TB seq.(uvvm)                  await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'int: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      3430.0 ns  TB seq.(uvvm)                  await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'int: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
+UVVM: ID_UTIL_SETUP                   3430.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #26  ***
+UVVM:          3460 ns   TB seq.(uvvm)
+UVVM:                    await_stable(integer, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last event
+UVVM:                    = 0 ns. 'int: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   3460.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #27  ***
+UVVM:          3460 ns   TB seq.(uvvm)
+UVVM:                    await_stable(integer, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'int: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      3460.0 ns  TB seq.(uvvm)                  await_stable(integer, 0 ns, 0 ns) => OK. Condition occurred immediately. 'int: stable for 0 ns,
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      3510.0 ns  TB seq.(uvvm)                  await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'int: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      3560.0 ns  TB seq.(uvvm)                  await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred immediately. 'int: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      3580.0 ns  TB seq.(uvvm)                  await_stable(integer, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'int: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
+UVVM: ID_UTIL_SETUP                   3590.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #28  ***
+UVVM:          3600 ns   TB seq.(uvvm)
+UVVM:                    await_stable(integer, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last event
+UVVM:                    = 0 ns. 'int: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   3700.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #29  ***
+UVVM:          3700 ns   TB seq.(uvvm)
+UVVM:                    await_stable(integer, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'int: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      3850.0 ns  TB seq.(uvvm)                  await_stable(integer, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'int: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      3900.0 ns  TB seq.(uvvm)                  await_stable(integer, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'int: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      3950.0 ns  TB seq.(uvvm)                  await_stable(integer, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'int: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_UTIL_SETUP                   3960.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #30  ***
+UVVM:          3960 ns   TB seq.(uvvm)
+UVVM:                    await_stable(integer, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'int: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      4010.0 ns  TB seq.(uvvm)                  await_stable(real, 50 ns, 100 ns) => OK. Condition occurred after 50 ns. 'real_a: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 50 ns'
+UVVM: ID_POS_ACK                      4090.0 ns  TB seq.(uvvm)                  await_stable(real, 50 ns, 100 ns) => OK. Condition occurred after 80 ns. 'real_a: Stable
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 80 ns'
+UVVM: ID_UTIL_SETUP                   4090.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #31  ***
+UVVM:          4120 ns   TB seq.(uvvm)
+UVVM:                    await_stable(real, 50 ns, 60 ns) => Failed. After 30 ns, stable for stable_req = 50 ns is not possible before timeout = 60 ns(time since last event =
+UVVM:                    0 ns. 'real_a: Not stable FROM_NOW, FROM_NOW, Fail after 30 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   4120.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #32  ***
+UVVM:          4120 ns   TB seq.(uvvm)
+UVVM:                    await_stable(real, 50 ns, 1 ns) => Failed immediately: Stable for stable_req = 50 ns is not possible before timeout = 1 ns. 'real_a: Timeout before
+UVVM:                    stable_req, FROM_NOW, FROM_NOW, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      4120.0 ns  TB seq.(uvvm)                  await_stable(real, 0 ns, 0 ns) => OK. Condition occurred immediately. 'real_a: stable for 0 ns,
+UVVM:                                                                           FROM_NOW, FROM_NOW, OK after 0 ns'
+UVVM: ID_POS_ACK                      4170.0 ns  TB seq.(uvvm)                  await_stable(real, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'real_a: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 40 ns'
+UVVM: ID_POS_ACK                      4220.0 ns  TB seq.(uvvm)                  await_stable(real, 50 ns, 100 ns) => OK. Condition occurred immediately. 'real_a: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK immediately (even though an event occurrs the next delta cycle)'
+UVVM: ID_POS_ACK                      4240.0 ns  TB seq.(uvvm)                  await_stable(real, 20 ns, 11 ns) => OK. Condition occurred after 9 ns. 'real_a: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_NOW, OK after 9 ns'
+UVVM: ID_UTIL_SETUP                   4250.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #33  ***
+UVVM:          4260 ns   TB seq.(uvvm)
+UVVM:                    await_stable(real, 21 ns, 20 ns) => Failed. After 10 ns, stable for stable_req = 21 ns is not possible before timeout = 20 ns(time since last event =
+UVVM:                    0 ns. 'real_a: Not stable FROM_LAST_EVENT, FROM_NOW, Fail after 10 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                   4360.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #34  ***
+UVVM:          4360 ns   TB seq.(uvvm)
+UVVM:                    await_stable(real, 40 ns, 100 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 0 ns. 'real_a: FROM_NOW,
+UVVM:                    FROM_LAST_EVENT, Fail immediately'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                      4510.0 ns  TB seq.(uvvm)                  await_stable(real, 40 ns, 150 ns) => OK. Condition occurred after 50 ns. 'real_a: FROM_NOW,
+UVVM:                                                                           FROM_LAST_EVENT, OK after 50 ns'
+UVVM: ID_POS_ACK                      4560.0 ns  TB seq.(uvvm)                  await_stable(real, 50 ns, 100 ns) => OK. Condition occurred after 40 ns. 'real_a: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_POS_ACK                      4610.0 ns  TB seq.(uvvm)                  await_stable(real, 50 ns, 50 ns) => OK. Condition occurred after 40 ns. 'real_a: Stable
+UVVM:                                                                           FROM_LAST_EVENT, FROM_LAST_EVENT, OK after 40 ns'
+UVVM: ID_UTIL_SETUP                   4620.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #35  ***
+UVVM:          4620 ns   TB seq.(uvvm)
+UVVM:                    await_stable(real, 50 ns, 49 ns) => Failed immediately: Stable for stable_req = 40 ns is not possible before timeout = 39 ns. 'real_a: Stable
+UVVM:                    FROM_LAST_EVENT, FROM_LAST_EVENT, FAIL after 39 ns'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :     35        35         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      5620.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -33,7 +33,7 @@ entity sbi_slave is
     sbi_wr     : in  std_logic;
     sbi_addr   : in  unsigned(GC_ADDR_WIDTH - 1 downto 0);
     sbi_wdata  : in  std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    sbi_rdata  : out std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
+    sbi_rdata  : out std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
     last_write : out std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
     data_in    : in  std_logic_vector(GC_DATA_WIDTH - 1 downto 0)
   );

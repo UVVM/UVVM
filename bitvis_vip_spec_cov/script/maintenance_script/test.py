@@ -8,10 +8,20 @@ from itertools import product
 try:
     from hdlregression import HDLRegression
 except:
-    print(
-        "Unable to import HDLRegression module. See HDLRegression documentation for installation instructions."
-    )
+    print("Unable to import HDLRegression module. See HDLRegression documentation for installation instructions.")
     sys.exit(1)
+
+def find_python3_executable():
+    python_executables = ["python3", "python"]
+
+    for executable in python_executables:
+        try:
+            output = (subprocess.check_output([executable, "--version"], stderr=subprocess.STDOUT).decode().strip())
+            if "Python 3" in output:
+                return executable
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            continue
+    return None
 
 
 def cleanup(msg="Cleaning up..."):
@@ -48,16 +58,13 @@ def test_clean_parameter():
     csv_file_subdir.close()
 
     try:
-        subprocess.run(["python3", "../script/run_spec_cov.py", "--clean"], check=True)
+        subprocess.run([find_python3_executable(), "../script/run_spec_cov.py", "--clean"], check=True)
     except subprocess.CalledProcessError as e:
         print("ERROR: Test of --clean parameter failed. %s" % (e))
         return 1
 
     try:
-        subprocess.run(
-            ["python3", "../script/run_spec_cov.py", "--clean", "./test_subdir"],
-            check=True,
-        )
+        subprocess.run([find_python3_executable(), "../script/run_spec_cov.py", "--clean", "./test_subdir"], check=True)
     except subprocess.CalledProcessError as e:
         print("ERROR: Cleaning test (specified dir) failed. %s" % (e))
         return 1
@@ -84,9 +91,6 @@ cleanup("Removing any previous runs.")
 
 hr = HDLRegression(simulator="modelsim")
 
-# Remove output files prior to sim
-hr.run_command("rm *.txt")
-
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
 hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
@@ -99,14 +103,12 @@ hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_spec_cov")
 hr.add_generics(
     entity="spec_cov_tb",
     generics=[
-        "GC_REQ_FILE",
-        ("../../tb/maintenance_tb/req_file.csv", "PATH"),
-        "GC_REQ_FILE_EMPTY",
-        ("../../tb/maintenance_tb/req_file_empty.csv", "PATH"),
-        "GC_SUB_REQ_FILE",
-        ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
-        "GC_REQ_OMIT_MAP",
-        ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH"),
+        "GC_REQ_FILE", ("../../tb/maintenance_tb/req_file.csv", "PATH"),
+        "GC_REQ_FILE_EMPTY", ("../../tb/maintenance_tb/req_file_empty.csv", "PATH"),
+        "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
+        "GC_UART_REQ_FILE", ("../../tb/maintenance_tb/uart_req_file.csv", "PATH"),
+        "GC_COMBI_REQ_FILE", ("../../tb/maintenance_tb/combi_req_file.csv", "PATH"),
+        "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")
     ],
 )
 
@@ -127,19 +129,40 @@ num_passing_tests = hr.get_num_pass_tests()
 num_failing_tests += errors
 
 # Check with golden reference
-(ret_txt, ret_code) = hr.run_command(
-    "python3 ../script/maintenance_script/maintenance_run_spec_cov.py"
-)
+(ret_txt, ret_code) = hr.run_command(find_python3_executable() + " ../script/maintenance_script/maintenance_run_spec_cov.py")
 
 if ret_code != 0:
     print(ret_txt)
     num_failing_tests += 1
 
+# Run demos
+print("Running demos...")
+
+# Basic demo
+(ret_txt, num_errors) = hr.run_command(
+    find_python3_executable() + " ../script/run_basic_demo.py")
+if num_errors != 0:
+    print("Basic demo failed")
+    print(ret_txt)
+    num_failing_tests += 1
+else:
+    print("Basic demo ok")
+
+# Advanced demo
+(ret_txt, num_errors) = hr.run_command(
+    find_python3_executable() + " ../script/run_advanced_demo.py")
+if num_errors != 0:
+    print("Advanced demo failed")
+    print(ret_txt)
+    num_failing_tests += 1
+else:
+    print("Advanced demo ok")
+
 # No tests run error
 if num_passing_tests == 0:
     sys.exit(1)
 # Remove output only if OK
-if hr.check_run_results(exp_fail=1) is True:
+if num_failing_tests == 0:
     cleanup("Removing simulation output")
 # Return number of failing tests
 sys.exit(num_failing_tests)

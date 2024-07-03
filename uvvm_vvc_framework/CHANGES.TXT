@@ -2,6 +2,14 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.7
+----------
+Released: 2024-07-03
+- Added ti_vvc_framework_context.vhd to compile_order.txt
+- Added completion detection functionality to wait for all the VVCs to be inactive with no pending commands to be executed, and
+  for all the enabled scoreboards to be empty: await_uvvm_completion().
+- Updated vvc_generator.py to add unwanted activity detection.
+
 v2.12.6
 ----------
 Released: 2024-03-08
@@ -14,6 +22,7 @@ Released: 2024-03-08
 - Updated vvc_generator.py to move sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
 - Updated vvc_generator.py generation of vvc_context file.
 - Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
+- Updated vvc_generator.py to use an individual constant to configure the VVC max instance number.
 
 v2.12.5
 ----------

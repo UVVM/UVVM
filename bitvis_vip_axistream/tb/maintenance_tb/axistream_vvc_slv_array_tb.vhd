@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -91,7 +91,7 @@ begin
   -----------------------------
   -- Instantiate Testharness
   -----------------------------
-  i_axistream_test_harness : entity bitvis_vip_axistream.test_harness(struct_vvc)
+  i_test_harness : entity work.axistream_th(struct_vvc)
     generic map(
       GC_DATA_WIDTH     => GC_DATA_WIDTH,
       GC_USER_WIDTH     => GC_USER_WIDTH,
@@ -422,23 +422,22 @@ begin
       variable v_short_byte_array    : t_slv_array(0 to num_bytes - 1)((num_bytes_in_word * C_BYTE) - 2 downto 0); -- size byte-1
       variable v_long_byte_array     : t_slv_array(0 to num_bytes - 1)((num_bytes_in_word * C_BYTE) downto 0); -- size byte+1
       variable v_normal_byte_array   : t_slv_array(0 to num_bytes - 1)((num_bytes_in_word * C_BYTE) - 1 downto 0); -- size byte
-      variable v_tb_alert_stop_limit : integer;
     begin
       for byte in 0 to num_bytes - 1 loop
         v_short_byte_array(byte)  := random(v_short_byte_array(0)'length);
         v_long_byte_array(byte)   := random(v_long_byte_array(0)'length);
         v_normal_byte_array(byte) := random(v_normal_byte_array(0)'length);
       end loop;
-      v_tb_alert_stop_limit := get_alert_stop_limit(TB_ERROR);
-      set_alert_stop_limit(TB_ERROR, v_tb_alert_stop_limit + 2);
       -- transmit data_array with short byte
-      increment_expected_alerts(TB_ERROR, 1);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       axistream_transmit(AXISTREAM_VVCT, 0, v_short_byte_array, user_array, "transmit, short byte"); -- expect TB_ERROR
       -- transmit data_array with long byte
-      increment_expected_alerts(TB_ERROR, 1);
+      increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       axistream_transmit(AXISTREAM_VVCT, 0, v_long_byte_array, user_array, "transmit, long byte"); -- expect TB_ERROR
       -- transmit data_array of bytes
       axistream_transmit(AXISTREAM_VVCT, 0, v_normal_byte_array, user_array, "transmit, normal byte"); -- expect no TB_ERROR
+      axistream_expect(AXISTREAM_VVCT, 1, v_normal_byte_array, user_array, "expect, normal byte", NO_ALERT);
+      await_completion(AXISTREAM_VVCT, 1, 1 ms);
     end procedure;
 
   begin
@@ -462,10 +461,11 @@ begin
     end if;
 
     -- Default: use same config for both the master and slave VVC
-    shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config := axistream_bfm_config; -- vvc_methods_pkg
-    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config  := axistream_bfm_config; -- vvc_methods_pkg
-    shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config  := axistream_bfm_config; -- vvc_methods_pkg
-    shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config   := axistream_bfm_config; -- vvc_methods_pkg
+    shared_axistream_vvc_config(C_FIFO2VVC_MASTER).bfm_config := axistream_bfm_config;
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).bfm_config  := axistream_bfm_config;
+    shared_axistream_vvc_config(C_VVC2VVC_MASTER).bfm_config  := axistream_bfm_config;
+    shared_axistream_vvc_config(C_VVC2VVC_SLAVE).bfm_config   := axistream_bfm_config;
+
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
@@ -475,7 +475,6 @@ begin
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
-    enable_log_msg(ID_BFM);
 
     disable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, ALL_MESSAGES);
     --enable_log_msg(AXISTREAM_VVCT, C_FIFO2VVC_MASTER, ID_BFM);
@@ -643,6 +642,7 @@ begin
     ------------------------------------------------------------
     log(ID_LOG_HDR, "TC: axistream transmit when tready=0 from DUT at start of transfer  ");
     ------------------------------------------------------------
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors due to transmit with inactive slave
     -- Fill DUT FIFO to provoke tready=0
     v_numBytes := 1;
     for i in 0 to GC_DUT_FIFO_DEPTH - 1 loop
@@ -651,6 +651,7 @@ begin
     end loop;
     await_completion(AXISTREAM_VVCT, 0, 1 ms);
     wait for 100 ns;
+    shared_axistream_vvc_config(C_FIFO2VVC_SLAVE).unwanted_activity_severity := C_AXISTREAM_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
 
     -- DUT FIFO is now full. Schedule the transmit which will wait for tready until DUT is read from later
     v_data_array_1_byte(0) := x"D0";

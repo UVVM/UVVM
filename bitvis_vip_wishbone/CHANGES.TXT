@@ -1,7 +1,21 @@
 Bitvis VIP Wishbone - Overview of Versions and Changes
 ==============================================================
 
-----------------------------------------------------------------------
+
+v0.1.5 BETA
+----------
+Released: 2024-07-03
+- Changed max constants used in VVC to be adjustable from adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Added unwanted activity detection functionality to the VVC to give an alert if the DUT generates any unexpected bus activity.
+
+v0.1.4 BETA
+----------
+Released: 2024-03-08
+- Fixed compilation warning vcom-1090.
+- Use the function get_scope_for_log() to generate VVC scope.
+- Moved sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
 v0.1.4 BETA
 ----------

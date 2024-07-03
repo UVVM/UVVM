@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -26,18 +26,9 @@ use work.string_methods_pkg.all;
 package protected_types_pkg is
 
   type t_protected_alert_attention_counters is protected
-    procedure increment(
-      alert_level : t_alert_level;
-      attention   : t_attention := REGARD; -- count, expect, ignore
-      number      : natural     := 1
-    );
-    impure function get(
-      alert_level : t_alert_level;
-      attention   : t_attention := REGARD
-    ) return natural;
-    procedure to_string(
-      order : t_order
-    );
+    procedure increment(alert_level : t_alert_level; attention : t_attention := REGARD; number : natural := 1);
+    impure function get(alert_level : t_alert_level; attention : t_attention := REGARD) return natural;
+    procedure to_string(order : t_order);
   end protected t_protected_alert_attention_counters;
 
   type t_protected_semaphore is protected
@@ -52,20 +43,10 @@ package protected_types_pkg is
   end protected t_protected_acknowledge_cmd_idx;
 
   type t_protected_check_counters is protected
-    procedure increment(
-      check_type : t_check_type;
-      number     : natural := 1
-    );
-    procedure decrement(
-      check_type : t_check_type;
-      number     : integer := 1
-    );
-    impure function get(
-      check_type : t_check_type
-    ) return natural;
-    procedure to_string(
-      order : t_order
-    );
+    procedure increment(check_type : t_check_type; number : natural := 1);
+    procedure decrement(check_type : t_check_type; number : integer := 1);
+    impure function get(check_type : t_check_type) return natural;
+    procedure to_string(order : t_order);
   end protected t_protected_check_counters;
 
   type t_protected_covergroup_status is protected
@@ -111,6 +92,21 @@ package protected_types_pkg is
     impure function get_total_covpts_coverage(constant cov_representation : t_coverage_representation) return real;
   end protected t_protected_covergroup_status;
 
+  type t_sb_activity is protected
+    impure function register_sb(constant name : string; constant instance : natural) return integer;
+    procedure increment_sb_element_cnt(constant sb_index : in integer);
+    procedure decrement_sb_element_cnt(constant sb_index : in integer; constant value : in natural := 1);
+    procedure reset_sb_element_cnt(constant sb_index : in integer);
+    procedure enable_sb(constant sb_index : in integer);
+    procedure disable_sb(constant sb_index : in integer);
+    impure function get_num_registered_sb(constant void : t_void) return natural;
+    impure function get_num_enabled_sb(constant void : t_void) return natural;
+    impure function get_sb_name(constant sb_index : integer) return string;
+    impure function get_sb_instance(constant sb_index : integer) return natural;
+    impure function get_sb_element_cnt(constant sb_index : integer) return natural;
+    impure function is_enabled(constant sb_index : integer) return boolean;
+  end protected t_sb_activity;
+
 end package protected_types_pkg;
 
 --=============================================================================
@@ -150,13 +146,13 @@ package body protected_types_pkg is
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   type t_protected_semaphore is protected body
-    variable v_priv_semaphore_taken : boolean := false;
+    variable priv_semaphore_taken : boolean := false;
 
     impure function get_semaphore return boolean is
     begin
-      if v_priv_semaphore_taken = false then
+      if priv_semaphore_taken = false then
         -- semaphore was free
-        v_priv_semaphore_taken := true;
+        priv_semaphore_taken := true;
         return true;
       else
         -- semaphore was not free
@@ -166,20 +162,20 @@ package body protected_types_pkg is
 
     procedure release_semaphore is
     begin
-      v_priv_semaphore_taken := false;
+      priv_semaphore_taken := false;
     end procedure;
   end protected body t_protected_semaphore;
   --------------------------------------------------------------------------------
   --------------------------------------------------------------------------------
   type t_protected_acknowledge_cmd_idx is protected body
-    variable v_priv_idx : integer := -1;
+    variable priv_idx : integer := -1;
 
     impure function set_index(index : integer) return boolean is
     begin
       -- for broadcast
-      if v_priv_idx = -1 or v_priv_idx = index then
+      if priv_idx = -1 or priv_idx = index then
         -- index was now set
-        v_priv_idx := index;
+        priv_idx := index;
         return true;
       else
         -- index was set by another vvc
@@ -189,12 +185,12 @@ package body protected_types_pkg is
 
     impure function get_index return integer is
     begin
-      return v_priv_idx;
+      return priv_idx;
     end;
 
     procedure release_index is
     begin
-      v_priv_idx := -1;
+      priv_idx := -1;
     end procedure;
   end protected body t_protected_acknowledge_cmd_idx;
   --------------------------------------------------------------------------------
@@ -658,6 +654,157 @@ package body protected_types_pkg is
     end function;
 
   end protected body t_protected_covergroup_status;
+  --------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------
+  type t_sb_activity is protected body
+
+    type t_sb_item is record
+      name         : string(1 to C_LOG_SCOPE_WIDTH);
+      instance     : natural;
+      num_elements : natural;
+      enabled      : boolean;
+    end record;
+
+    constant C_SB_ITEM_DEFAULT : t_sb_item := (
+      name         => (others => NUL),
+      instance     => 0,
+      num_elements => 0,
+      enabled      => false
+    );
+
+    type t_sb_array is array (natural range <>) of t_sb_item;
+
+    variable priv_sb_array               : t_sb_array(0 to C_MAX_SB_INDEX) := (others => C_SB_ITEM_DEFAULT);
+    variable priv_last_registered_sb_idx : integer                         := -1;
+    variable priv_num_enabled_sb         : natural                         := 0;
+
+    impure function register_sb(
+      constant name     : string;
+      constant instance : natural
+    ) return integer is
+    begin
+      if priv_last_registered_sb_idx < C_MAX_SB_INDEX then
+        priv_last_registered_sb_idx                                       := priv_last_registered_sb_idx + 1;
+        priv_sb_array(priv_last_registered_sb_idx).name(1 to name'length) := to_upper(name);
+        priv_sb_array(priv_last_registered_sb_idx).instance               := instance;
+        priv_sb_array(priv_last_registered_sb_idx).num_elements           := 0;
+        return priv_last_registered_sb_idx;
+      else
+        return -1;
+      end if;
+    end function;
+
+    procedure increment_sb_element_cnt(
+      constant sb_index : in integer
+    ) is
+    begin
+      if sb_index >= 0 then
+        priv_sb_array(sb_index).num_elements := priv_sb_array(sb_index).num_elements + 1;
+      end if;
+    end procedure;
+
+    procedure decrement_sb_element_cnt(
+      constant sb_index : in integer;
+      constant value    : in natural := 1
+    ) is
+    begin
+      if sb_index >= 0 then
+        for i in 1 to value loop
+          if priv_sb_array(sb_index).num_elements > 0 then
+            priv_sb_array(sb_index).num_elements := priv_sb_array(sb_index).num_elements - 1;
+          end if;
+        end loop;
+      end if;
+    end procedure;
+
+    procedure reset_sb_element_cnt(
+      constant sb_index : in integer
+    ) is
+    begin
+      if sb_index >= 0 then
+        priv_sb_array(sb_index).num_elements := 0;
+      end if;
+    end procedure;
+
+    procedure enable_sb(
+      constant sb_index : in integer
+    ) is
+    begin
+      if sb_index >= 0 then
+        priv_sb_array(sb_index).enabled := true;
+        priv_num_enabled_sb             := priv_num_enabled_sb + 1;
+      end if;
+    end procedure;
+
+    procedure disable_sb(
+      constant sb_index : in integer
+    ) is
+    begin
+      if sb_index >= 0 then
+        priv_sb_array(sb_index).enabled := false;
+        priv_num_enabled_sb             := priv_num_enabled_sb - 1;
+      end if;
+    end procedure;
+
+    impure function get_num_registered_sb(
+      constant void : t_void
+    ) return natural is
+    begin
+      return priv_last_registered_sb_idx + 1;
+    end function;
+
+    impure function get_num_enabled_sb(
+      constant void : t_void
+    ) return natural is
+    begin
+      return priv_num_enabled_sb;
+    end function;
+
+    impure function get_sb_name(
+      constant sb_index : integer
+    ) return string is
+    begin
+      if sb_index >= 0 then
+        return to_string(priv_sb_array(sb_index).name);
+      else
+        return "";
+      end if;
+    end function;
+
+    impure function get_sb_instance(
+      constant sb_index : integer
+    ) return natural is
+    begin
+      if sb_index >= 0 then
+        return priv_sb_array(sb_index).instance;
+      else
+        return 0;
+      end if;
+    end function;
+
+    impure function get_sb_element_cnt(
+      constant sb_index : integer
+    ) return natural is
+    begin
+      if sb_index >= 0 then
+        return priv_sb_array(sb_index).num_elements;
+      else
+        return 0;
+      end if;
+    end function;
+
+    impure function is_enabled(
+      constant sb_index : integer
+    ) return boolean is
+    begin
+      if sb_index >= 0 then
+        return priv_sb_array(sb_index).enabled;
+      else
+        return false;
+      end if;
+    end function;
+
+  end protected body t_sb_activity;
   --------------------------------------------------------------------------------
 
 end package body protected_types_pkg;

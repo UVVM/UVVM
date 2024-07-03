@@ -3,14 +3,24 @@ import os
 import sys
 import ntpath
 
+# Lines to be filtered out due to expected mismatches
+filter_list =  ["load_coverage_db",
+                "write_coverage_db",
+                "in the bins will be overwritten"]
+
 
 def get_golden_file_list(simulator='modelsim', path=None):
   filelist = []
 
   if path is None:
       path = os.getcwd()
-      
-  golden_dir = 'golden_modelsim' if simulator == 'modelsim' else 'golden_riviera_pro'
+
+  if simulator == 'modelsim':
+    golden_dir = 'golden_modelsim'
+  elif simulator == 'riviera':
+    golden_dir = 'golden_riviera_pro'
+  else:
+    golden_dir = 'golden_ghdl'
 
   if 'release' in path:
     path = os.path.join(path, '../uvvm_util/script/maintenance_script/' + golden_dir)
@@ -58,11 +68,16 @@ def compare_lines(golden_lines, verify_lines):
   else:
     for idx, line in enumerate(golden_lines):
       if line.rstrip() != verify_lines[idx].rstrip():
-        error_lines.append('(%d) Golden >>> %s\n(%d) Output >>> %s' % (idx, line.strip(), idx, verify_lines[idx].rstrip()))
+        skip = False
+        for filter_line in filter_list:
+          if filter_line in line.rstrip():
+            skip = True
+        if not skip:
+          error_lines.append('(%d) Golden >>> %s\n(%d) Output >>> %s' % (idx, line.strip(), idx, verify_lines[idx].rstrip()))
   return error_lines
 
 
-def compare(modelsim=False, riviera=False, path=None):
+def compare(modelsim=False, riviera=False, ghdl=False, path=None):
   # Get file lists
   test_run_file_list = get_test_file_list(path)
   num_test_run_files = len(test_run_file_list)
@@ -71,6 +86,8 @@ def compare(modelsim=False, riviera=False, path=None):
     golden_file_list = get_golden_file_list(simulator='modelsim', path=path)
   if riviera:
     golden_file_list = get_golden_file_list(simulator='riviera', path=path)
+  if ghdl:
+    golden_file_list = get_golden_file_list(simulator='ghdl', path=path)
 
   failing_verify_file = []
   missing_test_run_file = []
@@ -116,7 +133,13 @@ def compare(modelsim=False, riviera=False, path=None):
     elif match is False:
       missing_test_run_file.append(golden_file_name.replace('\\', '/'))
 
-  simulator = '[MODELSIM]' if modelsim else '[RIVIERA]'
+  if modelsim:
+    simulator = '[MODELSIM]'
+  if riviera:
+    simulator = '[RIVIERA]'
+  if ghdl:
+    simulator = '[GHDL]'
+
   # Present statistics
   print("%s Number of golden files found : %d" % (simulator, len(golden_file_list)))
   print("%s Number of verify files found : %d" % (simulator, num_test_run_files))
@@ -132,7 +155,7 @@ def compare(modelsim=False, riviera=False, path=None):
   if failing_verify_file:
     print("Mismatch found in the following file(s) : ")
     for file, error_lines in failing_verify_file:
-      print('\n%s\n\File: %s' % (50*'-', file))
+      print('\n%s\nFile: %s' % (50*'-', file))
       if error_lines:
         for line in error_lines:
           print(line)
@@ -179,8 +202,13 @@ def main(argv):
       print("--------------------------------------")
       compare(riviera=True, path=path)
 
+    elif ("ghdl" in arg):
+      print("Verify ghdl files : ")
+      print("--------------------------------------")
+      compare(ghdl=True, path=path)
+
   # No simulator match
-  print("Please specify simulator as argument: modelsim or riviera")
+  print("Please specify simulator as argument: modelsim, riviera or ghdl")
   sys.exit(1)
 
 

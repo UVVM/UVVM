@@ -60,5 +60,5 @@ eval vcom  $compdirectives  $tb_path/i2c_slave_dut.vhd
 echo "eval vcom  $compdirectives  $tb_path/i2c_th.vhd"
 eval vcom  $compdirectives  $tb_path/i2c_th.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/i2c_tb.vhd"
-eval vcom  $compdirectives  $tb_path/i2c_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/i2c_vvc_tb.vhd"
+eval vcom  $compdirectives  $tb_path/i2c_vvc_tb.vhd

@@ -28,8 +28,8 @@ echo "\n\n\n=== Compiling TB\n"
 echo "eval vcom  $compdirectives  $tb_path/../uart_vvc_demo_th.vhd"
 eval vcom  $compdirectives  $tb_path/../uart_vvc_demo_th.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/uart_simple_bfm_tb.vhd"
-eval vcom  $compdirectives  $tb_path/uart_simple_bfm_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/uart_bfm_tb.vhd"
+eval vcom  $compdirectives  $tb_path/uart_bfm_tb.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/uart_vvc_tb.vhd"
 eval vcom  $compdirectives  $tb_path/uart_vvc_tb.vhd

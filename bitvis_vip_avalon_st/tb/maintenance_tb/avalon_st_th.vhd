@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -27,7 +27,7 @@ use bitvis_vip_avalon_st.avalon_st_bfm_pkg.all;
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
-entity test_harness is
+entity avalon_st_th is
   generic(
     GC_DATA_WIDTH    : natural := 32;
     GC_CHANNEL_WIDTH : natural := 8;
@@ -52,7 +52,7 @@ end entity;
 --=================================================================================================
 -- Test harness architectures
 --=================================================================================================
-architecture struct_bfm of test_harness is
+architecture struct_bfm of avalon_st_th is
   signal avalon_st_master_if_int : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
                                                   data(GC_DATA_WIDTH - 1 downto 0),
                                                   data_error(GC_ERROR_WIDTH - 1 downto 0),
@@ -68,22 +68,30 @@ begin
   -- Mapping of interface to signals is done to make TB run in Riviera Pro.
   -- Values are not propagated when interface elements are mapped directly
   -- to ports. Riviera-PRO version 2019.10
-  avalon_st_master_if_int.data            <= avalon_st_master_if.data;
   avalon_st_master_if_int.channel         <= avalon_st_master_if.channel;
-  avalon_st_master_if_int.empty           <= avalon_st_master_if.empty;
+  avalon_st_master_if_int.data            <= avalon_st_master_if.data;
   avalon_st_master_if_int.data_error      <= avalon_st_master_if.data_error;
   avalon_st_master_if_int.valid           <= avalon_st_master_if.valid;
-  avalon_st_master_if_int.start_of_packet <= avalon_st_master_if.start_of_packet;
+  avalon_st_master_if_int.empty           <= avalon_st_master_if.empty;
   avalon_st_master_if_int.end_of_packet   <= avalon_st_master_if.end_of_packet;
+  avalon_st_master_if_int.start_of_packet <= avalon_st_master_if.start_of_packet;
+  avalon_st_master_if.channel             <= (others => 'Z');
+  avalon_st_master_if.data                <= (others => 'Z');
+  avalon_st_master_if.data_error          <= (others => 'Z');
   avalon_st_master_if.ready               <= avalon_st_master_if_int.ready;
+  avalon_st_master_if.valid               <= 'Z';
+  avalon_st_master_if.empty               <= (others => 'Z');
+  avalon_st_master_if.end_of_packet       <= 'Z';
+  avalon_st_master_if.start_of_packet     <= 'Z';
 
-  avalon_st_slave_if.data            <= avalon_st_slave_if_int.data;
   avalon_st_slave_if.channel         <= avalon_st_slave_if_int.channel;
-  avalon_st_slave_if.empty           <= avalon_st_slave_if_int.empty;
+  avalon_st_slave_if.data            <= avalon_st_slave_if_int.data;
   avalon_st_slave_if.data_error      <= avalon_st_slave_if_int.data_error;
+  avalon_st_slave_if.ready           <= 'Z';
   avalon_st_slave_if.valid           <= avalon_st_slave_if_int.valid;
-  avalon_st_slave_if.start_of_packet <= avalon_st_slave_if_int.start_of_packet;
+  avalon_st_slave_if.empty           <= avalon_st_slave_if_int.empty;
   avalon_st_slave_if.end_of_packet   <= avalon_st_slave_if_int.end_of_packet;
+  avalon_st_slave_if.start_of_packet <= avalon_st_slave_if_int.start_of_packet;
   avalon_st_slave_if_int.ready       <= avalon_st_slave_if.ready;
 
   i_avalon_st_fifo : entity work.avalon_st_fifo
@@ -116,9 +124,9 @@ begin
       master_eop_o     => avalon_st_slave_if_int.end_of_packet,
       master_ready_i   => avalon_st_slave_if_int.ready
     );
-end struct_bfm;
+end architecture struct_bfm;
 
-architecture struct_vvc of test_harness is
+architecture struct_vvc of avalon_st_th is
   signal avalon_st_vvc2vvc_if : t_avalon_st_if(channel(GC_CHANNEL_WIDTH - 1 downto 0),
                                                data(GC_DATA_WIDTH - 1 downto 0),
                                                data_error(GC_ERROR_WIDTH - 1 downto 0),
@@ -216,4 +224,4 @@ begin
       clk              => clk,
       avalon_st_vvc_if => avalon_st_vvc2vvc_if
     );
-end struct_vvc;
+end architecture struct_vvc;

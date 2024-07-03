@@ -1,0 +1,10 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    random(10000000000 ps,13000000000 ps,1 ps) => time_resolution is too small for the given range. It has been increased to 1000 ps
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    random(10000000000000 ps,13000000000000 ps,1 ps) => time_resolution is too small for the given range. It has been increased to 1000000 ps
+UVVM: 

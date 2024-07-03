@@ -118,6 +118,7 @@ begin
 			tx_state        <= TX_IDLE;
 			mii_tx_enable_o <= '0';
 			tx_busy_o       <= '1';
+			mii_tx_data_o   <= (others => '0');
 		elsif rising_edge(tx_clock_i) then
 			mii_tx_enable_o <= '0';
 			tx_busy_o       <= '0';

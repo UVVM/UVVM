@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -21,8 +21,6 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-use work.local_adaptations_pkg.all;
-
 --================================================================================================================================
 --================================================================================================================================
 package transaction_pkg is
@@ -43,17 +41,15 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    TRANSMIT,
-    RECEIVE,
-    EXPECT
+    TRANSMIT, RECEIVE, EXPECT
   );
 
-  -- Constants for the maximum sizes to use in this VVC.
-  -- You can create VVCs with smaller sizes than these constants, but not larger.
-  constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := C_AVALON_ST_CHANNEL_MAX_LENGTH;
-  constant C_VVC_CMD_WORD_MAX_LENGTH   : natural := C_AVALON_ST_WORD_MAX_LENGTH;
-  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := C_AVALON_ST_DATA_MAX_WORDS;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_CHAN_MAX_LENGTH   : natural := C_AVALON_ST_VVC_CMD_CHAN_MAX_LENGTH;
+  constant C_VVC_CMD_WORD_MAX_LENGTH   : natural := C_AVALON_ST_VVC_CMD_WORD_MAX_LENGTH;
+  constant C_VVC_CMD_DATA_MAX_WORDS    : natural := C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_AVALON_ST_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_AVALON_ST_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
@@ -100,11 +96,11 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_avalon_st_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
+  signal global_avalon_st_vvc_transaction_trigger : t_avalon_st_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_avalon_st_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_AVALON_ST_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_avalon_st_vvc_transaction_info : t_avalon_st_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

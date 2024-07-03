@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -92,7 +92,7 @@ begin
   -----------------------------
   -- Instantiate Testharness
   -----------------------------
-  i_axistream_test_harness : entity bitvis_vip_axistream.test_harness(struct_simple)
+  i_test_harness : entity work.axistream_th(struct_bfm)
     generic map(
       GC_DATA_WIDTH     => GC_DATA_WIDTH,
       GC_USER_WIDTH     => GC_USER_WIDTH,
@@ -180,9 +180,7 @@ begin
     report_msg_id_panel(VOID);
 
     -- Configure logging
-
     disable_log_msg(ID_PACKET_DATA);
-
     disable_log_msg(ID_PACKET_PAYLOAD);
 
     log(ID_LOG_HDR, "Start Simulation of TB for AXISTREAM 1", C_SCOPE);
@@ -226,13 +224,13 @@ begin
 
     if GC_USER_WIDTH = 1 then
       -- When calling axistream_expect later, setting tuser for second word to dont care to support cases where number of words are only 1 (depends on GC_DATA_WIDTH)
-      v_user_array(0 to 1) := (x"01", x"00");
+      v_user_array(0 to 1) := (32x"01", 32x"00");
       axistream_transmit(v_data_array_1_byte(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"02", x"10");
+      v_user_array(0 to 1) := (32x"02", 32x"10");
       axistream_transmit(v_data_array_2_byte(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"03", x"20");
+      v_user_array(0 to 1) := (32x"03", 32x"20");
       axistream_transmit(v_data_array_3_byte(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"04", x"30");
+      v_user_array(0 to 1) := (32x"04", 32x"30");
       axistream_transmit(v_data_array_4_byte(0 to 1), v_user_array(0 to 1), "Directly assign args including tuser", clk, axistream_if_m, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
     end if;
 
@@ -407,13 +405,13 @@ begin
 
     if GC_USER_WIDTH = 1 then
       -- setting tuser for second word to dont care to support cases where number of words are only 1 (depends on GC_DATA_WIDTH)
-      v_user_array(0 to 1) := (x"01", "--------");
+      v_user_array(0 to 1) := (32x"01", (others => '-'));
       axistream_expect(v_data_array_1_byte(0 to 1), v_user_array(0 to 1), "Directly assigned args, including tuser.", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"02", "--------");
+      v_user_array(0 to 1) := (32x"02", (others => '-'));
       axistream_expect(v_data_array_2_byte(0 to 1), v_user_array(0 to 1), "Directly assigned args, including tuser.", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"03", "--------");
+      v_user_array(0 to 1) := (32x"03", (others => '-'));
       axistream_expect(v_data_array_3_byte(0 to 1), v_user_array(0 to 1), "Directly assigned args, including tuser.", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
-      v_user_array(0 to 1) := (x"04", "--------");
+      v_user_array(0 to 1) := (32x"04", (others => '-'));
       axistream_expect(v_data_array_4_byte(0 to 1), v_user_array(0 to 1), "Directly assigned args, including tuser.", clk, axistream_if_s, error, C_SCOPE, shared_msg_id_panel, v_axistream_bfm_config);
     end if;
 

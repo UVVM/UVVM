@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -22,7 +22,7 @@ library bitvis_vip_axistream;
 use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
 --=================================================================================================
-entity test_harness is
+entity axistream_th is
   generic(
     constant GC_DATA_WIDTH     : natural := 32;
     constant GC_USER_WIDTH     : natural := 1;
@@ -51,10 +51,10 @@ entity test_harness is
                                                          )
   );
 
-end entity test_harness;
+end entity axistream_th;
 
 --=================================================================================================
-architecture struct_simple of test_harness is
+architecture struct_bfm of axistream_th is
 
   signal s_axis_tready : std_logic;
   signal s_axis_tvalid : std_logic;
@@ -75,7 +75,15 @@ begin
   -- Mapping of interface to signals is done to make TB run in Riviera Pro.
   -- Values are not propagated when interface elements are mapped directly
   -- to ports. Riviera-PRO version 2018.10.137.7135
+  axistream_if_m_VVC2FIFO.tdata  <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tkeep  <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tuser  <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tvalid <= 'Z';
+  axistream_if_m_VVC2FIFO.tlast  <= 'Z';
   axistream_if_m_VVC2FIFO.tready <= s_axis_tready;
+  axistream_if_m_VVC2FIFO.tstrb  <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tid    <= (others => 'Z');
+  axistream_if_m_VVC2FIFO.tdest  <= (others => 'Z');
   s_axis_tvalid                  <= axistream_if_m_VVC2FIFO.tvalid;
   s_axis_tdata                   <= axistream_if_m_VVC2FIFO.tdata;
   s_axis_tuser                   <= axistream_if_m_VVC2FIFO.tuser;
@@ -83,11 +91,15 @@ begin
   s_axis_tlast                   <= axistream_if_m_VVC2FIFO.tlast;
 
   m_axis_tready                  <= axistream_if_s_FIFO2VVC.tready;
-  axistream_if_s_FIFO2VVC.tvalid <= m_axis_tvalid;
   axistream_if_s_FIFO2VVC.tdata  <= m_axis_tdata;
-  axistream_if_s_FIFO2VVC.tuser  <= m_axis_tuser;
   axistream_if_s_FIFO2VVC.tkeep  <= m_axis_tkeep;
+  axistream_if_s_FIFO2VVC.tuser  <= m_axis_tuser;
+  axistream_if_s_FIFO2VVC.tvalid <= m_axis_tvalid;
   axistream_if_s_FIFO2VVC.tlast  <= m_axis_tlast;
+  axistream_if_s_FIFO2VVC.tready <= 'Z';
+  axistream_if_s_FIFO2VVC.tstrb  <= (others => 'Z');
+  axistream_if_s_FIFO2VVC.tid    <= (others => 'Z');
+  axistream_if_s_FIFO2VVC.tdest  <= (others => 'Z');
 
   -----------------------------
   -- Instantiate a DUT model
@@ -116,10 +128,10 @@ begin
       empty         => open
     );
 
-end struct_simple;
+end architecture struct_bfm;
 
 --=================================================================================================
-architecture struct_vvc of test_harness is
+architecture struct_vvc of axistream_th is
 
   signal axistream_if_m_VVC2VVC : t_axistream_if(tdata(GC_DATA_WIDTH - 1 downto 0),
                                                  tkeep((GC_DATA_WIDTH / 8) - 1 downto 0),
@@ -128,6 +140,9 @@ architecture struct_vvc of test_harness is
                                                  tid(GC_ID_WIDTH - 1 downto 0),
                                                  tdest(GC_DEST_WIDTH - 1 downto 0)
                                                 );
+  signal dut_m_axis_tstrb : std_logic_vector((GC_DATA_WIDTH / 8) - 1 downto 0);
+  signal dut_m_axis_tid   : std_logic_vector(GC_ID_WIDTH - 1 downto 0);
+  signal dut_m_axis_tdest : std_logic_vector(GC_DEST_WIDTH - 1 downto 0);
 
 begin
   -----------------------------
@@ -156,6 +171,14 @@ begin
       m_axis_tlast  => axistream_if_s_FIFO2VVC.tlast,
       empty         => open
     );
+
+  -- Use non-record signals to be able to force them from the tb
+  dut_m_axis_tstrb <= (others => '0');
+  dut_m_axis_tid   <= (others => '0');
+  dut_m_axis_tdest <= (others => '0');
+  axistream_if_s_FIFO2VVC.tstrb <= dut_m_axis_tstrb;
+  axistream_if_s_FIFO2VVC.tid   <= dut_m_axis_tid;
+  axistream_if_s_FIFO2VVC.tdest <= dut_m_axis_tdest;
 
   -----------------------------
   -- vvc/executors
@@ -222,10 +245,10 @@ begin
       axistream_vvc_if => axistream_if_m_VVC2VVC
     );
 
-end struct_vvc;
+end architecture struct_vvc;
 
 --=================================================================================================
-architecture struct_multiple_vvc of test_harness is
+architecture struct_multiple_vvc of axistream_th is
 
 begin
   -----------------------------
@@ -257,10 +280,10 @@ begin
       );
   end generate gen_axistream_vvc_master;
 
-end struct_multiple_vvc;
+end architecture struct_multiple_vvc;
 
 --=================================================================================================
-architecture struct_width_vvc of test_harness is
+architecture struct_width_vvc of axistream_th is
 
   constant C_DATA_WIDTH_1 : natural := 32;
   constant C_DATA_WIDTH_2 : natural := 64;
@@ -361,4 +384,4 @@ begin
       axistream_vvc_if => axistream_if_64b
     );
 
-end struct_width_vvc;
+end architecture struct_width_vvc;

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -1354,7 +1354,7 @@ package body rand_tb_pkg is
     variable value_cnt : inout t_integer_cnt;
     constant value     : in time) is
   begin
-    value_cnt(value / 1 ps) := value_cnt(value / 1 ps) + 1;
+    value_cnt(value / std.env.resolution_limit) := value_cnt(value / std.env.resolution_limit) + 1;
   end procedure;
 
   procedure count_rand_value(
@@ -1362,7 +1362,7 @@ package body rand_tb_pkg is
     constant values    : in time_vector) is
   begin
     for i in values'range loop
-      value_cnt(values(i) / 1 ps) := value_cnt(values(i) / 1 ps) + 1;
+      value_cnt(values(i) / std.env.resolution_limit) := value_cnt(values(i) / std.env.resolution_limit) + 1;
     end loop;
   end procedure;
 

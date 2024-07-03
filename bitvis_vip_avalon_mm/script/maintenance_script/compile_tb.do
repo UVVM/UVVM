@@ -39,11 +39,11 @@ eval vcom  $compdirectives  $tb_path/avalon_spi.vhd
 
 # TBs
 
-echo "eval vcom  $compdirectives  $tb_path/avalon_mm_simple_spi_tb.vhd"
-eval vcom  $compdirectives  $tb_path/avalon_mm_simple_spi_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/avalon_mm_bfm_spi_tb.vhd"
+eval vcom  $compdirectives  $tb_path/avalon_mm_bfm_spi_tb.vhd
 
-echo "eval vcom  $compdirectives  $tb_path/avalon_mm_simple_tb.vhd"
-eval vcom  $compdirectives  $tb_path/avalon_mm_simple_tb.vhd
+echo "eval vcom  $compdirectives  $tb_path/avalon_mm_bfm_tb.vhd"
+eval vcom  $compdirectives  $tb_path/avalon_mm_bfm_tb.vhd
 
 echo "eval vcom  $compdirectives  $tb_path/avalon_mm_vvc_pipeline_tb.vhd"
 eval vcom  $compdirectives  $tb_path/avalon_mm_vvc_pipeline_tb.vhd

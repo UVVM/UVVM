@@ -1,5 +1,5 @@
 #================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -10,10 +10,10 @@
 # Note : Any functionality not explicitly described in the documentation is subject to change at any time
 #--------------------------------------------------------------------------------------------------------------------------------cd 
 
-__author__ = 'Bitvis'
-__copyright__ = "Copyright 2020, Bitvis and Inventas AS"
+__author__ = 'UVVM'
+__copyright__ = "Copyright 2024, UVVM"
 __version__ = "1.0.0"
-__email__ = "support@bitvis.no"
+__email__ = "info@uvvm.org"
 
 import os
 import glob

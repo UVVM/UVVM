@@ -2,6 +2,14 @@ Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
 
+v3.0.0
+----------
+Released: 2024-07-03
+- Add support for set/check single std_logic (instead of std_logic_vector).
+- Changed max constants used in VVC to be adjustable from adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Added unwanted activity detection functionality to the VVC to give an alert if the DUT generates any unexpected bus activity.
+
 v2.0.0
 ----------
 Released: 2024-03-08

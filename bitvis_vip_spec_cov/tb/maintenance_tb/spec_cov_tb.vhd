@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -23,7 +23,6 @@ context uvvm_util.uvvm_util_context;
 
 library bitvis_vip_spec_cov;
 use bitvis_vip_spec_cov.spec_cov_pkg.all;
-use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 
 --hdlregression:tb
 entity spec_cov_tb is
@@ -32,7 +31,9 @@ entity spec_cov_tb is
     GC_REQ_FILE       : string := "";     -- "../tb/maintenance_tb/req_file.csv";
     GC_REQ_FILE_EMPTY : string := "";     -- "../tb/maintenance_tb/req_file_empty.csv"
     GC_SUB_REQ_FILE   : string := "";     -- "../tb/maintenance_tb/sub_req_file.csv";
-    GC_REQ_OMIT_MAP   : string := ""      -- "../tb/maintenance_tb/sub_req_omit_map_file.csv"
+    GC_UART_REQ_FILE  : string := "";     -- "../tb/maintenance_tb/uart_req_file.csv";
+    GC_COMBI_REQ_FILE : string := "";     -- "../tb/maintenance_tb/combi_req_file.csv";
+    GC_REQ_OMIT_MAP   : string := ""      -- "../tb/maintenance_tb/uart_omit_map_file.csv"
   );
 end entity spec_cov_tb;
 
@@ -332,11 +333,11 @@ begin
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ", GC_SUB_REQ_FILE, "pc_8.csv");
-        tick_off_req_cov("UART_REQ_BR_A", NA);
-        tick_off_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
-        tick_off_req_cov("UART_REQ_ODD", PASS, "testing UART_REQ_BR_B with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+        initialize_req_cov("TC_1", GC_SUB_REQ_FILE, "pc_8.csv");
+        tick_off_req_cov("REQ_1A", NA);
+        tick_off_req_cov("REQ_1B", NA, "testing REQ_1B without scope");
+        tick_off_req_cov("REQ_2A", PASS, "testing REQ_2A with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+        tick_off_req_cov("REQ_2B", PASS, "testing REQ_2B with scope", LIST_EVERY_TICKOFF, C_SCOPE);
         -- End testcase
         finalize_req_cov(VOID);
       end if;
@@ -350,11 +351,11 @@ begin
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ", GC_SUB_REQ_FILE, "pc_9.csv");
-        tick_off_req_cov("UART_REQ_BR_A", NA);
-        tick_off_req_cov("UART_REQ_BR_B", NA, "testing UART_REQ_BR_B without scope");
-        tick_off_req_cov("UART_REQ_ODD", FAIL, "testing UART_REQ_ODD with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+        initialize_req_cov("TC_1", GC_SUB_REQ_FILE, "pc_9.csv");
+        tick_off_req_cov("REQ_1A", NA);
+        tick_off_req_cov("REQ_1B", NA, "testing REQ_1B without scope");
+        tick_off_req_cov("REQ_2A", FAIL, "testing REQ_2A with scope", LIST_EVERY_TICKOFF, C_SCOPE);
+        tick_off_req_cov("REQ_2B", PASS, "testing REQ_2B with scope", LIST_EVERY_TICKOFF, C_SCOPE);
         -- End testcase
         finalize_req_cov(VOID);
       end if;
@@ -364,11 +365,11 @@ begin
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
       log(ID_LOG_HDR, "Testing incomplete sub-requirement tick off.", C_SCOPE);
-      if GC_SUB_REQ_FILE = "" then
+      if GC_UART_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ", GC_SUB_REQ_FILE, "pc_19.csv");
+        initialize_req_cov("TC_SUB_REQ", GC_UART_REQ_FILE, "pc_19.csv");
         tick_off_req_cov("UART_REQ_BR_A", PASS, "testing UART_REQ_BR_A with scope", LIST_EVERY_TICKOFF, C_SCOPE);
 
         log(ID_SEQUENCER, "Not ticking off UART_REQ_BR_B.", C_SCOPE);
@@ -384,12 +385,12 @@ begin
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
-      log(ID_LOG_HDR, "Testing omitted sub-requirement: UART_REQ_OMIT.", C_SCOPE);
-      if GC_SUB_REQ_FILE = "" then
+      log(ID_LOG_HDR, "Testing req file with out-commented sub-requirement: UART_REQ_OMIT.", C_SCOPE);
+      if GC_UART_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_SUB_REQ_FILE, "pc_16.csv");
+        initialize_req_cov("TC_SUB_REQ_OMIT", GC_UART_REQ_FILE, "pc_16.csv");
         tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
@@ -402,12 +403,12 @@ begin
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
-      log(ID_LOG_HDR, "Testing omitted sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
-      if GC_SUB_REQ_FILE = "" then
+      log(ID_LOG_HDR, "Testing out-commented sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
+      if GC_UART_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_SUB_REQ_FILE, "pc_17.csv");
+        initialize_req_cov("TC_SUB_REQ_OMIT", GC_UART_REQ_FILE, "pc_17.csv");
         tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
@@ -425,12 +426,12 @@ begin
       --
       -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
       --
-      log(ID_LOG_HDR, "Testing omitted sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
-      if GC_SUB_REQ_FILE = "" then
+      log(ID_LOG_HDR, "Testing out-commented sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
+      if GC_UART_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_SUB_REQ_FILE, "pc_18.csv");
+        initialize_req_cov("TC_SUB_REQ_OMIT", GC_UART_REQ_FILE, "pc_18.csv");
         tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
         tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
@@ -479,6 +480,48 @@ begin
         -- End testcase
         finalize_req_cov(VOID);
       end if;
+
+    elsif GC_TESTCASE = "test_combined_and_or_listed_testcases" then
+        --
+        -- This test will test requirements listed with a combination AND-listed and OR-listed testcases
+        --
+        log(ID_LOG_HDR, "Testing combination of AND- and OR- listed testcases.", C_SCOPE);
+        if GC_COMBI_REQ_FILE = "" then
+          alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
+        else
+          -- Run testcase
+          initialize_req_cov("TC_1", GC_COMBI_REQ_FILE, "pc_combi.csv");
+          tick_off_req_cov("REQ_1");
+          tick_off_req_cov("REQ_2");
+          tick_off_req_cov("REQ_3");
+          tick_off_req_cov("REQ_4");
+          -- End testcase
+          finalize_req_cov(VOID);
+        end if;
+
+    elsif GC_TESTCASE = "test_strictness" then
+        --
+        -- This test will tick of requirements specified with the same TC, different TC and no TC
+        -- For post-processing with various strictness levels
+        --
+        log(ID_LOG_HDR, "Testing tickoff in various TCs, for strictness testing.", C_SCOPE);
+        if GC_REQ_FILE = "" then
+            alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
+        else
+            -- Run testcase
+            initialize_req_cov("TC_1", GC_REQ_FILE, "pc_20a.csv");
+            tick_off_req_cov("REQ_1");  -- TC_1 specified -> Correct TC
+            tick_off_req_cov("REQ_2");  -- TC_2 specified -> Wrong TC
+            tick_off_req_cov("REQ_3");  -- TC_3 specified -> Wrong TC
+            -- End testcase
+            finalize_req_cov(VOID);
+
+            -- Run different testcase
+            initialize_req_cov("TC_2", GC_REQ_FILE, "pc_20b.csv");
+            tick_off_req_cov("REQ_2"); -- TC_2 specified -> Correct TC
+            -- End testcase
+            finalize_req_cov(VOID);
+        end if;
     end if;
 
     -----------------------------------------------------------------------------

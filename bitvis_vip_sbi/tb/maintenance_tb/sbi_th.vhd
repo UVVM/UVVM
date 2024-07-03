@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -25,7 +25,7 @@ library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
 --=================================================================================================
-entity test_harness is
+entity sbi_th is
   generic(
     GC_CLK_PERIOD   : time;
     GC_ADDR_WIDTH_1 : integer := 8;
@@ -38,12 +38,21 @@ entity test_harness is
     sbi_if_2 : inout t_sbi_if(addr(GC_ADDR_WIDTH_2 - 1 downto 0), wdata(GC_DATA_WIDTH_2 - 1 downto 0), rdata(GC_DATA_WIDTH_2 - 1 downto 0));
     clk      : out   std_logic
   );
-end entity test_harness;
+end entity sbi_th;
 
 --=================================================================================================
 --=================================================================================================
 
-architecture struct of test_harness is
+architecture struct of sbi_th is
+
+  signal sbi_if_1_dut : t_sbi_if(addr(GC_ADDR_WIDTH_1 - 1 downto 0), wdata(GC_DATA_WIDTH_1 - 1 downto 0), rdata(GC_DATA_WIDTH_1 - 1 downto 0));
+  signal dut_cs       : std_logic;
+  signal dut_addr     : unsigned(GC_ADDR_WIDTH_1 - 1 downto 0);
+  signal dut_rena     : std_logic;
+  signal dut_wena     : std_logic;
+  signal dut_wdata    : std_logic_vector(GC_DATA_WIDTH_1 - 1 downto 0);
+  signal dut_ready    : std_logic;
+  signal dut_rdata    : std_logic_vector(GC_DATA_WIDTH_1 - 1 downto 0);
 
 begin
 
@@ -59,9 +68,26 @@ begin
     )
     port map(
       clk      => clk,
-      sbi_if_1 => sbi_if_1,
+      sbi_if_1 => sbi_if_1_dut,
       sbi_if_2 => sbi_if_2
     );
+
+  -- Use non-record signals to be able to force them from the tb
+  sbi_if_1_dut.cs    <= dut_cs;
+  sbi_if_1_dut.addr  <= dut_addr;
+  sbi_if_1_dut.rena  <= dut_rena;
+  sbi_if_1_dut.wena  <= dut_wena;
+  sbi_if_1_dut.wdata <= dut_wdata;
+  dut_ready          <= sbi_if_1_dut.ready;
+  dut_rdata          <= sbi_if_1_dut.rdata;
+
+  dut_cs         <= sbi_if_1.cs;
+  dut_addr       <= sbi_if_1.addr;
+  dut_rena       <= sbi_if_1.rena;
+  dut_wena       <= sbi_if_1.wena;
+  dut_wdata      <= sbi_if_1.wdata;
+  sbi_if_1.ready <= dut_ready;
+  sbi_if_1.rdata <= dut_rdata;
 
   -----------------------------
   -- vvc/executors

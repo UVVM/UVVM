@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -14,9 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
@@ -35,6 +35,9 @@ use bitvis_vip_uart.uart_bfm_pkg.all;
 
 library bitvis_vip_avalon_mm;
 context bitvis_vip_avalon_mm.vvc_context;
+
+library bitvis_vip_axistream;
+context bitvis_vip_axistream.vvc_context;
 
 --hdlregression:tb
 -- Test bench entity
@@ -71,6 +74,7 @@ architecture func of vvc_tb is
   constant C_FLAG_H : string := "flag_h";
   constant C_FLAG_I : string := "flag_i";
   constant C_FLAG_J : string := "flag_j";
+  constant C_FLAG_K : string := "flag_k";
 
   constant C_UART_BFM_CONFIG_0 : t_uart_bfm_config := (
     bit_time                              => 160 ns,
@@ -117,9 +121,18 @@ architecture func of vvc_tb is
   signal uart_2_wdata : std_logic_vector(7 downto 0) := (others => '0');
   signal uart_2_rdata : std_logic_vector(7 downto 0);
 
+  signal uart_6_cs    : std_logic                    := '0';
+  signal uart_6_addr  : unsigned(2 downto 0)         := (others => '0');
+  signal uart_6_wr    : std_logic                    := '0';
+  signal uart_6_rd    : std_logic                    := '0';
+  signal uart_6_wdata : std_logic_vector(7 downto 0) := (others => '0');
+  signal uart_6_rdata : std_logic_vector(7 downto 0);
+
   signal uart_2_ready   : std_logic := '1'; -- Always ready
   signal uart_3_ready   : std_logic := '1'; -- Always ready
   signal uart_4_ready   : std_logic := '1'; -- Always ready
+  signal uart_5_ready   : std_logic := '1'; -- Always ready
+  signal uart_6_ready   : std_logic := '1'; -- Always ready
   signal terminate_loop : std_logic := '0'; -- Never in this testbench
 
   signal barrier_a        : std_logic := 'X';
@@ -135,6 +148,7 @@ architecture func of vvc_tb is
   signal barrier_i        : std_logic := 'X';
   signal barrier_i_helper : std_logic := 'X';
   signal barrier_j        : std_logic := 'X';
+  signal barrier_k        : std_logic := 'X';
 
   -- Procedure to make every single test start on a "round" time
   procedure separate_tests_in_time(     -- Wait for next round time number - e.g. if now=2100ns, and round_time=1000ns, then next round time is 3000ns
@@ -173,7 +187,14 @@ begin
       uart_2_wr    => uart_2_wr,
       uart_2_rd    => uart_2_rd,
       uart_2_wdata => uart_2_wdata,
-      uart_2_rdata => uart_2_rdata
+      uart_2_rdata => uart_2_rdata,
+      -- UART 6 CPU interface
+      uart_6_cs    => uart_6_cs,
+      uart_6_addr  => uart_6_addr,
+      uart_6_wr    => uart_6_wr,
+      uart_6_rd    => uart_6_rd,
+      uart_6_wdata => uart_6_wdata,
+      uart_6_rdata => uart_6_rdata
     );
 
   clock_generator(clk, C_CLK_PERIOD);
@@ -189,17 +210,17 @@ begin
     set_log_file_name(GC_TESTCASE & "_Log.txt");
     set_alert_file_name(GC_TESTCASE & "_Alert.txt");
 
-    set_alert_stop_limit(ERROR, 0);
-
-    report_global_ctrl(VOID);
-    report_msg_id_panel(VOID);
-
     set_alert_stop_limit(WARNING, 0);
     set_alert_stop_limit(ERROR, 0);     -- 0 = Never stop
     set_alert_stop_limit(TB_ERROR, 0);
 
+    report_global_ctrl(VOID);
+    report_msg_id_panel(VOID);
+
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
+
+    shared_uart_vvc_config(RX, 3).unwanted_activity_severity  := NO_ALERT; -- Unwanted activity errors due to transmission without receive commands
 
     log(ID_LOG_HDR, "Starting simulation using several sequencers", C_SCOPE_MAIN);
     enable_log_msg(ALL_MESSAGES, scope => C_SCOPE_MAIN);
@@ -240,6 +261,9 @@ begin
     elsif GC_TESTCASE = "Testing_2_Sequencer_Parallel_using_same_instance_of_a_VVC_type_at_the_same_time" then
       unblock_flag(C_FLAG_J, "Unblocking Flag_J -> starting the other 2 sequencer", global_trigger, C_SCOPE_MAIN);
       await_barrier(barrier_j, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_MAIN);
+    elsif GC_TESTCASE = "Testing_await_uvvm_completion" then
+      unblock_flag(C_FLAG_K, "Unblocking Flag_K -> starting the other sequencer", global_trigger, C_SCOPE_MAIN);
+      await_barrier(barrier_k, 100 us, "waiting for the sequencers to finish", scope => C_SCOPE_MAIN);
     end if;
 
     -----------------------------------------------------------------------------
@@ -1203,6 +1227,98 @@ begin
     await_barrier(barrier_j, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_J2);
     wait;                               -- to stop completely
   end process p_main_j2;
+
+  p_main_k1 : process
+    constant C_SCOPE_K1   : string := C_TB_SCOPE_DEFAULT & " K1";
+    variable v_data_array : t_slv_array(0 to 99)(7 downto 0);
+
+    -- Overload
+    procedure sbi_write(
+      constant addr_value : in unsigned;
+      constant data_value : in std_logic_vector;
+      constant msg        : in string) is
+    begin
+      sbi_write(addr_value, data_value, msg, clk, uart_6_cs, uart_6_addr, uart_6_rd, uart_6_wr, uart_6_ready, uart_6_wdata, C_SCOPE_K1);
+    end procedure;
+
+    -- Checks that all VVCs are inactive
+    procedure check_all_vvc_inactive(dummy : t_void) is
+      variable v_all_inactive : boolean := True;
+    begin
+      for i in 0 to shared_vvc_activity_register.priv_get_num_registered_vvcs(VOID) - 1 loop
+        v_all_inactive := v_all_inactive and check_value(shared_vvc_activity_register.priv_get_vvc_activity(i) /= ACTIVE,
+          error, "Checking that all VVCs are inactive", C_SCOPE_K1, ID_NEVER);
+      end loop;
+      log(ID_SEQUENCER, "check_all_vvc_inactive: " & to_string(v_all_inactive), C_SCOPE_K1);
+    end procedure;
+
+  begin
+    await_unblock_flag(C_FLAG_K, 0 us, "waiting for main sequencer to unblock flag", RETURN_TO_BLOCK, scope => C_SCOPE_K1);
+
+    for i in v_data_array'range loop
+      v_data_array(i) := random(8);
+    end loop;
+
+    disable_log_msg(UART_VVCT, 5, ALL_CHANNELS, ALL_MESSAGES);
+    disable_log_msg(AXISTREAM_VVCT, 0, ALL_MESSAGES);
+    disable_log_msg(AXISTREAM_VVCT, 1, ALL_MESSAGES);
+    disable_log_msg(ID_AWAIT_COMPLETION);
+    disable_log_msg(ID_AWAIT_COMPLETION_WAIT);
+    disable_log_msg(ID_AWAIT_COMPLETION_LIST);
+
+    shared_uart_vvc_config(RX, 5).bfm_config.bit_time := C_BIT_PERIOD;
+    shared_uart_vvc_config(TX, 5).bfm_config.bit_time := C_BIT_PERIOD;
+
+    log(ID_LOG_HDR, "Check that no error is thrown when no pending VVC commands or pending data in SB", C_SCOPE_K1);
+    check_all_vvc_inactive(VOID);
+    await_uvvm_completion(1*C_BIT_PERIOD, ERROR, 1 us, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1);
+
+    log(ID_LOG_HDR, "Check that no error is thrown when no pending VVC commands because of completion of commands", C_SCOPE_K1);
+    uart_transmit(UART_VVCT, 5, TX, x"55", "Sending TX out of UART 5 TX", scope => C_SCOPE_K1);
+    await_uvvm_completion(15*C_BIT_PERIOD, ERROR, 1 us, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1);
+    check_all_vvc_inactive(VOID);
+
+    log(ID_LOG_HDR, "Check that pending commands in VVC will result in ERROR", C_SCOPE_K1);
+    uart_transmit(UART_VVCT, 5, TX, x"55", "sending TX out of UART 5 TX", scope => C_SCOPE_K1);
+    increment_expected_alerts(ERROR, 1, scope => C_SCOPE_K1);
+    await_uvvm_completion(1 ns, ERROR, 1 us, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1); -- Should throw an alert since TX is not completed
+    await_completion(UART_VVCT, 5, TX, 15*C_BIT_PERIOD, scope => C_SCOPE_K1); -- This clears the pending command
+    check_all_vvc_inactive(VOID);
+
+    log(ID_LOG_HDR, "Check that pending data in SB will result in WARNING", C_SCOPE_K1);
+    UART_VVC_SB.add_expected(5, x"55");
+    increment_expected_alerts(WARNING, 1, scope => C_SCOPE_K1);
+    await_uvvm_completion(1 ns, WARNING, 1 us, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1); -- Should throw an alert since the RX-SB has pending data
+    sbi_write(C_ADDR_TX_DATA, x"55", "TX_DATA");
+    uart_receive(UART_VVCT, 5, RX, TO_SB, "expecting TX out of UART 5 TX", scope => C_SCOPE_K1); -- This clears the pending data
+    await_completion(UART_VVCT, 5, RX, 15*C_BIT_PERIOD, scope => C_SCOPE_K1);
+    check_all_vvc_inactive(VOID);
+
+    log(ID_LOG_HDR, "Check that null time in timeout or in sb_poll_time will result in TB_FAILURE", C_SCOPE_K1);
+    increment_expected_alerts_and_stop_limit(TB_FAILURE, 4, scope => C_SCOPE_K1);
+    await_uvvm_completion(0 ns, TB_FAILURE, 1 us, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1);
+    await_uvvm_completion(1 ns, TB_FAILURE, 0 ns, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1);
+    await_uvvm_completion(0 ns, TB_FAILURE, 0 ns, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1);
+
+    log(ID_LOG_HDR, "Check that a VVC without a SB will work fine", C_SCOPE_K1);
+    axistream_transmit(AXISTREAM_VVCT, 0, v_data_array(0 to 95), "Transmit data array");
+    axistream_expect(AXISTREAM_VVCT, 1, v_data_array(0 to 95), "Expect data array");
+    await_uvvm_completion(1000 ns, ERROR, 1 ns, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1);
+
+    log(ID_LOG_HDR, "Check that a VVC without a SB will generate an alert if the VVC is not inactive after the completion timeout", C_SCOPE_K1);
+    axistream_transmit(AXISTREAM_VVCT, 0, v_data_array(0 to 95), "Transmit data array");
+    axistream_expect(AXISTREAM_VVCT, 1, v_data_array(0 to 95), "Expect data array");
+    increment_expected_alerts(ERROR, 1, scope => C_SCOPE_K1);
+    await_uvvm_completion(10 ns, ERROR, 1 ns, NO_REPORT, NO_REPORT, NO_REPORT, C_SCOPE_K1); -- Should throw an alert since transmit is not completed
+
+    log(ID_LOG_HDR, "Print all reports", C_SCOPE_K1);
+    await_uvvm_completion(1 us, ERROR, 1 ns, REPORT_ALERT_COUNTERS, REPORT_SCOREBOARDS, REPORT_VVCS, C_SCOPE);
+
+    -- Ending the simulation in sequencer 1
+    log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_K1);
+    await_barrier(barrier_k, 100 us, "waiting for all sequencers to finish", scope => C_SCOPE_K1);
+    wait;                               -- to stop completely
+  end process p_main_k1;
 
   -- Toggle the reset after 5 clock periods
   p_arst : arst <= '1', '0' after 5 * C_CLK_PERIOD;

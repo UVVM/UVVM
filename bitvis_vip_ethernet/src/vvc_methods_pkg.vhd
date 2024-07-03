@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -108,8 +108,8 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
-  shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
-  shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
+  shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable ETHERNET_VVC_SB            : t_generic_sb;
 
   --==========================================================================================

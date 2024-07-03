@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -29,6 +29,7 @@ package vvc_cmd_pkg is
   -- - VVC and BFM operations
   --========================================================================================================================
   type t_operation is (
+    -- UVVM common
     NO_OPERATION,
     AWAIT_COMPLETION,
     AWAIT_ANY_COMPLETION,
@@ -42,14 +43,11 @@ package vvc_cmd_pkg is
     WRITE, READ, CHECK
   );
 
-  --<USER_INPUT> Create constants for the maximum sizes to use in this VVC.
-  -- You can create VVCs with smaller sizes than these constants, but not larger.
-  -- For example, given a VVC with parallel data bus and address bus, constraints should be added for maximum data length
-  -- and address length 
-  -- Example:
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 64;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_WISHBONE_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := C_WISHBONE_VVC_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_WISHBONE_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_WISHBONE_VVC_MAX_INSTANCE_NUM;
 
   --========================================================================================================================
   -- t_vvc_cmd_record
@@ -138,7 +136,7 @@ package vvc_cmd_pkg is
   -- shared_vvc_last_received_cmd_idx
   --  - Shared variable used to get last queued index from vvc to sequencer
   --===============================================================================================
-  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => -1));
+  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => -1));
 
 end package vvc_cmd_pkg;
 

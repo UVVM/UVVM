@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -21,9 +21,9 @@ use IEEE.math_real.all;
 
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
-use work.data_queue_pkg.all;
-use work.data_fifo_pkg.all;
-use work.data_stack_pkg.all;
+use uvvm_util.data_queue_pkg.all;
+use uvvm_util.data_fifo_pkg.all;
+use uvvm_util.data_stack_pkg.all;
 
 --hdlregression:tb
 -- Test case entity
@@ -71,8 +71,8 @@ begin
 
     variable v_buffer_idx_5_expected_data : std_logic_vector(C_BUFFER_SIZE_5 - 1 downto 0);
 
-    variable vr_slv_1   : std_logic_vector(0 downto 0);
-    variable vr_slv_max : std_logic_vector(C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1 downto 0);
+    variable v_slv_1   : std_logic_vector(0 downto 0);
+    variable v_slv_max : std_logic_vector(C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1 downto 0);
 
   begin
     -- To avoid that log files from different test cases (run in separate
@@ -82,7 +82,6 @@ begin
 
     -- Print the configuration to the log
     report_global_ctrl(VOID);
-    report_msg_id_panel(VOID);
     set_alert_stop_limit(TB_ERROR, 0);  -- 0 = Never stop
 
     enable_log_msg(ALL_MESSAGES);
@@ -333,23 +332,23 @@ begin
     check_value(queue_under_test.get_count(0), 1, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
     check_value(queue_under_test.peek_front(0, 1), "0", TB_ERROR, "Verifying that queue has correct value", C_SCOPE, HEX, AS_IS, ID_SEQUENCER);
     check_value(queue_under_test.get_count(0), 1, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
-    vr_slv_1 := queue_under_test.pop_front(0, 1);
+    v_slv_1 := queue_under_test.pop_front(0, 1);
     check_value(queue_under_test.get_count(0), 0, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
-    check_value(vr_slv_1, "0", TB_ERROR, "Verifying that pop_front returns correct value", C_SCOPE, HEX, AS_IS, ID_NEVER);
+    check_value(v_slv_1, "0", TB_ERROR, "Verifying that pop_front returns correct value", C_SCOPE, HEX, AS_IS, ID_NEVER);
     wait for 10 us;
     queue_under_test.push_back(0, "1");
     check_value(queue_under_test.get_count(0), 1, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
     check_value(queue_under_test.peek_back(0, 1), "1", TB_ERROR, "Peek_back: Verifying that queue has correct value", C_SCOPE, HEX, AS_IS, ID_SEQUENCER);
     check_value(queue_under_test.get_count(0), 1, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
-    vr_slv_1 := queue_under_test.pop_back(0, 1);
-    check_value(vr_slv_1, "1", TB_ERROR, "Verifying that pop_back returns correct value", C_SCOPE, HEX, AS_IS, ID_NEVER);
+    v_slv_1 := queue_under_test.pop_back(0, 1);
+    check_value(v_slv_1, "1", TB_ERROR, "Verifying that pop_back returns correct value", C_SCOPE, HEX, AS_IS, ID_NEVER);
     check_value(queue_under_test.get_count(0), 0, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
     wait for 10 us;
     -- Test two consecutive writes, then read value
     queue_under_test.push_back(0, "1");
     queue_under_test.push_back(0, "0");
-    vr_slv_1 := queue_under_test.pop_back(0, 1);
-    check_value(vr_slv_1, "0", TB_ERROR, "Verifying that pop_back returns correct value", C_SCOPE, HEX, AS_IS, ID_NEVER);
+    v_slv_1 := queue_under_test.pop_back(0, 1);
+    check_value(v_slv_1, "0", TB_ERROR, "Verifying that pop_back returns correct value", C_SCOPE, HEX, AS_IS, ID_NEVER);
     check_value(queue_under_test.get_count(0), 1, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER); -- shall be once here since we wrote twice
 
     -- 4. Creating a single C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER large queue and perform operations.
@@ -357,13 +356,13 @@ begin
     queue_under_test.init_queue(0, C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER);
     queue_under_test.push_back(0, random(C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER));
     check_value(queue_under_test.get_count(0), C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
-    vr_slv_max := queue_under_test.peek_front(0, C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER);
+    v_slv_max := queue_under_test.peek_front(0, C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER);
     check_value(queue_under_test.get_count(0), C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
-    vr_slv_max := queue_under_test.pop_back(0, C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER);
+    v_slv_max := queue_under_test.pop_back(0, C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER);
     check_value(queue_under_test.get_count(0), 0, TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
     queue_under_test.push_back(0, random(C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER));
     for i in 0 to C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1 loop
-      vr_slv_1 := queue_under_test.pop_front(0, 1);
+      v_slv_1 := queue_under_test.pop_front(0, 1);
       check_value(queue_under_test.get_count(0), C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - (i + 1), TB_ERROR, "Verifying number of elements in queue", C_SCOPE, ID_NEVER);
     end loop;
 

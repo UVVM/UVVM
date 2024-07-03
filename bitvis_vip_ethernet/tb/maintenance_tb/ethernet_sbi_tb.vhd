@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -49,8 +49,6 @@ architecture func of ethernet_sbi_tb is
   constant C_SCOPE      : string   := C_TB_SCOPE_DEFAULT;
   constant C_ADDR_WIDTH : positive := 8;
 
-  alias clk is << signal .ethernet_sbi_tb.i_test_harness.clk : std_logic >>;
-  alias i1_sbi_if is << signal .ethernet_sbi_tb.i_test_harness.i1_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH - 1 downto 0), wdata(GC_DATA_WIDTH - 1 downto 0), rdata(GC_DATA_WIDTH - 1 downto 0)) >>;
 begin
 
   -----------------------------------------------------------------------------
@@ -61,7 +59,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and Executors
   -----------------------------------------------------------------------------
-  i_test_harness : entity bitvis_vip_ethernet.ethernet_th(struct_sbi)
+  i_test_harness : entity work.ethernet_th(struct_sbi)
     generic map(
       GC_CLK_PERIOD     => C_CLK_PERIOD,
       GC_SBI_ADDR_WIDTH => C_ADDR_WIDTH,
@@ -78,6 +76,9 @@ begin
     variable v_receive_data   : bitvis_vip_ethernet.vvc_cmd_pkg.t_vvc_result;
     variable v_expected_frame : t_ethernet_frame;
     variable v_time_stamp     : time;
+
+    alias clk       is << signal i_test_harness.clk : std_logic >>;
+    alias i1_sbi_if is << signal i_test_harness.i1_sbi_if : t_sbi_if(addr(C_ADDR_WIDTH - 1 downto 0), wdata(GC_DATA_WIDTH - 1 downto 0), rdata(GC_DATA_WIDTH - 1 downto 0)) >>;
 
     impure function make_ethernet_frame(
       constant mac_destination : in unsigned(47 downto 0);

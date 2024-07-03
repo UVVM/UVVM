@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -61,6 +61,7 @@ package vvc_methods_pkg is
     bfm_config                            : t_rgmii_bfm_config; -- Configuration for the BFM. See BFM quick reference.
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel.
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
+    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT TX outputs is detected
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -75,7 +76,8 @@ package vvc_methods_pkg is
     result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
     bfm_config                            => C_RGMII_BFM_CONFIG_DEFAULT,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
+    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
   );
 
   type t_vvc_status is record
@@ -92,8 +94,8 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
-  shared variable shared_rgmii_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_RGMII_VVC_CONFIG_DEFAULT));
-  shared variable shared_rgmii_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable shared_rgmii_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_RGMII_VVC_CONFIG_DEFAULT));
+  shared variable shared_rgmii_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
   shared variable RGMII_VVC_SB            : t_generic_sb;
 
   --==========================================================================================
@@ -111,6 +113,17 @@ package vvc_methods_pkg is
     constant msg                 : in string;
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  );
+
+  procedure rgmii_write(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in integer;
+    constant channel                      : in t_channel;
+    constant data_array                   : in t_byte_array;
+    constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
+    constant msg                          : in string;
+    constant scope                        : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   );
 
   procedure rgmii_read(
@@ -193,6 +206,20 @@ package body vvc_methods_pkg is
     constant scope               : in string         := C_VVC_CMD_SCOPE_DEFAULT;
     constant parent_msg_id_panel : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
   ) is
+  begin
+    rgmii_write(VVCT, vvc_instance_idx, channel, data_array, RELEASE_LINE_AFTER_TRANSFER, msg, scope, parent_msg_id_panel);
+  end procedure;
+
+  procedure rgmii_write(
+    signal   VVCT                         : inout t_vvc_target_record;
+    constant vvc_instance_idx             : in integer;
+    constant channel                      : in t_channel;
+    constant data_array                   : in t_byte_array;
+    constant action_when_transfer_is_done : in t_action_when_transfer_is_done;
+    constant msg                          : in string;
+    constant scope                        : in string         := C_VVC_CMD_SCOPE_DEFAULT;
+    constant parent_msg_id_panel          : in t_msg_id_panel := C_UNUSED_MSG_ID_PANEL -- Only intended for usage by parent HVVCs
+  ) is
     constant proc_name      : string         := "rgmii_write";
     constant proc_call      : string         := proc_name & "(" & to_string(VVCT, vvc_instance_idx, channel) & ", " & to_string(data_array'length) & " bytes)";
     variable v_msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
@@ -203,6 +230,7 @@ package body vvc_methods_pkg is
     set_general_target_and_command_fields(VVCT, vvc_instance_idx, channel, proc_call, msg, QUEUED, WRITE);
     shared_vvc_cmd.data_array(0 to data_array'length - 1) := data_array;
     shared_vvc_cmd.data_array_length                      := data_array'length;
+    shared_vvc_cmd.action_when_transfer_is_done           := action_when_transfer_is_done;
     shared_vvc_cmd.parent_msg_id_panel                    := parent_msg_id_panel;
     if parent_msg_id_panel /= C_UNUSED_MSG_ID_PANEL then
       v_msg_id_panel := parent_msg_id_panel;

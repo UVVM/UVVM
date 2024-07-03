@@ -1,0 +1,5 @@
+REQ_1, Single testcase, TC_1
+REQ_2, Combined TCs, TC_1, TC_2, TC_3
+REQ_2, Combined TCs, TC_4
+REQ_3, Combined TCs, TC_1
+REQ_3, Combined TCs, TC_1, TC_2, TC_3

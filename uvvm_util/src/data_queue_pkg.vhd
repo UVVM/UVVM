@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -273,29 +273,29 @@ package body data_queue_pkg is
     -- There are several queues that can be instantiated in the slv.
     -- There is one set of variables per queue.
 
-    variable v_queue_initialized  : t_buffer_boolean_array := (others => false);
-    variable v_queue_size_in_bits : t_buffer_natural_array := (others => 0);
-    variable v_count              : t_buffer_natural_array := (others => 0);
+    variable priv_queue_initialized  : t_buffer_boolean_array := (others => false);
+    variable priv_queue_size_in_bits : t_buffer_natural_array := (others => 0);
+    variable priv_count              : t_buffer_natural_array := (others => 0);
 
     -- min_idx/max idx: These variables set the upper and lower limit of each queue in the buffer.
     --                  This is how the large slv buffer is divided into several smaller queues.
     --                  After a queue has been instantiated, all queue operations in the buffer
-    --                  for a given idx will happen within the v_min_idx and v_max_idx boundary.
+    --                  for a given idx will happen within the priv_min_idx and priv_max_idx boundary.
     --                  These variables will be set when a queue is instantiated, and will not
     --                  change afterwards.
-    variable v_min_idx : t_buffer_natural_array := (others => 0);
-    variable v_max_idx : t_buffer_natural_array := (others => 0);
+    variable priv_min_idx : t_buffer_natural_array := (others => 0);
+    variable priv_max_idx : t_buffer_natural_array := (others => 0);
 
-    variable v_next_available_idx : natural := 0; -- Where the v_min_idx of the next queue initialized shall be set.
+    variable priv_next_available_idx : natural := 0; -- Where the priv_min_idx of the next queue initialized shall be set.
 
     -- first_idx/last_idx: These variables set the current indices within a queue, i.e., within
     --                     the min_idx/max_idx boundary. These variables will change every time
     --                     a given queue has data pushed or popped.
-    variable v_first_idx : t_buffer_natural_array := (others => 0);
-    variable v_last_idx  : t_buffer_natural_array := (others => 0);
+    variable priv_first_idx : t_buffer_natural_array := (others => 0);
+    variable priv_last_idx  : t_buffer_natural_array := (others => 0);
 
     type t_string_pointer is access string;
-    variable v_scope : t_string_pointer := NULL;
+    variable priv_scope : t_string_pointer := NULL;
 
     ------------------------------------------
     -- init_queue
@@ -304,60 +304,60 @@ package body data_queue_pkg is
       queue_size_in_bits : natural;
       scope              : string := "data_queue"
     ) return natural is
-      variable vr_queue_idx       : natural;
-      variable vr_queue_idx_found : boolean := false;
+      variable v_queue_idx       : natural;
+      variable v_queue_idx_found : boolean := false;
     begin
-      if v_scope = NULL then
-        v_scope := new string'(scope);
+      if priv_scope = NULL then
+        priv_scope := new string'(scope);
       end if;
 
-      if not check_value(v_next_available_idx < C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER, TB_ERROR,
-                           "init_queue called, but no more space in buffer!", v_scope.all, ID_NEVER) then
+      if not check_value(priv_next_available_idx < C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER, TB_ERROR,
+                           "init_queue called, but no more space in buffer!", priv_scope.all, ID_NEVER) then
         return 0;
       end if;
 
       -- Find first available queue
       -- and tag as initialized
       for i in t_buffer_boolean_array'range loop
-        if not v_queue_initialized(i) then
+        if not priv_queue_initialized(i) then
           -- Save queue idx
-          vr_queue_idx                      := i;
-          vr_queue_idx_found                := true;
+          v_queue_idx                      := i;
+          v_queue_idx_found                := true;
           -- Tag this queue as initialized
-          v_queue_initialized(vr_queue_idx) := true;
+          priv_queue_initialized(v_queue_idx) := true;
           exit;                         -- exit loop
         end if;
       end loop;
 
       -- Verify that an available queue idx was found, else trigger alert and return 0
-      if not check_value(vr_queue_idx_found, TB_ERROR,
-                           "init_queue called, but all queues have already been initialized!", v_scope.all, ID_NEVER) then
+      if not check_value(v_queue_idx_found, TB_ERROR,
+                           "init_queue called, but all queues have already been initialized!", priv_scope.all, ID_NEVER) then
         return 0;
       end if;
 
       -- Set buffer size for this buffer to queue_size_in_bits
-      if queue_size_in_bits <= (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - (v_next_available_idx - 1) then -- less than or equal to the remaining total buffer space available
-        v_queue_size_in_bits(vr_queue_idx) := queue_size_in_bits;
+      if queue_size_in_bits <= (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - (priv_next_available_idx - 1) then -- less than or equal to the remaining total buffer space available
+        priv_queue_size_in_bits(v_queue_idx) := queue_size_in_bits;
       else
-        alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", v_scope.all);
-        v_queue_size_in_bits(vr_queue_idx) := (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - v_next_available_idx; -- Set to remaining available bits
+        alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", priv_scope.all);
+        priv_queue_size_in_bits(v_queue_idx) := (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - priv_next_available_idx; -- Set to remaining available bits
       end if;
 
       -- Set starting and ending indices for this queue_idx
-      v_min_idx(vr_queue_idx)   := v_next_available_idx;
-      v_max_idx(vr_queue_idx)   := v_min_idx(vr_queue_idx) + v_queue_size_in_bits(vr_queue_idx) - 1;
-      v_first_idx(vr_queue_idx) := v_min_idx(vr_queue_idx);
-      v_last_idx(vr_queue_idx)  := v_min_idx(vr_queue_idx);
+      priv_min_idx(v_queue_idx)   := priv_next_available_idx;
+      priv_max_idx(v_queue_idx)   := priv_min_idx(v_queue_idx) + priv_queue_size_in_bits(v_queue_idx) - 1;
+      priv_first_idx(v_queue_idx) := priv_min_idx(v_queue_idx);
+      priv_last_idx(v_queue_idx)  := priv_min_idx(v_queue_idx);
 
-      v_next_available_idx := v_max_idx(vr_queue_idx) + 1;
+      priv_next_available_idx := priv_max_idx(v_queue_idx) + 1;
 
-      log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(vr_queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(vr_queue_idx)) & ".", v_scope.all);
+      log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(v_queue_idx) & " initialized with buffer size " & to_string(priv_queue_size_in_bits(v_queue_idx)) & ".", priv_scope.all);
 
       -- Clear the buffer just to be sure
-      flush(vr_queue_idx);
+      flush(v_queue_idx);
 
       -- Return the index of the buffer
-      return vr_queue_idx;
+      return v_queue_idx;
     end function;
 
     ------------------------------------------
@@ -369,36 +369,36 @@ package body data_queue_pkg is
       scope              : string := "data_queue"
     ) is
     begin
-      if v_scope = NULL then
-        v_scope := new string'(scope);
+      if priv_scope = NULL then
+        priv_scope := new string'(scope);
       end if;
-      if not v_queue_initialized(queue_idx) then
+      if not priv_queue_initialized(queue_idx) then
 
         -- Set buffer size for this buffer to queue_size_in_bits
-        if queue_size_in_bits <= (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - (v_next_available_idx - 1) then -- less than or equal to the remaining total buffer space available
-          v_queue_size_in_bits(queue_idx) := queue_size_in_bits;
+        if queue_size_in_bits <= (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - (priv_next_available_idx - 1) then -- less than or equal to the remaining total buffer space available
+          priv_queue_size_in_bits(queue_idx) := queue_size_in_bits;
         else
-          alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", v_scope.all);
-          v_queue_size_in_bits(queue_idx) := (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - v_next_available_idx; -- Set to remaining available bits
+          alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", priv_scope.all);
+          priv_queue_size_in_bits(queue_idx) := (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - priv_next_available_idx; -- Set to remaining available bits
         end if;
 
         -- Set starting and ending indices for this queue_idx
-        v_min_idx(queue_idx)   := v_next_available_idx;
-        v_max_idx(queue_idx)   := v_min_idx(queue_idx) + v_queue_size_in_bits(queue_idx) - 1;
-        v_first_idx(queue_idx) := v_min_idx(queue_idx);
-        v_last_idx(queue_idx)  := v_min_idx(queue_idx);
+        priv_min_idx(queue_idx)   := priv_next_available_idx;
+        priv_max_idx(queue_idx)   := priv_min_idx(queue_idx) + priv_queue_size_in_bits(queue_idx) - 1;
+        priv_first_idx(queue_idx) := priv_min_idx(queue_idx);
+        priv_last_idx(queue_idx)  := priv_min_idx(queue_idx);
 
-        v_next_available_idx := v_max_idx(queue_idx) + 1;
+        priv_next_available_idx := priv_max_idx(queue_idx) + 1;
 
         -- Tag this buffer as initialized
-        v_queue_initialized(queue_idx) := true;
+        priv_queue_initialized(queue_idx) := true;
 
-        log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(queue_idx)) & ".", v_scope.all);
+        log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(queue_idx) & " initialized with buffer size " & to_string(priv_queue_size_in_bits(queue_idx)) & ".", priv_scope.all);
 
         -- Clear the buffer just to be sure
         flush(queue_idx);
       else
-        alert(TB_ERROR, "init_queue called, but the desired buffer index is already in use! No action taken.", v_scope.all);
+        alert(TB_ERROR, "init_queue called, but the desired buffer index is already in use! No action taken.", priv_scope.all);
         return;
       end if;
     end procedure;
@@ -412,20 +412,20 @@ package body data_queue_pkg is
     ) is
       alias a_data : std_logic_vector(data'length - 1 downto 0) is data;
     begin
-      if check_value(v_queue_initialized(queue_idx), TB_ERROR,
-                       "push_back called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER) then
+      if check_value(priv_queue_initialized(queue_idx), TB_ERROR,
+                       "push_back called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER) then
         for i in a_data'right to a_data'left loop -- From right to left since LSB shall be first in the queue.
-          shared_data_buffer(v_last_idx(queue_idx)) := a_data(i);
+          shared_data_buffer(priv_last_idx(queue_idx)) := a_data(i);
 
-          if v_last_idx(queue_idx) /= v_max_idx(queue_idx) then
-            v_last_idx(queue_idx) := v_last_idx(queue_idx) + 1;
+          if priv_last_idx(queue_idx) /= priv_max_idx(queue_idx) then
+            priv_last_idx(queue_idx) := priv_last_idx(queue_idx) + 1;
           else
-            v_last_idx(queue_idx) := v_min_idx(queue_idx);
+            priv_last_idx(queue_idx) := priv_min_idx(queue_idx);
           end if;
-          v_count(queue_idx) := v_count(queue_idx) + 1;
+          priv_count(queue_idx) := priv_count(queue_idx) + 1;
         end loop;
 
-        log(ID_UVVM_DATA_QUEUE, "Data " & to_string(data, HEX) & " pushed to back of queue " & to_string(queue_idx) & " (index " & to_string(v_last_idx(queue_idx)) & "). Fill level is " & to_string(v_count(queue_idx)) & "/" & to_string(v_queue_size_in_bits(queue_idx)) & ".", v_scope.all);
+        log(ID_UVVM_DATA_QUEUE, "Data " & to_string(data, HEX) & " pushed to back of queue " & to_string(queue_idx) & " (index " & to_string(priv_last_idx(queue_idx)) & "). Fill level is " & to_string(priv_count(queue_idx)) & "/" & to_string(priv_queue_size_in_bits(queue_idx)) & ".", priv_scope.all);
       end if;
     end procedure;
 
@@ -436,12 +436,12 @@ package body data_queue_pkg is
       queue_idx : natural
     ) is
     begin
-      check_value(v_queue_initialized(queue_idx), TB_WARNING, "flush called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
+      check_value(priv_queue_initialized(queue_idx), TB_WARNING, "flush called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER);
 
-      shared_data_buffer(v_max_idx(queue_idx) downto v_min_idx(queue_idx)) := (others => '0');
-      v_first_idx(queue_idx)                                               := v_min_idx(queue_idx);
-      v_last_idx(queue_idx)                                                := v_min_idx(queue_idx);
-      v_count(queue_idx)                                                   := 0;
+      shared_data_buffer(priv_max_idx(queue_idx) downto priv_min_idx(queue_idx)) := (others => '0');
+      priv_first_idx(queue_idx)                                               := priv_min_idx(queue_idx);
+      priv_last_idx(queue_idx)                                                := priv_min_idx(queue_idx);
+      priv_count(queue_idx)                                                   := 0;
     end procedure;
 
     ------------------------------------------
@@ -454,20 +454,20 @@ package body data_queue_pkg is
       variable v_return_entry : std_logic_vector(entry_size_in_bits - 1 downto 0) := (others => '0');
       variable v_current_idx  : natural;
     begin
-      check_value(v_queue_initialized(queue_idx), TB_ERROR, "peek_front() called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
-      check_value(v_count(queue_idx) > 0, TB_WARNING, "peek_front() when queue " & to_string(queue_idx) & " is empty. Return value will be garbage.", v_scope.all, ID_NEVER);
-      check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "peek_front called, but entry size is larger than buffer size!", v_scope.all, ID_NEVER);
+      check_value(priv_queue_initialized(queue_idx), TB_ERROR, "peek_front() called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER);
+      check_value(priv_count(queue_idx) > 0, TB_WARNING, "peek_front() when queue " & to_string(queue_idx) & " is empty. Return value will be garbage.", priv_scope.all, ID_NEVER);
+      check_value(entry_size_in_bits <= priv_queue_size_in_bits(queue_idx), TB_WARNING, "peek_front called, but entry size is larger than buffer size!", priv_scope.all, ID_NEVER);
 
-      v_current_idx := v_first_idx(queue_idx);
+      v_current_idx := priv_first_idx(queue_idx);
 
       -- Generate return value
       for i in 0 to v_return_entry'length - 1 loop
         v_return_entry(i) := shared_data_buffer(v_current_idx);
 
-        if v_current_idx < v_max_idx(queue_idx) then
+        if v_current_idx < priv_max_idx(queue_idx) then
           v_current_idx := v_current_idx + 1;
         else
-          v_current_idx := v_min_idx(queue_idx);
+          v_current_idx := priv_min_idx(queue_idx);
         end if;
       end loop;
 
@@ -484,24 +484,24 @@ package body data_queue_pkg is
       variable v_return_entry : std_logic_vector(entry_size_in_bits - 1 downto 0) := (others => '0');
       variable v_current_idx  : natural;
     begin
-      check_value(v_queue_initialized(queue_idx), TB_ERROR, "peek_back called, but queue not initialized.", v_scope.all, ID_NEVER);
-      check_value(v_count(queue_idx) > 0, TB_WARNING, "peek_back() when queue " & to_string(queue_idx) & " is empty. Return value will be garbage.", v_scope.all, ID_NEVER);
-      check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "peek_back called, but entry size is larger than buffer size!", v_scope.all, ID_NEVER);
+      check_value(priv_queue_initialized(queue_idx), TB_ERROR, "peek_back called, but queue not initialized.", priv_scope.all, ID_NEVER);
+      check_value(priv_count(queue_idx) > 0, TB_WARNING, "peek_back() when queue " & to_string(queue_idx) & " is empty. Return value will be garbage.", priv_scope.all, ID_NEVER);
+      check_value(entry_size_in_bits <= priv_queue_size_in_bits(queue_idx), TB_WARNING, "peek_back called, but entry size is larger than buffer size!", priv_scope.all, ID_NEVER);
 
-      if v_last_idx(queue_idx) > 0 then
-        v_current_idx := v_last_idx(queue_idx) - 1;
+      if priv_last_idx(queue_idx) > 0 then
+        v_current_idx := priv_last_idx(queue_idx) - 1;
       else
-        v_current_idx := v_max_idx(queue_idx);
+        v_current_idx := priv_max_idx(queue_idx);
       end if;
 
       -- Generate return value
       for i in v_return_entry'length - 1 downto 0 loop
         v_return_entry(i) := shared_data_buffer(v_current_idx);
 
-        if v_current_idx > v_min_idx(queue_idx) then
+        if v_current_idx > priv_min_idx(queue_idx) then
           v_current_idx := v_current_idx - 1;
         else
-          v_current_idx := v_max_idx(queue_idx);
+          v_current_idx := priv_max_idx(queue_idx);
         end if;
       end loop;
 
@@ -518,37 +518,37 @@ package body data_queue_pkg is
       variable v_return_entry : std_logic_vector(entry_size_in_bits - 1 downto 0);
       variable v_current_idx  : natural;
     begin
-      check_value(v_queue_initialized(queue_idx), TB_ERROR, "pop_back called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
-      check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "pop_back called, but entry size is larger than buffer size!", v_scope.all, ID_NEVER);
+      check_value(priv_queue_initialized(queue_idx), TB_ERROR, "pop_back called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER);
+      check_value(entry_size_in_bits <= priv_queue_size_in_bits(queue_idx), TB_WARNING, "pop_back called, but entry size is larger than buffer size!", priv_scope.all, ID_NEVER);
 
-      if v_queue_initialized(queue_idx) then
+      if priv_queue_initialized(queue_idx) then
         v_return_entry := peek_back(queue_idx, entry_size_in_bits);
 
-        if v_count(queue_idx) > 0 then
-          if v_last_idx(queue_idx) > v_min_idx(queue_idx) then
-            v_current_idx := v_last_idx(queue_idx) - 1;
+        if priv_count(queue_idx) > 0 then
+          if priv_last_idx(queue_idx) > priv_min_idx(queue_idx) then
+            v_current_idx := priv_last_idx(queue_idx) - 1;
           else
-            v_current_idx := v_max_idx(queue_idx);
+            v_current_idx := priv_max_idx(queue_idx);
           end if;
 
           -- Clear fields that belong to the return value
           for i in 0 to entry_size_in_bits - 1 loop
             shared_data_buffer(v_current_idx) := '0';
 
-            if v_current_idx > v_min_idx(queue_idx) then
+            if v_current_idx > priv_min_idx(queue_idx) then
               v_current_idx := v_current_idx - 1;
             else
-              v_current_idx := v_max_idx(queue_idx);
+              v_current_idx := priv_max_idx(queue_idx);
             end if;
 
-            v_count(queue_idx) := v_count(queue_idx) - 1;
+            priv_count(queue_idx) := priv_count(queue_idx) - 1;
           end loop;
 
           -- Set last idx
-          if v_current_idx < v_max_idx(queue_idx) then
-            v_last_idx(queue_idx) := v_current_idx + 1;
+          if v_current_idx < priv_max_idx(queue_idx) then
+            priv_last_idx(queue_idx) := v_current_idx + 1;
           else
-            v_last_idx(queue_idx) := v_min_idx(queue_idx);
+            priv_last_idx(queue_idx) := priv_min_idx(queue_idx);
           end if;
         end if;
       end if;
@@ -564,33 +564,33 @@ package body data_queue_pkg is
       entry_size_in_bits : natural
     ) return std_logic_vector is
       variable v_return_entry : std_logic_vector(entry_size_in_bits - 1 downto 0);
-      variable v_current_idx  : natural := v_first_idx(queue_idx);
+      variable v_current_idx  : natural := priv_first_idx(queue_idx);
     begin
-      check_value(entry_size_in_bits <= v_queue_size_in_bits(queue_idx), TB_WARNING, "pop_front called, but entry size is larger than buffer size!", v_scope.all, ID_NEVER);
+      check_value(entry_size_in_bits <= priv_queue_size_in_bits(queue_idx), TB_WARNING, "pop_front called, but entry size is larger than buffer size!", priv_scope.all, ID_NEVER);
 
-      if check_value(v_queue_initialized(queue_idx), TB_ERROR,
-                       "pop_front called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER) then
+      if check_value(priv_queue_initialized(queue_idx), TB_ERROR,
+                       "pop_front called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER) then
         v_return_entry := peek_front(queue_idx, entry_size_in_bits);
 
-        if v_count(queue_idx) > 0 then
-          -- v_first_idx points to the idx PREVIOUS to the first element in the buffer.
+        if priv_count(queue_idx) > 0 then
+          -- priv_first_idx points to the idx PREVIOUS to the first element in the buffer.
           -- Therefore must correct if at max_idx.
-          v_current_idx := v_first_idx(queue_idx);
+          v_current_idx := priv_first_idx(queue_idx);
 
           -- Clear fields that belong to the return value
           for i in 0 to entry_size_in_bits - 1 loop
             shared_data_buffer(v_current_idx) := '0';
 
-            if v_current_idx < v_max_idx(queue_idx) then
+            if v_current_idx < priv_max_idx(queue_idx) then
               v_current_idx := v_current_idx + 1;
             else
-              v_current_idx := v_min_idx(queue_idx);
+              v_current_idx := priv_min_idx(queue_idx);
             end if;
 
-            v_count(queue_idx) := v_count(queue_idx) - 1;
+            priv_count(queue_idx) := priv_count(queue_idx) - 1;
           end loop;
 
-          v_first_idx(queue_idx) := v_current_idx;
+          priv_first_idx(queue_idx) := v_current_idx;
         end if;
 
         return v_return_entry;
@@ -607,8 +607,8 @@ package body data_queue_pkg is
       queue_idx : natural
     ) return natural is
     begin
-      check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_count called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
-      return v_count(queue_idx);
+      check_value(priv_queue_initialized(queue_idx), TB_WARNING, "get_count called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER);
+      return priv_count(queue_idx);
     end function;
 
     ------------------------------------------
@@ -618,8 +618,8 @@ package body data_queue_pkg is
       queue_idx : natural
     ) return natural is
     begin
-      check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_queue_count_max called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
-      return v_queue_size_in_bits(queue_idx);
+      check_value(priv_queue_initialized(queue_idx), TB_WARNING, "get_queue_count_max called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER);
+      return priv_queue_size_in_bits(queue_idx);
     end function;
 
     ------------------------------------------
@@ -629,8 +629,8 @@ package body data_queue_pkg is
       queue_idx : natural
     ) return boolean is
     begin
-      check_value(v_queue_initialized(queue_idx), TB_WARNING, "get_queue_is_full called, but queue " & to_string(queue_idx) & " not initialized.", v_scope.all, ID_NEVER);
-      if v_count(queue_idx) >= v_queue_size_in_bits(queue_idx) then
+      check_value(priv_queue_initialized(queue_idx), TB_WARNING, "get_queue_is_full called, but queue " & to_string(queue_idx) & " not initialized.", priv_scope.all, ID_NEVER);
+      if priv_count(queue_idx) >= priv_queue_size_in_bits(queue_idx) then
         return true;
       else
         return false;
@@ -646,17 +646,17 @@ package body data_queue_pkg is
     begin
       shared_data_buffer := (others => '0');
 
-      v_queue_initialized  := (others => false);
-      v_queue_size_in_bits := (others => 0);
-      v_count              := (others => 0);
-      v_min_idx            := (others => 0);
-      v_max_idx            := (others => 0);
-      v_first_idx          := (others => 0);
-      v_last_idx           := (others => 0);
+      priv_queue_initialized  := (others => false);
+      priv_queue_size_in_bits := (others => 0);
+      priv_count              := (others => 0);
+      priv_min_idx            := (others => 0);
+      priv_max_idx            := (others => 0);
+      priv_first_idx          := (others => 0);
+      priv_last_idx           := (others => 0);
 
-      v_next_available_idx := 0;
+      priv_next_available_idx := 0;
 
-      log(ID_UVVM_DATA_QUEUE, "Buffer has been deallocated, i.e., all queues removed.", v_scope.all);
+      log(ID_UVVM_DATA_QUEUE, "Buffer has been deallocated, i.e., all queues removed.", priv_scope.all);
     end procedure;
 
   end protected body;

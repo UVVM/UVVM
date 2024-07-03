@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -100,7 +100,8 @@ begin
   --==========================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_RGMII_BFM_CONFIG,
                                                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
-                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
+                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
+                                                 C_VVC_MAX_INSTANCE_NUM);
   --==========================================================================================
 
   --==========================================================================================
@@ -275,12 +276,16 @@ begin
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
 
           -- Call the corresponding procedure in the BFM package.
-          rgmii_write(data_array   => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
-                      msg          => format_msg(v_cmd),
-                      rgmii_tx_if  => rgmii_vvc_tx_if,
-                      scope        => C_SCOPE,
-                      msg_id_panel => v_msg_id_panel,
-                      config       => vvc_config.bfm_config);
+          rgmii_write(data_array                   => v_cmd.data_array(0 to v_cmd.data_array_length - 1),
+                      action_when_transfer_is_done => v_cmd.action_when_transfer_is_done,
+                      msg                          => format_msg(v_cmd),
+                      rgmii_tx_if                  => rgmii_vvc_tx_if,
+                      scope                        => C_SCOPE,
+                      msg_id_panel                 => v_msg_id_panel,
+                      config                       => vvc_config.bfm_config);
+
+          -- Update vvc transaction info
+          set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
 
           -- Update vvc transaction info
           set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);

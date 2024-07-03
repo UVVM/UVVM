@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -60,7 +60,7 @@ begin
   --------------------------------------------------------------------------------
   -- Instantiate test harness
   --------------------------------------------------------------------------------
-  i_gmii_test_harness : entity bitvis_vip_gmii.test_harness(struct_bfm)
+  i_test_harness : entity work.gmii_th(struct_bfm)
     generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     )

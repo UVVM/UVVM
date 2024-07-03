@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -72,7 +72,7 @@ begin
   --------------------------------------------------------------------------------
   -- Instantiate test harness
   --------------------------------------------------------------------------------
-  i_avalon_st_test_harness : entity bitvis_vip_avalon_st.test_harness(struct_bfm)
+  i_test_harness : entity work.avalon_st_th(struct_bfm)
     generic map(
       GC_DATA_WIDTH    => GC_DATA_WIDTH,
       GC_CHANNEL_WIDTH => GC_CHANNEL_WIDTH,
@@ -225,25 +225,25 @@ begin
       -- Note: Error cases based on forcing master_sop_o or master_eop_o will not work in Modelsim 2020.1 because of a simulator bug in which values forced on port signals fail to propagate.
       log(ID_LOG_HDR, "Testing error case: receive() with missing start of packet");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '0';
+      << signal i_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '0';
       avalon_st_transmit(v_data_packet);
       avalon_st_receive(v_data_packet);
-      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
+      << signal i_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
       wait for 0 ns;                    -- Riviera Pro needs a delta cycle to use the force command again on the same signal
 
       log(ID_LOG_HDR, "Testing error case: receive() with start of packet in wrong position");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '1';
+      << signal i_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= force '1';
       avalon_st_transmit(v_data_packet(0 to 2 * GC_DATA_WIDTH / C_SYMBOL_WIDTH - 1));
       avalon_st_receive(v_data_packet(0 to 2 * GC_DATA_WIDTH / C_SYMBOL_WIDTH - 1));
-      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
+      << signal i_test_harness.i_avalon_st_fifo.master_sop_o : std_logic >> <= release;
 
       log(ID_LOG_HDR, "Testing error case: receive() with missing end of packet");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
-      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= force '0';
+      << signal i_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= force '0';
       avalon_st_transmit(v_data_packet);
       avalon_st_receive(v_data_packet);
-      << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= release;
+      << signal i_test_harness.i_avalon_st_fifo.master_eop_o : std_logic >> <= release;
 
       log(ID_LOG_HDR, "Testing error case: receive() with end of packet in wrong position");
       increment_expected_alerts_and_stop_limit(ERROR, 1);
@@ -254,10 +254,10 @@ begin
       if GC_DATA_WIDTH > C_SYMBOL_WIDTH then
         log(ID_LOG_HDR, "Testing error case: receive() with missing empty symbols");
         increment_expected_alerts_and_stop_limit(ERROR, 1);
-        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH - 1 downto 0) >> <= force (others => '0');
+        << signal i_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH - 1 downto 0) >> <= force (others => '0');
         avalon_st_transmit(v_data_packet(0 to 10));
         avalon_st_receive(v_data_packet(0 to 10));
-        << signal i_avalon_st_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH - 1 downto 0) >> <= release;
+        << signal i_test_harness.i_avalon_st_fifo.master_empty_o : std_logic_vector(C_EMPTY_WIDTH - 1 downto 0) >> <= release;
       end if;
 
       log(ID_LOG_HDR, "Testing error case: receive() timeout - no valid data");

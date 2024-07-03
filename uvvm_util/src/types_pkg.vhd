@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -14,12 +14,9 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use std.textio.all;
 
 package types_pkg is
@@ -235,8 +232,31 @@ package types_pkg is
 
   type t_error_report_extent is (EXTENDED, BRIEF);
 
+  type t_report_alert_counters is (NO_REPORT, REPORT_ALERT_COUNTERS, REPORT_ALERT_COUNTERS_FINAL);
+
+  type t_report_vvc is (NO_REPORT, REPORT_VVCS);
+
+  type t_report_sb is (NO_REPORT, REPORT_SCOREBOARDS);
+
+  constant C_CMD_IDX_PREFIX : string := " [";
+  constant C_CMD_IDX_SUFFIX : string := "]";
+
+  constant ALL_INSTANCES         : integer := -2;
+  constant ALL_ENABLED_INSTANCES : integer := -3;
+
+  type t_vvc_state is record
+    activity                 : t_activity;
+    last_cmd_idx_executed    : integer;
+    await_selected_supported : boolean;
+  end record;
+  constant C_VVC_STATE_DEFAULT : t_vvc_state := (
+    activity                 => INACTIVE,
+    last_cmd_idx_executed    => -1,
+    await_selected_supported => true
+  );
+
   -------------------------------------
-  -- SB
+  -- Scoreboard
   -------------------------------------
   -- Identifier_option: Typically describes what the next parameter means.
   -- - ENTRY_NUM :
@@ -249,6 +269,10 @@ package types_pkg is
   type t_range_option is (SINGLE, AND_LOWER, AND_HIGHER);
 
   type t_tag_usage is (TAG, NO_TAG);
+
+  -- These values are used to indicate outdated sub-programs
+  constant C_DEPRECATE_SETTING               : t_deprecate_setting := DEPRECATE_ONCE;
+  shared variable deprecated_subprogram_list : t_deprecate_list    := (others => (others => ' '));
 
 end package types_pkg;
 

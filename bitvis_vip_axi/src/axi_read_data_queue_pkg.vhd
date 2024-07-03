@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -58,7 +58,7 @@ package body axi_read_data_queue_pkg is
 
   type t_axi_read_data_queue is protected body
 
-    variable v_queue : axi_read_data_generic_queue_pkg.t_generic_queue;
+    variable priv_queue : axi_read_data_generic_queue_pkg.t_generic_queue;
 
     impure function exists(
       constant rid : in std_logic_vector
@@ -67,10 +67,10 @@ package body axi_read_data_queue_pkg is
       variable v_read_data      : t_vvc_result;
       variable v_normalized_rid : std_logic_vector(v_read_data.rid'length - 1 downto 0);
     begin
-      if v_queue.is_empty(VOID) then
+      if priv_queue.is_empty(VOID) then
         return false;
       else
-        v_queue_count := v_queue.get_count(VOID);
+        v_queue_count := priv_queue.get_count(VOID);
         if rid'length = 0 then
           -- If the RID length is zero, all read data must arrive in order. All we need to check is that the queue is not empty
           if v_queue_count > 0 then
@@ -79,7 +79,7 @@ package body axi_read_data_queue_pkg is
         else
           v_normalized_rid := normalize_and_check(rid, v_normalized_rid, ALLOW_NARROWER, "rid", "v_normalized_rid", "Normalizing rid");
           for i in 1 to v_queue_count loop
-            v_read_data := v_queue.peek(POSITION, i);
+            v_read_data := priv_queue.peek(POSITION, i);
             if v_read_data.rid = v_normalized_rid then
               return true;
             end if;
@@ -100,11 +100,11 @@ package body axi_read_data_queue_pkg is
         if rid'length > 0 then
           v_normalized_rid := normalize_and_check(rid, v_normalized_rid, ALLOW_NARROWER, "rid", "v_normalized_rid", "Normalizing rid");
         end if;
-        v_queue_count := v_queue.get_count(VOID);
+        v_queue_count := priv_queue.get_count(VOID);
         for i in 1 to v_queue_count loop
-          v_read_data := v_queue.peek(POSITION, i);
+          v_read_data := priv_queue.peek(POSITION, i);
           if rid'length = 0 or v_read_data.rid = v_normalized_rid then
-            v_queue.delete(POSITION, i, SINGLE);
+            priv_queue.delete(POSITION, i, SINGLE);
             return v_read_data;
           end if;
         end loop;
@@ -133,7 +133,7 @@ package body axi_read_data_queue_pkg is
         if ruser'length > 0 then
           v_read_data.ruser(0) := normalize_and_check(ruser, v_read_data.ruser(0), ALLOW_NARROWER, "ruser", "v_read_data.ruser(0)", "Normalizing ruser");
         end if;
-        v_queue.add(v_read_data);
+        priv_queue.add(v_read_data);
       else
         v_read_data                := fetch_from_queue(rid);
         v_index                    := v_read_data.len + 1;
@@ -143,7 +143,7 @@ package body axi_read_data_queue_pkg is
         if ruser'length > 0 then
           v_read_data.ruser(v_index) := normalize_and_check(ruser, v_read_data.ruser(v_index), ALLOW_NARROWER, "ruser", "v_read_data.ruser(" & to_string(v_index) & ")", "Normalizing ruser");
         end if;
-        v_queue.add(v_read_data);
+        priv_queue.add(v_read_data);
       end if;
     end procedure add_to_queue;
 
@@ -151,7 +151,7 @@ package body axi_read_data_queue_pkg is
       constant scope : in string
     ) is
     begin
-      v_queue.set_scope(scope);
+      priv_queue.set_scope(scope);
     end procedure set_scope;
 
   end protected body t_axi_read_data_queue;

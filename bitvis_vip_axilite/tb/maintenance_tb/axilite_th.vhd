@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -24,7 +24,7 @@ use bitvis_vip_axilite.axilite_bfm_pkg.all;
 use bitvis_vip_axilite.axilite_slave_model_pkg.all;
 
 --=================================================================================================
-entity test_harness is
+entity axilite_th is
   generic(
     constant C_ADDR_WIDTH_1 : natural := 32;
     constant C_DATA_WIDTH_1 : natural := 32;
@@ -45,11 +45,11 @@ entity test_harness is
                                              read_address_channel(araddr(C_ADDR_WIDTH_2 - 1 downto 0)),
                                              read_data_channel(rdata(C_DATA_WIDTH_2 - 1 downto 0))));
 
-end entity test_harness;
+end entity axilite_th;
 --=================================================================================================
 --=================================================================================================
 
-architecture struct_simple of test_harness is
+architecture struct_bfm of axilite_th is
 
 begin
   -----------------------------
@@ -136,9 +136,9 @@ begin
   axilite_if_2.read_address_channel.arvalid  <= 'Z';
   axilite_if_2.read_address_channel.arprot   <= (others => 'Z');
   axilite_if_2.read_data_channel.rready      <= 'Z';
-end struct_simple;
+end struct_bfm;
 
-architecture struct_vvc of test_harness is
+architecture struct_vvc of axilite_th is
 
 begin
   -----------------------------

@@ -15,15 +15,6 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Wait 100 ns until the coverpoint is initialized
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_SEQUENCER                      10.0 ns  p_sampling                     Waiting for coverpoint to be initialized
-UVVM: ID_SEQUENCER                      20.0 ns  p_sampling                     Waiting for coverpoint to be initialized
-UVVM: ID_SEQUENCER                      30.0 ns  p_sampling                     Waiting for coverpoint to be initialized
-UVVM: ID_SEQUENCER                      40.0 ns  p_sampling                     Waiting for coverpoint to be initialized
-UVVM: ID_SEQUENCER                      50.0 ns  p_sampling                     Waiting for coverpoint to be initialized
-UVVM: ID_SEQUENCER                      60.0 ns  p_sampling                     Waiting for coverpoint to be initialized
-UVVM: ID_SEQUENCER                      70.0 ns  p_sampling                     Waiting for coverpoint to be initialized
-UVVM: ID_SEQUENCER                      80.0 ns  p_sampling                     Waiting for coverpoint to be initialized
-UVVM: ID_SEQUENCER                      90.0 ns  p_sampling                     Waiting for coverpoint to be initialized
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                       100.0 ns  TB seq.                        Testing bins with single values

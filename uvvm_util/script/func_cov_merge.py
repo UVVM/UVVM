@@ -628,7 +628,7 @@ class CoverageMerger(object):
         cov_file_dir = os.path.normpath(filename)
         cov_file_dir = os.path.realpath(cov_file_dir)
 
-        files_list = glob(cov_file_dir, recursive = True)
+        files_list = sorted(glob(cov_file_dir, recursive = True))
 
         for item in files_list:
             cfr = CoverageFileReader(item)

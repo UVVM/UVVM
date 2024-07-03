@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -28,7 +28,7 @@ package transaction_pkg is
 
   --===============================================================================================
   -- t_operation
-  -- - Bitvis defined operations
+  -- - VVC and BFM operations
   --===============================================================================================
   type t_operation is (
     -- UVVM common
@@ -41,12 +41,15 @@ package transaction_pkg is
     FETCH_RESULT,
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
-    -- Transaction
-    WRITE, READ, CHECK, POLL_UNTIL);
+    -- VVC local
+    WRITE, READ, CHECK, POLL_UNTIL
+  );
 
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_SBI_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := C_SBI_VVC_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_SBI_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_SBI_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
@@ -118,11 +121,11 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_sbi_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_sbi_vvc_transaction_trigger : t_sbi_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
+  signal global_sbi_vvc_transaction_trigger : t_sbi_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_sbi_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_sbi_vvc_transaction_info : t_sbi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_sbi_vvc_transaction_info : t_sbi_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

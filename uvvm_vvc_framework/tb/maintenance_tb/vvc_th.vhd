@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -26,6 +26,8 @@ library bitvis_vip_uart;
 library bitvis_vip_sbi;
 library bitvis_vip_avalon_mm;
 use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
+library bitvis_vip_axistream;
+use bitvis_vip_axistream.axistream_bfm_pkg.all;
 
 -- Test harness entity
 entity vvc_th is
@@ -51,7 +53,14 @@ entity vvc_th is
     uart_2_wr    : in  std_logic;
     uart_2_rd    : in  std_logic;
     uart_2_wdata : in  std_logic_vector(7 downto 0);
-    uart_2_rdata : out std_logic_vector(7 downto 0) := (others => '0')
+    uart_2_rdata : out std_logic_vector(7 downto 0) := (others => '0');
+    -- CPU interface to UART 6
+    uart_6_cs    : in  std_logic;
+    uart_6_addr  : in  unsigned(2 downto 0);
+    uart_6_wr    : in  std_logic;
+    uart_6_rd    : in  std_logic;
+    uart_6_wdata : in  std_logic_vector(7 downto 0);
+    uart_6_rdata : out std_logic_vector(7 downto 0) := (others => '0')
   );
 end entity;
 
@@ -100,12 +109,24 @@ architecture struct of vvc_th is
   signal uart_5_rx_a  : std_logic;
   signal uart_5_tx    : std_logic;
 
+  signal uart_6_rx_a : std_logic;
+  signal uart_6_tx   : std_logic;
+
   signal ready : std_logic;
 
   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
 
   -- Avalon-MM signals
   signal avalon_mm_if : t_avalon_mm_if(address(31 downto 0), byte_enable(3 downto 0), writedata(31 downto 0), readdata(31 downto 0));
+  signal avalon_mm_if_read : std_logic := '0';
+
+  signal axistream_if : t_axistream_if(tdata(31 downto 0),
+                                       tkeep((32 / 8) - 1 downto 0),
+                                       tuser(0 downto 0),
+                                       tstrb((32 / 8) - 1 downto 0),
+                                       tid(0 downto 0),
+                                       tdest(0 downto 0)
+                                      );
 
 begin
 
@@ -213,6 +234,23 @@ begin
       rx_a  => uart_5_rx_a,
       tx    => uart_5_tx
     );
+  i_uart_6 : entity bitvis_uart.uart
+    port map(
+      -- DSP interface and general control signals
+      clk   => clk,
+      arst  => arst,
+      -- CPU interface
+      cs    => uart_6_cs,
+      addr  => uart_6_addr,
+      wr    => uart_6_wr,
+      rd    => uart_6_rd,
+      wdata => uart_6_wdata,
+      rdata => uart_6_rdata,
+      -- UART signals
+      rx_a  => uart_6_rx_a,
+      tx    => uart_6_tx
+    );
+  
 
   -----------------------------------------------------------------------------
   -- SBI VVC
@@ -331,6 +369,15 @@ begin
       uart_vvc_rx => uart_5_tx
     );
 
+  i_uart_vvc_5 : entity bitvis_vip_uart.uart_vvc
+    generic map(
+      GC_INSTANCE_IDX => 5
+    )
+    port map(
+      uart_vvc_tx => uart_6_rx_a,
+      uart_vvc_rx => uart_6_tx
+    );
+
   -----------------------------------------------------------------------------
   -- Avalon-MM VVC
   -----------------------------------------------------------------------------
@@ -350,7 +397,39 @@ begin
   avalon_mm_if.response      <= (others => '0');
   avalon_mm_if.waitrequest   <= '0';
   avalon_mm_if.irq           <= '0';
-  -- Simulate a delay in the read response
-  avalon_mm_if.readdatavalid <= transport avalon_mm_if.read after C_CLK_PERIOD * 5;
+  -- Simulate a delay in the read response (use a separate signal to set default value to '0')
+  avalon_mm_if_read          <= transport avalon_mm_if.read after (C_CLK_PERIOD * 5 + C_CLK_PERIOD / 4);
+  avalon_mm_if.readdatavalid <= avalon_mm_if_read;
+
+  -----------------------------------------------------------------------------
+  -- AXI-Stream VVC
+  -----------------------------------------------------------------------------
+  i_axistream_vvc_master : entity bitvis_vip_axistream.axistream_vvc
+    generic map(
+      GC_VVC_IS_MASTER => true,
+      GC_DATA_WIDTH    => 32,
+      GC_USER_WIDTH    => 1,
+      GC_ID_WIDTH      => 1,
+      GC_DEST_WIDTH    => 1,
+      GC_INSTANCE_IDX  => 0
+    )
+    port map(
+      clk              => clk,
+      axistream_vvc_if => axistream_if
+    );
+
+  i_axistream_vvc_slave : entity bitvis_vip_axistream.axistream_vvc
+    generic map(
+      GC_VVC_IS_MASTER => false,
+      GC_DATA_WIDTH    => 32,
+      GC_USER_WIDTH    => 1,
+      GC_ID_WIDTH      => 1,
+      GC_DEST_WIDTH    => 1,
+      GC_INSTANCE_IDX  => 1
+    )
+    port map(
+      clk              => clk,
+      axistream_vvc_if => axistream_if
+    );
 
 end struct;

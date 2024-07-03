@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -45,7 +45,10 @@ package body local_pkg is
     -- Limiting output to the first four elements in the result queue
     write(v_line, LF & "RID: " & to_string(value.rid, HEX, SKIP_LEADING_0, INCL_RADIX));
     for i in 0 to minimum(value.len, 3) loop
-      write(v_line, LF & "RDATA(" & to_string(i) & "): " & to_string(value.rdata(i), HEX, SKIP_LEADING_0, INCL_RADIX) & ", RRESP(" & to_string(i) & "): " & t_xresp'image(value.rresp(i)) & ", RUSER(" & to_string(i) & "): " & to_string(value.ruser(i), HEX, SKIP_LEADING_0, INCL_RADIX));
+      write(v_line, LF &
+        "RDATA(" & to_string(i) & "): " & to_string(value.rdata(i), HEX, SKIP_LEADING_0, INCL_RADIX) &
+        ", RRESP(" & to_string(i) & "): " & t_xresp'image(value.rresp(i)) &
+        ", RUSER(" & to_string(i) & "): " & to_string(value.ruser(i), HEX, SKIP_LEADING_0, INCL_RADIX));
     end loop;
     write(v_line, LF);
     if value.len > 3 then

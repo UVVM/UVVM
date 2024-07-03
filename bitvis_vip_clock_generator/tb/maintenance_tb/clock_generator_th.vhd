@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -25,7 +25,7 @@ library bitvis_vip_clock_generator;
 context bitvis_vip_clock_generator.vvc_context;
 
 --=================================================================================================
-entity test_harness is
+entity clock_generator_th is
   generic(
     GC_CLOCK_1_PERIOD      : time := 10 ns;
     GC_CLOCK_1_HIGH_PERIOD : time := 5 ns;
@@ -34,12 +34,12 @@ entity test_harness is
     GC_CLOCK_3_PERIOD      : time := 40 ns;
     GC_CLOCK_3_HIGH_PERIOD : time := 12 ns
   );
-end entity test_harness;
+end entity clock_generator_th;
 
 --=================================================================================================
 --=================================================================================================
 
-architecture struct of test_harness is
+architecture struct of clock_generator_th is
 
   signal clk_1 : std_logic;
   signal clk_2 : std_logic;

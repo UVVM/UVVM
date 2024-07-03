@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -25,14 +25,14 @@ context uvvm_util.uvvm_util_context;
 library bitvis_vip_avalon_mm;
 use bitvis_vip_avalon_mm.avalon_mm_bfm_pkg.all;
 
-entity test_harness is
+entity avalon_mm_vvc_th is
   generic(
     GC_CLK_PERIOD : time
   );
-end entity test_harness;
+end entity avalon_mm_vvc_th;
 
 -- Test case architecture
-architecture func of test_harness is
+architecture struct of avalon_mm_vvc_th is
 
   constant C_ADDR_WIDTH : integer := 32;
   constant C_DATA_WIDTH : integer := 32;
@@ -46,9 +46,13 @@ architecture func of test_harness is
                                          writedata(C_DATA_WIDTH - 1 downto 0), readdata(C_DATA_WIDTH - 1 downto 0));
 
   -- FIFO signals
-  signal empty_1 : std_logic;
-  signal full_1  : std_logic;
-  signal usedw_1 : std_logic_vector(3 downto 0);
+  signal empty_1         : std_logic;
+  signal full_1          : std_logic;
+  signal usedw_1         : std_logic_vector(3 downto 0);
+  signal response_1      : std_logic_vector(1 downto 0);
+  signal waitrequest_1   : std_logic;
+  signal readdatavalid_1 : std_logic;
+  signal irq_1           : std_logic;
 
   signal empty_2 : std_logic;
   signal full_2  : std_logic;
@@ -97,24 +101,28 @@ begin
       usedw => usedw_2
     );
 
-  -- Set default to unused interface signals
-  avalon_mm_if_1.response      <= (others => '0');
-  avalon_mm_if_1.irq           <= '0';
-  avalon_mm_if_1.readdatavalid <= '0';
+  -- Set default to unused interface signals (assign non-record signals to be able to force them from the tb)
+  response_1      <= (others => '0');
+  irq_1           <= '0';
+  readdatavalid_1 <= '0';
+  waitrequest_1   <= '0';
+  avalon_mm_if_1.response      <= response_1;
+  avalon_mm_if_1.irq           <= irq_1;
+  avalon_mm_if_1.readdatavalid <= readdatavalid_1;
 
   -- Set default to unused interface signals
   avalon_mm_if_2.response      <= (others => '0');
   avalon_mm_if_2.irq           <= '0';
   avalon_mm_if_2.readdatavalid <= '0';
 
-  p_waitrequest_1 : process(avalon_mm_if_1, full_1, empty_1)
+  p_waitrequest_1 : process(avalon_mm_if_1, full_1, empty_1, waitrequest_1)
   begin
     if avalon_mm_if_1.write and full_1 then
       avalon_mm_if_1.waitrequest <= '1';
     elsif avalon_mm_if_1.read and empty_1 then
       avalon_mm_if_1.waitrequest <= '1';
     else
-      avalon_mm_if_1.waitrequest <= '0';
+      avalon_mm_if_1.waitrequest <= waitrequest_1; -- (assign a non-record signal to be able to force it from the tb)
     end if;
   end process p_waitrequest_1;
 
@@ -156,4 +164,4 @@ begin
 
   p_clk : clock_generator(clk, GC_CLK_PERIOD);
 
-end func;
+end struct;

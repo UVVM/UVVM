@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -114,9 +114,9 @@ package vvc_methods_pkg is
     msg       => (others => ' ')
   );
 
-  shared variable shared_clock_generator_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_CLOCK_GENERATOR_VVC_CONFIG_DEFAULT);
-  shared variable shared_clock_generator_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
-  shared variable shared_clock_generator_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
+  shared variable shared_clock_generator_vvc_config       : t_vvc_config_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => C_CLOCK_GENERATOR_VVC_CONFIG_DEFAULT);
+  shared variable shared_clock_generator_vvc_status       : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
+  shared variable shared_clock_generator_transaction_info : t_transaction_info_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
 
   --==========================================================================================
   -- Methods dedicated to this VVC

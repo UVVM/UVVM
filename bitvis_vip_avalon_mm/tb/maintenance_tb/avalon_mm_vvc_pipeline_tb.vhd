@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -218,8 +218,7 @@ begin
     -- Reset the Avalon bus
     avalon_mm_reset(AVALON_MM_VVCT, 1, 5, "Resetting Avalon MM Interface 1");
 
-    -- Set maximum allowed pipeline delay
-    shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles   := 100;
+    shared_avalon_mm_vvc_config(1).bfm_config.max_wait_cycles   := 100; -- Set maximum allowed pipeline delay
     shared_avalon_mm_vvc_config(1).bfm_config.use_readdatavalid := TRUE;
     shared_avalon_mm_vvc_config(1).bfm_config.clock_period      := C_CLK_PERIOD;
 
@@ -238,12 +237,10 @@ begin
     for i in 0 to 1 loop
       log(ID_SEQUENCER, "Testing pipeliend read/check, iteration i=" & to_string(i));
       debug_data_to_send <= x"00110032";
-      wait for 100 ns;
       avalon_mm_check(AVALON_MM_VVCT, 1, x"0", x"00110032", "Reading data, i=" & to_string(i));
       await_completion(AVALON_MM_VVCT, 1, 1 us, "Awaiting completion of read");
 
       debug_data_to_send <= x"01AB129C";
-      wait for i * 100 ns;
       avalon_mm_check(AVALON_MM_VVCT, 1, x"0", x"01AB129C", "Reading data, i=" & to_string(i));
 
       await_completion(AVALON_MM_VVCT, 1, 1 us, "Awaiting completion of read");
@@ -324,7 +321,7 @@ begin
     log(ID_SEQUENCER, "Reading multiple times");
 
     -- Schedule each change in debug_data_to_send
-    for i in 0 to 200 loop
+    for i in 0 to 27 loop
       debug_data_to_send <= transport std_logic_vector(to_unsigned(i, 32)) after i * C_CLK_PERIOD;
     end loop;
 

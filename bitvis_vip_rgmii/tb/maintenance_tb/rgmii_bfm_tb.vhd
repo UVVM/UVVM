@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -60,7 +60,7 @@ begin
   --------------------------------------------------------------------------------
   -- Instantiate test harness
   --------------------------------------------------------------------------------
-  i_rgmii_test_harness : entity bitvis_vip_rgmii.test_harness(struct_bfm)
+  i_test_harness : entity work.rgmii_th(struct_bfm)
     generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     )
@@ -84,6 +84,13 @@ begin
       data_array : in t_byte_array) is
     begin
       rgmii_write(data_array, "", rgmii_tx_if, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
+    end procedure;
+
+    procedure rgmii_write(
+      data_array : in t_byte_array;
+      action_when_transfer_is_done : in t_action_when_transfer_is_done) is
+    begin
+      rgmii_write(data_array, action_when_transfer_is_done, "", rgmii_tx_if, c_scope, shared_msg_id_panel, v_rgmii_bfm_config);
     end procedure;
 
   begin
@@ -127,6 +134,17 @@ begin
         for i in 0 to 30 loop
         rgmii_write(data_array(0 to i));
         end loop;
+
+        await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
+        log(ID_LOG_HDR, "Testing multiple byte transfer in several transactions");
+        for i in 0 to 30 loop
+          if i < 30 then
+            rgmii_write(data_array(0 to i), HOLD_LINE_AFTER_TRANSFER);
+          else
+            rgmii_write(data_array(0 to i), RELEASE_LINE_AFTER_TRANSFER);
+          end if;
+        end loop;
+        check_stable(rgmii_tx_if.tx_ctl, C_CLK_PERIOD*30, error, "Checking that TXEN was held high during the complete transfer", c_scope);
 
         await_barrier(global_barrier, 1 us, "Synchronizing TX", error, c_scope);
         log(ID_LOG_HDR, "Testing error case: write() txc timeout");
@@ -253,6 +271,11 @@ begin
         rgmii_expect((x"01", x"23", x"45", x"67", x"89"));
 
         -- Testing data sizes
+        await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
+        for i in 0 to 30 loop
+        rgmii_expect(data_array(0 to i));
+        end loop;
+
         await_barrier(global_barrier, 1 us, "Synchronizing RX", error, c_scope);
         for i in 0 to 30 loop
         rgmii_expect(data_array(0 to i));

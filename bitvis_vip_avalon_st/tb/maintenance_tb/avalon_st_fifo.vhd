@@ -66,12 +66,18 @@ begin
   begin
     if rising_edge(clk_i) then
       if reset_i = '1' then
-        v_WrPtr        := 0;
-        v_RdPtr        := 0;
-        v_looped       := false;
-        master_valid_o <= '0';
-        slave_ready_o  <= '1';
-        empty_o        <= '1';
+        v_WrPtr          := 0;
+        v_RdPtr          := 0;
+        v_looped         := false;
+        slave_ready_o    <= '1';
+        empty_o          <= '1';
+        master_data_o    <= (others => '0');
+        master_channel_o <= (others => '0');
+        master_empty_o   <= (others => '0');
+        master_error_o   <= (others => '0');
+        master_valid_o   <= '0';
+        master_sop_o     <= '0';
+        master_eop_o     <= '0';
       else
         master_valid_o <= '0';
 

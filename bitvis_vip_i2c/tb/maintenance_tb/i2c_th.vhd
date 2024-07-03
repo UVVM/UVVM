@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -32,7 +32,7 @@ library bitvis_vip_sbi;
 use bitvis_vip_sbi.sbi_bfm_pkg.all;
 
 --=================================================================================================
-entity test_harness is
+entity i2c_th is
   generic(
     GC_CLK_PERIOD                 : time;
     GC_WISHBONE_DATA_WIDTH        : natural;
@@ -51,12 +51,12 @@ entity test_harness is
   port(
     arst : in std_logic
   );
-end entity test_harness;
+end entity i2c_th;
 
 --=================================================================================================
 --=================================================================================================
 
-architecture struct of test_harness is
+architecture struct of i2c_th is
 
   signal clk : std_logic;               -- 10 ns period
 
@@ -66,10 +66,12 @@ architecture struct of test_harness is
   constant C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := WARNING;
 
   -- component ports
-  signal i2c_vvc_if_1    : t_i2c_if;
-  signal i2c_vvc_if_2    : t_i2c_if;
-  signal wishbone_vvc_if : t_wishbone_if(adr_o(GC_WISHBONE_ADDR_WIDTH - 1 downto 0), dat_o(GC_WISHBONE_DATA_WIDTH - 1 downto 0), dat_i(GC_WISHBONE_DATA_WIDTH - 1 downto 0));
-  signal sbi_vvc_if      : t_sbi_if(addr(GC_SBI_ADDR_WIDTH - 1 downto 0), wdata(GC_SBI_DATA_WIDTH - 1 downto 0), rdata(GC_SBI_DATA_WIDTH - 1 downto 0));
+  signal i2c_vvc_if_1     : t_i2c_if;
+  signal i2c_vvc_if_1_sda : std_logic;
+  signal i2c_vvc_if_1_scl : std_logic;
+  signal i2c_vvc_if_2     : t_i2c_if;
+  signal wishbone_vvc_if  : t_wishbone_if(adr_o(GC_WISHBONE_ADDR_WIDTH - 1 downto 0), dat_o(GC_WISHBONE_DATA_WIDTH - 1 downto 0), dat_i(GC_WISHBONE_DATA_WIDTH - 1 downto 0));
+  signal sbi_vvc_if       : t_sbi_if(addr(GC_SBI_ADDR_WIDTH - 1 downto 0), wdata(GC_SBI_DATA_WIDTH - 1 downto 0), rdata(GC_SBI_DATA_WIDTH - 1 downto 0));
 
   signal sbi_rdata_slave_dut_1 : std_logic_vector(7 downto 0);
   signal sbi_ready_slave_dut_1 : std_logic;
@@ -87,8 +89,11 @@ begin
   sbi_vvc_if.ready <= sbi_ready_slave_dut_1 or sbi_ready_slave_dut_2 or sbi_ready_slave_dut_3 or sbi_ready_slave_dut_4;
 
   -- pull ups on sda and scl
-  i2c_vvc_if_1.sda <= 'H';
-  i2c_vvc_if_1.scl <= 'H';
+  -- Use non-record signals to be able to force them from the tb
+  i2c_vvc_if_1_sda <= 'H';
+  i2c_vvc_if_1_scl <= 'H';
+  i2c_vvc_if_1.sda <= i2c_vvc_if_1_sda;
+  i2c_vvc_if_1.scl <= i2c_vvc_if_1_scl;
 
   i2c_vvc_if_2.sda <= 'H';
   i2c_vvc_if_2.scl <= 'H';

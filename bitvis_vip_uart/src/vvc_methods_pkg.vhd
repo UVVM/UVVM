@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -36,8 +36,7 @@ use work.vvc_sb_pkg.all;
 --=================================================================================================
 package vvc_methods_pkg is
 
-  constant C_VVC_NAME                    : string  := "UART_VVC";
-  constant C_EXECUTOR_RESULT_ARRAY_DEPTH : natural := 3;
+  constant C_VVC_NAME : string  := "UART_VVC";
 
   signal UART_VVCT : t_vvc_target_record := set_vvc_target_defaults(C_VVC_NAME);
   alias THIS_VVCT  : t_vvc_target_record is UART_VVCT;
@@ -86,6 +85,7 @@ package vvc_methods_pkg is
     error_injection                       : t_vvc_error_injection;
     bit_rate_checker                      : t_bit_rate_checker;
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
+    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT TX output is detected
   end record;
 
   type t_vvc_config_array is array (t_channel range <>, natural range <>) of t_vvc_config;
@@ -102,7 +102,8 @@ package vvc_methods_pkg is
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
     error_injection                       => C_VVC_ERROR_INJECTION_INACTIVE,
     bit_rate_checker                      => C_BIT_RATE_CHECKER_DEFAULT,
-    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
+    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
   );
 
   type t_vvc_status is record
@@ -134,9 +135,9 @@ package vvc_methods_pkg is
     msg       => (others => ' ')
   );
 
-  shared variable shared_uart_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => (others => C_UART_VVC_CONFIG_DEFAULT));
-  shared variable shared_uart_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => (others => C_VVC_STATUS_DEFAULT));
-  shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
+  shared variable shared_uart_vvc_config       : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => (others => C_UART_VVC_CONFIG_DEFAULT));
+  shared variable shared_uart_vvc_status       : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable shared_uart_transaction_info : t_transaction_info_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_INFO_DEFAULT));
   shared variable UART_VVC_SB                  : t_generic_sb;
 
   --==========================================================================================

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -27,7 +27,7 @@ use bitvis_vip_rgmii.rgmii_bfm_pkg.all;
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
-entity test_harness is
+entity rgmii_th is
   generic(
     GC_CLK_PERIOD : time
   );
@@ -41,18 +41,22 @@ end entity;
 --=================================================================================================
 -- Test harness architectures
 --=================================================================================================
-architecture struct_bfm of test_harness is
+architecture struct_bfm of rgmii_th is
 begin
 
   -- Delay the RX path
   rgmii_tx_if.txc    <= clk;
+  rgmii_tx_if.txd    <= (others => 'Z');
+  rgmii_tx_if.tx_ctl <= 'Z';
   rgmii_rx_if.rxc    <= clk;
   rgmii_rx_if.rxd    <= transport rgmii_tx_if.txd after GC_CLK_PERIOD * 5;
   rgmii_rx_if.rx_ctl <= transport rgmii_tx_if.tx_ctl after GC_CLK_PERIOD * 5;
 
 end struct_bfm;
 
-architecture struct_vvc of test_harness is
+architecture struct_vvc of rgmii_th is
+  signal dut_txd    : std_logic_vector(3 downto 0);
+  signal dut_tx_ctl : std_logic;
 begin
 
   -- Instantiate VVC
@@ -67,7 +71,10 @@ begin
 
   rgmii_tx_if.txc    <= clk;
   rgmii_rx_if.rxc    <= clk;
-  rgmii_rx_if.rxd    <= rgmii_tx_if.txd;
-  rgmii_rx_if.rx_ctl <= rgmii_tx_if.tx_ctl;
+  -- Use non-record signals to be able to force them from the tb
+  dut_txd            <= rgmii_tx_if.txd;
+  dut_tx_ctl         <= rgmii_tx_if.tx_ctl;
+  rgmii_rx_if.rxd    <= dut_txd;
+  rgmii_rx_if.rx_ctl <= dut_tx_ctl;
 
 end struct_vvc;

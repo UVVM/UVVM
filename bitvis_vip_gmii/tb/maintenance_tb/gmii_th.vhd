@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -27,7 +27,7 @@ use bitvis_vip_gmii.gmii_bfm_pkg.all;
 --=================================================================================================
 -- Test harness entity
 --=================================================================================================
-entity test_harness is
+entity gmii_th is
   generic(
     GC_CLK_PERIOD : time
   );
@@ -41,18 +41,22 @@ end entity;
 --=================================================================================================
 -- Test harness architectures
 --=================================================================================================
-architecture struct_bfm of test_harness is
+architecture struct_bfm of gmii_th is
 begin
 
   -- Delay the RX path
   gmii_tx_if.gtxclk <= clk;
+  gmii_tx_if.txd    <= (others => 'Z');
+  gmii_tx_if.txen   <= 'Z';
   gmii_rx_if.rxclk  <= clk;
   gmii_rx_if.rxd    <= transport gmii_tx_if.txd after GC_CLK_PERIOD * 5;
   gmii_rx_if.rxdv   <= transport gmii_tx_if.txen after GC_CLK_PERIOD * 5;
 
 end struct_bfm;
 
-architecture struct_vvc of test_harness is
+architecture struct_vvc of gmii_th is
+  signal dut_txd  : std_logic_vector(7 downto 0);
+  signal dut_txen : std_logic;
 begin
 
   -- Instantiate VVC
@@ -67,7 +71,10 @@ begin
 
   gmii_tx_if.gtxclk <= clk;
   gmii_rx_if.rxclk  <= clk;
-  gmii_rx_if.rxd    <= gmii_tx_if.txd;
-  gmii_rx_if.rxdv   <= gmii_tx_if.txen;
+  -- Use non-record signals to be able to force them from the tb
+  dut_txd           <= gmii_tx_if.txd;
+  dut_txen          <= gmii_tx_if.txen;
+  gmii_rx_if.rxd    <= dut_txd;
+  gmii_rx_if.rxdv   <= dut_txen;
 
 end struct_vvc;

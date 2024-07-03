@@ -73,6 +73,24 @@ package generic_sb_pkg is
     procedure disable(
       constant void : in t_void);
 
+    procedure set_queue_count_max(
+      constant instance        : in integer;
+      constant queue_count_max : in natural
+    );
+
+    procedure set_queue_count_max(
+      constant queue_count_max : in natural
+    );
+
+    procedure set_queue_count_threshold(
+      constant instance                : in integer;
+      constant queue_count_alert_level : in natural
+    );
+
+    procedure set_queue_count_threshold(
+      constant queue_count_alert_level : in natural
+    );
+
     procedure add_expected(
       constant instance         : in integer;
       constant expected_element : in t_element;
@@ -836,6 +854,52 @@ package body generic_sb_pkg is
     begin
       disable(1, "", "disable() => SB disabled. ");
     end procedure disable;
+
+    ----------------------------------------------------------------------------------------------------
+    --
+    --  set_queue_count_max
+    --
+    --    Resize the internal generic queue
+    --
+    ----------------------------------------------------------------------------------------------------
+
+    procedure set_queue_count_max(
+      constant instance        : in integer;
+      constant queue_count_max : in natural
+    ) is
+    begin
+      vr_sb_queue.set_queue_count_max(instance, queue_count_max);
+    end procedure;
+
+    procedure set_queue_count_max(
+      constant queue_count_max : in natural
+    ) is
+    begin
+      vr_sb_queue.set_queue_count_max(queue_count_max);
+    end procedure;
+
+    ----------------------------------------------------------------------------------------------------
+    --
+    --  set_queue_count_threshold
+    --
+    --    Set the internal generic queue warning threshold value
+    --
+    ----------------------------------------------------------------------------------------------------
+
+    procedure set_queue_count_threshold(
+      constant instance                : in integer;
+      constant queue_count_alert_level : in natural
+    ) is
+    begin
+      vr_sb_queue.set_queue_count_threshold(instance, queue_count_alert_level);
+    end procedure;
+
+    procedure set_queue_count_threshold(
+      constant queue_count_alert_level : in natural
+    ) is
+    begin
+      vr_sb_queue.set_queue_count_threshold(queue_count_alert_level);
+    end procedure;
 
     ----------------------------------------------------------------------------------------------------
     --

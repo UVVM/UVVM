@@ -379,3 +379,4 @@ begin
   severity error;
 
 end architecture rtl;
+>>>>>>> github/master

@@ -463,3 +463,4 @@ Released: 2015-10-07
 
 All changes should be backwards compatible within 0.x.x
 - First version. Hence no change history.
+>>>>>>> github/master

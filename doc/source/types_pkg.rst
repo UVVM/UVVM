@@ -221,3 +221,24 @@ ALLOW_WIDER, ALLOW_NARROWER, ALLOW_WIDER_NARROWER, ALLOW_EXACT_ONLY
 t_data_routing
 ----------------------------------------------------------------------------------------------------------------------------------
 NA, TO_SB, TO_BUFFER, FROM_BUFFER, TO_RECEIVE_BUFFER
+
+
+.. _t_report_alert_counters:
+
+t_report_alert_counters
+----------------------------------------------------------------------------------------------------------------------------------
+NO_REPORT, REPORT_ALERT_COUNTERS, REPORT_ALERT_COUNTERS_FINAL
+
+
+.. _t_report_sb:
+
+t_report_sb
+----------------------------------------------------------------------------------------------------------------------------------
+NO_REPORT, REPORT_SCOREBOARDS
+
+
+.. _t_report_vvc:
+
+t_report_vvc
+----------------------------------------------------------------------------------------------------------------------------------
+NO_REPORT, REPORT_VVCS

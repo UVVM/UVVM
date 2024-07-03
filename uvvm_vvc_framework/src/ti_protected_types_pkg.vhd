@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -108,10 +108,14 @@ package ti_protected_types_pkg is
     ) return natural;
 
     -- Get the total number of registered VVCs
-    impure function priv_get_num_registered_vvcs return natural;
+    impure function priv_get_num_registered_vvcs(
+      constant void : t_void
+    ) return natural;
 
     -- Check if all registered VVCs are INACTIVE
-    impure function priv_are_all_vvc_inactive return boolean;
+    impure function priv_are_all_vvc_inactive(
+      constant void : t_void
+    ) return boolean;
 
   end protected;
 
@@ -121,14 +125,18 @@ package ti_protected_types_pkg is
   type t_prot_vvc_list is protected
 
     procedure add(
-      constant name     : in string;
-      constant instance : in integer;
-      constant channel  : in t_channel := NA
+      constant name         : in string;
+      constant instance     : in integer;
+      constant channel      : in t_channel := NA;
+      constant scope        : in string;
+      constant msg_id_panel : in t_msg_id_panel
     );
 
     procedure add(
-      constant name     : in string;
-      constant instance : in integer
+      constant name         : in string;
+      constant instance     : in integer;
+      constant scope        : in string;
+      constant msg_id_panel : in t_msg_id_panel
     );
 
     procedure clear_list(
@@ -175,6 +183,16 @@ package body ti_protected_types_pkg is
   ------------------------------------------------------------
   type t_vvc_activity is protected body
 
+    type t_vvc_id is record
+      name     : string(1 to C_MAX_VVC_NAME_LENGTH);
+      instance : natural;
+      channel  : t_channel;
+    end record;
+    constant C_VVC_ID_DEFAULT : t_vvc_id := (
+      name     => (others => NUL),
+      instance => 0,
+      channel  => NA
+    );
     type t_vvc_item is record
       vvc_id    : t_vvc_id;
       vvc_state : t_vvc_state;
@@ -343,7 +361,7 @@ package body ti_protected_types_pkg is
       if priv_registered_vvc(vvc_idx).vvc_id.channel = NA then
         return priv_registered_vvc(vvc_idx).vvc_id.name & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.instance);
       else
-        return priv_registered_vvc(vvc_idx).vvc_id.name & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.instance) & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.channel);
+        return priv_registered_vvc(vvc_idx).vvc_id.name & "," & to_string(priv_registered_vvc(vvc_idx).vvc_id.instance) & "," & to_upper(to_string(priv_registered_vvc(vvc_idx).vvc_id.channel));
       end if;
     end function;
 
@@ -363,12 +381,16 @@ package body ti_protected_types_pkg is
       return v_num_instances;
     end function;
 
-    impure function priv_get_num_registered_vvcs return natural is
+    impure function priv_get_num_registered_vvcs(
+      constant void : t_void
+    ) return natural is
     begin
       return priv_last_registered_vvc_idx + 1;
     end function;
 
-    impure function priv_are_all_vvc_inactive return boolean is
+    impure function priv_are_all_vvc_inactive(
+      constant void : t_void
+    ) return boolean is
     begin
       check_value(priv_last_registered_vvc_idx /= -1, TB_ERROR, "No VVCs in activity register", C_TB_SCOPE_DEFAULT, ID_NEVER);
 
@@ -405,14 +427,16 @@ package body ti_protected_types_pkg is
     variable priv_last_added_vvc_idx : integer                                 := -1;
 
     procedure add(
-      constant name     : in string;
-      constant instance : in integer;
-      constant channel  : in t_channel := NA
+      constant name         : in string;
+      constant instance     : in integer;
+      constant channel      : in t_channel := NA;
+      constant scope        : in string;
+      constant msg_id_panel : in t_msg_id_panel
     ) is
       variable v_duplicate : boolean := false;
     begin
       if priv_last_added_vvc_idx >= C_MAX_TB_VVC_NUM then
-        alert(TB_ERROR, "Number of VVCs in the list exceed C_MAX_TB_VVC_NUM.\n" & "Increase C_MAX_TB_VVC_NUM in adaptations package.");
+        alert(TB_ERROR, "Number of VVCs in the list exceed C_MAX_TB_VVC_NUM.\n" & "Increase C_MAX_TB_VVC_NUM in adaptations package.", scope);
       end if;
 
       -- Check if VVC was previously added
@@ -434,19 +458,21 @@ package body ti_protected_types_pkg is
         priv_vvc_list(priv_last_added_vvc_idx).channel                := channel;
 
         if channel = NA then
-          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & " to the list.");
+          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & " to the list.", scope, msg_id_panel);
         else
-          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " to the list.");
+          log(ID_AWAIT_COMPLETION_LIST, "Adding: " & to_upper(name) & "," & priv_instance_to_string(instance) & "," & to_string(channel) & " to the list.", scope, msg_id_panel);
         end if;
       end if;
     end procedure;
 
     procedure add(
-      constant name     : in string;
-      constant instance : in integer
+      constant name         : in string;
+      constant instance     : in integer;
+      constant scope        : in string;
+      constant msg_id_panel : in t_msg_id_panel
     ) is
     begin
-      add(name, instance, NA);
+      add(name, instance, NA, scope, msg_id_panel);
     end procedure;
 
     procedure clear_list(

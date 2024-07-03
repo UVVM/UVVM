@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -1622,10 +1622,17 @@ package body string_methods_pkg is
   begin
     if order = INTERMEDIATE then
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "*** INTERMEDIATE SUMMARY OF ALL ALERTS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
+            LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+            "*** INTERMEDIATE SUMMARY OF ALL ALERTS ***" & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+            "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
     else                                -- order=FINAL
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "*** FINAL SUMMARY OF ALL ALERTS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
+            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+            "*** FINAL SUMMARY OF ALL ALERTS ***" & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+            "                          REGARDED   EXPECTED  IGNORED      Comment?" & LF);
     end if;
 
     for i in NOTE to t_alert_level'right loop
@@ -1691,10 +1698,16 @@ package body string_methods_pkg is
   begin
     if order = INTERMEDIATE then
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "*** INTERMEDIATE SUMMARY OF ALL CHECK COUNTERS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+            LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+            "*** INTERMEDIATE SUMMARY OF ALL CHECK COUNTERS ***" & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     else                                -- order=FINAL
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "*** FINAL SUMMARY OF ALL CHECK COUNTERS ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+            LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+            "*** FINAL SUMMARY OF ALL CHECK COUNTERS ***" & LF &
+            fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
     end if;
 
     for i in CHECK_VALUE to t_check_type'right loop

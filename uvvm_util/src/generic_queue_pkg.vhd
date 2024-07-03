@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -275,28 +275,28 @@ package body generic_queue_pkg is
 
     type t_string_array is array (integer range 0 to C_MAX_QUEUE_INSTANCE_NUM) of string(1 to C_LOG_SCOPE_WIDTH);
 
-    variable vr_last_element          : t_element_ptr_array                           := (others => null); -- Back entry
-    variable vr_first_element         : t_element_ptr_array                           := (others => null); -- Front entry
-    variable vr_num_elements_in_queue : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => 0);
+    variable priv_last_element          : t_element_ptr_array                           := (others => null); -- Back entry
+    variable priv_first_element         : t_element_ptr_array                           := (others => null); -- Front entry
+    variable priv_num_elements_in_queue : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => 0);
 
     -- Scope variables
-    variable vr_scope            : t_string_array                                := (others => (others => NUL));
-    variable vr_scope_is_defined : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => false);
+    variable priv_scope            : t_string_array                                := (others => (others => NUL));
+    variable priv_scope_is_defined : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => false);
 
     -- Name variables
-    variable vr_name            : string(1 to C_LOG_SCOPE_WIDTH) := (others => NUL);
-    variable vr_name_is_defined : boolean                        := false;
+    variable priv_name            : string(1 to C_LOG_SCOPE_WIDTH) := (others => NUL);
+    variable priv_name_is_defined : boolean                        := false;
 
-    variable vr_queue_count_max                : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => GC_QUEUE_COUNT_MAX);
-    variable vr_queue_count_threshold          : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => GC_QUEUE_COUNT_THRESHOLD);
-    variable vr_queue_count_threshold_severity : t_alert_level                                 := TB_WARNING;
+    variable priv_queue_count_max                : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => GC_QUEUE_COUNT_MAX);
+    variable priv_queue_count_threshold          : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => GC_QUEUE_COUNT_THRESHOLD);
+    variable priv_queue_count_threshold_severity : t_alert_level                                 := TB_WARNING;
 
-    variable vr_entry_num : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => 0); --  Incremented before first insert
+    variable priv_entry_num : integer_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => 0); --  Incremented before first insert
 
     -- Fill level alert
     type t_queue_count_threshold_alert_frequency is (ALWAYS, FIRST_TIME_ONLY);
-    constant C_ALERT_FREQUENCY                  : t_queue_count_threshold_alert_frequency       := FIRST_TIME_ONLY;
-    variable vr_queue_count_threshold_triggered : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => false);
+    constant C_ALERT_FREQUENCY                 : t_queue_count_threshold_alert_frequency       := FIRST_TIME_ONLY;
+    variable priv_queue_count_threshold_triggered : boolean_vector(0 to C_MAX_QUEUE_INSTANCE_NUM) := (others => false);
 
     ------------------------------------------------------------------------------------------------------
     --
@@ -311,10 +311,10 @@ package body generic_queue_pkg is
       constant instance : in integer
     ) is
     begin
-      if ((vr_queue_count_threshold(instance) /= 0) and (vr_num_elements_in_queue(instance) >= vr_queue_count_threshold(instance))) then
-        if ((C_ALERT_FREQUENCY = ALWAYS) or (C_ALERT_FREQUENCY = FIRST_TIME_ONLY and not vr_queue_count_threshold_triggered(instance))) then
-          alert(vr_queue_count_threshold_severity, "Queue is now at " & to_string(vr_queue_count_threshold(instance)) & " of " & to_string(vr_queue_count_max(instance)) & " elements.", vr_scope(instance));
-          vr_queue_count_threshold_triggered(instance) := true;
+      if ((priv_queue_count_threshold(instance) /= 0) and (priv_num_elements_in_queue(instance) >= priv_queue_count_threshold(instance))) then
+        if ((C_ALERT_FREQUENCY = ALWAYS) or (C_ALERT_FREQUENCY = FIRST_TIME_ONLY and not priv_queue_count_threshold_triggered(instance))) then
+          alert(priv_queue_count_threshold_severity, "Queue is now at " & to_string(priv_queue_count_threshold(instance)) & " of " & to_string(priv_queue_count_max(instance)) & " elements.", priv_scope(instance));
+          priv_queue_count_threshold_triggered(instance) := true;
         end if;
       end if;
     end procedure;
@@ -338,9 +338,9 @@ package body generic_queue_pkg is
       matched_position    := C_NO_MATCH;
       matched_element_ptr := null;
 
-      if vr_num_elements_in_queue(instance) > 0 then
+      if priv_num_elements_in_queue(instance) > 0 then
         -- Search from front to back element
-        v_element_ptr := vr_first_element(instance);
+        v_element_ptr := priv_first_element(instance);
 
         loop
           if v_element_ptr.element_data = element then -- Element matched entry
@@ -370,7 +370,7 @@ package body generic_queue_pkg is
       preceding_element_ptr : out t_element_ptr -- valid if found_match=true. Element at position-1, pointing to elemnt_ptr
     ) is
       -- Search from front to back element. Init pointers/counters to the first entry:
-      variable v_element_ptr  : t_element_ptr := vr_first_element(instance); -- Entry currently being checked for match
+      variable v_element_ptr  : t_element_ptr := priv_first_element(instance); -- Entry currently being checked for match
       variable v_position_ctr : integer       := 1; -- Keep track of POSITION when traversing the linked list
     begin
       -- Default
@@ -380,7 +380,7 @@ package body generic_queue_pkg is
       preceding_element_ptr := null;
 
       -- If queue is not empty and indentifier in valid range
-      if (vr_num_elements_in_queue(instance) > 0) and ((identifier_option = POSITION and identifier <= vr_num_elements_in_queue(instance)) or (identifier_option = ENTRY_NUM and identifier <= vr_entry_num(instance))) then
+      if (priv_num_elements_in_queue(instance) > 0) and ((identifier_option = POSITION and identifier <= priv_num_elements_in_queue(instance)) or (identifier_option = ENTRY_NUM and identifier <= priv_entry_num(instance))) then
         loop
           -- For each element in queue:
           -- Check if POSITION or ENTRY_NUM matches v_element_ptr
@@ -427,25 +427,25 @@ package body generic_queue_pkg is
       constant proc_name      : string := "add";
       variable v_previous_ptr : t_element_ptr;
     begin
-      check_value(vr_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
       perform_pre_add_checks(instance);
-      check_value(vr_num_elements_in_queue(instance) < vr_queue_count_max(instance), TB_ERROR, proc_name & "() into generic queue (of size " & to_string(vr_queue_count_max(instance)) & ") when full", vr_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) < priv_queue_count_max(instance), TB_ERROR, proc_name & "() into generic queue (of size " & to_string(priv_queue_count_max(instance)) & ") when full", priv_scope(instance), ID_NEVER);
 
-      -- Increment vr_entry_num
-      vr_entry_num(instance) := vr_entry_num(instance) + 1;
+      -- Increment priv_entry_num
+      priv_entry_num(instance) := priv_entry_num(instance) + 1;
 
       -- Set read and write pointers when appending element to existing list
-      if vr_num_elements_in_queue(instance) > 0 then
-        v_previous_ptr              := vr_last_element(instance);
-        vr_last_element(instance)   := new t_element'(entry_num => vr_entry_num(instance), next_element => null, element_data => element);
-        v_previous_ptr.next_element := vr_last_element(instance); -- Insert the new element into the linked list
+      if priv_num_elements_in_queue(instance) > 0 then
+        v_previous_ptr              := priv_last_element(instance);
+        priv_last_element(instance)   := new t_element'(entry_num => priv_entry_num(instance), next_element => null, element_data => element);
+        v_previous_ptr.next_element := priv_last_element(instance); -- Insert the new element into the linked list
       else                              -- List is empty
-        vr_last_element(instance)  := new t_element'(entry_num => vr_entry_num(instance), next_element => null, element_data => element);
-        vr_first_element(instance) := vr_last_element(instance); -- Update read pointer, since this is the first and only element in the list.
+        priv_last_element(instance)  := new t_element'(entry_num => priv_entry_num(instance), next_element => null, element_data => element);
+        priv_first_element(instance) := priv_last_element(instance); -- Update read pointer, since this is the first and only element in the list.
       end if;
 
       -- Increment number of elements
-      vr_num_elements_in_queue(instance) := vr_num_elements_in_queue(instance) + 1;
+      priv_num_elements_in_queue(instance) := priv_num_elements_in_queue(instance) + 1;
     end procedure;
 
     procedure add(
@@ -489,20 +489,20 @@ package body generic_queue_pkg is
     ) is
       variable v_to_be_deallocated_ptr : t_element_ptr;
     begin
-      check_value(vr_scope_is_defined(instance), TB_WARNING, "Scope name must be defined for this generic queue " & to_string(instance), "???", ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, "Scope name must be defined for this generic queue " & to_string(instance), "???", ID_NEVER);
 
       -- Deallocate all entries in the list
       -- Setting the last element to null and iterating over the queue until finding the null element
-      vr_last_element(instance) := null;
-      while vr_first_element(instance) /= null loop
-        v_to_be_deallocated_ptr    := vr_first_element(instance);
-        vr_first_element(instance) := vr_first_element(instance).next_element;
+      priv_last_element(instance) := null;
+      while priv_first_element(instance) /= null loop
+        v_to_be_deallocated_ptr   := priv_first_element(instance);
+        priv_first_element(instance) := priv_first_element(instance).next_element;
         DEALLOCATE(v_to_be_deallocated_ptr);
       end loop;
 
       -- Reset the queue counter
-      vr_num_elements_in_queue(instance)           := 0;
-      vr_queue_count_threshold_triggered(instance) := false;
+      priv_num_elements_in_queue(instance)           := 0;
+      priv_queue_count_threshold_triggered(instance) := false;
     end procedure;
 
     procedure flush(
@@ -516,7 +516,7 @@ package body generic_queue_pkg is
       constant instance : in integer) is
     begin
       flush(instance);
-      vr_entry_num(instance) := 0;      -- Incremented before first insert
+      priv_entry_num(instance) := 0;      -- Incremented before first insert
     end procedure;
 
     procedure reset(
@@ -529,7 +529,7 @@ package body generic_queue_pkg is
       constant instance : in integer
     ) return boolean is
     begin
-      if vr_num_elements_in_queue(instance) = 0 then
+      if priv_num_elements_in_queue(instance) = 0 then
         return true;
       else
         return false;
@@ -549,22 +549,22 @@ package body generic_queue_pkg is
     begin
       if instance = ALL_INSTANCES then
         if scope'length > C_LOG_SCOPE_WIDTH then
-          vr_scope := (others => scope(1 to C_LOG_SCOPE_WIDTH));
+          priv_scope := (others => scope(1 to C_LOG_SCOPE_WIDTH));
         else
-          for idx in vr_scope'range loop
-            vr_scope(idx)                    := (others => NUL);
-            vr_scope(idx)(1 to scope'length) := scope;
+          for idx in priv_scope'range loop
+            priv_scope(idx)                    := (others => NUL);
+            priv_scope(idx)(1 to scope'length) := scope;
           end loop;
         end if;
-        vr_scope_is_defined := (others => true);
+        priv_scope_is_defined := (others => true);
       else
         if scope'length > C_LOG_SCOPE_WIDTH then
-          vr_scope(instance) := scope(1 to C_LOG_SCOPE_WIDTH);
+          priv_scope(instance) := scope(1 to C_LOG_SCOPE_WIDTH);
         else
-          vr_scope(instance)                    := (others => NUL);
-          vr_scope(instance)(1 to scope'length) := scope;
+          priv_scope(instance)                    := (others => NUL);
+          priv_scope(instance)(1 to scope'length) := scope;
         end if;
-        vr_scope_is_defined(instance) := true;
+        priv_scope_is_defined(instance) := true;
       end if;
     end procedure;
 
@@ -577,15 +577,15 @@ package body generic_queue_pkg is
     procedure set_name(
       constant name : in string) is
     begin
-      vr_name(1 to name'length) := name;
-      vr_name_is_defined        := true;
+      priv_name(1 to name'length) := name;
+      priv_name_is_defined        := true;
     end procedure;
 
     impure function get_scope(
       constant instance : in integer
     ) return string is
     begin
-      return to_string(vr_scope(instance));
+      return to_string(priv_scope(instance));
     end function;
 
     impure function get_scope(
@@ -599,7 +599,7 @@ package body generic_queue_pkg is
       constant instance : in integer
     ) return natural is
     begin
-      return vr_num_elements_in_queue(instance);
+      return priv_num_elements_in_queue(instance);
     end function;
 
     impure function get_count(
@@ -613,7 +613,7 @@ package body generic_queue_pkg is
       constant instance : in integer
     ) return natural is
     begin
-      return vr_queue_count_max(instance);
+      return priv_queue_count_max(instance);
     end function;
 
     impure function get_queue_count_max(
@@ -628,8 +628,8 @@ package body generic_queue_pkg is
       constant queue_count_max : in natural
     ) is
     begin
-      vr_queue_count_max(instance) := queue_count_max;
-      check_value(vr_num_elements_in_queue(instance) < vr_queue_count_max(instance), TB_ERROR, "set_queue_count_max() new queue max count (" & to_string(vr_queue_count_max(instance)) & ") is less than current queue count(" & to_string(vr_num_elements_in_queue(instance)) & ").", vr_scope(instance), ID_NEVER);
+      priv_queue_count_max(instance) := queue_count_max;
+      check_value(priv_num_elements_in_queue(instance) < priv_queue_count_max(instance), TB_ERROR, "set_queue_count_max() new queue max count (" & to_string(priv_queue_count_max(instance)) & ") is less than current queue count(" & to_string(priv_num_elements_in_queue(instance)) & ").", priv_scope(instance), ID_NEVER);
     end procedure;
 
     procedure set_queue_count_max(
@@ -644,7 +644,7 @@ package body generic_queue_pkg is
       constant queue_count_alert_level : in natural
     ) is
     begin
-      vr_queue_count_threshold(instance) := queue_count_alert_level;
+      priv_queue_count_threshold(instance) := queue_count_alert_level;
     end procedure;
 
     procedure set_queue_count_threshold(
@@ -658,7 +658,7 @@ package body generic_queue_pkg is
       constant instance : in integer
     ) return natural is
     begin
-      return vr_queue_count_threshold(instance);
+      return priv_queue_count_threshold(instance);
     end function;
 
     impure function get_queue_count_threshold(
@@ -672,13 +672,13 @@ package body generic_queue_pkg is
       constant dummy : in t_void
     ) return t_alert_level is
     begin
-      return vr_queue_count_threshold_severity;
+      return priv_queue_count_threshold_severity;
     end function;
 
     procedure set_queue_count_threshold_severity(
       constant alert_level : in t_alert_level) is
     begin
-      vr_queue_count_threshold_severity := alert_level;
+      priv_queue_count_threshold_severity := alert_level;
     end procedure;
 
     ----------------------------------------------------
@@ -704,15 +704,15 @@ package body generic_queue_pkg is
       variable v_matched_position      : integer;
     begin
       -- pre insert checks
-      check_value(vr_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
       perform_pre_add_checks(instance);
-      check_value(vr_num_elements_in_queue(instance) < vr_queue_count_max(instance), TB_ERROR, proc_name & "() into generic queue (of size " & to_string(vr_queue_count_max(instance)) & ") when full", vr_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) < priv_queue_count_max(instance), TB_ERROR, proc_name & "() into generic queue (of size " & to_string(priv_queue_count_max(instance)) & ") when full", priv_scope(instance), ID_NEVER);
 
       if (identifier /= 1) then
         if (identifier_option = POSITION) then
-          check_value(vr_num_elements_in_queue(instance) >= identifier, TB_ERROR, proc_name & "() into position larger than number of elements in queue. Use add() instead when inserting at the back of the queue", vr_scope(instance), ID_NEVER);
+          check_value(priv_num_elements_in_queue(instance) >= identifier, TB_ERROR, proc_name & "() into position larger than number of elements in queue. Use add() instead when inserting at the back of the queue", priv_scope(instance), ID_NEVER);
         else                            -- identifier_option /= POSITION
-          check_value(vr_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() into empty queue isn't supported. Use add() instead", vr_scope(instance), ID_NEVER);
+          check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() into empty queue isn't supported. Use add() instead", priv_scope(instance), ID_NEVER);
         end if;
       end if;
 
@@ -729,28 +729,28 @@ package body generic_queue_pkg is
 
       if v_found_match then
         -- Make new element
-        vr_entry_num(instance) := vr_entry_num(instance) + 1; -- Increment vr_entry_num
+        priv_entry_num(instance) := priv_entry_num(instance) + 1; -- Increment priv_entry_num
 
         -- POSITION: insert at matched position
         if identifier_option = POSITION then
-          v_new_element_ptr := new t_element'(entry_num    => vr_entry_num(instance),
+          v_new_element_ptr := new t_element'(entry_num    => priv_entry_num(instance),
                                             next_element => v_element_ptr,
                                             element_data => element);
           -- if match is first element
           if v_preceding_element_ptr = null then
-            vr_first_element(instance) := v_new_element_ptr; -- Insert the new element into the front of the linked list
+            priv_first_element(instance) := v_new_element_ptr; -- Insert the new element into the front of the linked list
           else
             v_preceding_element_ptr.next_element := v_new_element_ptr; -- Insert the new element into the linked list
           end if;
 
         --ENTRY_NUM: insert at position after match
         else
-          v_new_element_ptr          := new t_element'(entry_num    => vr_entry_num(instance),
+          v_new_element_ptr          := new t_element'(entry_num    => priv_entry_num(instance),
                                             next_element => v_element_ptr.next_element,
                                             element_data => element);
           v_element_ptr.next_element := v_new_element_ptr; -- Insert the new element into the linked list
         end if;
-        vr_num_elements_in_queue(instance) := vr_num_elements_in_queue(instance) + 1; -- Increment number of elements
+        priv_num_elements_in_queue(instance) := priv_num_elements_in_queue(instance) + 1; -- Increment number of elements
 
       elsif identifier_option = POSITION then -- v_found_match = false
         if identifier = 1 then
@@ -758,7 +758,7 @@ package body generic_queue_pkg is
         end if;
 
       elsif identifier_option = ENTRY_NUM then
-        if (vr_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
+        if (priv_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
           tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier) & ", element...", scope);
         end if;
       end if;
@@ -798,19 +798,19 @@ package body generic_queue_pkg is
       variable v_found_match           : boolean;
       variable v_deletes_remaining     : integer;
     begin
-      check_value(vr_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
 
-      if (vr_num_elements_in_queue(instance) < vr_queue_count_threshold(instance)) then
+      if (priv_num_elements_in_queue(instance) < priv_queue_count_threshold(instance)) then
         -- reset alert trigger if set
-        vr_queue_count_threshold_triggered(instance) := false;
+        priv_queue_count_threshold_triggered(instance) := false;
       end if;
 
       -- delete based on POSITION :
       -- Note that when deleting the first position, all above positions are decremented by one.
       -- Find the identifier_min, delete it, and following next_element until we reach number of positions to delete
       if (identifier_option = POSITION) then
-        check_value(vr_num_elements_in_queue(instance) >= identifier_max, TB_ERROR, proc_name & " where identifier_max > generic queue size", vr_scope(instance), ID_NEVER);
-        check_value(identifier_max >= identifier_min, TB_ERROR, "Check that identifier_max >= identifier_min", vr_scope(instance), ID_NEVER);
+        check_value(priv_num_elements_in_queue(instance) >= identifier_max, TB_ERROR, proc_name & " where identifier_max > generic queue size", priv_scope(instance), ID_NEVER);
+        check_value(identifier_max >= identifier_min, TB_ERROR, "Check that identifier_max >= identifier_min", priv_scope(instance), ID_NEVER);
         v_deletes_remaining := 1 + identifier_max - identifier_min;
 
         -- Find min position
@@ -831,17 +831,17 @@ package body generic_queue_pkg is
 
             -- Update pointer to the element about to be removed.
             if (v_preceding_element_ptr = null) then -- Removing the first entry,
-              vr_first_element(instance) := vr_first_element(instance).next_element;
+              priv_first_element(instance) := priv_first_element(instance).next_element;
             else                        -- Removing an intermediate or last entry
               v_preceding_element_ptr.next_element := v_element_to_delete_ptr.next_element;
-              -- If the element is the last entry, update vr_last_element
+              -- If the element is the last entry, update priv_last_element
               if v_element_to_delete_ptr.next_element = null then
-                vr_last_element(instance) := v_preceding_element_ptr;
+                priv_last_element(instance) := v_preceding_element_ptr;
               end if;
             end if;
 
             -- Decrement number of elements
-            vr_num_elements_in_queue(instance) := vr_num_elements_in_queue(instance) - 1;
+            priv_num_elements_in_queue(instance) := priv_num_elements_in_queue(instance) - 1;
 
             -- Memory management
             DEALLOCATE(v_element_to_delete_ptr);
@@ -853,7 +853,7 @@ package body generic_queue_pkg is
             if v_deletes_remaining > 0 then
               if (v_preceding_element_ptr = null) then
                 -- We just removed the first entry, so there's no pointer from a preceding entry. Next to delete is the first entry.
-                v_element_to_delete_ptr := vr_first_element(instance);
+                v_element_to_delete_ptr := priv_first_element(instance);
               else                      -- Removed an intermediate or last entry. Next to delete is the pointer from the preceding element
                 v_element_to_delete_ptr := v_preceding_element_ptr.next_element;
               end if;
@@ -861,7 +861,7 @@ package body generic_queue_pkg is
           end loop;
 
         else                            -- v_found_match
-          if (vr_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
+          if (priv_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
             tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier_min=" & to_string(identifier_min) & ", identifier_max=" & to_string(identifier_max) & ", non-matching identifier=" & to_string(identifier_min), scope);
           end if;
         end if;                         -- v_found_match
@@ -871,8 +871,8 @@ package body generic_queue_pkg is
       -- Entry_num is not necessarily increasing as we follow next_element pointers.
       -- This means that we must do a complete search for each entry we want to delete
       elsif (identifier_option = ENTRY_NUM) then
-        check_value(vr_entry_num(instance) >= identifier_max, TB_ERROR, proc_name & " where identifier_max > highest entry number", vr_scope(instance), ID_NEVER);
-        check_value(identifier_max >= identifier_min, TB_ERROR, "Check that identifier_max >= identifier_min", vr_scope(instance), ID_NEVER);
+        check_value(priv_entry_num(instance) >= identifier_max, TB_ERROR, proc_name & " where identifier_max > highest entry number", priv_scope(instance), ID_NEVER);
+        check_value(identifier_max >= identifier_min, TB_ERROR, "Check that identifier_max >= identifier_min", priv_scope(instance), ID_NEVER);
 
         v_deletes_remaining := 1 + identifier_max - identifier_min;
 
@@ -893,23 +893,23 @@ package body generic_queue_pkg is
 
             -- Update pointer to the element about to be removed.
             if (v_preceding_element_ptr = null) then -- Removing the first entry,
-              vr_first_element(instance) := vr_first_element(instance).next_element;
+              priv_first_element(instance) := priv_first_element(instance).next_element;
             else                        -- Removing an intermediate or last entry
               v_preceding_element_ptr.next_element := v_element_to_delete_ptr.next_element;
-              -- If the element is the last entry, update vr_last_element
+              -- If the element is the last entry, update priv_last_element
               if v_element_to_delete_ptr.next_element = null then
-                vr_last_element(instance) := v_preceding_element_ptr;
+                priv_last_element(instance) := v_preceding_element_ptr;
               end if;
             end if;
 
             -- Decrement number of elements
-            vr_num_elements_in_queue(instance) := vr_num_elements_in_queue(instance) - 1;
+            priv_num_elements_in_queue(instance) := priv_num_elements_in_queue(instance) - 1;
 
             -- Memory management
             DEALLOCATE(v_element_to_delete_ptr);
 
           else                          -- v_found_match
-            if (vr_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
+            if (priv_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
               tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier_min=" & to_string(identifier_min) & ", identifier_max=" & to_string(identifier_max) & ", non-matching identifier=" & to_string(identifier), scope);
             end if;
           end if;                       -- v_found_match
@@ -933,9 +933,9 @@ package body generic_queue_pkg is
       constant instance : in integer;
       constant element  : in t_generic_element
     ) is
-      variable v_entry_num : integer := find_entry_num(element);
+      variable priv_entry_num : integer := find_entry_num(element);
     begin
-      delete(instance, ENTRY_NUM, v_entry_num, v_entry_num);
+      delete(instance, ENTRY_NUM, priv_entry_num, priv_entry_num);
     end procedure;
 
     procedure delete(
@@ -959,9 +959,9 @@ package body generic_queue_pkg is
           delete(instance, identifier_option, 1, identifier);
         when AND_HIGHER =>
           if identifier_option = POSITION then
-            delete(instance, identifier_option, identifier, vr_num_elements_in_queue(instance));
+            delete(instance, identifier_option, identifier, priv_num_elements_in_queue(instance));
           elsif identifier_option = ENTRY_NUM then
-            delete(instance, identifier_option, identifier, vr_entry_num(instance));
+            delete(instance, identifier_option, identifier, priv_entry_num(instance));
           end if;
       end case;
     end procedure;
@@ -997,8 +997,8 @@ package body generic_queue_pkg is
       variable v_matched_position      : integer; -- Keep track of POSITION when traversing the linked list
       variable v_found_match           : boolean := false;
     begin
-      check_value(vr_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
-      check_value(vr_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", vr_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       match_identifier(
         instance              => instance,
@@ -1013,7 +1013,7 @@ package body generic_queue_pkg is
       if v_found_match then
         v_matched_element_data := v_matched_element_ptr.element_data;
       else
-        if (vr_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
+        if (priv_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
           tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier), scope);
         end if;
       end if;
@@ -1066,12 +1066,12 @@ package body generic_queue_pkg is
       variable v_matched_position      : integer;
       variable v_found_match           : boolean;
     begin
-      check_value(vr_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
-      check_value(vr_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", vr_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, proc_name & ": Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, proc_name & "() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
-      if (vr_num_elements_in_queue(instance) < vr_queue_count_threshold(instance)) then
+      if (priv_num_elements_in_queue(instance) < priv_queue_count_threshold(instance)) then
         -- reset alert trigger if set
-        vr_queue_count_threshold_triggered(instance) := false;
+        priv_queue_count_threshold_triggered(instance) := false;
       end if;
 
       match_identifier(
@@ -1090,23 +1090,23 @@ package body generic_queue_pkg is
 
         -- Update pointer to the element about to be removed.
         if (v_preceding_element_ptr = null) then -- Removing the first entry,
-          vr_first_element(instance) := vr_first_element(instance).next_element;
+          priv_first_element(instance) := priv_first_element(instance).next_element;
         else                            -- Removing an intermediate or last entry
           v_preceding_element_ptr.next_element := v_matched_element_ptr.next_element;
-          -- If the element is the last entry, update vr_last_element
+          -- If the element is the last entry, update priv_last_element
           if v_matched_element_ptr.next_element = null then
-            vr_last_element(instance) := v_preceding_element_ptr;
+            priv_last_element(instance) := v_preceding_element_ptr;
           end if;
         end if;
 
         -- Decrement number of elements
-        vr_num_elements_in_queue(instance) := vr_num_elements_in_queue(instance) - 1;
+        priv_num_elements_in_queue(instance) := priv_num_elements_in_queue(instance) - 1;
 
         -- Memory management
         DEALLOCATE(v_matched_element_ptr);
 
       else
-        if (vr_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
+        if (priv_num_elements_in_queue(instance) > 0) then -- if not already reported tb_error due to empty
           tb_error(proc_name & "() did not match an element in queue. It was called with the following parameters: " & "instance=" & to_string(instance) & ", identifier_option=" & t_identifier_option'image(identifier_option) & ", identifier=" & to_string(identifier), scope);
         end if;
       end if;
@@ -1146,10 +1146,10 @@ package body generic_queue_pkg is
       variable v_matched_position : integer;
       variable v_found_match      : boolean;
     begin
-      check_value(vr_scope_is_defined(instance), TB_WARNING, "find_position: Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, "find_position: Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
 
       -- Don't include this check, because we may want to use exists() on an empty queue.
-      -- check_value(vr_num_elements_in_queue(instance) > 0, TB_ERROR, "find_position() from generic queue when empty", vr_scope(instance), ID_NEVER);
+      -- check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "find_position() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       match_element_data(
         instance            => instance,
@@ -1198,8 +1198,8 @@ package body generic_queue_pkg is
       variable v_matched_position : integer;
       variable v_found_match      : boolean;
     begin
-      check_value(vr_scope_is_defined(instance), TB_WARNING, "find_entry_num(): Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
-      check_value(vr_num_elements_in_queue(instance) > 0, TB_ERROR, "find_entry_num() from generic queue when empty", vr_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, "find_entry_num(): Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "find_entry_num() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       match_element_data(
         instance            => instance,
@@ -1233,8 +1233,8 @@ package body generic_queue_pkg is
       variable v_matched_element_ptr   : t_element_ptr;
       variable v_preceding_element_ptr : t_element_ptr;
     begin
-      check_value(vr_scope_is_defined(instance), TB_WARNING, "get_entry_num(): Scope name must be defined for this generic queue", vr_scope(instance), ID_NEVER);
-      check_value(vr_num_elements_in_queue(instance) > 0, TB_ERROR, "get_entry_num() from generic queue when empty", vr_scope(instance), ID_NEVER);
+      check_value(priv_scope_is_defined(instance), TB_WARNING, "get_entry_num(): Scope name must be defined for this generic queue", priv_scope(instance), ID_NEVER);
+      check_value(priv_num_elements_in_queue(instance) > 0, TB_ERROR, "get_entry_num() from generic queue when empty", priv_scope(instance), ID_NEVER);
 
       match_identifier(
         instance              => instance,
@@ -1271,7 +1271,7 @@ package body generic_queue_pkg is
       variable v_found_match     : boolean := false;
     begin
       -- Search from front to back element. Initalise pointers/counters to the first entry:
-      v_element_ptr := vr_first_element(instance);
+      v_element_ptr := priv_first_element(instance);
       if v_element_ptr = NULL then
         return;                         -- Return if queue is empty
       end if;

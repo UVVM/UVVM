@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -45,8 +45,10 @@ package transaction_pkg is
     SET, GET, CHECK, CHECK_STABLE, EXPECT, EXPECT_STABLE
   );
 
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_GPIO_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_GPIO_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_GPIO_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
@@ -94,10 +96,10 @@ package transaction_pkg is
   -- Type is defined as array to coincide with channel based VVCs
   type t_gpio_transaction_trigger_array is array (natural range <>) of std_logic;
   -- Global transaction info trigger signal
-  signal global_gpio_vvc_transaction_trigger : t_gpio_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
+  signal global_gpio_vvc_transaction_trigger : t_gpio_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
 
   -- Shared transaction info variable
   type t_gpio_transaction_group_array is array (natural range <>) of t_transaction_group;
-  shared variable shared_gpio_vvc_transaction_info : t_gpio_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_gpio_vvc_transaction_info : t_gpio_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

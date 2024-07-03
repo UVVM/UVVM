@@ -1,5 +1,5 @@
 # ================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -11,7 +11,7 @@
 # --------------------------------------------------------------------------------------------------------------------------------
 
 __author__ = 'UVVM'
-__copyright__ = "Copyright 2020, UVVM"
+__copyright__ = "Copyright 2024, UVVM"
 __version__ = "1.1.2"
 __email__ = "info@uvvm.org"
 
@@ -21,7 +21,8 @@ division_line = "--=============================================================
 
 extended_features = {"scoreboard": False,
                      "transaction_pkg": False,
-                     "transaction_info": False}
+                     "transaction_info": False,
+                     "unwanted_activity": False}
 
 
 class Channel:
@@ -110,6 +111,8 @@ def get_generating_level():
         if get_user_input("\rAdd transaction info to VVC? [y/n]: ") == 'y':
             selected_features["transaction_pkg"] = True
             selected_features["transaction_info"] = True
+        if get_user_input("\rAdd unwanted activity detection to VVC? [y/n]: ") == 'y':
+            selected_features["unwanted_activity"] = True
 
     return selected_features
 
@@ -425,6 +428,9 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, n
             file_handle.write("  signal last_" + vvc_channel.executor_names[i] + "_idx_executed  : natural := 0;\n")
 
     file_handle.write("  signal terminate_current_cmd  : t_flag_record;\n")
+    if features["unwanted_activity"]:
+        file_handle.write("  --<USER_INPUT> Uncomment if the VVC has a valid signal, e.g. tvalid in AXI-Stream\n")
+        file_handle.write("  -- signal clock_period           : time;\n")
     print_linefeed(file_handle)
     file_handle.write("  -- Instantiation of the element dedicated executor\n")
     file_handle.write("  shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;\n")
@@ -490,7 +496,8 @@ def add_vvc_constructor(file_handle, vvc_name):
     file_handle.write("  work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_" +vvc_name.upper() +
                       "_BFM_CONFIG,\n")
     file_handle.write("                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,\n")
-    file_handle.write("                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);\n")
+    file_handle.write("                  GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,\n")
+    file_handle.write("                  C_VVC_MAX_INSTANCE_NUM);\n")
     file_handle.write(division_line + "\n")
 
     print_linefeed(file_handle)
@@ -1023,6 +1030,86 @@ def add_vvc_terminator(file_handle):
     print_linefeed(file_handle)
 
 
+def add_clock_period(file_handle):
+    file_handle.write(division_line + "\n")
+    file_handle.write("-- Clock period\n")
+    file_handle.write("-- - Finds the clock period\n")
+    file_handle.write(division_line + "\n")
+    file_handle.write("  --<USER_INPUT> Uncomment if the VVC has a valid signal, e.g. tvalid in AXI-Stream\n")
+    file_handle.write("  -- p_clock_period : process\n")
+    file_handle.write("  -- begin\n")
+    file_handle.write("  --   wait until rising_edge(clk);\n")
+    file_handle.write("  --   clock_period <= now;\n")
+    file_handle.write("  --   wait until rising_edge(clk);\n")
+    file_handle.write("  --   clock_period <= now - clock_period;\n")
+    file_handle.write("  --   wait;\n")
+    file_handle.write("  -- end process;\n")
+    file_handle.write(division_line + "\n")
+    print_linefeed(file_handle)
+    print_linefeed(file_handle)
+
+
+def add_unwanted_activity_detection(file_handle, vvc_name, vvc_channel):
+    file_handle.write(division_line + "\n")
+    file_handle.write("-- Unwanted activity detection\n")
+    file_handle.write("-- - Monitors unwanted activity from the DUT\n")
+    file_handle.write(division_line + "\n")
+    file_handle.write("  p_unwanted_activity : process\n")
+    file_handle.write("  begin\n")
+    file_handle.write("    -- Add a delay to avoid detecting the first transition from the undefined value to initial value\n") 
+    file_handle.write("    wait for std.env.resolution_limit;\n")
+    print_linefeed(file_handle)
+    file_handle.write("    loop\n")
+    file_handle.write("      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register\n")
+    file_handle.write("      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then\n")
+    file_handle.write("        -- Wait until the vvc is inactive\n")
+    file_handle.write("        loop\n")
+    file_handle.write("          wait on global_trigger_vvc_activity_register;\n")
+    file_handle.write("          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then\n")
+    file_handle.write("            exit;\n")
+    file_handle.write("          end if;\n")
+    file_handle.write("        end loop;\n")
+    file_handle.write("      end if;\n")
+    print_linefeed(file_handle)
+    file_handle.write("      --<USER_INPUT> Insert all DUT outputs to be monitored in the Wait On statement, except ready signal\n")
+    file_handle.write("      -- Note: ready signal, e.g. tready in AXI-Stream, shall not be monitored when the VVC is a master VVC\n")
+    file_handle.write("      -- Example:\n")
+    if vvc_channel != "NA":
+        file_handle.write("      -- wait on t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid, t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data, global_trigger_vvc_activity_register;\n")
+    else:
+        file_handle.write("      -- wait on t_" + vvc_name.lower() + "_if.valid, t_" + vvc_name.lower() + "_if.data, global_trigger_vvc_activity_register;\n")
+    print_linefeed(file_handle)
+    file_handle.write("      -- Check the changes on the DUT outputs only when the vvc is inactive\n")
+    file_handle.write("      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then\n")
+    file_handle.write("        --<USER_INPUT> Use the check_value() method to check the changes on the DUT outputs\n")
+    file_handle.write("        -- Example:\n")
+    if vvc_channel != "NA":
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.last'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on last\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+    else:
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_if.last'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on last\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+    print_linefeed(file_handle)
+    file_handle.write("        -- Note: Use the following example instead if the interface has a valid signal, e.g. tvalid in AXI-Stream\n")
+    file_handle.write("        -- Example:\n")
+    file_handle.write("        -- Skip checking the changes if the valid signal goes low within one clock period after the VVC becomes inactive\n")
+    if vvc_channel != "NA":
+        file_handle.write("        -- if not (falling_edge(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on valid\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+    else:
+        file_handle.write("        -- if not (falling_edge(" + vvc_name.lower() + "_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_if.valid'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on valid\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+    file_handle.write("        -- end if;\n")
+    file_handle.write("      end if;\n")
+    file_handle.write("    end loop;\n")
+    file_handle.write("  end process p_unwanted_activity;\n")
+    file_handle.write(division_line + "\n")
+    print_linefeed(file_handle)
+    print_linefeed(file_handle)
+
+
 def add_end_of_architecture(file_handle):
     file_handle.write("end behave;\n")
     print_linefeed(file_handle)
@@ -1089,6 +1176,7 @@ def add_vvc_cmd_pkg_header(file_handle, features):
         file_handle.write("  -- - VVC and BFM operations\n")
         file_handle.write("  " + division_line + "\n")
         file_handle.write("  type t_operation is (\n")
+        file_handle.write("    -- UVVM common\n")
         file_handle.write("    NO_OPERATION,\n")
         file_handle.write("    AWAIT_COMPLETION,\n")
         file_handle.write("    AWAIT_ANY_COMPLETION,\n")
@@ -1098,6 +1186,7 @@ def add_vvc_cmd_pkg_header(file_handle, features):
         file_handle.write("    FETCH_RESULT,\n")
         file_handle.write("    INSERT_DELAY,\n")
         file_handle.write("    TERMINATE_CURRENT_COMMAND\n")
+        file_handle.write("    -- VVC local\n")
         file_handle.write("    --<USER_INPUT> Expand this type with enums for BFM procedures.\n")
         file_handle.write("    -- Example: \n")
         file_handle.write("    -- TRANSMIT, RECEIVE, EXPECT\n")
@@ -1107,11 +1196,14 @@ def add_vvc_cmd_pkg_header(file_handle, features):
         file_handle.write("  --<USER_INPUT> Create constants for the maximum sizes to use in this VVC.\n")
         file_handle.write("  -- You can create VVCs with smaller sizes than these constants, but not larger.\n")
         file_handle.write("  -- For example, given a VVC with parallel data bus and address bus, constraints\n")
-        file_handle.write("  -- should be added for maximum data length and address length\n")
+        file_handle.write("  -- should be added for maximum data length and address length.\n")
+        file_handle.write("  -- Note: if these constants are to be flexible, create similar constants in adaptations_pkg\n")
+        file_handle.write("  -- and use them to assign these constants, see other UVVM VIPs for guidance on how it's done.\n")
         file_handle.write("  -- Example:\n")
         file_handle.write("  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;\n")
         file_handle.write("  --constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;\n")
         file_handle.write("  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;\n")
+        file_handle.write("  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;\n")
         print_linefeed(file_handle)
 
     file_handle.write("  " + division_line + "\n")
@@ -1207,7 +1299,7 @@ def add_vvc_cmd_pkg_header(file_handle, features):
     file_handle.write("  --  - Shared variable used to get last queued index from VVC to sequencer\n")
     file_handle.write("  " + division_line + "\n")
     file_handle.write("  shared variable shared_vvc_last_received_cmd_idx : t_last_received_cmd_idx(t_channel'left to t_channel'right, 0 to" +
-                      " C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => -1));\n")
+                      " C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => -1));\n")
     print_linefeed(file_handle)
     file_handle.write("  " + division_line + "\n")
     file_handle.write("  -- Procedures\n")
@@ -1293,6 +1385,7 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    result_queue_count_threshold_severity : t_alert_level;\n")
     file_handle.write("    bfm_config                            : t_" + vvc_name.lower() + "_bfm_config; -- Configuration for the BFM. See BFM quick reference.\n")
     file_handle.write("    msg_id_panel                          : t_msg_id_panel;    -- VVC dedicated message ID panel.\n")
+    file_handle.write("    unwanted_activity_severity            : t_alert_level;     -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected.\n")
     file_handle.write("  end record;\n")
     print_linefeed(file_handle)
     if vvc_channels.__len__() == 1:
@@ -1309,7 +1402,8 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    result_queue_count_threshold          => C_RESULT_QUEUE_COUNT_THRESHOLD,\n")
     file_handle.write("    result_queue_count_threshold_severity => C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,\n")
     file_handle.write("    bfm_config                            => C_" + vvc_name.upper() + "_BFM_CONFIG_DEFAULT,\n")
-    file_handle.write("    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT\n")
+    file_handle.write("    msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,\n")
+    file_handle.write("    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY\n")
     file_handle.write("  );\n")
     print_linefeed(file_handle)
     file_handle.write("  type t_vvc_status is record\n")
@@ -1332,14 +1426,14 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
     print_linefeed(file_handle)
     if vvc_channels.__len__() == 1:
         file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_config : t_vvc_config_array(0 to "
-                          "C_MAX_VVC_INSTANCE_NUM-1) := (others => C_" + vvc_name.upper() + "_VVC_CONFIG_DEFAULT);\n")
+                          "C_VVC_MAX_INSTANCE_NUM-1) := (others => C_" + vvc_name.upper() + "_VVC_CONFIG_DEFAULT);\n")
         file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_status : t_vvc_status_array(0 to "
-                          "C_MAX_VVC_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);\n")
+                          "C_VVC_MAX_INSTANCE_NUM-1) := (others => C_VVC_STATUS_DEFAULT);\n")
     else:
         file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_config : t_vvc_config_array(t_channel'left"
-                          " to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_" + vvc_name.upper() + "_VVC_CONFIG_DEFAULT));\n")
+                          " to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => C_" + vvc_name.upper() + "_VVC_CONFIG_DEFAULT));\n")
         file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_status : t_vvc_status_array(t_channel'left"
-                          " to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));\n")
+                          " to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => C_VVC_STATUS_DEFAULT));\n")
     if features["scoreboard"]:
         file_handle.write("  shared variable " + vvc_name.upper() + "_VVC_SB            : t_generic_sb;\n")
         print_linefeed(file_handle)
@@ -1728,6 +1822,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("  -- - VVC and BFM operations\n")
     file_handle.write("  " + division_line + "\n")
     file_handle.write("  type t_operation is (\n")
+    file_handle.write("    -- UVVM common\n")
     file_handle.write("    NO_OPERATION,\n")
     file_handle.write("    AWAIT_COMPLETION,\n")
     file_handle.write("    AWAIT_ANY_COMPLETION,\n")
@@ -1737,6 +1832,7 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("    FETCH_RESULT,\n")
     file_handle.write("    INSERT_DELAY,\n")
     file_handle.write("    TERMINATE_CURRENT_COMMAND\n")
+    file_handle.write("    -- VVC local\n")
     file_handle.write("    --<USER_INPUT> Expand this type with enums for BFM procedures.\n")
     file_handle.write("    -- Example: \n")
     file_handle.write("    -- TRANSMIT, RECEIVE, EXPECT\n")
@@ -1746,11 +1842,14 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
     file_handle.write("  --<USER_INPUT> Create constants for the maximum sizes to use in this VVC.\n")
     file_handle.write("  -- You can create VVCs with smaller sizes than these constants, but not larger.\n")
     file_handle.write("  -- For example, given a VVC with parallel data bus and address bus, constraints\n")
-    file_handle.write("  -- should be added for maximum data length and address length\n")
+    file_handle.write("  -- should be added for maximum data length and address length.\n")
+    file_handle.write("  -- Note: if these constants are to be flexible, create similar constants in adaptations_pkg\n")
+    file_handle.write("  -- and use them to assign these constants, see other UVVM VIPs for guidance on how it's done.\n")
     file_handle.write("  -- Example:\n")
     file_handle.write("  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;\n")
     file_handle.write("  --constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;\n")
     file_handle.write("  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;\n")
+    file_handle.write("  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;\n")
     print_linefeed(file_handle)
     print_linefeed(file_handle)
 
@@ -1805,12 +1904,12 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
             file_handle.write("  -- Global vvc_transaction_info trigger signal\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_trigger_array is array (natural range <>) of std_logic;\n")
             file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() +
-                              "_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => '0');\n")
+                              "_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => '0');\n")
             print_linefeed(file_handle)
             file_handle.write("  -- Shared vvc_transaction_info info variable\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_group_array is array (natural range <>) of t_transaction_group;\n")
             file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_transaction_info : t_" + vvc_name.lower() +
-                              "_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => C_TRANSACTION_GROUP_DEFAULT);\n")
+                              "_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => C_TRANSACTION_GROUP_DEFAULT);\n")
         else:
             first_channel = vvc_channels[0].name.upper()
             last_channel = vvc_channels[len(vvc_channels) - 1].name.upper()
@@ -1819,12 +1918,12 @@ def add_transaction_pkg(file_handle, vvc_name, vvc_channels, features):
             file_handle.write("  -- Global vvc_transaction_info trigger signal\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;\n")
             file_handle.write("  signal global_" + vvc_name.lower() + "_vvc_transaction_trigger : t_" + vvc_name.lower() +
-                              "_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => '0'));\n")
+                              "_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => '0'));\n")
             print_linefeed(file_handle)
             file_handle.write("  -- Shared vvc_transaction_info info variable\n")
             file_handle.write("  type t_" + vvc_name.lower() + "_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;\n")
             file_handle.write("  shared variable shared_" + vvc_name.lower() + "_vvc_transaction_info : t_" + vvc_name.lower() +
-                              "_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));\n")
+                              "_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM-1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));\n")
 
     print_linefeed(file_handle)
     file_handle.write("end package transaction_pkg;\n")
@@ -1946,6 +2045,9 @@ def generate_vvc_file(vvc_name, vvc_channels, features):
                 add_vvc_pipeline_step(f, vvc_name, channel.executor_names[i], features)
 
         add_vvc_terminator(f)
+        if features["unwanted_activity"]:
+            add_clock_period(f)
+            add_unwanted_activity_detection(f, vvc_name, channel.name)
         add_end_of_architecture(f)
 
         f.close()

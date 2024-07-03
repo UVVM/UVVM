@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -90,6 +90,7 @@ architecture behave of axilite_vvc is
   signal last_write_response_channel_idx_executed   : natural := 0;
   signal last_read_data_channel_idx_executed        : natural := 0;
   signal terminate_current_cmd                      : t_flag_record;
+  signal clock_period                               : time;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue                : work.td_cmd_queue_pkg.t_generic_queue;
@@ -139,7 +140,8 @@ begin
   --===============================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_AXILITE_CONFIG,
                                                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
-                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
+                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
+                                                 C_VVC_MAX_INSTANCE_NUM);
   --===============================================================================================
 
   --===============================================================================================
@@ -293,7 +295,6 @@ begin
     variable v_msg_id_panel                          : t_msg_id_panel;
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH - 1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
-    variable v_cmd_queues_are_empty                  : boolean;
 
   begin
     -- 0. Initialize the process prior to first command
@@ -430,8 +431,7 @@ begin
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_normalised_addr      : unsigned(GC_ADDR_WIDTH - 1 downto 0) := (others => '0');
-    variable v_cmd_queues_are_empty : boolean;
-    constant C_CHANNEL_SCOPE        : string                               := C_VVC_NAME & "_AR" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE        : string                               := get_scope_for_log(C_VVC_NAME & "_AR", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                         := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -455,7 +455,7 @@ begin
       case v_cmd.operation is
         when READ | CHECK =>
           -- Set vvc transaction info
-          set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
           -- Start transaction
           read_address_channel_write(araddr_value => std_logic_vector(v_normalised_addr),
                                      msg          => format_msg(v_cmd),
@@ -468,7 +468,7 @@ begin
                                      msg_id_panel => v_msg_id_panel,
                                      config       => vvc_config.bfm_config);
           -- Update vvc transaction info
-          set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+          set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
       end case;
@@ -487,8 +487,7 @@ begin
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_read_data            : t_vvc_result; -- See vvc_cmd_pkg
     variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
-    variable v_cmd_queues_are_empty : boolean;
-    constant C_CHANNEL_SCOPE        : string                                       := C_VVC_NAME & "_R" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE        : string                                       := get_scope_for_log(C_VVC_NAME & "_R", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                                 := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -512,7 +511,7 @@ begin
       case v_cmd.operation is
         when READ =>
           -- Set vvc transaction info
-          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
           -- Start transaction
           read_data_channel_receive(rdata_value  => v_read_data(GC_DATA_WIDTH - 1 downto 0),
                                     msg          => format_msg(v_cmd),
@@ -535,11 +534,11 @@ begin
                                                         result       => v_read_data);
           end if;
           -- Update vvc transaction info
-          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_SCOPE);
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, v_read_data, COMPLETED, C_CHANNEL_SCOPE);
 
         when CHECK =>
           -- Set vvc transaction info
-          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
           -- Start transaction
           read_data_channel_check(rdata_exp    => v_normalised_data,
                                   msg          => format_msg(v_cmd),
@@ -553,14 +552,14 @@ begin
                                   msg_id_panel => v_msg_id_panel,
                                   config       => vvc_config.bfm_config);
           -- Update vvc transaction info
-          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+          set_r_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
         when others =>
           tb_error("Unsupported local command received for execution: '" & to_string(v_cmd.operation) & "'", C_CHANNEL_SCOPE);
       end case;
       last_read_data_channel_idx_executed <= v_cmd.cmd_idx;
 
       -- Update vvc transaction info
-      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_r_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
@@ -576,8 +575,7 @@ begin
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_normalised_addr      : unsigned(GC_ADDR_WIDTH - 1 downto 0) := (others => '0');
-    variable v_cmd_queues_are_empty : boolean;
-    constant C_CHANNEL_SCOPE        : string                               := C_VVC_NAME & "_AW" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE        : string                               := get_scope_for_log(C_VVC_NAME & "_AW", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                         := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -598,7 +596,7 @@ begin
       -- Normalise address
       v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", "Function called with too wide address. " & v_cmd.msg);
       -- Set vvc transaction info
-      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
       -- Start transaction
       write_address_channel_write(awaddr_value => std_logic_vector(v_normalised_addr),
                                   msg          => format_msg(v_cmd),
@@ -612,7 +610,7 @@ begin
                                   config       => vvc_config.bfm_config);
 
       -- Update vvc transaction info
-      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_arw_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_arw_vvc_transaction_info(vvc_transaction_info, v_cmd);
     end loop;
@@ -627,8 +625,7 @@ begin
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
-    variable v_cmd_queues_are_empty : boolean;
-    constant C_CHANNEL_SCOPE        : string                                       := C_VVC_NAME & "_W" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE        : string                                       := get_scope_for_log(C_VVC_NAME & "_W", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                                 := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -649,7 +646,7 @@ begin
       -- Normalise data
       v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", "Function called with too wide data. " & v_cmd.msg);
       -- Set vvc transaction info
-      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
       -- Start transaction
       write_data_channel_write(wdata_value  => v_normalised_data,
                                wstrb_value  => v_cmd.byte_enable((GC_DATA_WIDTH / 8 - 1) downto 0),
@@ -664,7 +661,7 @@ begin
                                config       => vvc_config.bfm_config);
 
       -- Update vvc transaction info
-      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_w_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_w_vvc_transaction_info(vvc_transaction_info);
     end loop;
@@ -679,8 +676,7 @@ begin
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
-    variable v_cmd_queues_are_empty : boolean;
-    constant C_CHANNEL_SCOPE        : string                                       := C_VVC_NAME & "_B" & "," & to_string(GC_INSTANCE_IDX);
+    constant C_CHANNEL_SCOPE        : string                                       := get_scope_for_log(C_VVC_NAME & "_B", GC_INSTANCE_IDX);
     constant C_CHANNEL_VVC_LABELS   : t_vvc_labels                                 := assign_vvc_labels(C_CHANNEL_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
   begin
     -- Set the command response queue up to the same settings as the command queue
@@ -699,7 +695,7 @@ begin
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
       -- Set vvc transaction info
-      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_SCOPE);
+      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, IN_PROGRESS, C_CHANNEL_SCOPE);
       -- Receiving a write response
       write_response_channel_check(msg          => format_msg(v_cmd),
                                    clk          => clk,
@@ -714,8 +710,8 @@ begin
       last_write_response_channel_idx_executed <= v_cmd.cmd_idx;
 
       -- Update vvc transaction info
-      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
-      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_SCOPE);
+      set_b_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
+      set_global_vvc_transaction_info(vvc_transaction_info_trigger, vvc_transaction_info, v_cmd, vvc_config, COMPLETED, C_CHANNEL_SCOPE);
       -- Set vvc transaction info back to default values
       reset_b_vvc_transaction_info(vvc_transaction_info);
       reset_vvc_transaction_info(vvc_transaction_info, v_cmd);
@@ -728,6 +724,64 @@ begin
   -- - Handles the termination request record (sets and resets terminate flag on request)
   --===============================================================================================
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --===============================================================================================
+
+  --===============================================================================================
+  -- Clock period
+  -- - Finds the clock period
+  --===============================================================================================
+  p_clock_period : process
+  begin
+    wait until rising_edge(clk);
+    clock_period <= now;
+    wait until rising_edge(clk);
+    clock_period <= now - clock_period;
+    wait;
+  end process;
+  --===============================================================================================
+
+  --===============================================================================================
+  -- Unwanted activity detection
+  -- - Monitors unwanted activity from the DUT
+  --===============================================================================================
+  p_unwanted_activity : process
+  begin
+    -- Add a delay to avoid detecting the first transition from the undefined value to initial value
+    wait for std.env.resolution_limit;
+
+    loop
+      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then
+        -- Wait until the vvc is inactive
+        loop
+          wait on global_trigger_vvc_activity_register;
+          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+            exit;
+          end if;
+        end loop;
+      end if;
+
+      -- All ready signals are not monitored. See AXI-Lite VVC QuickRef.
+      wait on axilite_vvc_master_if.write_response_channel.bresp, axilite_vvc_master_if.write_response_channel.bvalid, axilite_vvc_master_if.read_data_channel.rdata,
+              axilite_vvc_master_if.read_data_channel.rresp, axilite_vvc_master_if.read_data_channel.rvalid, global_trigger_vvc_activity_register;
+
+      -- Check the changes on the DUT outputs only when the vvc is inactive
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+        -- Skip checking the changes if the bvalid signal goes low within one clock period after the VVC becomes inactive
+        if not (falling_edge(axilite_vvc_master_if.write_response_channel.bvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+          check_value(not axilite_vvc_master_if.write_response_channel.bvalid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on bvalid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.write_response_channel.bresp'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on bresp", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+        end if;
+
+        -- Skip checking the changes if the rvalid signal goes low within one clock period after the VVC becomes inactive
+        if not (falling_edge(axilite_vvc_master_if.read_data_channel.rvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
+          check_value(not axilite_vvc_master_if.read_data_channel.rvalid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rvalid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.read_data_channel.rdata'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rdata", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.read_data_channel.rresp'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rresp", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+        end if;
+      end if;
+    end loop;
+  end process p_unwanted_activity;
   --===============================================================================================
 
 end behave;

@@ -10,11 +10,51 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2024.07.03
+--------------------
+Released: 2024-07-03
+- Updated Scoreboard documentation to mention in every method that instance 1 is used as default.
+- Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
+- Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
+- Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt
+- Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Added support for combination of AND- and OR-listed testcases in spec cov.
+- Reset addr and wdata signals when sbi_write() finishes.
+- Reset addr signal and wait a delta cycle when sbi_read() finishes.
+- Wait until rising edge of the clock before exiting rgmii_read() so that the interface is idle when it happens.
+- Add support for set/check single std_logic (instead of std_logic_vector) in bitvis_vip_gpio.
+- Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
+- Added individual constants to configure the VVCs max instance number from adaptations_pkg. Updated vvc_generator.py script.
+- Removed Avalon-ST local_adaptations_pkg and moved content to adaptations_pkg.
+- Deprecated Spec Cov local_adaptations_pkg and moved content to adaptations_pkg.
+- Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+- Fixed strictness 2 in spec cov.
+- Decreased C_MAX_TUSER_BITS to 32 in Axistream BFM which allows GHDL to run without storage errors.
+- Updated Utility Library documentation on how to enable report_check_counters().
+- Added comment support and updated handling of omitted requirements in spec cov.
+- Various changes to spec cov output files.
+- Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
+- Added completion detection functionality to wait for all the VVCs to be inactive with no pending commands to be executed, and
+  for all the enabled scoreboards to be empty: await_uvvm_completion(), await_sb_completion(), check_sb_completion().
+- Added completion detection test to UVVM demo tb.
+- Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
+- Added PR from @aghoras fixing a problem with Avalon-MM BFM sampling readdata one cycle too early when waitrequest is not asserted.
+- Fixed avalon_mm_read_response() sampling the same data in several pipelined commands.
+- Use dedicated scope in Avalon-MM, AXI and AXI-Lite VVC pipeline processes.
+- Fixed initialization check in tickoff procedure in spec cov.
+- Changed behavior for explicit fail at tickoff in spec cov.
+- Added unwanted activity detection functionality to VVCs to give an alert if the DUT generates any unexpected bus activity.
+- Added unwanted activity detection test to UVVM demo tb.
+- Added unwanted activity detection in VVC generator.
+- Removed "omitted requirement"-functionality in spec cov.
+
+
 v2 2024.03.08
 --------------------
 Released: 2024-03-08
 - Updated vvc_transaction_info in all VVCs to also trigger after the BFM call with updated data and the status
-  COMPLETED. Updated vvc_generator.py script.
+  COMPLETED. Updated vvc_generator.py script. NOTE that this change can cause older testbenches to fail due to the extra trigger,
+  see the VVC Framework - Essential Mechanisms documentation for examples of the updated recommended usage.
 - Added missing scope to alert in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
 - Removed unnecessary constraining in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
 - Moved t_transaction_status type from all VVCs to types_pkg and added COMPLETED. Updated vvc_generator.py script.
@@ -45,6 +85,7 @@ Released: 2024-03-08
 - Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
 - Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
 - Updated spec cov documentation for modified clean parameter to run_spec_cov.py
+- Added function to util check_value to properly display signed values
 - Added general_severity to AXI bfm config record. Replaces error as default alert level in BFM and VVC. From pull request by user EMAZAC.
 - Increased C_MAX_TUSER_BITS to 64 in Axistream BFM. (allows for higher GC_USER_WIDTH)
 - Updated vvc_generator.py generation of vvc_context file.

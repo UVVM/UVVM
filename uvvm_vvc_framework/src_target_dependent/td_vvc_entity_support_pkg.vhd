@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -81,7 +81,8 @@ package td_vvc_entity_support_pkg is
     constant cmd_queue_count_threshold_severity    : in t_alert_level;
     constant result_queue_count_max                : in natural;
     constant result_queue_count_threshold          : in natural;
-    constant result_queue_count_threshold_severity : in t_alert_level
+    constant result_queue_count_threshold_severity : in t_alert_level;
+    constant max_vvc_instance_num                  : in natural := C_MAX_VVC_INSTANCE_NUM
   );
 
   -------------------------------------------
@@ -344,12 +345,13 @@ package body td_vvc_entity_support_pkg is
     constant cmd_queue_count_threshold_severity    : in t_alert_level;
     constant result_queue_count_max                : in natural;
     constant result_queue_count_threshold          : in natural;
-    constant result_queue_count_threshold_severity : in t_alert_level
+    constant result_queue_count_threshold_severity : in t_alert_level;
+    constant max_vvc_instance_num                  : in natural := C_MAX_VVC_INSTANCE_NUM
   ) is
     variable v_delta_cycle_counter : natural := 0;
     variable v_comma_number        : natural := 0;
   begin
-    check_value(instance_idx <= C_MAX_VVC_INSTANCE_NUM - 1, TB_FAILURE, "Generic VVC Instance index =" & to_string(instance_idx) & " cannot exceed C_MAX_VVC_INSTANCE_NUM-1 in UVVM adaptations = " & to_string(C_MAX_VVC_INSTANCE_NUM - 1), C_SCOPE, ID_NEVER);
+    check_value(instance_idx <= max_vvc_instance_num - 1, TB_FAILURE, "Generic VVC Instance index =" & to_string(instance_idx) & " cannot exceed C_<VIP>_MAX_VVC_INSTANCE_NUM-1 in UVVM adaptations = " & to_string(max_vvc_instance_num - 1), C_SCOPE, ID_NEVER);
     vvc_config.bfm_config := bfm_config;
 
     -- compose log message based on the number of channels in scope string

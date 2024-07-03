@@ -86,4 +86,4 @@ and 'RX' channels but more can be added to fit any project.
 
 Support
 ---------------------------------------------------------
-For support, please contact Bitvis Support at support@bitvis.no
+For support, please contact UVVM Support at info@uvvm.org

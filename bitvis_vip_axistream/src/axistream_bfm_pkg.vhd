@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -36,13 +36,11 @@ package axistream_bfm_pkg is
   --========================================================================================================================
   constant C_BFM_SCOPE : string := "AXISTREAM_BFM";
 
-  --========================================================================================================================
-  -- C_MAX_*_BITS : Maximum number of bits per data word supported by the BFM.
-  -- These constant can be increased as needed.
-  constant C_MAX_TUSER_BITS : positive := 64;
-  constant C_MAX_TSTRB_BITS : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
-  constant C_MAX_TID_BITS   : positive := 8; -- Recommended maximum in protocol specification (ARM IHI0051A)
-  constant C_MAX_TDEST_BITS : positive := 4; -- Recommended maximum in protocol specification (ARM IHI0051A)
+  -- Constants for the maximum sizes to use in this BFM. Can be modified in adaptations_pkg.
+  constant C_MAX_TUSER_BITS : positive := C_AXISTREAM_BFM_MAX_TUSER_BITS;
+  constant C_MAX_TSTRB_BITS : positive := C_AXISTREAM_BFM_MAX_TSTRB_BITS;
+  constant C_MAX_TID_BITS   : positive := C_AXISTREAM_BFM_MAX_TID_BITS;
+  constant C_MAX_TDEST_BITS : positive := C_AXISTREAM_BFM_MAX_TDEST_BITS;
 
   constant C_RANDOM          : integer := -1;
   constant C_MULTIPLE_RANDOM : integer := -2;
@@ -51,7 +49,6 @@ package axistream_bfm_pkg is
   type t_strb_array is array (natural range <>) of std_logic_vector(C_MAX_TSTRB_BITS - 1 downto 0);
   type t_id_array is array (natural range <>) of std_logic_vector(C_MAX_TID_BITS - 1 downto 0);
   type t_dest_array is array (natural range <>) of std_logic_vector(C_MAX_TDEST_BITS - 1 downto 0);
-  --========================================================================================================================
 
   -- Interface record for BFM signals
   type t_axistream_if is record

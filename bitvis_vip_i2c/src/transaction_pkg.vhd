@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -28,7 +28,7 @@ package transaction_pkg is
 
   --===============================================================================================
   -- t_operation
-  -- - Bitvis defined BFM operations
+  -- - VVC and BFM operations
   --===============================================================================================
   type t_operation is (
     -- UVVM common
@@ -46,9 +46,11 @@ package transaction_pkg is
     SLAVE_TRANSMIT, SLAVE_RECEIVE, SLAVE_CHECK,
     MASTER_QUICK_CMD);
 
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
-  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := 64;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 10;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_LENGTH   : natural := C_I2C_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH   : natural := C_I2C_VVC_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_I2C_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_I2C_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
@@ -103,11 +105,11 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_i2c_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_i2c_vvc_transaction_trigger : t_i2c_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
+  signal global_i2c_vvc_transaction_trigger : t_i2c_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_i2c_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_i2c_vvc_transaction_info : t_i2c_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_i2c_vvc_transaction_info : t_i2c_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

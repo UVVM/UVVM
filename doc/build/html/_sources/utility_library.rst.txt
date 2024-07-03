@@ -166,10 +166,51 @@ Checks if the target signal has been stable in stable_req time. If not, an alert
     check_stable(slv8, 9 ns, "Checking if SLV is stable");
 
 
+check_sb_completion()
+----------------------------------------------------------------------------------------------------------------------------------
+This procedure checks that all the enabled scoreboards are empty, i.e. all expected values checked. The result of the check is 
+returned as a boolean if the method is called as a function.
+
+If an enabled scoreboard has expected values to be checked, an alert will be generated. Otherwise, a successful completion message 
+and the optional reports will be printed in the log.
+
+.. code-block::
+
+    [boolean :=] check_sb_completion(VOID)
+    [boolean :=] check_sb_completion(alert_level, [print_alert_counters, [print_sbs, [scope, [msg_id_panel]]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | VOID               | in     | t_void                       | A dummy parameter for easier reading syntax             |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is       |
+|          |                    |        |                              | TB_ERROR.                                               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_alert_counte\| in     | :ref:`t_report_alert_counter\| Whether to print a report of alert counters. Default    |
+|          | rs                 |        | s`                           | value is NO_REPORT.                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_sbs          | in     | :ref:`t_report_sb`           | Whether to print a report with all the scoreboards in   |
+|          |                    |        |                              | the testbench. Default value is NO_REPORT.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    v_check := check_sb_completion(VOID);
+    check_sb_completion(TB_WARNING, REPORT_ALERT_COUNTERS, REPORT_SCOREBOARDS, C_SCOPE);
+
+
 await_change()
 ----------------------------------------------------------------------------------------------------------------------------------
 Waits until the target signal changes, or times out after max_time. An alert is asserted if the signal does not change between 
-min_time and max_time. Note that if the value changes at exactly max_time, the timeout gets precedence. ::
+min_time and max_time. *Note* that if the value changes at exactly max_time, the timeout gets precedence. ::
 
     await_change(target(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_change(target(sl), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
@@ -211,8 +252,10 @@ min_time and max_time. Note that if the value changes at exactly max_time, the t
 await_value()
 ----------------------------------------------------------------------------------------------------------------------------------
 Waits until the target signal equals the exp signal, or times out after max_time. An alert is asserted if the signal does not 
-equal the expected value between min_time and max_time. Note that if the value changes to the expected value at exactly max_time, 
-the timeout gets precedence. ::
+equal the expected value between min_time and max_time, or if the target equals exp before min_time. 
+*Note* that if the value changes to the expected value at exactly max_time, the timeout gets precedence. 
+This procedure is a fallthrough procedure when ``min_time = 0 ns``, and will not require a change. For a change to be requred. 
+see await_change_to_value() under. ::
 
     await_value(target(sl), exp(sl), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
@@ -231,6 +274,10 @@ the timeout gets precedence. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | match_strictness   | in     | :ref:`t_match_strictness`    | Specifies if match needs to be exact or std_match, e.g. |
 |          |                    |        |                              | 'H' = '1'. Default value is MATCH_STD.                  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | min_time           | in     | time                         | Minimum time that must pass while target /= exp         |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | max_time           | in     | time                         | Maximum time for the signal to change                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.|
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -252,11 +299,64 @@ the timeout gets precedence. ::
     await_value(bol, true, 10 ns, 20 ns, "Waiting for bol to become true");
     await_value(slv8, "10101010", MATCH_STD, 3 ns, 7 ns, WARNING, "Waiting for slv8 value");
 
+await_change_to_value()
+----------------------------------------------------------------------------------------------------------------------------------
+Waits until the target signal changes to the exp signal, or times out after max_time. 
+If the signal changes to the expected value before min_time, or the signal does not change to the expected value between min_time and max_time, an alert is asserted. 
+
+.. note::
+
+    * If the target changes before min_time, but not to the expected value, nothing happens (check will continue until timeout or target changes to expected value)
+    * If the value changes to the expected value at exactly max_time, the timeout gets precedence.
+
+.. code-block::
+
+    await_change_to_value(target(sl), exp(sl), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change_to_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change_to_value(target(bool), exp(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change_to_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change_to_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change_to_value(target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change_to_value(target(real), exp(real), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                           |
++==========+====================+========+==============================+=======================================================================+
+| signal   | target             | in     | *see overloads*              | Signal to be checked                                                  |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | exp                | in     | *see overloads*              | Expected value                                                        |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | match_strictness   | in     | :ref:`t_match_strictness`    | Specifies if match needs to be exact or std_match, e.g.               |
+|          |                    |        |                              | 'H' = '1'. Default value is MATCH_STD. (only in sl, and slv versions) |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | min_time           | in     | time                         | Minimum time that must pass before the target signal changes to exp   |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | max_time           | in     | time                         | Maximum time for the target signal to change to exp                   |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is ERROR.              |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | msg                | in     | string                       | A custom message to be appended in the log/alert                      |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.              |
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                                  |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg.               |
+|          |                    |        |                              | Default value is ID_POS_ACK.                                          |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default                  |
+|          |                    |        |                              | value is shared_msg_id_panel.                                         |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+
+.. code-block::
+
+    -- Examples:
+    await_change_to_value(bol, true, 10 ns, 20 ns, "Waiting for bol to change to true for min 10 ns and max 20 ns");
+    await_change_to_value(slv8, "10101010", MATCH_STD, 3 ns, 7 ns, WARNING, "Waiting for slv8 to change to value");
 
 await_stable()
 ----------------------------------------------------------------------------------------------------------------------------------
 Wait until the target signal has been stable for at least stable_req. Report an error if this does not occurr within the time 
-specified by timeout. Note that **stable** refers to that the signal has not had an event (i.e. not changed value). ::
+specified by timeout. *Note* that **stable** refers to that the signal has not had an event (i.e. not changed value). ::
 
     await_stable(target(bool), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_stable(target(sl), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
@@ -300,6 +400,58 @@ specified by timeout. Note that **stable** refers to that the signal has not had
     await_stable(u8, 20 ns, FROM_LAST_EVENT, 100 ns, FROM_NOW, ERROR, "Waiting for u8 to stabilize");
 
 
+.. _await_sb_completion:
+
+await_sb_completion()
+----------------------------------------------------------------------------------------------------------------------------------
+This procedure waits for all the enabled scoreboards to be empty, i.e. all expected values checked.
+
+If an enabled scoreboard still has expected values to be checked when the timeout occurs, an alert will be generated. Otherwise, a 
+successful completion message and the optional reports will be printed in the log.
+
+.. code-block::
+
+    await_sb_completion(timeout, [alert_level, [sb_poll_time, [print_alert_counters, [print_sbs, [scope, [msg_id_panel]]]]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | timeout            | in     | time                         | Timeout for the VVCs to be inactive and the scoreboards |
+|          |                    |        |                              | to be empty. Must be greater than 0.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is       |
+|          |                    |        |                              | TB_ERROR.                                               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | sb_poll_time       | in     | time                         | Time to wait until checking again whether the           |
+|          |                    |        |                              | scoreboards have been emptied. Must be greater than 0.  |
+|          |                    |        |                              | Default value is 100 us.                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_alert_counte\| in     | :ref:`t_report_alert_counter\| Whether to print a report of alert counters. Default    |
+|          | rs                 |        | s`                           | value is NO_REPORT.                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_sbs          | in     | :ref:`t_report_sb`           | Whether to print a report with all the scoreboards in   |
+|          |                    |        |                              | the testbench. Default value is NO_REPORT.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Example: Wait for all Scoreboards to be empty
+    await_sb_completion(1 ms);
+
+    -- Example: Wait for all Scoreboards to be empty and report the alert counters and scoreboards
+    await_sb_completion(1 ms, TB_WARNING, 1 us, REPORT_ALERT_COUNTERS, REPORT_SCOREBOARDS, C_SCOPE);
+
+.. note::
+
+    This procedure is called within :ref:`await_uvvm_completion`, which is recommended to use when there are VVCs in the testbench.
+
+
 Logging and verbosity control
 ==================================================================================================================================
 
@@ -326,7 +478,7 @@ adaptations_pkg. ::
 
 log()
 ----------------------------------------------------------------------------------------------------------------------------------
-Writes a message to the log. Note that if the msg_id is disabled in the msg_id_panel, the message will not be shown. Some general 
+Writes a message to the log. *Note* that if the msg_id is disabled in the msg_id_panel, the message will not be shown. Some general 
 string handling features are:
 
 * All log messages will be given using the user defined layout in adaptations_pkg.vhd
@@ -578,7 +730,7 @@ alert()
 
 alert() overloads
 ----------------------------------------------------------------------------------------------------------------------------------
-Overloads for alert(). Note that: ``warning(msg, [scope]) = alert(warning, msg, [scope])``. ::
+Overloads for alert(). *Note* that: ``warning(msg, [scope]) = alert(warning, msg, [scope])``. ::
 
     note(msg, [scope])          tb_note(msg, [scope]) 
     warning(msg, [scope])       tb_warning(msg, [scope]) 
@@ -790,7 +942,9 @@ gives same result as FINAL. ::
 
 report_check_counters()
 ----------------------------------------------------------------------------------------------------------------------------------
-Logs the status of all check counters, typically at the end of simulation. VOID parameter gives same result as FINAL. ::
+Logs the number of all check counters in the testbench, typically to be used at the end of simulation. Note that this functionality 
+is disabled by default to avoid possible decreased performance, set C_ENABLE_CHECK_COUNTER to true in adaptations_pkg to enable it. 
+The VOID parameter gives same result as FINAL. ::
 
     report_check_counters(order)
     report_check_counters(VOID)
@@ -1455,7 +1609,7 @@ your testbench. ::
 
 gen_pulse()
 ----------------------------------------------------------------------------------------------------------------------------------
-Generates a pulse on the target signal for a certain amount of time or a number of clock cycles. Note that the clock_signal 
+Generates a pulse on the target signal for a certain amount of time or a number of clock cycles. *Note* that the clock_signal 
 version will synchronize the pulse to clock_signal and begin the pulse on the falling edge and end the pulse on a succeeding 
 falling edge. ::
 
@@ -1606,6 +1760,8 @@ the timeout. The flag can be re-blocked when leaving the process by setting flag
     await_unblock_flag("my_flag", 10 us, "waiting for my_flag to be unblocked", RETURN_TO_BLOCK, WARNING);
     await_unblock_flag(C_MY_FLAG_1, 10 us, "waiting for " & C_MY_FLAG_1 & " to be unblocked", RETURN_TO_BLOCK, WARNING, "My Scope");
 
+
+.. _await_barrier:
 
 await_barrier()
 ----------------------------------------------------------------------------------------------------------------------------------

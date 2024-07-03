@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -33,8 +33,9 @@ package avalon_st_bfm_pkg is
   --==========================================================================================
   constant C_BFM_SCOPE : string := "AVALON_ST BFM";
 
-  constant C_MAX_BITS_PER_SYMBOL  : positive := 512; -- Recommended maximum in protocol specification (MNL-AVABUSREF)
-  constant C_MAX_SYMBOLS_PER_BEAT : positive := 32; -- Recommended maximum in protocol specification (MNL-AVABUSREF)
+  -- Constants for the maximum sizes to use in this BFM. Can be modified in adaptations_pkg.
+  constant C_MAX_BITS_PER_SYMBOL  : positive := C_AVALON_ST_BFM_MAX_BITS_PER_SYMBOL;
+  constant C_MAX_SYMBOLS_PER_BEAT : positive := C_AVALON_ST_BFM_MAX_SYMBOLS_PER_BEAT;
 
   -- Interface record for BFM signals
   type t_avalon_st_if is record

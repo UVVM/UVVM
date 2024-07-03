@@ -2,6 +2,15 @@ Bitvis VIP UART - Overview on Versions and Changes
 ==============================================================
 
 
+v4.0.0
+----------
+Released: 2024-07-03
+- Changed max constants used in VVC to be adjustable from adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Added completion detection test to UVVM demo tb.
+- Added unwanted activity detection functionality to the RX VVC to give an alert if the DUT generates any unexpected bus activity.
+- Added unwanted activity detection test to UVVM demo tb.
+
 v3.0.0
 ----------
 Released: 2024-03-08

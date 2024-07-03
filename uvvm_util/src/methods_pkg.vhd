@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -30,7 +30,7 @@ library ieee;
 
 package methods_pkg is
 
-  constant C_UVVM_VERSION : string := "v2 2024.03.08";
+  constant C_UVVM_VERSION : string := "v2 2024.07.03";
 
   -- -- ============================================================================
   -- -- Initialisation and license
@@ -294,6 +294,10 @@ package methods_pkg is
   procedure report_check_counters(
       constant order : in t_order
     );
+
+  procedure report_scoreboards(
+    constant void : in t_void
+  );
 
   -- ============================================================================
   -- Deprecate message
@@ -2383,6 +2387,231 @@ package methods_pkg is
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel
     );
 
+  -- main std_logic version
+  procedure await_change_to_value(
+    signal   target           : std_logic;
+    constant exp_value        : std_logic;
+    constant match_strictness : t_match_strictness;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "std_logic"
+  );
+
+  procedure await_change_to_value(
+    signal   target           : std_logic;
+    constant exp_value        : std_logic;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  procedure await_change_to_value(
+    signal   target           : std_logic;
+    constant exp_value        : std_logic;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  procedure await_change_to_value(
+    signal   target           : std_logic;
+    constant exp_value        : std_logic;
+    constant match_strictness : t_match_strictness;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  -- main std_logic_vector version
+  procedure await_change_to_value(
+    signal   target           : std_logic_vector;
+    constant exp_value        : std_logic_vector;
+    constant match_strictness : t_match_strictness;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "std_logic_vector"
+  );
+
+  procedure await_change_to_value(
+    signal   target           : std_logic_vector;
+    constant exp_value        : std_logic_vector;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  procedure await_change_to_value(
+    signal   target           : std_logic_vector;
+    constant exp_value        : std_logic_vector;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  procedure await_change_to_value(
+    signal   target           : std_logic_vector;
+    constant exp_value        : std_logic_vector;
+    constant match_strictness : t_match_strictness;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  -- main boolean version
+  procedure await_change_to_value(
+    signal   target           : boolean;
+    constant exp_value        : boolean;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "boolean"
+  );
+
+  procedure await_change_to_value(
+    signal   target           : boolean;
+    constant exp_value        : boolean;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  -- main unsigned version
+  procedure await_change_to_value(
+    signal   target           : unsigned;
+    constant exp_value        : unsigned;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "unsigned"
+  );
+
+  procedure await_change_to_value(
+    signal   target           : unsigned;
+    constant exp_value        : unsigned;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  -- main signed version
+  procedure await_change_to_value(
+    signal   target           : signed;
+    constant exp_value        : signed;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "signed"
+  );
+
+  procedure await_change_to_value(
+    signal   target           : signed;
+    constant exp_value        : signed;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  -- main integer version
+  procedure await_change_to_value(
+    signal   target           : integer;
+    constant exp_value        : integer;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "integer"
+  );
+
+  procedure await_change_to_value(
+    signal   target           : integer;
+    constant exp_value        : integer;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
+  -- main real version
+  procedure await_change_to_value(
+    signal   target           : real;
+    constant exp_value        : real;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "real"
+  );
+
+  procedure await_change_to_value(
+    signal   target           : real;
+    constant exp_value        : real;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  );
+
   -- Await Stable Procedures
   procedure await_stable(
       signal   target          : boolean;
@@ -2575,6 +2804,42 @@ package methods_pkg is
       constant msg_id          : t_msg_id       := ID_POS_ACK;
       constant msg_id_panel    : t_msg_id_panel := shared_msg_id_panel
     );
+
+  impure function check_sb_completion(
+    constant alert_level          : t_alert_level;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
+    constant ext_proc_call        : string                  := ""
+  ) return boolean;
+
+  impure function check_sb_completion(
+    constant void : t_void
+  ) return boolean;
+
+  procedure check_sb_completion(
+    constant alert_level          : t_alert_level;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel
+  );
+
+  procedure check_sb_completion(
+    constant void : t_void
+  );
+
+  procedure await_sb_completion(
+    constant timeout              : time;
+    constant alert_level          : t_alert_level           := TB_ERROR;
+    constant sb_poll_time         : time                    := 100 us;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
+    constant ext_proc_call        : string                  := ""
+  );
 
   -----------------------------------------------------
   -- Pulse Generation Procedures
@@ -3911,7 +4176,11 @@ package body methods_pkg is
   begin
     pot_initialise_util(VOID); -- Only executed the first time called
     write(v_line,
-          LF & fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "***  REPORT OF GLOBAL CTRL ***" & LF & fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "                          IGNORE    STOP_LIMIT" & LF);
+          LF &
+          fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+          "***  REPORT OF GLOBAL CTRL ***" & LF &
+          fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+          "                          IGNORE    STOP_LIMIT" & LF);
     for i in note to t_alert_level'right loop
       write(v_line, "          " & to_upper(to_string(i, 13, left)) & ": "); -- Severity
 
@@ -3937,7 +4206,12 @@ package body methods_pkg is
   begin
     pot_initialise_util(VOID); -- Only executed the first time called
     write(v_line,
-          LF & fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "***  REPORT OF MSG ID PANEL ***" & LF & fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "          " & justify("ID", left, C_LOG_MSG_ID_WIDTH) & "       Status" & LF & "          " & fill_string('-', C_LOG_MSG_ID_WIDTH) & "       ------" & LF);
+          LF &
+          fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+          "***  REPORT OF MSG ID PANEL ***" & LF &
+          fill_string('-',(C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+          "          " & justify("ID", left, C_LOG_MSG_ID_WIDTH) & "       Status" & LF &
+          "          " & fill_string('-', C_LOG_MSG_ID_WIDTH) & "       ------" & LF);
     for i in t_msg_id'left to t_msg_id'right loop
       if ((i /= ALL_MESSAGES) and ((i /= NO_ID) and (i /= ID_NEVER))) then -- report all but ID_NEVER, NO_ID and ALL_MESSAGES
         write(v_line, "          " & to_upper(to_string(i, C_LOG_MSG_ID_WIDTH + 5, left)) & ": "); -- MSG_ID
@@ -4026,7 +4300,11 @@ package body methods_pkg is
       attention   : t_attention := REGARD
     ) return natural is
   begin
-    return protected_alert_attention_counters.get(alert_level, attention);
+    if alert_level = NO_ALERT then
+      return 0;
+    else
+      return protected_alert_attention_counters.get(alert_level, attention);
+    end if;
   end function;
 
   procedure increment_alert_counter(
@@ -4104,6 +4382,38 @@ package body methods_pkg is
     ) is
   begin
     report_check_counters(FINAL);
+  end procedure;
+
+  -- Lists all the scoreboards and whether they are enabled or not
+  procedure report_scoreboards(
+    constant void : in t_void
+  ) is
+    constant C_PREFIX : string := C_LOG_PREFIX & "     ";
+    variable v_line   : line;
+  begin
+    -- Print report header
+    write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+    write(v_line, timestamp_header(now, justify("*** SUMMARY OF SCOREBOARDS***", LEFT, C_LOG_LINE_WIDTH - C_PREFIX'length, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE)) & LF);
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+
+    -- Print scoreboards
+    if protected_sb_activity_register.get_num_registered_sb(void) = 0 then
+      write(v_line, "     " & "No UVVM scoreboards to report." & LF);
+    else
+      for idx in 0 to protected_sb_activity_register.get_num_registered_sb(void) - 1 loop
+        write(v_line, "     " & to_string(protected_sb_activity_register.get_sb_name(idx)) & "," & to_string(protected_sb_activity_register.get_sb_instance(idx)) &
+              "," & return_string1_if_true_otherwise_string2("ENABLED", "DISABLED", protected_sb_activity_register.is_enabled(idx)) & LF);
+      end loop;
+    end if;
+
+    -- Print report bottom line
+    write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & LF);
+
+    -- Write the info string to transcript
+    wrap_lines(v_line, 1, 1, C_LOG_LINE_WIDTH - C_PREFIX'length);
+    prefix_lines(v_line, C_PREFIX);
+    write_line_to_log_destination(v_line);
+    DEALLOCATE(v_line);
   end procedure;
 
   -- ============================================================================
@@ -4221,7 +4531,9 @@ package body methods_pkg is
 
         when MATCH_STD_INCL_Z =>
           for i in v_min_length - 1 downto 0 loop
-            if not (std_match(a_value1(i), a_value2(i)) or (a_value1(i) = 'Z' and a_value2(i) = 'Z') or (a_value1(i) = '-' or a_value2(i) = '-')) then
+            if not (std_match(a_value1(i), a_value2(i)) or
+              (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
+              (a_value1(i) = '-' or a_value2(i) = '-')) then
               v_match := false;
               exit;
             end if;
@@ -4229,7 +4541,12 @@ package body methods_pkg is
 
         when MATCH_STD_INCL_ZXUW =>
           for i in v_min_length - 1 downto 0 loop
-            if not (std_match(a_value1(i), a_value2(i)) or (a_value1(i) = 'Z' and a_value2(i) = 'Z') or (a_value1(i) = 'X' and a_value2(i) = 'X') or (a_value1(i) = 'U' and a_value2(i) = 'U') or (a_value1(i) = 'W' and a_value2(i) = 'W') or (a_value1(i) = '-' or a_value2(i) = '-')) then
+            if not (std_match(a_value1(i), a_value2(i)) or
+              (a_value1(i) = 'Z' and a_value2(i) = 'Z') or
+              (a_value1(i) = 'X' and a_value2(i) = 'X') or
+              (a_value1(i) = 'U' and a_value2(i) = 'U') or
+              (a_value1(i) = 'W' and a_value2(i) = 'W') or
+              (a_value1(i) = '-' or a_value2(i) = '-')) then
               v_match := false;
               exit;
             end if;
@@ -4397,10 +4714,9 @@ package body methods_pkg is
       constant value_type       : string         := "slv"
     ) return boolean is
     -- Normalise vectors to (N downto 0)
+
     alias a_value : std_logic_vector(value'length - 1 downto 0) is value;
     alias a_exp   : std_logic_vector(exp'length - 1 downto 0)   is exp;
-    constant C_VALUE_STR : string := to_string(a_value, radix, format, INCL_RADIX);
-    constant C_EXP_STR   : string := to_string(a_exp, radix, format, INCL_RADIX);
     variable v_check_ok      : boolean := true;  -- as default prior to checking
     variable v_trigger_alert : boolean := false; -- trigger alert and log message
 
@@ -4411,6 +4727,24 @@ package body methods_pkg is
       -- Include leading 'x"'
       return short(1 to 2) & v_padding & short(3 to short'length);
     end function;
+
+    -- Function to represent signed value as string if value_type is "signed"
+    function signed_string_check(
+      constant slv_value  : std_logic_vector;
+      constant radix      : t_radix;
+      constant format     : t_format_zeros;
+      constant value_type : string
+    ) return string is
+    begin
+      if value_type = "signed" then
+        return to_string(signed(slv_value), radix, format, INCL_RADIX);
+      else
+        return to_string(slv_value, radix, format, INCL_RADIX);
+      end if;
+    end function signed_string_check;
+
+    constant C_VALUE_STR : string := signed_string_check(a_value, radix, format, value_type);
+    constant C_EXP_STR   : string := signed_string_check(a_exp, radix, format, value_type);
 
   begin
     protected_check_counters.increment(CHECK_VALUE);
@@ -7052,7 +7386,7 @@ package body methods_pkg is
     variable v_slv_idx_min : integer;
   begin
     -- Adjust value if there was no remainder
-    if (slv'length rem 8) = 0 then
+    if (slv'length mod 8) = 0 then
       v_num_bytes := v_num_bytes - 1;
     end if;
 
@@ -7930,6 +8264,473 @@ package body methods_pkg is
     await_value(target, exp, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
   end procedure;
 
+  -- Await Change to Value
+  -- Wait until target to change (regardless of value) and then wait until it changes to the expected value
+  -- Unlike await_value, this procedure is a non fall-through procedure and requires the signal to change before it can check the value  
+
+  -- main std_logic version (cannot be sendt into std_logic_vector bc of signal)
+  procedure await_change_to_value(
+    signal   target           : std_logic;
+    constant exp_value        : std_logic;
+    constant match_strictness : t_match_strictness;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "std_logic"
+  ) is
+    constant C_START_TIME        : time    := now;
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_no_alert_min_time : boolean := true;
+    variable v_ch_to_exp_value   : boolean := false;
+    variable v_match             : boolean := false;
+  begin
+    while (now - C_START_TIME) < min_time loop
+      wait on target for min_time - (now - C_START_TIME);
+      v_match := check_value(target, exp_value, match_strictness, NO_ALERT, "check_value within: " & C_NAME, scope);
+      v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
+      exit when (target'event and v_match);
+    end loop;
+
+    if v_no_alert_min_time then -- only check for value if no change before min_time
+      -- loops until target changes to exp_value or max_time is reached (breaks loop if target changes to exp_value)
+      while (max_time - (now - C_START_TIME)) > 0 ns loop
+        wait on target for max_time - (now - C_START_TIME);
+        v_match := check_value(target, exp_value, match_strictness, NO_ALERT, "check_value within: " & C_NAME, scope);
+        if target'event and v_match then
+          v_ch_to_exp_value := true;
+          exit;
+        end if;
+      end loop;
+    end if;
+
+    -- logging
+    check_time_window((v_no_alert_min_time and v_ch_to_exp_value), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non strict match version
+  procedure await_change_to_value(
+    signal   target           : std_logic;
+    constant exp_value        : std_logic;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+  begin
+    await_change_to_value(target, exp_value, MATCH_EXACT, min_time, max_time, alert_level, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non strict match & alert_level version
+  procedure await_change_to_value(
+    signal   target           : std_logic;
+    constant exp_value        : std_logic;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+  begin
+    await_change_to_value(target, exp_value, MATCH_EXACT, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non alert_level version
+  procedure await_change_to_value(
+    signal   target           : std_logic;
+    constant exp_value        : std_logic;
+    constant match_strictness : t_match_strictness;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+  begin
+    await_change_to_value(target, exp_value, match_strictness, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- main std_logic_vector version
+  procedure await_change_to_value(
+    signal   target           : std_logic_vector;
+    constant exp_value        : std_logic_vector;
+    constant match_strictness : t_match_strictness;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "std_logic_vector"
+  ) is
+    constant C_START_TIME        : time    := now;
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_no_alert_min_time : boolean := true;
+    variable v_ch_to_exp_value   : boolean := false;
+    variable v_match             : boolean := false;
+  begin
+    while (now - C_START_TIME) < min_time loop
+      wait on target for min_time;
+      v_match := check_value(target, exp_value, match_strictness, NO_ALERT, "check_value within: " & C_NAME, scope);
+      v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
+      exit when (target'event and (target = exp_value));
+    end loop;
+
+    if v_no_alert_min_time then -- only check for value if no change before min_time
+      -- loops until target changes to exp_value or max_time is reached (breaks loop if target changes to exp_value)
+      while (max_time - (now - C_START_TIME)) > 0 ns loop
+        wait on target for max_time - (now - C_START_TIME);
+        v_match := check_value(target, exp_value, match_strictness, NO_ALERT, "check_value within: " & C_NAME, scope);
+        if target'event and v_match then
+          v_ch_to_exp_value := true;
+          exit;
+        end if;
+      end loop;
+    end if;
+
+    -- logging
+    check_time_window((v_no_alert_min_time and v_ch_to_exp_value), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non strict match version
+  procedure await_change_to_value(
+    signal   target           : std_logic_vector;
+    constant exp_value        : std_logic_vector;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+  begin
+    await_change_to_value(target, exp_value, MATCH_EXACT, min_time, max_time, alert_level, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non alert_level version
+  procedure await_change_to_value(
+    signal   target           : std_logic_vector;
+    constant exp_value        : std_logic_vector;
+    constant match_strictness : t_match_strictness;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+  begin
+    await_change_to_value(target, exp_value, match_strictness, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non strict match & alert_level version
+  procedure await_change_to_value(
+    signal   target           : std_logic_vector;
+    constant exp_value        : std_logic_vector;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+  begin
+    await_change_to_value(target, exp_value, MATCH_EXACT, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- main boolean version
+  procedure await_change_to_value(
+    signal   target           : boolean;
+    constant exp_value        : boolean;
+    -- match_strictness does not apply to boolean (and will result in an error if used on boolean)
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "boolean"
+  ) is
+    constant C_START_TIME        : time    := now;
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_no_alert_min_time : boolean := true;
+    variable v_ch_to_exp_value   : boolean := false;
+    variable v_match             : boolean := false;
+  begin
+    while (now - C_START_TIME) < min_time loop
+      wait on target for min_time - (now - C_START_TIME);
+      v_match := (target = exp_value);
+      v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
+      exit when (target'event and (target = exp_value));
+    end loop;
+
+    if v_no_alert_min_time then
+      while (max_time - (now - C_START_TIME)) > 0 ns loop
+        wait on target for max_time - (now - C_START_TIME);
+        v_match := (target = exp_value);
+        if target'event and v_match then
+          v_ch_to_exp_value := true;
+          exit;
+        end if;
+      end loop;
+    end if;
+
+    -- logging
+    check_time_window((v_no_alert_min_time and v_ch_to_exp_value), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non alert_level version
+  procedure await_change_to_value(
+    signal   target           : boolean;
+    constant exp_value        : boolean;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+  begin
+    await_change_to_value(target, exp_value, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- main unsigned version
+  procedure await_change_to_value(
+    signal   target           : unsigned;
+    constant exp_value        : unsigned;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "unsigned"
+  ) is
+    constant C_START_TIME        : time    := now;
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_no_alert_min_time : boolean := true;
+    variable v_ch_to_exp_value   : boolean := false;
+    variable v_match             : boolean := false;
+  begin
+    while (now - C_START_TIME) < min_time loop
+      wait on target for min_time - (now - C_START_TIME);
+      v_match := matching_values(target, exp_value);
+      v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
+      exit when (target'event and v_match);
+    end loop;
+
+    if v_no_alert_min_time then
+      while (max_time - (now - C_START_TIME)) > 0 ns loop
+        wait on target for max_time - (now - C_START_TIME);
+        v_match := matching_values(target, exp_value);
+        if target'event and v_match then
+          v_ch_to_exp_value := true;
+          exit;
+        end if;
+      end loop;
+    end if;
+
+    -- logging
+    check_time_window((v_no_alert_min_time and v_ch_to_exp_value), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non alert_level version
+  procedure await_change_to_value(
+    signal   target           : unsigned;
+    constant exp_value        : unsigned;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+  begin
+    await_change_to_value(target, exp_value, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- main signed version
+  procedure await_change_to_value(
+    signal   target           : signed;
+    constant exp_value        : signed;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "signed"
+  ) is
+    constant C_START_TIME        : time    := now;
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_no_alert_min_time : boolean := true;
+    variable v_ch_to_exp_value   : boolean := false;
+    variable v_match             : boolean := false;
+  begin
+    while (now - C_START_TIME) < min_time loop
+      wait on target for min_time - (now - C_START_TIME);
+      v_match := matching_values(target, exp_value);
+      v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
+      exit when (target'event and v_match);
+    end loop;
+
+    if v_no_alert_min_time then
+      while (max_time - (now - C_START_TIME)) > 0 ns loop
+        wait on target for max_time - (now - C_START_TIME);
+        v_match := matching_values(target, exp_value);
+        if target'event and v_match then
+          v_ch_to_exp_value := true;
+          exit;
+        end if;
+      end loop;
+    end if;
+
+    -- logging
+    check_time_window((v_no_alert_min_time and v_ch_to_exp_value), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non alert_level version
+  procedure await_change_to_value(
+    signal   target           : signed;
+    constant exp_value        : signed;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+    begin
+    await_change_to_value(target, exp_value, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- main integer version
+  procedure await_change_to_value(
+    signal   target           : integer;
+    constant exp_value        : integer;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "integer"
+  ) is
+    constant C_START_TIME        : time    := now;
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_no_alert_min_time : boolean := true;
+    variable v_ch_to_exp_value   : boolean := false;
+    variable v_match             : boolean := false;
+  begin
+    while (now - C_START_TIME) < min_time loop
+      wait on target for min_time - (now - C_START_TIME);
+      v_match := (target = exp_value);
+      v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
+      exit when (target'event and v_match);
+    end loop;
+
+    if v_no_alert_min_time then -- only check for value if no change before min_time
+      -- loops until target changes to exp_value or max_time is reached (breaks loop if target changes to exp_value)
+      while (max_time - (now - C_START_TIME)) > 0 ns loop
+        wait on target for max_time - (now - C_START_TIME);
+        v_match := (target = exp_value);
+        if target'event and v_match then
+          v_ch_to_exp_value := true;
+          exit;
+        end if;
+      end loop;
+    end if;
+
+    -- logging
+    check_time_window((v_no_alert_min_time and v_ch_to_exp_value), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non alert_level version
+  procedure await_change_to_value(
+    signal   target           : integer;
+    constant exp_value        : integer;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+    begin
+    await_change_to_value(target, exp_value, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- main real version
+  procedure await_change_to_value(
+    signal   target           : real;
+    constant exp_value        : real;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant alert_level      : t_alert_level;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel;
+    constant value_type       : string         := "real"
+  ) is
+    constant C_START_TIME        : time    := now;
+    constant C_NAME              : string  := "await_change_to_value(" & value_type & " " & to_string(exp_value) & ", " & to_string(min_time, ns) & ", " & to_string(max_time, ns) & ")";
+    variable v_no_alert_min_time : boolean := true;
+    variable v_ch_to_exp_value   : boolean := false;
+    variable v_match             : boolean := false;
+  begin
+    while (now - C_START_TIME) < min_time loop
+      wait on target for min_time - (now - C_START_TIME);
+      v_match := (target = exp_value);
+      v_no_alert_min_time := not (target'event and v_match); -- false (alert) if change to exp_value occurred before min_time
+      exit when (target'event and v_match);
+    end loop;
+
+    if v_no_alert_min_time then -- only check for value if no change before min_time
+      -- loops until target changes to exp_value or max_time is reached (breaks loop if target changes to exp_value)
+      while (max_time - (now - C_START_TIME)) > 0 ns loop
+        wait on target for max_time - (now - C_START_TIME);
+        v_match := (target = exp_value);
+        if target'event and v_match then
+          v_ch_to_exp_value := true;
+          exit;
+        end if;
+      end loop;
+    end if;
+
+    -- logging
+    check_time_window((v_no_alert_min_time and v_ch_to_exp_value), now - C_START_TIME, min_time, max_time, alert_level, C_NAME, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
+  -- non alert_level version
+  procedure await_change_to_value(
+    signal   target           : real;
+    constant exp_value        : real;
+    constant min_time         : time;
+    constant max_time         : time;
+    constant msg              : string;
+    constant scope            : string         := C_TB_SCOPE_DEFAULT;
+    constant msg_id           : t_msg_id       := ID_POS_ACK;
+    constant msg_id_panel     : t_msg_id_panel := shared_msg_id_panel
+  ) is
+    begin
+    await_change_to_value(target, exp_value, min_time, max_time, error, msg, scope, msg_id, msg_id_panel);
+  end procedure await_change_to_value;
+
   -- Helper procedure:
   -- Convert time from 'FROM_LAST_EVENT' to 'FROM_NOW'
   procedure await_stable_calc_time(
@@ -8641,6 +9442,160 @@ package body methods_pkg is
     ) is
   begin
     await_stable(target, stable_req, stable_req_from, timeout, timeout_from, error, msg, scope, msg_id, msg_id_panel);
+  end procedure;
+
+  -- Checks whether the enabled scoreboards still have pending data, returns true if none of them have pending data
+  impure function check_sb_completion(
+    constant alert_level          : t_alert_level;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
+    constant ext_proc_call        : string                  := ""
+  ) return boolean is
+    constant C_NAME      : string  := "check_sb_completion()";
+    constant C_PRINT_LOG : boolean := ext_proc_call = ""; -- Only print log messages when called directly from sequencer
+    variable v_line      : line;
+    variable v_check_ok  : boolean := true;
+  begin
+    -- Iterate through all the enabled scoreboards
+    for idx in 0 to protected_sb_activity_register.get_num_registered_sb(void) - 1 loop
+      if protected_sb_activity_register.is_enabled(idx) and protected_sb_activity_register.get_sb_element_cnt(idx) > 0 then
+        if C_PRINT_LOG then
+          write(v_line, "  " & to_string(protected_sb_activity_register.get_sb_name(idx)) & "," & to_string(protected_sb_activity_register.get_sb_instance(idx)) & LF);
+          v_check_ok := false;
+        else
+          return false;
+        end if;
+      end if;
+    end loop;
+
+    if C_PRINT_LOG then
+      if not v_check_ok then
+        alert(alert_level, C_NAME & " => Failed. The following UVVM scoreboard(s) still have pending data:\n" & v_line.all, scope);
+        DEALLOCATE(v_line);
+        return false;
+      else
+        if protected_sb_activity_register.get_num_enabled_sb(void) = 0 then
+          log(ID_POS_ACK, C_NAME & " => OK. There are no UVVM scoreboards enabled.", scope, msg_id_panel);
+        else
+          log(ID_POS_ACK, C_NAME & " => OK. All UVVM scoreboards are empty.", scope, msg_id_panel);
+        end if;
+
+        -- Print reports
+        if print_sbs = REPORT_SCOREBOARDS then
+          report_scoreboards(void);
+        end if;
+        if print_alert_counters = REPORT_ALERT_COUNTERS then
+          report_alert_counters(INTERMEDIATE);
+        elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
+          report_alert_counters(FINAL);
+        end if;
+        return true;
+      end if;
+    else
+      return true;
+    end if;
+  end function;
+
+  -- Overload
+  impure function check_sb_completion(
+    constant void : t_void
+  ) return boolean is
+  begin
+    return check_sb_completion(TB_ERROR);
+  end function;
+
+  -- Overload
+  procedure check_sb_completion(
+    constant alert_level          : t_alert_level;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel
+  ) is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_sb_completion(alert_level, print_alert_counters, print_sbs, scope, msg_id_panel);
+  end procedure;
+
+  -- Overload
+  procedure check_sb_completion(
+    constant void : t_void
+  ) is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_sb_completion(void);
+  end procedure;
+
+  -- Waits until all the enabled scoreboards have no pending data or a timeout occurs
+  procedure await_sb_completion(
+    constant timeout              : time;
+    constant alert_level          : t_alert_level           := TB_ERROR;
+    constant sb_poll_time         : time                    := 100 us;
+    constant print_alert_counters : t_report_alert_counters := NO_REPORT;
+    constant print_sbs            : t_report_sb             := NO_REPORT;
+    constant scope                : string                  := C_TB_SCOPE_DEFAULT;
+    constant msg_id_panel         : t_msg_id_panel          := shared_msg_id_panel;
+    constant ext_proc_call        : string                  := ""
+  ) is
+    constant C_NAME         : string := "await_sb_completion()";
+    variable v_elapsed_time : time   := 0 ns;
+    variable v_line         : line;
+    variable v_proc_call    : line;
+  begin
+    -- Called directly from sequencer
+    if ext_proc_call = "" then
+      write(v_proc_call, C_NAME);
+    -- Called from another procedure
+    else
+      write(v_proc_call, ext_proc_call);
+    end if;
+
+    -- Sanity checks
+    check_value(timeout > 0 ns, TB_FAILURE, "timeout must be greater than 0", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    check_value(sb_poll_time > 0 ns, TB_FAILURE, "sb_poll_time must be greater than 0", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if timeout <= 0 ns or sb_poll_time <= 0 ns then
+      return;
+    end if;
+
+    -- Wait until the scoreboards are empty or a timeout occurs
+    loop
+      if check_sb_completion(TB_ERROR, ext_proc_call => v_proc_call.all) or v_elapsed_time >= timeout then
+        exit;
+      else
+        wait for sb_poll_time;
+        v_elapsed_time := v_elapsed_time + sb_poll_time;
+      end if;
+    end loop;
+
+    -- Print success/fail log message
+    if v_elapsed_time >= timeout then
+      for idx in 0 to protected_sb_activity_register.get_num_registered_sb(void) - 1 loop
+        if protected_sb_activity_register.is_enabled(idx) and protected_sb_activity_register.get_sb_element_cnt(idx) > 0 then
+          write(v_line, "  " & to_string(protected_sb_activity_register.get_sb_name(idx)) & "," & to_string(protected_sb_activity_register.get_sb_instance(idx)) & LF);
+        end if;
+      end loop;
+      alert(alert_level, v_proc_call.all & " => Failed. The following UVVM scoreboard(s) still have pending data after " & to_string(v_elapsed_time, get_time_unit(v_elapsed_time)) & ":\n" & v_line.all, scope);
+    else
+      if protected_sb_activity_register.get_num_enabled_sb(void) = 0 then
+        log(ID_AWAIT_UVVM_COMPLETION, v_proc_call.all & " => OK. There are no UVVM scoreboards enabled.", scope, msg_id_panel);
+      else
+        log(ID_AWAIT_UVVM_COMPLETION, v_proc_call.all & " => OK. All UVVM scoreboards are empty. Condition occurred after " & to_string(v_elapsed_time, get_time_unit(v_elapsed_time)), scope, msg_id_panel);
+      end if;
+
+      -- Print reports
+      if print_sbs = REPORT_SCOREBOARDS then
+        report_scoreboards(void);
+      end if;
+      if print_alert_counters = REPORT_ALERT_COUNTERS then
+        report_alert_counters(INTERMEDIATE);
+      elsif print_alert_counters = REPORT_ALERT_COUNTERS_FINAL then
+        report_alert_counters(FINAL);
+      end if;
+    end if;
+    DEALLOCATE(v_line);
+    DEALLOCATE(v_proc_call);
   end procedure;
 
   -----------------------------------------------------------------------------------

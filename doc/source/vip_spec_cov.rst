@@ -594,8 +594,8 @@ Additional documentation about UVVM and its features can be found under "/uvvm_v
 Compilation
 ---------------------------------------------------------------------------------------------------------------------------------
 This VHDL package may only be compiled with VHDL 2008. It is dependent on the following libraries
-•	UVVM Utility Library (UVVM-Util), version 2.13.0 and up
-•	UVVM VVC Framework, version 2.9.0 and up
+•	UVVM Utility Library (UVVM-Util), version 2.19.5 and up
+•	UVVM VVC Framework, version 2.12.7 and up
 
 Before compiling the Specification Coverage component, make sure that uvvm_vvc_framework and uvvm_util have been compiled.
 See UVVM Essential Mechanisms located in uvvm_vvc_framework/doc for information about compile scripts.

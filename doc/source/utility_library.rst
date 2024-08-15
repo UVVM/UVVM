@@ -258,10 +258,10 @@ This procedure is a fallthrough procedure when ``min_time = 0 ns``, and will not
 see await_change_to_value() under. ::
 
     await_value(target(sl), exp(sl), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
     await_value(target(bool), exp(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
+    await_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
     await_value(target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_value(target(real), exp(real), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 

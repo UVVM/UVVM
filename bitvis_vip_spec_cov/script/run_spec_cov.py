@@ -174,14 +174,6 @@ class Requirement():
 
     @property
     def compliance(self) -> str :
-        # Update if dependent on any sub-requirements
-        for sub_requirement in self.__sub_requirement_list:
-            # Do not overwrite NON_COMPLIANT
-            if not(self.__req_compliance == non_compliant_string):
-                if sub_requirement.compliance == not_tested_compliant_string:
-                    self.__req_compliance = not_tested_compliant_string
-                else:
-                    self.__req_compliance = sub_requirement.compliance
         return self.__req_compliance
 
     @compliance.setter
@@ -189,10 +181,6 @@ class Requirement():
         # COMPLIANT should not be allowed to overwrite a NON_COMPLIANT
         if not(self.__req_compliance == non_compliant_string):
             self.__req_compliance = req_compliance
-        # Update any super-requirements
-        for requirement in self.__super_requirement_list:
-            requirement.compliance = req_compliance
-
 
 
     def is_super_requirement(self) -> bool :
@@ -417,6 +405,8 @@ def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
             csv_writer = csv.writer(to_file, delimiter=delimiter)
             csv_writer.writerow(["Requirement", "Testcase", "Compliance"])
             for req, tc in (run_req_list + not_run_req_list):
+                if req.is_super_requirement():
+                    continue # Don't list requirements defined in map file (super reqs)
                 if tc:
                     csv_writer.writerow([req.name, tc.name, req.compliance])
                 else:
@@ -633,7 +623,7 @@ def write_spec_cov_files(run_configuration, container, delimiter):
                 sorted_testcase_list = requirement.get_sorted_testcase_list()
 
                 if not sorted_testcase_list: # Req. listed without TC, not tested
-                    csv_writer.writerow([requirement.name, testcase.name, requirement.compliance]) # Expect NOT_TESTED
+                    csv_writer.writerow([requirement.name, "", requirement.compliance]) # Expect NOT_TESTED
                     if not (requirement.compliance == not_tested_compliant_string):
                         print("ERROR: Expected result to be NOT_TESTED, was " + requirement.compliance)
                     continue
@@ -803,9 +793,6 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
                 if testcase.result == testcase_fail_string:
                     requirement.compliance = non_compliant_string
 
-            for sub_requirement in requirement.get_sub_requirement_list():
-                requirement.compliance = sub_requirement.compliance
-
     #==========================================================================
     # Strictness = 1 : Requirement has to be tested in specified testcase(s).
     #                  Any other testcase is also OK.
@@ -873,9 +860,26 @@ def build_spec_compliance_list(run_configuration, container, delimiter):
 
             # Super/sub-requirement(s) are updated automatically in the Requirement Object
 
-    else:
-        msg = ("strictness level %d outside limits 0-2" %(strictness))
+    else: # Strictness neither 0, 1 or 2
+        msg = ("strictness level %s outside limits 0-2" %(strictness))
         abort(error_code = 1, msg = msg)
+
+    # Set requirement status based on sub-requirements
+    for requirement in container.get_requirement_list():
+        not_tested_subreq_found = False
+        for sub_requirement in requirement.get_sub_requirement_list():
+            if sub_requirement.compliance == not_tested_compliant_string:
+                not_tested_subreq_found = True
+            # If requirement is already non-compliant, no subreq status can overwrite it. This is handled by the compliance setter.
+            # If any sub-requirement is NOT_TESTED, requirement status will also be NOT_TESTED (unless NON_COMPLIANT)
+            # If requirement is COMPLIANT, any subreq status can overwrite it
+            if not_tested_subreq_found:
+                if sub_requirement.compliance == non_compliant_string:
+                    requirement.compliance = non_compliant_string # NON_COMPLIANT can overwrite all other statuses
+                else:
+                    requirement.compliance = not_tested_compliant_string
+            else:
+                requirement.compliance = sub_requirement.compliance
 
 
 def build_mapping_req_list(run_configuration, container, delimiter):

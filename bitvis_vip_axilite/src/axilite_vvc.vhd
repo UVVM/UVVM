@@ -134,6 +134,19 @@ architecture behave of axilite_vvc is
 
 begin
 
+  -- Remove vsim-8684 warning
+  p_initial_drivers : process begin
+    axilite_vvc_master_if.write_address_channel.awready <= 'Z';
+    axilite_vvc_master_if.write_data_channel.wready     <= 'Z';
+    axilite_vvc_master_if.write_response_channel.bvalid <= 'Z';
+    axilite_vvc_master_if.write_response_channel.bresp  <= (others => 'Z');
+    axilite_vvc_master_if.read_address_channel.arready  <= 'Z';
+    axilite_vvc_master_if.read_data_channel.rvalid      <= 'Z';
+    axilite_vvc_master_if.read_data_channel.rdata       <= (axilite_vvc_master_if.read_data_channel.rdata'range => 'Z');
+    axilite_vvc_master_if.read_data_channel.rresp       <= (others => 'Z');
+    wait;
+  end process p_initial_drivers;
+
   --===============================================================================================
   -- Constructor
   -- - Set up the defaults and show constructor if enabled

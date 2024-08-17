@@ -14,7 +14,7 @@ simple testbenches and as a low-level introduction to UVVM.
 
 .. note::
 
-    UVVM and UVVM Light require VHDL 2008 to compile.
+    UVVM and UVVM Light require VHDL-2008 or newer to compile.
 
 **********************************************************************************************************************************
 Installation

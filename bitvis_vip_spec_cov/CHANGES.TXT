@@ -1,6 +1,13 @@
 Bitvis VIP Specification Coverage - Overview on Versions and Changes
 ==============================================================
 
+v1.1.1
+----------
+Released: 2024-08-16
+- Updated spec_cov methods signature to match in specification and body.
+- Fixed bug where a COMPLIANT status might overwrite NOT_TESTED status for super requirement. 
+- Clear old testcase name before setting new testcase name in initialize_req_cov.
+
 v1.1.0
 ----------
 Released: 2024-07-03
@@ -12,6 +19,7 @@ Released: 2024-07-03
 - Fixed initialization check in tick_off_req_cov().
 - Don't fail testcase and other requirements if requirement is explicitly failed at tickoff.
 - Removed "omitted requirement"-functionality.
+- Converted documentation to RST format.
 
 v1.0.1
 ----------

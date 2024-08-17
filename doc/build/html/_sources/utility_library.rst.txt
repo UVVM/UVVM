@@ -246,7 +246,7 @@ min_time and max_time. *Note* that if the value changes at exactly max_time, the
 .. code-block::
 
     -- Examples:
-    await_change(bol, 3 ns, 5 ns, "Awaiting change on bol signal");
+    await_change(bool, 3 ns, 5 ns, "Awaiting change on bool signal");
 
 
 await_value()
@@ -254,14 +254,14 @@ await_value()
 Waits until the target signal equals the exp signal, or times out after max_time. An alert is asserted if the signal does not 
 equal the expected value between min_time and max_time, or if the target equals exp before min_time. 
 *Note* that if the value changes to the expected value at exactly max_time, the timeout gets precedence. 
-This procedure is a fallthrough procedure when ``min_time = 0 ns``, and will not require a change. For a change to be requred. 
+This procedure is a fall-through procedure when ``min_time = 0 ns``, and will not require a change. For a change to be required. 
 see await_change_to_value() under. ::
 
     await_value(target(sl), exp(sl), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
     await_value(target(bool), exp(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
+    await_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [radix, [format, [msg_id, [msg_id_panel]]]]])
     await_value(target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_value(target(real), exp(real), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
@@ -296,7 +296,7 @@ see await_change_to_value() under. ::
 .. code-block::
 
     -- Examples:
-    await_value(bol, true, 10 ns, 20 ns, "Waiting for bol to become true");
+    await_value(bool, true, 10 ns, 20 ns, "Waiting for bool to become true");
     await_value(slv8, "10101010", MATCH_STD, 3 ns, 7 ns, WARNING, "Waiting for slv8 value");
 
 await_change_to_value()
@@ -350,12 +350,12 @@ If the signal changes to the expected value before min_time, or the signal does 
 .. code-block::
 
     -- Examples:
-    await_change_to_value(bol, true, 10 ns, 20 ns, "Waiting for bol to change to true for min 10 ns and max 20 ns");
+    await_change_to_value(bool, true, 10 ns, 20 ns, "Waiting for bool to change to true for min 10 ns and max 20 ns");
     await_change_to_value(slv8, "10101010", MATCH_STD, 3 ns, 7 ns, WARNING, "Waiting for slv8 to change to value");
 
 await_stable()
 ----------------------------------------------------------------------------------------------------------------------------------
-Wait until the target signal has been stable for at least stable_req. Report an error if this does not occurr within the time 
+Wait until the target signal has been stable for at least stable_req. Report an error if this does not occur within the time 
 specified by timeout. *Note* that **stable** refers to that the signal has not had an event (i.e. not changed value). ::
 
     await_stable(target(bool), stable_req, stable_req_from, timeout, timeout_from, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
@@ -1131,7 +1131,7 @@ Additions to the IEEE defined to_string functions. Return a string with the valu
     string := to_string(val(t_natural_vector), [radix, [format, [prefix]]])
     string := to_string(val(real_vector))
     string := to_string(val(time_vector))
-    string := to_string(val(string)) -- Removes non printable ascii characters
+    string := to_string(val(string)) -- Removes non printable ASCII characters
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                             |
@@ -1405,7 +1405,7 @@ Returns the position of the leftmost character in the string. If not found, retu
 
 pos_of_leftmost_non_zero()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns the position of the leftmost character, which is not zero or whitespace, in the string. If not found, returns 
+Returns the position of the leftmost character, which is not zero or white-space, in the string. If not found, returns 
 'result_if_not_found'. ::
 
     natural := pos_of_leftmost_non_zero(vector, [result_if_not_found])
@@ -1448,7 +1448,7 @@ Returns the position of the rightmost character in the string. If not found, ret
 
 pos_of_rightmost_non_whitespace()
 ----------------------------------------------------------------------------------------------------------------------------------
-Returns the position of the rightmost character, which is not whitespace, in the string. If not found, returns 'result_if_not_found'. ::
+Returns the position of the rightmost character, which is not white-space, in the string. If not found, returns 'result_if_not_found'. ::
 
     natural := pos_of_rightmost_non_whitespace(vector, [result_if_not_found])
 
@@ -1660,7 +1660,7 @@ falling edge. ::
     gen_pulse(slv8, x"AB", clk100M, 2, "Pulsing SLV for 2 clock periods");
 
 
-Synchronisation
+Synchronization
 ==================================================================================================================================
 
 .. note::
@@ -1671,7 +1671,7 @@ Synchronisation
 
 block_flag()
 ----------------------------------------------------------------------------------------------------------------------------------
-Blocks a flag to allow synchronisation between processes. Adds a new blocked flag if it does not already exist. Maximum number of 
+Blocks a flag to allow synchronization between processes. Adds a new blocked flag if it does not already exist. Maximum number of 
 flags can be modified in adaptations_pkg. Generates an alert with already_blocked_severity if the flag is already blocked. ::
 
     block_flag(flag_name, msg, [already_blocked_severity, [scope]])
@@ -1765,7 +1765,7 @@ the timeout. The flag can be re-blocked when leaving the process by setting flag
 
 await_barrier()
 ----------------------------------------------------------------------------------------------------------------------------------
-The procedure can be used to synchronise between several sequencers. When the procedure is called, it waits for all sequencers 
+The procedure can be used to synchronize between several sequencers. When the procedure is called, it waits for all sequencers 
 using the same barrier_signal to reach their call of await_barrier(). ::
 
     await_barrier(barrier_signal, timeout, msg, [timeout_severity, [scope]])
@@ -2090,7 +2090,7 @@ time extension. ::
 
 reinitialize_watchdog()
 ----------------------------------------------------------------------------------------------------------------------------------
-Reinitializes the watchdog timer with a new timeout. ::
+Re-initializes the watchdog timer with a new timeout. ::
 
     reinitialize_watchdog(watchdog_ctrl, timeout)
 
@@ -2110,7 +2110,7 @@ Reinitializes the watchdog timer with a new timeout. ::
 
 terminate_watchdog()
 ----------------------------------------------------------------------------------------------------------------------------------
-Terminates the concurrent procedure where the watchdog timer is running. Once this is done the watchdog can’t be started again. 
+Terminates the concurrent procedure where the watchdog timer is running. Once this is done the watchdog can't be started again. 
 This should normally be called at the end of the simulation. ::
 
     terminate_watchdog(watchdog_ctrl)
@@ -2147,7 +2147,7 @@ The predefined message IDs are listed in the table below. All the message IDs ar
 +==========================+=====================================================================================================+
 | -- **Bitvis utility methods**                                                                                                  |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
-| NO_ID                    | Used as default prior to setting actual ID when transfering ID as a field in a record               |
+| NO_ID                    | Used as default prior to setting actual ID when transferring ID as a field in a record              |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_UTIL_BURIED           | Used for buried log messages where msg and scope cannot be modified from outside                    |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
@@ -2167,7 +2167,7 @@ The predefined message IDs are listed in the table below. All the message IDs ar
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_GEN_PULSE             | Used for logging when a gen_pulse procedure starts pulsing a signal.                                |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
-| ID_BLOCKING              | Used for logging when using synchronisation flags                                                   |
+| ID_BLOCKING              | Used for logging when using synchronization flags                                                   |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_WATCHDOG              | Used for logging the activity of the watchdog                                                       |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
@@ -2244,7 +2244,7 @@ The predefined message IDs are listed in the table below. All the message IDs ar
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_PACKET_CHECKSUM       | Notify that a packet checksum has been transmitted or received                                      |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
-| ID_PACKET_GAP            | Notify that an interpacket gap is in process                                                        |
+| ID_PACKET_GAP            | Notify that an inter-packet gap is in process                                                       |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 | ID_PACKET_PAYLOAD        | Notify that a packet payload has been transmitted or received                                       |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
@@ -2376,8 +2376,8 @@ Using Hierarchical Alert Reporting
 | **Intended use**:
 | In UVVM mostly use the scope to describe components, e.g. VVCs. It can also be smaller structures, but it has to have its own 
   sequencer. A good way to set up the hierarchy is to let every scope register themselves with the default parent scope, and then 
-  in addition make every parent register each of its children. This is because the child scope doesn’t have to have the same 
-  parent scope in all testbenches/testharnesses, i.e. the child doesn’t know its parent.
+  in addition make every parent register each of its children. This is because the child scope doesn't have to have the same 
+  parent scope in all testbenches/test-harnesses, i.e. the child doesn't know its parent.
 
 * In the child, call add_to_alert_hierarchy(<child scope>). This will add the scope of the child to the hierarchy with the default 
   (base) parent.
@@ -2553,9 +2553,9 @@ constant VOID : t_void
 **********************************************************************************************************************************
 Adaptations package
 **********************************************************************************************************************************
-The adaptations_pkg.vhd is intended for local modifications to library behaviour and log layout. This way only one file needs to 
+The adaptations_pkg.vhd is intended for local modifications to library behavior and log layout. This way only one file needs to 
 merge when a new version of the library is released. This package may of course also be used to set up a company or project 
-specific behaviour and layout.
+specific behavior and layout.
 
 The package has constants for customizing functionality such as:
 
@@ -2601,7 +2601,7 @@ There is also a webinar available on 'Making a simple, structured and efficient 
 **********************************************************************************************************************************
 Compilation
 **********************************************************************************************************************************
-The UVVM Utility Library must be compiled with VHDL 2008.
+The UVVM Utility Library must be compiled with VHDL-2008 or newer.
 
 .. table:: Compile order for the UVVM Utility Library
 
@@ -2674,5 +2674,5 @@ Required setup:
 
 .. rubric:: Footnotes
 
-.. [#f1] IEEE = Method is native for VHDL2008 (method is listed here for completeness).
+.. [#f1] IEEE = Method is native for VHDL-2008 (method is listed here for completeness).
 .. [#f2] https://www.aldec.com/en/support/resources/multimedia/webinars/1673

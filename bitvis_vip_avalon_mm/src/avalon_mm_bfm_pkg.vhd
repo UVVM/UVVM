@@ -116,7 +116,9 @@ package avalon_mm_bfm_pkg is
   ----------------------------------------------------
   -- BFM procedures
   ----------------------------------------------------
-
+  -- This function returns an Avalon-MM interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_avalon_mm_if_signals(
     addr_width : natural;
     data_width : natural;

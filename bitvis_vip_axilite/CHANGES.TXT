@@ -2,6 +2,12 @@ Bitvis VIP Axilite (AXI4-Lite) - Overview on Versions and Changes
 ==============================================================
 
 
+v4.0.1
+----------
+Released: 2024-08-16
+- Removed vsim-8684 warning messages.
+- Converted documentation to RST format.
+
 v4.0.0
 ----------
 Released: 2024-07-03

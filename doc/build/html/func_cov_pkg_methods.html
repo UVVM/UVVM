@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Methods &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -27,12 +30,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #F5F5F5" >
-            <a href="index.html">
-            <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -86,14 +93,13 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="protected_types.html">Protected types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon MM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI-Lite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
@@ -124,9 +130,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="func_cov_pkg_overview.html">Functional Coverage</a> &raquo;</li>
-      <li>Methods</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="func_cov_pkg_overview.html">Functional Coverage</a></li>
+      <li class="breadcrumb-item active">Methods</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/func_cov_pkg_methods.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -137,25 +143,18 @@
            <div itemprop="articleBody">
              
   <section id="methods">
-<h1>Methods<a class="headerlink" href="#methods" title="Permalink to this headline"></a></h1>
+<h1>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h1>
 <p>Procedures and functions complementing the t_coverpoint functionality.</p>
 <section id="bin">
-<span id="bin-functions"></span><h2>bin()<a class="headerlink" href="#bin" title="Permalink to this headline"></a></h2>
+<span id="bin-functions"></span><h2>bin()<a class="headerlink" href="#bin" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing a bin with a single value or multiple values. When having multiple values in a bin, only one
 of them needs to be sampled for the bin to collect coverage. The maximum number of multiple values is C_FC_MAX_NUM_BIN_VALUES
 defined in adaptations_pkg.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"></span>
-<span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="n">set_of_values</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="n">set_of_values</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -179,14 +178,14 @@ defined in adaptations_pkg.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">)));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">)));</span>
 </pre></div>
 </div>
 </section>
 <section id="bin-range">
-<h2>bin_range()<a class="headerlink" href="#bin-range" title="Permalink to this headline"></a></h2>
+<h2>bin_range()<a class="headerlink" href="#bin-range" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing a bin with a range of values. When num_bins is different than 1, several bins are created
 instead by dividing the range into num_bins. If the division has a residue, it is spread equally starting from the last bins. If
 num_bins is 0 or greater than the number of values in the range, then a single bin is created for each value.</p>
@@ -194,13 +193,6 @@ num_bins is 0 or greater than the number of values in the range, then a single b
 <div><p>t_new_bin_array := bin_range(min_value, max_value, [num_bins])</p>
 </div></blockquote>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -230,17 +222,17 @@ num_bins is 0 or greater than the number of values in the range, then a single b
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">));</span><span class="w">    </span><span class="c1">-- creates 1 bin:   10 to 20</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">4</span><span class="p">));</span><span class="w">  </span><span class="c1">-- creates 4 bins:  10 to 11, 12 to 14, 15 to 17, 18 to 20</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span><span class="w">  </span><span class="c1">-- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">11</span><span class="p">));</span><span class="w"> </span><span class="c1">-- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">));</span><span class="w"> </span><span class="c1">-- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">));</span><span class="w">    </span><span class="c1">-- creates 1 bin:   10 to 20</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">4</span><span class="p">));</span><span class="w">  </span><span class="c1">-- creates 4 bins:  10 to 11, 12 to 14, 15 to 17, 18 to 20</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span><span class="w">  </span><span class="c1">-- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">11</span><span class="p">));</span><span class="w"> </span><span class="c1">-- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">));</span><span class="w"> </span><span class="c1">-- creates 11 bins: 10,11,12,13,14,15,16,17,18,19,20</span>
 </pre></div>
 </div>
 </section>
 <section id="bin-vector">
-<h2>bin_vector()<a class="headerlink" href="#bin-vector" title="Permalink to this headline"></a></h2>
+<h2>bin_vector()<a class="headerlink" href="#bin-vector" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing a bin with a vector’s range. When num_bins is different than 1, several bins are created
 instead by dividing the range into num_bins. If the division has a residue, it is spread equally starting from the last bins. If
 num_bins is 0 or greater than the number of values in the vector’s range, then a single bin is created for each value.</p>
@@ -248,13 +240,6 @@ num_bins is 0 or greater than the number of values in the vector’s range, then
 <div><p>t_new_bin_array := bin_vector(vector, [num_bins])</p>
 </div></blockquote>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -278,28 +263,21 @@ num_bins is 0 or greater than the number of values in the vector’s range, then
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">address</span><span class="p">));</span><span class="w">   </span><span class="c1">-- creates 1 bin</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">address</span><span class="p">,</span><span class="mi">4</span><span class="p">));</span><span class="w"> </span><span class="c1">-- creates 4 bins</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">address</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span><span class="w"> </span><span class="c1">-- creates 2^(address&#39;length) bins: address[0], address[1], ...</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">address</span><span class="p">));</span><span class="w">   </span><span class="c1">-- creates 1 bin</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">address</span><span class="p">,</span><span class="mi">4</span><span class="p">));</span><span class="w"> </span><span class="c1">-- creates 4 bins</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_vector</span><span class="p">(</span><span class="n">address</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span><span class="w"> </span><span class="c1">-- creates 2^(address&#39;length) bins: address[0], address[1], ...</span>
 </pre></div>
 </div>
 </section>
 <section id="bin-transition">
-<h2>bin_transition()<a class="headerlink" href="#bin-transition" title="Permalink to this headline"></a></h2>
+<h2>bin_transition()<a class="headerlink" href="#bin-transition" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing a bin with a transition of values. The maximum number of transition values is
 C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin_transition</span><span class="p">(</span><span class="n">set_of_values</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bin_transition</span><span class="p">(</span><span class="n">set_of_values</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -317,25 +295,18 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">bin_transition</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
 <section id="ignore-bin">
-<h2>ignore_bin()<a class="headerlink" href="#ignore-bin" title="Permalink to this headline"></a></h2>
+<h2>ignore_bin()<a class="headerlink" href="#ignore-bin" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing an ignore bin with a single value.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ignore_bin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ignore_bin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -353,25 +324,18 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">50</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin</span><span class="p">(</span><span class="mi">50</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
 <section id="ignore-bin-range">
-<h2>ignore_bin_range()<a class="headerlink" href="#ignore-bin-range" title="Permalink to this headline"></a></h2>
+<h2>ignore_bin_range()<a class="headerlink" href="#ignore-bin-range" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing an ignore bin with a range of values.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ignore_bin_range</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ignore_bin_range</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -395,26 +359,19 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_range</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_range</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
 <section id="ignore-bin-transition">
-<h2>ignore_bin_transition()<a class="headerlink" href="#ignore-bin-transition" title="Permalink to this headline"></a></h2>
+<h2>ignore_bin_transition()<a class="headerlink" href="#ignore-bin-transition" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing an ignore bin with a transition of values. The maximum number of transition values is
 C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ignore_bin_transition</span><span class="p">(</span><span class="n">set_of_values</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ignore_bin_transition</span><span class="p">(</span><span class="n">set_of_values</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -432,25 +389,18 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_transition</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">ignore_bin_transition</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">30</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
 <section id="illegal-bin">
-<h2>illegal_bin()<a class="headerlink" href="#illegal-bin" title="Permalink to this headline"></a></h2>
+<h2>illegal_bin()<a class="headerlink" href="#illegal-bin" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing an illegal bin with a single value.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">illegal_bin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">illegal_bin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -468,25 +418,18 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
 <section id="illegal-bin-range">
-<h2>illegal_bin_range()<a class="headerlink" href="#illegal-bin-range" title="Permalink to this headline"></a></h2>
+<h2>illegal_bin_range()<a class="headerlink" href="#illegal-bin-range" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing an illegal bin with a range of values.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">max_value</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -510,26 +453,19 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin_range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
 <section id="illegal-bin-transition">
-<h2>illegal_bin_transition()<a class="headerlink" href="#illegal-bin-transition" title="Permalink to this headline"></a></h2>
+<h2>illegal_bin_transition()<a class="headerlink" href="#illegal-bin-transition" title="Link to this heading"></a></h2>
 <p>Returns a t_new_bin_array containing an illegal bin with a transition of values. The maximum number of transition values is
 C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">illegal_bin_transition</span><span class="p">(</span><span class="n">set_of_values</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_new_bin_array</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">illegal_bin_transition</span><span class="p">(</span><span class="n">set_of_values</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -547,26 +483,19 @@ C_FC_MAX_NUM_BIN_VALUES defined in adaptations_pkg.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin_transition</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">my_coverpoint</span><span class="p">.</span><span class="n">add_bins</span><span class="p">(</span><span class="n">illegal_bin_transition</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
 <section id="fc-set-covpts-coverage-goal">
-<h2>fc_set_covpts_coverage_goal()<a class="headerlink" href="#fc-set-covpts-coverage-goal" title="Permalink to this headline"></a></h2>
+<h2>fc_set_covpts_coverage_goal()<a class="headerlink" href="#fc-set-covpts-coverage-goal" title="Link to this heading"></a></h2>
 <p>Configures the coverpoints coverage goal, which represents the percentage of the number of coverpoints that need to be covered.
 Default value is 100.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_set_covpts_coverage_goal</span><span class="p">(</span><span class="n">percentage</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_set_covpts_coverage_goal</span><span class="p">(</span><span class="n">percentage</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 6%" />
-<col style="width: 24%" />
-<col style="width: 46%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -598,25 +527,18 @@ value is shared_msg_id_panel.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">fc_set_covpts_coverage_goal</span><span class="p">(</span><span class="mi">75</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Cover only 75% of the total number of coverpoints</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">fc_set_covpts_coverage_goal</span><span class="p">(</span><span class="mi">75</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Cover only 75% of the total number of coverpoints</span>
 </pre></div>
 </div>
 </section>
 <section id="fc-get-covpts-coverage-goal">
-<h2>fc_get_covpts_coverage_goal()<a class="headerlink" href="#fc-get-covpts-coverage-goal" title="Permalink to this headline"></a></h2>
+<h2>fc_get_covpts_coverage_goal()<a class="headerlink" href="#fc-get-covpts-coverage-goal" title="Link to this heading"></a></h2>
 <p>Returns the coverpoints coverage goal.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">positive</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fc_get_covpts_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">positive</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fc_get_covpts_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -634,26 +556,19 @@ value is shared_msg_id_panel.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Covpts goal: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_covpts_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Covpts goal: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_covpts_coverage_goal</span><span class="p">(</span><span class="n">VOID</span><span class="p">)));</span>
 </pre></div>
 </div>
 </section>
 <section id="fc-get-overall-coverage">
-<h2>fc_get_overall_coverage()<a class="headerlink" href="#fc-get-overall-coverage" title="Permalink to this headline"></a></h2>
+<h2>fc_get_overall_coverage()<a class="headerlink" href="#fc-get-overall-coverage" title="Link to this heading"></a></h2>
 <p>Returns either the coverpoints coverage, bins coverage or hits coverage accumulated from all the coverpoints. For an overview on
 the types of coverage click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-status"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">coverage_type</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">real</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">coverage_type</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 6%" />
-<col style="width: 26%" />
-<col style="width: 44%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -671,27 +586,20 @@ the types of coverage click <a class="reference internal" href="func_cov_pkg_ove
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Covpts Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">COVPTS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bins Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hits Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Covpts Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">COVPTS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bins Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">BINS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
+<span class="n">log</span><span class="p">(</span><span class="n">ID_SEQUENCER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hits Overall Coverage: &quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">fc_get_overall_coverage</span><span class="p">(</span><span class="n">HITS</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="s">&quot;%&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="fc-overall-coverage-completed">
-<h2>fc_overall_coverage_completed()<a class="headerlink" href="#fc-overall-coverage-completed" title="Permalink to this headline"></a></h2>
+<h2>fc_overall_coverage_completed()<a class="headerlink" href="#fc-overall-coverage-completed" title="Link to this heading"></a></h2>
 <p>Returns true if the coverpoints coverage has reached the goal. Default goal is 100.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fc_overall_coverage_completed</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fc_overall_coverage_completed</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 7%" />
-<col style="width: 24%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -709,30 +617,23 @@ the types of coverage click <a class="reference internal" href="func_cov_pkg_ove
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span><span class="w"></span>
-<span class="k">if</span><span class="w"> </span><span class="n">fc_overall_coverage_completed</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w"></span>
-<span class="p">...</span><span class="w"></span>
-<span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Example:</span>
+<span class="k">if</span><span class="w"> </span><span class="n">fc_overall_coverage_completed</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="p">...</span>
+<span class="k">end</span><span class="w"> </span><span class="k">if</span><span class="p">;</span>
 </pre></div>
 </div>
 </section>
 <section id="fc-report-overall-coverage">
-<h2>fc_report_overall_coverage()<a class="headerlink" href="#fc-report-overall-coverage" title="Permalink to this headline"></a></h2>
+<h2>fc_report_overall_coverage()<a class="headerlink" href="#fc-report-overall-coverage" title="Link to this heading"></a></h2>
 <p>Prints the overall coverage summary for all the coverpoints in the testbench. The printing destination can be log and/or console
 and is defined by shared_default_log_destination in adaptations_pkg. The report can also be printed to a separate file by using
 the file_name parameter. To see an example of the generated report click <a class="reference internal" href="func_cov_pkg_overview.html#func-cov-pkg-coverage-report"><span class="std std-ref">here</span></a>.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span><span class="w"></span>
-<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">file_name</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">open_mode</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]])</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">file_name</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">open_mode</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]])</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 16%" />
-<col style="width: 6%" />
-<col style="width: 24%" />
-<col style="width: 46%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Object</p></th>
 <th class="head"><p>Name</p></th>
@@ -779,10 +680,10 @@ Default value is C_TB_SCOPE_DEFAULT.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span><span class="w"></span>
-<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w"></span>
-<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">);</span><span class="w"></span>
-<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;coverage_report.txt&quot;</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">VERBOSE</span><span class="p">);</span>
+<span class="n">fc_report_overall_coverage</span><span class="p">(</span><span class="n">HOLES_ONLY</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;coverage_report.txt&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>

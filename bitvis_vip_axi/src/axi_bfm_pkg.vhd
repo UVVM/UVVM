@@ -196,9 +196,9 @@ package axi_bfm_pkg is
   ------------------------------------------
   -- init_axi_if_signals
   ------------------------------------------
-  -- - This function returns an AXI interface with initialized signals.
-  -- - All AXI input signals are initialized to 0
-  -- - All AXI output signals are initialized to Z
+  -- This function returns an AXI interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_axi_if_signals(
     addr_width : natural;
     data_width : natural;

@@ -507,7 +507,7 @@ Overlapping bins
 If a sampled value is contained in more than one valid bin (not ignore or illegal), all the valid bins will collect the coverage, 
 i.e. increment the number of hits.
 
-In case this is unintended behaviour in the testbench, an alert can be generated when overlapping valid bins are sampled, by using 
+In case this is unintended behavior in the testbench, an alert can be generated when overlapping valid bins are sampled, by using 
 the procedure ``set_bin_overlap_alert_level()``, to select the severity of the alert.
 
 .. code-block::
@@ -795,7 +795,7 @@ report shows 3 extra lines:
 * **Goal** = configured goal value.
 * **% of Goal** = percentage of the covered goal, stops at 100%.
 * **% of Goal (uncapped)** = percentage of the covered goal without limits. This is useful to see if there are bins 
-  which are oversampled.
+  which are over-sampled.
 
 .. code-block:: none
 
@@ -872,7 +872,7 @@ When using ``load_coverage_db()``, the following applies for the given coverpoin
     * The bins matching with the loaded bins (same type, values, min_hits and rand_weight) are also overwritten.
     * Any loaded bins which are not found in the given coverpoint are added.
     * Any bins in the given coverpoint which are not found in the loaded coverpoint are kept. However, depending on the 
-      *new_bins_acceptance* parameter, an alert can be generated whenever this occurs. The default behaviour is to generate a 
+      *new_bins_acceptance* parameter, an alert can be generated whenever this occurs. The default behavior is to generate a 
       TB_WARNING alert to ensure that all the testcases collect coverage from the same bins. However, for instance when running 
       two testcases in a certain order, one might add extra bins in the second testcase which are irrelevant for the first one, 
       and in this case the alert can be removed.
@@ -1195,7 +1195,7 @@ The maximum number of coverpoints that can be created is determined by C_FC_MAX_
 
 .. note::
 
-    Enhanced Randomization, Optimized Randomization and Functional Coverage were inpired by general statistics and similar 
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inspired by general statistics and similar 
     functionality in SystemVerilog and OSVVM.
 
 .. _func_cov_pkg:

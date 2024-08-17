@@ -4,21 +4,21 @@ This project uses the following versions:
   bitvis_irqc, version v1.0.12
   bitvis_uart, version v1.1.7
   bitvis_vip_avalon_mm, version v4.0.0
-  bitvis_vip_avalon_st, version v3.0.0
-  bitvis_vip_axilite, version v4.0.0
-  bitvis_vip_axistream, version v6.0.0
+  bitvis_vip_avalon_st, version v3.0.1
+  bitvis_vip_axilite, version v4.0.1
+  bitvis_vip_axistream, version v6.0.1
   bitvis_vip_clock_generator, version v1.5.5
   bitvis_vip_error_injection, version v1.0.1
   bitvis_vip_gmii, version v3.0.0
   bitvis_vip_gpio, version v3.0.0
   bitvis_vip_i2c, version v4.0.0
   bitvis_vip_rgmii, version v4.0.0
-  bitvis_vip_sbi, version v4.0.0
-  bitvis_vip_scoreboard, version v2.3.2
+  bitvis_vip_sbi, version v4.0.1
+  bitvis_vip_scoreboard, version v2.3.3
   bitvis_vip_spi, version v5.0.0
   bitvis_vip_uart, version v4.0.0
-  bitvis_vip_spec_cov, version v1.1.0
+  bitvis_vip_spec_cov, version v1.1.1
   bitvis_vip_hvvc_to_vvc_bridge, version v0.1.1
   bitvis_vip_ethernet, version v0.3.1
-  bitvis_vip_axi, version v3.0.0
+  bitvis_vip_axi, version v3.0.1
   bitvis_vip_wishbone, version v0.1.5 BETA

@@ -182,7 +182,7 @@ def print_multiple_executor_info():
     print("\nMultiple executors (and queues) are used when concurrent command operations are needed.\nE.g. Avalon MM uses two executors because multiple read" +
           " requests might be sent before receiving the responses.\nThus the first executor is sending out the commands, whereas the second executor is receiving" +
           " the response.\nBoth are required because the first executor may be busy issuing a new command at the same time the second executor is receiving a" +
-          " response on a previous command.\n")
+          " response on a previous command.")
 
 
 def get_number_of_channels_with_multiple_executors(number_of_channels):
@@ -2093,7 +2093,7 @@ def main():
 
     # If channels have multiple executors
     # One channel
-    if number_of_channels_with_multiple_executors == 1:
+    if number_of_channels_with_multiple_executors == 1 and number_of_channels > 1:
         for channel in range(0, number_of_channels):
             if yes_no_question("Shall channel " + vvc_channels[channel].get_name() + " have multiple executors?"):
                 vvc_channels[channel].append_executor(get_list_of_executors())

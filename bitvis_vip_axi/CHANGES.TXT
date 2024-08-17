@@ -2,6 +2,12 @@ Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
 
+v3.0.1
+----------
+Released: 2024-08-16
+- Added PR from @FPonGitHub removing vsim-8684 warning messages.
+- Converted documentation to RST format.
+
 v3.0.0
 ----------
 Released: 2024-07-03

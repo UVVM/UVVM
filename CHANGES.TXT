@@ -10,6 +10,19 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2024.08.16
+--------------------
+Released: 2024-08-16
+- Updated spec_cov methods signature to match in specification and body.
+- Added PR from @FPonGitHub removing vsim-8684 warning messages in AXI VVC.
+- Removed vsim-8684 warning messages in AXI-Lite VVC.
+- Fixed bug in spec cov where COMPLIANT status might overwrite NOT_TESTED status of super requirement. 
+- Clear old spec cov testcase name before setting new name in initialize_req_cov.
+- Fixed ready_default_value not having the initial value from the GC_AXISTREAM_BFM_CONFIG VVC generic.
+- Added PR from @am9417 to support changing the default queue size configuration in the built-in scoreboards.
+- Converted Avalon-MM, Avalon-ST, AXI4, AXI4-Lite, AXI4-Stream, SBI, Scoreboard and VVC generator documentation to RST format.
+
+
 v2 2024.07.03
 --------------------
 Released: 2024-07-03
@@ -47,6 +60,7 @@ Released: 2024-07-03
 - Added unwanted activity detection test to UVVM demo tb.
 - Added unwanted activity detection in VVC generator.
 - Removed "omitted requirement"-functionality in spec cov.
+- Converted Spec Cov documentation to RST format.
 
 
 v2 2024.03.08

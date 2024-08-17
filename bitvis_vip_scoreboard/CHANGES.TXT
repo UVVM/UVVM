@@ -2,6 +2,12 @@ Bitvis VIP Scoreboard - Overview on Versions and Changes
 ==============================================================
 
 
+v2.3.3
+----------
+Released: 2024-08-16
+- Added PR from @am9417 to support changing the default queue size configuration in the built-in scoreboards.
+- Converted documentation to RST format.
+
 v2.3.2
 ----------
 Released: 2024-07-03

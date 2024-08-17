@@ -73,8 +73,8 @@ package rgmii_bfm_pkg is
   -- BFM procedures
   --==========================================================================================
   -- This function returns an RGMII interface with initialized signals.
-  -- All input signals are initialized to 0
-  -- All output signals are initialized to Z
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_rgmii_if_signals
   return t_rgmii_tx_if;
 

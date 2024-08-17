@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Introduction &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -27,12 +30,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: #F5F5F5" >
-            <a href="index.html">
-            <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,14 +65,13 @@
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="protected_types.html">Protected types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon MM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI-Lite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
@@ -96,8 +102,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Introduction</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Introduction</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/uvvm_intro.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -108,7 +114,7 @@
            <div itemprop="articleBody">
              
   <section id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline"></a></h1>
+<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
 <p>UVVM (Universal VHDL Verification Methodology) is a free and Open Source Methodology and Library for making very structured
 VHDL-based testbenches.</p>
 <p>Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency and quality.
@@ -121,7 +127,7 @@ UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle 
 <li><p>VVCs to be used with UVVM VVC Framework and may be combined with BFMs (see overview below)</p></li>
 </ul>
 <section id="for-starters">
-<h2>For starters<a class="headerlink" href="#for-starters" title="Permalink to this headline"></a></h2>
+<h2>For starters<a class="headerlink" href="#for-starters" title="Link to this heading"></a></h2>
 <p>Please note that UVVM has two different complexity levels. The VVC Framework and VVCs for medium to advanced testbenches, and the
 Utility library and BFMs for simple usage - and as a basis for more advanced testbenches. Novice users are strongly recommended to
 first use UVVM Utility library and BFMs. This has a <em>very</em> low user threshold and you will be up and running in an hour. Please
@@ -133,7 +139,7 @@ VHDL library is used. The documentation and code are 100% the same as for the fu
 <p>Please also see <a class="reference internal" href="uvvm_getting_started.html#getting-started"><span class="std std-ref">Getting Started</span></a>.</p>
 </section>
 <section id="for-what-do-i-need-this-vvc-framework">
-<h2>For what do I need this VVC Framework?<a class="headerlink" href="#for-what-do-i-need-this-vvc-framework" title="Permalink to this headline"></a></h2>
+<h2>For what do I need this VVC Framework?<a class="headerlink" href="#for-what-do-i-need-this-vvc-framework" title="Link to this heading"></a></h2>
 <p>UVVM is a verification component system that allows the implementation of a very structured testbench architecture to handle any
 verification complexity - from really simple to really complex. A key benefit of this system is the very simple software-like VHDL
 test sequencer that may control your complete testbench architecture with any number of verification components. This takes
@@ -142,22 +148,22 @@ As an example a simple command like uart_expect(UART_VVCT, my_data), or axilite_
 will automatically tell the respective VVC (for UART or AXI-Lite) to execute the uart_receive() or axilite_write() BFM respectively.</p>
 </section>
 <section id="what-are-the-main-benefits-of-using-this-system">
-<h2>What are the main benefits of using this system?<a class="headerlink" href="#what-are-the-main-benefits-of-using-this-system" title="Permalink to this headline"></a></h2>
+<h2>What are the main benefits of using this system?<a class="headerlink" href="#what-are-the-main-benefits-of-using-this-system" title="Link to this heading"></a></h2>
 <p>The really great benefit here is the unique overview, readability, maintainability, extensibility and reuse you get from having
 the best testbench architecture possible - much in the same way as a good architecture is also critical for any complex design.
 Another major benefit here is that any number of commands may be issued at the same time from the test sequencer - thus allowing
 full control of when an access is to be performed, and the commands are understandable “even” for a software developer ;-)
-The commands may be queued, skewed, delayed, synchronised, etc. - and a super-set for applying constrained random or other
+The commands may be queued, skewed, delayed, synchronized, etc. - and a super-set for applying constrained random or other
 sequences of data may of course also be applied. This yields an excellent control over your testbench and VVCs.</p>
 <p>For debugging you can select logging of a command when it is issued from the sequencer, when it is received by the VVC, when it is
 initiated by the VVC and/or when it has been executed towards the DUT. This allows full overview of all actions in your complete
 testbench.</p>
-<p>UVVM is free and open source and has standardised the way to build good testbench architectures and VVCs so that reuse is dead
+<p>UVVM is free and open source and has standardized the way to build good testbench architectures and VVCs so that reuse is dead
 simple, and allows the FPGA community to share VVCs that will work together in a well-structured test harness.</p>
 <p>You may of course combine UVVM with any other legacy or 3rd party testbenches or verification models.</p>
 </section>
 <section id="main-features">
-<h2>Main Features<a class="headerlink" href="#main-features" title="Permalink to this headline"></a></h2>
+<h2>Main Features<a class="headerlink" href="#main-features" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Very useful support for checking values, ranges, time aspects, and for waiting for events inside a given window</p></li>
 <li><p>An extremely low user threshold for the basic functionality - like logging, alert handling and checkers</p></li>
@@ -181,7 +187,7 @@ the VVCs in the local sequencers for better control and encapsulation</p></li>
 </ul>
 </section>
 <section id="available-vvcs-and-bfms">
-<h2>Available VVCs and BFMs<a class="headerlink" href="#available-vvcs-and-bfms" title="Permalink to this headline"></a></h2>
+<h2>Available VVCs and BFMs<a class="headerlink" href="#available-vvcs-and-bfms" title="Link to this heading"></a></h2>
 <p>These VVCs and BFMs could be used inside a typical UVVM testbench, but they could also be used stand-alone - e.g. as a BFM or VVC
 to handle just the AXI4-Lite interface with everything else being your proprietary testbench and methodology.</p>
 <ul class="simple">
@@ -205,8 +211,8 @@ checkers.</p>
 </div>
 </section>
 <section id="prerequisites">
-<span id="uvvm-prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline"></a></h2>
-<p>UVVM is tool and library independent, but it must be compiled with VHDL-2008.
+<span id="uvvm-prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<p>UVVM is tool and library independent, but it must be compiled with VHDL-2008 or newer.
 The latest release of UVVM has been tested with the following simulators:</p>
 <ul class="simple">
 <li><p>ModelSim</p></li>
@@ -219,7 +225,7 @@ The latest release of UVVM has been tested with the following simulators:</p>
 <p>Python is required <strong>if</strong> you want to execute the VVC generation scripts</p>
 </section>
 <section id="introduction-to-vvc-framework-including-manuals">
-<h2>Introduction to VVC Framework - including manuals<a class="headerlink" href="#introduction-to-vvc-framework-including-manuals" title="Permalink to this headline"></a></h2>
+<h2>Introduction to VVC Framework - including manuals<a class="headerlink" href="#introduction-to-vvc-framework-including-manuals" title="Link to this heading"></a></h2>
 <p>All documents including powerpoint presentations are available in the <em>uvvm_vvc_framework/doc</em> directory on GitHub. These are just
 fast access links to some interesting info:</p>
 <ul class="simple">
@@ -228,7 +234,7 @@ fast access links to some interesting info:</p>
 </ul>
 </section>
 <section id="license">
-<h2>License<a class="headerlink" href="#license" title="Permalink to this headline"></a></h2>
+<h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
 <div class="line-block">
 <div class="line">Copyright 2024 UVVM</div>
 <div class="line">Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License.
@@ -239,7 +245,7 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 governing permissions and limitations under the License.</p>
 </section>
 <section id="uvvm-maintainers">
-<h2>UVVM Maintainers<a class="headerlink" href="#uvvm-maintainers" title="Permalink to this headline"></a></h2>
+<h2>UVVM Maintainers<a class="headerlink" href="#uvvm-maintainers" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="http://uvvm.org">UVVM steering group</a> has released UVVM as open source and we are committed to develop this system further. We do
 however appreciate contributions and suggestions from users.</p>
 <p>Please use the pull_requests branch for contributions and we will evaluate them for inclusion in our release on the master branch

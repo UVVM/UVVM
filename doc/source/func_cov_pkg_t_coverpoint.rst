@@ -399,7 +399,7 @@ C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT defined in adaptations_pkg. ::
 
 delete_coverpoint()
 ----------------------------------------------------------------------------------------------------------------------------------
-Deallocates the list of bins and resets all configuration settings to their default values. ::
+De-allocates the list of bins and resets all configuration settings to their default values. ::
 
     delete_coverpoint(VOID)
     delete_coverpoint(msg_id_panel)
@@ -706,7 +706,7 @@ parameter. To see an example of the generated report click :ref:`here <func_cov_
 
 report_config()
 ----------------------------------------------------------------------------------------------------------------------------------
-Prints a report containing the coverpoints's configuration parameters. The report can also be printed to a separate file by using 
+Prints a report containing the coverpoint's configuration parameters. The report can also be printed to a separate file by using 
 the file_name parameter. To see an example of the generated report click :ref:`here <func_cov_pkg_config_report>`. ::
 
     report_config(VOID)

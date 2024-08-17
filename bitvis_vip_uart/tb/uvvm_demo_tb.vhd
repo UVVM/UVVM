@@ -433,7 +433,7 @@ begin
     --   2. SBI VVC will send 1 byte to the DUT and UART RX VVC will expect the same data.
     --   3. Unwanted activity detection will not be triggered (normal data transmission).
     --   4. SBI VVC will send 1 byte to the DUT and UART RX VVC will not expect any data.
-    --   5. Unwanted activity detection will be be triggered (unexpected data transmission).
+    --   5. Unwanted activity detection will be triggered (unexpected data transmission).
     --   6. Step 1 to 5 is repeated for different alerts of severity.
     --
     procedure test_unwanted_activity_detection(void : t_void) is

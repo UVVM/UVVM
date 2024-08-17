@@ -121,16 +121,16 @@ package spec_cov_pkg is
   ) return t_test_status;
 
   procedure priv_set_requirement_status(
-    requirement : string;
-    status      : t_test_status
+    constant requirement : string;
+    constant status      : t_test_status
   );
 
   procedure priv_inc_num_requirement_tick_offs(
-    requirement : string
+    constant requirement : string
   );
 
   function priv_test_status_to_string(
-    constant test_status : t_test_status
+    test_status : t_test_status
   ) return string;
 
   impure function priv_get_summary_string
@@ -144,7 +144,7 @@ package spec_cov_pkg is
   return string;
 
   impure function priv_find_string_length(
-    constant search_string : string
+    search_string : string
   ) return natural;
 
   impure function priv_get_requirement_name_length(
@@ -152,7 +152,7 @@ package spec_cov_pkg is
   return natural;
 
   impure function priv_req_listed_in_disabled_tick_off_array(
-    constant requirement : string
+    requirement : string
   ) return boolean;
 
 end package spec_cov_pkg;
@@ -585,7 +585,7 @@ package body spec_cov_pkg is
   -- Increment number of tick offs for requirement
   --
   procedure priv_inc_num_requirement_tick_offs(
-    requirement : string
+    constant requirement : string
   ) is
   begin
     for i in 0 to priv_requirements_in_array - 1 loop
@@ -622,7 +622,7 @@ package body spec_cov_pkg is
   -- Get the t_test_status parameter as string
   --
   function priv_test_status_to_string(
-    constant test_status : t_test_status
+    test_status : t_test_status
   ) return string is
   begin
     if test_status = PASS then
@@ -653,6 +653,7 @@ package body spec_cov_pkg is
     constant testcase : string
   ) is
   begin
+    priv_testcase_name := (others => NUL);
     priv_testcase_name(1 to testcase'length) := testcase;
   end procedure priv_set_default_testcase_name;
 
@@ -670,7 +671,7 @@ package body spec_cov_pkg is
   -- Find the length of a string which will contain NUL characters.
   --
   impure function priv_find_string_length(
-    constant search_string : string
+    search_string : string
   ) return natural is
     variable v_return : natural := 0;
   begin
@@ -707,7 +708,7 @@ package body spec_cov_pkg is
   -- Check if requirement is listed in the priv_disabled_tick_off_array() array.
   --
   impure function priv_req_listed_in_disabled_tick_off_array(
-    constant requirement : string
+    requirement : string
   ) return boolean is
     constant c_requirement_length : natural := priv_get_requirement_name_length(requirement);
   begin

@@ -233,7 +233,7 @@ Additional info
 
 .. note::
 
-    Enhanced Randomization, Optimized Randomization and Functional Coverage were inpired by general statistics and similar 
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inspired by general statistics and similar 
     functionality in SystemVerilog and OSVVM.
 
 .. include:: rst_snippets/ip_disclaimer.rst
@@ -251,6 +251,6 @@ Additional info
 
 
 .. |opt_rand_restart| replace:: Once all the bins in the given coverpoint have been :ref:`covered <concept_covered>`, the random 
-    generator will start again from scratch as if none of the bins have been hit. This behaviour will keep on repeating. This is 
+    generator will start again from scratch as if none of the bins have been hit. This behavior will keep on repeating. This is 
     useful when we want to generate constrained sets of random values which repeat over time, similar to Cyclic generation from 
     Enhanced Randomization, but with minimum hits and weighted distribution features.

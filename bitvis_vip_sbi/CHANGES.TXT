@@ -2,6 +2,11 @@ Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
 
+v4.0.1
+----------
+Released: 2024-08-16
+- Converted documentation to RST format.
+
 v4.0.0
 ----------
 Released: 2024-07-03

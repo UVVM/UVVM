@@ -2,6 +2,12 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v6.0.1
+----------
+Released: 2024-08-16
+- Fixed ready_default_value not having the initial value from the GC_AXISTREAM_BFM_CONFIG VVC generic.
+- Converted documentation to RST format.
+
 v6.0.0
 ----------
 Released: 2024-07-03

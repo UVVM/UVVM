@@ -107,7 +107,7 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 
     * To use the vvc_list, the package ``uvvm_vvc_framework.ti_protected_types_pkg.all`` must be included in the testbench.
     * The command with the vvc_list requires VVCs supporting the VVC activity register introduced in UVVM release v2020.05.19.
-    * Combining old VVCs not supporting VVC activity regiser and new VVCs is not supported by await_completion().
+    * Combining old VVCs not supporting VVC activity register and new VVCs is not supported by await_completion().
 
 .. code-block::
 
@@ -620,7 +620,7 @@ If several VVCs are needed: ::
 t_vvc_result
 ----------------------------------------------------------------------------------------------------------------------------------
 The common type t_vvc_result is always defined with the max length of fetched data that the VVC supports (see the definition of 
-t_vvc_result in its corresponding vvc_cmd_pkg). Therefore it is recommended to define the range of the desired data output after 
+t_vvc_result in its corresponding vvc_cmd_pkg.vhd). Therefore it is recommended to define the range of the desired data output after 
 the fetch_result method has been completed. ::
 
     --Example:
@@ -855,10 +855,10 @@ For a VVC specific description of this feature, see the Unwanted Activity Detect
 
     * For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period 
       after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge, 
-      causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more infomation.
+      causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more information.
     * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the 
       VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to 
-      differenciate between the unwanted activity and intended activity. See each VVC QuickRef for more information.
+      differentiate between the unwanted activity and intended activity. See each VVC QuickRef for more information.
 
 .. _vvc_framework_transaction_info:
 
@@ -878,14 +878,14 @@ a mechanism for getting the transaction information directly from the VVC.
 Purpose
 ----------------------------------------------------------------------------------------------------------------------------------
 By enabling the distribution of transaction info, models or any other parts of the testbench can see exactly what accesses have 
-been made on the various interfaces of the DUT, so that the expected DUT behaviour and outputs may be checked. Let us illustrate 
+been made on the various interfaces of the DUT, so that the expected DUT behavior and outputs may be checked. Let us illustrate 
 this with a really simple testbench scenario to verify a UART peripheral with an AXI-lite register/CPU interface on one side and 
 the UART RX and TX ports on the other side. The test sequencer may command the AXI-lite BFM or VVC to write a data byte into the 
 UART TX register, and then it must be checked that the data byte is transmitted out on the DUT TX output some time later.
 
     a. A simple testbench approach could be to have the test sequencer also telling the receiving UART BFM or VVC exactly what to 
        expect. This is a straightforward approach, but requires more action and data control inside the test sequencer. This could 
-       of course all be handled in a super-procedure, but for any undetermined behaviour inside the BFM or VVC, like random data 
+       of course all be handled in a super-procedure, but for any undetermined behavior inside the BFM or VVC, like random data 
        generation or error injection, that would not work. See Figure 3.
     b. A more advanced approach is to have a model overlooking the DUT accesses, generate the expected data and tell the receiving 
        BFM or VVC to check for that data. See Figure 4.
@@ -893,10 +893,10 @@ UART TX register, and then it must be checked that the data byte is transmitted 
        from a model. See Figure 5.
 
 However, for the two latter approaches the model needs information about exactly what happened (the transaction) on the various 
-DUT interfaces, so that it can generate the correct expected data. For the model it doesn’t matter if the transaction info comes 
+DUT interfaces, so that it can generate the correct expected data. For the model it doesn't matter if the transaction info comes 
 from a Monitor or from a VVC, as long as the information is correct.
 
-The model could of course look at the interfaces and analyse the actual transactions, but distributing this task to the VVC or 
+The model could of course look at the interfaces and analyze the actual transactions, but distributing this task to the VVC or 
 Monitor makes the testbench far more structured and significantly improves overview, maintenance, extensibility and reuse – at 
 least for anything above medium simple verification challenges.
 
@@ -953,11 +953,11 @@ transaction info is provided from the VVC or Monitor, different types of informa
 they always provide info about the operation (read, write, transmit, etc.) and often also any other protocol specific info. For a 
 UART this could be data and parity, for an SBI it could be address and data, and for Ethernet, the packet fields.
 
-This minimum is normally what the Monitor can provide from just analysing the interface, and this is also normally enough for a 
+This minimum is normally what the Monitor can provide from just analyzing the interface, and this is also normally enough for a 
 model to generate expected DUT outputs. The VVC on the other hand, can provide more info, which could be useful for instance for 
 progress viewing and debugging.
 
-The transaction information is organised as a transaction record with some predefined fields as shown below. Table 1 shows the 
+The transaction information is organized as a transaction record with some predefined fields as shown below. Table 1 shows the 
 general transaction record, whereas table 2 shows a concrete example for the SBI.
 
 Note that for a given interface/protocol, the VVC and the Monitor will use the same interface dedicated transaction record type - 
@@ -1006,7 +1006,7 @@ with some fields potentially unused.
     |   or succeeded.*                                                                                                            |
     | | *However, the transaction info from a VVC is also updated at the end of the command, which can be useful to fetch the data|
     |   from read/receive operations.*                                                                                            |
-    | | *The VVC does not know the BFM status, and this is fine because the BFM will issue an alert for unexpected behaviour.*    |
+    | | *The VVC does not know the BFM status, and this is fine because the BFM will issue an alert for unexpected behavior.*     |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
 
 .. table:: Table 2 - SBI specific transaction record t_base_transaction. The fields in bold indicate protocol dedicated fields
@@ -1054,7 +1054,7 @@ A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-
     * A VVC will update its Transaction Info leaf transaction details at the start of the transaction when the BFM is called, then
       again when the transaction is completed, and turned off one delta cycle afterwards.
     * A Monitor will set its Transaction Info record after the transaction is finished (or transaction status is known) and keep 
-      it on for a pre-defined time - or until the next transaction is finished if earlier.
+      it on for a predefined time - or until the next transaction is finished if earlier.
 
 .. hint::
 
@@ -1360,14 +1360,14 @@ base transaction):
 Protocol Aware Error Injection
 ==================================================================================================================================
 Error injection into the DUT could be very useful in a testbench in order to test how the DUT handles interface errors when these 
-errors are: a) to be detected and corrected, b) detected only, and c) not detected but may or may not affect the behaviour.
+errors are: a) to be detected and corrected, b) detected only, and c) not detected but may or may not affect the behavior.
 
 Protocol aware error injection is defined here as intelligent error injection, given knowledge about the interface and protocol, 
-e.g. to inject a parity error in a protocol rather than just inverting or delaying a signal without pre-defined detailed support 
+e.g. to inject a parity error in a protocol rather than just inverting or delaying a signal without predefined detailed support 
 to do this at the right place. The latter is supported by a dedicated "brute force" error injection VIP 'bitvis_vip_error_injection' 
 in UVVM.
 
-UVVM has a pre-defined methodology for handling protocol aware error injection in a structured way.
+UVVM has a predefined methodology for handling protocol aware error injection in a structured way.
 
 .. note::
 
@@ -1378,9 +1378,9 @@ UVVM error injection principles
 ----------------------------------------------------------------------------------------------------------------------------------
 Error injection may be applied randomly, with no limitations. For UVVM however, we recommend the following approach:
 
-    #. No randomization of behaviour inside BFMs when this could affect the DUT behaviour or output (and a monitor would be 
+    #. No randomization of behavior inside BFMs when this could affect the DUT behavior or output (and a monitor would be 
        required to check the actual DUT stimuli). Hence BFM procedures should only be called with parameters explicitly defining 
-       the interface behaviour (from the BFM side). Thus no parity error randomization inside. The only exception is for behaviour 
+       the interface behavior (from the BFM side). Thus no parity error randomization inside. The only exception is for behavior 
        that should not affect the DUT. Thus the position of a data bit error could be randomized inside the BFM.
     #. It is recommended that more advanced VVCs include randomization - in order to distribute this away from the test sequencer 
        and increase the re-use value of a VVC. Thus a VVC may be told to apply say 10% parity errors for a UART_VVC transmission 
@@ -1422,7 +1422,7 @@ Naming and type usage
 ----------------------------------------------------------------------------------------------------------------------------------
 The error injection sub-record will be VVC and BFM dedicated, and thus any names and types may be used, and even sub-records under 
 'error_injection' is required. The VVC and BFM error injection records may differ or be the same. The only requirement is that 
-readability is prioritised. Values should be checked against legal ranges or values.
+readability is prioritized. Values should be checked against legal ranges or values.
 
 Built-in randomization
 ==================================================================================================================================
@@ -1438,9 +1438,9 @@ UVVM provides functions and procedures for simple generation of random numbers (
 UVVM VIP randomization principles
 ----------------------------------------------------------------------------------------------------------------------------------
 Randomization may of course be applied with no limitations in a UVVM based testbench. For UVVM VIP however, we recommend the same 
-general approach as for error injection randomizations:
+general approach as for error injection randomization:
 
-    #. No randomization of data inside BFMs as this would affect the DUT behaviour or output (and a monitor would be required to 
+    #. No randomization of data inside BFMs as this would affect the DUT behavior or output (and a monitor would be required to 
        check the actual DUT stimuli). Hence BFM procedures should only be called with explicit data.
     #. It is recommended that more advanced VVCs include functionality for randomization of data - in order to distribute this 
        away from the test sequencer and increase the re-use value of a VVC. Thus, a VVC may be told to apply random data, in which 
@@ -1542,11 +1542,11 @@ turned on and off for more flexibility.
 Property check configuration
 ----------------------------------------------------------------------------------------------------------------------------------
 In UVVM, turning checkers on and off is controlled by the VVC configuration (see :ref:`vvc_framework_status_config_transaction_info`), 
-and often additional control of the checker behaviour is also required. Thus, it is recommended to include the checker control for 
+and often additional control of the checker behavior is also required. Thus, it is recommended to include the checker control for 
 each individual check in a dedicated sub-record. An example on this (for the UART VVC) is shown below. See :ref:`UART VVC 
 <vip_uart_vvc>` for implementation. ::
 
-    .bit_rate_checker              -- Sub-record containing all control of the property checker behaviour
+    .bit_rate_checker              -- Sub-record containing all control of the property checker behavior
         .enable      boolean       -- Enables or disables the complete bit rate checker
         .min_period  time
         .alert_level t_alert_level
@@ -1613,7 +1613,7 @@ info out of a VVC - as described in :ref:`vvc_framework_transaction_info`. The o
 provide parts of what the VVC can provide.
 
     * No monitor can provide info about compound transactions.
-    * For a split transaction protocol like Avalon - only the sub-transactions could be provided (which could be analysed at the 
+    * For a split transaction protocol like Avalon - only the sub-transactions could be provided (which could be analyzed at the 
       higher level to provide Base transactions).
     * A monitor cannot provide meta data like command index or command message.
 
@@ -1812,7 +1812,7 @@ Entity
 ================= ================================================================================================================
 GC_INSTANCE_IDX   Needed in case there are multiple instances of a given VVC. (E.g. DUT with 2 <VVC-NAME>S). Default is 1, but any 
                   natural type is ok.
-GC_<name>_CONFIG  Recommended. Allows predefined BFM behaviour to be set up for every VVC.
+GC_<name>_CONFIG  Recommended. Allows predefined BFM behavior to be set up for every VVC.
 GC_CMD_QUEUE_*    Needed to limit the queue size and to generate a warning if more elements in the queue than ever expected.
 Other generics    Optional and VVC dependent. These generics could for example contain widths of BFM signals.
 ================= ================================================================================================================
@@ -1837,7 +1837,7 @@ Constructor
 ^^^^^^^^^^^
 The constructor is run once only - immediately when starting the simulation. The procedure:
 
-    * Initialises VVC with BFM config and the queue with queue name.
+    * Initializes VVC with BFM config and the queue with queue name.
     * Allows constructor log for VVC info (using ID_CONSTRUCTOR), and VVC Queue info (using ID_CONSTRUCTOR_SUB).
 
 The procedure will report alerts with severity TB_FAILURE if one of the following occurs:
@@ -1854,7 +1854,7 @@ next command from the sequencer.
 
 | Step 0
 | ``initialize_interpreter()``
-|   - Initialises parameters to default passive/initial values (e.g. terminate_current_cmd.set := '0').
+|   - Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.set := '0').
 
 | Step 1
 | ``await_cmd_from_sequencer()``
@@ -1886,7 +1886,7 @@ command queue.
 
 | Step 0
 | ``initialize_executor()``
-|   - Initialises parameters to default passive/initial values (e.g. terminate_current_cmd.reset := '0').
+|   - Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.reset := '0').
 
 | Step 1
 | ``fetch_command_and_prepare_executor()``
@@ -2132,5 +2132,124 @@ about the interpreter_* procedures, please see :ref:`vvc_framework_methods`. For
 package, see :ref:`vvc_framework_name_vvc`. In addition to the procedures, the td_vvc_entity_support_pkg.vhd also contains types 
 for VVC labels and executor results. The result array is also defined and its shared variable is instantiated in this package.
 
+
+VVC Generator script
+==================================================================================================================================
+**Quick Summary**
+
+#. Run the script from the command line with ``python3 vvc_generator.py`` and follow the instructions.
+#. Modify the generated code as instructed wherever the key \--<USER_INPUT> is found.
+#. If necessary, update the t_channel type in UVVM-Util adaptations_pkg if new channels (other than RX and TX) are used.
+
+Introduction
+----------------------------------------------------------------------------------------------------------------------------------
+The VVC Generator is a Python 3 script that generates VVCs and accompanying support files, including the command package, methods 
+package, a BFM skeleton and if necessary, a VVC wrapper for multi-channel VVCs.
+
+Prerequisites
+----------------------------------------------------------------------------------------------------------------------------------
+In order to run the script, it is necessary to have Python installed. To run the script from the command line, the python interpreter 
+path needs to be added to the Path environmental variable. Only Python 3 is supported.
+
+Running the script
+----------------------------------------------------------------------------------------------------------------------------------
+The script can be run from the command line by running: ``python3 vvc_generator.py``
+
+The script will query the user for information about the VVC during the script:
+
+#. First, it will ask for the **VVC name**. Please enter the VVC name without spaces. This name needs to be usable in the VHDL code, 
+   i.e. don't use any other characters than "a-z", "A-Z", "0-9" or "_". Any name must start with a letter.
+
+#. Then, the script will ask if **extended features** should be added. If you type 'y' and Enter, it will ask whether you want to 
+   add the following features, which you can select by typing 'y' or 'n' and pressing Enter after each one:
+
+     * **Scoreboard**
+     * **Transaction info**
+     * **Unwanted activity detection**
+
+#. Afterwards, the script will ask to select the **number of concurrent channels** to use in the VVC. Channels are a way of 
+   implementing more than one concurrent process which will use the BFM procedures. For example, when implementing a VVC for a bus 
+   which can only read OR write at the same time you would not need multiple channels. The SBI example VVC is an example of this. 
+   When implementing a full duplex VVC, e.g. UART, it would make sense to use multiple channels since TX and RX will operate 
+   concurrently. If you are implementing a VVC with concurrent channels, please type a number between 2 and 99 and press Enter. 
+   If not, press Enter to select the default '1'.
+
+#. If you choose a number other than the default '1', you will be asked to **name each channel**, one at a time. The channel names 
+   follow the same naming restrictions as the VVC name, stated in step 1. The script will generate new leaf VVCs for each channel 
+   name you enter, it will also generate a wrapper VVC that you can include in your test harness instead of including each leaf VVC 
+   individually. You must update the t_channel type in UVVM-Util adaptations_pkg if you use channel names other than RX and TX.
+
+#. Finally, the script will ask:
+
+     * If VVC has 1 concurrent channel: whether the **VVC shall have multiple executors**. If you type 'n' and Enter, the script 
+       will not need any further information. If you type 'y' and Enter, it will ask to type a number between 2 and 3 for the 
+       **number of concurrent executors** including the cmd_executor. Then, the script will ask to **name each executor**, one at 
+       a time. The executor names follow the same naming restrictions as the VVC name, stated in step 1.
+
+     * If VVC has several concurrent channels: **how many channels shall have multiple executors**. If you want a single executor 
+       in each channel press Enter to select the default '0', the script will not need any further information. Otherwise, type the 
+       number of channels which shall have multiple executors and press Enter. The script will then ask for each channel, whether 
+       it **shall contain multiple executors** for which you can answer 'y' or 'n'. If you answer 'y' for a given channel, you will 
+       be then asked to type a number between 2 and 3 for the **number of concurrent executors** including the cmd_executor. Then, 
+       the script will ask to **name each executor**, one at a time. The executor names follow the same naming restrictions as the 
+       VVC name, stated in step 1.
+
+When the script has gathered all the information it needs, it will generate the VHDL files in the 'output' directory.
+The naming of the files will be (<name> is the VVC name, and <channel> is a channel name):
+
+* *<name>_vvc.vhd*
+
+  * If this is a single channel VVC, this will be the main VVC file which includes all VVC logic (e.g. executor and interpreter)
+  * If this is a multi-channel VVC, this file will be the wrapper for all the leaf VVCs.
+
+* *<name>_<channel>_vvc.vhd*
+
+  * These files will consist of the VVC implementation for each VVC channel (leaf VVC). 
+  * These files will only be generated if there are multiple channels for this VVC.
+
+* *<name>_bfm_pkg.vhd*
+
+  * This file is a suggested setup for the user BFM. It contains the necessary config records and types needed for UVVM to function 
+    properly. It does not contain any actual BFM procedures.
+
+* *vvc_cmd_pkg.vhd*
+
+  * This file contains the VVC operations and command records in which the VVC data is placed. 
+
+* *vvc_methods_pkg.vhd*
+
+  * This file contains VVC configuration and status records, and examples of how to implement the VVC methods.
+
+* *vvc_context.vhd*
+
+  * This file contains the necessary packages that are used when simulating a VVC.
+
+* *vvc_sb_pkg.vhd*
+
+  * This file contains the Scoreboard package used for the internal VVC Scoreboard.
+  * This file will only be generated if the Scoreboard feature was selected.
+
+* *transaction_pkg.vhd*
+
+  * This file contains the types used for the transaction info.
+  * This file will only be generated if the Transaction info feature was selected.
+
+Modifying the created VHDL files
+---------------------------------------------------------
+After the script has completed, the files need some user interaction before they are ready to use. In all places marked with 
+"\--<USER_INPUT>" there will be instructions on how to properly modify the VVC for your BFM. Additionally, if you created a VVC 
+with multiple channels, please make sure to add these channels to the t_channel type located in the UVVM-Util adaptations_pkg.vhd 
+file. By default, this type only contains 'TX' and 'RX' channels but more can be added to fit any project.
+
+
+**********************************************************************************************************************************
+TI Protected Types
+**********************************************************************************************************************************
+Protected type definitions used in the VVC Framework.
+
+.. toctree::
+   :maxdepth: 1
+
+   ti_protected_types_pkg.rst
 
 .. include:: rst_snippets/ip_disclaimer.rst

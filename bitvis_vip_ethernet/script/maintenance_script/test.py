@@ -59,23 +59,25 @@ hr.add_files("../../tb/*.vhd", "bitvis_vip_ethernet")
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_ethernet")
 
 # Add TB dependencies
-compile_directives_93 = ["-suppress", "1346,1236", "-93"]
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/XilinxCoreLib/*.vhd", "xilinxcorelib")
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim")  # 08
-hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd", "unisim", com_options=compile_directives_93)  # version="93")
+hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/*.vhd", "unisim")
+hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/unisims/primitive/*.vhd", "unisim")
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/*.vhd", "mac_master")
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/*.vhd", "mac_master")
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/generic/*.vhd", "mac_master")
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
 
 sim_options = None
-default_options = []
 simulator_name = hr.settings.get_simulator_name()
+# Set simulator name and compile options
 if simulator_name in ["MODELSIM", "RIVIERA"]:
     sim_options = "-t ps"
-    # Set compile options
-    default_options = ["-suppress", "1346,1246,1236", "-2008"]
-    hr.set_simulator(simulator=simulator_name, com_options=default_options)
+    com_options = ["-suppress", "1346,1246,1236", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
+elif simulator_name == "GHDL":
+    com_options = ["--ieee=standard", "--std=08", "-frelaxed-rules", "--warn-no-shared", "--warn-no-hide", "--warn-no-attribute"]
+    com_options += ["-fsynopsys"] # Xilinx library requires Synopsys std_logic_unsigned library
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
 
 hr.start(sim_options=sim_options)
 

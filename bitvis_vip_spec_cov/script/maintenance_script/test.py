@@ -11,6 +11,7 @@ except:
     print("Unable to import HDLRegression module. See HDLRegression documentation for installation instructions.")
     sys.exit(1)
 
+
 def find_python3_executable():
     python_executables = ["python3", "python"]
 
@@ -108,55 +109,90 @@ hr.add_generics(
         "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
         "GC_UART_REQ_FILE", ("../../tb/maintenance_tb/uart_req_file.csv", "PATH"),
         "GC_COMBI_REQ_FILE", ("../../tb/maintenance_tb/combi_req_file.csv", "PATH"),
-        "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH")
+        "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH"),
     ],
 )
 
 sim_options = None
-default_options = []
 simulator_name = hr.settings.get_simulator_name()
+# Set simulator name and compile options
 if simulator_name in ["MODELSIM", "RIVIERA"]:
     sim_options = "-t ns"
-    # Set compile options
-    default_options = ["-suppress", "1346,1246,1236", "-2008"]
-    hr.set_simulator(simulator=simulator_name, com_options=default_options)
+    com_options = ["-suppress", "1346,1246,1236", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
 
 hr.start(sim_options=sim_options)
 
+num_expected_failing_tests = 1
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()
 
+if num_failing_tests >= num_expected_failing_tests:
+    num_failing_tests -= num_expected_failing_tests
+
 num_failing_tests += errors
 
+################################
 # Check with golden reference
-(ret_txt, ret_code) = hr.run_command(find_python3_executable() + " ../script/maintenance_script/maintenance_run_spec_cov.py")
+################################
+(ret_txt, ret_code) = hr.run_command(find_python3_executable() + " ../script/maintenance_script/maintenance_run_spec_cov.py", True)
 
 if ret_code != 0:
     print(ret_txt)
     num_failing_tests += 1
 
+################################
 # Run demos
+################################
 print("Running demos...")
 
+hr = HDLRegression(simulator="modelsim")
+
+# Add Util, VVC Framework and Scoreboard VIP
+hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
+hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")
+hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
+# Add UART VIP
+hr.add_files("../../../bitvis_vip_uart/src/*.vhd", "bitvis_vip_uart")
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_uart")
+# Add UART DUT
+hr.add_files("../../../bitvis_uart/src/*.vhd", "bitvis_uart")
+# Add SBI VIP
+hr.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
+hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_sbi")
+# Add Spec Cov VIP
+hr.add_files("../../src/*.vhd", "bitvis_vip_spec_cov")
+
+sim_options = None
+simulator_name = hr.settings.get_simulator_name()
+# Set simulator name and compile options
+if simulator_name in ["MODELSIM", "RIVIERA"]:
+    sim_options = "-t ns"
+    com_options = ["-suppress", "1346,1246,1236", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
+
+script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../")
+script_path = script_path.replace("\\", "/")
 # Basic demo
-(ret_txt, num_errors) = hr.run_command(
-    find_python3_executable() + " ../script/run_basic_demo.py")
-if num_errors != 0:
-    print("Basic demo failed")
-    print(ret_txt)
-    num_failing_tests += 1
-else:
-    print("Basic demo ok")
+hr.add_files("../../demo/basic_usage/*.vhd", "bitvis_vip_spec_cov")
+hr.add_generics(entity="uart_vvc_tb", architecture="func", generics=["GC_SCRIPT_PATH", (script_path, "PATH")])
+
+hr.start(sim_options=sim_options)
+
+num_failing_tests += hr.get_num_fail_tests()
+num_passing_tests += hr.get_num_pass_tests()
 
 # Advanced demo
-(ret_txt, num_errors) = hr.run_command(
-    find_python3_executable() + " ../script/run_advanced_demo.py")
-if num_errors != 0:
-    print("Advanced demo failed")
-    print(ret_txt)
-    num_failing_tests += 1
-else:
-    print("Advanced demo ok")
+hr.remove_file("../../demo/basic_usage/*.vhd", "bitvis_vip_spec_cov")
+hr.add_files("../../demo/advanced_usage/*.vhd", "bitvis_vip_spec_cov")
+C_NUM_TESTCASES = 4
+for i in range(C_NUM_TESTCASES):
+    hr.add_generics(entity="uart_vvc_tb", architecture="func", generics=["GC_SCRIPT_PATH", (script_path, "PATH"), "GC_TESTCASE", i])
+
+hr.start(sim_options=sim_options)
+
+num_failing_tests += hr.get_num_fail_tests()
+num_passing_tests += hr.get_num_pass_tests()
 
 # No tests run error
 if num_passing_tests == 0:

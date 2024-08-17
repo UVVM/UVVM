@@ -78,9 +78,9 @@ package gmii_bfm_pkg is
   --==========================================================================================
   -- BFM procedures 
   --==========================================================================================
-  -- This function returns a GMII interface with initialized signals.
-  -- All input signals are initialized to 0
-  -- All output signals are initialized to Z
+  -- This function returns an GMII interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_gmii_if_signals
   return t_gmii_tx_if;
 

@@ -118,7 +118,8 @@ begin
       -- Set back original value
       v_num_expected_alerts := get_alert_counter(alert_level);
       dut_rdata <= release;
-      wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+      wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
+      wait for 0 ns;
       wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
       v_num_expected_alerts := 0 when alert_level = NO_ALERT else
                                v_num_expected_alerts + 1;

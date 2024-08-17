@@ -2,6 +2,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.8
+----------
+Released: 2024-08-16
+- Converted VVC generator documentation to RST format.
+
 v2.12.7
 ----------
 Released: 2024-07-03

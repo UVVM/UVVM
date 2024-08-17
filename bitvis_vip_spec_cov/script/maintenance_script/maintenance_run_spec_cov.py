@@ -98,7 +98,7 @@ test_list = [
     [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/uart_req_file.csv", "-m", "../tb/maintenance_tb/uart_omit_map_file.csv", "-p", "../sim/pc_16.csv", "-s", "../sim/sc_16.csv"],
     [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/uart_req_file.csv", "-m", "../tb/maintenance_tb/uart_omit_map_file.csv", "-p", "../sim/pc_17.csv", "-s", "../sim/sc_17.csv"],
     [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/uart_req_file.csv", "-m", "../tb/maintenance_tb/uart_omit_map_file.csv", "-p", "../sim/pc_18.csv", "-s", "../sim/sc_18.csv"],
-    [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/uart_req_file.csv", "-m", "../tb/maintenance_tb/uart_omit_map_file.csv", "-p", "../sim/pc_19.csv", "-s", "../sim/sc_19.csv"],
+    [python_exe, "../script/run_spec_cov.py", "--strictness", "0", "-r", "../tb/maintenance_tb/uart_req_file.csv", "-m", "../tb/maintenance_tb/uart_map_file.csv", "-p", "../sim/pc_19.csv", "-s", "../sim/sc_19.csv"],
     [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_3_strict_0.txt"],
     [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_3_strict_1.txt"],
     [python_exe, "../script/run_spec_cov.py", "--config", "../tb/maintenance_tb/cfg_3_strict_2.txt"],
@@ -137,7 +137,7 @@ def run_tests():
         try:
             output = subprocess.check_output(test, stderr=subprocess.PIPE)
             # Save output for golden check
-            with open("output_" + str(idx + 1) + ".txt", "w") as file:
+            with open("output_" + str(idx + 1) + ".txt", "w", newline='\n') as file:
                 file.write(str(output, "utf-8"))
         except subprocess.CalledProcessError as e:
             print("ERROR: %s" % (e))

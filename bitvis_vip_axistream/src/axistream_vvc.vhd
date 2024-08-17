@@ -56,7 +56,7 @@ entity axistream_vvc is
     );
   port(
     clk              : in    std_logic;
-    axistream_vvc_if : inout t_axistream_if := init_axistream_if_signals(GC_VVC_IS_MASTER, GC_DATA_WIDTH, GC_USER_WIDTH, GC_ID_WIDTH, GC_DEST_WIDTH)
+    axistream_vvc_if : inout t_axistream_if := init_axistream_if_signals(GC_VVC_IS_MASTER, GC_DATA_WIDTH, GC_USER_WIDTH, GC_ID_WIDTH, GC_DEST_WIDTH, GC_AXISTREAM_BFM_CONFIG)
     );
 begin
   -- Check the interface widths to assure that the interface was correctly set up

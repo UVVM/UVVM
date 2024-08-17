@@ -67,13 +67,16 @@ hr.add_generics(
 )
 
 sim_options = None
-default_options = []
 simulator_name = hr.settings.get_simulator_name()
+# Set simulator name and compile options
 if simulator_name in ["MODELSIM", "RIVIERA"]:
     sim_options = "-t ps"
-    # Set compile options
-    default_options = ["-suppress", "1346,1246,1236", "-2008"]
-    hr.set_simulator(simulator=simulator_name, com_options=default_options)
+    com_options = ["-suppress", "1346,1246,1236", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
+elif simulator_name == "GHDL":
+    com_options = ["--ieee=standard", "--std=08", "-frelaxed-rules", "--warn-no-shared", "--warn-no-hide", "--warn-no-attribute"]
+    com_options += ["-fsynopsys"] # Altera library requires Synopsys std_logic_unsigned library
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
 
 hr.start(sim_options=sim_options)
 

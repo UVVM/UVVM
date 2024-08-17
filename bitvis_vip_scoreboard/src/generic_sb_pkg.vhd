@@ -868,14 +868,14 @@ package body generic_sb_pkg is
       constant queue_count_max : in natural
     ) is
     begin
-      vr_sb_queue.set_queue_count_max(instance, queue_count_max);
+      priv_sb_queue.set_queue_count_max(instance, queue_count_max);
     end procedure;
 
     procedure set_queue_count_max(
       constant queue_count_max : in natural
     ) is
     begin
-      vr_sb_queue.set_queue_count_max(queue_count_max);
+      priv_sb_queue.set_queue_count_max(queue_count_max);
     end procedure;
 
     ----------------------------------------------------------------------------------------------------
@@ -891,14 +891,14 @@ package body generic_sb_pkg is
       constant queue_count_alert_level : in natural
     ) is
     begin
-      vr_sb_queue.set_queue_count_threshold(instance, queue_count_alert_level);
+      priv_sb_queue.set_queue_count_threshold(instance, queue_count_alert_level);
     end procedure;
 
     procedure set_queue_count_threshold(
       constant queue_count_alert_level : in natural
     ) is
     begin
-      vr_sb_queue.set_queue_count_threshold(queue_count_alert_level);
+      priv_sb_queue.set_queue_count_threshold(queue_count_alert_level);
     end procedure;
 
     ----------------------------------------------------------------------------------------------------

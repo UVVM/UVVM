@@ -47,14 +47,14 @@ The really great benefit here is the unique overview, readability, maintainabili
 the best testbench architecture possible - much in the same way as a good architecture is also critical for any complex design.
 Another major benefit here is that any number of commands may be issued at the same time from the test sequencer - thus allowing 
 full control of when an access is to be performed, and the commands are understandable "even" for a software developer ;-) 
-The commands may be queued, skewed, delayed, synchronised, etc. - and a super-set for applying constrained random or other 
+The commands may be queued, skewed, delayed, synchronized, etc. - and a super-set for applying constrained random or other 
 sequences of data may of course also be applied. This yields an excellent control over your testbench and VVCs.
 
 For debugging you can select logging of a command when it is issued from the sequencer, when it is received by the VVC, when it is 
 initiated by the VVC and/or when it has been executed towards the DUT. This allows full overview of all actions in your complete 
 testbench.
 
-UVVM is free and open source and has standardised the way to build good testbench architectures and VVCs so that reuse is dead 
+UVVM is free and open source and has standardized the way to build good testbench architectures and VVCs so that reuse is dead 
 simple, and allows the FPGA community to share VVCs that will work together in a well-structured test harness.
 
 You may of course combine UVVM with any other legacy or 3rd party testbenches or verification models.
@@ -111,7 +111,7 @@ to handle just the AXI4-Lite interface with everything else being your proprieta
 **********************************************************************************************************************************
 Prerequisites
 **********************************************************************************************************************************
-UVVM is tool and library independent, but it must be compiled with VHDL-2008.
+UVVM is tool and library independent, but it must be compiled with VHDL-2008 or newer.
 The latest release of UVVM has been tested with the following simulators:
 
 * ModelSim

@@ -306,7 +306,7 @@ Returns the default range weight mode. ::
 
 clear_rand_cyclic()
 ----------------------------------------------------------------------------------------------------------------------------------
-Clears the state of the cyclic random generation. Deallocates the list/queue used to store the generated numbers. For an overview 
+Clears the state of the cyclic random generation. De-allocates the list/queue used to store the generated numbers. For an overview 
 on cyclic randomization click :ref:`here <rand_pkg_cyclic>`. ::
 
     clear_rand_cyclic(VOID)
@@ -1189,7 +1189,7 @@ Adds a constraint specifying a range which will be included in the randomized va
 add_range_unsigned()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range which will be included in the randomized values. This procedure can be used for min and max 
-values bigger than the integer’s 32-bit range. ::
+values bigger than the integer's 32-bit range. ::
 
     add_range_unsigned(min_value, max_value, [msg_id_panel])
 
@@ -1215,7 +1215,7 @@ values bigger than the integer’s 32-bit range. ::
 add_range_signed()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range which will be included in the randomized values. This procedure can be used for min and max 
-values bigger than the integer’s 32-bit range. ::
+values bigger than the integer's 32-bit range. ::
 
     add_range_signed(min_value, max_value, [msg_id_panel])
 

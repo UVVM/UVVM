@@ -90,8 +90,8 @@ package avalon_st_bfm_pkg is
   -- BFM procedures
   --==========================================================================================
   -- This function returns an Avalon-ST interface with initialized signals.
-  -- All input signals are initialized to 0
-  -- All output signals are initialized to Z
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_avalon_st_if_signals(
     is_master        : boolean;         -- When true, this BFM drives data signals
     channel_width    : natural;

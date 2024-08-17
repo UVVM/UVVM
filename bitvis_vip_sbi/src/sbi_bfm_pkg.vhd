@@ -90,9 +90,9 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- init_sbi_if_signals
   ------------------------------------------
-  -- - This function returns an SBI interface with initialized signals.
-  -- - All SBI input signals are initialized to 0
-  -- - All SBI output signals are initialized to Z
+  -- This function returns an SBI interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_sbi_if_signals(
     addr_width : natural;
     data_width : natural

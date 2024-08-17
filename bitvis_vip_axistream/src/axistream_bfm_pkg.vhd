@@ -122,10 +122,9 @@ package axistream_bfm_pkg is
   --========================================================================================================================
   -- BFM procedures
   --========================================================================================================================
-
-  -- - This function returns an AXI Stream interface with initialized signals.
-  -- - All input signals are initialized to 0
-  -- - All output signals are initialized to Z
+  -- This function returns an AXI-Stream interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_axistream_if_signals(
     is_master  : boolean;           -- When true, this BFM drives data signals
     data_width : natural;
@@ -723,7 +722,8 @@ package body axistream_bfm_pkg is
                                               data_width => axistream_if.tdata'length,
                                               user_width => axistream_if.tuser'length,
                                               id_width   => axistream_if.tid'length,
-                                              dest_width => axistream_if.tdest'length);
+                                              dest_width => axistream_if.tdest'length,
+                                              config     => config);
 
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
@@ -849,8 +849,8 @@ package body axistream_bfm_pkg is
                                                   data_width => axistream_if.tdata'length,
                                                   user_width => axistream_if.tuser'length,
                                                   id_width   => axistream_if.tid'length,
-                                                  dest_width => axistream_if.tdest'length
-                                                 );
+                                                  dest_width => axistream_if.tdest'length,
+                                                  config     => config);
       end if;
     end loop;
 

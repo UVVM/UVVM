@@ -37,14 +37,17 @@ use bitvis_vip_spec_cov.spec_cov_pkg.all;
 --hdlregression:tb
 -- Test bench entity
 entity uart_vvc_tb is
+  generic (
+    GC_SCRIPT_PATH : string := ""
+  );
 end entity;
 
 -- Test bench architecture
 architecture func of uart_vvc_tb is
 
   -- Assuming that the testbench is run from the sim folder
-  constant C_REQ_LIST_FILE      : string := "../demo/basic_usage/req_list_basic_demo.csv";
-  constant C_PARTIAL_COV_FILE   : string := "../sim/partial_cov_basic_demo.csv";
+  constant C_REQ_LIST_FILE      : string := GC_SCRIPT_PATH & "../demo/basic_usage/req_list_basic_demo.csv";
+  constant C_PARTIAL_COV_FILE   : string := GC_SCRIPT_PATH & "../sim/partial_cov_basic_demo.csv";
 
   constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
 

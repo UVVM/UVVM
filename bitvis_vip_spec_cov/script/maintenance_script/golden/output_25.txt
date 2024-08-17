@@ -1,0 +1,40 @@
+
+Configuration:
+----------------------------------------------
+requirement_list     : ../tb/maintenance_tb/req_file.csv
+partial_cov          : ../tb/maintenance_tb/pc_20_files.txt
+requirement_map_list : None
+spec_cov             : ../sim/sc_20_1.csv
+clean                : None
+strictness           : 1
+config               : ../tb/maintenance_tb/cfg_3_strict_1.txt
+
+
+SUMMARY:
+----------------------------------------------
+Number of compliant requirements     : 2
+Number of non compliant requirements : 0
+Number of non verified requirements  : 8
+Number of not listed requirements    : 0
+Number of passing testcases : 2
+Number of failing testcases : 0
+Number of not run testcases : 9
+
+
+Compliant requirement(s) :
+REQ_1, REQ_2, 
+
+Not verified requirement(s) :
+REQ_3, REQ_4, REQ_5, REQ_6, REQ_7, REQ_88, REQ_9, REQ_10, 
+
+Passing testcase(s) :
+TC_1, TC_2, 
+
+Not run testcase(s) :
+TC_3, TC_4, TC_4_FAIL, TC_5, TC_6, TC_7, TC_8, TC_9, TC_10, 
+
+Following 2 partial coverage file(s) have been previously executed :
+../sim/pc_20a.csv
+../sim/pc_20b.csv
+
+

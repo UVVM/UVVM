@@ -1,0 +1,10 @@
+Requirement,Testcase,Compliance
+REQ_1,TC_1,COMPLIANT
+REQ_2,TC_1,NOT_TESTED
+REQ_3,TC_1,COMPLIANT
+REQ_4,TC_1,NON_COMPLIANT
+
+
+
+Not listed requirement(s)
+REQ_4

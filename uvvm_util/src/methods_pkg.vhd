@@ -30,7 +30,7 @@ library ieee;
 
 package methods_pkg is
 
-  constant C_UVVM_VERSION : string := "v2 2024.07.03";
+  constant C_UVVM_VERSION : string := "v2 2024.08.16";
 
   -- -- ============================================================================
   -- -- Initialisation and license

@@ -1,0 +1,5 @@
+Testcase,Requirement,Result
+TC_1,REQ_1,PASS
+TC_2,,NOT_EXECUTED
+TC_3,,NOT_EXECUTED
+TC_4,,NOT_EXECUTED

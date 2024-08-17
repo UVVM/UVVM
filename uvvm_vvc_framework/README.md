@@ -44,7 +44,7 @@ You may of course combine UVVM with any other legacy or 3rd party testbenches or
 See [UVVM](./../README.md)
 
 ## Prerequisites
-UVVM is tool and library independent, but it must be compiled with VHDL 2008.
+UVVM is tool and library independent, but it must be compiled with VHDL-2008 or newer.
 See the overall [UVVM](./../README.md) documentation for prerequisites, license, maintainers, etc.
 Python is required **if** you want to execute the VVC generation scripts
 

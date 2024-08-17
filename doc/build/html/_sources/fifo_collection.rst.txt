@@ -137,7 +137,7 @@ This function returns a boolean indicating if the FIFO is full or not. ::
 
 uvvm_fifo_deallocate()
 ----------------------------------------------------------------------------------------------------------------------------------
-This function deallocates the FIFO buffer, all the FIFO pointers are reset. ::
+This function de-allocates the FIFO buffer, all the FIFO pointers are reset. ::
 
     uvvm_fifo_deallocate(VOID)
 

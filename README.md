@@ -92,7 +92,7 @@ The VIPs complies with respective protocols and thus allows a
 normal access towards the interface. The VIPs are not protocol checkers.
 
 ## Prerequisites
-UVVM is tool and library independent, but it must be compiled with VHDL 2008.
+UVVM is tool and library independent, but it must be compiled with VHDL-2008 or newer.
 UVVM has been tested with the following simulators:
 - Modelsim
 - Riviera-PRO

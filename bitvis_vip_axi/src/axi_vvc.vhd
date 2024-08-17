@@ -171,22 +171,23 @@ architecture behave of axi_vvc is
 
 begin
 
-  process begin
+  -- Remove vsim-8684 warning
+  p_initial_drivers : process begin
     axi_vvc_master_if.write_address_channel.awready <= 'Z';
-    axi_vvc_master_if.write_data_channel.wready <= 'Z';
+    axi_vvc_master_if.write_data_channel.wready     <= 'Z';
     axi_vvc_master_if.write_response_channel.bvalid <= 'Z';
-    axi_vvc_master_if.write_response_channel.bid(GC_ID_WIDTH-1 downto 0) <= (others => 'Z');
-    axi_vvc_master_if.write_response_channel.bresp <= (others => 'Z');
-    axi_vvc_master_if.write_response_channel.buser(GC_USER_WIDTH-1 downto 0) <= (others => 'Z');
-    axi_vvc_master_if.read_address_channel.arready <= 'Z';
-    axi_vvc_master_if.read_data_channel.rlast <= 'Z';
-    axi_vvc_master_if.read_data_channel.rvalid <= 'Z';
-    axi_vvc_master_if.read_data_channel.rid(GC_ID_WIDTH-1 downto 0) <= (others => 'Z');
-    axi_vvc_master_if.read_data_channel.rdata(GC_DATA_WIDTH-1 downto 0) <= (others => 'Z');
-    axi_vvc_master_if.read_data_channel.rresp <= (others => 'Z');
-    axi_vvc_master_if.read_data_channel.ruser(GC_USER_WIDTH-1 downto 0) <= (others => 'Z');
+    axi_vvc_master_if.write_response_channel.bid    <= (axi_vvc_master_if.write_response_channel.bid'range => 'Z');
+    axi_vvc_master_if.write_response_channel.bresp  <= (others => 'Z');
+    axi_vvc_master_if.write_response_channel.buser  <= (axi_vvc_master_if.write_response_channel.buser'range => 'Z');
+    axi_vvc_master_if.read_address_channel.arready  <= 'Z';
+    axi_vvc_master_if.read_data_channel.rlast       <= 'Z';
+    axi_vvc_master_if.read_data_channel.rvalid      <= 'Z';
+    axi_vvc_master_if.read_data_channel.rid         <= (axi_vvc_master_if.read_data_channel.rid'range => 'Z');
+    axi_vvc_master_if.read_data_channel.rdata       <= (axi_vvc_master_if.read_data_channel.rdata'range => 'Z');
+    axi_vvc_master_if.read_data_channel.rresp       <= (others => 'Z');
+    axi_vvc_master_if.read_data_channel.ruser       <= (axi_vvc_master_if.read_data_channel.ruser'range => 'Z');
     wait;
-  end process;
+  end process p_initial_drivers;
 
   --===============================================================================================
   -- Constructor

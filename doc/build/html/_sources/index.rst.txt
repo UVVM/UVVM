@@ -28,7 +28,6 @@ UVVM consists currently of the following elements:
    func_cov_pkg_overview.rst
    optimized_rand.rst
    vvc_framework.rst
-   protected_types.rst
    fifo_collection.rst
    generic_queue.rst
    vip_avalon_mm.rst

@@ -184,7 +184,8 @@ begin
           when 6 => dut_m_eop     <= release;
           when 7 => dut_m_sop     <= release;
         end case;
-        wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+        wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
+        wait for 0 ns;
         v_num_expected_alerts := 0 when alert_level = NO_ALERT else
                                  v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
                                  v_num_expected_alerts + 1;

@@ -47,13 +47,12 @@ hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_v
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_axilite")
 
 sim_options = None
-default_options = []
-simualtor_name = hr.settings.get_simulator_name()
-if simualtor_name in ['MODELSIM', 'RIVIERA']:
-    sim_options = '-t ns'
-    # Set compile options
-    default_options = ["-suppress", "1346,1246,1236", "-2008"]
-    hr.set_simulator(simulator=simualtor_name, com_options=default_options)
+simulator_name = hr.settings.get_simulator_name()
+# Set simulator name and compile options
+if simulator_name in ["MODELSIM", "RIVIERA"]:
+    sim_options = "-t ns"
+    com_options = ["-suppress", "1346,1246,1236", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
 
 hr.start(sim_options=sim_options)
 

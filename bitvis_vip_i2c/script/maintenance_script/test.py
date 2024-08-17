@@ -57,13 +57,16 @@ hr.add_files("../../../bitvis_vip_wishbone/src/*.vhd", "bitvis_vip_wishbone")
 hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_vip_wishbone")
 
 sim_options = None
-default_options = []
 simulator_name = hr.settings.get_simulator_name()
+# Set simulator name and compile options
 if simulator_name in ["MODELSIM", "RIVIERA"]:
     sim_options = "-t ns"
-    # Set compile options
-    default_options = ["-suppress", "1346,1246,1236", "-2008"]
-    hr.set_simulator(simulator=simulator_name, com_options=default_options)
+    com_options = ["-suppress", "1346,1246,1236", "-2008"]
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
+elif simulator_name == "GHDL":
+    com_options = ["--ieee=standard", "--std=08", "-frelaxed-rules", "--warn-no-shared", "--warn-no-hide", "--warn-no-attribute"]
+    com_options += ["-fsynopsys"] # Opencores library requires Synopsys std_logic_unsigned library
+    hr.set_simulator(simulator=simulator_name, com_options=com_options)
 
 hr.start(sim_options=sim_options)
 

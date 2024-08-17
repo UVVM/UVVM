@@ -14,6 +14,11 @@ Released: 2024-03-08
 - Moved sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
 - Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
+v4.0.1
+----------
+Released: 2024-XX-XX
+- Converted documentation to RST format.
+
 v4.0.0
 ----------
 Released: 2024-07-03

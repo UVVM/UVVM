@@ -1,0 +1,11 @@
+NOTE: This coverage file is only valid when the last line is 'SUMMARY, TC_1, PASS'
+TESTCASE_NAME: TC_1
+DELIMITER: ,
+
+REQ_1,TC_1,PASS
+REQ_2,TC_1,PASS
+REQ_3,TC_1,PASS
+REQ_4,TC_1,PASS
+SUMMARY, TC_1, PASS
+
+Has been parsed by run_spec_cov.py script for total coverage

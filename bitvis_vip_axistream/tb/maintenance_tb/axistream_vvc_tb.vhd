@@ -198,7 +198,8 @@ begin
           when 7 => dut_m_tid    <= release;
           when 8 => dut_m_tdest  <= release;
         end case;
-        wait for 0 ns; -- Wait a delta cycle so that the alert is triggered
+        wait for 0 ns; -- Wait two delta cycles so that the alert is triggered
+        wait for 0 ns;
         wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
         v_num_expected_alerts := 0 when alert_level = NO_ALERT else
                                  v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else

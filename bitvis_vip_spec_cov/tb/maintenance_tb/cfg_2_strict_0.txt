@@ -1,0 +1,5 @@
+-r ../tb/maintenance_tb/sub_req_file.csv 
+-p ../sim/pc_9.csv 
+-m ../tb/maintenance_tb/sub_req_map_file.csv
+-s ../sim/sc_9_0.csv
+--strictness 0

@@ -229,11 +229,9 @@ begin
     insert_delay(AVALON_MM_VVCT, 1, 50, "Giving the DUT some time to initialize");
     await_completion(AVALON_MM_VVCT, 1, 55000 ns, "Awaiting completion of inserted delay and wait statement");
 
-    --==================================================================================================
-    -- Start of tests
     --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Basic read and write tests with pipelined DUT");
-
+    --------------------------------------------------------------------------------------
     for i in 0 to 1 loop
       log(ID_SEQUENCER, "Testing pipeliend read/check, iteration i=" & to_string(i));
       debug_data_to_send <= x"00110032";
@@ -247,7 +245,7 @@ begin
     end loop;
 
     wait for 1 us;
-    log(ID_SEQUENCER, "Testing pipeliend write");
+    log(ID_SEQUENCER, "Testing pipelined write");
     avalon_mm_write(AVALON_MM_VVCT, 1, x"0", x"10", "Writing to DUT");
     await_completion(AVALON_MM_VVCT, 1, 2000 ns, "Awaiting completion of write");
     await_value(debug_received_data, x"10", 0 ns, 1 us, ERROR, "Awaiting value on debug output port");
@@ -261,8 +259,9 @@ begin
     await_value(debug_received_data, x"1234", 0 ns, 1 us, ERROR, "Awaiting value on debug output port");
     await_completion(AVALON_MM_VVCT, 1, 2000 ns, "Awaiting completion of write");
 
+    --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of multiple pipelined reads");
-
+    --------------------------------------------------------------------------------------
     log(ID_SEQUENCER, "Reading multiple times");
     debug_data_to_send <= x"00001100";
     avalon_mm_check(AVALON_MM_VVCT, 1, x"0", x"00001100", "Reading data");
@@ -316,10 +315,10 @@ begin
     await_completion(AVALON_MM_VVCT, 1, 10 us, "Waiting until test is done");
     wait for 1 us;
 
-    -- Test : pipelined reading, when different readdata each read:
+    --------------------------------------------------------------------------------------
     log(ID_LOG_HDR, "Test of pipelined reading, when different readdata each read");
+    --------------------------------------------------------------------------------------
     log(ID_SEQUENCER, "Reading multiple times");
-
     -- Schedule each change in debug_data_to_send
     for i in 0 to 27 loop
       debug_data_to_send <= transport std_logic_vector(to_unsigned(i, 32)) after i * C_CLK_PERIOD;
@@ -341,6 +340,18 @@ begin
     wait for 10 us;
     await_completion(AVALON_MM_VVCT, 1, 10000 ns, "Awaiting completion");
     wait for 10 us;
+
+    --------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Test fetch_result with cmd_idx lower than the last_cmd_idx_executed");
+    --------------------------------------------------------------------------------------
+    debug_data_to_send <= x"10100011";
+    avalon_mm_read(AVALON_MM_VVCT, 1, x"0", "Reading data");
+    v_cmd_idx := get_last_received_cmd_idx(AVALON_MM_VVCT, 1); -- Retrieve the command index for the read
+    avalon_mm_unlock(AVALON_MM_VVCT, 1, "Send a new command to VVC which executes faster than the read to increase the last_cmd_idx_executed");
+    await_completion(AVALON_MM_VVCT, 1, v_cmd_idx, 100 us, "Wait for read to finish");
+    fetch_result(AVALON_MM_VVCT, 1, v_cmd_idx, v_data, v_is_ok, "Fetching read-result");
+    check_value(v_is_ok, ERROR, "Readback OK via fetch_result()");
+    check_value(v_data(31 downto 0), x"10100011", ERROR, "Readback data via fetch_result()");
 
     -----------------------------------------------------------------------------
     -- Ending the simulation

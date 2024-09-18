@@ -2,6 +2,15 @@ UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
 ----------------------------------------------------------------------
+v2.19.7
+----------
+Released: 2024-09-19
+- Changed default names for log and alert files to UVVM_Log.txt and UVVM_Alert.txt
+
+v2.19.6
+----------
+Released: 2024-07-03
+- Fixed bug in .single_tc_vs_single_req listed output files in spec cov. 
 
 v2.19.5
 ----------

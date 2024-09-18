@@ -1,0 +1,67 @@
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF GLOBAL CTRL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                                IGNORE    STOP_LIMIT
+UVVM:                NOTE         :  REGARD         0
+UVVM:                TB_NOTE      :  REGARD         0
+UVVM:                WARNING      :  REGARD         0
+UVVM:                TB_WARNING   :  REGARD         0
+UVVM:                MANUAL_CHECK :  REGARD         0
+UVVM:                ERROR        :  REGARD         1
+UVVM:                TB_ERROR     :  REGARD         1
+UVVM:                FAILURE      :  REGARD         1
+UVVM:                TB_FAILURE   :  REGARD         1
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ALL_MESSAGES). 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Start Simulation of generic queue package
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Setting up generic queue and verifying scope and size
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Queue instantiated with depth 1000
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Checking queue scope is OK => received queue_scope
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for boolean true. 'Checking if queue is initially empty'
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for int 0. 'Checking if queue is initially empty'
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for int 1000. 'Checking size of queue'
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for int 0. 'Checking queue count alert level'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of insert
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for boolean true. 'Check if the queue is big enough for the planned test'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Filling up the queue with 9 entries = (others => '0'). 
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for int 10. 'Pre insert test: Checking if queue initially has 10 entries'
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for boolean true. 'Pre insert test: Check that Element doens't exists yet'
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for int -1. 'Pre insert test: Check that element = 0 is not found yet'
+UVVM: ID_SEQUENCER_SUB                   0.0 ns  test_bench                     Insert element = different byte =  at POSITION 2
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for int 11. 'Post insert test: Checking that queue has 11 entries'
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for boolean true. 'Check that inserted Element exists'
+UVVM: ID_POS_ACK                         0.0 ns  test_bench                     check_value() => OK, for int 2. 'Check that the new element =  TRUE  is at POSITION 2'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  test_bench                     SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

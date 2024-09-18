@@ -134,6 +134,24 @@ begin
                                  v_num_expected_alerts + 1;
         check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
       end loop;
+
+      -- Test ignored transitions ('U'->'L', 'U'->'0', '0'->'L', 'L'->'0')
+      wait for C_CLK_PERIOD;
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, 2); -- Expected due to forcing to uninitialized value
+      end if;
+      dut_txen <= force 'U';
+      wait for C_CLK_PERIOD;
+      dut_txen <= force 'L';
+      wait for C_CLK_PERIOD;
+      dut_txen <= force 'U';
+      wait for C_CLK_PERIOD;
+      dut_txen <= force '0';
+      wait for C_CLK_PERIOD;
+      dut_txen <= force 'L';
+      wait for C_CLK_PERIOD;
+      dut_txen <= release;
+      wait for C_CLK_PERIOD;
     end procedure;
 
   begin

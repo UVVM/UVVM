@@ -19,8 +19,10 @@ def get_golden_file_list(simulator='modelsim', path=None):
     golden_dir = 'golden_modelsim'
   elif simulator == 'riviera':
     golden_dir = 'golden_riviera_pro'
-  else:
+  elif simulator == 'ghdl':
     golden_dir = 'golden_ghdl'
+  else:
+    golden_dir = 'golden_nvc'
 
   if 'release' in path:
     path = os.path.join(path, '../uvvm_util/script/maintenance_script/' + golden_dir)
@@ -77,7 +79,7 @@ def compare_lines(golden_lines, verify_lines):
   return error_lines
 
 
-def compare(modelsim=False, riviera=False, ghdl=False, path=None):
+def compare(modelsim=False, riviera=False, ghdl=False, nvc=False, path=None):
   # Get file lists
   test_run_file_list = get_test_file_list(path)
   num_test_run_files = len(test_run_file_list)
@@ -88,6 +90,8 @@ def compare(modelsim=False, riviera=False, ghdl=False, path=None):
     golden_file_list = get_golden_file_list(simulator='riviera', path=path)
   if ghdl:
     golden_file_list = get_golden_file_list(simulator='ghdl', path=path)
+  if nvc:
+    golden_file_list = get_golden_file_list(simulator='nvc', path=path)
 
   failing_verify_file = []
   missing_test_run_file = []
@@ -139,6 +143,8 @@ def compare(modelsim=False, riviera=False, ghdl=False, path=None):
     simulator = '[RIVIERA]'
   if ghdl:
     simulator = '[GHDL]'
+  if nvc:
+    simulator = '[NVC]'
 
   # Present statistics
   print("%s Number of golden files found : %d" % (simulator, len(golden_file_list)))
@@ -207,8 +213,13 @@ def main(argv):
       print("--------------------------------------")
       compare(ghdl=True, path=path)
 
+    elif ("nvc" in arg):
+      print("Verify nvc files : ")
+      print("--------------------------------------")
+      compare(nvc=True, path=path)
+
   # No simulator match
-  print("Please specify simulator as argument: modelsim, riviera or ghdl")
+  print("Please specify simulator as argument: modelsim, riviera, ghdl or nvc")
   sys.exit(1)
 
 

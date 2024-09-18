@@ -1,6 +1,13 @@
 Bitvis VIP Specification Coverage - Overview on Versions and Changes
 ==============================================================
 
+
+v1.1.2
+----------
+Released: 2024-09-19
+- Fixed bug in .single_tc_vs_single_req format where tc could be given wrong status and listed without reqs.
+
+
 v1.1.1
 ----------
 Released: 2024-08-16

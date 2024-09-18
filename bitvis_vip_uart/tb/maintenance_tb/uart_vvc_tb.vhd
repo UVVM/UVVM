@@ -101,6 +101,36 @@ begin
       v_num_expected_alerts := 0 when alert_level = NO_ALERT else
                                v_num_expected_alerts + 1;
       check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
+
+      -- Test ignored transitions ('U'->'X', 'U'->'Z', 'U'->'W', 'U'->'H', 'U'->'1', '1'->'H', 'H'->'1')
+      wait for C_CLK_PERIOD;
+      if alert_level /= NO_ALERT then
+        increment_expected_alerts_and_stop_limit(alert_level, 5); -- Expected due to forcing to uninitialized value
+      end if;
+      dut_tx <= force 'U';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'X';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'U';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'Z';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'U';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'W';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'U';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'H';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'U';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force '1';
+      wait for C_CLK_PERIOD;
+      dut_tx <= force 'H';
+      wait for C_CLK_PERIOD;
+      dut_tx <= release;
+      wait for C_CLK_PERIOD;
     end procedure;
 
   begin

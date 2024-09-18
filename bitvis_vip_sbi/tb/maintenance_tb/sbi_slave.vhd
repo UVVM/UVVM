@@ -33,7 +33,7 @@ entity sbi_slave is
     sbi_wr     : in  std_logic;
     sbi_addr   : in  unsigned(GC_ADDR_WIDTH - 1 downto 0);
     sbi_wdata  : in  std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
-    sbi_rdata  : out std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
+    sbi_rdata  : out std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
     last_write : out std_logic_vector(GC_DATA_WIDTH - 1 downto 0);
     data_in    : in  std_logic_vector(GC_DATA_WIDTH - 1 downto 0)
   );

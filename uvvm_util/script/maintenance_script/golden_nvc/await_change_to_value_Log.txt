@@ -1,0 +1,373 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.(uvvm)                  Starting testcase: await_change_to_value
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Verifying await_change_to_value
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.(uvvm)                  Testing await_change_to_value with std_logic
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:             4 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(std_logic 1, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                     14.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:            17 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(std_logic 1, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
+UVVM: 
+UVVM: ID_POS_ACK                        19.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic '1'. 'check_value within: await_change_to_value(std_logic 1,
+UVVM:                                                                           0 ns, 3 ns)'
+UVVM: ID_POS_ACK                        19.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic 1, 0 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           value specified within limit, OK'
+UVVM: ID_UTIL_SETUP                     29.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                        30.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic '0'. 'check_value within: await_change_to_value(std_logic 0,
+UVVM:                                                                           2 ns, 3 ns)'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:            30 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(std_logic 0, 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                     40.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:            47 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(std_logic 1, 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                        61.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic '1'. 'check_value within: await_change_to_value(std_logic 1,
+UVVM:                                                                           3 ns, 5 ns)'
+UVVM: ID_POS_ACK                        61.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic 1, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change
+UVVM:                                                                           only (not correct) triggered'
+UVVM: ID_POS_ACK                        73.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic 'L' (exp: '0'). 'check_value within:
+UVVM:                                                                           await_change_to_value(std_logic 0, 1 ns, 3 ns)'
+UVVM: ID_POS_ACK                        73.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic 0, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable STD value within timeframe'
+UVVM: ID_UTIL_SETUP                     78.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #4  ***
+UVVM:            81 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(std_logic Z, 1 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change to correct STD but outside t_match_strictness scope should
+UVVM:                    give error'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                        93.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic 'Z' (exp: 'Z'). 'check_value within:
+UVVM:                                                                           await_change_to_value(std_logic Z, 1 ns, 3 ns)'
+UVVM: ID_POS_ACK                        93.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic Z, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable STD value within timeframe'
+UVVM: ID_UTIL_SETUP                     98.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #5  ***
+UVVM:           101 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(std_logic X, 1 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change to correct STD but outside t_match_strictness scope should
+UVVM:                    give error'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    111.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #6  ***
+UVVM:           114 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(std_logic H, 1 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change to similar STD but outside t_match_strictness scope should
+UVVM:                    give error'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       126.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic 'X' (exp: 'X'). 'check_value within:
+UVVM:                                                                           await_change_to_value(std_logic X, 1 ns, 3 ns)'
+UVVM: ID_POS_ACK                       126.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic X, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_UTIL_SETUP                    136.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #7  ***
+UVVM:           139 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(std_logic 1, 1 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change to acceptable value within timeframe'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       151.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic '0'. 'check_value within: await_change_to_value(std_logic 0,
+UVVM:                                                                           1 ns, 3 ns)'
+UVVM: ID_POS_ACK                       151.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic 0, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       153.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic '1'. 'check_value within: await_change_to_value(std_logic 1,
+UVVM:                                                                           1 ns, 3 ns)'
+UVVM: ID_POS_ACK                       153.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic 1, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       155.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic '0'. 'check_value within: await_change_to_value(std_logic 0,
+UVVM:                                                                           1 ns, 3 ns)'
+UVVM: ID_POS_ACK                       155.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic 0, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       157.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic '1'. 'check_value within: await_change_to_value(std_logic 1,
+UVVM:                                                                           1 ns, 3 ns)'
+UVVM: ID_POS_ACK                       157.0 ns  TB seq.(uvvm)                  await_change_to_value(std_logic 1, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_SEQUENCER                     167.0 ns  TB seq.(uvvm)                  Testing await_change_to_value with unsigned
+UVVM: ID_UTIL_SETUP                    167.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #8  ***
+UVVM:           170 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(unsigned 00000001, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    180.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
+UVVM: 
+UVVM: ***  WARNING #2  ***
+UVVM:           183 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(unsigned 00000001, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
+UVVM: 
+UVVM: ID_POS_ACK                       195.0 ns  TB seq.(uvvm)                  await_change_to_value(unsigned 00000001, 0 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to value specified within limit, OK'
+UVVM: ID_UTIL_SETUP                    205.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #9  ***
+UVVM:           206 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(unsigned 00000000, 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    216.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #10  ***
+UVVM:           223 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(unsigned 00000001, 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       237.0 ns  TB seq.(uvvm)                  await_change_to_value(unsigned 00000001, 3 ns, 5 ns) => OK. Condition occurred after 4 ns.
+UVVM:                                                                           'Change only (not correct) triggered'
+UVVM: ID_SEQUENCER_SUB                 249.0 ns  TB seq.(uvvm)                  await_change_to_value(unsigned 00000000, 1 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to acceptable value within timeframe'
+UVVM: ID_SEQUENCER_SUB                 251.0 ns  TB seq.(uvvm)                  await_change_to_value(unsigned 00000010, 1 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to acceptable value within timeframe'
+UVVM: ID_SEQUENCER_SUB                 253.0 ns  TB seq.(uvvm)                  await_change_to_value(unsigned 00000000, 1 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to acceptable value within timeframe'
+UVVM: ID_SEQUENCER_SUB                 255.0 ns  TB seq.(uvvm)                  await_change_to_value(unsigned 00000010, 1 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to acceptable value within timeframe'
+UVVM: ID_SEQUENCER                     265.0 ns  TB seq.(uvvm)                  Testing await_change_to_value with signed
+UVVM: ID_UTIL_SETUP                    265.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #11  ***
+UVVM:           268 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(signed 00000001, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    278.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
+UVVM: 
+UVVM: ***  WARNING #3  ***
+UVVM:           281 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(signed 00000001, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
+UVVM: 
+UVVM: ID_POS_ACK                       293.0 ns  TB seq.(uvvm)                  await_change_to_value(signed 00000001, 0 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to value specified within limit, OK'
+UVVM: ID_UTIL_SETUP                    303.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #12  ***
+UVVM:           304 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(signed 00000000, 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    314.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #13  ***
+UVVM:           321 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(signed 00000001, 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       335.0 ns  TB seq.(uvvm)                  await_change_to_value(signed 00000001, 3 ns, 5 ns) => OK. Condition occurred after 4 ns.
+UVVM:                                                                           'Change only (not correct) triggered'
+UVVM: ID_POS_ACK                       347.0 ns  TB seq.(uvvm)                  await_change_to_value(signed 00000000, 1 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to acceptable value within timeframe'
+UVVM: ID_POS_ACK                       349.0 ns  TB seq.(uvvm)                  await_change_to_value(signed 00000010, 1 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to acceptable value within timeframe'
+UVVM: ID_POS_ACK                       351.0 ns  TB seq.(uvvm)                  await_change_to_value(signed 00000000, 1 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to acceptable value within timeframe'
+UVVM: ID_POS_ACK                       353.0 ns  TB seq.(uvvm)                  await_change_to_value(signed 00000010, 1 ns, 3 ns) => OK. Condition occurred after 2 ns.
+UVVM:                                                                           'Change to acceptable value within timeframe'
+UVVM: ID_SEQUENCER                     363.0 ns  TB seq.(uvvm)                  Testing await_change_to_value with boolean
+UVVM: ID_UTIL_SETUP                    363.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #14  ***
+UVVM:           366 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(boolean true, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    376.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
+UVVM: 
+UVVM: ***  WARNING #4  ***
+UVVM:           379 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(boolean true, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
+UVVM: 
+UVVM: ID_POS_ACK                       391.0 ns  TB seq.(uvvm)                  await_change_to_value(boolean true, 0 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change
+UVVM:                                                                           to value specified within limit, OK'
+UVVM: ID_UTIL_SETUP                    401.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #15  ***
+UVVM:           402 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(boolean false, 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    412.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #16  ***
+UVVM:           419 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(boolean true, 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       433.0 ns  TB seq.(uvvm)                  await_change_to_value(boolean true, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change
+UVVM:                                                                           only (not correct) triggered'
+UVVM: ID_POS_ACK                       445.0 ns  TB seq.(uvvm)                  await_change_to_value(boolean false, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change
+UVVM:                                                                           to acceptable value within timeframe'
+UVVM: ID_POS_ACK                       447.0 ns  TB seq.(uvvm)                  await_change_to_value(boolean true, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change
+UVVM:                                                                           to acceptable value within timeframe'
+UVVM: ID_POS_ACK                       449.0 ns  TB seq.(uvvm)                  await_change_to_value(boolean false, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change
+UVVM:                                                                           to acceptable value within timeframe'
+UVVM: ID_POS_ACK                       451.0 ns  TB seq.(uvvm)                  await_change_to_value(boolean true, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change
+UVVM:                                                                           to acceptable value within timeframe'
+UVVM: ID_SEQUENCER                     461.0 ns  TB seq.(uvvm)                  Testing await_change_to_value with integer
+UVVM: ID_UTIL_SETUP                    461.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #17  ***
+UVVM:           464 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(integer 1, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    474.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
+UVVM: 
+UVVM: ***  WARNING #5  ***
+UVVM:           477 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(integer 1, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
+UVVM: 
+UVVM: ID_POS_ACK                       489.0 ns  TB seq.(uvvm)                  await_change_to_value(integer 1, 0 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           value specified within limit, OK'
+UVVM: ID_UTIL_SETUP                    499.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #18  ***
+UVVM:           500 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(integer 0, 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    510.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #19  ***
+UVVM:           517 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(integer 1, 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       531.0 ns  TB seq.(uvvm)                  await_change_to_value(integer 1, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change only
+UVVM:                                                                           (not correct) triggered'
+UVVM: ID_POS_ACK                       543.0 ns  TB seq.(uvvm)                  await_change_to_value(integer 0, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       545.0 ns  TB seq.(uvvm)                  await_change_to_value(integer 1, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       547.0 ns  TB seq.(uvvm)                  await_change_to_value(integer 0, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       549.0 ns  TB seq.(uvvm)                  await_change_to_value(integer 1, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_SEQUENCER                     559.0 ns  TB seq.(uvvm)                  Testing await_change_to_value with real
+UVVM: ID_UTIL_SETUP                    559.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #20  ***
+UVVM:           562 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(real 1, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    572.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
+UVVM: 
+UVVM: ***  WARNING #6  ***
+UVVM:           575 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(real 1, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
+UVVM: 
+UVVM: ID_POS_ACK                       587.0 ns  TB seq.(uvvm)                  await_change_to_value(real 1, 0 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           value specified within limit, OK'
+UVVM: ID_UTIL_SETUP                    597.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #21  ***
+UVVM:           598 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(real 0, 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    608.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #22  ***
+UVVM:           615 ns   TB seq.(uvvm)
+UVVM:                    await_change_to_value(real 1, 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       629.0 ns  TB seq.(uvvm)                  await_change_to_value(real 1, 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change only
+UVVM:                                                                           (not correct) triggered'
+UVVM: ID_POS_ACK                       641.0 ns  TB seq.(uvvm)                  await_change_to_value(real 0, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       643.0 ns  TB seq.(uvvm)                  await_change_to_value(real 1, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       645.0 ns  TB seq.(uvvm)                  await_change_to_value(real 0, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM: ID_POS_ACK                       647.0 ns  TB seq.(uvvm)                  await_change_to_value(real 1, 1 ns, 3 ns) => OK. Condition occurred after 2 ns. 'Change to
+UVVM:                                                                           acceptable value within timeframe'
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      6         6         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :     22        22         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1657.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

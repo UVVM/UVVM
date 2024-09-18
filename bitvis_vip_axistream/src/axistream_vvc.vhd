@@ -167,17 +167,6 @@ begin
 
         case v_local_vvc_cmd.operation is
 
-          when AWAIT_COMPLETION =>
-            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
-
-          when AWAIT_ANY_COMPLETION =>
-            if not v_local_vvc_cmd.gen_boolean then
-              -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
-              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
-              v_cmd_has_been_acked := true;
-            end if;
-            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
-
           when DISABLE_LOG_MSG =>
             uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE);
 
@@ -191,7 +180,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
-            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
+            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, entry_num_in_vvc_activity_register, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, shared_vvc_response);
 
           when others =>
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
@@ -223,6 +212,7 @@ begin
   -- - Fetch and execute the commands
   --========================================================================================================================
   cmd_executor : process
+    constant C_EXECUTOR_ID                           : natural := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_result                                : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time    := 0 ns;
@@ -242,14 +232,14 @@ begin
     loop
 
       -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
 
       -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Reset the transaction info for waveview
       --transaction_info := C_TRANSACTION_INFO_DEFAULT;
@@ -446,7 +436,7 @@ begin
   g_unwanted_activity : if not GC_VVC_IS_MASTER generate
     p_unwanted_activity : process
     begin
-      -- Add a delay to avoid detecting the first transition from the undefined value to initial value
+      -- Add a delay to allow the VVC to be registered in the activity register
       wait for std.env.resolution_limit;
 
       loop
@@ -470,14 +460,14 @@ begin
         if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
           -- Skip checking the changes if the tvalid signal goes low within one clock period after the VVC becomes inactive
           if not (falling_edge(axistream_vvc_if.tvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
-            check_value(not axistream_vvc_if.tvalid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tvalid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-            check_value(not axistream_vvc_if.tdata'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tdata", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-            check_value(not axistream_vvc_if.tkeep'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tkeep", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-            check_value(not axistream_vvc_if.tuser'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tuser", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-            check_value(not axistream_vvc_if.tlast'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tlast", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-            check_value(not axistream_vvc_if.tstrb'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tstrb", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-            check_value(not axistream_vvc_if.tid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-            check_value(not axistream_vvc_if.tdest'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on tdest", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+            check_unwanted_activity(axistream_vvc_if.tvalid, vvc_config.unwanted_activity_severity, "tvalid", C_SCOPE);
+            check_unwanted_activity(axistream_vvc_if.tdata, vvc_config.unwanted_activity_severity, "tdata", C_SCOPE);
+            check_unwanted_activity(axistream_vvc_if.tkeep, vvc_config.unwanted_activity_severity, "tkeep", C_SCOPE);
+            check_unwanted_activity(axistream_vvc_if.tuser, vvc_config.unwanted_activity_severity, "tuser", C_SCOPE);
+            check_unwanted_activity(axistream_vvc_if.tlast, vvc_config.unwanted_activity_severity, "tlast", C_SCOPE);
+            check_unwanted_activity(axistream_vvc_if.tstrb, vvc_config.unwanted_activity_severity, "tstrb", C_SCOPE);
+            check_unwanted_activity(axistream_vvc_if.tid, vvc_config.unwanted_activity_severity, "tid", C_SCOPE);
+            check_unwanted_activity(axistream_vvc_if.tdest, vvc_config.unwanted_activity_severity, "tdest", C_SCOPE);
           end if;
         end if;
       end loop;

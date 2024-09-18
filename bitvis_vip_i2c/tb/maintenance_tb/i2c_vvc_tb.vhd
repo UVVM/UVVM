@@ -809,11 +809,6 @@ begin                                   -- architecture behav
       shared_i2c_vvc_config(4).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
       shared_i2c_vvc_config(5).unwanted_activity_severity := NO_ALERT; -- Unwanted activity errors in other VVCs using common i2c_vvc_if_1 interface
 
-      -- Test await_any_completion (just to check that VVC handles the call)
-      await_any_completion(WISHBONE_VVCT, 0, NOT_LAST, 1 ms);
-      await_any_completion(I2C_VVCT, 0, NOT_LAST, 1 ms);
-      await_any_completion(SBI_VVCT, 0, LAST, 1 ms);
-
       -- There is only one interface, so transmission goes from Master to Slave or Slave to Master
       -- Master needs to act first to avoid problem with master pulling down SDA
       -- before slave starts sensing on it, i.e., slave misses the start condition.

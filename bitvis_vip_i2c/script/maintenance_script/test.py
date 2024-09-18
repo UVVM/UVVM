@@ -32,7 +32,7 @@ print("Verify Bitvis VIP I2C")
 
 cleanup("Removing any previous runs.")
 
-hr = HDLRegression(simulator="modelsim")
+hr = HDLRegression()
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
 hr.add_files("../../../uvvm_vvc_framework/src/*.vhd", "uvvm_vvc_framework")

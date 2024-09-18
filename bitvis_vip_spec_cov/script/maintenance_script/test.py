@@ -90,7 +90,7 @@ print("Verify Bitvis VIP Spec Cov")
 
 cleanup("Removing any previous runs.")
 
-hr = HDLRegression(simulator="modelsim")
+hr = HDLRegression()
 
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
@@ -146,7 +146,7 @@ if ret_code != 0:
 ################################
 print("Running demos...")
 
-hr = HDLRegression(simulator="modelsim")
+hr = HDLRegression()
 
 # Add Util, VVC Framework and Scoreboard VIP
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")

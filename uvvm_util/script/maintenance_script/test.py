@@ -30,7 +30,7 @@ print('Verify UVVM Util')
 
 cleanup()
 
-hr = HDLRegression(simulator='modelsim')
+hr = HDLRegression()
 
 # Add Util src
 hr.add_files("../../src/*.vhd", "uvvm_util")
@@ -60,6 +60,8 @@ if simulator_name in ["MODELSIM", "RIVIERA"]:
     sim_options = "-t ps"
     com_options = ["-suppress", "1346,1246,1236", "-2008"]
     hr.set_simulator(simulator=simulator_name, com_options=com_options)
+elif simulator_name == "NVC":
+    sim_options = ["-M64m", "-H2g"]
 
 hr.start(sim_options=sim_options)
 
@@ -78,8 +80,10 @@ elif simulator_name == 'RIVIERA':
     (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -riviera")
 elif simulator_name == 'GHDL':
     (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -ghdl")
+elif simulator_name == 'NVC':
+    (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -nvc")
 else:
-  print("Please specify simulator as argument: MODELSIM, RIVIERA or GHDL")
+  print("Please specify simulator as argument: MODELSIM, RIVIERA, GHDL or NVC")
   sys.exit(1)
 print(ret_txt.replace('\\', '/'))
 

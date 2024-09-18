@@ -44,15 +44,6 @@ package vvc_methods_pkg is
   alias THIS_VVCT     : t_vvc_target_record is AXILITE_VVCT;
   alias t_bfm_config is t_axilite_bfm_config;
 
-  type t_executor_result is record
-    cmd_idx           : natural;        -- from UVVM handshake mechanism
-    data              : std_logic_vector(127 downto 0);
-    value_is_new      : boolean;        -- turn true/false for put/fetch
-    fetch_is_accepted : boolean;
-  end record;
-
-  type t_executor_result_array is array (natural range <>) of t_executor_result;
-
   -- Type found in UVVM-Util types_pkg
   constant C_AXILITE_INTER_BFM_DELAY_DEFAULT : t_inter_bfm_delay := (
     delay_type                         => NO_DELAY,
@@ -268,17 +259,6 @@ package vvc_methods_pkg is
   procedure reset_r_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group
   );
-
-  --==============================================================================
-  -- VVC Activity
-  --==============================================================================
-  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
-                                         variable vvc_status                           : inout t_vvc_status;
-                                         constant activity                             : in t_activity;
-                                         constant entry_num_in_vvc_activity_register   : in integer;
-                                         constant last_cmd_idx_executed                : in natural;
-                                         constant command_queue_is_empty               : in boolean;
-                                         constant scope                                : in string := C_VVC_NAME);
 
 end package vvc_methods_pkg;
 
@@ -605,35 +585,4 @@ package body vvc_methods_pkg is
     vvc_transaction_info_group.st_r := C_R_TRANSACTION_DEFAULT;
   end procedure reset_r_vvc_transaction_info;
 
-  --==============================================================================
-  -- VVC Activity
-  --==============================================================================
-  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
-                                         variable vvc_status                           : inout t_vvc_status;
-                                         constant activity                             : in t_activity;
-                                         constant entry_num_in_vvc_activity_register   : in integer;
-                                         constant last_cmd_idx_executed                : in natural;
-                                         constant command_queue_is_empty               : in boolean;
-                                         constant scope                                : in string := C_VVC_NAME) is
-    variable v_activity : t_activity := activity;
-  begin
-    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
-    if activity = INACTIVE then
-      vvc_status.previous_cmd_idx := last_cmd_idx_executed;
-      vvc_status.current_cmd_idx  := 0;
-    end if;
-
-    if v_activity = INACTIVE and not (command_queue_is_empty) then
-      v_activity := ACTIVE;
-    end if;
-    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
-                                                          activity              => v_activity,
-                                                          last_cmd_idx_executed => last_cmd_idx_executed);
-    if global_trigger_vvc_activity_register /= 'L' then
-      wait until global_trigger_vvc_activity_register = 'L';
-    end if;
-    gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
-  end procedure;
-
 end package body vvc_methods_pkg;
-

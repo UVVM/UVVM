@@ -39,7 +39,7 @@ print('Verify Bitvis VIP SPI')
 
 cleanup('Removing any previous runs.')
 
-hr = HDLRegression(simulator='modelsim')
+hr = HDLRegression()
 
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")

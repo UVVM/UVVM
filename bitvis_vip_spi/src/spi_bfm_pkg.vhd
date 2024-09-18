@@ -1108,7 +1108,7 @@ package body spi_bfm_pkg is
     end if;
 
     -- Await for master to drive SS_N and SCLK
-    if (ss_n /= '0') then               -- master not acvtive
+    if (ss_n /= '0') then               -- master not active
       wait until (ss_n = '0') or (terminate_access = '1');
     elsif (ss_n = '0') then             -- master active
       case when_to_start_transfer is
@@ -1229,8 +1229,7 @@ package body spi_bfm_pkg is
 
     -- Await for master to finish
     if not (v_terminated) then
-      wait until (mosi = 'Z')
-        for config.ss_n_to_sclk;
+      wait until (mosi = 'Z') for (minimum(config.spi_bit_time/2 - std.env.resolution_limit, config.ss_n_to_sclk)); -- Waiting for ss_n_to_sclk because the procedure spi_master_transmit_and_receive() waits this long before setting the first rising edge of a new transaction when it is not a multi word transaction.
     end if;
     miso <= 'Z';
 

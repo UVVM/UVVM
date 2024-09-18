@@ -1,0 +1,262 @@
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_range_weight([1:1],30)=> min_value must be less than max_value
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_range_weight([10:5],30)=> min_value must be less than max_value
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm((1,0),(2,0))=> The total weight of the values must be greater than 0
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-5:3],30,COMBINED)) => Failed. Boolean was false. 'Exclude constraint and weighted randomization cannot be combined. Ignoring exclude
+UVVM:                    constraint.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-5:3],30,COMBINED)) => Failed. Boolean was false. 'Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-5:3],30,COMBINED)) => Failed. Boolean was false. 'Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness
+UVVM:                    configuration.'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-5:-3],30,COMBINED))=> Weighted randomization not supported for integer_vector type.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_range_weight_real([1.00:1.00],30)=> min_value must be less than max_value
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_range_weight_real([10.00:5.00],30)=> min_value must be less than max_value
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm((1.00,0),(2.00,0))=> The total weight of the values must be greater than 0
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-5.00:-3.00],30,COMBINED)) => Failed. Boolean was false. 'Exclude constraint and weighted randomization cannot be combined. Ignoring exclude
+UVVM:                    constraint.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(UNCONSTRAINED)=> Cyclic mode not supported for real type. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-5.00:-3.00],30,COMBINED)) => Failed. Boolean was false. 'Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness
+UVVM:                    configuration.'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([1.00:3.00],30,COMBINED))=> Weighted randomization not supported for real_vector type.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #9  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_range_weight_time([1 fs:1 fs],30)=> min_value must be less than max_value
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #10  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    add_range_weight_time([10 fs:5 fs],30)=> min_value must be less than max_value
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm((1 fs,0),(2 fs,0))=> The total weight of the values must be greater than 0
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-5 fs:3 fs],30,COMBINED)) => Failed. Boolean was false. 'Exclude constraint and weighted randomization cannot be combined. Ignoring exclude
+UVVM:                    constraint.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(UNCONSTRAINED)=> Cyclic mode not supported for time type. Ignoring cyclic configuration.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-5 fs:3 fs],30,COMBINED)) => Failed. Boolean was false. 'Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness
+UVVM:                    configuration.'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #12  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([1 fs:3 fs],30,COMBINED))=> Weighted randomization not supported for time_vector type.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #13  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:65536],30,COMBINED))=> constraints must be within range [0:15] due to length parameter
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #14  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm((131072,30))=> constraints must be within range [0:15] due to length parameter
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #15  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-4:-2],30,COMBINED))=> constraints must be within range [0:15] due to length parameter
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Exclude constraint and weighted randomization cannot be combined. Ignoring exclude
+UVVM:                    constraint.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness
+UVVM:                    configuration.'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #16  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:65536],30,COMBINED))=> constraints must be within range [-8:7] due to length parameter
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #17  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm((131072,30))=> constraints must be within range [-8:7] due to length parameter
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #13  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Exclude constraint and weighted randomization cannot be combined. Ignoring exclude
+UVVM:                    constraint.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #14  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #15  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness
+UVVM:                    configuration.'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #18  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:65536],30,COMBINED))=> constraints must be within range [0:15] due to length parameter
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #19  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm((131072,30))=> constraints must be within range [0:15] due to length parameter
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #20  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([-4:-2],30,COMBINED))=> constraints must be within range [0:15] due to length parameter
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #16  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Exclude constraint and weighted randomization cannot be combined. Ignoring exclude
+UVVM:                    constraint.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #17  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Cyclic mode and weighted randomization cannot be combined. Ignoring cyclic configuration.'
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #18  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    randm(([0:3],30,COMBINED)) => Failed. Boolean was false. 'Uniqueness and weighted randomization cannot be combined. Ignoring uniqueness
+UVVM:                    configuration.'
+UVVM: 

@@ -2,6 +2,14 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.9
+----------
+Released: 2024-09-19
+- Updated vvc_generator.py with fixes for VVCs with multiple executors.
+- Added a common procedure, check_unwanted_activity(), so that VVCs can call it to check for unwanted activity.
+- Added a mechanism in the check_unwanted_activity() procedure to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
+- Updated vvc_generator.py to use the check_unwanted_activity() procedure.
+
 v2.12.8
 ----------
 Released: 2024-08-16

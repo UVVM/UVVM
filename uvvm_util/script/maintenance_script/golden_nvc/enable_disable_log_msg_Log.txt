@@ -1,0 +1,63 @@
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         1.0 ns  (non scoped)                   Verifying disable_log_msg and enable_log_msg
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_BFM                             1.0 ns  My scope                       ID_BFM enabled
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check ID_BFM enabled'
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        disable_log_msg(ID_BFM). 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean false. 'check ID_BFM disabled'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check ID_LOG_HDR enabled'
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        enable_log_msg(ID_BFM). 
+UVVM: ID_BFM                             1.0 ns  My scope                       ID_BFM re-enabled. Should be written
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Verifying disable_log_msg() with QUIET. Next line should be empty.
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This shall be visible
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This log message shall be visible
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Verifying that attempting to enable ID_NEVER triggers an alert.
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    enable_log_msg() ignored for ID_NEVER (not allowed). 'This shall trigger a TB_WARNING.'
+UVVM: 
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Testing ID_LOG_MSG_CTRL and ALL_MESSAGES
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This should be visible (and enabling of ID_SEQUENCER should be visible)
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Testing ID_LOG_MSG_CTRL and ALL_MESSAGES with QUIET
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This should be visible (and enabling of ID_SEQUENCER should NOT be visible)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      

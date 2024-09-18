@@ -1,0 +1,348 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.(uvvm)                  Starting testcase: await_value_default_alert
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Verifying await_value with default alert level
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected ERRORs by 4. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:             2 ns   TB seq.(uvvm)
+UVVM:                    await_value(slv x"1", 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                        15.0 ns  TB seq.(uvvm)                  await_value(slv x"2", 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window 1, OK'
+UVVM: ID_POS_ACK                        19.0 ns  TB seq.(uvvm)                  await_value(slv x"3", 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window 2, leading zero, OK'
+UVVM: ID_POS_ACK                        24.0 ns  TB seq.(uvvm)                  await_value(slv x"4", 3 ns, 5 ns) => OK. Condition occurred after 5 ns. 'Change within time
+UVVM:                                                                           window 3, leading zero, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:            29 ns   TB seq.(uvvm)
+UVVM:                    await_value(slv x"5", 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                        33.0 ns  TB seq.(uvvm)                  await_value(slv x"8", 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:            33 ns   TB seq.(uvvm)
+UVVM:                    await_value(slv x"113", 3 ns, 5 ns) => Failed. Widths did not match. 'Different width, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                        33.0 ns  TB seq.(uvvm)                  await_value(slv x"9", 0 ns, 1 ns) => OK. Condition occurred after 0 ns. 'Changed immediately,
+UVVM:                                                                           OK'
+UVVM: ID_POS_ACK                        43.0 ns  TB seq.(uvvm)                  await_value(slv b"1111", 0 ns, 0 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in BIN'
+UVVM: ID_POS_ACK                        43.0 ns  TB seq.(uvvm)                  await_value(slv x"F", 0 ns, 1 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, No
+UVVM:                                                                           signal'event. OK. Log in HEX'
+UVVM: ID_POS_ACK                        43.0 ns  TB seq.(uvvm)                  await_value(slv d"15", 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, No
+UVVM:                                                                           signal'event. OK. Log in DECimal'
+UVVM: ID_POS_ACK                        44.0 ns  TB seq.(uvvm)                  await_value(slv x"80", 0 ns, 0 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, No
+UVVM:                                                                           signal'event. OK. '
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #4  ***
+UVVM:            44 ns   TB seq.(uvvm)
+UVVM:                    await_value(slv x"80", 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, min_time>0ns, Fail. '
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                        48.0 ns  TB seq.(uvvm)                  await_value(slv x"3", 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change within time
+UVVM:                                                                           window 2, exact match, OK'
+UVVM: ID_POS_ACK                        62.0 ns  TB seq.(uvvm)                  await_value(slv x"X1" (b"10--0001"), 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change
+UVVM:                                                                           within time window 2, STD match, OK'
+UVVM: ID_UTIL_SETUP                     62.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                        76.0 ns  TB seq.(uvvm)                  await_value(slv x"BX" (b"1011000Z"), 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change
+UVVM:                                                                           within time window 3, STD match including Z, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #5  ***
+UVVM:            86 ns   TB seq.(uvvm)
+UVVM:                    await_value(slv x"BX" (b"1011000Z"), 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including Z, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                     86.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                       100.0 ns  TB seq.(uvvm)                  await_value(slv x"XX" (b"1W1U0X0Z"), 3 ns, 5 ns) => OK. Condition occurred after 4 ns. 'Change
+UVVM:                                                                           within time window 3, STD match including ZXUW, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #6  ***
+UVVM:           115 ns   TB seq.(uvvm)
+UVVM:                    await_value(slv x"XX" (b"1W1U1X0Z"), 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Different values, STD match including ZXUW, Fail 1'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    115.0 ns  TB seq.                        incremented expected ERRORs by 2. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #7  ***
+UVVM:           117 ns   TB seq.(uvvm)
+UVVM:                    await_value(unsigned x"1", 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       120.0 ns  TB seq.(uvvm)                  await_value(unsigned x"2", 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within
+UVVM:                                                                           time window, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #8  ***
+UVVM:           125 ns   TB seq.(uvvm)
+UVVM:                    await_value(unsigned x"5", 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       135.0 ns  TB seq.(uvvm)                  await_value(unsigned b"1111", 0 ns, 0 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in BIN'
+UVVM: ID_POS_ACK                       135.0 ns  TB seq.(uvvm)                  await_value(unsigned x"F", 0 ns, 0 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in HEX'
+UVVM: ID_POS_ACK                       135.0 ns  TB seq.(uvvm)                  await_value(unsigned d"15", 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in DECimal'
+UVVM: ID_UTIL_SETUP                    135.0 ns  TB seq.                        incremented expected ERRORs by 2. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #9  ***
+UVVM:           137 ns   TB seq.(uvvm)
+UVVM:                    await_value(signed x"1", 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       140.0 ns  TB seq.(uvvm)                  await_value(signed x"2", 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #10  ***
+UVVM:           145 ns   TB seq.(uvvm)
+UVVM:                    await_value(signed x"5", 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       155.0 ns  TB seq.(uvvm)                  await_value(signed d"15", 0 ns, 1 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. Log in DECimal'
+UVVM: ID_UTIL_SETUP                    155.0 ns  TB seq.                        incremented expected ERRORs by 3. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #11  ***
+UVVM:           157 ns   TB seq.(uvvm)
+UVVM:                    await_value(boolean true, 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       170.0 ns  TB seq.(uvvm)                  await_value(boolean false, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within
+UVVM:                                                                           time window, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #12  ***
+UVVM:           175 ns   TB seq.(uvvm)
+UVVM:                    await_value(boolean true, 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       185.0 ns  TB seq.(uvvm)                  await_value(boolean false, 0 ns, 1 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. '
+UVVM: ID_POS_ACK                       185.0 ns  TB seq.(uvvm)                  await_value(boolean true, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp already,
+UVVM:                                                                           No signal'event. OK. '
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #13  ***
+UVVM:           185 ns   TB seq.(uvvm)
+UVVM:                    await_value(boolean true, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, min_time>0ns, Fail. '
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    185.0 ns  TB seq.                        incremented expected ERRORs by 5. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #14  ***
+UVVM:           187 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic 1, 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       200.0 ns  TB seq.(uvvm)                  await_value(std_logic 0, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #15  ***
+UVVM:           205 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic 1, 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       215.0 ns  TB seq.(uvvm)                  await_value(std_logic 0, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Changed
+UVVM:                                                                           immediately, OK. '
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #16  ***
+UVVM:           225 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic 1, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, min_time>0ns, Fail. '
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       238.0 ns  TB seq.(uvvm)                  await_value(std_logic 0, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window to weak, expecting forced, OK'
+UVVM: ID_POS_ACK                       251.0 ns  TB seq.(uvvm)                  await_value(std_logic H, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window to forced, expecting weak, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #17  ***
+UVVM:           266 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic L, 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change within time window to forced, expecting weak, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #18  ***
+UVVM:           281 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic 1, 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change within time window to weak, expecting forced, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    291.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                       295.0 ns  TB seq.(uvvm)                  await_value(std_logic Z, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, STD match including Z, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #19  ***
+UVVM:           305 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic Z, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including Z, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    305.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                       310.0 ns  TB seq.(uvvm)                  await_value(std_logic Z, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, STD match including ZXUW, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #20  ***
+UVVM:           320 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic Z, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including ZXUW, Fail 2'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    320.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                       325.0 ns  TB seq.(uvvm)                  await_value(std_logic X, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, STD match including ZXUW, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #21  ***
+UVVM:           335 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic X, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including ZXUW, Fail 3'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    335.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                       340.0 ns  TB seq.(uvvm)                  await_value(std_logic U, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, STD match including ZXUW, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #22  ***
+UVVM:           350 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic U, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including ZXUW, Fail 4'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    350.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_POS_ACK                       355.0 ns  TB seq.(uvvm)                  await_value(std_logic W, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, STD match including ZXUW, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #23  ***
+UVVM:           365 ns   TB seq.(uvvm)
+UVVM:                    await_value(std_logic W, 3 ns, 5 ns) => Failed. Condition occurred too early, after 0 ns. 'Different values, STD match including ZXUW, Fail 5'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    365.0 ns  TB seq.                        incremented expected ERRORs by 3. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #24  ***
+UVVM:           367 ns   TB seq.(uvvm)
+UVVM:                    await_value(integer 1, 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       370.0 ns  TB seq.(uvvm)                  await_value(integer 2, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #25  ***
+UVVM:           375 ns   TB seq.(uvvm)
+UVVM:                    await_value(integer 3, 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       385.0 ns  TB seq.(uvvm)                  await_value(integer 15, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, no
+UVVM:                                                                           signal'event, OK. '
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #26  ***
+UVVM:           395 ns   TB seq.(uvvm)
+UVVM:                    await_value(integer 17, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, Min_time>0ns, Fail. '
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                    395.0 ns  TB seq.                        incremented expected ERRORs by 3. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #27  ***
+UVVM:           397 ns   TB seq.(uvvm)
+UVVM:                    await_value(real 1, 3 ns, 5 ns) => Failed. Condition occurred too early, after 2 ns. 'Change too soon, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       400.0 ns  TB seq.(uvvm)                  await_value(real 2, 3 ns, 5 ns) => OK. Condition occurred after 3 ns. 'Change within time
+UVVM:                                                                           window, OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #28  ***
+UVVM:           405 ns   TB seq.(uvvm)
+UVVM:                    await_value(real 3, 3 ns, 5 ns) => Failed. Timed out after 5 ns. 'Change too late, Fail'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                       415.0 ns  TB seq.(uvvm)                  await_value(real 15, 0 ns, 2 ns) => OK. Condition occurred after 0 ns. 'Val=exp already, no
+UVVM:                                                                           signal'event, OK. '
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #29  ***
+UVVM:           425 ns   TB seq.(uvvm)
+UVVM:                    await_value(real 17, 1 ns, 2 ns) => Failed. Condition occurred too early, after 0 ns. 'Val=exp already, Min_time>0ns, Fail. '
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :     29        29         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1425.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

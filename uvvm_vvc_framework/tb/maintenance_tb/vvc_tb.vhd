@@ -725,26 +725,26 @@ begin
 
     wait for 200 ns;
 
-    log(ID_LOG_HDR, "Activate UART VVC 3 and SBI VVC 3 and await VVC completion.", C_SCOPE_G);
-    shared_uart_vvc_config(RX, 3).bfm_config.bit_time := C_BIT_PERIOD;
+    log(ID_LOG_HDR, "Activate UART VVC 4 and SBI VVC 4 and await VVC completion.", C_SCOPE_G);
+    shared_uart_vvc_config(RX, 4).bfm_config.bit_time := C_BIT_PERIOD;
 
-    check_value(shared_sbi_vvc_status(3).previous_cmd_idx = shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same (initial value)", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx = shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same (initial value)", C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(4).previous_cmd_idx = shared_sbi_vvc_status(4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same (initial value)", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 4).previous_cmd_idx = shared_uart_vvc_status(RX, 4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are the same (initial value)", C_SCOPE_G);
 
-    sbi_write(SBI_VVCT, 3, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_G);
-    uart_receive(UART_VVCT, 3, RX, "reading out of UART 3 TX", scope => C_SCOPE_G);
+    sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, x"33", "TX_DATA", C_SCOPE_G);
+    uart_receive(UART_VVCT, 4, RX, "reading out of UART 4 TX", scope => C_SCOPE_G);
 
-    insert_delay(SBI_VVCT, 3, C_CLK_PERIOD, scope => C_SCOPE_G);
-    insert_delay(UART_VVCT, 3, RX, 2 * C_CLK_PERIOD, scope => C_SCOPE_G);
+    insert_delay(SBI_VVCT, 4, C_CLK_PERIOD, scope => C_SCOPE_G);
+    insert_delay(UART_VVCT, 4, RX, 2 * C_CLK_PERIOD, scope => C_SCOPE_G);
 
-    v_sbi_cmd_idx  := get_last_received_cmd_idx(SBI_VVCT, 3);
-    v_uart_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 3, RX);
+    v_sbi_cmd_idx  := get_last_received_cmd_idx(SBI_VVCT, 4);
+    v_uart_cmd_idx := get_last_received_cmd_idx(UART_VVCT, 4, RX);
 
-    check_value(shared_sbi_vvc_status(3).previous_cmd_idx /= shared_sbi_vvc_status(3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different (during execution)", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 3).previous_cmd_idx /= shared_uart_vvc_status(RX, 3).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different (during execution)", C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(4).previous_cmd_idx /= shared_sbi_vvc_status(4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different (during execution)", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 4).previous_cmd_idx /= shared_uart_vvc_status(RX, 4).current_cmd_idx, ERROR, "check that previous_cmd_idx and current_cmd_idx are different (during execution)", C_SCOPE_G);
 
-    await_any_completion(SBI_VVCT, 3, v_sbi_cmd_idx, NOT_LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
-    await_any_completion(UART_VVCT, 3, RX, v_uart_cmd_idx, LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
+    await_any_completion(SBI_VVCT, 4, v_sbi_cmd_idx, NOT_LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
+    await_any_completion(UART_VVCT, 4, RX, v_uart_cmd_idx, LAST, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
 
     v_vvc_time_of_completion := shared_uvvm_status.info_on_finishing_await_any_completion.vvc_time_of_completion;
     v_vvc_cmd_idx            := shared_uvvm_status.info_on_finishing_await_any_completion.vvc_cmd_idx;
@@ -753,9 +753,9 @@ begin
     check_value((v_vvc_cmd_idx = v_sbi_cmd_idx) or (v_vvc_cmd_idx = v_uart_cmd_idx), ERROR, "check command index initiated await_any_completion", C_SCOPE_G);
     check_value(v_vvc_time_of_completion > 0 ns, ERROR, "check vvc_time_of_completion value has increased.", C_SCOPE_G);
 
-    await_completion(UART_VVCT, 3, RX, v_uart_cmd_idx, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
-    check_value(shared_sbi_vvc_status(3).current_cmd_idx = 0, ERROR, "check that current_cmd_idx is 0 (when idle)", C_SCOPE_G);
-    check_value(shared_uart_vvc_status(RX, 3).current_cmd_idx = 0, ERROR, "check that current_cmd_idx is 0 (when idle)", C_SCOPE_G);
+    await_completion(UART_VVCT, 4, RX, v_uart_cmd_idx, 2 us, "waiting for VVC to finish.", scope => C_SCOPE_G);
+    check_value(shared_sbi_vvc_status(4).current_cmd_idx = 0, ERROR, "check that current_cmd_idx is 0 (when idle)", C_SCOPE_G);
+    check_value(shared_uart_vvc_status(RX, 4).current_cmd_idx = 0, ERROR, "check that current_cmd_idx is 0 (when idle)", C_SCOPE_G);
 
     -- Ending the simulation in sequencer 1
     log(ID_LOG_HDR, "SEQUENCER 1 COMPLETED", C_SCOPE_G);
@@ -804,6 +804,7 @@ begin
 
     log(ID_LOG_HDR, "Use await_completion with broadcast to all VVCs while another sequencer access one of the VVCs", C_SCOPE_H1);
     sbi_write(SBI_VVCT, 4, C_ADDR_TX_DATA, 4, RANDOM, "TX_DATA", C_SCOPE_H1);
+    increment_expected_alerts(TB_ERROR, 14); -- Expect an alert for each of the VVCs not supporting the old await_completion call used by VVC_BROADCAST
     await_completion(VVC_BROADCAST, 100 ns, scope => C_SCOPE_H1);
     wait for 6 * C_FRAME_PERIOD;
     await_barrier(barrier_h_helper, 100 us, "SEQUENCER 1: synchronising both sequencers point 5", scope => C_SCOPE_H1);

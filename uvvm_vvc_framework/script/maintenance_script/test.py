@@ -41,7 +41,7 @@ def cleanup(msg="Cleaning up..."):
 def test_vvc_framework():
     print("Verify UVVM VVC Framework")
 
-    hr = HDLRegression(simulator="modelsim")
+    hr = HDLRegression()
 
     # Add util, fw and VIP Scoreboard
     hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
@@ -205,7 +205,7 @@ def test_vvc_generator():
     test_14()
     os.rename("output", "generated_vip_14")
 
-    hr = HDLRegression(simulator="modelsim")
+    hr = HDLRegression()
 
     # Add util, fw and VIP Scoreboard
     hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")

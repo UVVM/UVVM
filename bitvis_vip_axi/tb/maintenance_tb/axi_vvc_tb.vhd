@@ -301,7 +301,7 @@ begin
     await_completion(AXI_VVCT, 1, 1 us, "Waiting for commands to finish");
 
     ------------------------------------------------------------------------------------------------------------------------------
-    log(ID_LOG_HDR, "Testing read data response coming out of order");
+    log(ID_LOG_HDR, "Testing read data response coming out-of-order");
     ------------------------------------------------------------------------------------------------------------------------------
     axi_write(
       VVCT             => AXI_VVCT,
@@ -344,6 +344,58 @@ begin
       rdata_exp        => t_slv_array'(x"DDDDDDDD", x"EEEEEEEE", x"FFFFFFFF"),
       msg              => "Testing AXI check"
     );
+    await_completion(AXI_VVCT, 1, 1 us, "Waiting for commands to finish");
+
+    ------------------------------------------------------------------------------------------------------------------------------
+    log(ID_LOG_HDR, "Test fetch_result with cmd_idx lower than the last_cmd_idx_executed. Read data response comes out-of-order");
+    ------------------------------------------------------------------------------------------------------------------------------
+    axi_write(
+      VVCT             => AXI_VVCT,
+      vvc_instance_idx => 1,
+      awid             => x"00",
+      awaddr           => x"00000030",
+      awlen            => x"08",
+      awsize           => 4,
+      wdata            => t_slv_array'(x"77777777", x"88888888", x"99999999", x"AAAAAAAA", x"BBBBBBBB", x"CCCCCCCC", x"DDDDDDDD", x"EEEEEEEE", x"FFFFFFFF"),
+      msg              => "Testing AXI write"
+    );
+    await_completion(AXI_VVCT, 1, 1 us, "Waiting for commands to finish");
+    axi_read(
+      VVCT             => AXI_VVCT,
+      vvc_instance_idx => 1,
+      arid             => x"01",
+      araddr           => x"00000030",
+      arlen            => x"02",
+      arsize           => 4,
+      data_routing     => TO_BUFFER,
+      msg              => "Testing AXI check"
+    );
+    v_cmd_idx := get_last_received_cmd_idx(AXI_VVCT, 1); -- Retrieve the command index for the first read request
+    axi_read(
+      VVCT             => AXI_VVCT,
+      vvc_instance_idx => 1,
+      arid             => x"02",
+      araddr           => x"0000003C",
+      arlen            => x"02",
+      arsize           => 4,
+      data_routing     => TO_BUFFER,
+      msg              => "Testing AXI check"
+    );
+    axi_read(
+      VVCT             => AXI_VVCT,
+      vvc_instance_idx => 1,
+      arid             => x"03",
+      araddr           => x"00000048",
+      arlen            => x"02",
+      arsize           => 4,
+      data_routing     => TO_BUFFER,
+      msg              => "Testing AXI check"
+    );
+
+    await_completion(AXI_VVCT, 1, v_cmd_idx, 1 us, "Waiting for first command to finish");
+    fetch_result(AXI_VVCT, 1, v_cmd_idx, v_result, "Fetching read result");
+    check_value(v_result.rid, x"01", "Checking RID", C_SCOPE);
+
     await_completion(AXI_VVCT, 1, 1 us, "Waiting for commands to finish");
 
     ------------------------------------------------------------------------------------------------------------------------------

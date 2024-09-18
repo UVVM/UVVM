@@ -1,0 +1,310 @@
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq                         Testing alert summary report
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing without any major or minor alerts
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing NOTE
+UVVM: 
+UVVM: ***  NOTE #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in minor alerts report
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         0         0         *** NOTE ***
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected NOTEs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing TB_NOTE
+UVVM: 
+UVVM: ***  TB_NOTE #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in minor alerts report
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         0         0         *** TB_NOTE ***
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_NOTEs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing WARNING
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in minor alerts report
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         0         0         *** WARNING ***
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected WARNINGs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing TB_WARNING
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in minor alerts report
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      1         0         0         *** TB_WARNING ***
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing MANUAL_CHECK
+UVVM: 
+UVVM: ***  MANUAL_CHECK #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in minor alerts report
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      1         0         0         *** MANUAL_CHECK ***
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts, but mismatch in minor alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected MANUAL_CHECKs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing ERROR
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in major alerts report
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      1         1         0         ok
+UVVM:                ERROR        :      1         0         0         *** ERROR ***
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation FAILED, with unexpected serious alert(s)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected ERRORs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing TB_ERROR
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in major alerts report
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      1         1         0         ok
+UVVM:                ERROR        :      1         1         0         ok
+UVVM:                TB_ERROR     :      1         0         0         *** TB_ERROR ***
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation FAILED, with unexpected serious alert(s)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing FAILURE
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  FAILURE #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in major alerts report
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      1         1         0         ok
+UVVM:                ERROR        :      1         1         0         ok
+UVVM:                TB_ERROR     :      1         1         0         ok
+UVVM:                FAILURE      :      1         0         0         *** FAILURE ***
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation FAILED, with unexpected serious alert(s)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected FAILUREs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing TB_FAILURE
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #1  ***
+UVVM:             0 ns   TB seq
+UVVM:                    This alert shall set mismatch in major alerts report
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      1         1         0         ok
+UVVM:                ERROR        :      1         1         0         ok
+UVVM:                TB_ERROR     :      1         1         0         ok
+UVVM:                FAILURE      :      1         1         0         ok
+UVVM:                TB_FAILURE   :      1         0         0         *** TB_FAILURE ***
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation FAILED, with unexpected serious alert(s)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_FAILUREs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing final summary, all OK
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      1         1         0         ok
+UVVM:                ERROR        :      1         1         0         ok
+UVVM:                TB_ERROR     :      1         1         0         ok
+UVVM:                FAILURE      :      1         1         0         ok
+UVVM:                TB_FAILURE   :      1         1         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      1         1         0         ok
+UVVM:                TB_NOTE      :      1         1         0         ok
+UVVM:                WARNING      :      1         1         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      1         1         0         ok
+UVVM:                ERROR        :      1         1         0         ok
+UVVM:                TB_ERROR     :      1         1         0         ok
+UVVM:                FAILURE      :      1         1         0         ok
+UVVM:                TB_FAILURE   :      1         1         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq                         SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

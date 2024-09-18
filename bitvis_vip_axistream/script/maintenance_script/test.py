@@ -39,7 +39,7 @@ print('Verify Bitvis VIP AXI Stream')
 
 cleanup('Removing any previous runs.')
 
-hr = HDLRegression(simulator='modelsim')
+hr = HDLRegression()
 
 # Add util, fw and VIP Scoreboard
 hr.add_files("../../../uvvm_util/src/*.vhd", "uvvm_util")
@@ -98,6 +98,8 @@ if simulator_name in ["MODELSIM", "RIVIERA"]:
     sim_options = "-t ns"
     com_options = ["-suppress", "1346,1246,1236", "-2008"]
     hr.set_simulator(simulator=simulator_name, com_options=com_options)
+elif simulator_name == "NVC":
+    sim_options = ["-M64m", "-H2g"]
 
 hr.start(sim_options=sim_options)
 

@@ -135,7 +135,7 @@ architecture structural of i2c_master_top is
     -- end component i2c_master_byte_ctrl;
 
     -- registers
-    signal prer : unsigned(15 downto 0) := (others => '1'); -- clock prescale register
+    signal prer : unsigned(15 downto 0);             -- clock prescale register
     signal ctr  : std_logic_vector(7 downto 0);      -- control register
     signal txr  : std_logic_vector(7 downto 0);      -- transmit register
     signal rxr  : std_logic_vector(7 downto 0);      -- receive register

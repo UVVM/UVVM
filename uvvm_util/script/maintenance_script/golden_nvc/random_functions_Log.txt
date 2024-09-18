@@ -1,0 +1,156 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.(uvvm)                  Verifying basic random functions
+UVVM: =========================================================================================================================================================================
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 14, 12
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  std_logic_vector / std_logic
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random SLV function (not self checking)
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function slv8 = 11100000
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function slv8 = 00011110
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function slv8 = 00011111
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function slv8 = 10111000
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function slv8 = 11000100
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random SLV procedure (not self checking)
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure slv8 = 01000111
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure slv8 = 00010100
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure slv8 = 00111011
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure slv8 = 00100101
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure slv8 = 10010011
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random SL function (not self checking)
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random function sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random SL procedure (not self checking)
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 1
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random procedure sl = 1
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Integer
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random integer function
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  integer function: counter(10) =       30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  integer function: counter(11) =       24
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  integer function: counter(12) =       19
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  integer function: counter(13) =       27
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random integer procedure
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  integer procedure: counter(10) =       30
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  integer procedure: counter(11) =       24
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  integer procedure: counter(12) =       19
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  integer procedure: counter(13) =       27
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the max limit
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the min & max limits (not self checking)
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = 1696538084
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = 1444254049
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = -79746802
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = 1249112244
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = 999149533
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = 1849154016
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = 2060080162
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = -1311453570
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = -177838257
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random int procedure = -1894313752
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Real
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random real function
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real function = 0.014844
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real function = 0.014752
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real function = 0.021915
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real function = 0.018639
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real function = 0.012342
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random real procedure
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real procedure = 0.015613
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real procedure = 0.019191
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real procedure = 0.014498
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real procedure = 0.029138
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Random real procedure = 0.024971
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Time
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(10) =       37
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(11) =       56
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(12) =       31
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(13) =        0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with default time resolution
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(10) =       41
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(11) =       32
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(12) =       58
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(13) =        0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with explicit time resolution
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    random(10000000000000 fs,13000000000000 fs,1000 fs) => time_resolution is too small for the given range. It has been increased to 1000000 fs
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(10) =       78
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(11) =       34
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(12) =       29
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(13) =        0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(10) =       78
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(11) =       34
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(12) =       29
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(13) =        0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with default time resolution
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ms) : counter(10) =       78
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ms) : counter(11) =       34
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ms) : counter(12) =       29
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ms) : counter(13) =        0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with explicit time resolution
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    random(10000000000000000 fs,13000000000000000 fs,1000 fs) => time_resolution is too small for the given range. It has been increased to 1000000000 fs
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(10) =       78
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(11) =       34
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(12) =       29
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(13) =        0
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      2         2         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

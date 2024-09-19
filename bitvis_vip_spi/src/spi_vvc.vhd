@@ -164,17 +164,6 @@ begin
 
         case v_local_vvc_cmd.operation is
 
-          when AWAIT_COMPLETION =>
-            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
-
-          when AWAIT_ANY_COMPLETION =>
-            if not v_local_vvc_cmd.gen_boolean then
-              -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
-              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
-              v_cmd_has_been_acked := true;
-            end if;
-            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
-
           when DISABLE_LOG_MSG =>
             uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE);
 
@@ -188,7 +177,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
-            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
+            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, entry_num_in_vvc_activity_register, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, shared_vvc_response);
 
           when others =>
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
@@ -221,6 +210,7 @@ begin
   -- - Fetch and execute the commands
   --===============================================================================================
   cmd_executor : process
+    constant C_EXECUTOR_ID                           : natural                                                                   := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_result                                : t_slv_array(C_VVC_CMD_MAX_WORDS - 1 downto 0)(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
     variable v_timestamp_start_of_current_bfm_access : time                                                                      := 0 ns;
@@ -252,14 +242,14 @@ begin
     loop
 
       -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
 
       -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Set the transaction info for waveview
       transaction_info           := C_TRANSACTION_INFO_DEFAULT;
@@ -762,7 +752,7 @@ begin
   --===============================================================================================
   p_unwanted_activity : process
   begin
-    -- Add a delay to avoid detecting the first transition from the undefined value to initial value
+    -- Add a delay to allow the VVC to be registered in the activity register
     wait for std.env.resolution_limit;
 
     loop
@@ -786,11 +776,19 @@ begin
       -- Check the changes on the DUT outputs only when the vvc is inactive
       if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
         if GC_MASTER_MODE then
-          check_value(not spi_vvc_if.miso'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on miso", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_unwanted_activity(spi_vvc_if.miso, vvc_config.unwanted_activity_severity, "miso", C_SCOPE);
         else
-          check_value(not spi_vvc_if.ss_n'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on ss_n", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-          check_value(not spi_vvc_if.sclk'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on sclk", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
-          check_value(not spi_vvc_if.mosi'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on mosi", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          -- Skip checking the changes if the ss_n signal goes high within the sclk_to_ss_n period after the last sclk
+          if not (rising_edge(spi_vvc_if.ss_n) and global_trigger_vvc_activity_register'last_event <= (vvc_config.bfm_config.sclk_to_ss_n - minimum(vvc_config.bfm_config.spi_bit_time/2, vvc_config.bfm_config.ss_n_to_sclk) + std.env.resolution_limit)) then
+            check_unwanted_activity(spi_vvc_if.ss_n, vvc_config.unwanted_activity_severity, "ss_n", C_SCOPE);
+          end if;
+
+          -- Skip checking the changes if the mosi signal goes to 'Z' within the sclk_to_ss_n period after the last sclk
+          if not (spi_vvc_if.mosi = 'Z' and global_trigger_vvc_activity_register'last_event <= (vvc_config.bfm_config.sclk_to_ss_n - minimum(vvc_config.bfm_config.spi_bit_time/2, vvc_config.bfm_config.ss_n_to_sclk) + std.env.resolution_limit)) then
+            check_unwanted_activity(spi_vvc_if.mosi, vvc_config.unwanted_activity_severity, "mosi", C_SCOPE);
+          end if;
+
+          check_unwanted_activity(spi_vvc_if.sclk, vvc_config.unwanted_activity_severity, "sclk", C_SCOPE);
         end if;
       end if;
     end loop;

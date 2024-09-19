@@ -10,6 +10,23 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2024.09.19
+--------------------
+Released: 2024-09-19
+- Removed old await_completion code from all VVCs.
+- Moved update_vvc_activity_register procedure to a common package for all VVCs.
+- Update the VVC activity register in each executor individually using an ID to avoid problems with race conditions for Avalon-MM,
+  AXI and AXI-Lite VVCs.
+- Check correctly whether a cmd_idx has been executed in await_completion and fetch_result procedures for Avalon-MM, AXI and AXI-Lite VVCs.
+- Added a delta cycle in Wishbone VVC executor so that the last_cmd_idx_executed is updated before being stored in the activity register.
+- Updated vvc_generator.py with fixes for VVCs with multiple executors.
+- Updated unwanted activity detection to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
+- Added a common procedure for unwanted activity detection in the VVC framework support package.
+- Updated vvc_generator.py with fixes for ignored signal transitions in unwanted activity detection.
+- Changed default names for log and alert files to UVVM_Log.txt and UVVM_Alert.txt
+- SPI VIP: Fixed bug where slave BFM exited too late for multi-word transfers in some configurations.
+
+
 v2 2024.08.16
 --------------------
 Released: 2024-08-16

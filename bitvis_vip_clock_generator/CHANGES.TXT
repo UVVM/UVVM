@@ -2,6 +2,12 @@ Bitvis VIP Clock Generator - Overview on Versions and Changes
 ==============================================================
 
 
+v1.6.0
+----------
+Released: 2024-09-19
+- Removed old await_completion code from VVC.
+- Moved update_vvc_activity_register procedure to a common package for all VVCs.
+
 v1.5.5
 ----------
 Released: 2024-07-03

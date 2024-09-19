@@ -95,6 +95,9 @@ package td_vvc_entity_support_pkg is
     signal global_awaiting_completion : out std_logic_vector(C_MAX_NUM_SEQUENCERS-1 downto 0)
   );
 
+  -------------------------------------------
+  -- get_msg_id_panel
+  -------------------------------------------
   function get_msg_id_panel(
     constant command    : in t_vvc_cmd_record;
     constant vvc_config : in t_vvc_config
@@ -218,6 +221,16 @@ package td_vvc_entity_support_pkg is
   -- t_vvc_response is specific to each VVC,
   -- so the BFM can return any type which is then transported from the VVC to the sequencer via a fetch_result() call
   procedure interpreter_fetch_result(
+    variable result_queue                       : inout work.td_result_queue_pkg.t_generic_queue;
+    constant entry_num_in_vvc_activity_register : in integer;
+    constant command                            : in t_vvc_cmd_record;
+    constant vvc_config                         : in t_vvc_config;
+    constant vvc_labels                         : in t_vvc_labels;
+    variable shared_vvc_response                : inout work.vvc_cmd_pkg.t_vvc_response
+  );
+
+  -- DEPRECATE: will be removed in v3
+  procedure interpreter_fetch_result(
     variable result_queue          : inout work.td_result_queue_pkg.t_generic_queue;
     constant command               : in t_vvc_cmd_record;
     constant vvc_config            : in t_vvc_config;
@@ -305,6 +318,20 @@ package td_vvc_entity_support_pkg is
   procedure populate_shared_vvc_cmd_with_broadcast(
     variable output_vvc_cmd : out t_vvc_cmd_record;
     constant scope          : in string := C_SCOPE
+  );
+
+  -------------------------------------------
+  -- update_vvc_activity_register
+  -------------------------------------------
+  procedure update_vvc_activity_register(
+    signal   global_trigger_vvc_activity_register : inout std_logic;
+    variable vvc_status                           : inout t_vvc_status;
+    constant activity                             : in t_activity;
+    constant entry_num_in_vvc_activity_register   : in integer;
+    constant executor_id                          : in natural;
+    constant last_cmd_idx_executed                : in integer;
+    constant command_queue_is_empty               : in boolean;
+    constant scope                                : in string := C_VVC_NAME
   );
 
 end package td_vvc_entity_support_pkg;
@@ -405,67 +432,6 @@ package body td_vvc_entity_support_pkg is
     wait for 0 ns;                      -- delay by 1 delta cycle to allow constructor to finish first
 
     global_awaiting_completion <= (others => 'Z'); -- Avoid driving until the VVC is involved in await_any_completion()
-  end procedure;
-
-  function broadcast_cmd_to_shared_cmd(
-    constant broadcast_cmd : t_broadcastable_cmd
-  ) return t_operation is
-  begin
-    case broadcast_cmd is
-      when AWAIT_COMPLETION          => return AWAIT_COMPLETION;
-      when ENABLE_LOG_MSG            => return ENABLE_LOG_MSG;
-      when DISABLE_LOG_MSG           => return DISABLE_LOG_MSG;
-      when FLUSH_COMMAND_QUEUE       => return FLUSH_COMMAND_QUEUE;
-      when INSERT_DELAY              => return INSERT_DELAY;
-      when TERMINATE_CURRENT_COMMAND => return TERMINATE_CURRENT_COMMAND;
-      when others                    => return NO_OPERATION;
-    end case;
-  end function;
-
-  function get_command_type_from_operation(
-    constant broadcast_cmd : t_broadcastable_cmd
-  ) return t_immediate_or_queued is
-  begin
-    case broadcast_cmd is
-      when AWAIT_COMPLETION          => return IMMEDIATE;
-      when ENABLE_LOG_MSG            => return IMMEDIATE;
-      when DISABLE_LOG_MSG           => return IMMEDIATE;
-      when FLUSH_COMMAND_QUEUE       => return IMMEDIATE;
-      when TERMINATE_CURRENT_COMMAND => return IMMEDIATE;
-      when INSERT_DELAY              => return QUEUED;
-      when others                    => return NO_command_type;
-    end case;
-  end function;
-
-  procedure populate_shared_vvc_cmd_with_broadcast(
-    variable output_vvc_cmd : out t_vvc_cmd_record;
-    constant scope          : in string := C_SCOPE
-  ) is
-  begin
-
-    -- Increment the shared command index. This is normally done in the CDM, but for broadcast commands it is done by the VVC itself.
-    check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", C_SCOPE, ID_NEVER);
-    await_semaphore_in_delta_cycles(protected_broadcast_semaphore);
-
-    -- Populate the shared VVC command record
-    output_vvc_cmd.operation            := broadcast_cmd_to_shared_cmd(shared_vvc_broadcast_cmd.operation);
-    output_vvc_cmd.msg_id               := shared_vvc_broadcast_cmd.msg_id;
-    output_vvc_cmd.msg                  := shared_vvc_broadcast_cmd.msg;
-    output_vvc_cmd.quietness            := shared_vvc_broadcast_cmd.quietness;
-    output_vvc_cmd.delay                := shared_vvc_broadcast_cmd.delay;
-    output_vvc_cmd.timeout              := shared_vvc_broadcast_cmd.timeout;
-    output_vvc_cmd.gen_integer_array(0) := shared_vvc_broadcast_cmd.gen_integer;
-    output_vvc_cmd.proc_call            := shared_vvc_broadcast_cmd.proc_call;
-    output_vvc_cmd.cmd_idx              := shared_cmd_idx;
-    output_vvc_cmd.command_type         := get_command_type_from_operation(shared_vvc_broadcast_cmd.operation);
-
-    if global_show_msg_for_uvvm_cmd then
-      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_broadcast_cmd.msg)) & format_command_idx(shared_cmd_idx), scope);
-    else
-      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & format_command_idx(shared_cmd_idx), scope);
-    end if;
-    release_semaphore(protected_broadcast_semaphore);
-
   end procedure;
 
   function get_msg_id_panel(
@@ -777,7 +743,7 @@ package body td_vvc_entity_support_pkg is
   ) is
     constant C_MSG_ID_PANEL : t_msg_id_panel := get_msg_id_panel(command, vvc_config);
   begin
-    log(ID_IMMEDIATE_CMD, "Flushing command queue (" & to_string(shared_vvc_cmd.gen_integer_array(0)) & ") " & format_command_idx(shared_vvc_cmd), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
+    log(ID_IMMEDIATE_CMD, "Flushing command queue" & format_command_idx(shared_vvc_cmd), to_string(vvc_labels.scope), C_MSG_ID_PANEL);
     command_queue.flush(VOID);
     vvc_status.pending_cmd_cnt := command_queue.get_count(VOID);
   end;
@@ -797,6 +763,59 @@ package body td_vvc_entity_support_pkg is
     end if;
   end procedure;
 
+  procedure interpreter_fetch_result(
+    variable result_queue                       : inout work.td_result_queue_pkg.t_generic_queue;
+    constant entry_num_in_vvc_activity_register : in integer;
+    constant command                            : in t_vvc_cmd_record;
+    constant vvc_config                         : in t_vvc_config;
+    constant vvc_labels                         : in t_vvc_labels;
+    variable shared_vvc_response                : inout work.vvc_cmd_pkg.t_vvc_response
+  ) is
+    constant C_MSG_ID_PANEL       : t_msg_id_panel := get_msg_id_panel(command, vvc_config);
+    variable v_current_element    : work.vvc_cmd_pkg.t_vvc_result_queue_element;
+    variable v_local_result_queue : work.td_result_queue_pkg.t_generic_queue;
+    alias    wanted_idx           : integer is command.gen_integer_array(0); -- generic integer used as wanted command idx to wait for
+
+  begin
+    v_local_result_queue.set_scope(to_string(vvc_labels.scope));
+
+    shared_vvc_response.fetch_is_accepted := false; -- default
+    if not shared_vvc_activity_register.priv_is_cmd_idx_executed(entry_num_in_vvc_activity_register, wanted_idx) then
+      tb_warning(to_string(command.proc_call) & ". Requested result is not yet available. " & format_command_idx(command), to_string(vvc_labels.scope));
+    else
+      -- Search for the command idx among the elements of the queue.
+      -- Easiest method of doing this is to pop elements, and pushing them again
+      -- if the cmd idx does not match. Not very efficient, but an OK initial implementation.
+
+      -- Pop the element. Compare cmd idx. If it does not match, push to local result queue.
+      -- If an index matches, set shared_vvc_response.result. (Don't push element back to result queue)
+      while result_queue.get_count(VOID) > 0 loop
+        v_current_element := result_queue.get(VOID);
+        if v_current_element.cmd_idx = wanted_idx then
+          shared_vvc_response.fetch_is_accepted := true;
+          shared_vvc_response.result            := v_current_element.result;
+          log(ID_IMMEDIATE_CMD, to_string(command.proc_call) & " Requested result is found" & ". " & to_string(command.msg) & " " & format_command_idx(command), to_string(vvc_labels.scope), C_MSG_ID_PANEL); -- Get and ack the new command
+          exit;
+        else
+          -- No match for element: put in local result queue
+          v_local_result_queue.put(v_current_element);
+        end if;
+      end loop;
+
+      -- Pop each element of local result queue and push to result queue.
+      -- This is to clear the local result queue and restore the result
+      -- queue to its original state (except that the matched element is not put back).
+      while v_local_result_queue.get_count(VOID) > 0 loop
+        result_queue.put(v_local_result_queue.get(VOID));
+      end loop;
+
+      if not shared_vvc_response.fetch_is_accepted then
+        tb_warning(to_string(command.proc_call) & ". Requested result was not found. Given command index is not available in this VVC. " & format_command_idx(command), to_string(vvc_labels.scope));
+      end if;
+    end if;
+  end procedure;
+
+  -- DEPRECATE: will be removed in v3
   procedure interpreter_fetch_result(
     variable result_queue          : inout work.td_result_queue_pkg.t_generic_queue;
     constant command               : in t_vvc_cmd_record;
@@ -944,5 +963,100 @@ package body td_vvc_entity_support_pkg is
     insert_inter_bfm_delay_if_requested(vvc_config, command_is_bfm_access, timestamp_start_of_last_bfm_access,
                                         timestamp_end_of_last_bfm_access, vvc_config.msg_id_panel, scope);
   end procedure;
+
+  function broadcast_cmd_to_shared_cmd(
+    constant broadcast_cmd : t_broadcastable_cmd
+  ) return t_operation is
+  begin
+    case broadcast_cmd is
+      when AWAIT_COMPLETION          => return AWAIT_COMPLETION;
+      when ENABLE_LOG_MSG            => return ENABLE_LOG_MSG;
+      when DISABLE_LOG_MSG           => return DISABLE_LOG_MSG;
+      when FLUSH_COMMAND_QUEUE       => return FLUSH_COMMAND_QUEUE;
+      when INSERT_DELAY              => return INSERT_DELAY;
+      when TERMINATE_CURRENT_COMMAND => return TERMINATE_CURRENT_COMMAND;
+      when others                    => return NO_OPERATION;
+    end case;
+  end function;
+
+  function get_command_type_from_operation(
+    constant broadcast_cmd : t_broadcastable_cmd
+  ) return t_immediate_or_queued is
+  begin
+    case broadcast_cmd is
+      when AWAIT_COMPLETION          => return IMMEDIATE;
+      when ENABLE_LOG_MSG            => return IMMEDIATE;
+      when DISABLE_LOG_MSG           => return IMMEDIATE;
+      when FLUSH_COMMAND_QUEUE       => return IMMEDIATE;
+      when TERMINATE_CURRENT_COMMAND => return IMMEDIATE;
+      when INSERT_DELAY              => return QUEUED;
+      when others                    => return NO_command_type;
+    end case;
+  end function;
+
+  procedure populate_shared_vvc_cmd_with_broadcast(
+    variable output_vvc_cmd : out t_vvc_cmd_record;
+    constant scope          : in string := C_SCOPE
+  ) is
+  begin
+
+    -- Increment the shared command index. This is normally done in the CDM, but for broadcast commands it is done by the VVC itself.
+    check_value((shared_uvvm_state /= IDLE), TB_FAILURE, "UVVM will not work without uvvm_vvc_framework.ti_uvvm_engine instantiated in the test harness", C_SCOPE, ID_NEVER);
+    await_semaphore_in_delta_cycles(protected_broadcast_semaphore);
+
+    -- Populate the shared VVC command record
+    output_vvc_cmd.operation            := broadcast_cmd_to_shared_cmd(shared_vvc_broadcast_cmd.operation);
+    output_vvc_cmd.msg_id               := shared_vvc_broadcast_cmd.msg_id;
+    output_vvc_cmd.msg                  := shared_vvc_broadcast_cmd.msg;
+    output_vvc_cmd.quietness            := shared_vvc_broadcast_cmd.quietness;
+    output_vvc_cmd.delay                := shared_vvc_broadcast_cmd.delay;
+    output_vvc_cmd.timeout              := shared_vvc_broadcast_cmd.timeout;
+    output_vvc_cmd.gen_integer_array(0) := shared_vvc_broadcast_cmd.gen_integer;
+    output_vvc_cmd.proc_call            := shared_vvc_broadcast_cmd.proc_call;
+    output_vvc_cmd.cmd_idx              := shared_cmd_idx;
+    output_vvc_cmd.command_type         := get_command_type_from_operation(shared_vvc_broadcast_cmd.operation);
+
+    if global_show_msg_for_uvvm_cmd then
+      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & ": " & add_msg_delimiter(to_string(shared_vvc_broadcast_cmd.msg)) & format_command_idx(shared_cmd_idx), scope);
+    else
+      log(ID_UVVM_SEND_CMD, to_string(shared_vvc_broadcast_cmd.proc_call) & format_command_idx(shared_cmd_idx), scope);
+    end if;
+    release_semaphore(protected_broadcast_semaphore);
+
+  end procedure;
+
+  procedure update_vvc_activity_register(
+    signal   global_trigger_vvc_activity_register : inout std_logic;
+    variable vvc_status                           : inout t_vvc_status;
+    constant activity                             : in t_activity;
+    constant entry_num_in_vvc_activity_register   : in integer;
+    constant executor_id                          : in natural;
+    constant last_cmd_idx_executed                : in integer;
+    constant command_queue_is_empty               : in boolean;
+    constant scope                                : in string := C_VVC_NAME
+  ) is
+    variable v_activity : t_activity := activity;
+  begin
+    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
+    if activity = INACTIVE then
+      if last_cmd_idx_executed > 0 then -- In VVCs with multiple executors, each executor will report activity but not all should update the last_cmd_idx_executed
+        vvc_status.previous_cmd_idx := last_cmd_idx_executed;
+      end if;
+      vvc_status.current_cmd_idx  := 0;
+    end if;
+
+    if v_activity = INACTIVE and not (command_queue_is_empty) then
+      v_activity := ACTIVE;
+    end if;
+    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx                => entry_num_in_vvc_activity_register,
+                                                          executor_id            => executor_id,
+                                                          activity               => v_activity,
+                                                          last_cmd_idx_executed  => last_cmd_idx_executed,
+                                                          cmd_completed          => activity = INACTIVE);
+    if global_trigger_vvc_activity_register /= 'L' then
+      wait until global_trigger_vvc_activity_register = 'L';
+    end if;
+    gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
+  end procedure update_vvc_activity_register;
 
 end package body td_vvc_entity_support_pkg;

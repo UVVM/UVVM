@@ -244,17 +244,6 @@ package types_pkg is
   constant ALL_INSTANCES         : integer := -2;
   constant ALL_ENABLED_INSTANCES : integer := -3;
 
-  type t_vvc_state is record
-    activity                 : t_activity;
-    last_cmd_idx_executed    : integer;
-    await_selected_supported : boolean;
-  end record;
-  constant C_VVC_STATE_DEFAULT : t_vvc_state := (
-    activity                 => INACTIVE,
-    last_cmd_idx_executed    => -1,
-    await_selected_supported => true
-  );
-
   -------------------------------------
   -- Scoreboard
   -------------------------------------

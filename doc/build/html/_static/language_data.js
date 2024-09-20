@@ -18,7 +18,7 @@ var stopwords = ["a", "and", "are", "as", "at", "be", "but", "by", "for", "if", 
 /**
  * Porter Stemmer
  */
-var Stemmer = function() {
+var Stemmer = function () {
 
   var step2list = {
     ational: 'ate',
@@ -62,7 +62,7 @@ var Stemmer = function() {
   var mgr0 = "^(" + C + ")?" + V + C;                      // [C]VC... is m>0
   var meq1 = "^(" + C + ")?" + V + C + "(" + V + ")?$";    // [C]VC[V] is m=1
   var mgr1 = "^(" + C + ")?" + V + C + V + C;              // [C]VCVC... is m>1
-  var s_v   = "^(" + C + ")?" + v;                         // vowel in stem
+  var s_v = "^(" + C + ")?" + v;                         // vowel in stem
 
   this.stemWord = function (w) {
     var stem;
@@ -78,7 +78,7 @@ var Stemmer = function() {
     var re3;
     var re4;
 
-    firstch = w.substr(0,1);
+    firstch = w.substr(0, 1);
     if (firstch == "y")
       w = firstch.toUpperCase() + w.substr(1);
 
@@ -87,9 +87,9 @@ var Stemmer = function() {
     re2 = /^(.+?)([^s])s$/;
 
     if (re.test(w))
-      w = w.replace(re,"$1$2");
+      w = w.replace(re, "$1$2");
     else if (re2.test(w))
-      w = w.replace(re2,"$1$2");
+      w = w.replace(re2, "$1$2");
 
     // Step 1b
     re = /^(.+?)eed$/;
@@ -99,7 +99,7 @@ var Stemmer = function() {
       re = new RegExp(mgr0);
       if (re.test(fp[1])) {
         re = /.$/;
-        w = w.replace(re,"");
+        w = w.replace(re, "");
       }
     }
     else if (re2.test(w)) {
@@ -115,7 +115,7 @@ var Stemmer = function() {
           w = w + "e";
         else if (re3.test(w)) {
           re = /.$/;
-          w = w.replace(re,"");
+          w = w.replace(re, "");
         }
         else if (re4.test(w))
           w = w + "e";
@@ -187,7 +187,7 @@ var Stemmer = function() {
     re2 = new RegExp(mgr1);
     if (re.test(w) && re2.test(w)) {
       re = /.$/;
-      w = w.replace(re,"");
+      w = w.replace(re, "");
     }
 
     // and turn initial Y back to y

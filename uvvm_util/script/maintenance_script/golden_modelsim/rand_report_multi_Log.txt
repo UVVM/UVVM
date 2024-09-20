@@ -1,0 +1,518 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.                        Start Simulation of Randomization package - rand_report
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_GEN). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_CONF). 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing config report with integer constraints
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range([10:20])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range([30:40])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range([50:60])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val(100)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        excl_val(15, 35, 55)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        set_cyclic_mode(CYCLIC)
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[10:20],[30:40],[50:60], ADD:(100), EXCL:(15, 35, 55), CYCLIC)=> 100
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                     RAND_INT_1
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                         400140
+UVVM:                SEED 2             :                        4069200
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                RANGE INTEGER VALUES    : [10:20],[30:40],[50:60]
+UVVM:                INCLUDED INTEGER VALUES : (100)
+UVVM:                EXCLUDED INTEGER VALUES : (15, 35, 55)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_weight(200,8)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                     RAND_INT_2
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                         400140
+UVVM:                SEED 2             :                        4069200
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                EXCLUDED INTEGER VALUES : (15, 35, 55)
+UVVM:                WEIGHTED INTEGER VALUES : ([10:20],1,COMBINED),([30:40],1,COMBINED),([50:60],1,COMBINED),(100,1),(200,8)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range([10:20])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_weight([30:40],5)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_weight([50:60],10,INDIVIDUAL_WEIGHT)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val(100)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_weight(200,8)
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(([10:20],1,COMBINED),([30:40],5,COMBINED),([50:60],10,INDIVIDUAL),(100,1),(200,8))=> 53
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                     RAND_INT_3
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                      578976272
+UVVM:                SEED 2             :                     2035136597
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                WEIGHTED INTEGER VALUES : ([10:20],1,COMBINED),([30:40],5,COMBINED),([50:60],10,INDIVIDUAL),(100,1),(200,8)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing config report with real constraints
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_real([10.00:20.00])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_real([30.00:40.00])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_real(0.00, 0.10, 0.20, 0.30)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        excl_val_real(15.00, 35.00)
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[10.00:20.00],[30.00:40.00], ADD:(0.00, 0.10, 0.20, 0.30), EXCL:(15.00, 35.00))=>
+UVVM:                                                                           0.000000e+00
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                    RAND_REAL_1
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                      880047891
+UVVM:                SEED 2             :                      866703730
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                RANGE REAL VALUES       : [10.00:20.00],[30.00:40.00]
+UVVM:                INCLUDED REAL VALUES    : (0.00, 0.10, 0.20, 0.30)
+UVVM:                EXCLUDED REAL VALUES    : (15.00, 35.00)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_weight_real(1.00,8)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                    RAND_REAL_2
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                      880047891
+UVVM:                SEED 2             :                      866703730
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                EXCLUDED REAL VALUES    : (15.00, 35.00)
+UVVM:                WEIGHTED REAL VALUES    : ([10.00:20.00],1,COMBINED),([30.00:40.00],1,COMBINED),(0.00,1),(0.10,1),(0.20,1),(0.30,1),(1.00,8)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_real([10.00:20.00])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_weight_real([30.00:40.00],5)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_weight_real([50.00:60.00],10)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_real(0.00)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_weight_real(1.00,8)
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                       
+UVVM:                                                                           randm(([10.00:20.00],1,COMBINED),([30.00:40.00],5,COMBINED),([50.00:60.00],10,COMBINED),(0.00,1
+UVVM:                                                                           ),(1.00,8))=> 1.210049e+01
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                    RAND_REAL_3
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                      299323893
+UVVM:                SEED 2             :                     1995729824
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                WEIGHTED REAL VALUES    : ([10.00:20.00],1,COMBINED),([30.00:40.00],5,COMBINED),([50.00:60.00],10,COMBINED),(0.00,1),(1.00,8)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing config report with time constraints
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([10 ps:20 ps])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([30 ps:40 ps])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_time(100 ps)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        excl_val_time(15 ps, 35 ps, 55 ps)
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[10 ps:20 ps],[30 ps:40 ps], ADD:(100 ps), EXCL:(15 ps, 35 ps, 55 ps))=> 100 ps
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                    RAND_TIME_1
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                     1430040116
+UVVM:                SEED 2             :                      527225666
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                RANGE TIME VALUES       : [10 ps:20 ps],[30 ps:40 ps]
+UVVM:                INCLUDED TIME VALUES    : (100 ps)
+UVVM:                EXCLUDED TIME VALUES    : (15 ps, 35 ps, 55 ps)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_weight_time(200 ps,8)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                    RAND_TIME_2
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                     1430040116
+UVVM:                SEED 2             :                      527225666
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                EXCLUDED TIME VALUES    : (15 ps, 35 ps, 55 ps)
+UVVM:                WEIGHTED TIME VALUES    : ([10 ps:20 ps],1,COMBINED),([30 ps:40 ps],1,COMBINED),(100 ps,1),(200 ps,8)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([10 ps:20 ps])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_weight_time([30 ps:40 ps],5)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_weight_time([50 ps:60 ps],10)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_time(100 ps)
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_weight_time(200 ps,8)
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(([10 ps:20 ps],1,COMBINED),([30 ps:40 ps],5,COMBINED),([50 ps:60 ps],10,COMBINED),(100
+UVVM:                                                                           ps,1),(200 ps,8))=> 100 ps
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                    RAND_TIME_3
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                     1868636406
+UVVM:                SEED 2             :                      441909523
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                WEIGHTED TIME VALUES    : ([10 ps:20 ps],1,COMBINED),([30 ps:40 ps],5,COMBINED),([50 ps:60 ps],10,COMBINED),(100 ps,1),(200 ps,8)
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing config report with unsigned constraints
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_unsigned([x"0":x"2"])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_unsigned([x"6":x"8"])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_unsigned([x"AAA":x"FFF"])
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:16, RANGE:[x"0000":x"0002"], [x"0006":x"0008"], [x"0AAA":x"0FFF"])=> x"0FC6"
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                     RAND_UNS_1
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                      534453150
+UVVM:                SEED 2             :                     1303810089
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                RANGE UNSIGNED VALUES   : [x"0":x"2"], [x"6":x"8"], [x"AAA":x"FFF"]
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing config report with signed constraints
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_signed([x"C":x"E"])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_signed([x"F":x"1"])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_signed([x"4":x"7"])
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_signed([x"7AA":x"7FF"])
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:16, RANGE:[x"FFFC":x"FFFE"], [x"FFFF":x"0001"], [x"0004":x"0007"],
+UVVM:                                                                           [x"07AA":x"07FF"])=> x"07D8"
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                     RAND_SIG_1
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                     1129334310
+UVVM:                SEED 2             :                      187381694
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                MULTI-METHOD CONSTRAINTS
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                CYCLIC MODE             : NON_CYCLIC
+UVVM:                UNIQUENESS              : NON_UNIQUE
+UVVM:                RANGE SIGNED VALUES     : [x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC":x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE"], [x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF":x"1"],
+UVVM:      [x"4":x"7"], [x"7AA":x"7FF"]
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        clear_config()
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing log messages
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_RAND_CONF). 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Integer
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(UNCONSTRAINED)=> -1219239831
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2])=> 0
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:9])=> 9
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-5, -3, 4))=> 4
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(EXCL:(-1, 0, 1))=> -1174793094
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1:1], ADD:(10))=> -1
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1:1],[8:9], ADD:(10, -5, -3, 4))=> 1
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2], EXCL:(-1, 0, 1))=> 2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:10], EXCL:(-1, 0, 1, 10))=> 9
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-6, -4, -2, 0, 2, 4, 6), EXCL:(-2, 0, 2))=> 6
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2], ADD:(-5, -3, 4), EXCL:(-5, -1, 1))=> -2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:10], ADD:(-5, -3, 4, 20, 30, 40), EXCL:(-5, -1, 1, 9, 30, 40))=> 2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(UNCONSTRAINED, CYCLIC)=> 471970153
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2], CYCLIC)=> -2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:9], CYCLIC)=> 9
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-5, -3, 4), CYCLIC)=> -3
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(EXCL:(-1, 0, 1), CYCLIC)=> -1356323145
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1:1], ADD:(10), CYCLIC)=> -1
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1:1],[8:9], ADD:(10, -5, -3, 4), CYCLIC)=> -3
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2], EXCL:(-1, 0, 1), CYCLIC)=> 2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:10], EXCL:(-1, 0, 1, 10), CYCLIC)=> -2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-6, -4, -2, 0, 2, 4, 6), EXCL:(-2, 0, 2), CYCLIC)=> -6
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2], ADD:(-5, -3, 4), EXCL:(-5, -1, 1), CYCLIC)=> -2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:10], ADD:(-5, -3, 4, 20, 30, 40), EXCL:(-5, -1, 1, 9, 30, 40), CYCLIC)=>
+UVVM:                                                                           20
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Real
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2.00:2.00])=> -1.162419e-01
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2.00:2.00],[8.00:9.00])=> -8.339445e-01
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-5.00, -3.00, 4.00))=> -3.000000e+00
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1.00:1.00], ADD:(10.00))=> 6.307712e-01
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1.00:1.00],[8.00:9.00], ADD:(10.00, -5.00, -3.00, 4.00))=> -4.189389e-01
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2.00:2.00], EXCL:(-1.00, 0.00, 1.00))=> -7.014891e-01
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2.00:2.00],[8.00:10.00], EXCL:(-1.00, 0.00, 1.00, 10.00))=> -4.977825e-01
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-6.00, -4.00, -2.00, 0.00, 2.00, 4.00, 6.00), EXCL:(-2.00, 0.00, 2.00))=>
+UVVM:                                                                           -6.000000e+00
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2.00:2.00], ADD:(-5.00, -3.00, 4.00), EXCL:(-5.00, -1.00, 1.00))=> -3.000000e+00
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2.00:2.00],[8.00:10.00], ADD:(-5.00, -3.00, 4.00, 20.00, 30.00, 40.00),
+UVVM:                                                                           EXCL:(-5.00, -1.00, 1.00, 9.00, 30.00, 40.00))=> -1.249004e+00
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Time
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 ps:2 ps])=> 0 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 ps:2 ps],[8 ps:9 ps])=> 8 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-5 ps, 3 ps, 4 ps))=> 4 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1 ps:1 ps], ADD:(10 ps))=> 1 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1 ps:1 ps],[8 ps:9 ps], ADD:(10 ps, -5 ps, 3 ps, 4 ps))=> 9 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 ps:2 ps], EXCL:(-1 ps, 0 ps, 1 ps))=> 2 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 ps:2 ps],[8 ps:10 ps], EXCL:(-1 ps, 0 ps, 1 ps, 10 ps))=> 8 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-6 ps, -4 ps, -2 ps, 0 ps, 2 ps, 4 ps, 6 ps), EXCL:(-2 ps, 0 ps, 2 ps))=> 6 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 ps:2 ps], ADD:(-5 ps, 3 ps, 4 ps), EXCL:(-5 ps, -1 ps, 1 ps))=> -2 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2 ps:2 ps],[8 ps:10 ps], ADD:(-5 ps, 3 ps, 4 ps, 20 ps, 30 ps, 40 ps), EXCL:(-5
+UVVM:                                                                           ps, -1 ps, 1 ps, 9 ps, 30 ps, 40 ps))=> 4 ps
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Unsigned
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4)=> x"0"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2])=> x"0"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2],[8:9])=> x"8"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, ONLY:(5, 3, 4))=> x"3"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, EXCL:(11, 0, 1))=> x"3"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:1], ADD:(10))=> x"A"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:1],[8:9], ADD:(10, 5, 3, 4))=> x"4"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2], EXCL:(0, 1))=> x"2"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2],[8:10], EXCL:(0, 1, 10))=> x"9"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, ONLY:(0, 2, 4, 6), EXCL:(0, 2))=> x"6"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2], ADD:(5, 3, 4), EXCL:(5, 1))=> x"2"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2],[8:10], ADD:(5, 3, 4, 7, 8, 9), EXCL:(5, 1, 9, 8, 9))=> x"A"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, CYCLIC)=> x"F"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2], CYCLIC)=> x"0"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2],[8:9], CYCLIC)=> x"0"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, ONLY:(5, 3, 4), CYCLIC)=> x"5"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, EXCL:(11, 0, 1), CYCLIC)=> x"C"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:1], ADD:(10), CYCLIC)=> x"1"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:1],[8:9], ADD:(10, 5, 3, 4), CYCLIC)=> x"5"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2], EXCL:(0, 1), CYCLIC)=> x"2"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2],[8:10], EXCL:(0, 1, 10), CYCLIC)=> x"8"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, ONLY:(0, 2, 4, 6), EXCL:(0, 2), CYCLIC)=> x"6"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2], ADD:(5, 3, 4), EXCL:(5, 1), CYCLIC)=> x"4"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[0:2],[8:10], ADD:(5, 3, 4, 7, 8, 9), EXCL:(5, 1, 9, 8, 9), CYCLIC)=> x"2"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Unsigned constraints
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[x"0":x"3"])=> x"0"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[x"0":x"3"], [x"7":x"B"])=> x"9"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:128,
+UVVM:                                                                           RANGE:[x"00000000000000000000000000000000":x"00000000000000000000000000000003"])=>
+UVVM:                                                                           x"00000000000000000000000000000003"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:128, RANGE:[x"00000000000000000000000000000000":x"00000000000000000000000000000003"],
+UVVM:                                                                           [x"00000000000000000000000000000007":x"0000000000000000000000000000000B"])=>
+UVVM:                                                                           x"0000000000000000000000000000000B"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Signed
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4)=> x"2"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2])=> x"1"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2],[6:7])=> x"2"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, ONLY:(-5, -3, 4))=> x"B"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, EXCL:(-1, 0, 1))=> x"D"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-1:1], ADD:(3))=> x"3"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-1:1],[6:7], ADD:(3, -5, -3, 4))=> x"B"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2], EXCL:(-1, 0, 1))=> x"E"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2],[5:7], EXCL:(-1, 0, 1, 7))=> x"2"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, ONLY:(-6, -4, -2, 0, 2, 4, 6), EXCL:(-2, 0, 2))=> x"6"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2], ADD:(-5, -3), EXCL:(-5, -1, 1))=> x"0"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2],[5:7], ADD:(-5, -3, 4), EXCL:(-5, -1, 1, 6))=> x"0"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, CYCLIC)=> x"9"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2], CYCLIC)=> x"0"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2],[6:7], CYCLIC)=> x"E"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, ONLY:(-5, -3, 4), CYCLIC)=> x"D"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, EXCL:(-1, 0, 1), CYCLIC)=> x"D"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-1:1], ADD:(3), CYCLIC)=> x"F"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-1:1],[6:7], ADD:(3, -5, -3, 4), CYCLIC)=> x"F"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2], EXCL:(-1, 0, 1), CYCLIC)=> x"2"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2],[5:7], EXCL:(-1, 0, 1, 7), CYCLIC)=> x"6"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, ONLY:(-6, -4, -2, 0, 2, 4, 6), EXCL:(-2, 0, 2), CYCLIC)=> x"A"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2], ADD:(-5, -3), EXCL:(-5, -1, 1), CYCLIC)=> x"D"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[-2:2],[5:7], ADD:(-5, -3, 4), EXCL:(-5, -1, 1, 6), CYCLIC)=> x"4"
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Signed constraints
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[x"F":x"3"])=> x"1"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:4, RANGE:[x"F":x"3"], [x"5":x"7"])=> x"F"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:128,
+UVVM:                                                                           RANGE:[x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF":x"00000000000000000000000000000003"])=>
+UVVM:                                                                           x"00000000000000000000000000000000"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:128, RANGE:[x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF":x"00000000000000000000000000000003"],
+UVVM:                                                                           [x"00000000000000000000000000000005":x"00000000000000000000000000000007"])=>
+UVVM:                                                                           x"00000000000000000000000000000002"
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.                        SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

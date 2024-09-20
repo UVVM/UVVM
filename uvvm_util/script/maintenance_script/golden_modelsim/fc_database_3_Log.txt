@@ -1,0 +1,250 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.                        Start Simulation of Functional Coverage package - fc_database_3
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_BINS). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_BINS_INFO). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_RAND). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_SAMPLE). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_FUNC_COV_CONFIG). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_FUNC_COV_BINS_INFO). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_FUNC_COV_SAMPLE). 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        fc_set_covpts_coverage_goal(50)
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing coverpoint with same bins and different coverage values
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin(10), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin(20), min_hits:8, rand_weight:20, "single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin((30, 35, 39)), min_hits:9, rand_weight:30, "multiple")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_range(40, 49, num_bins:2), min_hits:15, rand_weight:40, "range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(bin_transition((50, 51, 52, 53, 54, 55, 56, 57, 58, 59)), min_hits:5,
+UVVM:                                                                           rand_weight:50, "transition")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(ignore_bin(100), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(ignore_bin(110), min_hits:1000, rand_weight:500, "ignore_single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(ignore_bin_range(121,125), min_hits:1000, rand_weight:500, "ignore_range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(ignore_bin_transition((132, 134, 136, 138)), min_hits:1000, rand_weight:500,
+UVVM:                                                                           "ignore_transition")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(illegal_bin(200), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(illegal_bin(210), min_hits:1000, rand_weight:500, "illegal_single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(illegal_bin_range(226,229), min_hits:1000, rand_weight:500, "illegal_range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_1] add_bins(illegal_bin_transition((231, 237, 237, 238, 235, 231)), min_hits:1000,
+UVVM:                                                                           rand_weight:500, "illegal_transition")
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] set_illegal_bin_alert_level(TB_NOTE)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] set_overall_coverage_weight(5)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] set_bins_coverage_goal(50)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] set_hits_coverage_goal(200)
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_NOTEs by 6. 
+UVVM: 
+UVVM: ***  TB_NOTE #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_A] sample_coverage(210)=> Sampled illegal_bin(210)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_A] sample_coverage(226)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_A] sample_coverage(227)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_A] sample_coverage(228)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_A] sample_coverage(229)=> Sampled illegal_bin_range(226 to 229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_NOTE #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_A] sample_coverage(231)=> Sampled illegal_bin_transition(231->237->237->238->235->231)
+UVVM: 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] write_coverage_db(db_covpt_parallel_1.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] write_coverage_db(db_covpt_parallel_2.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] clear_coverage()
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Covpt_A] write_coverage_db(db_covpt_parallel_3.txt)
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross with different number of bins and coverage values
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(10), bin(1010), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin(20), bin(1020), min_hits:8, rand_weight:20, "single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin((30, 35, 39)), bin((1030, 1035, 1039)), min_hits:9, rand_weight:30,
+UVVM:                                                                           "multiple")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin_range(40, 49, num_bins:2), bin_range(1040, 1049), min_hits:15,
+UVVM:                                                                           rand_weight:40, "range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(bin_transition((50, 51, 52, 53, 54, 55)), bin_transition((1050, 1051, 1052,
+UVVM:                                                                           1053, 1054, 1055)), min_hits:5, rand_weight:50, "transition")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(ignore_bin(100), ignore_bin(1100), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(ignore_bin(110), ignore_bin(1110), min_hits:1000, rand_weight:500,
+UVVM:                                                                           "ignore_single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(ignore_bin_range(121,125), ignore_bin_range(1121,1125), min_hits:1000,
+UVVM:                                                                           rand_weight:500, "ignore_range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(ignore_bin_transition((132, 134, 136, 138)), ignore_bin_transition((1132,
+UVVM:                                                                           1134, 1136, 1138)), min_hits:1000, rand_weight:500, "ignore_transition")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(illegal_bin(200), illegal_bin(1200), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(illegal_bin(210), illegal_bin(1210), min_hits:1000, rand_weight:500,
+UVVM:                                                                           "illegal_single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(illegal_bin_range(226,229), illegal_bin_range(1226,1229), min_hits:1000,
+UVVM:                                                                           rand_weight:500, "illegal_range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_2] add_cross(illegal_bin_transition((231, 237, 237)), illegal_bin_transition((1231,
+UVVM:                                                                           1237, 1237)), min_hits:1000, rand_weight:500, "illegal_transition")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin(10), bin(10000), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin(10), bin(10001), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin(20), bin(1020), min_hits:8, rand_weight:20, "single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin((30, 35, 39)), bin((1030, 1035, 1039)), min_hits:9, rand_weight:30,
+UVVM:                                                                           "multiple")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin_range(40, 49, num_bins:2), bin_range(1040, 1049), min_hits:15,
+UVVM:                                                                           rand_weight:40, "range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(bin_transition((50, 51, 52, 53, 54, 55)), bin_transition((1050, 1051, 1052,
+UVVM:                                                                           1053, 1054, 1055)), min_hits:5, rand_weight:50, "transition")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(ignore_bin(100), ignore_bin(20000), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(ignore_bin(100), ignore_bin(20001), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(ignore_bin(110), ignore_bin(1110), min_hits:1000, rand_weight:500,
+UVVM:                                                                           "ignore_single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(ignore_bin_range(121,125), ignore_bin_range(1121,1125), min_hits:1000,
+UVVM:                                                                           rand_weight:500, "ignore_range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(ignore_bin_transition((132, 134, 136, 138)), ignore_bin_transition((1132,
+UVVM:                                                                           1134, 1136, 1138)), min_hits:1000, rand_weight:500, "ignore_transition")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(illegal_bin(200), illegal_bin(30000), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(illegal_bin(200), illegal_bin(30001), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(illegal_bin(210), illegal_bin(1210), min_hits:1000, rand_weight:500,
+UVVM:                                                                           "illegal_single")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(illegal_bin_range(226,229), illegal_bin_range(1226,1229), min_hits:1000,
+UVVM:                                                                           rand_weight:500, "illegal_range")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_3] add_cross(illegal_bin_transition((231, 237, 237)), illegal_bin_transition((1231,
+UVVM:                                                                           1237, 1237)), min_hits:1000, rand_weight:500, "illegal_transition")
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] set_illegal_bin_alert_level(TB_WARNING)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] set_overall_coverage_weight(8)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] set_bins_coverage_goal(50)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] set_hits_coverage_goal(75)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] set_illegal_bin_alert_level(TB_WARNING)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] set_overall_coverage_weight(8)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] set_bins_coverage_goal(50)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] set_hits_coverage_goal(75)
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 6. 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((210, 1210))=> Sampled illegal_bin(1210)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((226, 1226))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((227, 1227))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((228, 1228))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((229, 1229))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((237, 1237))=> Sampled illegal_bin_transition(1231->1237->1237)
+UVVM: 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] write_coverage_db(db_cross_parallel_1.txt)
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 8. 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((200, 30000))=> Sampled illegal_bin(30000)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((200, 30001))=> Sampled illegal_bin(30001)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #9  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((210, 1210))=> Sampled illegal_bin(1210)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #10  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((226, 1226))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #11  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((227, 1227))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #12  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((228, 1228))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #13  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((229, 1229))=> Sampled illegal_bin_range(1226 to 1229)
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #14  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Cross_B] sample_coverage((237, 1237))=> Sampled illegal_bin_transition(1231->1237->1237)
+UVVM: 
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_B] write_coverage_db(db_cross_parallel_2.txt)
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross with different bins and coverage values
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_cross(bin_range(1, 10), bin(200), bin(300), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_cross(bin_range(11, 20), bin(210), bin(310), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_4] add_cross(bin_range(21, 30), bin(220), bin(320), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_cross(bin_range(1, 10), bin(200), bin(400), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_cross(bin_range(11, 20), bin(210), bin(410), "")
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_5] add_cross(bin_range(21, 30), bin(220), bin(420), "")
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] set_overall_coverage_weight(6)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] set_hits_coverage_goal(150)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] set_overall_coverage_weight(6)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] set_hits_coverage_goal(150)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] write_coverage_db(db_cross_parallel_3.txt)
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_C] write_coverage_db(db_cross_parallel_4.txt)
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing cross with a single coverage file
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_FUNC_COV_BINS                   0.0 ns  TB seq.                        [Covpt_6] add_cross(bin_range(1, 10, num_bins:0), bin(200), bin(300), bin(400), "")
+UVVM: ID_FUNC_COV_CONFIG                 0.0 ns  TB seq.                        [Cross_D] write_coverage_db(db_cross_parallel_5.txt)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      6         6         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :     14        14         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.                        SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

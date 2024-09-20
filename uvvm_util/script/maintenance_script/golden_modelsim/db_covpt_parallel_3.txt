@@ -1,0 +1,63 @@
+--UVVM_FUNCTIONAL_COVERAGE_FILE--
+Covpt_A
+TB seq.
+1
+TRUE
+0
+85514 85614
+2
+0
+6
+1
+53
+21
+21
+21
+5
+50
+200
+50
+6
+bin_0
+1 1 -1
+0 1 10 
+single
+4 8 20
+0 1 20 
+multiple
+3 9 30
+0 3 30 35 39 
+range
+5 15 40
+3 2 40 44 
+range
+5 15 40
+3 2 45 49 
+transition
+3 5 50
+6 10 50 51 52 53 54 55 56 57 58 59 
+8
+bin_6
+0 0 0
+1 1 100 
+ignore_single
+0 0 0
+1 1 110 
+ignore_range
+0 0 0
+4 2 121 125 
+ignore_transition
+0 0 0
+7 4 132 134 136 138 
+bin_10
+0 0 0
+2 1 200 
+illegal_single
+0 0 0
+2 1 210 
+illegal_range
+0 0 0
+5 2 226 229 
+illegal_transition
+0 0 0
+8 6 231 237 237 238 235 231 

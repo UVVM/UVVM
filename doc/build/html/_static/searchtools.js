@@ -164,8 +164,8 @@ const _orderResultsByScoreThenName = (a, b) => {
  */
 if (typeof splitQuery === "undefined") {
   var splitQuery = (query) => query
-      .split(/[^\p{Letter}\p{Number}_\p{Emoji_Presentation}]+/gu)
-      .filter(term => term)  // remove remaining empty strings
+    .split(/[^\p{Letter}\p{Number}_\p{Emoji_Presentation}]+/gu)
+    .filter(term => term)  // remove remaining empty strings
 }
 
 /**
@@ -326,7 +326,7 @@ const Search = {
 
     const queryLower = query.toLowerCase().trim();
     for (const [title, foundTitles] of Object.entries(allTitles)) {
-      if (title.toLowerCase().trim().includes(queryLower) && (queryLower.length >= title.length/2)) {
+      if (title.toLowerCase().trim().includes(queryLower) && (queryLower.length >= title.length / 2)) {
         for (const [file, id] of foundTitles) {
           let score = Math.round(100 * queryLower.length / title.length)
           normalResults.push([
@@ -343,7 +343,7 @@ const Search = {
 
     // search for explicit entries in index directives
     for (const [entry, foundEntries] of Object.entries(indexEntries)) {
-      if (entry.includes(queryLower) && (queryLower.length >= entry.length/2)) {
+      if (entry.includes(queryLower) && (queryLower.length >= entry.length / 2)) {
         for (const [file, id, isMain] of foundEntries) {
           const score = Math.round(100 * queryLower.length / entry.length);
           const result = [

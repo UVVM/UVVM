@@ -25,14 +25,6 @@ Released: 2024-03-08
 - Moved sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
 - Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
 
-v0.1.4 BETA
-----------
-Released: 2024-03-08
-- Fixed compilation warning vcom-1090.
-- Use the function get_scope_for_log() to generate VVC scope.
-- Moved sb_pkg and pad_xxx_sb function from methods_pkg to new vvc_sb_pkg.
-- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
-
 v0.1.3 BETA
 ----------
 Released: 2023-09-16

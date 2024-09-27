@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -305,8 +305,8 @@ package body ti_data_queue_pkg is
       queue_size_in_bits : natural;
       scope              : string := "data_queue"
     ) return natural is
-      variable vr_queue_idx       : natural;
-      variable vr_queue_idx_found : boolean := false;
+      variable v_queue_idx       : natural;
+      variable v_queue_idx_found : boolean := false;
     begin
       if v_scope = NULL then
         v_scope := new string'(scope);
@@ -322,43 +322,43 @@ package body ti_data_queue_pkg is
       for i in t_buffer_boolean_array'range loop
         if not v_queue_initialized(i) then
           -- Save queue idx
-          vr_queue_idx                      := i;
-          vr_queue_idx_found                := true;
+          v_queue_idx                      := i;
+          v_queue_idx_found                := true;
           -- Tag this queue as initialized
-          v_queue_initialized(vr_queue_idx) := true;
+          v_queue_initialized(v_queue_idx) := true;
           exit;                         -- exit loop
         end if;
       end loop;
 
       -- Verify that an available queue idx was found, else trigger alert and return 0
-      if not check_value(vr_queue_idx_found, TB_ERROR,
+      if not check_value(v_queue_idx_found, TB_ERROR,
                            "init_queue called, but all queues have already been initialized!", v_scope.all, ID_NEVER) then
         return 0;
       end if;
 
       -- Set buffer size for this buffer to queue_size_in_bits
       if queue_size_in_bits <= (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - (v_next_available_idx - 1) then -- less than or equal to the remaining total buffer space available
-        v_queue_size_in_bits(vr_queue_idx) := queue_size_in_bits;
+        v_queue_size_in_bits(v_queue_idx) := queue_size_in_bits;
       else
         alert(TB_ERROR, "queue_size_in_bits larger than maximum allowed!", v_scope.all);
-        v_queue_size_in_bits(vr_queue_idx) := (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - v_next_available_idx; -- Set to remaining available bits
+        v_queue_size_in_bits(v_queue_idx) := (C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER - 1) - v_next_available_idx; -- Set to remaining available bits
       end if;
 
       -- Set starting and ending indices for this queue_idx
-      v_min_idx(vr_queue_idx)   := v_next_available_idx;
-      v_max_idx(vr_queue_idx)   := v_min_idx(vr_queue_idx) + v_queue_size_in_bits(vr_queue_idx) - 1;
-      v_first_idx(vr_queue_idx) := v_min_idx(vr_queue_idx);
-      v_last_idx(vr_queue_idx)  := v_min_idx(vr_queue_idx);
+      v_min_idx(v_queue_idx)   := v_next_available_idx;
+      v_max_idx(v_queue_idx)   := v_min_idx(v_queue_idx) + v_queue_size_in_bits(v_queue_idx) - 1;
+      v_first_idx(v_queue_idx) := v_min_idx(v_queue_idx);
+      v_last_idx(v_queue_idx)  := v_min_idx(v_queue_idx);
 
-      v_next_available_idx := v_max_idx(vr_queue_idx) + 1;
+      v_next_available_idx := v_max_idx(v_queue_idx) + 1;
 
-      log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(vr_queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(vr_queue_idx)) & ".", v_scope.all);
+      log(ID_UVVM_DATA_QUEUE, "Queue " & to_string(v_queue_idx) & " initialized with buffer size " & to_string(v_queue_size_in_bits(v_queue_idx)) & ".", v_scope.all);
 
       -- Clear the buffer just to be sure
-      flush(vr_queue_idx);
+      flush(v_queue_idx);
 
       -- Return the index of the buffer
-      return vr_queue_idx;
+      return v_queue_idx;
     end function;
 
     ------------------------------------------

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -125,30 +125,30 @@ package body hierarchy_linked_list_pkg is
       hierarchy_level : natural;        -- How far down the tree this node is. Used when printing summary.
     end record;
 
-    variable vr_top_element_ptr      : t_element_ptr;
-    variable vr_num_elements_in_tree : natural := 0;
+    variable priv_top_element_ptr      : t_element_ptr;
+    variable priv_num_elements_in_tree : natural := 0;
 
-    variable vr_max_hierarchy_level : natural := 0;
+    variable priv_max_hierarchy_level : natural := 0;
 
     -- Initialization variables
-    variable vr_has_been_initialized : boolean := false;
-    variable vr_base_scope           : string(1 to C_HIERARCHY_NODE_NAME_LENGTH);
+    variable priv_has_been_initialized : boolean := false;
+    variable priv_base_scope           : string(1 to C_HIERARCHY_NODE_NAME_LENGTH);
 
     procedure initialize_hierarchy(
       base_scope : string := "";
       stop_limit : t_alert_counters) is
-      variable v_base_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH)                 := justify(base_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
+      variable priv_base_scope : string(1 to C_HIERARCHY_NODE_NAME_LENGTH)                 := justify(base_scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
       variable base_node    : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH)) := (
-        v_base_scope,
+        priv_base_scope,
         (others => (others => 0)),
         stop_limit,
         (others => true));
     begin
-      if not vr_has_been_initialized then
+      if not priv_has_been_initialized then
         -- Generate a base node.
         insert_in_tree(base_node, "");
-        vr_base_scope           := v_base_scope;
-        vr_has_been_initialized := true;
+        priv_base_scope           := priv_base_scope;
+        priv_has_been_initialized := true;
       end if;
     end procedure;
 
@@ -249,7 +249,7 @@ package body hierarchy_linked_list_pkg is
       found_unexpected_simulation_errors_or_worse       := 0;
       mismatch_on_expected_simulation_warnings_or_worse := 0;
       mismatch_on_expected_simulation_errors_or_worse   := 0;
-      v_traverse_children_ptr                           := vr_top_element_ptr;
+      v_traverse_children_ptr                           := priv_top_element_ptr;
       -- Update uvvm simulation status
       while v_traverse_children_ptr /= null loop -- loop through children
         v_traverse_siblings_ptr := v_traverse_children_ptr;
@@ -310,10 +310,10 @@ package body hierarchy_linked_list_pkg is
       v_hierarchy_node      := hierarchy_node;
       v_hierarchy_node.name := justify(hierarchy_node.name, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
       -- Set read and write pointers when appending element to existing list
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
 
         -- Search for the parent.
-        search_for_scope(vr_top_element_ptr, v_parent_scope, v_parent_ptr, v_found);
+        search_for_scope(priv_top_element_ptr, v_parent_scope, v_parent_ptr, v_found);
         if v_found then
           -- Parent found.
           if v_parent_ptr.first_child = null then
@@ -334,8 +334,8 @@ package body hierarchy_linked_list_pkg is
           end if;
 
           -- Update max hierarchy level
-          if vr_max_hierarchy_level < v_parent_ptr.hierarchy_level + 1 then
-            vr_max_hierarchy_level := v_parent_ptr.hierarchy_level + 1;
+          if priv_max_hierarchy_level < v_parent_ptr.hierarchy_level + 1 then
+            priv_max_hierarchy_level := v_parent_ptr.hierarchy_level + 1;
           end if;
         else
           -- parent not in tree
@@ -345,11 +345,11 @@ package body hierarchy_linked_list_pkg is
 
       else
         -- tree is empty, create top element in tree
-        vr_top_element_ptr := new t_element'(first_child => null, next_sibling => null, prev_sibling => null, parent => null, element_data => v_hierarchy_node, hierarchy_level => 0);
+        priv_top_element_ptr := new t_element'(first_child => null, next_sibling => null, prev_sibling => null, parent => null, element_data => v_hierarchy_node, hierarchy_level => 0);
       end if;
 
       -- Increment number of elements
-      vr_num_elements_in_tree := vr_num_elements_in_tree + 1;
+      priv_num_elements_in_tree := priv_num_elements_in_tree + 1;
     end procedure;
 
     procedure clear_recursively(variable element_ptr : inout t_element_ptr) is
@@ -372,16 +372,16 @@ package body hierarchy_linked_list_pkg is
     begin
 
       -- Deallocate all nodes in the tree
-      if vr_top_element_ptr /= null then
-        clear_recursively(vr_top_element_ptr);
+      if priv_top_element_ptr /= null then
+        clear_recursively(priv_top_element_ptr);
       end if;
 
       -- Reset the linked_list counter
-      vr_num_elements_in_tree := 0;
+      priv_num_elements_in_tree := 0;
 
       -- Reset the hierarchy variables
-      vr_max_hierarchy_level  := 0;
-      vr_has_been_initialized := false;
+      priv_max_hierarchy_level  := 0;
+      priv_has_been_initialized := false;
 
       update_uvvm_sim_status;
 
@@ -390,7 +390,7 @@ package body hierarchy_linked_list_pkg is
     impure function is_empty
     return boolean is
     begin
-      if vr_num_elements_in_tree = 0 then
+      if priv_num_elements_in_tree = 0 then
         return true;
       else
         return false;
@@ -406,7 +406,7 @@ package body hierarchy_linked_list_pkg is
     impure function get_size
     return natural is
     begin
-      return vr_num_elements_in_tree;
+      return priv_num_elements_in_tree;
     end function;
 
     impure function contains_scope(
@@ -415,7 +415,7 @@ package body hierarchy_linked_list_pkg is
       variable v_candidate_ptr : t_element_ptr := null;
       variable v_found         : boolean       := false;
     begin
-      search_for_scope(vr_top_element_ptr, scope, v_candidate_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_candidate_ptr, v_found);
       return v_found;
     end function;
 
@@ -427,7 +427,7 @@ package body hierarchy_linked_list_pkg is
       variable v_candidate_ptr : t_element_ptr := null;
       variable v_found         : boolean       := false;
     begin
-      search_for_scope(vr_top_element_ptr, scope, v_candidate_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_candidate_ptr, v_found);
       result := v_found;
       if v_found then
         hierarchy_node := v_candidate_ptr.element_data;
@@ -460,9 +460,9 @@ package body hierarchy_linked_list_pkg is
       variable v_parent_node       : t_hierarchy_node(name(1 to C_HIERARCHY_NODE_NAME_LENGTH));
       variable v_do_print          : boolean := false; -- Enable/disable print of alert message
     begin
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
         -- search for tree node that contains scope
-        search_for_scope(vr_top_element_ptr, scope, v_starting_node_ptr, v_found);
+        search_for_scope(priv_top_element_ptr, scope, v_starting_node_ptr, v_found);
 
         if not v_found then
           -- If the scope was not found, register automatically
@@ -470,7 +470,7 @@ package body hierarchy_linked_list_pkg is
           -- Stop limit set to default.
           insert_in_tree((scope, (others => (others => 0)), (others => 0), (others => true)), justify(C_BASE_HIERARCHY_LEVEL, LEFT, C_HIERARCHY_NODE_NAME_LENGTH));
           -- Search again to get ptr
-          search_for_scope(vr_top_element_ptr, scope, v_starting_node_ptr, v_found);
+          search_for_scope(priv_top_element_ptr, scope, v_starting_node_ptr, v_found);
         end if;
 
         v_current_ptr := v_starting_node_ptr;
@@ -609,9 +609,9 @@ package body hierarchy_linked_list_pkg is
       variable v_new_expected_alerts : natural;
       variable v_found               : boolean := false;
     begin
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
         -- search for tree node that contains scope
-        search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+        search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
         assert v_found report "Scope not found!" severity warning;
 
         if v_found then
@@ -648,9 +648,9 @@ package body hierarchy_linked_list_pkg is
       variable v_found       : boolean                                   := false;
       variable v_scope       : string(1 to C_HIERARCHY_NODE_NAME_LENGTH) := justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
     begin
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
         -- search for tree node that contains scope
-        search_for_scope(vr_top_element_ptr, v_scope, v_current_ptr, v_found);
+        search_for_scope(priv_top_element_ptr, v_scope, v_current_ptr, v_found);
 
         assert v_found report "Scope not found!" severity warning;
 
@@ -686,7 +686,7 @@ package body hierarchy_linked_list_pkg is
       variable v_found       : boolean                                   := false;
       variable v_scope       : string(1 to C_HIERARCHY_NODE_NAME_LENGTH) := justify(scope, LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
     begin
-      search_for_scope(vr_top_element_ptr, v_scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, v_scope, v_current_ptr, v_found);
 
       if v_found then
         return v_current_ptr.element_data.alert_attention_counters(alert_level)(EXPECT);
@@ -704,9 +704,9 @@ package body hierarchy_linked_list_pkg is
       variable v_new_stop_limit : natural;
       variable v_found          : boolean := false;
     begin
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
         -- search for tree node that contains scope
-        search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+        search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
 
         assert v_found report "Scope not found!" severity warning;
 
@@ -738,9 +738,9 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr;
       variable v_found       : boolean := false;
     begin
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
         -- search for tree node that contains scope
-        search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+        search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
 
         assert v_found report "Scope not found!" severity warning;
 
@@ -768,7 +768,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr;
       variable v_found       : boolean := false;
     begin
-      search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
 
       if v_found then
         return v_current_ptr.element_data.alert_stop_limit(alert_level);
@@ -852,9 +852,9 @@ package body hierarchy_linked_list_pkg is
       write(v_line, starting_node_ptr.element_data.name);
 
       -- Adjust the columns according to max hierarchy level
-      if vr_max_hierarchy_level > 0 then
-        if starting_node_ptr.hierarchy_level /= vr_max_hierarchy_level then
-          write(v_line, fill_string(' ', (vr_max_hierarchy_level - starting_node_ptr.hierarchy_level) * 3));
+      if priv_max_hierarchy_level > 0 then
+        if starting_node_ptr.hierarchy_level /= priv_max_hierarchy_level then
+          write(v_line, fill_string(' ', (priv_max_hierarchy_level - starting_node_ptr.hierarchy_level) * 3));
         end if;
       end if;
 
@@ -916,11 +916,11 @@ package body hierarchy_linked_list_pkg is
 
       -- Write header
       write(v_line,
-            LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & v_header & LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "     " & justify(" ", RIGHT, 3 + C_HIERARCHY_NODE_NAME_LENGTH + vr_max_hierarchy_level * 3) & "NOTE" & justify(" ", RIGHT, 6) & "TB_NOTE" & justify(" ", RIGHT, 5) & "WARNING" & justify(" ", RIGHT, 3) & "TB_WARNING" & justify(" ", RIGHT, 2) & "MANUAL_CHECK" & justify(" ", RIGHT, 3) & "ERROR" & justify(" ", RIGHT, 5) & "TB_ERROR" & justify(" ", RIGHT, 5) & "FAILURE" & justify(" ", RIGHT, 3) & "TB_FAILURE" & LF);
+            LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & v_header & LF & fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF & "     " & justify(" ", RIGHT, 3 + C_HIERARCHY_NODE_NAME_LENGTH + priv_max_hierarchy_level * 3) & "NOTE" & justify(" ", RIGHT, 6) & "TB_NOTE" & justify(" ", RIGHT, 5) & "WARNING" & justify(" ", RIGHT, 3) & "TB_WARNING" & justify(" ", RIGHT, 2) & "MANUAL_CHECK" & justify(" ", RIGHT, 3) & "ERROR" & justify(" ", RIGHT, 5) & "TB_ERROR" & justify(" ", RIGHT, 5) & "FAILURE" & justify(" ", RIGHT, 3) & "TB_FAILURE" & LF);
 
       -- Print all nodes
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
-        print_node(vr_top_element_ptr, v_status_ok, v_minor_status_ok, v_mismatch, v_minor_mismatch, v_line);
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
+        print_node(priv_top_element_ptr, v_status_ok, v_minor_status_ok, v_mismatch, v_minor_mismatch, v_line);
       end if;
 
       write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - prefix'length)) & LF);
@@ -956,8 +956,8 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
-        search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
+        search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
         assert v_found report "Scope not found. Exiting get_parent_scope()..." severity warning;
         if not v_found then
           return justify("", LEFT, C_HIERARCHY_NODE_NAME_LENGTH);
@@ -982,8 +982,8 @@ package body hierarchy_linked_list_pkg is
           node_ptr.hierarchy_level := 0;
         end if;
 
-        if vr_max_hierarchy_level < node_ptr.hierarchy_level then
-          vr_max_hierarchy_level := node_ptr.hierarchy_level;
+        if priv_max_hierarchy_level < node_ptr.hierarchy_level then
+          priv_max_hierarchy_level := node_ptr.hierarchy_level;
         end if;
 
         if node_ptr.next_sibling /= null then
@@ -1006,15 +1006,15 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr    : t_element_ptr := null;
       variable v_found          : boolean       := false;
     begin
-      if vr_num_elements_in_tree > 0 and vr_has_been_initialized then
+      if priv_num_elements_in_tree > 0 and priv_has_been_initialized then
 
-        search_for_scope(vr_top_element_ptr, scope, v_child_ptr, v_found);
+        search_for_scope(priv_top_element_ptr, scope, v_child_ptr, v_found);
         assert v_found report "Child not found. Exiting change_parent()..." severity warning;
         if not v_found then
           return;
         end if;
 
-        search_for_scope(vr_top_element_ptr, parent_scope, v_new_parent_ptr, v_found);
+        search_for_scope(priv_top_element_ptr, parent_scope, v_new_parent_ptr, v_found);
         assert v_found report "Parent not found. Exiting change_parent()..." severity warning;
         if not v_found then
           return;
@@ -1083,10 +1083,10 @@ package body hierarchy_linked_list_pkg is
         end if;
 
         -- Set parent correctly
-        v_child_ptr.parent     := v_new_parent_ptr;
+        v_child_ptr.parent    := v_new_parent_ptr;
         -- Update hierarchy levels for the whole tree
-        vr_max_hierarchy_level := 0;
-        propagate_hierarchy_level(vr_top_element_ptr);
+        priv_max_hierarchy_level := 0;
+        propagate_hierarchy_level(priv_top_element_ptr);
       end if;
     end procedure;
 
@@ -1098,13 +1098,13 @@ package body hierarchy_linked_list_pkg is
       --
       --
 
-      vr_top_element_ptr.element_data.alert_stop_limit(alert_level) := value;
+      priv_top_element_ptr.element_data.alert_stop_limit(alert_level) := value;
 
       -- Evaluate new stop limit in case it is less than or equal to the current alert counter for this alert level
       -- If that is the case, a new alert with the same alert level shall be triggered.
-      if vr_top_element_ptr.element_data.alert_stop_limit(alert_level) /= 0 and (vr_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD) >= vr_top_element_ptr.element_data.alert_stop_limit(alert_level)) then
+      if priv_top_element_ptr.element_data.alert_stop_limit(alert_level) /= 0 and (priv_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD) >= priv_top_element_ptr.element_data.alert_stop_limit(alert_level)) then
         assert false
-        report "Alert stop limit for scope " & vr_top_element_ptr.element_data.name & " at alert level " & to_upper(to_string(alert_level)) & " set to " & to_string(value) & ", which is lower than the current " & to_upper(to_string(alert_level)) & " count (" & to_string(vr_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD)) & ")."
+        report "Alert stop limit for scope " & priv_top_element_ptr.element_data.name & " at alert level " & to_upper(to_string(alert_level)) & " set to " & to_string(value) & ", which is lower than the current " & to_upper(to_string(alert_level)) & " count (" & to_string(priv_top_element_ptr.element_data.alert_attention_counters(alert_level)(REGARD)) & ")."
         severity failure;
 
       end if;
@@ -1115,7 +1115,7 @@ package body hierarchy_linked_list_pkg is
       alert_level : t_alert_level
     ) return natural is
     begin
-      return vr_top_element_ptr.element_data.alert_stop_limit(alert_level);
+      return priv_top_element_ptr.element_data.alert_stop_limit(alert_level);
     end function;
 
     procedure propagate_alert_level(
@@ -1144,7 +1144,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
       if v_found then
         propagate_alert_level(v_current_ptr, alert_level, true);
       end if;
@@ -1157,7 +1157,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
       if v_found then
         propagate_alert_level(v_current_ptr, alert_level, false);
       end if;
@@ -1169,7 +1169,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
       if v_found then
         for alert_level in NOTE to t_alert_level'right loop
           propagate_alert_level(v_current_ptr, alert_level, true);
@@ -1183,7 +1183,7 @@ package body hierarchy_linked_list_pkg is
       variable v_current_ptr : t_element_ptr := null;
       variable v_found       : boolean       := false;
     begin
-      search_for_scope(vr_top_element_ptr, scope, v_current_ptr, v_found);
+      search_for_scope(priv_top_element_ptr, scope, v_current_ptr, v_found);
       if v_found then
         for alert_level in NOTE to t_alert_level'right loop
           propagate_alert_level(v_current_ptr, alert_level, false);

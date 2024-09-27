@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -21,7 +21,6 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library work;
 use work.axi_bfm_pkg.all;
 
 --=================================================================================================
@@ -31,7 +30,7 @@ package transaction_pkg is
 
   --===============================================================================================
   -- t_operation
-  -- - Bitvis defined BFM operations
+  -- - VVC and BFM operations
   --===============================================================================================
   type t_operation is (
     -- UVVM common
@@ -45,27 +44,24 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    WRITE, READ, CHECK);
+    WRITE, READ, CHECK
+  );
 
-  constant C_VVC_CMD_MAX_BURST_WORDS : natural := 256;
-
-  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := 256;
-  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := 32;
-  constant C_VVC_CMD_ID_MAX_LENGTH          : natural := 32;
-  constant C_VVC_CMD_USER_MAX_LENGTH        : natural := 128;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_MAX_BURST_WORDS        : natural := C_AXI_VVC_CMD_MAX_BURST_WORDS;
+  constant C_VVC_CMD_DATA_MAX_LENGTH        : natural := C_AXI_VVC_CMD_DATA_MAX_LENGTH;
+  constant C_VVC_CMD_ADDR_MAX_LENGTH        : natural := C_AXI_VVC_CMD_ADDR_MAX_LENGTH;
+  constant C_VVC_CMD_ID_MAX_LENGTH          : natural := C_AXI_VVC_CMD_ID_MAX_LENGTH;
+  constant C_VVC_CMD_USER_MAX_LENGTH        : natural := C_AXI_VVC_CMD_USER_MAX_LENGTH;
   constant C_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := C_VVC_CMD_DATA_MAX_LENGTH / 8;
-  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := 300;
+  constant C_VVC_CMD_STRING_MAX_LENGTH      : natural := C_AXI_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM           : natural := C_AXI_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
   -- Transaction info types, constants and global signal
   --
   --==========================================================================================
-
-  -- Transaction status
-  type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED);
-
-  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := INACTIVE;
 
   -- VVC Meta
   type t_vvc_meta is record
@@ -88,7 +84,7 @@ package transaction_pkg is
   constant C_BASE_TRANSACTION_SET_DEFAULT : t_base_transaction := (
     operation          => NO_OPERATION,
     vvc_meta           => C_VVC_META_DEFAULT,
-    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+    transaction_status => INACTIVE
   );
 
   type t_arw_transaction is record
@@ -122,7 +118,7 @@ package transaction_pkg is
     arwregion          => (others => '0'),
     arwuser            => (others => '0'),
     vvc_meta           => C_VVC_META_DEFAULT,
-    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+    transaction_status => INACTIVE
   );
 
   type t_w_transaction is record
@@ -140,7 +136,7 @@ package transaction_pkg is
     wstrb              => (others => (others => '0')),
     wuser              => (others => (others => '0')),
     vvc_meta           => C_VVC_META_DEFAULT,
-    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+    transaction_status => INACTIVE
   );
 
   type t_b_transaction is record
@@ -158,7 +154,7 @@ package transaction_pkg is
     bresp              => OKAY,
     buser              => (others => '0'),
     vvc_meta           => C_VVC_META_DEFAULT,
-    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+    transaction_status => INACTIVE
   );
 
   type t_r_transaction is record
@@ -178,7 +174,7 @@ package transaction_pkg is
     rresp              => (others => OKAY),
     ruser              => (others => (others => '0')),
     vvc_meta           => C_VVC_META_DEFAULT,
-    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+    transaction_status => INACTIVE
   );
 
   -- Transaction group
@@ -204,11 +200,11 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_axi_transaction_trigger_array is array (natural range <>) of std_logic;
-  signal global_axi_vvc_transaction_trigger : t_axi_transaction_trigger_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => '0');
+  signal global_axi_vvc_transaction_trigger : t_axi_transaction_trigger_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => '0');
 
   -- Type is defined as array to coincide with channel based VVCs
   type t_axi_transaction_group_array is array (natural range <>) of t_transaction_group;
   -- Shared transaction info variable
-  shared variable shared_axi_vvc_transaction_info : t_axi_transaction_group_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
+  shared variable shared_axi_vvc_transaction_info : t_axi_transaction_group_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_GROUP_DEFAULT);
 
 end package transaction_pkg;

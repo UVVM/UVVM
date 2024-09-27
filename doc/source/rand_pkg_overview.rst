@@ -6,8 +6,7 @@ Enhanced Randomization
 **********************************************************************************************************************************
 Getting started
 **********************************************************************************************************************************
-All the functionality for **Enhanced Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*. For 
-more information on protected types see :ref:`protected_types`.
+All the functionality for **Enhanced Randomization**, using protected types, can be found in *uvvm_util/src/rand_pkg.vhd*.
 
 For more simple functionality, not using protected types, refer to the :ref:`basic_randomization`.
 
@@ -408,7 +407,7 @@ constraints have been generated. Once this happens, the process starts over.
     parsing of the growing queue.
 
 .. important::
-    It is recommended to call ``clear_rand_cyclic()`` at the end of the testbench when using cyclic generation to deallocate the
+    It is recommended to call ``clear_rand_cyclic()`` at the end of the testbench when using cyclic generation to de-allocate the
     list/queue.
 
 .. _rand_pkg_distributions:
@@ -655,7 +654,7 @@ The number of decimal digits displayed in the real values logs can be adjusted w
 
 .. note::
 
-    Enhanced Randomization, Optimized Randomization and Functional Coverage were inpired by general statistics and similar 
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inspired by general statistics and similar 
     functionality in SystemVerilog and OSVVM.
 
 .. _rand_pkg:

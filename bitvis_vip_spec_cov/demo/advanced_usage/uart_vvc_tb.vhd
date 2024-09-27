@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -33,20 +33,22 @@ context bitvis_vip_uart.vvc_context;
 
 library bitvis_vip_spec_cov;
 use bitvis_vip_spec_cov.spec_cov_pkg.all;
-use bitvis_vip_spec_cov.local_adaptations_pkg.all;
 
 --hdlregression:tb
 -- Test bench entity
 entity uart_vvc_tb is
-  generic (GC_TESTCASE : natural := 0);
+  generic (
+    GC_TESTCASE    : natural := 0;
+    GC_SCRIPT_PATH : string  := ""
+  );
 end entity;
 
 -- Test bench architecture
 architecture func of uart_vvc_tb is
 
   -- Assuming that the testbench is run from the sim folder
-  constant C_REQ_LIST_FILE      : string := "../demo/advanced_usage/req_list_advanced_demo.csv";
-  constant C_PARTIAL_COV_FILE   : string := "../sim/partial_cov_advanced_demo_T" & to_string(GC_TESTCASE) & ".csv";
+  constant C_REQ_LIST_FILE      : string := GC_SCRIPT_PATH & "../demo/advanced_usage/req_list_advanced_demo.csv";
+  constant C_PARTIAL_COV_FILE   : string := GC_SCRIPT_PATH & "../sim/partial_cov_advanced_demo_T" & to_string(GC_TESTCASE) & ".csv";
 
   constant C_SCOPE              : string  := C_TB_SCOPE_DEFAULT;
 
@@ -85,8 +87,8 @@ architecture func of uart_vvc_tb is
     disable_log_msg(ALL_MESSAGES);
     enable_log_msg(ID_LOG_HDR);
     enable_log_msg(ID_SEQUENCER);
-    enable_log_msg(ID_FILE_OPEN_CLOSE); -- Enable the Spec Cov IDs
-    enable_log_msg(ID_FILE_PARSER);     -- Enable the Spec Cov IDs
+    enable_log_msg(ID_SPEC_COV_INIT);   -- Enable the Spec Cov IDs
+    enable_log_msg(ID_SPEC_COV_REQS);   -- Enable the Spec Cov IDs
     enable_log_msg(ID_SPEC_COV);        -- Enable the Spec Cov IDs
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);

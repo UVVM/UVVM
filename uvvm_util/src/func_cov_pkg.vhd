@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -959,12 +959,26 @@ package body func_cov_pkg is
     write(v_line, fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
     -- Print summary
-    write(v_line, return_string_if_true("Goal:                    Covpts: " & to_string(protected_covergroup_status.get_covpts_coverage_goal(VOID)) & "%" & LF, C_PRINT_GOAL) & return_string_if_true("% of Goal:               Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_CAPPED), 2) & "%" & LF, C_PRINT_GOAL) & return_string_if_true("% of Goal (uncapped):    Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_UNCAPPED), 2) & "%" & LF, C_PRINT_GOAL) & "Coverage (for goal 100): " & justify("Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(NO_GOAL), 2) & "%, ", left, 18, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & justify("Bins: " & to_string(protected_covergroup_status.get_total_bins_coverage(VOID), 2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & justify("Hits: " & to_string(protected_covergroup_status.get_total_hits_coverage(VOID), 2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+    write(v_line, return_string_if_true("Goal:                    Covpts: " & to_string(protected_covergroup_status.get_covpts_coverage_goal(VOID)) & "%" & LF, C_PRINT_GOAL) &
+                  return_string_if_true("% of Goal:               Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_CAPPED), 2) & "%" & LF, C_PRINT_GOAL) &
+                  return_string_if_true("% of Goal (uncapped):    Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(GOAL_UNCAPPED), 2) & "%" & LF, C_PRINT_GOAL) &
+                  "Coverage (for goal 100): " &
+                    justify("Covpts: " & to_string(protected_covergroup_status.get_total_covpts_coverage(NO_GOAL), 2) & "%, ", left, 18, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                    justify("Bins: " & to_string(protected_covergroup_status.get_total_bins_coverage(VOID), 2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                    justify("Hits: " & to_string(protected_covergroup_status.get_total_hits_coverage(VOID), 2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                  fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
     if verbosity = VERBOSE or verbosity = HOLES_ONLY then
       -- Print column headers
       write(v_line, justify(
-        fill_string(' ', v_log_extra_space) & justify("COVERPOINT", center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("COVERAGE WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("COVERED BINS", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("COVERAGE(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("GOAL(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("% OF GOAL(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & return_string_if_true(justify("NUM TESTCASES", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), C_PRINT_NUM_TC),
+        fill_string(' ', v_log_extra_space) &
+        justify("COVERPOINT", center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("COVERAGE WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("COVERED BINS", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("COVERAGE(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("GOAL(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("% OF GOAL(BINS|HITS)", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        return_string_if_true(justify("NUM TESTCASES", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), C_PRINT_NUM_TC),
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       -- Print coverpoints
@@ -972,7 +986,18 @@ package body func_cov_pkg is
         if protected_covergroup_status.is_initialized(i) then
           if verbosity /= HOLES_ONLY or not (protected_covergroup_status.get_bins_coverage(i, GOAL_CAPPED) = 100.0 and protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED) = 100.0) then
             write(v_line, justify(
-              fill_string(' ', v_log_extra_space) & justify(protected_covergroup_status.get_name(i), center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(protected_covergroup_status.get_coverage_weight(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(protected_covergroup_status.get_num_covered_bins(i)) & " / " & to_string(protected_covergroup_status.get_num_valid_bins(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(protected_covergroup_status.get_bins_coverage(i, NO_GOAL), 2) & "% | " & to_string(protected_covergroup_status.get_hits_coverage(i, NO_GOAL), 2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(protected_covergroup_status.get_bins_coverage_goal(i)) & "% | " & to_string(protected_covergroup_status.get_hits_coverage_goal(i)) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(protected_covergroup_status.get_bins_coverage(i, GOAL_CAPPED), 2) & "% | " & to_string(protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED), 2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & return_string_if_true(justify(to_string(protected_covergroup_status.get_num_tc_accumulated(i) + 1), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), C_PRINT_NUM_TC),
+              fill_string(' ', v_log_extra_space) &
+              justify(protected_covergroup_status.get_name(i), center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_coverage_weight(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_num_covered_bins(i)) & " / " &
+                      to_string(protected_covergroup_status.get_num_valid_bins(i)), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_bins_coverage(i, NO_GOAL), 2) & "% | " &
+                      to_string(protected_covergroup_status.get_hits_coverage(i, NO_GOAL), 2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_bins_coverage_goal(i)) & "% | " &
+                      to_string(protected_covergroup_status.get_hits_coverage_goal(i)) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(protected_covergroup_status.get_bins_coverage(i, GOAL_CAPPED), 2) & "% | " &
+                      to_string(protected_covergroup_status.get_hits_coverage(i, GOAL_CAPPED), 2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              return_string_if_true(justify(to_string(protected_covergroup_status.get_num_tc_accumulated(i) + 1), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), C_PRINT_NUM_TC),
               left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end if;
@@ -1001,6 +1026,7 @@ package body func_cov_pkg is
 
     type t_bin_type_verbosity is (LONG, SHORT, NONE);
     type t_samples_vector is array (natural range <>) of integer_vector(C_FC_MAX_NUM_BIN_VALUES - 1 downto 0);
+    type t_integer_vector_ptr is access integer_vector;
 
     -- This means that the randomization weight of the bin will be equal to the min_hits
     -- parameter and will be reduced by 1 every time the bin is sampled.
@@ -1218,7 +1244,9 @@ package body func_cov_pkg is
       variable v_is_ignore : boolean := false;
     begin
       for i in 0 to priv_num_bins_crossed - 1 loop
-        v_is_ignore := v_is_ignore or (bin.cross_bins(i).contains = VAL_IGNORE or bin.cross_bins(i).contains = RAN_IGNORE or bin.cross_bins(i).contains = TRN_IGNORE);
+        v_is_ignore := v_is_ignore or (bin.cross_bins(i).contains = VAL_IGNORE or
+                                       bin.cross_bins(i).contains = RAN_IGNORE or
+                                       bin.cross_bins(i).contains = TRN_IGNORE);
       end loop;
       return v_is_ignore;
     end function;
@@ -1230,7 +1258,9 @@ package body func_cov_pkg is
       variable v_is_illegal : boolean := false;
     begin
       for i in 0 to priv_num_bins_crossed - 1 loop
-        v_is_illegal := v_is_illegal or (bin.cross_bins(i).contains = VAL_ILLEGAL or bin.cross_bins(i).contains = RAN_ILLEGAL or bin.cross_bins(i).contains = TRN_ILLEGAL);
+        v_is_illegal := v_is_illegal or (bin.cross_bins(i).contains = VAL_ILLEGAL or
+                                         bin.cross_bins(i).contains = RAN_ILLEGAL or
+                                         bin.cross_bins(i).contains = TRN_ILLEGAL);
       end loop;
       return v_is_illegal;
     end function;
@@ -1320,7 +1350,10 @@ package body func_cov_pkg is
       constant C_VALUES     : integer_vector(0 to C_NUM_VALUES - 1) := cov_bin_vector(cov_bin_idx).cross_bins(cross_bin_idx).values(0 to C_NUM_VALUES - 1);
     begin
       for i in 0 to cov_bin_idx - 1 loop
-        if cov_bin_vector(i).cross_bins(cross_bin_idx).contains = C_CONTAINS and cov_bin_vector(i).cross_bins(cross_bin_idx).num_values = C_NUM_VALUES and cov_bin_vector(i).cross_bins(cross_bin_idx).values(0 to C_NUM_VALUES - 1) = C_VALUES then
+        if cov_bin_vector(i).cross_bins(cross_bin_idx).contains = C_CONTAINS and
+           cov_bin_vector(i).cross_bins(cross_bin_idx).num_values = C_NUM_VALUES and
+           cov_bin_vector(i).cross_bins(cross_bin_idx).values(0 to C_NUM_VALUES - 1) = C_VALUES
+        then
           return true;
         end if;
       end loop;
@@ -1539,7 +1572,9 @@ package body func_cov_pkg is
           -- Check that all the bins being added are valid
           v_bin_is_valid    := true;
           for j in 0 to C_NUM_CROSS_BINS - 1 loop
-            v_bin_is_valid := v_bin_is_valid and (bin_array(j).bin_vector(idx_reg(j)).contains = VAL or bin_array(j).bin_vector(idx_reg(j)).contains = RAN or bin_array(j).bin_vector(idx_reg(j)).contains = TRN);
+            v_bin_is_valid := v_bin_is_valid and (bin_array(j).bin_vector(idx_reg(j)).contains = VAL or
+                                                  bin_array(j).bin_vector(idx_reg(j)).contains = RAN or
+                                                  bin_array(j).bin_vector(idx_reg(j)).contains = TRN);
           end loop;
           v_num_transitions := C_UNINITIALIZED;
 
@@ -1924,7 +1959,8 @@ package body func_cov_pkg is
               -- Generate an alert if the current bin was not found in the loaded bins
               if new_bins_acceptance /= NO_ALERT_ON_NEW_BINS then
                 v_alert_level := TB_ERROR when new_bins_acceptance = ERROR_ON_NEW_BINS else TB_WARNING;
-                alert(v_alert_level, C_LOCAL_CALL & "=> bin[" & get_bin_values(bins_vector(i)) & ", min_hits:" & to_string(bins_vector(i).min_hits) & ", rand_weight:" & to_string(bins_vector(i).rand_weight) & "] not found in loaded database. Coverage for this bin might not be correct.", priv_scope);
+                alert(v_alert_level, C_LOCAL_CALL & "=> bin[" & get_bin_values(bins_vector(i)) & ", min_hits:" & to_string(bins_vector(i).min_hits) &
+                  ", rand_weight:" & to_string(bins_vector(i).rand_weight) & "] not found in loaded database. Coverage for this bin might not be correct.", priv_scope);
               end if;
             end if;
           end loop;
@@ -2244,7 +2280,8 @@ package body func_cov_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding bins: " & get_bin_array_values(bin) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding bins: " & get_bin_array_values(bin) & ", min_hits:" & to_string(min_hits) &
+        ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_proc_call.all, v_bin_array, bin);
@@ -2282,7 +2319,8 @@ package body func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL      : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL      : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", min_hits:" & to_string(min_hits) &
+        ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS  : natural := 2;
       constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call       : line;
@@ -2292,7 +2330,9 @@ package body func_cov_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & get_bin_array_values(bin1) & " x " & get_bin_array_values(bin2) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & get_bin_array_values(bin1) & " x " & get_bin_array_values(bin2) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_proc_call.all, v_bin_array, bin1, bin2);
@@ -2306,7 +2346,8 @@ package body func_cov_pkg is
       constant min_hits     : in positive;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", min_hits:" & to_string(min_hits) &
+        ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2333,7 +2374,8 @@ package body func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL      : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL      : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS  : natural := 3;
       constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call       : line;
@@ -2343,7 +2385,9 @@ package body func_cov_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & get_bin_array_values(bin1) & " x " & get_bin_array_values(bin2) & " x " & get_bin_array_values(bin3) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & get_bin_array_values(bin1) & " x " & get_bin_array_values(bin2) & " x " & get_bin_array_values(bin3) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_proc_call.all, v_bin_array, bin1, bin2, bin3);
@@ -2358,7 +2402,8 @@ package body func_cov_pkg is
       constant min_hits     : in positive;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2369,7 +2414,8 @@ package body func_cov_pkg is
       constant bin3         : in t_new_bin_array;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2387,7 +2433,8 @@ package body func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL      : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL      : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS  : natural := 4;
       constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call       : line;
@@ -2397,7 +2444,9 @@ package body func_cov_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & get_bin_array_values(bin1) & " x " & get_bin_array_values(bin2) & " x " & get_bin_array_values(bin3) & " x " & get_bin_array_values(bin4) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & get_bin_array_values(bin1) & " x " & get_bin_array_values(bin2) & " x " & get_bin_array_values(bin3) & " x " & get_bin_array_values(bin4) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_proc_call.all, v_bin_array, bin1, bin2, bin3, bin4);
@@ -2413,7 +2462,8 @@ package body func_cov_pkg is
       constant min_hits     : in positive;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, bin4, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2425,7 +2475,8 @@ package body func_cov_pkg is
       constant bin4         : in t_new_bin_array;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", " & get_proc_calls(bin4) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, bin4, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2444,7 +2495,8 @@ package body func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL      : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL      : string  := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS  : natural := 5;
       constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call       : line;
@@ -2454,7 +2506,10 @@ package body func_cov_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all);
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & get_bin_array_values(bin1) & " x " & get_bin_array_values(bin2) & " x " & get_bin_array_values(bin3) & " x " & get_bin_array_values(bin4) & " x " & get_bin_array_values(bin5) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & get_bin_array_values(bin1) & " x " & get_bin_array_values(bin2) & " x " & get_bin_array_values(bin3) &
+        " x " & get_bin_array_values(bin4) & " x " & get_bin_array_values(bin5) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_proc_call.all, v_bin_array, bin1, bin2, bin3, bin4, bin5);
@@ -2471,7 +2526,8 @@ package body func_cov_pkg is
       constant min_hits     : in positive;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, bin4, bin5, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2484,7 +2540,8 @@ package body func_cov_pkg is
       constant bin5         : in t_new_bin_array;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) & ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & get_proc_calls(bin1) & ", " & get_proc_calls(bin2) & ", " & get_proc_calls(bin3) &
+        ", " & get_proc_calls(bin4) & ", " & get_proc_calls(bin5) & ", """ & bin_name & """)";
     begin
       add_cross(bin1, bin2, bin3, bin4, bin5, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2500,7 +2557,8 @@ package body func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL      : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL      : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS  : integer := coverpoint1.get_num_bins_crossed(VOID) + coverpoint2.get_num_bins_crossed(VOID);
       constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call       : line;
@@ -2510,7 +2568,9 @@ package body func_cov_pkg is
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, coverpoint1.get_num_bins_crossed(VOID), coverpoint2.get_num_bins_crossed(VOID));
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & coverpoint1.get_all_bins_string(VOID) & " x " & coverpoint2.get_all_bins_string(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & coverpoint1.get_all_bins_string(VOID) & " x " & coverpoint2.get_all_bins_string(VOID) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_bin_array, coverpoint1, coverpoint2);
@@ -2551,7 +2611,8 @@ package body func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL      : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL      : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS  : integer := coverpoint1.get_num_bins_crossed(VOID) + coverpoint2.get_num_bins_crossed(VOID) + coverpoint3.get_num_bins_crossed(VOID);
       constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call       : line;
@@ -2562,7 +2623,9 @@ package body func_cov_pkg is
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, coverpoint1.get_num_bins_crossed(VOID), coverpoint2.get_num_bins_crossed(VOID),
                              coverpoint3.get_num_bins_crossed(VOID));
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & coverpoint1.get_all_bins_string(VOID) & " x " & coverpoint2.get_all_bins_string(VOID) & " x " & coverpoint3.get_all_bins_string(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & coverpoint1.get_all_bins_string(VOID) & " x " & coverpoint2.get_all_bins_string(VOID) & " x " & coverpoint3.get_all_bins_string(VOID) &
+        ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_bin_array, coverpoint1, coverpoint2, coverpoint3);
@@ -2577,7 +2640,8 @@ package body func_cov_pkg is
       constant min_hits     : in positive;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) &
+        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(coverpoint1, coverpoint2, coverpoint3, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2606,7 +2670,8 @@ package body func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL      : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL      : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) &
+        ", " & coverpoint4.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS  : integer := coverpoint1.get_num_bins_crossed(VOID) + coverpoint2.get_num_bins_crossed(VOID) + coverpoint3.get_num_bins_crossed(VOID) + coverpoint4.get_num_bins_crossed(VOID);
       constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call       : line;
@@ -2617,7 +2682,9 @@ package body func_cov_pkg is
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, coverpoint1.get_num_bins_crossed(VOID), coverpoint2.get_num_bins_crossed(VOID),
                              coverpoint3.get_num_bins_crossed(VOID), coverpoint4.get_num_bins_crossed(VOID));
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & coverpoint1.get_all_bins_string(VOID) & " x " & coverpoint2.get_all_bins_string(VOID) & " x " & coverpoint3.get_all_bins_string(VOID) & " x " & coverpoint4.get_all_bins_string(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & coverpoint1.get_all_bins_string(VOID) & " x " & coverpoint2.get_all_bins_string(VOID) & " x " & coverpoint3.get_all_bins_string(VOID) &
+        " x " & coverpoint4.get_all_bins_string(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) &
+        ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_bin_array, coverpoint1, coverpoint2, coverpoint3, coverpoint4);
@@ -2633,7 +2700,8 @@ package body func_cov_pkg is
       constant min_hits     : in positive;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) &
+        ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(coverpoint1, coverpoint2, coverpoint3, coverpoint4, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2664,7 +2732,8 @@ package body func_cov_pkg is
       constant bin_name      : in string         := "";
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel;
       constant ext_proc_call : in string         := "") is
-      constant C_LOCAL_CALL      : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) & ", " & coverpoint5.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL      : string  := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) &
+        ", " & coverpoint5.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & to_string(rand_weight) & ", """ & bin_name & """)";
       constant C_NUM_CROSS_BINS  : integer := coverpoint1.get_num_bins_crossed(VOID) + coverpoint2.get_num_bins_crossed(VOID) + coverpoint3.get_num_bins_crossed(VOID) + coverpoint4.get_num_bins_crossed(VOID) + coverpoint5.get_num_bins_crossed(VOID);
       constant C_USE_RAND_WEIGHT : boolean := ext_proc_call = ""; -- When procedure is called from the sequencer
       variable v_proc_call       : line;
@@ -2675,7 +2744,9 @@ package body func_cov_pkg is
       check_num_bins_crossed(C_NUM_CROSS_BINS, v_proc_call.all, coverpoint1.get_num_bins_crossed(VOID), coverpoint2.get_num_bins_crossed(VOID),
                              coverpoint3.get_num_bins_crossed(VOID), coverpoint4.get_num_bins_crossed(VOID), coverpoint5.get_num_bins_crossed(VOID));
       log(ID_FUNC_COV_BINS, get_name_prefix(VOID) & v_proc_call.all, priv_scope, msg_id_panel);
-      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & coverpoint1.get_all_bins_string(VOID) & " x " & coverpoint2.get_all_bins_string(VOID) & " x " & coverpoint3.get_all_bins_string(VOID) & " x " & coverpoint4.get_all_bins_string(VOID) & " x " & coverpoint5.get_all_bins_string(VOID) & ", min_hits:" & to_string(min_hits) & ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
+      log(ID_FUNC_COV_BINS_INFO, get_name_prefix(VOID) & "Adding cross: " & coverpoint1.get_all_bins_string(VOID) & " x " & coverpoint2.get_all_bins_string(VOID) &
+        " x " & coverpoint3.get_all_bins_string(VOID) & " x " & coverpoint4.get_all_bins_string(VOID) & " x " & coverpoint5.get_all_bins_string(VOID) & ", min_hits:" & to_string(min_hits) &
+        ", rand_weight:" & return_string1_if_true_otherwise_string2(to_string(rand_weight), to_string(min_hits), C_USE_RAND_WEIGHT) & ", """ & bin_name & """", priv_scope, msg_id_panel);
 
       -- Copy the bins into an array and use a recursive procedure to add them to the list
       create_bin_array(v_bin_array, coverpoint1, coverpoint2, coverpoint3, coverpoint4, coverpoint5);
@@ -2692,7 +2763,8 @@ package body func_cov_pkg is
       constant min_hits     : in positive;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) & ", " & coverpoint5.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) &
+        ", " & coverpoint5.get_name(VOID) & ", min_hits:" & to_string(min_hits) & ", """ & bin_name & """)";
     begin
       add_cross(coverpoint1, coverpoint2, coverpoint3, coverpoint4, coverpoint5, min_hits, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2705,7 +2777,8 @@ package body func_cov_pkg is
       variable coverpoint5  : inout t_coverpoint;
       constant bin_name     : in string         := "";
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) & ", " & coverpoint5.get_name(VOID) & ", """ & bin_name & """)";
+      constant C_LOCAL_CALL : string := "add_cross(" & coverpoint1.get_name(VOID) & ", " & coverpoint2.get_name(VOID) & ", " & coverpoint3.get_name(VOID) & ", " & coverpoint4.get_name(VOID) &
+        ", " & coverpoint5.get_name(VOID) & ", """ & bin_name & """)";
     begin
       add_cross(coverpoint1, coverpoint2, coverpoint3, coverpoint4, coverpoint5, 1, 1, bin_name, msg_id_panel, C_LOCAL_CALL);
     end procedure;
@@ -2740,6 +2813,8 @@ package body func_cov_pkg is
       variable v_value_match       : std_logic_vector(0 to priv_num_bins_crossed - 1) := (others => '0');
       variable v_illegal_match_idx : integer                                          := -1;
       variable v_num_occurrences   : natural                                          := 0;
+      variable v_sample_shift_reg  : t_integer_vector_ptr;
+      variable v_bin_values        : t_integer_vector_ptr;
     begin
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       if priv_num_bins_crossed = C_UNINITIALIZED then
@@ -2778,11 +2853,20 @@ package body func_cov_pkg is
                 v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = RAN_ILLEGAL;
               end if;
             when TRN | TRN_IGNORE | TRN_ILLEGAL =>
+              -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
+              v_sample_shift_reg     := new integer_vector(priv_invalid_bins(i).cross_bins(j).num_values - 1 downto 0);
+              v_sample_shift_reg.all := priv_bin_sample_shift_reg(j)(priv_invalid_bins(i).cross_bins(j).num_values - 1 downto 0);
+              v_bin_values           := new integer_vector(0 to priv_invalid_bins(i).cross_bins(j).num_values - 1);
+              v_bin_values.all       := priv_invalid_bins(i).cross_bins(j).values(0 to priv_invalid_bins(i).cross_bins(j).num_values - 1);
+
               -- Check if there are enough valid values in the shift register to compare the transition
-              if priv_invalid_bins(i).transition_mask(priv_invalid_bins(i).cross_bins(j).num_values - 1) = '1' and priv_bin_sample_shift_reg(j)(priv_invalid_bins(i).cross_bins(j).num_values - 1 downto 0) = priv_invalid_bins(i).cross_bins(j).values(0 to priv_invalid_bins(i).cross_bins(j).num_values - 1) then
+              if priv_invalid_bins(i).transition_mask(priv_invalid_bins(i).cross_bins(j).num_values - 1) = '1' and v_sample_shift_reg.all = v_bin_values.all then
                 v_value_match(j)    := '1';
                 v_illegal_match_idx := j when priv_invalid_bins(i).cross_bins(j).contains = TRN_ILLEGAL;
               end if;
+
+              DEALLOCATE(v_sample_shift_reg);
+              DEALLOCATE(v_bin_values);
             when others =>
               alert(TB_FAILURE, v_proc_call.all & "=> Unexpected error, invalid bin contains " & to_upper(to_string(priv_invalid_bins(i).cross_bins(j).contains)), priv_scope);
           end case;
@@ -2817,10 +2901,19 @@ package body func_cov_pkg is
                   v_value_match(j) := '1';
                 end if;
               when TRN =>
+                -- Fix for Modelsim: copy the 2 values to variables before comparing them, otherwise the comparison always returns true.
+                v_sample_shift_reg     := new integer_vector(priv_bins(i).cross_bins(j).num_values - 1 downto 0);
+                v_sample_shift_reg.all := priv_bin_sample_shift_reg(j)(priv_bins(i).cross_bins(j).num_values - 1 downto 0);
+                v_bin_values           := new integer_vector(0 to priv_bins(i).cross_bins(j).num_values - 1);
+                v_bin_values.all       := priv_bins(i).cross_bins(j).values(0 to priv_bins(i).cross_bins(j).num_values - 1);
+
                 -- Check if there are enough valid values in the shift register to compare the transition
-                if priv_bins(i).transition_mask(priv_bins(i).cross_bins(j).num_values - 1) = '1' and priv_bin_sample_shift_reg(j)(priv_bins(i).cross_bins(j).num_values - 1 downto 0) = priv_bins(i).cross_bins(j).values(0 to priv_bins(i).cross_bins(j).num_values - 1) then
+                if priv_bins(i).transition_mask(priv_bins(i).cross_bins(j).num_values - 1) = '1' and v_sample_shift_reg.all = v_bin_values.all then
                   v_value_match(j) := '1';
                 end if;
+
+                DEALLOCATE(v_sample_shift_reg);
+                DEALLOCATE(v_bin_values);
               when others =>
                 alert(TB_FAILURE, v_proc_call.all & "=> Unexpected error, valid bin contains " & to_upper(to_string(priv_bins(i).cross_bins(j).contains)), priv_scope);
             end case;
@@ -2941,22 +3034,55 @@ package body func_cov_pkg is
 
       -- Print summary
       if priv_id /= C_DEALLOCATED_ID then
-        v_print_goal := protected_covergroup_status.get_bins_coverage_goal(priv_id) /= 100 or protected_covergroup_status.get_hits_coverage_goal(priv_id) /= 100;
-        write(v_line, "Coverpoint:              " & to_string(priv_name) & return_string_if_true("    (accumulated over this and " & to_string(priv_num_tc_accumulated) & " previous testcases)", priv_loaded_coverpoint) & LF & return_string_if_true("Goal:                    " & justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage_goal(priv_id)) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, v_print_goal) & return_string_if_true("% of Goal:               " & justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_CAPPED), 2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_CAPPED), 2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, v_print_goal) & return_string_if_true("% of Goal (uncapped):    " & justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_UNCAPPED), 2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_UNCAPPED), 2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, v_print_goal) & "Coverage (for goal 100): " & justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, NO_GOAL), 2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, NO_GOAL), 2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF & fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+        v_print_goal := protected_covergroup_status.get_bins_coverage_goal(priv_id) /= 100 or
+                        protected_covergroup_status.get_hits_coverage_goal(priv_id) /= 100;
+        write(v_line, "Coverpoint:              " & to_string(priv_name) &
+                      return_string_if_true("    (accumulated over this and " & to_string(priv_num_tc_accumulated) & " previous testcases)", priv_loaded_coverpoint) & LF &
+                      return_string_if_true("Goal:                    " &
+                        justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage_goal(priv_id)) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage_goal(priv_id)) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, v_print_goal) &
+                      return_string_if_true("% of Goal:               " &
+                        justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_CAPPED), 2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_CAPPED), 2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, v_print_goal) &
+                      return_string_if_true("% of Goal (uncapped):    " &
+                        justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, GOAL_UNCAPPED), 2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, GOAL_UNCAPPED), 2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF, v_print_goal) &
+                      "Coverage (for goal 100): " &
+                        justify("Bins: " & to_string(protected_covergroup_status.get_bins_coverage(priv_id, NO_GOAL), 2) & "%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: " & to_string(protected_covergroup_status.get_hits_coverage(priv_id, NO_GOAL), 2) & "%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                      fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
       else
-        write(v_line, "Coverpoint:              " & to_string(priv_name) & LF & "Coverage (for goal 100): " & justify("Bins: 0.0%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & justify("Hits: 0.0%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF & fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+        write(v_line, "Coverpoint:              " & to_string(priv_name) & LF &
+                      "Coverage (for goal 100): " &
+                        justify("Bins: 0.0%, ", left, 16, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) &
+                        justify("Hits: 0.0%", left, 14, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF &
+                      fill_string('-', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
       end if;
 
       -- Print column headers
       write(v_line, justify(
-        fill_string(' ', v_log_extra_space) & justify("BINS", center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("HITS", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("MIN HITS", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("HIT COVERAGE", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & return_string_if_true(justify("RAND WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), rand_weight_col = SHOW_RAND_WEIGHT) & justify("NAME", center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("ILLEGAL/IGNORE", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+        fill_string(' ', v_log_extra_space) &
+        justify("BINS", center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("HITS", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("MIN HITS", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("HIT COVERAGE", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        return_string_if_true(justify("RAND WEIGHT", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), rand_weight_col = SHOW_RAND_WEIGHT) &
+        justify("NAME", center, C_FC_MAX_NAME_LENGTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+        justify("ILLEGAL/IGNORE", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
         left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
 
       -- Print illegal bins
       for i in 0 to priv_invalid_bins_idx - 1 loop
         if is_bin_illegal(priv_invalid_bins(i)) and (verbosity = VERBOSE or (verbosity = NON_VERBOSE and priv_invalid_bins(i).hits > 0)) then
           write(v_line, justify(
-            fill_string(' ', v_log_extra_space) & justify(get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(priv_invalid_bins(i).hits), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & return_string_if_true(justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), rand_weight_col = SHOW_RAND_WEIGHT) & justify(to_string(priv_invalid_bins(i).name), center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("ILLEGAL", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            fill_string(' ', v_log_extra_space) &
+            justify(get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_invalid_bins(i).hits), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            return_string_if_true(justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), rand_weight_col = SHOW_RAND_WEIGHT) &
+            justify(to_string(priv_invalid_bins(i).name), center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("ILLEGAL", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
@@ -2966,7 +3092,14 @@ package body func_cov_pkg is
         for i in 0 to priv_invalid_bins_idx - 1 loop
           if is_bin_ignore(priv_invalid_bins(i)) then
             write(v_line, justify(
-              fill_string(' ', v_log_extra_space) & justify(get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(priv_invalid_bins(i).hits), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & return_string_if_true(justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), rand_weight_col = SHOW_RAND_WEIGHT) & justify(to_string(priv_invalid_bins(i).name), center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("IGNORE", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+              fill_string(' ', v_log_extra_space) &
+              justify(get_bin_values(priv_invalid_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify(to_string(priv_invalid_bins(i).hits), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              return_string_if_true(justify("N/A", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), rand_weight_col = SHOW_RAND_WEIGHT) &
+              justify(to_string(priv_invalid_bins(i).name), center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+              justify("IGNORE", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
               left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
           end if;
         end loop;
@@ -2977,7 +3110,14 @@ package body func_cov_pkg is
         if verbosity = VERBOSE or verbosity = NON_VERBOSE or (verbosity = HOLES_ONLY and priv_bins(i).hits < get_total_min_hits(priv_bins(i).min_hits)) then
           v_rand_weight := priv_bins(i).min_hits when priv_bins(i).rand_weight = C_USE_ADAPTIVE_WEIGHT else priv_bins(i).rand_weight;
           write(v_line, justify(
-            fill_string(' ', v_log_extra_space) & justify(get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(priv_bins(i).hits), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(priv_bins(i).min_hits), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify(to_string(get_bin_coverage(priv_bins(i)), 2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & return_string_if_true(justify(to_string(v_rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), rand_weight_col = SHOW_RAND_WEIGHT) & justify(to_string(priv_bins(i).name), center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) & justify("-", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
+            fill_string(' ', v_log_extra_space) &
+            justify(get_bin_values(priv_bins(i), C_BIN_COLUMN_WIDTH), center, C_BIN_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).hits), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(priv_bins(i).min_hits), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify(to_string(get_bin_coverage(priv_bins(i)), 2) & "%", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            return_string_if_true(justify(to_string(v_rand_weight), center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space), rand_weight_col = SHOW_RAND_WEIGHT) &
+            justify(to_string(priv_bins(i).name), center, C_FC_MAX_NAME_LENGTH, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space) &
+            justify("-", center, C_COLUMN_WIDTH, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE) & fill_string(' ', v_log_extra_space),
             left, C_LOG_LINE_WIDTH - C_PREFIX'length, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE) & LF);
         end if;
       end loop;
@@ -3040,7 +3180,9 @@ package body func_cov_pkg is
       variable v_line          : line;
     begin
       -- Print report header
-      write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF & "***  COVERPOINT CONFIGURATION REPORT ***" & LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
+      write(v_line, LF & fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF &
+                    "***  COVERPOINT CONFIGURATION REPORT ***" & LF &
+                    fill_string('=', (C_LOG_LINE_WIDTH - C_PREFIX'length)) & LF);
 
       -- Print report config
       if priv_id /= C_DEALLOCATED_ID then

@@ -1,5 +1,5 @@
 #================================================================================================================================
-# Copyright 2020 Bitvis
+# Copyright 2024 UVVM
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 #
@@ -27,7 +27,7 @@ if { [info exists ::env(SIMULATOR)] } {
   puts "Simulator: $simulator"
 
   if [string equal $simulator "MODELSIM"] {
-    set compdirectives "-quiet -suppress 1346,1236,1090 -2008 -work $lib_name"
+    set compdirectives "-quiet -suppress 1346,1236 -2008 -work $lib_name"
   } elseif [string equal $simulator "RIVIERAPRO"] {
     set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work $lib_name"
   } else {

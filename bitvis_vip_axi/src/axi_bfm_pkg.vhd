@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -70,6 +70,7 @@ package axi_bfm_pkg is
 
   -- Configuration record to be assigned in the test harness.
   type t_axi_bfm_config is record
+    general_severity         : t_alert_level; -- Alert Severity 
     max_wait_cycles          : natural; -- Used for setting the maximum cycles to wait before an alert is issued when waiting for ready and valid signals from the DUT.
     max_wait_cycles_severity : t_alert_level; -- The above timeout will have this severity
     clock_period             : time;    -- Period of the clock signal.
@@ -90,6 +91,7 @@ package axi_bfm_pkg is
   end record;
 
   constant C_AXI_BFM_CONFIG_DEFAULT : t_axi_bfm_config := (
+    general_severity         => ERROR,
     max_wait_cycles          => 1000,
     max_wait_cycles_severity => TB_FAILURE,
     clock_period             => -1 ns,
@@ -194,9 +196,9 @@ package axi_bfm_pkg is
   ------------------------------------------
   -- init_axi_if_signals
   ------------------------------------------
-  -- - This function returns an AXI interface with initialized signals.
-  -- - All AXI input signals are initialized to 0
-  -- - All AXI output signals are initialized to Z
+  -- This function returns an AXI interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_axi_if_signals(
     addr_width : natural;
     data_width : natural;
@@ -313,7 +315,7 @@ package axi_bfm_pkg is
     constant msg            : in string;
     signal   clk            : in std_logic;
     signal   axi_if         : inout t_axi_if;
-    constant alert_level    : in t_alert_level                := error;
+    constant alert_level    : in t_alert_level                := C_AXI_BFM_CONFIG_DEFAULT.general_severity;
     constant scope          : in string                       := C_BFM_SCOPE;
     constant msg_id_panel   : in t_msg_id_panel               := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config             := C_AXI_BFM_CONFIG_DEFAULT
@@ -700,7 +702,7 @@ package body axi_bfm_pkg is
 
       if axi_if.write_response_channel.bvalid = '1' and cycle >= config.num_b_pipe_stages then
         -- Checking response
-        check_value(axi_if.write_response_channel.bid, v_awid_value, error, "Checking BID", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
+        check_value(axi_if.write_response_channel.bid, v_awid_value, config.general_severity, "Checking BID", scope, BIN, KEEP_LEADING_0, ID_NEVER, msg_id_panel, proc_call);
         buser_value := normalize_and_check(axi_if.write_response_channel.buser, buser_value, ALLOW_WIDER_NARROWER, "axi_if.write_response_channel.buser", "buser_value", msg);
         bresp_value := slv_to_xresp(axi_if.write_response_channel.bresp);
         -- Wait according to config.bfm_sync setup
@@ -856,7 +858,7 @@ package body axi_bfm_pkg is
 
         if axi_if.read_data_channel.rvalid = '1' and cycle >= config.num_r_pipe_stages then
           v_await_rvalid                  := false;
-          check_value(axi_if.read_data_channel.rid, v_arid_value, config.match_strictness, error, "Checking RID", scope, HEX, KEEP_LEADING_0, ID_POS_ACK, msg_id_panel);
+          check_value(axi_if.read_data_channel.rid, v_arid_value, config.match_strictness, config.general_severity, "Checking RID", scope, HEX, KEEP_LEADING_0, ID_POS_ACK, msg_id_panel);
           rdata_value(read_transfer_num)  := normalize_and_check(axi_if.read_data_channel.rdata, rdata_value(read_transfer_num), ALLOW_WIDER_NARROWER, "axi_if.read_data_channel.rdata", "rdata_value(" & to_string(read_transfer_num) & ")", msg);
           rresp_value(read_transfer_num)  := slv_to_xresp(axi_if.read_data_channel.rresp);
           ruser_value(read_transfer_num)  := normalize_and_check(axi_if.read_data_channel.ruser, ruser_value(read_transfer_num), ALLOW_WIDER_NARROWER, "axi_if.read_data_channel.ruser", "ruser_value(" & to_string(read_transfer_num) & ")", msg);
@@ -900,7 +902,7 @@ package body axi_bfm_pkg is
     constant msg            : in string;
     signal   clk            : in std_logic;
     signal   axi_if         : inout t_axi_if;
-    constant alert_level    : in t_alert_level                := error;
+    constant alert_level    : in t_alert_level                := C_AXI_BFM_CONFIG_DEFAULT.general_severity;
     constant scope          : in string                       := C_BFM_SCOPE;
     constant msg_id_panel   : in t_msg_id_panel               := shared_msg_id_panel;
     constant config         : in t_axi_bfm_config             := C_AXI_BFM_CONFIG_DEFAULT

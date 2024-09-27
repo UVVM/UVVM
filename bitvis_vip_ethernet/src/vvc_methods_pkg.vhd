@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -18,6 +18,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library std;
+use std.textio.all;
+
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
@@ -27,17 +30,11 @@ use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 library bitvis_vip_hvvc_to_vvc_bridge;
 use bitvis_vip_hvvc_to_vvc_bridge.support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.support_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
-use work.ethernet_sb_pkg.all;
-
-library std;
-use std.textio.all;
+use work.vvc_sb_pkg.all;
 
 --==========================================================================================
 --==========================================================================================
@@ -111,16 +108,9 @@ package vvc_methods_pkg is
     pending_cmd_cnt  => 0
   );
 
-  shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
-  shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
-
-  -- Scoreboard
-  package ethernet_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map(t_element         => t_ethernet_frame,
-                element_match     => ethernet_match,
-                to_string_element => to_string);
-  use ethernet_sb_pkg.all;
-  shared variable ETHERNET_VVC_SB : ethernet_sb_pkg.t_generic_sb;
+  shared variable shared_ethernet_vvc_config : t_vvc_config_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_ETHERNET_VVC_CONFIG_DEFAULT));
+  shared variable shared_ethernet_vvc_status : t_vvc_status_array(t_channel'left to t_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_VVC_STATUS_DEFAULT));
+  shared variable ETHERNET_VVC_SB            : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC
@@ -259,22 +249,20 @@ package vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
   procedure reset_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record);
-
-  --==============================================================================
-  -- VVC Activity
-  --==============================================================================
-  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
-                                         variable vvc_status                           : inout t_vvc_status;
-                                         constant activity                             : in t_activity;
-                                         constant entry_num_in_vvc_activity_register   : in integer;
-                                         constant last_cmd_idx_executed                : in natural;
-                                         constant command_queue_is_empty               : in boolean;
-                                         constant scope                                : in string := C_VVC_NAME);
 
 end package vvc_methods_pkg;
 
@@ -829,21 +817,44 @@ package body vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
-        vvc_transaction_info_group.bt.operation                             := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.ethernet_frame.mac_destination        := vvc_cmd.mac_destination;
-        vvc_transaction_info_group.bt.ethernet_frame.mac_source             := vvc_cmd.mac_source;
-        vvc_transaction_info_group.bt.ethernet_frame.payload_length         := vvc_cmd.payload_length;
-        vvc_transaction_info_group.bt.ethernet_frame.payload                := vvc_cmd.payload;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length) := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                      := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                    := IN_PROGRESS;
+        vvc_transaction_info_group.bt.operation                      := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.ethernet_frame.mac_destination := vvc_cmd.mac_destination;
+        vvc_transaction_info_group.bt.ethernet_frame.mac_source      := vvc_cmd.mac_source;
+        vvc_transaction_info_group.bt.ethernet_frame.payload_length  := vvc_cmd.payload_length;
+        vvc_transaction_info_group.bt.ethernet_frame.payload         := vvc_cmd.payload;
+        vvc_transaction_info_group.bt.vvc_meta.msg                   := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx               := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status             := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        alert(TB_ERROR, "VVC operation not recognized", scope);
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_vvc_transaction_info;
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  begin
+    case vvc_cmd.operation is
+      when RECEIVE =>
+        vvc_transaction_info_group.bt.ethernet_frame     := vvc_result.ethernet_frame;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when others =>
+        alert(TB_ERROR, "VVC operation does not update vvc_result", scope);
     end case;
 
     wait for 0 ns;
@@ -856,41 +867,12 @@ package body vvc_methods_pkg is
     case vvc_cmd.operation is
       when TRANSMIT | RECEIVE | EXPECT =>
         vvc_transaction_info_group.bt := C_BASE_TRANSACTION_SET_DEFAULT;
+
       when others =>
         null;
     end case;
 
     wait for 0 ns;
   end procedure reset_vvc_transaction_info;
-
-  --==============================================================================
-  -- VVC Activity
-  --==============================================================================
-  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
-                                         variable vvc_status                           : inout t_vvc_status;
-                                         constant activity                             : in t_activity;
-                                         constant entry_num_in_vvc_activity_register   : in integer;
-                                         constant last_cmd_idx_executed                : in natural;
-                                         constant command_queue_is_empty               : in boolean;
-                                         constant scope                                : in string := C_VVC_NAME) is
-    variable v_activity : t_activity := activity;
-  begin
-    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
-    if activity = INACTIVE then
-      vvc_status.previous_cmd_idx := last_cmd_idx_executed;
-      vvc_status.current_cmd_idx  := 0;
-    end if;
-
-    if v_activity = INACTIVE and not (command_queue_is_empty) then
-      v_activity := ACTIVE;
-    end if;
-    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
-                                                          activity              => v_activity,
-                                                          last_cmd_idx_executed => last_cmd_idx_executed);
-    if global_trigger_vvc_activity_register /= 'L' then
-      wait until global_trigger_vvc_activity_register = 'L';
-    end if;
-    gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
-  end procedure;
 
 end package body vvc_methods_pkg;

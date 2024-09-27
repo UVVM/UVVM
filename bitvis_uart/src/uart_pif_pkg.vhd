@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -34,12 +34,14 @@ package uart_pif_pkg is
   constant C_ADDR_RX_DATA_VALID : integer := 1;
   constant C_ADDR_TX_DATA       : integer := 2;
   constant C_ADDR_TX_READY      : integer := 3;
+  constant C_ADDR_NUM_DATA_BITS : integer := 4;
 
   -- Signals from pif to core
   type t_p2c is record
-    awo_tx_data    : std_logic_vector(7 downto 0);
-    awo_tx_data_we : std_logic;
-    aro_rx_data_re : std_logic;
+    awo_tx_data       : std_logic_vector(7 downto 0);
+    awo_tx_data_we    : std_logic;
+    aro_rx_data_re    : std_logic;
+    rw_num_data_bits  : positive range 7 to 8;
   end record t_p2c;
 
   -- Signals from core to PIF

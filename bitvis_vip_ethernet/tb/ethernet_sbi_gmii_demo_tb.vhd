@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -66,7 +66,7 @@ begin
   -----------------------------------------------------------------------------
   -- Instantiate test harness, containing DUT and VVCs
   -----------------------------------------------------------------------------
-  i_test_harness : entity bitvis_vip_ethernet.ethernet_sbi_gmii_demo_th
+  i_test_harness : entity work.ethernet_sbi_gmii_demo_th
     generic map(
       GC_CLK_PERIOD => C_CLK_PERIOD
     );
@@ -164,6 +164,7 @@ begin
     ethernet_receive(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, TO_SB, "Receive a frame in the PHY and put it in the Scoreboard.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_SBI, TX, 1 ms, "Wait for transmit to finish.");
     await_completion(ETHERNET_VVCT, C_VVC_ETH_GMII, RX, 1 ms, "Wait for receive to finish.");
+    wait for 1 us; -- Wait so that interface goes idle before the next test
 
     ---------------------------------------------------------------------------
     log(ID_LOG_HDR_LARGE, "TEST DIRECT ACCESS TO INTERFACE VVCs");

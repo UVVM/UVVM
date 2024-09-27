@@ -2,6 +2,37 @@ Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v3.1.0
+----------
+Released: 2024-09-19
+- Removed old await_completion code from VVC.
+- Moved update_vvc_activity_register procedure to a common package for all VVCs.
+- Updated unwanted activity detection to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
+
+v3.0.1
+----------
+Released: 2024-08-16
+- Converted documentation to RST format.
+
+v3.0.0
+----------
+Released: 2024-07-03
+- Changed max constants used in BFM and VVC to be adjustable from adaptations_pkg.
+- Removed local_adaptations_pkg and moved content to adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Added unwanted activity detection functionality to the VVC to give an alert if the DUT generates any unexpected bus activity.
+
+v2.0.0
+----------
+Released: 2024-03-08
+- Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.
+- Added missing scope to alert in set_global_vvc_transaction_info procedure.
+- Removed unnecessary constraining in set_global_vvc_transaction_info procedure.
+- Moved t_transaction_status type to types_pkg (common for all VVCs) and added COMPLETED.
+- Fixed compilation warning vcom-1090.
+- Use the function get_scope_for_log() to generate VVC scope.
+- Implemented option for extended error message.
+
 v1.2.5
 ----------
 Released: 2023-09-16

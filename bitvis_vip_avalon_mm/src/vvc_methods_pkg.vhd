@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -24,13 +24,11 @@ context uvvm_util.uvvm_util_context;
 library uvvm_vvc_framework;
 use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
 
-library bitvis_vip_scoreboard;
-use bitvis_vip_scoreboard.generic_sb_support_pkg.all;
-
 use work.avalon_mm_bfm_pkg.all;
 use work.vvc_cmd_pkg.all;
 use work.td_target_support_pkg.all;
 use work.transaction_pkg.all;
+use work.vvc_sb_pkg.all;
 
 --=================================================================================================
 --=================================================================================================
@@ -38,7 +36,7 @@ use work.transaction_pkg.all;
 package vvc_methods_pkg is
 
   --===============================================================================================
-  -- Types and constants for the SBI VVC 
+  -- Types and constants for the AVALON_MM VVC
   --===============================================================================================
   constant C_VVC_NAME : string := "AVALON_MM_VVC";
 
@@ -66,6 +64,7 @@ package vvc_methods_pkg is
     num_pipeline_stages                   : natural; -- Max read_requests in pipeline
     msg_id_panel                          : t_msg_id_panel; -- VVC dedicated message ID panel
     parent_msg_id_panel                   : t_msg_id_panel; --UVVM: temporary fix for HVVC, remove in v3.0
+    unwanted_activity_severity            : t_alert_level; -- Severity of alert to be initiated if unwanted activity on the DUT outputs is detected
   end record;
 
   type t_vvc_config_array is array (natural range <>) of t_vvc_config;
@@ -82,7 +81,8 @@ package vvc_methods_pkg is
     use_read_pipeline                     => TRUE,
     num_pipeline_stages                   => 5,
     msg_id_panel                          => C_VVC_MSG_ID_PANEL_DEFAULT,
-    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT
+    parent_msg_id_panel                   => C_VVC_MSG_ID_PANEL_DEFAULT,
+    unwanted_activity_severity            => C_UNWANTED_ACTIVITY_SEVERITY
   );
 
   type t_vvc_status is record
@@ -118,17 +118,10 @@ package vvc_methods_pkg is
     msg         => (others => ' ')
   );
 
-  shared variable shared_avalon_mm_vvc_config       : t_vvc_config_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_AVALON_MM_VVC_CONFIG_DEFAULT);
-  shared variable shared_avalon_mm_vvc_status       : t_vvc_status_array(0 to C_MAX_VVC_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
-  shared variable shared_avalon_mm_transaction_info : t_transaction_info_array(0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
-
-  -- Scoreboard
-  package avalon_mm_sb_pkg is new bitvis_vip_scoreboard.generic_sb_pkg
-    generic map(t_element         => std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0),
-                element_match     => std_match,
-                to_string_element => to_string);
-  use avalon_mm_sb_pkg.all;
-  shared variable AVALON_MM_VVC_SB : avalon_mm_sb_pkg.t_generic_sb;
+  shared variable shared_avalon_mm_vvc_config       : t_vvc_config_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => C_AVALON_MM_VVC_CONFIG_DEFAULT);
+  shared variable shared_avalon_mm_vvc_status       : t_vvc_status_array(0 to C_VVC_MAX_INSTANCE_NUM - 1)       := (others => C_VVC_STATUS_DEFAULT);
+  shared variable shared_avalon_mm_transaction_info : t_transaction_info_array(0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => C_TRANSACTION_INFO_DEFAULT);
+  shared variable AVALON_MM_VVC_SB                  : t_generic_sb;
 
   --==========================================================================================
   -- Methods dedicated to this VVC 
@@ -225,29 +218,20 @@ package vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT);
 
   procedure reset_vvc_transaction_info(
     variable vvc_transaction_info_group : inout t_transaction_group;
     constant vvc_cmd                    : in t_vvc_cmd_record);
-
-  --==============================================================================
-  -- VVC Activity
-  --==============================================================================
-  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
-                                         variable vvc_status                           : inout t_vvc_status;
-                                         constant activity                             : in t_activity;
-                                         constant entry_num_in_vvc_activity_register   : in integer;
-                                         constant last_cmd_idx_executed                : in natural;
-                                         constant command_queue_is_empty               : in boolean;
-                                         constant scope                                : in string := C_VVC_NAME);
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-  function pad_avalon_mm_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector;
 
 end package vvc_methods_pkg;
 
@@ -271,8 +255,8 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_mm_write";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -301,9 +285,9 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_mm_write";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ", " & to_string(byte_enable, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr     : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)                := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_normalised_data     : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0)        := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
-    variable v_normalised_byte_ena : std_logic_vector(shared_vvc_cmd.byte_enable'length - 1 downto 0) := normalize_and_check(byte_enable, shared_vvc_cmd.byte_enable, ALLOW_WIDER_NARROWER, "byte_enable", "shared_vvc_cmd.byte_enable", proc_call & " called with to wide byte_enable. " & add_msg_delimiter(msg));
+    variable v_normalised_addr     : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)                := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_data     : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0)        := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
+    variable v_normalised_byte_ena : std_logic_vector(shared_vvc_cmd.byte_enable'length - 1 downto 0) := normalize_and_check(byte_enable, shared_vvc_cmd.byte_enable, ALLOW_WIDER_NARROWER, "byte_enable", "shared_vvc_cmd.byte_enable", proc_call & " called with too wide byte_enable. " & add_msg_delimiter(msg));
     variable v_msg_id_panel        : t_msg_id_panel                                                   := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -332,7 +316,7 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_mm_read";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0) := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0) := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                    := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -373,8 +357,8 @@ package body vvc_methods_pkg is
     constant proc_name : string := "avalon_mm_check";
     constant proc_call : string := proc_name & "(" & to_string(VVCT, vvc_instance_idx) -- First part common for all
                                    & ", " & to_string(addr, HEX, AS_IS, INCL_RADIX) & ", " & to_string(data, HEX, AS_IS, INCL_RADIX) & ")";
-    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with to wide address. " & add_msg_delimiter(msg));
-    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with to wide data. " & add_msg_delimiter(msg));
+    variable v_normalised_addr : unsigned(shared_vvc_cmd.addr'length - 1 downto 0)         := normalize_and_check(addr, shared_vvc_cmd.addr, ALLOW_WIDER_NARROWER, "addr", "shared_vvc_cmd.addr", proc_call & " called with too wide address. " & add_msg_delimiter(msg));
+    variable v_normalised_data : std_logic_vector(shared_vvc_cmd.data'length - 1 downto 0) := normalize_and_check(data, shared_vvc_cmd.data, ALLOW_WIDER_NARROWER, "data", "shared_vvc_cmd.data", proc_call & " called with too wide data. " & add_msg_delimiter(msg));
     variable v_msg_id_panel    : t_msg_id_panel                                            := shared_msg_id_panel;
   begin
     -- Create command by setting common global 'VVCT' signal record and dedicated VVC 'shared_vvc_cmd' record
@@ -470,30 +454,52 @@ package body vvc_methods_pkg is
     variable vvc_transaction_info_group   : inout t_transaction_group;
     constant vvc_cmd                      : in t_vvc_cmd_record;
     constant vvc_config                   : in t_vvc_config;
+    constant transaction_status           : in t_transaction_status;
     constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
   begin
     case vvc_cmd.operation is
       when WRITE | RESET | LOCK | UNLOCK =>
-        vvc_transaction_info_group.bt.operation                                            := vvc_cmd.operation;
-        vvc_transaction_info_group.bt.addr(vvc_cmd.addr'length - 1 downto 0)               := vvc_cmd.addr;
-        vvc_transaction_info_group.bt.data(vvc_cmd.data'length - 1 downto 0)               := vvc_cmd.data;
-        vvc_transaction_info_group.bt.byte_enable(vvc_cmd.byte_enable'length - 1 downto 0) := vvc_cmd.byte_enable;
-        vvc_transaction_info_group.bt.vvc_meta.msg(1 to vvc_cmd.msg'length)                := vvc_cmd.msg;
-        vvc_transaction_info_group.bt.vvc_meta.cmd_idx                                     := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.bt.transaction_status                                   := IN_PROGRESS;
+        vvc_transaction_info_group.bt.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.bt.addr               := vvc_cmd.addr;
+        vvc_transaction_info_group.bt.data               := vvc_cmd.data;
+        vvc_transaction_info_group.bt.byte_enable        := vvc_cmd.byte_enable;
+        vvc_transaction_info_group.bt.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.bt.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.bt.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when READ | CHECK =>
-        vvc_transaction_info_group.st.operation                              := vvc_cmd.operation;
-        vvc_transaction_info_group.st.addr(vvc_cmd.addr'length - 1 downto 0) := vvc_cmd.addr;
-        vvc_transaction_info_group.st.data(vvc_cmd.data'length - 1 downto 0) := vvc_cmd.data;
-        vvc_transaction_info_group.st.vvc_meta.msg(1 to vvc_cmd.msg'length)  := vvc_cmd.msg;
-        vvc_transaction_info_group.st.vvc_meta.cmd_idx                       := vvc_cmd.cmd_idx;
-        vvc_transaction_info_group.st.transaction_status                     := IN_PROGRESS;
+        vvc_transaction_info_group.st.operation          := vvc_cmd.operation;
+        vvc_transaction_info_group.st.addr               := vvc_cmd.addr;
+        vvc_transaction_info_group.st.data               := vvc_cmd.data;
+        vvc_transaction_info_group.st.vvc_meta.msg       := vvc_cmd.msg;
+        vvc_transaction_info_group.st.vvc_meta.cmd_idx   := vvc_cmd.cmd_idx;
+        vvc_transaction_info_group.st.transaction_status := transaction_status;
         gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
 
       when others =>
-        alert(TB_ERROR, "VVC operation not recognized");
+        alert(TB_ERROR, "VVC operation not recognized", scope);
+    end case;
+
+    wait for 0 ns;
+  end procedure set_global_vvc_transaction_info;
+
+  procedure set_global_vvc_transaction_info(
+    signal   vvc_transaction_info_trigger : inout std_logic;
+    variable vvc_transaction_info_group   : inout t_transaction_group;
+    constant vvc_cmd                      : in t_vvc_cmd_record;
+    constant vvc_result                   : in t_vvc_result;
+    constant transaction_status           : in t_transaction_status;
+    constant scope                        : in string := C_VVC_CMD_SCOPE_DEFAULT) is
+  begin
+    case vvc_cmd.operation is
+      when READ =>
+        vvc_transaction_info_group.st.data               := vvc_result;
+        vvc_transaction_info_group.st.transaction_status := transaction_status;
+        gen_pulse(vvc_transaction_info_trigger, 0 ns, "pulsing global vvc transaction info trigger", scope, ID_NEVER);
+
+      when others =>
+        alert(TB_ERROR, "VVC operation does not update vvc_result", scope);
     end case;
 
     wait for 0 ns;
@@ -517,46 +523,4 @@ package body vvc_methods_pkg is
     wait for 0 ns;
   end procedure reset_vvc_transaction_info;
 
-  --==============================================================================
-  -- VVC Activity
-  --==============================================================================
-  procedure update_vvc_activity_register(signal   global_trigger_vvc_activity_register : inout std_logic;
-                                         variable vvc_status                           : inout t_vvc_status;
-                                         constant activity                             : in t_activity;
-                                         constant entry_num_in_vvc_activity_register   : in integer;
-                                         constant last_cmd_idx_executed                : in natural;
-                                         constant command_queue_is_empty               : in boolean;
-                                         constant scope                                : in string := C_VVC_NAME) is
-    variable v_activity : t_activity := activity;
-  begin
-    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)
-    if activity = INACTIVE then
-      vvc_status.previous_cmd_idx := last_cmd_idx_executed;
-      vvc_status.current_cmd_idx  := 0;
-    end if;
-
-    if v_activity = INACTIVE and not (command_queue_is_empty) then
-      v_activity := ACTIVE;
-    end if;
-    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,
-                                                          activity              => v_activity,
-                                                          last_cmd_idx_executed => last_cmd_idx_executed);
-    if global_trigger_vvc_activity_register /= 'L' then
-      wait until global_trigger_vvc_activity_register = 'L';
-    end if;
-    gen_pulse(global_trigger_vvc_activity_register, 0 ns, "pulsing global trigger for vvc activity register", scope, ID_NEVER);
-  end procedure;
-
-  --==============================================================================
-  -- VVC Scoreboard helper method
-  --==============================================================================
-
-  function pad_avalon_mm_sb(
-    constant data : in std_logic_vector
-  ) return std_logic_vector is
-  begin
-    return pad_sb_slv(data, C_VVC_CMD_DATA_MAX_LENGTH);
-  end function pad_avalon_mm_sb;
-
 end package body vvc_methods_pkg;
-

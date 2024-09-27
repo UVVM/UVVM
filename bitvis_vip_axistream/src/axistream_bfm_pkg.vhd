@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -36,13 +36,11 @@ package axistream_bfm_pkg is
   --========================================================================================================================
   constant C_BFM_SCOPE : string := "AXISTREAM_BFM";
 
-  --========================================================================================================================
-  -- C_MAX_*_BITS : Maximum number of bits per data word supported by the BFM.
-  -- These constant can be increased as needed.
-  constant C_MAX_TUSER_BITS : positive := 8;
-  constant C_MAX_TSTRB_BITS : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
-  constant C_MAX_TID_BITS   : positive := 8; -- Recommended maximum in protocol specification (ARM IHI0051A)
-  constant C_MAX_TDEST_BITS : positive := 4; -- Recommended maximum in protocol specification (ARM IHI0051A)
+  -- Constants for the maximum sizes to use in this BFM. Can be modified in adaptations_pkg.
+  constant C_MAX_TUSER_BITS : positive := C_AXISTREAM_BFM_MAX_TUSER_BITS;
+  constant C_MAX_TSTRB_BITS : positive := C_AXISTREAM_BFM_MAX_TSTRB_BITS;
+  constant C_MAX_TID_BITS   : positive := C_AXISTREAM_BFM_MAX_TID_BITS;
+  constant C_MAX_TDEST_BITS : positive := C_AXISTREAM_BFM_MAX_TDEST_BITS;
 
   constant C_RANDOM          : integer := -1;
   constant C_MULTIPLE_RANDOM : integer := -2;
@@ -51,7 +49,6 @@ package axistream_bfm_pkg is
   type t_strb_array is array (natural range <>) of std_logic_vector(C_MAX_TSTRB_BITS - 1 downto 0);
   type t_id_array is array (natural range <>) of std_logic_vector(C_MAX_TID_BITS - 1 downto 0);
   type t_dest_array is array (natural range <>) of std_logic_vector(C_MAX_TDEST_BITS - 1 downto 0);
-  --========================================================================================================================
 
   -- Interface record for BFM signals
   type t_axistream_if is record
@@ -125,10 +122,9 @@ package axistream_bfm_pkg is
   --========================================================================================================================
   -- BFM procedures
   --========================================================================================================================
-
-  -- - This function returns an AXI Stream interface with initialized signals.
-  -- - All input signals are initialized to 0
-  -- - All output signals are initialized to Z
+  -- This function returns an AXI-Stream interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_axistream_if_signals(
     is_master  : boolean;           -- When true, this BFM drives data signals
     data_width : natural;
@@ -726,7 +722,8 @@ package body axistream_bfm_pkg is
                                               data_width => axistream_if.tdata'length,
                                               user_width => axistream_if.tuser'length,
                                               id_width   => axistream_if.tid'length,
-                                              dest_width => axistream_if.tdest'length);
+                                              dest_width => axistream_if.tdest'length,
+                                              config     => config);
 
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
@@ -852,8 +849,8 @@ package body axistream_bfm_pkg is
                                                   data_width => axistream_if.tdata'length,
                                                   user_width => axistream_if.tuser'length,
                                                   id_width   => axistream_if.tid'length,
-                                                  dest_width => axistream_if.tdest'length
-                                                 );
+                                                  dest_width => axistream_if.tdest'length,
+                                                  config     => config);
       end if;
     end loop;
 
@@ -1530,7 +1527,7 @@ package body axistream_bfm_pkg is
 
     -- Log the received frame
     if is_log_msg_enabled(ID_PACKET_PAYLOAD, msg_id_panel) then -- large frames may affect performance
-      log(ID_PACKET_PAYLOAD, v_proc_call.all & "=> Rx Frame (" & to_string(v_byte_cnt) & " bytes) " & to_string(v_data_byte_array) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(ID_PACKET_PAYLOAD, v_proc_call.all & "=> Rx Frame (" & to_string(v_byte_cnt) & " bytes) " & to_string(v_data_byte_array(0 to v_byte_cnt-1)) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     end if;
 
     -- Check if there was a timeout or it was successful
@@ -1538,9 +1535,9 @@ package body axistream_bfm_pkg is
       alert(config.max_wait_cycles_severity, v_proc_call.all & "=> Failed. Timeout while waiting for valid data. " & add_msg_delimiter(msg), scope);
     else
       if ext_proc_call = "" then
-        log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
+        log(ID_PACKET_COMPLETE, v_proc_call.all & "=> Rx DONE (" & to_string(integer(ceil((real(v_byte_cnt) / real(C_DATA_ARRAY_BYTES_PER_WORD))))) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
       else
-      -- Log will be handled by calling procedure (e.g. axistream_expect)
+        -- Log will be handled by calling procedure (e.g. axistream_expect)
       end if;
     end if;
 
@@ -1711,7 +1708,7 @@ package body axistream_bfm_pkg is
     constant config         : in t_axistream_bfm_config := C_AXISTREAM_BFM_CONFIG_DEFAULT
   ) is
     constant C_DATA_ARRAY_BYTES_PER_WORD : natural := exp_data_array(exp_data_array'low)'length / 8;
-    constant C_PROC_CALL                   : string  := "axistream_expect(" & to_string(exp_data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b])";
+    constant C_PROC_CALL                 : string  := "axistream_expect(" & to_string(exp_data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b])";
 
     constant C_NUM_BYTES_PER_WORD     : natural := axistream_if.tdata'length / 8;
     constant C_NUM_USER_BITS_PER_WORD : natural := axistream_if.tuser'length;
@@ -1734,6 +1731,15 @@ package body axistream_bfm_pkg is
     variable v_first_errored_word : natural;
     variable v_alert_radix        : t_radix;
     variable v_check_ok           : boolean                := true;
+    variable v_rx_user_slv_array  : t_slv_array(exp_user_array'range)(C_NUM_USER_BITS_PER_WORD-1 downto 0);
+    variable v_rx_strb_slv_array  : t_slv_array(exp_strb_array'range)(C_NUM_STRB_BITS_PER_WORD-1 downto 0);
+    variable v_rx_id_slv_array    : t_slv_array(exp_id_array'range)(C_NUM_ID_BITS_PER_WORD-1 downto 0);
+    variable v_rx_dest_slv_array  : t_slv_array(exp_dest_array'range)(C_NUM_DEST_BITS_PER_WORD-1 downto 0);
+    variable v_exp_user_slv_array : t_slv_array(exp_user_array'range)(C_NUM_USER_BITS_PER_WORD-1 downto 0);
+    variable v_exp_strb_slv_array : t_slv_array(exp_strb_array'range)(C_NUM_STRB_BITS_PER_WORD-1 downto 0);
+    variable v_exp_id_slv_array   : t_slv_array(exp_id_array'range)(C_NUM_ID_BITS_PER_WORD-1 downto 0);
+    variable v_exp_dest_slv_array : t_slv_array(exp_dest_array'range)(C_NUM_DEST_BITS_PER_WORD-1 downto 0);
+    variable v_all_alerts_line    : line;
   begin
     v_check_ok := v_check_ok and check_value(exp_data_array(exp_data_array'low)'length mod 8 = 0, TB_ERROR, "Sanity check: Check that exp_data_array word is N*byte", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     if not (v_check_ok) then
@@ -1778,6 +1784,9 @@ package body axistream_bfm_pkg is
     -- Check all bits the exp_user_array. If the caller (Test Sequencer or VVC) don't care, the length of exp_user_array input shall be only one
     for word in exp_user_array'high downto 0 loop
       for i in C_NUM_USER_BITS_PER_WORD - 1 downto 0 loop -- i = bit
+        -- Put bits in corresponding slv array for proper presentation in log
+        v_rx_user_slv_array(word)(i)   := v_rx_user_array(word)(i);
+        v_exp_user_slv_array(word)(i)  := exp_user_array(word)(i);
         -- Allow don't care in expected value and use match strictness from config for comparison
         if exp_user_array(word)(i) = '-' or check_value(v_rx_user_array(word)(i), exp_user_array(word)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
         -- Check is OK
@@ -1793,6 +1802,9 @@ package body axistream_bfm_pkg is
     -- Check that all bits in exp_strb_array matches received tstrb
     for word in exp_strb_array'high downto 0 loop
       for i in C_NUM_STRB_BITS_PER_WORD - 1 downto 0 loop -- i = bit
+        -- Put bits in corresponding slv array for proper presentation in log
+        v_rx_strb_slv_array(word)(i)   := v_rx_strb_array(word)(i);
+        v_exp_strb_slv_array(word)(i)  := exp_strb_array(word)(i);
         -- Allow don't care in expected value and use match strictness from config for comparison
         if exp_strb_array(word)(i) = '-' or check_value(v_rx_strb_array(word)(i), exp_strb_array(word)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
         -- Check is OK
@@ -1808,6 +1820,9 @@ package body axistream_bfm_pkg is
     -- Check that all bits in exp_id_array matches received tid
     for word in exp_id_array'high downto 0 loop
       for i in C_NUM_ID_BITS_PER_WORD - 1 downto 0 loop -- i = bit
+        -- Put bits in corresponding slv array for proper presentation in log
+        v_rx_id_slv_array(word)(i)   := v_rx_id_array(word)(i);
+        v_exp_id_slv_array(word)(i)  := exp_id_array(word)(i);
         -- Allow don't care in expected value and use match strictness from config for comparison
         if exp_id_array(word)(i) = '-' or check_value(v_rx_id_array(word)(i), exp_id_array(word)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
         -- Check is OK
@@ -1823,6 +1838,9 @@ package body axistream_bfm_pkg is
     -- Check that all bits in exp_dest_array matches received tdest
     for word in exp_dest_array'high downto 0 loop
       for i in C_NUM_DEST_BITS_PER_WORD - 1 downto 0 loop -- i = bit
+        -- Put bits in corresponding slv array for proper presentation in log
+        v_rx_dest_slv_array(word)(i)   := v_rx_dest_array(word)(i);
+        v_exp_dest_slv_array(word)(i)  := exp_dest_array(word)(i);
         -- Allow don't care in expected value and use match strictness from config for comparison
         if exp_dest_array(word)(i) = '-' or check_value(v_rx_dest_array(word)(i), exp_dest_array(word)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
         -- Check is OK
@@ -1835,29 +1853,65 @@ package body axistream_bfm_pkg is
       end loop;
     end loop;
 
-    -- No more than one alert per packet
     if v_data_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_errored_word), exp_data_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
-    elsif v_user_error_cnt /= 0 then
+      v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_errored_word), exp_data_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_data_error_cnt) & " data bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & 
+        ". Expected " & to_string(exp_data_array(v_first_errored_word), v_alert_radix, AS_IS, INCL_RADIX) & "." & add_msg_delimiter(msg)));
+      if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full data array to alert line when error report extent is set to EXTENDED
+        write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_data_array, v_alert_radix, AS_IS) & LF & "Expected:" & LF & to_string(exp_data_array, v_alert_radix, AS_IS) & LF));
+      end if;
+    end if;
+    
+    if v_user_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_user_array(v_first_errored_word), exp_user_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
-    elsif v_strb_error_cnt /= 0 then
+      v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_user_array(v_first_errored_word), exp_user_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      write(v_all_alerts_line,(LF & C_PROC_CALL & "=> Failed in " & to_string(v_user_error_cnt) & " tuser bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), 
+        v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_user_array(v_first_errored_word)(C_NUM_USER_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & add_msg_delimiter(msg)));
+      if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full tuser array to alert line when error report extent is set to EXTENDED
+        write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_user_slv_array, v_alert_radix, AS_IS) & LF & "Expected:" & LF & to_string(v_exp_user_slv_array, v_alert_radix, AS_IS) & LF));
+      end if;
+    end if;
+    
+    if v_strb_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_strb_array(v_first_errored_word), exp_strb_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_strb_error_cnt) & " tstrb bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
-    elsif v_id_error_cnt /= 0 then
+      v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_strb_array(v_first_errored_word), exp_strb_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_strb_error_cnt) & " tstrb bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_strb_slv_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), 
+        v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_strb_array(v_first_errored_word)(C_NUM_STRB_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & add_msg_delimiter(msg)));
+      if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full tstrb array to alert line when error report extent is set to EXTENDED
+        write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_strb_slv_array, v_alert_radix, AS_IS) & LF & "Expected:" & LF & to_string(v_exp_strb_slv_array, v_alert_radix, AS_IS) & LF));
+      end if;
+    end if;
+    
+    if v_id_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_id_array(v_first_errored_word), exp_id_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_id_error_cnt) & " tid bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
-    elsif v_dest_error_cnt /= 0 then
+      v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_id_array(v_first_errored_word), exp_id_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_id_error_cnt) & " tid bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), 
+        v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_id_array(v_first_errored_word)(C_NUM_ID_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & add_msg_delimiter(msg)));
+      if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full tid array to alert line when error report extent is set to EXTENDED
+        write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_id_slv_array, v_alert_radix, AS_IS) & LF & "Expected:" & LF & to_string(v_exp_id_slv_array, v_alert_radix, AS_IS) & LF));
+      end if;
+    end if;
+    
+    if v_dest_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_dest_array(v_first_errored_word), exp_dest_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
-      alert(alert_level, C_PROC_CALL & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_word) & ". Was " & to_string(v_rx_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
-    else
+      v_alert_radix         := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_dest_array(v_first_errored_word), exp_dest_array(v_first_errored_word), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      write(v_all_alerts_line, (LF & C_PROC_CALL & "=> Failed in " & to_string(v_dest_error_cnt) & " tdest bits. First mismatch in word# " & to_string(v_first_errored_word+1) & ". Was " & to_string(v_rx_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), 
+        v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(exp_dest_array(v_first_errored_word)(C_NUM_DEST_BITS_PER_WORD - 1 downto 0), v_alert_radix, AS_IS, INCL_RADIX) & "." & add_msg_delimiter(msg)));
+      if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append full tdest array to alert line when error report extent is set to EXTENDED
+        write(v_all_alerts_line, (LF & "Was:" & LF & to_string(v_rx_dest_slv_array, v_alert_radix, AS_IS) & LF & "Expected:" & LF & to_string(v_exp_dest_slv_array, v_alert_radix, AS_IS) & LF));
+      end if;
+    end if;
+    
+    -- No more than one alert per packet
+    if (v_data_error_cnt = 0) and (v_user_error_cnt = 0) and (v_strb_error_cnt = 0) and (v_id_error_cnt = 0) and (v_dest_error_cnt = 0) then -- Log OK when no errors present
       log(ID_PACKET_COMPLETE, C_PROC_CALL & "=> OK, received " & to_string(exp_data_array'length) & " words[" & to_string(C_DATA_ARRAY_BYTES_PER_WORD * 8) & "b]). " & add_msg_delimiter(msg), scope, msg_id_panel);
+    else
+      if C_ERROR_REPORT_EXTENT = EXTENDED then -- Append summary of amount of wrong bits to alert line when error report extent is EXTENDED
+        write(v_all_alerts_line, (LF & "Summary of errors in expected transaction. Failed in: " & LF & to_string(v_data_error_cnt) & " data bits." & LF & to_string(v_user_error_cnt) & " tuser bits." & LF & to_string(v_strb_error_cnt) & " tstrb bits." & LF & 
+          to_string(v_id_error_cnt) & " tid bits." & LF & to_string(v_dest_error_cnt) & " tdest bits." & LF));
+      end if;
+      alert(alert_level, v_all_alerts_line.all, scope);
     end if;
 
   end procedure axistream_expect;
@@ -2268,4 +2322,3 @@ package body axistream_bfm_pkg is
   end procedure;
 
 end package body axistream_bfm_pkg;
-

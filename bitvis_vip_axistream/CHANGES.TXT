@@ -2,6 +2,42 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v6.1.0
+----------
+Released: 2024-09-19
+- Removed old await_completion code from VVC.
+- Moved update_vvc_activity_register procedure to a common package for all VVCs.
+- Updated unwanted activity detection to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
+
+v6.0.1
+----------
+Released: 2024-08-16
+- Fixed ready_default_value not having the initial value from the GC_AXISTREAM_BFM_CONFIG VVC generic.
+- Converted documentation to RST format.
+
+v6.0.0
+----------
+Released: 2024-07-03
+- Changed max constants used in BFM and VVC to be adjustable from adaptations_pkg.
+- Added an individual constant to configure the VVC max instance number from adaptations_pkg.
+- Decreased C_MAX_TUSER_BITS to 32 which allows GHDL to run without storage errors.
+- Added unwanted activity detection functionality to the VVC to give an alert if the DUT generates any unexpected bus activity.
+
+v5.0.0
+----------
+Released: 2024-03-08
+- Updated vvc_transaction_info to also trigger after the BFM call with updated data and the status COMPLETED.
+- Added missing scope to alert in set_global_vvc_transaction_info procedure.
+- Removed unnecessary constraining in set_global_vvc_transaction_info procedure.
+- Moved t_transaction_status type to types_pkg (common for all VVCs) and added COMPLETED.
+- Fixed incorrect logging of ID_PACKET_PAYLOAD and ID_PACKET_COMPLETE in axistream_receive.
+- Fixed compilation warning vcom-1090.
+- Use the function get_scope_for_log() to generate VVC scope.
+- Fixed data length typo in Axistream BFM- and VVC Quick Reference.
+- Added functionality for extended error mismatch message for data.
+- Increased C_MAX_TUSER_BITS to 64 in BFM. (allows for higher GC_USER_WIDTH)
+- Added executor_is_busy to interpreter_terminate_current_command() missing in VVC.
+
 v4.7.8
 ----------
 Released: 2023-09-16

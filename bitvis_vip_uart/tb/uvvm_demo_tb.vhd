@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -364,7 +364,7 @@ begin
     --
     procedure test_general_watchdog(void : t_void) is
     begin
-      log(ID_LOG_HDR_XL, "Test general watchdog.\n\n" & "This test demonstrate configuration and usage of the general watchdog.", C_SCOPE);
+      log(ID_LOG_HDR_XL, "Test general watchdog.\n\n" & "This test demonstrates configuration and usage of the general watchdog.", C_SCOPE);
 
       log(ID_SEQUENCER, "Incrementing UVVM stop limit\n", C_SCOPE);
       -- To prevent the 4 general watchdogs from stopping the TB, increase the stop limit.
@@ -427,6 +427,64 @@ begin
       wait for 3 * C_BIT_PERIOD;
     end procedure test_general_watchdog;
 
+    -- Description:
+    --
+    --   1. UART RX VVC is configured with an alert of severity.
+    --   2. SBI VVC will send 1 byte to the DUT and UART RX VVC will expect the same data.
+    --   3. Unwanted activity detection will not be triggered (normal data transmission).
+    --   4. SBI VVC will send 1 byte to the DUT and UART RX VVC will not expect any data.
+    --   5. Unwanted activity detection will be triggered (unexpected data transmission).
+    --   6. Step 1 to 5 is repeated for different alerts of severity.
+    --
+    procedure test_unwanted_activity_detection(void : t_void) is
+      variable v_alert_level         : t_alert_level;
+    begin
+      log(ID_LOG_HDR_XL, "Test unwanted activity detection.\n\n" & "This test demonstrates configuration and usage of the unwanted activity detection.", C_SCOPE);
+
+      -- This will test the unwanted activity detection with different alerts of severity.
+      -- Normal data transmission and unexpected data transmission are tested in each alert configuration.
+      for i in 0 to 2 loop
+        -- Configure the alert of severity for unwanted activity detection
+        if i = 0 then
+          v_alert_level := C_UART_VVC_CONFIG_DEFAULT.unwanted_activity_severity;
+        elsif i = 1 then
+          v_alert_level := FAILURE;
+        else
+          v_alert_level := NO_ALERT;
+        end if;
+
+        log(ID_SEQUENCER, "Configure unwanted activity severity to " & to_upper(to_string(v_alert_level)) & ".", C_SCOPE);
+        shared_uart_vvc_config(RX, 1).unwanted_activity_severity := v_alert_level;
+
+        -- Normal data transmission
+        --   Use SBI VVC to write 1 byte data and use UART RX VVC to expect the data
+        --   Data is expected on UART RX VVC and alerts are not triggered
+        log(ID_LOG_HDR, "Testing normal data transmission.", C_SCOPE);
+        sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "Transmit data");
+        uart_expect(UART_VVCT, 1, RX, x"55", "Expect data");
+        await_completion(UART_VVCT, 1, RX, 13 * C_BIT_PERIOD);
+
+        -- Increment expected alerts
+        if v_alert_level /= NO_ALERT then
+          increment_expected_alerts_and_stop_limit(v_alert_level, 10); -- Note: number of expected alerts = number of toggles for transmitted data
+        end if;
+
+        -- Unexpected data transmission
+        --   Use SBI VVC to write 1 byte and not expecting any data
+        --   Data is not expected on UART RX VVC and alerts are triggered
+        log(ID_LOG_HDR, "Testing unexpected data transmission.", C_SCOPE);
+        sbi_write(SBI_VVCT, 1, C_ADDR_TX_DATA, x"55", "Transmit data");
+        await_completion(SBI_VVCT, 1, 13 * C_BIT_PERIOD);
+        wait for 10 * C_BIT_PERIOD;
+      end loop;
+
+      -- Empty SB for next test
+      UART_VVC_SB.reset("Empty SB for next test");
+
+      -- Add small delay before next test
+      wait for 3 * C_BIT_PERIOD;
+    end procedure test_unwanted_activity_detection;
+
   begin
     -- Wait for UVVM to finish initialization
     await_uvvm_initialization(VOID);
@@ -442,6 +500,7 @@ begin
     enable_log_msg(ID_SEQUENCER);
     enable_log_msg(ID_SEQUENCER_SUB);
     enable_log_msg(ID_UVVM_SEND_CMD);
+    enable_log_msg(ID_AWAIT_UVVM_COMPLETION);
     --enable_log_msg(ID_BFM);
 
     disable_log_msg(SBI_VVCT, 1, ALL_MESSAGES);
@@ -489,12 +548,12 @@ begin
     test_protocol_checker(VOID);
     test_activity_watchdog(VOID);
     test_general_watchdog(VOID);
+    test_unwanted_activity_detection(VOID);
 
     -----------------------------------------------------------------------------
     -- Ending the simulation
     -----------------------------------------------------------------------------
-    wait for 1000 ns;                   -- to allow some time for completion
-    report_alert_counters(FINAL);       -- Report final counters and print conclusion for simulation (Success/Fail)
+    await_uvvm_completion(1000 ns, ERROR, 1 ns, REPORT_ALERT_COUNTERS_FINAL, REPORT_SCOREBOARDS, REPORT_VVCS, C_SCOPE);
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation

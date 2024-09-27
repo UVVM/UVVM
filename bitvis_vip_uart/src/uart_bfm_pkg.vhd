@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -21,11 +21,11 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library uvvm_util;
-context uvvm_util.uvvm_util_context;
-
 library std;
 use std.textio.all;
+
+library uvvm_util;
+context uvvm_util.uvvm_util_context;
 
 --=================================================================================================
 package uart_bfm_pkg is
@@ -152,7 +152,7 @@ package uart_bfm_pkg is
   -- - If the number of '1' in the 'data' input is odd, '1' will be returned
   -- - If the number of '1' in the 'data' input is even, '0' will be returned
   function odd_parity(
-    constant data : std_logic_vector(7 downto 0))
+    constant data : std_logic_vector)
   return std_logic;
 
 end package uart_bfm_pkg;
@@ -163,7 +163,7 @@ end package uart_bfm_pkg;
 package body uart_bfm_pkg is
 
   function odd_parity(
-    constant data : std_logic_vector(7 downto 0))
+    constant data : std_logic_vector)
   return std_logic is
   begin
     return xnor(data);
@@ -183,6 +183,9 @@ package body uart_bfm_pkg is
     constant proc_name : string := "uart_transmit";
     constant proc_call : string := proc_name & "(" & to_string(data_value, HEX, AS_IS, INCL_RADIX) & ")";
 
+    variable v_data_value      : std_logic_vector(config.num_data_bits - 1 downto 0);
+    variable v_normalized_data : std_logic_vector(config.num_data_bits - 1 downto 0) := normalize_and_check(data_value, v_data_value, ALLOW_WIDER_NARROWER, "data_value", "v_data_value", "Normalize data_value");
+
     alias stop_bit_error is config.error_injection.stop_bit_error;
     alias parity_bit_error is config.error_injection.parity_bit_error;
 
@@ -197,24 +200,24 @@ package body uart_bfm_pkg is
     tx <= not config.idle_state;
     wait for config.bit_time;
 
-    for j in data_value'low to data_value'high loop
-      tx <= data_value(j);
+    for j in v_normalized_data'low to v_normalized_data'high loop
+      tx <= v_normalized_data(j);
       wait for config.bit_time;
     end loop;
 
     -- Set parity bit
     if (config.parity = PARITY_ODD) then
-      tx <= odd_parity(data_value);
+      tx <= odd_parity(v_normalized_data);
     elsif (config.parity = PARITY_EVEN) then
-      tx <= not (odd_parity(data_value));
+      tx <= not (odd_parity(v_normalized_data));
     end if;
 
     -- Invert parity bit if error injection is requested
     if parity_bit_error = true then
       if (config.parity = PARITY_ODD) then
-        tx <= not (odd_parity(data_value));
+        tx <= not (odd_parity(v_normalized_data));
       elsif (config.parity = PARITY_EVEN) then
-        tx <= odd_parity(data_value);
+        tx <= odd_parity(v_normalized_data);
       end if;
     end if;
 
@@ -415,6 +418,7 @@ package body uart_bfm_pkg is
     constant proc_call                      : string                                                                                   := proc_name & "(" & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & ")";
     constant start_time                     : time                                                                                     := now;
     variable v_data_value                   : std_logic_vector(config.num_data_bits - 1 downto 0);
+    variable v_normalized_data              : std_logic_vector(config.num_data_bits - 1 downto 0)                                      := normalize_and_check(data_exp, v_data_value, ALLOW_WIDER_NARROWER, "data_exp", "v_data_value", "Normalize data_exp");
     variable v_num_of_occurrences           : natural                                                                                  := 0;
     variable v_check_ok                     : boolean;
     variable v_num_of_occurrences_ok        : boolean;
@@ -443,11 +447,11 @@ package body uart_bfm_pkg is
     end if;
 
     if v_internal_timeout = 0 ns then
-      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences. " & msg, scope, msg_id_panel);
+      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences. " & msg, scope, msg_id_panel);
     elsif max_receptions = 0 then
-      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(v_internal_timeout, ns) & ". " & msg, scope, msg_id_panel);
+      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(v_internal_timeout, ns) & ". " & msg, scope, msg_id_panel);
     else
-      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(data_exp, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences and " & to_string(v_internal_timeout, ns) & ". " & msg, scope, msg_id_panel);
+      log(v_config.id_for_bfm_wait, "Expecting data " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & " within " & to_string(max_receptions) & " occurrences and " & to_string(v_internal_timeout, ns) & ". " & msg, scope, msg_id_panel);
     end if;
 
     -- Initial status of check variables
@@ -469,7 +473,7 @@ package body uart_bfm_pkg is
       uart_receive(v_data_value, msg, rx, terminate_loop, v_config, scope, msg_id_panel, proc_call);
       for i in 0 to v_config.num_data_bits - 1 loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if data_exp(i) = '-' or check_value(v_data_value(i), data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
+        if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           v_check_ok := true;
         else
           v_check_ok := false;
@@ -520,14 +524,14 @@ package body uart_bfm_pkg is
     if v_check_ok then
       log(v_config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & " after " & to_string(v_num_of_occurrences) & " occurrences and " & to_string((now - start_time), ns) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     elsif not v_timeout_ok then
-      alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(data_exp, HEX, AS_IS, INCL_RADIX) & " before time " & to_string(v_internal_timeout, ns) & ". " & add_msg_delimiter(msg), scope);
+      alert(config.timeout_severity, proc_call & "=> Failed due to timeout. Did not get expected value " & to_string(v_normalized_data, HEX, AS_IS, INCL_RADIX) & " before time " & to_string(v_internal_timeout, ns) & ". " & add_msg_delimiter(msg), scope);
     elsif not v_num_of_occurrences_ok then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, data_exp, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       if max_receptions = 1 then
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences, received value " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope);
       else
-        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(data_exp, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
+        alert(alert_level, proc_call & "=> Failed. Expected value " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & " did not appear within " & to_string(max_receptions) & " occurrences. " & add_msg_delimiter(msg), scope);
       end if;
     else
       alert(warning, proc_call & "=> Failed. Terminate loop received. " & add_msg_delimiter(msg), scope);

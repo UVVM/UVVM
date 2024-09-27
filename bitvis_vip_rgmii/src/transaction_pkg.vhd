@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -30,6 +30,7 @@ package transaction_pkg is
   -- - VVC and BFM operations
   --==========================================================================================
   type t_operation is (
+    -- UVVM common
     NO_OPERATION,
     AWAIT_COMPLETION,
     AWAIT_ANY_COMPLETION,
@@ -40,26 +41,19 @@ package transaction_pkg is
     INSERT_DELAY,
     TERMINATE_CURRENT_COMMAND,
     -- VVC local
-    WRITE,
-    READ,
-    EXPECT
+    WRITE, READ, EXPECT
   );
 
-  -- Constants for the maximum sizes to use in this VVC.
-  -- You can create VVCs with smaller sizes than these constants, but not larger.
-  constant C_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;
-  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+  -- Constants for the maximum sizes to use in this VVC. Can be modified in adaptations_pkg.
+  constant C_VVC_CMD_DATA_MAX_BYTES    : natural := C_RGMII_VVC_CMD_DATA_MAX_BYTES;
+  constant C_VVC_CMD_STRING_MAX_LENGTH : natural := C_RGMII_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_VVC_MAX_INSTANCE_NUM      : natural := C_RGMII_VVC_MAX_INSTANCE_NUM;
 
   --==========================================================================================
   --
   -- Transaction info types, constants and global signal
   --
   --==========================================================================================
-
-  -- Transaction status
-  type t_transaction_status is (INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED);
-
-  constant C_TRANSACTION_STATUS_DEFAULT : t_transaction_status := INACTIVE;
 
   -- VVC Meta
   type t_vvc_meta is record
@@ -84,7 +78,7 @@ package transaction_pkg is
     operation          => NO_OPERATION,
     data_array         => (others => (others => '0')),
     vvc_meta           => C_VVC_META_DEFAULT,
-    transaction_status => C_TRANSACTION_STATUS_DEFAULT
+    transaction_status => INACTIVE
   );
 
   -- Transaction group
@@ -100,10 +94,10 @@ package transaction_pkg is
 
   -- Global transaction info trigger signal
   type t_rgmii_transaction_trigger_array is array (t_sub_channel range <>, natural range <>) of std_logic;
-  signal global_rgmii_vvc_transaction_trigger : t_rgmii_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => '0'));
+  signal global_rgmii_vvc_transaction_trigger : t_rgmii_transaction_trigger_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => '0'));
 
   -- Shared transaction info variable
   type t_rgmii_transaction_group_array is array (t_sub_channel range <>, natural range <>) of t_transaction_group;
-  shared variable shared_rgmii_vvc_transaction_info : t_rgmii_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_MAX_VVC_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));
+  shared variable shared_rgmii_vvc_transaction_info : t_rgmii_transaction_group_array(t_sub_channel'left to t_sub_channel'right, 0 to C_VVC_MAX_INSTANCE_NUM - 1) := (others => (others => C_TRANSACTION_GROUP_DEFAULT));
 
 end package transaction_pkg;

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -158,10 +158,10 @@ package axilite_bfm_pkg is
   ------------------------------------------
   -- init_axilite_if_signals
   ------------------------------------------
-  -- - This function returns an AXILITE interface with initialized signals.
-  -- - All AXILITE input signals are initialized to 0
-  -- - All AXILITE output signals are initialized to Z
-  -- - awprot and arprot are initialized to UNPRIVILEGED_NONSECURE_DATA
+  -- This function returns an AXILITE interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
+  -- awprot and arprot are initialized to UNPRIVILEGED_NONSECURE_DATA
   function init_axilite_if_signals(
     addr_width : natural;
     data_width : natural

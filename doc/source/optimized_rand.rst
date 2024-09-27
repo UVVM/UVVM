@@ -206,12 +206,34 @@ not included in the transition bins, we can use a range bin:
     end loop;
 
 **********************************************************************************************************************************
+Randomization using crosses
+**********************************************************************************************************************************
+When running the ``rand()`` procedure on a coverpoint containing a cross, the procedure will return a vector containing a set of values
+from the uncovered crosses. The length of the vector will be the same as the number of crossed elements.
+
+.. code-block::
+
+    coverpoint_a.add_bins(bin(0));
+    coverpoint_a.add_bins(bin(1));
+    coverpoint_b.add_bins(bin(0));
+    coverpoint_b.add_bins(bin(1));
+
+    -- Create cross of above coverpoints. The cross coverpoint will contain the following bins:
+    -- 0x0, 0x1, 1x0, 1x1
+    coverpoint_cross.add_cross(coverpoint_a, coverpoint_b);
+
+    -- Generate vectors containing the data pairs above until all four pairs have been generated.
+    while not(coverpoint_cross.coverage_completed(BINS_AND_HITS)) loop
+        my_data_vector := coverpoint_cross.rand(SAMPLE_COV);
+    end loop;
+
+**********************************************************************************************************************************
 Additional info
 **********************************************************************************************************************************
 
 .. note::
 
-    Enhanced Randomization, Optimized Randomization and Functional Coverage were inpired by general statistics and similar 
+    Enhanced Randomization, Optimized Randomization and Functional Coverage were inspired by general statistics and similar 
     functionality in SystemVerilog and OSVVM.
 
 .. include:: rst_snippets/ip_disclaimer.rst
@@ -229,6 +251,6 @@ Additional info
 
 
 .. |opt_rand_restart| replace:: Once all the bins in the given coverpoint have been :ref:`covered <concept_covered>`, the random 
-    generator will start again from scratch as if none of the bins have been hit. This behaviour will keep on repeating. This is 
+    generator will start again from scratch as if none of the bins have been hit. This behavior will keep on repeating. This is 
     useful when we want to generate constrained sets of random values which repeat over time, similar to Cyclic generation from 
     Enhanced Randomization, but with minimum hits and weighted distribution features.

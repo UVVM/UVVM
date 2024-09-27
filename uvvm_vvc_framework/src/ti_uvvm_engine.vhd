@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -21,8 +21,7 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library uvvm_vvc_framework;
-use uvvm_vvc_framework.ti_vvc_framework_support_pkg.all;
+use work.ti_vvc_framework_support_pkg.all;
 
 entity ti_uvvm_engine is
 end entity ti_uvvm_engine;

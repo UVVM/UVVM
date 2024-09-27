@@ -14,7 +14,7 @@ The base functionality of Utility Library is dead easy to use. The extremely low
 
 
 ## Prerequisites
-UVVM Utility Library is tool and library independent, but it must be compiled with VHDL 2008.
+UVVM Utility Library is tool and library independent, but it must be compiled with VHDL-2008 or newer.
 See the overall [UVVM](./../README.md) documentation for prerequisites, license, maintainers, etc.
 
 ## Introduction to Utility Library - including manuals

@@ -4,6 +4,84 @@
 VVC Framework
 ##################################################################################################################################
 
+**********************************************************************************************************************************
+UVVM Methods
+**********************************************************************************************************************************
+
+.. _await_uvvm_completion:
+
+await_uvvm_completion()
+==================================================================================================================================
+This procedure waits for all the VVCs to be inactive with no pending commands to be executed, and for all the enabled scoreboards
+to be empty, i.e. all expected values checked. It is therefore meant to be used at the end of the test sequencer.
+
+If any VVC is still active and/or an enabled scoreboard still has expected values to be checked when the timeout occurs, an alert
+will be generated. Otherwise, a successful completion message and the optional reports will be printed in the log.
+
+.. code-block::
+
+    await_uvvm_completion(timeout, [alert_level, [sb_poll_time, [print_alert_counters, [print_sbs, [print_vvcs, [scope, [msg_id_panel]]]]]]])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                             |
++==========+====================+========+==============================+=========================================================+
+| constant | timeout            | in     | time                         | Timeout for the VVCs to be inactive and the scoreboards |
+|          |                    |        |                              | to be empty. Must be greater than 0.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | alert_level        | in     | :ref:`t_alert_level`         | Sets the severity for the alert. Default value is       |
+|          |                    |        |                              | TB_ERROR.                                               |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | sb_poll_time       | in     | time                         | Time to wait until checking again whether the           |
+|          |                    |        |                              | scoreboards have been emptied. Must be greater than 0.  |
+|          |                    |        |                              | Default value is 100 us.                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_alert_counte\| in     | :ref:`t_report_alert_counter\| Whether to print a report of alert counters. Default    |
+|          | rs                 |        | s`                           | value is NO_REPORT.                                     |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_sbs          | in     | :ref:`t_report_sb`           | Whether to print a report with all the scoreboards in   |
+|          |                    |        |                              | the testbench. Default value is NO_REPORT.              |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | print_vvcs         | in     | :ref:`t_report_vvc`          | Whether to print a report with all the VVCs in the      |
+|          |                    |        |                              | testbench. Default value is NO_REPORT.                  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
+|          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
+|          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+
+.. code-block::
+
+    -- Example: Wait for all transactions to finish
+    await_uvvm_completion(1 ms);
+
+    -- Example: Wait for all transactions to finish and report the alert counters, VVCs and scoreboards
+    await_uvvm_completion(1 ms, TB_WARNING, 1 us, REPORT_ALERT_COUNTERS, REPORT_SCOREBOARDS, REPORT_VVCS, C_SCOPE);
+
+.. note::
+
+    * It is recommended to use a single sequencer to control all the VVCs in the testbench, this way the code is more organized 
+      and easier to follow, but it also ensures that by using `await_uvvm_completion()` the testbench has truly finished.
+    * However, if several sequencers or processes are used to control the VVCs, it is the user's responsibility to terminate 
+      correctly the testbench, perhaps by using synchronization mechanisms such as :ref:`await_barrier`, to ensure all the 
+      sequencers or processes have finished before calling `await_uvvm_completion()` in the main sequencer.
+
+.. hint::
+
+    If there is only need to check for VVCs to be inactive with no pending commands to be executed, one can also use the 
+    :ref:`await_completion` procedure: ::
+
+        -- Example: Wait for all VVCs to finish
+        await_completion(ALL_VVCS, 1 ms, "Wait for all the VVCs to finish", C_SCOPE);
+
+    If there are no VVCs in the testbench and only want to check for scoreboards to be empty, one can also use the 
+    :ref:`await_sb_completion` procedure: ::
+
+        -- Example: Wait for all Scoreboards to be empty
+        await_sb_completion(1 ms, TB_WARNING, 1 us, NO_REPORT, REPORT_SCOREBOARDS, C_SCOPE);
+
+
 .. _vvc_framework_methods:
 
 **********************************************************************************************************************************
@@ -11,6 +89,8 @@ Common VVC Methods
 **********************************************************************************************************************************
 * All VVC procedures are defined in td_vvc_framework_common_methods_pkg.vhd and ti_vvc_framework_support_pkg.vhd
 * All parameters in brackets are optional.
+
+.. _await_completion:
 
 await_completion()
 ==================================================================================================================================
@@ -27,7 +107,7 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
 
     * To use the vvc_list, the package ``uvvm_vvc_framework.ti_protected_types_pkg.all`` must be included in the testbench.
     * The command with the vvc_list requires VVCs supporting the VVC activity register introduced in UVVM release v2020.05.19.
-    * Combining old VVCs not supporting VVC activity regiser and new VVCs is not supported by await_completion().
+    * Combining old VVCs not supporting VVC activity register and new VVCs is not supported by await_completion().
 
 .. code-block::
 
@@ -540,7 +620,7 @@ If several VVCs are needed: ::
 t_vvc_result
 ----------------------------------------------------------------------------------------------------------------------------------
 The common type t_vvc_result is always defined with the max length of fetched data that the VVC supports (see the definition of 
-t_vvc_result in its corresponding vvc_cmd_pkg). Therefore it is recommended to define the range of the desired data output after 
+t_vvc_result in its corresponding vvc_cmd_pkg.vhd). Therefore it is recommended to define the range of the desired data output after 
 the fetch_result method has been completed. ::
 
     --Example:
@@ -623,7 +703,7 @@ Available information is dependent on VVC type and typical information is: ::
     operation          : t_operation;                                            -- default NO_OPERATION
     data               : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH-1 downto 0); -- default 0x0
     vvc_meta           : t_vvc_meta;                                             -- default C_VVC_META_DEFAFULT
-    transaction_status : t_transaction_status;                                   -- default C_TRANSACTION_STATUS_DEFAULT (INACTIVE)
+    transaction_status : t_transaction_status;                                   -- default INACTIVE
 
 .. note::
 
@@ -706,6 +786,99 @@ of expected VVCs registered in the VVC activity register but will not have any e
     p_activity_watchdog:
         activity_watchdog(num_exp_vvc => 3, timeout => C_ACTIVITY_WATCHDOG_TIMEOUT);
 
+.. _vvc_framework_unwanted_activity:
+
+Unwanted Activity Detection
+==================================================================================================================================
+The UVVM VVCs support detection of unwanted or unexpected activity from the DUT. This mechanism will give an alert if the DUT 
+generates any unexpected bus activity. It assures that no data is output from the DUT when it is not expected, 
+e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, they start to monitor continuously on the 
+DUT outputs. When unwanted activity is detected, the VVCs issue an alert of severity.
+
+All VVC method packages contain a configuration in the t_vvc_config type for setting the severity level for alerting unwanted 
+activity. The default value for this configuration is set to ERROR in the adaptations_pkg.vhd, e.g. ::
+
+    constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
+
+The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be 
+changed to a different value. To disable this feature in the testbench, e.g. for UART VVC: ::
+
+    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+
+If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted activity detection 
+will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be 
+initiated from I2C slave VVC 2 and 3.
+
+.. figure:: /images/vvc_framework/multiple_slave_VVCs_example.png
+   :alt: False unwanted activity detection
+   :width: 550pt
+   :align: center
+
+   Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT
+
+In order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive VVCs 
+as shown below example. Note that the unwanted activity detection must be enabled again after the data transfer is complete.
+
+.. code-block::
+
+    -- Example:
+    -- Expect data on I2C slave VVC 1.
+    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 1, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 1, 50 ms);
+    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
+
+    -- Expect data on I2C slave VVC 2
+    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 2, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 2, 50 ms);
+    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
+
+    -- Expect data on I2C slave VVC 3
+    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
+    sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
+    i2c_slave_check(I2C_VVCT, 3, x"55", "Slave check data");
+    await_completion(I2C_VVCT, 3, 50 ms);
+    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
+
+When the reset signal is set, signal transitions may occur from the uninitialized value 'U'. Additionally, using pull-up or pull-down 
+resistors in the design may cause signal transitions from the weak 1 state 'H' to the logic high '1' or from the weak 0 state 'L' 
+to the logic low '0', and vice versa. These are intended behaviors that should not be monitored by the unwanted activity detection. 
+The signal transitions that are excluded from unwanted activity detection are summarized below.
+
++----------------+-----------------------------------+
+| From           | To                                |
++================+===================================+
+| 'U'            | 'X', '0', '1', 'Z', 'W', 'L', 'H' |
++----------------+-----------------------------------+
+| 'L'            | '0'                               |
++----------------+-----------------------------------+
+| '0'            | 'L'                               |
++----------------+-----------------------------------+
+| 'H'            | '1'                               |
++----------------+-----------------------------------+
+| '1'            | 'H'                               |
++----------------+-----------------------------------+
+
+For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.
+
+.. note::
+
+    * For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period 
+      after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge, 
+      causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more information.
+    * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the 
+      VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to 
+      differentiate between the unwanted activity and intended activity. See each VVC QuickRef for more information.
+
 .. _vvc_framework_transaction_info:
 
 Distribution of Transaction Info - From VVCs and/or Monitors
@@ -724,25 +897,25 @@ a mechanism for getting the transaction information directly from the VVC.
 Purpose
 ----------------------------------------------------------------------------------------------------------------------------------
 By enabling the distribution of transaction info, models or any other parts of the testbench can see exactly what accesses have 
-been made on the various interfaces of the DUT, so that the expected DUT behaviour and outputs may be checked. Let us illustrate 
+been made on the various interfaces of the DUT, so that the expected DUT behavior and outputs may be checked. Let us illustrate 
 this with a really simple testbench scenario to verify a UART peripheral with an AXI-lite register/CPU interface on one side and 
 the UART RX and TX ports on the other side. The test sequencer may command the AXI-lite BFM or VVC to write a data byte into the 
 UART TX register, and then it must be checked that the data byte is transmitted out on the DUT TX output some time later.
 
     a. A simple testbench approach could be to have the test sequencer also telling the receiving UART BFM or VVC exactly what to 
        expect. This is a straightforward approach, but requires more action and data control inside the test sequencer. This could 
-       of course all be handled in a super-procedure, but for any undetermined behaviour inside the BFM or VVC, like random data 
-       generation or error injection, that would not work. See Figure 2.
+       of course all be handled in a super-procedure, but for any undetermined behavior inside the BFM or VVC, like random data 
+       generation or error injection, that would not work. See Figure 3.
     b. A more advanced approach is to have a model overlooking the DUT accesses, generate the expected data and tell the receiving 
-       BFM or VVC to check for that data. See Figure 3.
+       BFM or VVC to check for that data. See Figure 4.
     c. An even more advanced approach would be to use a Scoreboard to check received data (from DUT via VVC) against expected data 
-       from a model. See Figure 4.
+       from a model. See Figure 5.
 
 However, for the two latter approaches the model needs information about exactly what happened (the transaction) on the various 
-DUT interfaces, so that it can generate the correct expected data. For the model it doesn’t matter if the transaction info comes 
+DUT interfaces, so that it can generate the correct expected data. For the model it doesn't matter if the transaction info comes 
 from a Monitor or from a VVC, as long as the information is correct.
 
-The model could of course look at the interfaces and analyse the actual transactions, but distributing this task to the VVC or 
+The model could of course look at the interfaces and analyze the actual transactions, but distributing this task to the VVC or 
 Monitor makes the testbench far more structured and significantly improves overview, maintenance, extensibility and reuse – at 
 least for anything above medium simple verification challenges.
 
@@ -755,19 +928,19 @@ simulation transcripts.
            :alt: Direct transaction transfer A
            :align: center
 
-           Figure 2 Distribution of Transaction Info Approach A
+           Figure 3 Distribution of Transaction Info Approach A
 
       - .. figure:: /images/vvc_framework/direct_transaction_transfer_example_B.png
            :alt: Direct transaction transfer B
            :align: center
 
-           Figure 3 Distribution of Transaction Info Approach B
+           Figure 4 Distribution of Transaction Info Approach B
 
       - .. figure:: /images/vvc_framework/direct_transaction_transfer_example_C.png
            :alt: Direct transaction transfer C
            :align: center
 
-           Figure 4 Distribution of Transaction Info Approach C
+           Figure 5 Distribution of Transaction Info Approach C
 
 .. _vvc_framework_transaction_info_definitions:
 
@@ -799,17 +972,17 @@ transaction info is provided from the VVC or Monitor, different types of informa
 they always provide info about the operation (read, write, transmit, etc.) and often also any other protocol specific info. For a 
 UART this could be data and parity, for an SBI it could be address and data, and for Ethernet, the packet fields.
 
-This minimum is normally what the Monitor can provide from just analysing the interface, and this is also normally enough for a 
+This minimum is normally what the Monitor can provide from just analyzing the interface, and this is also normally enough for a 
 model to generate expected DUT outputs. The VVC on the other hand, can provide more info, which could be useful for instance for 
 progress viewing and debugging.
 
-The transaction information is organised as a transaction record with some predefined fields as shown below. Table 1 shows the 
+The transaction information is organized as a transaction record with some predefined fields as shown below. Table 1 shows the 
 general transaction record, whereas table 2 shows a concrete example for the SBI.
 
 Note that for a given interface/protocol, the VVC and the Monitor will use the same interface dedicated transaction record type - 
 with some fields potentially unused.
 
-.. table:: Table 1 - General transaction record t_transaction. The fields in bold indicate optional or protocol dedicated fields
+.. table:: Table 1 - General transaction record t_base_transaction. The fields in bold indicate optional or protocol dedicated fields
 
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
@@ -827,8 +1000,10 @@ with some fields potentially unused.
     |                         |                              |   fields, or a better solution, include as a complete sub-record.  |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | transaction_status      | t_transaction_status         | | Handled slightly different from a VVC and a Monitor.             |
-    |                         |                              | | VVC: Will show 'IN_PROGRESS' during the transaction and INACTIVE |
-    |                         |                              |   in between (for at least one delta cycle).                       |
+    |                         |                              | | VVC: Will show IN_PROGRESS during the transaction, then COMPLETED|
+    |                         |                              |   when the transaction ends (for one delta cycle) and finally      |
+    |                         |                              |   INACTIVE until the next transaction (for at least one delta      |
+    |                         |                              |   cycle).                                                          |
     |                         |                              | | Monitor: Will show FAILED or SUCCEEDED immediately as soon as    |
     |                         |                              |   this is 100% certain - and keep this info for the display period |
     |                         |                              |   defined in the Monitor configuration record, or until the start  |
@@ -848,10 +1023,12 @@ with some fields potentially unused.
     | | *Note: For transaction info from a VVC, the record reflects the command status, i.e. the status assumed by the VVC when   |
     |   initiating the command, whereas the Monitor will set up the record only after knowing whether the transaction has failed  |
     |   or succeeded.*                                                                                                            |
-    | | *The VVC does not know the BFM status, and this is fine because the BFM will issue an alert for unexpected behaviour.*    |
+    | | *However, the transaction info from a VVC is also updated at the end of the command, which can be useful to fetch the data|
+    |   from read/receive operations.*                                                                                            |
+    | | *The VVC does not know the BFM status, and this is fine because the BFM will issue an alert for unexpected behavior.*     |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
 
-.. table:: Table 2 - SBI specific transaction record t_transaction. The fields in bold indicate protocol dedicated fields
+.. table:: Table 2 - SBI specific transaction record t_base_transaction. The fields in bold indicate protocol dedicated fields
 
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
@@ -883,8 +1060,8 @@ request may be active at the same time as a read response. (And the sub-transact
 be part of a CT).
 
 Table 3 shows the maximum transaction group record for an SBI, whereas Table 4 shows the maximum transaction group record for an 
-Avalon. The bold CT is optional for both, and thus depends on whether CTs have been defined in the VVC. Multiple parallel STs may 
-be written to the transaction group record simultaneously - as these are handled by different "threads" (concurrent statements 
+Avalon MM. The bold CT is optional for both, and thus depends on whether CTs have been defined in the VVC. Multiple parallel STs 
+may be written to the transaction group record simultaneously - as these are handled by different "threads" (concurrent statements 
 like a process).
 
 A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-record. A Monitor for a split transaction protocol 
@@ -893,24 +1070,28 @@ A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-
 
 .. note::
 
-    * A VVC will update its Transaction Info leaf transaction details at the start of the transaction when the BFM is called. and 
-      turned off when BFM is finished.
+    * A VVC will update its Transaction Info leaf transaction details at the start of the transaction when the BFM is called, then
+      again when the transaction is completed, and turned off one delta cycle afterwards.
     * A Monitor will set its Transaction Info record after the transaction is finished (or transaction status is known) and keep 
-      it on for a pre-defined time - or until the next transaction is finished if earlier.
+      it on for a predefined time - or until the next transaction is finished if earlier.
 
 .. hint::
 
-    It is recommended that the model (or any other user of Transaction Info) triggers on the VVC/Monitor trigger signal and checks 
-    when transaction_status is changing to 'INACTIVE' and then sample <signal>'last_value.
+    * For operations in which the VVC/Monitor knows the data beforehand, e.g. WRITE, TRANSMIT, it is recommended that the model
+      triggers on the VVC/Monitor trigger signal and checks when the transaction_status is 'IN_PROGRESS' and then samples the 
+      transaction value.
+    * Whereas for operations in which the VVC/Monitor receives the data after the transaction, e.g. READ, RECEIVE, it is 
+      recommended that the model triggers on the VVC/Monitor trigger signal and checks when the transaction_status is 'COMPLETED' 
+      and then samples the transaction value.
 
 .. table:: Table 3 - Maximum transaction group record t_transaction_group - for an SBI interface
 
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
     +=========================+==============================+====================================================================+
-    | bt                      | t_transaction                | Base transaction                                                   |
+    | bt                      | t_base_transaction           | Base transaction                                                   |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | **ct**                  | **t_transaction**            | Compound transaction                                               |
+    | **ct**                  | **t_compound_transaction**   | Compound transaction                                               |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
 
 .. table:: Table 4 - Maximum transaction group record t_transaction_group - for an Avalon MM interface
@@ -918,13 +1099,13 @@ A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-
     +-------------------------+------------------------------+--------------------------------------------------------------------+
     | Field                   | Type                         | Description                                                        |
     +=========================+==============================+====================================================================+
-    | st_request              | t_transaction                | Sub-transaction                                                    |
+    | st_request              | t_sub_transaction            | Sub-transaction                                                    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | st_response             | t_transaction                | Sub-transaction                                                    |
+    | st_response             | t_sub_transaction            | Sub-transaction                                                    |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | bt                      | t_transaction                | Base transaction                                                   |
+    | bt                      | t_base_transaction           | Base transaction                                                   |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
-    | **ct**                  | **t_transaction**            | Compound transaction                                               |
+    | **ct**                  | **t_compound_transaction**   | Compound transaction                                               |
     +-------------------------+------------------------------+--------------------------------------------------------------------+
 
 .. _vvc_framework_transaction_info_record:
@@ -932,7 +1113,8 @@ A Monitor cannot know about CTs, and thus a Monitor will never fill in that sub-
 Transaction Info record signals
 ----------------------------------------------------------------------------------------------------------------------------------
 The Transaction Info record is provided out of the VVC and Monitor using sets of a global signal and a shared variable. These and 
-all Transaction Info related VHDL types are defined in transaction_pkg.vhd, located in the VIP src folder.
+all Transaction Info related VHDL types are defined in transaction_pkg.vhd, located in the VIP src folder (except for the 
+t_transaction_status type, which is defined in types_pkg).
 
     * **Monitor trigger signal** : *global_<protocol-name>_monitor_transaction_trigger*, e.g. global_uart_monitor_transaction_trigger
     * **Monitor shared variable** : *shared_<protocol-name>_monitor_transaction_info*, e.g. shared_uart_monitor_transaction_info
@@ -946,8 +1128,8 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | Name             | Type                   | Default         | Description                                                   |
     +==================+========================+=================+===============================================================+
-    | bt               | t_transaction          | C_TRANSACTION_S\| Transaction Info record entry for base transaction            |
-    |                  |                        | ET_DEFAULT      |                                                               |
+    | bt               | t_base_transaction     | C_BASE_TRANSACT\| Transaction Info record entry for base transaction            |
+    |                  |                        | ION_SET_DEFAULT |                                                               |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | -> operation     | t_operation            | NO_OPERATION    | Equal to VVC transaction operation, e.g. TRANSMIT, RECEIVE and|
     |                  |                        |                 | EXPECT (UART)                                                 |
@@ -964,11 +1146,11 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | ---> cmd_idx     | integer                | -1              | VVC command index resulting in this base transaction          |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
-    | -> transaction_s\| t_transaction_status   | C_TRANSACTION_S\| The current status of transaction. Available statuses are     |
-    | tatus            |                        | TATUS_DEFAULT   | INACTIVE, IN_PROGRESS, FAILED and SUCCEEDED [#f2]_            |
+    | -> transaction_s\| t_transaction_status   | INACTIVE        | The current status of transaction. Available statuses are     |
+    | tatus            |                        |                 | INACTIVE, IN_PROGRESS, FAILED, SUCCEEDED and COMPLETED [#f2]_ |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
-    | -> error_info    | t_error_info           | C_ERRO_INFO_DEF\| Record entry of errors that will be injected to the DUT access|
-    | [#f3]_           |                        | AULT            | transaction                                                   |
+    | -> error_info    | t_error_info           | C_ERROR_INFO_DE\| Record entry of errors that will be injected to the DUT access|
+    | [#f3]_           |                        | FAULT           | transaction                                                   |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
     | ---> parity_bit\ | boolean                | False           | The DUT transaction will have a parity bit error if entry is  |
     | _error [#f4]_    |                        |                 | set to true                                                   |
@@ -976,9 +1158,9 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
     | ---> stop_bir_er\| boolean                | False           | The DUT transaction will have a stop bit error if entry is set|
     | ror [#f4]_       |                        |                 | to true                                                       |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
-    | ct [#f5]_        | t_transaction          | C_TRANSACTION_S\| | Transaction Info record entry for compound transaction      |
-    |                  |                        | ET_DEFAULT      | | Note that sub-record entries would typically have the same  |
-    |                  |                        |                 |   entries as for a base transaction, and that this entry does |
+    | ct [#f5]_        | t_compound_transaction | C_COMPOUND_TRAN\| | Transaction Info record entry for compound transaction      |
+    |                  |                        | SACTION_SET_DEF\| | Note that sub-record entries would typically have the same  |
+    |                  |                        | AULT            |   entries as for a base transaction, and that this entry does |
     |                  |                        |                 |   not have to be suited for all interface Transaction Info    |
     |                  |                        |                 |   records.                                                    |
     +------------------+------------------------+-----------------+---------------------------------------------------------------+
@@ -987,8 +1169,8 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
 
     .. [#f1] Record field **address** is not applicable for all interface types, e.g. UART, and is only shown here for 
        informational purposes.
-    .. [#f2] Transaction status **FAILED** and **SUCCEEDED** are not applicable for VVC Transaction Info records, but will be used 
-       for Monitor Transaction Info records.
+    .. [#f2] Transaction status **FAILED** and **SUCCEEDED** are only applicable for Monitor Transaction Info records and not for 
+       VVC Transaction Info records. Whereas **COMPLETED** is applicable only for VVCs and not Monitors.
     .. [#f3] Record field **error_info** and its sub-record fields can be omitted if no error injection is implemented in the BFM.
     .. [#f4] **error_info** sub-record fields **parity_bit_error** and **stop_bit_error** are examples of UART error injection.
     .. [#f5] Record entry **ct** will consist of similar record fields as **bt**, and might not always be necessary. This applies 
@@ -997,14 +1179,14 @@ all Transaction Info related VHDL types are defined in transaction_pkg.vhd, loca
 Transaction Info signal and shared variable
 ----------------------------------------------------------------------------------------------------------------------------------
 A VVC or Monitor will trigger the global trigger signals listed in :ref:`vvc_framework_transaction_info_record` when information 
-of a new transaction info is made available. For a VVC, the transaction info is made available prior to the corresponding bus 
-access, i.e. before calling the BFM method, and the global trigger signal will be pulsed for a delta cycle. The VVC will set the 
-transaction info back to default values immediately after the bus access has finished, but then without pulsing the global trigger 
-signal.
+of a new transaction info is made available. For a VVC, the transaction info can be available prior to the corresponding bus 
+access, i.e. before calling the BFM method, or at the end of the access, i.e. when the BFM method has finished. The global trigger 
+signal will be pulsed in both cases for a delta cycle. The VVC will set the transaction info back to default values immediately 
+after the second trigger, but then without pulsing the global trigger signal.
 
 For a Monitor, the transaction info will be made available immediately after a bus access is completed and then the global trigger 
-signal will be pulsed for a delta cycle. The transaction info is valid when the global trigger signal is pulsed and is set back to 
-default values after a period of transaction_display_time, set in the Monitor configuration record, or when a new transaction is 
+signal will be pulsed for a delta cycle. The transaction info is valid when the global trigger signal is pulsed and it is set back 
+to default values after a period of transaction_display_time, set in the Monitor configuration record, or when a new transaction is 
 started.
 
 Examples of Transaction Info Usage
@@ -1035,13 +1217,13 @@ involves the following 3 steps:
     #. Decode the base transaction info operation.
     #. Execute wanted operation from the obtained transaction info.
 
-A simple VVC Scoreboard Support process is presented in Figure 5, demonstrating how VVC scoreboard actions can be accomplished 
-using transaction info and a stand-alone process when not performed by a VVC. The same approach is shown in Figure 6 with a simple 
+A simple VVC Scoreboard Support process is presented in Figure 6, demonstrating how VVC scoreboard actions can be accomplished 
+using transaction info and a stand-alone process when not performed by a VVC. The same approach is shown in Figure 7 with a simple 
 DUT Model process, demonstrating how DUT modelling can be accomplished using transaction info and a stand-alone process. Note that 
-Figure 5 uses aliasing to simplify and improve code readability, while Figure 6 uses full transaction info names.
+Figure 6 uses aliasing to simplify and improve code readability, while Figure 7 uses full transaction info names.
 
 .. code-block::
-    :caption: Figure 5 VVC Scoreboard Support – with aliasing
+    :caption: Figure 6 VVC Scoreboard Support – with aliasing
 
     p_vvc_sb_support : process
       -- transaction info handles
@@ -1058,30 +1240,28 @@ Figure 5 uses aliasing to simplify and improve code readability, while Figure 6 
         wait until (sbi_transaction_trigger = '1') or (uart_rx_transaction_trigger = '1');
 
         if sbi_transaction_trigger'event then
-          case sbi_transaction_info.operation is
-            when READ =>
-              v_sb_element := sbi_transaction_info.data(C_DATA_WIDTH-1 downto 0);
-              SBI_VVC_SB.check_received(C_SBI_VVC_1, v_sb_element);
-          end case;
+          if sbi_transaction_info.operation = READ and sbi_transaction_info.transaction_status = COMPLETED then
+            v_sb_element := sbi_transaction_info.data(C_DATA_WIDTH-1 downto 0);
+            SBI_VVC_SB.check_received(C_SBI_VVC_1, v_sb_element);
+          end if;
         end if;
 
         if uart_rx_transaction_trigger'event then
-          case uart_rx_info.operation is
-            when RECEIVE =>
-              v_sb_element := uart_rx_info.data(C_DATA_WIDTH-1 downto 0);
-              UART_VVC_SB.check_received(C_UART_VVC_1, v_sb_element);
-          end case;
+          if uart_rx_info.operation = RECEIVE and uart_rx_info.transaction_status = COMPLETED then
+            v_sb_element := uart_rx_info.data(C_DATA_WIDTH-1 downto 0);
+            UART_VVC_SB.check_received(C_UART_VVC_1, v_sb_element);
+          end if;
         end if;
 
       end loop;
     end process p_vvc_sb_support;
 
-Figure 5 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in 
+Figure 6 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in 
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>`. For simple scoreboard elements, such as std_logic_vector, 
 these scoreboard approaches are already performed by the VVCs.
 
 .. code-block::
-    :caption: Figure 6 DUT Model – no aliasing
+    :caption: Figure 7 DUT Model – no aliasing
 
     p_dut_model : process
     begin
@@ -1091,23 +1271,21 @@ these scoreboard approaches are already performed by the VVCs.
         wait until (global_sbi_vvc_transaction_trigger(C_SBI_VVC_1) = '1') or (global_uart_vvc_transaction_trigger(TX, C_UART_VVC_1) = '1');
 
         if global_sbi_vvc_transaction_trigger(C_SBI_VVC_1)'event then
-          case shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.operation is
-            when WRITE =>
-              UART_VVC_SB.add_expected(shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
-          end case;
+          if shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.operation = WRITE and shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.transaction_status = IN_PROGRESS then
+            UART_VVC_SB.add_expected(shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
+          end if;
         end if;
 
         if global_uart_vvc_transaction_trigger(TX, C_UART_VVC_1)'event then
-          case shared_uart_vvc_transaction_info(TX, C_UART_VVC_1).bt.operation is
-            when TRANSMIT =>
-              SBI_VVC_SB.add_expected(shared_uart_vvc_transaction(TX, C_UART_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
-          end case;
+          if shared_uart_vvc_transaction_info(TX, C_UART_VVC_1).bt.operation = TRANSMIT and shared_uart_vvc_transaction_info(TX, C_UART_VVC_1).bt.transaction_status = IN_PROGRESS then
+            SBI_VVC_SB.add_expected(shared_uart_vvc_transaction(TX, C_UART_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
+          end if;
         end if;
 
       end loop;
     end process p_dut_model;
 
-Figure 6 demonstrates the setup of a DUT Model process that operates with the 3 steps listed in 
+Figure 7 demonstrates the setup of a DUT Model process that operates with the 3 steps listed in 
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>`. For simple scoreboard elements, such as std_logic_vector, 
 these scoreboard approaches are already performed by the VVCs.
 
@@ -1115,11 +1293,11 @@ Complex Protocols
 ^^^^^^^^^^^^^^^^^
 For scoreboards with complex protocols, e.g. AXI Stream and Avalon ST, the same approach as listed in 
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>` applies. The only difference is that the scoreboard 
-element is of a more complex type, i.e. a record element. Figure 7 demonstrates a VVC scoreboard support approach using a complex 
+element is of a more complex type, i.e. a record element. Figure 8 demonstrates a VVC scoreboard support approach using a complex 
 record element.
 
 .. code-block::
-    :caption: Figure 7 VVC Scoreboard Support – complex scoreboard element
+    :caption: Figure 8 VVC Scoreboard Support – complex scoreboard element
 
     -- define complex Avalon ST scoreboard type
     type t_avalon_st_element is record
@@ -1158,18 +1336,17 @@ record element.
         wait until avalon_st_transaction_trigger = '1';
 
         if avalon_st_transaction_trigger'event then
-          case avalon_st_transaction_info.operation is
-            when RECEIVE =>
-              v_sb_element.channel_value := avalon_st_transaction_info.channel_value(C_CH_WIDTH-1 downto 0);
-              v_sb_element.data_array    := avalon_st_transaction_info.data_array(0 to C_ARRAY_LENGTH-1)(C_WORD_WIDTH-1 downto 0);
-              AVALON_ST_VVC_SB.check_received(C_AVALON_ST_VVC_1, v_sb_element);
-          end case;
+          if avalon_st_transaction_info.operation = RECEIVE and avalon_st_transaction_info.transaction_status = COMPLETED then
+            v_sb_element.channel_value := avalon_st_transaction_info.channel_value(C_CH_WIDTH-1 downto 0);
+            v_sb_element.data_array    := avalon_st_transaction_info.data_array(0 to C_ARRAY_LENGTH-1)(C_WORD_WIDTH-1 downto 0);
+            AVALON_ST_VVC_SB.check_received(C_AVALON_ST_VVC_1, v_sb_element);
+          end if;
         end if;
 
       end loop;
     end process p_vvc_sb_support;
 
-Figure 7 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in 
+Figure 8 demonstrates the setup of a VVC Scoreboard Support process that operates with the 3 steps listed in 
 :ref:`Transaction Info Mechanism <vvc_framework_transaction_info_mechanism>`. For complex scoreboard elements, such as records, the 
 scoreboard package declaration, defining the shared variable and scoreboard approaches have to be performed outside the VVC.
 
@@ -1202,14 +1379,14 @@ base transaction):
 Protocol Aware Error Injection
 ==================================================================================================================================
 Error injection into the DUT could be very useful in a testbench in order to test how the DUT handles interface errors when these 
-errors are: a) to be detected and corrected, b) detected only, and c) not detected but may or may not affect the behaviour.
+errors are: a) to be detected and corrected, b) detected only, and c) not detected but may or may not affect the behavior.
 
 Protocol aware error injection is defined here as intelligent error injection, given knowledge about the interface and protocol, 
-e.g. to inject a parity error in a protocol rather than just inverting or delaying a signal without pre-defined detailed support 
+e.g. to inject a parity error in a protocol rather than just inverting or delaying a signal without predefined detailed support 
 to do this at the right place. The latter is supported by a dedicated "brute force" error injection VIP 'bitvis_vip_error_injection' 
 in UVVM.
 
-UVVM has a pre-defined methodology for handling protocol aware error injection in a structured way.
+UVVM has a predefined methodology for handling protocol aware error injection in a structured way.
 
 .. note::
 
@@ -1220,9 +1397,9 @@ UVVM error injection principles
 ----------------------------------------------------------------------------------------------------------------------------------
 Error injection may be applied randomly, with no limitations. For UVVM however, we recommend the following approach:
 
-    #. No randomization of behaviour inside BFMs when this could affect the DUT behaviour or output (and a monitor would be 
+    #. No randomization of behavior inside BFMs when this could affect the DUT behavior or output (and a monitor would be 
        required to check the actual DUT stimuli). Hence BFM procedures should only be called with parameters explicitly defining 
-       the interface behaviour (from the BFM side). Thus no parity error randomization inside. The only exception is for behaviour 
+       the interface behavior (from the BFM side). Thus no parity error randomization inside. The only exception is for behavior 
        that should not affect the DUT. Thus the position of a data bit error could be randomized inside the BFM.
     #. It is recommended that more advanced VVCs include randomization - in order to distribute this away from the test sequencer 
        and increase the re-use value of a VVC. Thus a VVC may be told to apply say 10% parity errors for a UART_VVC transmission 
@@ -1264,7 +1441,7 @@ Naming and type usage
 ----------------------------------------------------------------------------------------------------------------------------------
 The error injection sub-record will be VVC and BFM dedicated, and thus any names and types may be used, and even sub-records under 
 'error_injection' is required. The VVC and BFM error injection records may differ or be the same. The only requirement is that 
-readability is prioritised. Values should be checked against legal ranges or values.
+readability is prioritized. Values should be checked against legal ranges or values.
 
 Built-in randomization
 ==================================================================================================================================
@@ -1280,9 +1457,9 @@ UVVM provides functions and procedures for simple generation of random numbers (
 UVVM VIP randomization principles
 ----------------------------------------------------------------------------------------------------------------------------------
 Randomization may of course be applied with no limitations in a UVVM based testbench. For UVVM VIP however, we recommend the same 
-general approach as for error injection randomizations:
+general approach as for error injection randomization:
 
-    #. No randomization of data inside BFMs as this would affect the DUT behaviour or output (and a monitor would be required to 
+    #. No randomization of data inside BFMs as this would affect the DUT behavior or output (and a monitor would be required to 
        check the actual DUT stimuli). Hence BFM procedures should only be called with explicit data.
     #. It is recommended that more advanced VVCs include functionality for randomization of data - in order to distribute this 
        away from the test sequencer and increase the re-use value of a VVC. Thus, a VVC may be told to apply random data, in which 
@@ -1384,11 +1561,11 @@ turned on and off for more flexibility.
 Property check configuration
 ----------------------------------------------------------------------------------------------------------------------------------
 In UVVM, turning checkers on and off is controlled by the VVC configuration (see :ref:`vvc_framework_status_config_transaction_info`), 
-and often additional control of the checker behaviour is also required. Thus, it is recommended to include the checker control for 
+and often additional control of the checker behavior is also required. Thus, it is recommended to include the checker control for 
 each individual check in a dedicated sub-record. An example on this (for the UART VVC) is shown below. See :ref:`UART VVC 
 <vip_uart_vvc>` for implementation. ::
 
-    .bit_rate_checker              -- Sub-record containing all control of the property checker behaviour
+    .bit_rate_checker              -- Sub-record containing all control of the property checker behavior
         .enable      boolean       -- Enables or disables the complete bit rate checker
         .min_period  time
         .alert_level t_alert_level
@@ -1455,7 +1632,7 @@ info out of a VVC - as described in :ref:`vvc_framework_transaction_info`. The o
 provide parts of what the VVC can provide.
 
     * No monitor can provide info about compound transactions.
-    * For a split transaction protocol like Avalon - only the sub-transactions could be provided (which could be analysed at the 
+    * For a split transaction protocol like Avalon - only the sub-transactions could be provided (which could be analyzed at the 
       higher level to provide Base transactions).
     * A monitor cannot provide meta data like command index or command message.
 
@@ -1554,14 +1731,14 @@ connected to the DUT.
 The HVVC-to-VVC Bridge is the connection between a hierarchical VVC (HVVC) and the VVC at a lower protocol level, in this context 
 referred to only as the VVC. Communications between the HVVC and VVC is handled by the HVVC-to-VVC Bridge. Data is transferred 
 between the HVVC and HVVC-to-VVC Bridge on a common interface and converted in the HVVC-to-VVC Bridge to/from the specific 
-interface of the VVC used. An example of this concept used on Ethernet is seen in Figure 8.
+interface of the VVC used. An example of this concept used on Ethernet is seen in Figure 9.
 
 .. figure:: /images/vvc_framework/hvvc_to_vvc_bridge.png
    :alt: HVVC-to-VVC Bridge
    :width: 550pt
    :align: center
 
-   Figure 8 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC
+   Figure 9 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC
 
 HVVC usage
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1654,7 +1831,7 @@ Entity
 ================= ================================================================================================================
 GC_INSTANCE_IDX   Needed in case there are multiple instances of a given VVC. (E.g. DUT with 2 <VVC-NAME>S). Default is 1, but any 
                   natural type is ok.
-GC_<name>_CONFIG  Recommended. Allows predefined BFM behaviour to be set up for every VVC.
+GC_<name>_CONFIG  Recommended. Allows predefined BFM behavior to be set up for every VVC.
 GC_CMD_QUEUE_*    Needed to limit the queue size and to generate a warning if more elements in the queue than ever expected.
 Other generics    Optional and VVC dependent. These generics could for example contain widths of BFM signals.
 ================= ================================================================================================================
@@ -1679,7 +1856,7 @@ Constructor
 ^^^^^^^^^^^
 The constructor is run once only - immediately when starting the simulation. The procedure:
 
-    * Initialises VVC with BFM config and the queue with queue name.
+    * Initializes VVC with BFM config and the queue with queue name.
     * Allows constructor log for VVC info (using ID_CONSTRUCTOR), and VVC Queue info (using ID_CONSTRUCTOR_SUB).
 
 The procedure will report alerts with severity TB_FAILURE if one of the following occurs:
@@ -1696,7 +1873,7 @@ next command from the sequencer.
 
 | Step 0
 | ``initialize_interpreter()``
-|   - Initialises parameters to default passive/initial values (e.g. terminate_current_cmd.set := '0').
+|   - Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.set := '0').
 
 | Step 1
 | ``await_cmd_from_sequencer()``
@@ -1728,7 +1905,7 @@ command queue.
 
 | Step 0
 | ``initialize_executor()``
-|   - Initialises parameters to default passive/initial values (e.g. terminate_current_cmd.reset := '0').
+|   - Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.reset := '0').
 
 | Step 1
 | ``fetch_command_and_prepare_executor()``
@@ -1771,34 +1948,14 @@ thread (here: 'channel'). No more; no less. This allows a single command queue a
 
 Note that SBI_VVC must handle both read and write accesses, but never simultaneously and always in the given order.
 
-Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. Some examples:
+Multi-channel VVCs may be implemented in many different ways - depending on your preferences and priorities. The included
+bitvis_vip_uart implementation uses the following method:
 
-    #. | **As unique VVC implementation**
-       | Unique VVCs may be used in order to omit the channel input, e.g. UART RX VVC and UART TX VVC. UART TX VVC would only 
-         contain TX specific BFM procedures, while UART RX VVC would only contain RX specific BFM procedures. With this approach 
-         the testbench sequencer calls would look like e.g. (assuming both VVCs in this pair are set to instance index 1):
-       |    a. uart_transmit(UART_TX_VVCT, 1, ...)
-       |    b. uart_receive(UART_RX_VVCT, 1, ...)
-
-    #. | **As shared VVC implementation with usage restricted by user, and multiple VVC instances**
-       | A combined VVC with different VVC instances for different channels e.g. RX and TX. The TX instance could e.g. be instance 
-         1, and the RX instance could be e.g. instance 2. Using this UART VVC with this implementation would look like:
-       |    a. uart_transmit(UART_VVCT, 1, ...)
-       |    b. uart_receive(UART_VVCT, 2, ...)
-
-    #. | **As shared VVC implementation with GC_CHANNEL generic input**
-       | A combined VVC with the same combined VVC implementation, but separate instances for different channels e.g. RX and TX 
-         (both functionalities inside the same leaf VVC). The downside of this implementation is that it would be possible to call 
-         TX BFM procedures when calling the RX VVC channel. Using this UART VVC would look like:
-       |    a. uart_transmit(UART_VVCT, TX, 1, ...)
-       |    b. uart_receive(UART_VVCT, RX, 1, ...)
-
-    #. | **As unique VVC implementation with GC_CHANNEL generic input**
+    *  | **A unique VVC implementation with GC_CHANNEL generic input**
        | This approach uses unique VVC implementations for each channel, e.g. in uart_rx_vvc.vhd and uart_tx_vvc.vhd, but they 
          both share the VVC target parameter, UART_VVCT. They both use the GC_CHANNEL generic input to specify their channel, i.e. 
-         TX or RX. This is similar to the method described in example 3, but with restrictions that ensure that e.g. the UART TX 
-         VVC can't use the UART RX BFM procedures. The included bitvis_vip_uart example is implemented with this method. Using 
-         this UART VVC would look like:
+         TX or RX. The VVCs have restrictions that ensure that e.g. the UART TX VVC can't use the UART RX BFM procedures.
+         Using this UART VVC would look like:
        |    a. uart_transmit(UART_VVCT, TX, 1, ...)
        |    b. uart_receive(UART_VVCT, RX, 1, ...)
 
@@ -1857,8 +2014,10 @@ the VVC/BFM configuration will differ for each VVC. The record contents are:
     * inter_bfm_delay: A record containing the potential inter-bfm delay specifications, e.g. if BFM accesses shall be separated 
       with a given time.
     * cmd_queue_count_*: Command queue specifications.
-    * msg_id_panel: The ID panel that the VVC shall use.
+    * result_queue_count_*: Result queue specifications.
     * bfm_config: A record containing all settings for the BFM, e.g. clock periods, message IDs etc.
+    * msg_id_panel: The ID panel that the VVC shall use.
+    * unwanted_activity_severity: Severity of alert for the unwanted activity detection.
 
 | A constant C_<name>_VVC_CONFIG_DEFAULT is defined for this type to use as default value.
 | A shared variable array of t_vvc_config *shared_<name>_vvc_config* is declared and all elements are set to the default value.
@@ -1992,5 +2151,124 @@ about the interpreter_* procedures, please see :ref:`vvc_framework_methods`. For
 package, see :ref:`vvc_framework_name_vvc`. In addition to the procedures, the td_vvc_entity_support_pkg.vhd also contains types 
 for VVC labels and executor results. The result array is also defined and its shared variable is instantiated in this package.
 
+
+VVC Generator script
+==================================================================================================================================
+**Quick Summary**
+
+#. Run the script from the command line with ``python3 vvc_generator.py`` and follow the instructions.
+#. Modify the generated code as instructed wherever the key \--<USER_INPUT> is found.
+#. If necessary, update the t_channel type in UVVM-Util adaptations_pkg if new channels (other than RX and TX) are used.
+
+Introduction
+----------------------------------------------------------------------------------------------------------------------------------
+The VVC Generator is a Python 3 script that generates VVCs and accompanying support files, including the command package, methods 
+package, a BFM skeleton and if necessary, a VVC wrapper for multi-channel VVCs.
+
+Prerequisites
+----------------------------------------------------------------------------------------------------------------------------------
+In order to run the script, it is necessary to have Python installed. To run the script from the command line, the python interpreter 
+path needs to be added to the Path environmental variable. Only Python 3 is supported.
+
+Running the script
+----------------------------------------------------------------------------------------------------------------------------------
+The script can be run from the command line by running: ``python3 vvc_generator.py``
+
+The script will query the user for information about the VVC during the script:
+
+#. First, it will ask for the **VVC name**. Please enter the VVC name without spaces. This name needs to be usable in the VHDL code, 
+   i.e. don't use any other characters than "a-z", "A-Z", "0-9" or "_". Any name must start with a letter.
+
+#. Then, the script will ask if **extended features** should be added. If you type 'y' and Enter, it will ask whether you want to 
+   add the following features, which you can select by typing 'y' or 'n' and pressing Enter after each one:
+
+     * **Scoreboard**
+     * **Transaction info**
+     * **Unwanted activity detection**
+
+#. Afterwards, the script will ask to select the **number of concurrent channels** to use in the VVC. Channels are a way of 
+   implementing more than one concurrent process which will use the BFM procedures. For example, when implementing a VVC for a bus 
+   which can only read OR write at the same time you would not need multiple channels. The SBI example VVC is an example of this. 
+   When implementing a full duplex VVC, e.g. UART, it would make sense to use multiple channels since TX and RX will operate 
+   concurrently. If you are implementing a VVC with concurrent channels, please type a number between 2 and 99 and press Enter. 
+   If not, press Enter to select the default '1'.
+
+#. If you choose a number other than the default '1', you will be asked to **name each channel**, one at a time. The channel names 
+   follow the same naming restrictions as the VVC name, stated in step 1. The script will generate new leaf VVCs for each channel 
+   name you enter, it will also generate a wrapper VVC that you can include in your test harness instead of including each leaf VVC 
+   individually. You must update the t_channel type in UVVM-Util adaptations_pkg if you use channel names other than RX and TX.
+
+#. Finally, the script will ask:
+
+     * If VVC has 1 concurrent channel: whether the **VVC shall have multiple executors**. If you type 'n' and Enter, the script 
+       will not need any further information. If you type 'y' and Enter, it will ask to type a number between 2 and 3 for the 
+       **number of concurrent executors** including the cmd_executor. Then, the script will ask to **name each executor**, one at 
+       a time. The executor names follow the same naming restrictions as the VVC name, stated in step 1.
+
+     * If VVC has several concurrent channels: **how many channels shall have multiple executors**. If you want a single executor 
+       in each channel press Enter to select the default '0', the script will not need any further information. Otherwise, type the 
+       number of channels which shall have multiple executors and press Enter. The script will then ask for each channel, whether 
+       it **shall contain multiple executors** for which you can answer 'y' or 'n'. If you answer 'y' for a given channel, you will 
+       be then asked to type a number between 2 and 3 for the **number of concurrent executors** including the cmd_executor. Then, 
+       the script will ask to **name each executor**, one at a time. The executor names follow the same naming restrictions as the 
+       VVC name, stated in step 1.
+
+When the script has gathered all the information it needs, it will generate the VHDL files in the 'output' directory.
+The naming of the files will be (<name> is the VVC name, and <channel> is a channel name):
+
+* *<name>_vvc.vhd*
+
+  * If this is a single channel VVC, this will be the main VVC file which includes all VVC logic (e.g. executor and interpreter)
+  * If this is a multi-channel VVC, this file will be the wrapper for all the leaf VVCs.
+
+* *<name>_<channel>_vvc.vhd*
+
+  * These files will consist of the VVC implementation for each VVC channel (leaf VVC). 
+  * These files will only be generated if there are multiple channels for this VVC.
+
+* *<name>_bfm_pkg.vhd*
+
+  * This file is a suggested setup for the user BFM. It contains the necessary config records and types needed for UVVM to function 
+    properly. It does not contain any actual BFM procedures.
+
+* *vvc_cmd_pkg.vhd*
+
+  * This file contains the VVC operations and command records in which the VVC data is placed. 
+
+* *vvc_methods_pkg.vhd*
+
+  * This file contains VVC configuration and status records, and examples of how to implement the VVC methods.
+
+* *vvc_context.vhd*
+
+  * This file contains the necessary packages that are used when simulating a VVC.
+
+* *vvc_sb_pkg.vhd*
+
+  * This file contains the Scoreboard package used for the internal VVC Scoreboard.
+  * This file will only be generated if the Scoreboard feature was selected.
+
+* *transaction_pkg.vhd*
+
+  * This file contains the types used for the transaction info.
+  * This file will only be generated if the Transaction info feature was selected.
+
+Modifying the created VHDL files
+---------------------------------------------------------
+After the script has completed, the files need some user interaction before they are ready to use. In all places marked with 
+"\--<USER_INPUT>" there will be instructions on how to properly modify the VVC for your BFM. Additionally, if you created a VVC 
+with multiple channels, please make sure to add these channels to the t_channel type located in the UVVM-Util adaptations_pkg.vhd 
+file. By default, this type only contains 'TX' and 'RX' channels but more can be added to fit any project.
+
+
+**********************************************************************************************************************************
+TI Protected Types
+**********************************************************************************************************************************
+Protected type definitions used in the VVC Framework.
+
+.. toctree::
+   :maxdepth: 1
+
+   ti_protected_types_pkg.rst
 
 .. include:: rst_snippets/ip_disclaimer.rst

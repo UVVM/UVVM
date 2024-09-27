@@ -1,0 +1,46 @@
+# Mac OS index files
+.DS_Store
+
+# MS Word backup files
+~$*.doc*
+
+# python
+release/regression_test/__pycache__/
+
+# VS Code
+uvvm_internal.code-workspace
+vhdl_ls.toml
+/uvvm_util/internal_script/compile_all_and_sim_gen_pulse.do
+/uvvm_util/internal_script/compile_all_and_sim_alert_level_specific.do
+/uvvm_util/sim
+
+# Sigasi
+.project
+.pydevproject
+.library_mapping.xml
+.settings
+
+# Emacs
+*.*~
+
+# GHDL compilations
+*.cf
+
+# Python pyc
+__pycache__/
+.pytest_cache/
+
+# OS
+.DS_Store
+
+# rst
+*.doctree
+*.pickle
+
+release/hdlregression/
+
+releasedb_coverpoint.txt
+
+releasedb_cross_max.txt
+
+releasedb_cross.txt

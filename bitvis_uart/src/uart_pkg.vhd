@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -38,7 +38,7 @@ package uart_pkg is
   return natural;
 
   function odd_parity(
-    signal data : std_logic_vector(7 downto 0))
+    signal data : std_logic_vector)
   return std_logic;
 
 end package uart_pkg;
@@ -94,7 +94,7 @@ package body uart_pkg is
   end function;
 
   function odd_parity(
-    signal data : std_logic_vector(7 downto 0))
+    signal data : std_logic_vector)
   return std_logic is
     variable odd : std_logic;
   begin

@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -33,6 +33,7 @@ use work.td_target_support_pkg.all;
 use work.td_vvc_entity_support_pkg.all;
 use work.td_cmd_queue_pkg.all;
 use work.td_result_queue_pkg.all;
+use work.vvc_sb_support_pkg.all;
 
 --========================================================================================================================
 entity wishbone_vvc is
@@ -64,13 +65,14 @@ end entity wishbone_vvc;
 --========================================================================================================================
 architecture behave of wishbone_vvc is
 
-  constant C_SCOPE      : string       := C_VVC_NAME & "," & to_string(GC_INSTANCE_IDX);
+  constant C_SCOPE      : string       := get_scope_for_log(C_VVC_NAME, GC_INSTANCE_IDX);
   constant C_VVC_LABELS : t_vvc_labels := assign_vvc_labels(C_SCOPE, C_VVC_NAME, GC_INSTANCE_IDX, NA);
 
   signal executor_is_busy      : boolean := false;
   signal queue_is_increasing   : boolean := false;
   signal last_cmd_idx_executed : natural := 0;
   signal terminate_current_cmd : t_flag_record;
+  signal clock_period          : time;
 
   -- Instantiation of the element dedicated Queue
   shared variable command_queue : work.td_cmd_queue_pkg.t_generic_queue;
@@ -79,7 +81,7 @@ architecture behave of wishbone_vvc is
   alias vvc_config                          : t_vvc_config is shared_wishbone_vvc_config(GC_INSTANCE_IDX);
   alias vvc_status                          : t_vvc_status is shared_wishbone_vvc_status(GC_INSTANCE_IDX);
   alias transaction_info                    : t_transaction_info is shared_wishbone_transaction_info(GC_INSTANCE_IDX);
-  -- VVC Activity 
+  -- VVC Activity
   signal entry_num_in_vvc_activity_register : integer;
 
   --UVVM: temporary fix for HVVC, remove function below in v3.0
@@ -105,7 +107,8 @@ begin
   --========================================================================================================================
   work.td_vvc_entity_support_pkg.vvc_constructor(C_SCOPE, GC_INSTANCE_IDX, vvc_config, command_queue, result_queue, GC_WISHBONE_BFM_CONFIG,
                                                  GC_CMD_QUEUE_COUNT_MAX, GC_CMD_QUEUE_COUNT_THRESHOLD, GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY,
-                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY);
+                                                 GC_RESULT_QUEUE_COUNT_MAX, GC_RESULT_QUEUE_COUNT_THRESHOLD, GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY,
+                                                 C_VVC_MAX_INSTANCE_NUM);
   --========================================================================================================================
 
   --========================================================================================================================
@@ -159,17 +162,6 @@ begin
 
         case v_local_vvc_cmd.operation is
 
-          when AWAIT_COMPLETION =>
-            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed);
-
-          when AWAIT_ANY_COMPLETION =>
-            if not v_local_vvc_cmd.gen_boolean then
-              -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
-              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
-              v_cmd_has_been_acked := true;
-            end if;
-            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, executor_is_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
-
           when DISABLE_LOG_MSG =>
             uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
 
@@ -180,10 +172,10 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_flush_command_queue(v_local_vvc_cmd, command_queue, vvc_config, vvc_status, C_VVC_LABELS);
 
           when TERMINATE_CURRENT_COMMAND =>
-            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd);
+            work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
-            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
+            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, entry_num_in_vvc_activity_register, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, shared_vvc_response);
 
           when others =>
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
@@ -206,6 +198,7 @@ begin
       end if;
 
     end loop;
+    wait;
   end process;
   --========================================================================================================================
 
@@ -214,6 +207,7 @@ begin
   -- - Fetch and execute the commands
   --========================================================================================================================
   cmd_executor : process
+    constant C_EXECUTOR_ID                           : natural                                      := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_read_data                             : std_logic_vector(C_VVC_CMD_DATA_MAX_LENGTH - 1 downto 0);
     variable v_timestamp_start_of_current_bfm_access : time                                         := 0 ns;
@@ -241,14 +235,14 @@ begin
     loop
 
       -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
 
       -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
+      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
@@ -287,8 +281,8 @@ begin
         --===================================
         when WRITE =>
           -- Normalise address and data
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "wishbone_write() called with to wide address. " & v_cmd.msg);
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "wishbone_write() called with to wide data. " & v_cmd.msg);
+          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "wishbone_write() called with too wide address. " & v_cmd.msg);
+          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "wishbone_write() called with too wide data. " & v_cmd.msg);
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
@@ -304,7 +298,7 @@ begin
 
         when READ =>
           -- Normalise address and data
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "wishbone_read() called with to wide address. " & v_cmd.msg);
+          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "wishbone_read() called with too wide address. " & v_cmd.msg);
 
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
           -- Call the corresponding procedure in the BFM package.
@@ -330,8 +324,8 @@ begin
 
         when CHECK =>
           -- Normalise address and data
-          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "wishbone_check() called with to wide address. " & v_cmd.msg);
-          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "wishbone_check() called with to wide data. " & v_cmd.msg);
+          v_normalised_addr := normalize_and_check(v_cmd.addr, v_normalised_addr, ALLOW_WIDER_NARROWER, "v_cmd.addr", "v_normalised_addr", "wishbone_check() called with too wide address. " & v_cmd.msg);
+          v_normalised_data := normalize_and_check(v_cmd.data, v_normalised_data, ALLOW_WIDER_NARROWER, "v_cmd.data", "v_normalised_data", "wishbone_check() called with too wide data. " & v_cmd.msg);
 
           transaction_info.data(GC_DATA_WIDTH - 1 downto 0) := v_normalised_data;
           transaction_info.addr(GC_ADDR_WIDTH - 1 downto 0) := v_normalised_addr;
@@ -382,7 +376,7 @@ begin
       last_cmd_idx_executed <= v_cmd.cmd_idx;
       -- Reset the transaction info for waveview
       transaction_info      := C_TRANSACTION_INFO_DEFAULT;
-
+      wait for 0 ns; -- This delta cycle is needed to update last_cmd_idx_executed, other VVCs have it inside reset_vvc_transaction_info()
     end loop;
   end process;
   --========================================================================================================================
@@ -392,6 +386,55 @@ begin
   -- - Handles the termination request record (sets and resets terminate flag on request)
   --========================================================================================================================
   cmd_terminator : uvvm_vvc_framework.ti_vvc_framework_support_pkg.flag_handler(terminate_current_cmd); -- flag: is_active, set, reset
+  --========================================================================================================================
+
+  --===============================================================================================
+  -- Clock period
+  -- - Finds the clock period
+  --===============================================================================================
+  p_clock_period : process
+  begin
+    wait until rising_edge(clk);
+    clock_period <= now;
+    wait until rising_edge(clk);
+    clock_period <= now - clock_period;
+    wait;
+  end process;
+  --===============================================================================================
+
+  --========================================================================================================================
+  -- Unwanted activity detection
+  -- - Monitors unwanted activity from the DUT
+  --========================================================================================================================
+  p_unwanted_activity : process
+  begin
+    -- Add a delay to allow the VVC to be registered in the activity register
+    wait for std.env.resolution_limit;
+
+    loop
+      -- Skip if the vvc is inactive to avoid waiting for an inactive activity register
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = ACTIVE then
+        -- Wait until the vvc is inactive
+        loop
+          wait on global_trigger_vvc_activity_register;
+          if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+            exit;
+          end if;
+        end loop;
+      end if;
+
+      wait on wishbone_vvc_master_if.dat_i, wishbone_vvc_master_if.ack_i, global_trigger_vvc_activity_register;
+
+      -- Check the changes on the DUT outputs only when the vvc is inactive
+      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
+        -- Skip checking the changes if the acknowledge signal goes low within one clock period after the VVC becomes inactive
+        if not (wishbone_vvc_master_if.ack_i = '0' and global_trigger_vvc_activity_register'last_event < clock_period) then
+          check_unwanted_activity(wishbone_vvc_master_if.dat_i, vvc_config.unwanted_activity_severity, "dat_i", C_SCOPE);
+          check_unwanted_activity(wishbone_vvc_master_if.ack_i, vvc_config.unwanted_activity_severity, "ack_i", C_SCOPE);
+        end if;
+      end if;
+    end loop;
+  end process p_unwanted_activity;
   --========================================================================================================================
 
 end behave;

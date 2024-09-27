@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -14,35 +14,43 @@
 -- Description   : See library quick reference (under 'doc') and README-file(s)
 ------------------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use std.textio.all;
 
 use work.types_pkg.all;
 
 package adaptations_pkg is
-  constant C_ALERT_FILE_NAME : string := "_Alert.txt";
-  constant C_LOG_FILE_NAME   : string := "_Log.txt";
+  -- =============================================================================================================================
+  -- *****************************************************************************************************************************
+  --  Utility Library
+  -- *****************************************************************************************************************************
+  -- =============================================================================================================================
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- Alert and Log files
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_ALERT_FILE_NAME                          : string := "UVVM_Alert.txt";
+  constant C_LOG_FILE_NAME                            : string := "UVVM_Log.txt";
+  constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
+
+  shared variable shared_default_log_destination : t_log_destination := CONSOLE_AND_LOG;
 
   constant C_SHOW_UVVM_UTILITY_LIBRARY_INFO         : boolean := true; -- Set this to false when you no longer need the initial info
   constant C_SHOW_UVVM_UTILITY_LIBRARY_RELEASE_INFO : boolean := true; -- Set this to false when you no longer need the release info
-
-  constant C_UVVM_TIMEOUT : time := 100 us; -- General timeout for UVVM wait statements
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Log format
   --------------------------------------------------------------------------------------------------------------------------------
   --UVVM: [<ID>]  <time>  <Scope>        Msg
   --PPPPPPPPIIIIII TTTTTTTT  SSSSSSSSSSSSSS MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-  constant C_LOG_PREFIX : string := "UVVM: "; -- Note: ': ' is recommended as final characters
-
+  constant C_LOG_PREFIX        : string := "UVVM: "; -- Note: ': ' is recommended as final characters
   constant C_LOG_PREFIX_WIDTH  : natural := C_LOG_PREFIX'length;
   constant C_LOG_MSG_ID_WIDTH  : natural := 24;
-  constant C_LOG_TIME_WIDTH    : natural := 16; -- 3 chars used for unit eg. " ns"
-  constant C_LOG_TIME_BASE     : time    := ns; -- Unit in which time is shown in log (ns | ps)
-  constant C_LOG_TIME_DECIMALS : natural := 1; -- Decimals to show for given C_LOG_TIME_BASE
-  constant C_LOG_SCOPE_WIDTH   : natural := 30; -- Maximum scope length
+  constant C_LOG_TIME_WIDTH    : natural := 16;      -- 3 chars used for unit eg. " ns"
+  constant C_LOG_TIME_BASE     : time    := ns;      -- Unit in which time is shown in log (ns | ps)
+  constant C_LOG_TIME_DECIMALS : natural := 1;       -- Decimals to show for given C_LOG_TIME_BASE
+  constant C_LOG_SCOPE_WIDTH   : natural := 30;      -- Maximum scope length
   constant C_LOG_LINE_WIDTH    : natural := 175;
   constant C_LOG_INFO_WIDTH    : natural := C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH;
 
@@ -62,24 +70,16 @@ package adaptations_pkg is
   constant C_SHOW_LOG_ID            : boolean := true; -- This constant has replaced the global_show_log_id
   constant C_SHOW_LOG_SCOPE         : boolean := true; -- This constant has replaced the global_show_log_scope
 
-  constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
-
-  constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true; -- true: break using std.env.stop, false: break using failure
-
-  constant C_ENABLE_CHECK_COUNTER : boolean := False; -- enable/disable check_counter to count number of check calls.
-
-  shared variable shared_default_log_destination : t_log_destination := CONSOLE_AND_LOG;
-
   --------------------------------------------------------------------------------------------------------------------------------
   -- Verbosity control
   -- NOTE: Do not enter new IDs without proper evaluation:
   --       1. Is it - or could it be covered by an existing ID
   --       2. Could it be combined with other needs for a more general new ID
-  --       Feel free to suggest new ID for future versions of UVVM Utility Library (support@bitvis.no)
+  --       Feel free to suggest new ID for future versions of UVVM Utility Library (info@uvvm.org)
   --------------------------------------------------------------------------------------------------------------------------------
   type t_msg_id is (
     -- Bitvis utility methods
-    NO_ID,                              -- Used as default prior to setting actual ID when transfering ID as a field in a record
+    NO_ID,                              -- Used as default prior to setting actual ID when transferring ID as a field in a record
     ID_UTIL_BURIED,                     -- Used for buried log messages where msg and scope cannot be modified from outside
     ID_BITVIS_DEBUG,                    -- Bitvis internal ID used for UVVM debugging
     ID_UTIL_SETUP,                      -- Used for Utility setup
@@ -89,7 +89,7 @@ package adaptations_pkg is
     ID_FINISH_OR_STOP,                  -- Used when terminating the complete simulation - independent of why
     ID_CLOCK_GEN,                       -- Used for logging when clock generators are enabled or disabled
     ID_GEN_PULSE,                       -- Used for logging when a gen_pulse procedure starts pulsing a signal
-    ID_BLOCKING,                        -- Used for logging when using synchronisation flags
+    ID_BLOCKING,                        -- Used for logging when using synchronization flags
     ID_WATCHDOG,                        -- Used for logging the activity of the watchdog
     ID_RAND_GEN,                        -- Used for logging "Enhanced Randomization" values returned by rand()\randm()
     ID_RAND_CONF,                       -- Used for logging "Enhanced Randomization" configuration changes, except from name and scope
@@ -160,6 +160,7 @@ package adaptations_pkg is
     ID_AWAIT_COMPLETION_LIST,           -- Used for logging modifications to the list of VVCs waiting for completion
     ID_AWAIT_COMPLETION_WAIT,           -- Used for logging when the procedure starts waiting for completion
     ID_AWAIT_COMPLETION_END,            -- Used for logging when the procedure has finished waiting for completion
+    ID_AWAIT_UVVM_COMPLETION,           -- Used for logging the procedure calls waiting for scoreboards or UVVM completion
     -- Distributed data
     ID_UVVM_DATA_QUEUE,                 -- Information about UVVM data FIFO/stack (initialization, put, get, etc)
     -- VVC system
@@ -172,10 +173,13 @@ package adaptations_pkg is
     -- SB package
     ID_DATA,                            -- To write general handling of data
     ID_CTRL,                            -- To write general control/config information
-    -- Specification vs Verification IDs
+    -- Specification requirement coverage
+    ID_SPEC_COV_INIT,                   -- Used for logging specification requirement coverage initialization
+    ID_SPEC_COV_REQS,                   -- Used for logging the specification requirement list
+    ID_SPEC_COV,                        -- Used for logging general specification requirement coverage methods
+    -- File handling
     ID_FILE_OPEN_CLOSE,                 -- Id used when opening / closing file
     ID_FILE_PARSER,                     -- Id used in file parsers
-    ID_SPEC_COV,                        -- Messages from the specification coverage methods
     -- Special purpose - Not really IDs
     ALL_MESSAGES                        -- Applies to ALL message ID apart from ID_NEVER
   );
@@ -220,9 +224,17 @@ package adaptations_pkg is
 
   constant C_MSG_DELIMITER : character := ''';
 
+  -- Switch for setting the extent of error reports in mismatched stream data. Options are EXTENDED and BRIEF,
+  -- where EXTENDED prints all received data with error, and BRIEF exclusively prints first mismatched word.
+  -- Applies to RGMII, GMII, Avalon-ST and AXI-Stream
+  constant C_ERROR_REPORT_EXTENT : t_error_report_extent := EXTENDED;
+
   --------------------------------------------------------------------------------------------------------------------------------
-  -- Alert counters
+  -- Alert handling
   --------------------------------------------------------------------------------------------------------------------------------
+  constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true;  -- true: break using std.env.stop, false: break using failure
+  constant C_ENABLE_CHECK_COUNTER             : boolean := false; -- enable/disable check_counter to count number of check calls.
+
   -- Default values. These can be overwritten in each sequencer by using
   -- set_alert_attention or set_alert_stop_limit (see quick ref).
   constant C_DEFAULT_ALERT_ATTENTION : t_alert_attention := (others => REGARD);
@@ -243,17 +255,24 @@ package adaptations_pkg is
                                                                (others => true));
 
   --------------------------------------------------------------------------------------------------------------------------------
-  -- Synchronisation
+  -- Buffers and queues
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER : positive := 2048;
+  constant C_NUMBER_OF_DATA_BUFFERS              : positive := 10;
+  constant C_MAX_QUEUE_INSTANCE_NUM              : positive := 100; -- Maximum number of generic queue instances
+
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- Synchronization
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_NUM_SYNC_FLAGS : positive := 100; -- Maximum number of sync flags
 
   --------------------------------------------------------------------------------------------------------------------------------
-  -- Randomization adaptations
+  -- Randomization
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_RAND_MAX_NAME_LENGTH                : positive := 20; -- Maximum length used for random generator names
-  constant C_RAND_INIT_SEED_1                    : positive := 10; -- Initial randomizaton seed 1
-  constant C_RAND_INIT_SEED_2                    : positive := 100; -- Initial randomizaton seed 2
-  constant C_RAND_REAL_NUM_DECIMAL_DIGITS        : positive := 2; -- Number of decimal digits displayed in randomization logs
+  constant C_RAND_MAX_NAME_LENGTH                : positive := 20;  -- Maximum length used for random generator names
+  constant C_RAND_INIT_SEED_1                    : positive := 10;  -- Initial randomization seed 1
+  constant C_RAND_INIT_SEED_2                    : positive := 100; -- Initial randomization seed 2
+  constant C_RAND_REAL_NUM_DECIMAL_DIGITS        : positive := 2;   -- Number of decimal digits displayed in randomization logs
   -- Maximum number of possible values to be stored in the cyclic list. This limit is due to memory restrictions since some
   -- simulators cannot handle more than 2**30 values. When a higher number of values is used, a generic queue is used instead
   -- which only stores the generated values. The queue will use less memory, but will be slower than the list.
@@ -266,20 +285,59 @@ package adaptations_pkg is
   constant C_RAND_MM_MAX_LONG_VECTOR_LENGTH : natural := 128; -- Maximum length for unsigned/signed constraints in multi-method approach
 
   --------------------------------------------------------------------------------------------------------------------------------
-  -- Functional Coverage adaptations
+  -- Functional Coverage
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_FC_MAX_NUM_NEW_BINS                     : positive := 1000; -- Maximum number of bins which can be added using a single add_bins() call
-  constant C_FC_MAX_PROC_CALL_LENGTH                 : positive := 100; -- Maximum string length used for logging a single bin function
-  constant C_FC_MAX_NAME_LENGTH                      : positive := 20; -- Maximum string length used for coverpoint and bin names
-  constant C_FC_MAX_NUM_BIN_VALUES                   : positive := 10; -- Maximum number of values that can be given in bin() and bin_transition()
-  constant C_FC_MAX_NUM_COVERPOINTS                  : positive := 20; -- Maximum number of coverpoints
-  constant C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED   : positive := 1; -- Default value used for the number of bins allocated when a coverpoint is created
-  constant C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT : positive := 10; -- Default value used to increment the number of bins allocated in a coverpoint when the max is reached
+  constant C_FC_MAX_PROC_CALL_LENGTH                 : positive := 100;  -- Maximum string length used for logging a single bin function
+  constant C_FC_MAX_NAME_LENGTH                      : positive := 20;   -- Maximum string length used for coverpoint and bin names
+  constant C_FC_MAX_NUM_BIN_VALUES                   : positive := 10;   -- Maximum number of values that can be given in bin() and bin_transition()
+  constant C_FC_MAX_NUM_COVERPOINTS                  : positive := 20;   -- Maximum number of coverpoints
+  constant C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED   : positive := 1;    -- Default value used for the number of bins allocated when a coverpoint is created
+  constant C_FC_DEFAULT_NUM_BINS_ALLOCATED_INCREMENT : positive := 10;   -- Default value used to increment the number of bins allocated in a coverpoint when the max is reached
 
   --------------------------------------------------------------------------------------------------------------------------------
-  -- UVVM VVC Framework adaptations
+  -- Scoreboard
   --------------------------------------------------------------------------------------------------------------------------------
+  alias C_MAX_SB_INSTANCE_IDX is C_MAX_QUEUE_INSTANCE_NUM; -- Maximum number of SB instances
+  constant C_MAX_TB_SB_NUM   : positive := 20;             -- Maximum number of scoreboard data types in testbench
+  constant C_MAX_SB_INDEX    : positive := C_MAX_TB_SB_NUM * C_MAX_SB_INSTANCE_IDX;
+  constant C_SB_TAG_WIDTH    : positive := 128; -- Number of characters in SB tag
+  constant C_SB_SOURCE_WIDTH : positive := 128; -- Number of characters in SB source element
+  constant C_SB_SLV_WIDTH    : positive := 128; -- Width of the SLV in the predefined SLV SB
+
+  -- Default message Id panel intended for use in SB
+  constant C_SB_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
+    ID_CTRL => ENABLED,
+    ID_DATA => DISABLED,
+    others  => DISABLED
+  );
+
+  --------------------------------------------------------------------------------------------------------------------------------
+  -- BFMs
+  --------------------------------------------------------------------------------------------------------------------------------
+  constant C_UVVM_TIMEOUT : time := 100 us; -- General timeout for UVVM wait statements
+
+  -- Avalon-ST
+  -- Constants for the maximum sizes to use in the BFM.
+  constant C_AVALON_ST_BFM_MAX_BITS_PER_SYMBOL  : positive := 512; -- Recommended maximum in protocol specification (MNL-AVABUSREF)
+  constant C_AVALON_ST_BFM_MAX_SYMBOLS_PER_BEAT : positive := 32;  -- Recommended maximum in protocol specification (MNL-AVABUSREF)
+
+  -- AXI-Stream
+  -- Constants for the maximum sizes to use in the BFM.
+  constant C_AXISTREAM_BFM_MAX_TUSER_BITS : positive := 32;
+  constant C_AXISTREAM_BFM_MAX_TSTRB_BITS : positive := 32; -- Must be large enough for number of data bytes per transfer, C_MAX_TSTRB_BITS >= tdata/8
+  constant C_AXISTREAM_BFM_MAX_TID_BITS   : positive := 8;  -- Recommended maximum in protocol specification (ARM IHI0051A)
+  constant C_AXISTREAM_BFM_MAX_TDEST_BITS : positive := 4;  -- Recommended maximum in protocol specification (ARM IHI0051A)
+
+
+  -- =============================================================================================================================
+  -- *****************************************************************************************************************************
+  --  VVC Framework
+  -- *****************************************************************************************************************************
+  -- =============================================================================================================================
   signal global_show_msg_for_uvvm_cmd : boolean := true; -- If true, the msg parameter for the commands using the msg_id ID_UVVM_SEND_CMD will be shown
+
+  constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
 
   constant C_CMD_QUEUE_COUNT_MAX                   : natural       := 1000; -- (VVC Command queue)  May be overwritten for dedicated VVC
   constant C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY    : t_alert_level := WARNING;
@@ -287,20 +345,22 @@ package adaptations_pkg is
   constant C_RESULT_QUEUE_COUNT_MAX                : natural       := 1000; -- (VVC Result queue)  May be overwritten for dedicated VVC
   constant C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY : t_alert_level := WARNING;
   constant C_RESULT_QUEUE_COUNT_THRESHOLD          : natural       := 950;
-  constant C_MAX_VVC_INSTANCE_NUM                  : natural       := 10;
+  constant C_MAX_VVC_INSTANCE_NUM                  : natural       := 10; -- May be overwritten for dedicated VVCs using constants below
   constant C_MAX_NUM_SEQUENCERS                    : natural       := 10; -- Max number of sequencers
   constant C_MAX_TB_VVC_NUM                        : natural       := 20; -- Max number of VVCs in testbench (including all channels)
+
+  -- Default severity for the unwanted activity detection.
+  -- All VVCs have the unwanted activity detection enabled (ERROR) by default, except:
+  -- For GPIO VVC, the unwanted activity detection is disabled (NO_ALERT) by default. See constant C_GPIO_VVC_CONFIG_DEFAULT in the GPIO VVC methods package.
+  constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
 
   -- Maximum allowed length of VVC names
   constant C_MAX_VVC_NAME_LENGTH : positive := 20;
 
-  -- Minimum width of vvc name and channel displayed in scope.
+  -- Minimum width of VVC name and channel displayed in scope.
   -- These combined + the length of instance + 2 (commas), cannot exceed C_LOG_SCOPE_WIDTH.
   constant C_MINIMUM_CHANNEL_SCOPE_WIDTH  : natural := 10;
   constant C_MINIMUM_VVC_NAME_SCOPE_WIDTH : natural := 10;
-
-  constant C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER : natural := 2048;
-  constant C_NUMBER_OF_DATA_BUFFERS              : natural := 10;
 
   -- Default message Id panel intended for use in the VVCs
   constant C_VVC_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
@@ -342,29 +402,123 @@ package adaptations_pkg is
     -- User can add more channels if needed below.
   );
 
-  constant C_NUM_SEMAPHORE_LOCK_TRIES : natural := 500;
-
-  constant C_MAX_QUEUE_INSTANCE_NUM : positive := 100; -- Maximum number of generic queue instances
-
   --------------------------------------------------------------------------------------------------------------------------------
-  -- Scoreboard adaptations
+  -- VVCs
   --------------------------------------------------------------------------------------------------------------------------------
-  alias C_MAX_SB_INSTANCE_IDX is C_MAX_QUEUE_INSTANCE_NUM; -- Maximum number of SB instances
-  constant C_SB_TAG_WIDTH    : positive := 128; -- Number of characters in SB tag
-  constant C_SB_SOURCE_WIDTH : positive := 128; -- Number of characters in SB source element
-  constant C_SB_SLV_WIDTH    : positive := 128; -- Width of the SLV in the predefined SLV SB
+  constant C_COMMON_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
 
-  -- Default message Id panel intended for use in SB
-  constant C_SB_MSG_ID_PANEL_DEFAULT : t_msg_id_panel := (
-    ID_CTRL => ENABLED,
-    ID_DATA => DISABLED,
-    others  => DISABLED
-  );
+  -- Avalon-MM
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_AVALON_MM_VVC_CMD_DATA_MAX_LENGTH        : natural := 1024;
+  constant C_AVALON_MM_VVC_CMD_ADDR_MAX_LENGTH        : natural := 64;
+  constant C_AVALON_MM_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := 128;
+  constant C_AVALON_MM_VVC_CMD_STRING_MAX_LENGTH      : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AVALON_MM_VVC_MAX_INSTANCE_NUM           : natural := C_MAX_VVC_INSTANCE_NUM;
 
-  --------------------------------------------------------------------------------------------------------------------------------
-  -- VVC Adaptations
-  --------------------------------------------------------------------------------------------------------------------------------
-  constant C_SPI_VVC_DATA_ARRAY_WIDTH : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
+  -- Avalon-ST
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_AVALON_ST_VVC_CMD_CHAN_MAX_LENGTH   : natural := 8;
+  constant C_AVALON_ST_VVC_CMD_WORD_MAX_LENGTH   : natural := 512;
+  constant C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS    : natural := 1024;
+  constant C_AVALON_ST_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AVALON_ST_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- AXI
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_AXI_VVC_CMD_MAX_BURST_WORDS        : natural := 256;
+  constant C_AXI_VVC_CMD_DATA_MAX_LENGTH        : natural := 256;
+  constant C_AXI_VVC_CMD_ADDR_MAX_LENGTH        : natural := 32;
+  constant C_AXI_VVC_CMD_ID_MAX_LENGTH          : natural := 32;
+  constant C_AXI_VVC_CMD_USER_MAX_LENGTH        : natural := 128;
+  constant C_AXI_VVC_CMD_STRING_MAX_LENGTH      : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AXI_VVC_MAX_INSTANCE_NUM           : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- AXI-Lite
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_AXILITE_VVC_CMD_DATA_MAX_LENGTH    : natural := 256;
+  constant C_AXILITE_VVC_CMD_ADDR_MAX_LENGTH    : natural := 32;
+  constant C_AXILITE_VVC_CMD_STRING_MAX_LENGTH  : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AXILITE_VVC_MAX_INSTANCE_NUM       : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- AXI-Stream
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_AXISTREAM_VVC_CMD_DATA_MAX_BYTES    : natural := 16 * 1024;
+  constant C_AXISTREAM_VVC_CMD_MAX_WORD_LENGTH   : natural := 32; -- 4 bytes
+  constant C_AXISTREAM_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_AXISTREAM_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- Clock Generator
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_CLOCK_GEN_VVC_CMD_DATA_MAX_LENGTH   : natural := 8;
+  constant C_CLOCK_GEN_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_CLOCK_GEN_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- Error injection
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_EI_VVC_MAX_INSTANCE_NUM : natural := 100;
+
+  -- Ethernet
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_ETHERNET_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_ETHERNET_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- GMII
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_GMII_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;
+  constant C_GMII_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_GMII_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- GPIO
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_GPIO_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
+  constant C_GPIO_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_GPIO_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- I2C
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_I2C_VVC_CMD_DATA_MAX_LENGTH   : natural := 64;
+  constant C_I2C_VVC_CMD_ADDR_MAX_LENGTH   : natural := 10;
+  constant C_I2C_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_I2C_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- RGMII
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_RGMII_VVC_CMD_DATA_MAX_BYTES    : natural := 2048;
+  constant C_RGMII_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_RGMII_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- SBI
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_SBI_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
+  constant C_SBI_VVC_CMD_ADDR_MAX_LENGTH   : natural := 32;
+  constant C_SBI_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_SBI_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- Specification Coverage
+  constant C_CSV_FILE_MAX_LINE_LENGTH   : positive      := 256;  -- Max length of line read from CSV file, used in csv_file_reader_pkg.vhd
+  constant C_CSV_DELIMITER              : character     := ',';  -- Delimiter when reading and writing CSV files.
+  constant C_MAX_REQUIREMENTS           : positive      := 1000; -- Maximum number of requirements in the req_map file used in initialize_req_cov().
+  constant C_MAX_TESTCASES_PER_REQ      : positive      := 20;   -- Max number of testcases allowed per requirement.
+  constant C_MISSING_REQ_LABEL_SEVERITY : t_alert_level := TB_WARNING;
+
+  -- SPI
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_SPI_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
+  constant C_SPI_VVC_DATA_ARRAY_WIDTH      : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
+  constant C_SPI_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_SPI_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- UART
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_UART_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_UART_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
+
+  -- Wishbone
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_WISHBONE_VVC_CMD_DATA_MAX_LENGTH   : natural := 1024;
+  constant C_WISHBONE_VVC_CMD_ADDR_MAX_LENGTH   : natural := 64;
+  constant C_WISHBONE_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_WISHBONE_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- Hierarchical-VVCs
@@ -391,45 +545,6 @@ package adaptations_pkg is
   constant C_CRC_32_START_VALUE : std_logic_vector(31 downto 0) := x"FFFFFFFF";
   constant C_CRC_32_POLYNOMIAL  : std_logic_vector(32 downto 0) := (32 | 26|23|22|16|12|11|10|8|7|5|4|2|1|0 => '1', others => '0'); --0x04C11DB7
   constant C_CRC_32_RESIDUE     : std_logic_vector(31 downto 0) := x"C704DD7B"; -- using left shifting CRC
-
-  --------------------------------------------------------------------------------------------------------------------------------
-  -- *****************************************************************************************************************************
-  -- WARNING!
-  -- The code below is not intended for user modifications!
-  -- *****************************************************************************************************************************
-  --------------------------------------------------------------------------------------------------------------------------------
-
-  constant C_CMD_IDX_PREFIX : string := " [";
-  constant C_CMD_IDX_SUFFIX : string := "]";
-
-  constant ALL_INSTANCES         : integer := -2;
-  constant ALL_ENABLED_INSTANCES : integer := -3;
-
-  type t_vvc_id is record
-    name     : string(1 to C_MAX_VVC_NAME_LENGTH);
-    instance : natural;
-    channel  : t_channel;
-  end record;
-  constant C_VVC_ID_DEFAULT : t_vvc_id := (
-    name     => (others => NUL),
-    instance => 0,
-    channel  => NA
-  );
-
-  type t_vvc_state is record
-    activity                 : t_activity;
-    last_cmd_idx_executed    : integer;
-    await_selected_supported : boolean;
-  end record;
-  constant C_VVC_STATE_DEFAULT : t_vvc_state := (
-    activity                 => INACTIVE,
-    last_cmd_idx_executed    => -1,
-    await_selected_supported => true
-  );
-
-  -- These values are used to indicate outdated sub-programs
-  constant C_DEPRECATE_SETTING               : t_deprecate_setting := DEPRECATE_ONCE;
-  shared variable deprecated_subprogram_list : t_deprecate_list    := (others => (others => ' '));
 
 end package adaptations_pkg;
 

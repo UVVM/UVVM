@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -193,20 +193,24 @@ begin
           tx_bit_counter <= tx_bit_counter + 1;
         end if;
 
-        case to_integer(tx_bit_counter) is
-          when 0 =>
-            tx <= GC_START_BIT;
-          when 1 to 8 =>
-            -- mux out the correct tx bit
-            tx <= tx_buffer(to_integer(tx_bit_counter) - 1);
-          when 9 =>
+        -- Assign value to tx based on current value of tx_bit_counter
+        if to_integer(tx_bit_counter) = 0 then
+          tx <= GC_START_BIT;
+        elsif to_integer(tx_bit_counter) <= p2c.rw_num_data_bits then
+          -- mux out the correct tx bit
+          tx <= tx_buffer(to_integer(tx_bit_counter) - 1);
+        elsif to_integer(tx_bit_counter) = p2c.rw_num_data_bits + 1 then
+          if p2c.rw_num_data_bits = 8 then
             tx <= odd_parity(tx_buffer);
-          when 10 =>
-            tx <= GC_STOP_BIT;
-          when others =>
-            tx        <= '1';
-            tx_active <= '0';
-        end case;
+          elsif p2c.rw_num_data_bits = 7 then
+            tx <= odd_parity(tx_buffer(6 downto 0));
+          end if;
+        elsif to_integer(tx_bit_counter) = p2c.rw_num_data_bits + 2 then
+          tx <= GC_STOP_BIT;
+        else
+          tx        <= '1';
+          tx_active <= '0';
+        end if;
       end if;
     end if;
   end process uart_tx;
@@ -299,47 +303,55 @@ begin
           end if;
 
           -- are we done? not counting the start bit
-          if to_integer(rx_bit_counter) >= 9 then
+          if to_integer(rx_bit_counter) >= p2c.rw_num_data_bits + 1 then
             rx_active <= '0';
           end if;
 
-          case to_integer(rx_bit_counter) is
-            when 0 to 7 =>
-              -- mux in new bit
-              rx_buffer(to_integer(rx_bit_counter)) <= find_most_repeated_bit(rx_bit_samples);
-            when 8 =>
-              -- check parity
-              if (odd_parity(rx_buffer) /= find_most_repeated_bit(rx_bit_samples)) then
+          if to_integer(rx_bit_counter) < p2c.rw_num_data_bits then
+            -- mux in new bit
+            rx_buffer(to_integer(rx_bit_counter)) <= find_most_repeated_bit(rx_bit_samples);
+          elsif to_integer(rx_bit_counter) = p2c.rw_num_data_bits then
+            -- check parity based on number of data bits
+            if p2c.rw_num_data_bits = 8 then -- num_data_bits = 8
+              if (odd_parity(rx_buffer(7 downto 0)) /= find_most_repeated_bit(rx_bit_samples)) then
                 parity_err       <= '1';
                 v_error_detected := true;
               end if;
-            when 9 =>
-              rx_data_valid <= '1';     -- ready for higher level protocol
-
-              -- check stop bit, and end byte receive
-              if find_most_repeated_bit(rx_bit_samples) /= GC_STOP_BIT then
-                stop_err         <= '1';
+            elsif p2c.rw_num_data_bits = 7 then -- num_data_bits = 7
+              if (odd_parity(rx_buffer(6 downto 0)) /= find_most_repeated_bit(rx_bit_samples)) then
+                parity_err       <= '1';
                 v_error_detected := true;
               end if;
+            end if;
+          elsif to_integer(rx_bit_counter) = p2c.rw_num_data_bits + 1 then
+            rx_data_valid <= '1';     -- ready for higher level protocol
 
-              -- Data not valid on error
-              if v_error_detected then
-                rx_data_valid <= '0';
-              else
+            -- check stop bit, and end byte receive
+            if find_most_repeated_bit(rx_bit_samples) /= GC_STOP_BIT then
+              stop_err         <= '1';
+              v_error_detected := true;
+            end if;
+
+            -- Data not valid on error
+            if v_error_detected then
+              rx_data_valid <= '0';
+            else
+              -- Add data bits to rx_data
+              if p2c.rw_num_data_bits = 8 then -- num_data_bits = 8
                 rx_data(to_integer(vr_rx_data_idx)) <= rx_buffer;
-
-                if vr_rx_data_idx < 3 then
-                  vr_rx_data_idx := vr_rx_data_idx + 1;
-                else
-                  rx_data_full <= '1';
-                end if;
+              elsif p2c.rw_num_data_bits = 7 then -- num_data_bits = 7
+                rx_data(to_integer(vr_rx_data_idx)) <= ("0" & rx_buffer(p2c.rw_num_data_bits-1 downto 0));
               end if;
-
-            when others =>
-              rx_active      <= '0';
-              rx_bit_samples <= (others => '1');
-
-          end case;
+              if vr_rx_data_idx < 3 then
+                vr_rx_data_idx := vr_rx_data_idx + 1;
+              else
+                rx_data_full <= '1';
+              end if;
+            end if;
+          else
+            rx_active      <= '0';
+            rx_bit_samples <= (others => '1');
+          end if;
         end if;
       end if;
     end if;

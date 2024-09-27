@@ -2,6 +2,63 @@ UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
 ----------------------------------------------------------------------
+v2.19.7
+----------
+Released: 2024-09-19
+- Changed default names for log and alert files to UVVM_Log.txt and UVVM_Alert.txt
+
+v2.19.6
+----------
+Released: 2024-07-03
+- Fixed bug in .single_tc_vs_single_req listed output files in spec cov. 
+
+v2.19.5
+----------
+Released: 2024-07-03
+- Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
+- Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
+- Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
+- Added individual constants to configure the VVCs max instance number from adaptations_pkg.
+- Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+- Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
+- Added completion detection functionality to wait for all the enabled scoreboards to be empty: await_sb_completion(), check_sb_completion().
+- Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
+
+v2.19.4
+----------
+Released: 2024-03-08
+- Moved t_transaction_status type to types_pkg and added COMPLETED.
+- Added function for extracting closest time unit for time type.
+- Changed check_value and check_value_in_ranged to print formatted time types with closest fitting time unit.
+- Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
+- Added for latest version of Modelsim.
+- Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
+- Added function to check_value to properly display signed values
+
+v2.19.5
+----------
+Released: 2024-07-03
+- Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
+- Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
+- Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
+- Added individual constants to configure the VVCs max instance number from adaptations_pkg.
+- Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+- Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
+- Added completion detection functionality to wait for all the enabled scoreboards to be empty: await_sb_completion(), check_sb_completion().
+- Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
+
+v2.19.4
+----------
+Released: 2024-03-08
+- Moved t_transaction_status type to types_pkg and added COMPLETED.
+- Added function for extracting closest time unit for time type.
+- Changed check_value and check_value_in_ranged to print formatted time types with closest fitting time unit.
+- Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
+- Added for latest version of Modelsim.
+- Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
+- Added function to check_value to properly display signed values
 
 v2.19.3
 ----------

@@ -1,6 +1,12 @@
 Bitvis VIP Error Injection - Overview on Versions and Changes
 ==============================================================
 
+
+v1.0.1
+----------
+Released: 2024-07-03
+- Changed max constants used in VIP to be adjustable from adaptations_pkg.
+
 v1.0.0
 ----------
 Released: 2023-03-10

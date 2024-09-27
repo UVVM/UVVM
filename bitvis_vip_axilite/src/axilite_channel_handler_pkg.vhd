@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -24,7 +24,6 @@ use std.textio.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library work;
 use work.axilite_bfm_pkg.all;
 
 --=================================================================================================

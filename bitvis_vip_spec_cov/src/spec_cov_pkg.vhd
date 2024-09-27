@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -24,9 +24,28 @@ context uvvm_util.uvvm_util_context;
 use std.textio.all;
 
 use work.csv_file_reader_pkg.all;
-use work.local_adaptations_pkg.all;
 
 package spec_cov_pkg is
+
+  type t_spec_cov_config is record
+    missing_req_label_severity : t_alert_level; -- Alert level used when the tick_off_req_cov() procedure does not find the specified
+                                                -- requirement label in the requirement list.
+    csv_delimiter              : character;     -- Character used as delimiter in the CSV files. Default is ",".
+    max_requirements           : natural;       -- Maximum number of requirements in the req_map file used in initialize_req_cov().
+    max_testcases_per_req      : natural;       -- Max number of testcases allowed per requirement.
+    csv_max_line_length        : positive;      -- Max length of each line in any CSV file.
+  end record;
+
+  constant C_SPEC_COV_CONFIG_DEFAULT : t_spec_cov_config := (
+    missing_req_label_severity => C_MISSING_REQ_LABEL_SEVERITY,
+    csv_delimiter              => C_CSV_DELIMITER,
+    max_requirements           => C_MAX_REQUIREMENTS,
+    max_testcases_per_req      => C_MAX_TESTCASES_PER_REQ,
+    csv_max_line_length        => C_CSV_FILE_MAX_LINE_LENGTH
+  );
+
+  -- Shared variable for configuring the Spec Cov VIP from the testbench sequencer.
+  shared variable shared_spec_cov_config : t_spec_cov_config := C_SPEC_COV_CONFIG_DEFAULT;
 
   file RESULT_FILE : text;
 
@@ -42,19 +61,19 @@ package spec_cov_pkg is
   );
 
   procedure tick_off_req_cov(
-    constant requirement    : string;
-    constant test_status    : t_test_status    := NA;
-    constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
-    constant scope          : string           := C_SCOPE
+    constant requirement        : string;
+    constant requirement_status : t_test_status    := NA;
+    constant msg                : string           := "";
+    constant tickoff_extent     : t_extent_tickoff := LIST_SINGLE_TICKOFF;
+    constant scope              : string           := C_SCOPE
   );
 
   procedure cond_tick_off_req_cov(
-    constant requirement    : string;
-    constant test_status    : t_test_status    := NA;
-    constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
-    constant scope          : string           := C_SCOPE
+    constant requirement        : string;
+    constant requirement_status : t_test_status    := NA;
+    constant msg                : string           := "";
+    constant tickoff_extent     : t_extent_tickoff := LIST_SINGLE_TICKOFF;
+    constant scope              : string           := C_SCOPE
   );
 
   procedure disable_cond_tick_off_req_cov(
@@ -97,12 +116,21 @@ package spec_cov_pkg is
     requirement : string
   ) return natural;
 
-  procedure priv_inc_num_requirement_tick_offs(
+  impure function priv_get_requirement_status(
     requirement : string
+  ) return t_test_status;
+
+  procedure priv_set_requirement_status(
+    constant requirement : string;
+    constant status      : t_test_status
+  );
+
+  procedure priv_inc_num_requirement_tick_offs(
+    constant requirement : string
   );
 
   function priv_test_status_to_string(
-    constant test_status : t_test_status
+    test_status : t_test_status
   ) return string;
 
   impure function priv_get_summary_string
@@ -116,7 +144,7 @@ package spec_cov_pkg is
   return string;
 
   impure function priv_find_string_length(
-    constant search_string : string
+    search_string : string
   ) return natural;
 
   impure function priv_get_requirement_name_length(
@@ -124,7 +152,7 @@ package spec_cov_pkg is
   return natural;
 
   impure function priv_req_listed_in_disabled_tick_off_array(
-    constant requirement : string
+    requirement : string
   ) return boolean;
 
 end package spec_cov_pkg;
@@ -146,6 +174,7 @@ package body spec_cov_pkg is
     num_tcs      : natural;
     tc_list      : t_line_vector;
     num_tickoffs : natural;
+    status       : t_test_status;
   end record;
   type t_requirement_entry_array is array (natural range <>) of t_requirement_entry;
 
@@ -157,6 +186,7 @@ package body spec_cov_pkg is
   shared variable priv_testcase_passed         : boolean;
   shared variable priv_requirement_file_exists : boolean;
   shared variable priv_result_file_exists      : boolean;
+  shared variable priv_req_cov_initialized     : boolean                                 := false;
 
   type t_disabled_tick_off_array is array (0 to shared_spec_cov_config.max_requirements) of string(1 to C_CSV_FILE_MAX_LINE_LENGTH);
   shared variable priv_disabled_tick_off_array : t_disabled_tick_off_array := (others => (others => NUL));
@@ -170,71 +200,85 @@ package body spec_cov_pkg is
     constant partial_cov_file : string
   ) is
   begin
+    log(ID_SPEC_COV_INIT, "Initializing requirement coverage with requirement file: " & req_list_file, C_SCOPE);
     priv_set_default_testcase_name(testcase);
-    -- update pkg local variables
+
+    -- Update pkg local variables
     priv_testcase_passed         := true;
     priv_requirement_file_exists := true;
 
+    -- Read requirements from CSV file and save to array. TB_ERROR alert will be raised if file is emtpy.
     priv_read_and_parse_csv_file(req_list_file);
+
+    -- Initialize PC file (open file and write info/settings to top of file)
     priv_initialize_result_file(partial_cov_file);
+
+    -- Flag that initialization has been done
+    priv_req_cov_initialized := true;
   end procedure initialize_req_cov;
+
   -- Overloading procedure
   procedure initialize_req_cov(
     constant testcase         : string;
     constant partial_cov_file : string
   ) is
   begin
-    log(ID_SPEC_COV, "Requirement Coverage initialized with no requirement file.", C_SCOPE);
+    log(ID_SPEC_COV_INIT, "Initializing requirement coverage without requirement file.", C_SCOPE);
     priv_set_default_testcase_name(testcase);
     -- update pkg local variables
     priv_testcase_passed         := true;
     priv_requirement_file_exists := false;
 
     priv_initialize_result_file(partial_cov_file);
+
+    -- Flag that initialization has been done
+    priv_req_cov_initialized     := true;
   end procedure initialize_req_cov;
 
   --
   -- Log the requirement and testcase
   --
   procedure tick_off_req_cov(
-    constant requirement    : string;
-    constant test_status    : t_test_status    := NA;
-    constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
-    constant scope          : string           := C_SCOPE
+    constant requirement        : string;
+    constant requirement_status : t_test_status    := NA;
+    constant msg                : string           := "";
+    constant tickoff_extent     : t_extent_tickoff := LIST_SINGLE_TICKOFF;
+    constant scope              : string           := C_SCOPE
   ) is
     variable v_requirement_to_file_line : line;
     variable v_requirement_status       : t_test_status;
-    variable v_prev_test_status         : t_test_status;
+    variable v_prev_requirement_status  : t_test_status;
   begin
-    if priv_requirements_in_array = 0 and priv_requirement_file_exists = true then
-      alert(TB_ERROR, "Requirements have not been parsed. Please use initialize_req_cov() with a requirement file before calling tick_off_req_cov().", scope);
+    -- Raise TB_ERROR alert if tick_off_req_cov() is called before initialize_req_cov()
+    if not priv_req_cov_initialized  then
+      alert(TB_ERROR, "Requirement coverage has not been initialized. Please use initialize_req_cov() before calling tick_off_req_cov().", scope);
       return;
     end if;
 
     -- Check if requirement exists
-    if (priv_requirement_exists(requirement) = false) and (priv_requirement_file_exists = true) then
+    if priv_requirement_file_exists and not priv_requirement_exists(requirement) then
       alert(shared_spec_cov_config.missing_req_label_severity, "Requirement not found in requirement list: " & to_string(requirement), C_SCOPE);
     end if;
 
-    -- Save testcase status
-    if priv_testcase_passed then
-      v_prev_test_status := PASS;
-    else
-      v_prev_test_status := FAIL;
-    end if;
-
     ---- Check if there were any errors globally or testcase was explicit set to FAIL
-    if (shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1) or (test_status = FAIL) then
+    if shared_uvvm_status.found_unexpected_simulation_errors_or_worse = 1 then
       v_requirement_status := FAIL;
       -- Set failing testcase for finishing summary line
       priv_testcase_passed := false;
+    elsif requirement_status = FAIL then
+        v_requirement_status := FAIL;
     else
       v_requirement_status := PASS;
     end if;
 
+    -- Get previous requirement status (used for checking for PASS to FAIL transition)
+    v_prev_requirement_status := priv_get_requirement_status(requirement);   
+
+    -- Save requirement status
+    priv_set_requirement_status(requirement, v_requirement_status);
+
     -- Check if requirement tick-off should be written
-    if (tickoff_extent = LIST_EVERY_TICKOFF) or (priv_get_num_requirement_tick_offs(requirement) = 0) or (v_prev_test_status = PASS and test_status = FAIL) then
+    if (tickoff_extent = LIST_EVERY_TICKOFF) or (priv_get_num_requirement_tick_offs(requirement) = 0) or (v_prev_requirement_status = PASS and v_requirement_status = FAIL) then
       -- Log result to transcript
       log(ID_SPEC_COV, "Logging requirement " & requirement & " [" & priv_test_status_to_string(v_requirement_status) & "]. '" & priv_get_description(requirement) & "'. " & msg, scope);
       -- Log to file
@@ -252,17 +296,17 @@ package body spec_cov_pkg is
   --   If the requirement has been enabled for conditional tick_off_req_cov()
   --   with enable_cond_tick_off_req_cov() it will not be ticked off.
   procedure cond_tick_off_req_cov(
-    constant requirement    : string;
-    constant test_status    : t_test_status    := NA;
-    constant msg            : string           := "";
-    constant tickoff_extent : t_extent_tickoff := LIST_SINGLE_TICKOFF;
-    constant scope          : string           := C_SCOPE
+    constant requirement        : string;
+    constant requirement_status : t_test_status    := NA;
+    constant msg                : string           := "";
+    constant tickoff_extent     : t_extent_tickoff := LIST_SINGLE_TICKOFF;
+    constant scope              : string           := C_SCOPE
   ) is
   begin
     -- Check: is requirement listed in the conditional tick off array?
     if priv_req_listed_in_disabled_tick_off_array(requirement) = false then
       -- requirement was not listed, call tick off method.
-      tick_off_req_cov(requirement, test_status, msg, tickoff_extent, scope);
+      tick_off_req_cov(requirement, requirement_status, msg, tickoff_extent, scope);
     end if;
   end procedure cond_tick_off_req_cov;
 
@@ -327,7 +371,7 @@ package body spec_cov_pkg is
     variable v_checksum_string : line;
   begin
     -- Free used memory
-    log(ID_SPEC_COV, "Freeing stored requirements from memory", C_SCOPE);
+    log(ID_SPEC_COV, "Finalizing requirement coverage", C_SCOPE);
 
     for i in 0 to priv_requirements_in_array - 1 loop
       deallocate(priv_requirement_array(i).requirement);
@@ -342,7 +386,6 @@ package body spec_cov_pkg is
     priv_requirements_in_array := 0;
 
     -- Add closing line
-    log(ID_SPEC_COV, "Marking requirement coverage result.", C_SCOPE);
     write(v_checksum_string, priv_get_summary_string);
 
     if priv_result_file_exists then
@@ -350,7 +393,9 @@ package body spec_cov_pkg is
     end if;
 
     file_close(RESULT_FILE);
-    log(ID_SPEC_COV, "Requirement coverage finalized.", C_SCOPE);
+
+    -- Clear initialization flag. initialize_req_cov() must be called again before another tickoff can be done
+    priv_req_cov_initialized := false;
   end procedure finalize_req_cov;
 
   --=================================================================================================  
@@ -377,7 +422,7 @@ package body spec_cov_pkg is
     end if;
 
     -- Write info and settings to CSV file for Python post-processing script
-    log(ID_SPEC_COV, "Adding test and configuration information to coverage file. ", C_SCOPE);
+    log(ID_SPEC_COV_INIT, "Adding test and configuration information to coverage file: " & file_name, C_SCOPE);
     write(v_settings_to_file_line, "NOTE: This coverage file is only valid when the last line is 'SUMMARY, " & priv_get_default_testcase_name & ", PASS'" & LF);
     write(v_settings_to_file_line, "TESTCASE_NAME: " & priv_get_default_testcase_name & LF);
     write(v_settings_to_file_line, "DELIMITER: " & shared_spec_cov_config.csv_delimiter & LF);
@@ -392,9 +437,8 @@ package body spec_cov_pkg is
   ) is
     variable v_tc_valid : boolean;
     variable v_file_ok  : boolean;
+    variable v_requirement : string(1 to C_CSV_FILE_MAX_LINE_LENGTH) := (others => NUL);
   begin
-    log(ID_SPEC_COV, "Reading and parsing requirement file, " & req_list_file, C_SCOPE);
-
     if priv_requirements_in_array > 0 then
       alert(TB_ERROR, "Requirements have already been read from file, please call finalize_req_cov before starting a new requirement coverage process.", C_SCOPE);
       return;
@@ -411,31 +455,33 @@ package body spec_cov_pkg is
       priv_csv_file.readline;
 
       -- Read requirement
-      priv_requirement_array(priv_requirements_in_array).requirement := new string'(priv_csv_file.read_string);
-      -- Read description
-      priv_requirement_array(priv_requirements_in_array).description := new string'(priv_csv_file.read_string);
-      -- Read testcases
-      v_tc_valid                                                     := true;
-      priv_requirement_array(priv_requirements_in_array).num_tcs     := 0;
-      while v_tc_valid loop
-        priv_requirement_array(priv_requirements_in_array).tc_list(priv_requirement_array(priv_requirements_in_array).num_tcs) := new string'(priv_csv_file.read_string);
-        if (priv_requirement_array(priv_requirements_in_array).tc_list(priv_requirement_array(priv_requirements_in_array).num_tcs).all(1) /= NUL) then
-          priv_requirement_array(priv_requirements_in_array).num_tcs := priv_requirement_array(priv_requirements_in_array).num_tcs + 1;
-        else
-          v_tc_valid := false;
-        end if;
-      end loop;
-      -- Validate entry
-      priv_requirement_array(priv_requirements_in_array).valid       := true;
+      v_requirement := priv_csv_file.read_string;
+      if v_requirement(1) /= '#' then -- Ignore if comment line
+        priv_requirement_array(priv_requirements_in_array).requirement := new string'(v_requirement);
+        -- Read description
+        priv_requirement_array(priv_requirements_in_array).description := new string'(priv_csv_file.read_string);
+        -- Read testcases
+        v_tc_valid                                                     := true;
+        priv_requirement_array(priv_requirements_in_array).num_tcs     := 0;
+        while v_tc_valid loop
+          priv_requirement_array(priv_requirements_in_array).tc_list(priv_requirement_array(priv_requirements_in_array).num_tcs) := new string'(priv_csv_file.read_string);
+          if (priv_requirement_array(priv_requirements_in_array).tc_list(priv_requirement_array(priv_requirements_in_array).num_tcs).all(1) /= NUL) then
+            priv_requirement_array(priv_requirements_in_array).num_tcs := priv_requirement_array(priv_requirements_in_array).num_tcs + 1;
+          else
+            v_tc_valid := false;
+          end if;
+        end loop;
+        -- Validate entry
+        priv_requirement_array(priv_requirements_in_array).valid       := true;
 
-      -- Set number of tickoffs for this requirement to 0
-      priv_requirement_array(priv_requirements_in_array).num_tickoffs := 0;
+        -- Set number of tickoffs for this requirement to 0
+        priv_requirement_array(priv_requirements_in_array).num_tickoffs := 0;
 
-      priv_log_entry(priv_requirements_in_array);
-      priv_requirements_in_array := priv_requirements_in_array + 1;
+        priv_log_entry(priv_requirements_in_array);
+        priv_requirements_in_array := priv_requirements_in_array + 1;
+      end if;
     end loop;
 
-    log(ID_SPEC_COV, "Closing requirement file", C_SCOPE);
     priv_csv_file.dispose;
   end procedure priv_read_and_parse_csv_file;
 
@@ -445,18 +491,26 @@ package body spec_cov_pkg is
   procedure priv_log_entry(
     constant index : natural
   ) is
+    variable v_line : line;
   begin
     if priv_requirement_array(index).valid then
       -- log requirement and description to terminal
-      log(ID_SPEC_COV, "Requirement: " & priv_requirement_array(index).requirement.all, C_SCOPE);
-      log(ID_SPEC_COV, "Description: " & priv_requirement_array(index).description.all, C_SCOPE);
+      log(ID_SPEC_COV_REQS, "Requirement: " & priv_requirement_array(index).requirement.all & ", " & priv_requirement_array(index).description.all, C_SCOPE);
       -- log testcases to terminal
-      for i in 0 to priv_requirement_array(index).num_tcs - 1 loop
-        log(ID_SPEC_COV, "  TC: " & priv_requirement_array(index).tc_list(i).all, C_SCOPE);
-      end loop;
+      if priv_requirement_array(index).num_tcs > 0 then
+        write(v_line, string'("  TC: "));
+        for i in 0 to priv_requirement_array(index).num_tcs - 1 loop
+          if i > 0 then
+            write(v_line, string'(", "));
+          end if;
+          write(v_line, priv_requirement_array(index).tc_list(i).all);
+        end loop;
+        log(ID_SPEC_COV_REQS, v_line.all, C_SCOPE);
+      end if;
     else
-      log(ID_SPEC_COV, "Requirement entry was not valid", C_SCOPE);
+      log(ID_SPEC_COV_REQS, "Requirement entry was not valid", C_SCOPE);
     end if;
+    deallocate(v_line);
   end procedure priv_log_entry;
 
   --
@@ -493,11 +547,45 @@ package body spec_cov_pkg is
     return 0;
   end function priv_get_num_requirement_tick_offs;
 
+  -- 
+  -- Set tick off status for requirement
+  --
+  procedure priv_set_requirement_status(
+    constant requirement : string;
+    constant status      : t_test_status
+  ) is
+  begin
+    for i in 0 to priv_requirements_in_array - 1 loop
+      if priv_get_requirement_name_length(priv_requirement_array(i).requirement.all) = requirement'length then
+        if to_upper(priv_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
+          priv_requirement_array(i).status := status;
+        end if;
+      end if;
+    end loop;    
+  end procedure priv_set_requirement_status;
+
+  --
+  -- Get the most recent tick off status for requirement
+  --
+  impure function priv_get_requirement_status(
+    requirement : string
+  ) return t_test_status is
+  begin 
+    for i in 0 to priv_requirements_in_array - 1 loop
+      if priv_get_requirement_name_length(priv_requirement_array(i).requirement.all) = requirement'length then
+        if to_upper(priv_requirement_array(i).requirement.all(1 to requirement'length)) = to_upper(requirement(1 to requirement'length)) then
+          return priv_requirement_array(i).status;
+        end if;
+      end if;
+    end loop;
+    return FAIL;  
+  end function priv_get_requirement_status;
+
   --
   -- Increment number of tick offs for requirement
   --
   procedure priv_inc_num_requirement_tick_offs(
-    requirement : string
+    constant requirement : string
   ) is
   begin
     for i in 0 to priv_requirements_in_array - 1 loop
@@ -534,7 +622,7 @@ package body spec_cov_pkg is
   -- Get the t_test_status parameter as string
   --
   function priv_test_status_to_string(
-    constant test_status : t_test_status
+    test_status : t_test_status
   ) return string is
   begin
     if test_status = PASS then
@@ -565,6 +653,7 @@ package body spec_cov_pkg is
     constant testcase : string
   ) is
   begin
+    priv_testcase_name := (others => NUL);
     priv_testcase_name(1 to testcase'length) := testcase;
   end procedure priv_set_default_testcase_name;
 
@@ -582,7 +671,7 @@ package body spec_cov_pkg is
   -- Find the length of a string which will contain NUL characters.
   --
   impure function priv_find_string_length(
-    constant search_string : string
+    search_string : string
   ) return natural is
     variable v_return : natural := 0;
   begin
@@ -619,7 +708,7 @@ package body spec_cov_pkg is
   -- Check if requirement is listed in the priv_disabled_tick_off_array() array.
   --
   impure function priv_req_listed_in_disabled_tick_off_array(
-    constant requirement : string
+    requirement : string
   ) return boolean is
     constant c_requirement_length : natural := priv_get_requirement_name_length(requirement);
   begin

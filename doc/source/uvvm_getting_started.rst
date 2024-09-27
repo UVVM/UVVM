@@ -14,7 +14,7 @@ simple testbenches and as a low-level introduction to UVVM.
 
 .. note::
 
-    UVVM and UVVM Light require VHDL 2008 to compile.
+    UVVM and UVVM Light require VHDL-2008 or newer to compile.
 
 **********************************************************************************************************************************
 Installation
@@ -94,7 +94,7 @@ and the vsim command / Modelsim GUI is run from the ``/my_project`` folder with 
 
 * Command line example for UVVM Utility Library compilation:
   
-  ``$ vsim -c -do "do ../UVVM/uvvm_util/script/compile_src.do ../UVVM ./sim"``
+  ``$ vsim -c -do "do ../UVVM/uvvm_util/script/compile_src.do ../UVVM/uvvm_util ./sim"``
 
 * Modelsim GUI example:
 
@@ -105,7 +105,7 @@ and the vsim command / Modelsim GUI is run from the ``/my_project`` folder with 
 .. note::
 
     * ``../UVVM/uvvm_util/script/compile_src.do`` is the relative path to the ``compile_src.do`` script for the UVVM Utility Library.
-    * ``../UVVM is`` the relative path to UVVM installation (source path).
+    * ``../UVVM/uvvm_util`` is the relative path to UVVM installation (source path), for ``../UVVM/script/compile_all.do``, use ``../UVVM/script`` as source path.
     * ``./sim`` is the relative path to the compilation target (target path).
 
 Compilation Order

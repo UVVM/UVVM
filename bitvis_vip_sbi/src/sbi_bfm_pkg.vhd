@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -90,9 +90,9 @@ package sbi_bfm_pkg is
   ------------------------------------------
   -- init_sbi_if_signals
   ------------------------------------------
-  -- - This function returns an SBI interface with initialized signals.
-  -- - All SBI input signals are initialized to 0
-  -- - All SBI output signals are initialized to Z
+  -- This function returns an SBI interface with initialized signals.
+  -- All BFM output signals are initialized to 0
+  -- All BFM input signals are initialized to Z
   function init_sbi_if_signals(
     addr_width : natural;
     data_width : natural
@@ -383,8 +383,10 @@ package body sbi_bfm_pkg is
     -- Wait according to config.bfm_sync setup
     wait_on_bfm_exit(clk, config.bfm_sync, config.hold_time, v_time_of_falling_edge, v_time_of_rising_edge);
 
-    cs   <= '0';
-    wena <= '0';
+    cs    <= '0';
+    wena  <= '0';
+    addr  <= (addr'range => '0');
+    wdata <= (wdata'range => '0');
     log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure;
 
@@ -496,6 +498,9 @@ package body sbi_bfm_pkg is
 
     cs   <= '0';
     rena <= '0';
+    addr <= (addr'range => '0');
+    wait for 0 ns; -- Wait a delta cycle so that the rdata port can be updated before exiting the procedure
+
     if ext_proc_call = "" then
       log(config.id_for_bfm, v_proc_call.all & "=> " & to_string(v_data_value, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
     else

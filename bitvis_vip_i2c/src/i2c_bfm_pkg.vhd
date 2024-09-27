@@ -1,5 +1,5 @@
 --================================================================================================================================
--- Copyright 2020 Bitvis
+-- Copyright 2024 UVVM
 -- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
@@ -92,8 +92,8 @@ package i2c_bfm_pkg is
   ------------------------------------------
   -- init_i2c_if_signals
   ------------------------------------------
-  -- - This function returns an I2C interface with initialized signals.
-  -- - All I2C signals are initialized to Z
+  -- This function returns an I2C interface with initialized signals.
+  -- All I2C signals are initialized to Z
   function init_i2c_if_signals(
     constant VOID : in t_void
   ) return t_i2c_if;

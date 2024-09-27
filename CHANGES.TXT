@@ -10,6 +10,121 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2024.09.19
+--------------------
+Released: 2024-09-19
+- Removed old await_completion code from all VVCs.
+- Moved update_vvc_activity_register procedure to a common package for all VVCs.
+- Update the VVC activity register in each executor individually using an ID to avoid problems with race conditions for Avalon-MM,
+  AXI and AXI-Lite VVCs.
+- Check correctly whether a cmd_idx has been executed in await_completion and fetch_result procedures for Avalon-MM, AXI and AXI-Lite VVCs.
+- Added a delta cycle in Wishbone VVC executor so that the last_cmd_idx_executed is updated before being stored in the activity register.
+- Updated vvc_generator.py with fixes for VVCs with multiple executors.
+- Updated unwanted activity detection to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
+- Added a common procedure for unwanted activity detection in the VVC framework support package.
+- Updated vvc_generator.py with fixes for ignored signal transitions in unwanted activity detection.
+- Changed default names for log and alert files to UVVM_Log.txt and UVVM_Alert.txt
+- SPI VIP: Fixed bug where slave BFM exited too late for multi-word transfers in some configurations.
+
+
+v2 2024.08.16
+--------------------
+Released: 2024-08-16
+- Updated spec_cov methods signature to match in specification and body.
+- Added PR from @FPonGitHub removing vsim-8684 warning messages in AXI VVC.
+- Removed vsim-8684 warning messages in AXI-Lite VVC.
+- Fixed bug in spec cov where COMPLIANT status might overwrite NOT_TESTED status of super requirement. 
+- Clear old spec cov testcase name before setting new name in initialize_req_cov.
+- Fixed ready_default_value not having the initial value from the GC_AXISTREAM_BFM_CONFIG VVC generic.
+- Added PR from @am9417 to support changing the default queue size configuration in the built-in scoreboards.
+- Converted Avalon-MM, Avalon-ST, AXI4, AXI4-Lite, AXI4-Stream, SBI, Scoreboard and VVC generator documentation to RST format.
+
+
+v2 2024.07.03
+--------------------
+Released: 2024-07-03
+- Updated Scoreboard documentation to mention in every method that instance 1 is used as default.
+- Sort the coverage files in the func_cov_merge.py script to always get the same order of bins in the report.
+- Fixed a GHDL bound check failure in unsigned rand() when having wrong min and max constraints.
+- Added ti_vvc_framework_context.vhd to uvvm_vvc_framework/script/compile_order.txt
+- Fixed a GHDL exponentiation overflow error in rand_pkg.
+- Added support for combination of AND- and OR-listed testcases in spec cov.
+- Reset addr and wdata signals when sbi_write() finishes.
+- Reset addr signal and wait a delta cycle when sbi_read() finishes.
+- Wait until rising edge of the clock before exiting rgmii_read() so that the interface is idle when it happens.
+- Add support for set/check single std_logic (instead of std_logic_vector) in bitvis_vip_gpio.
+- Changed max constants used in BFMs and VVCs to be adjustable from adaptations_pkg.
+- Added individual constants to configure the VVCs max instance number from adaptations_pkg. Updated vvc_generator.py script.
+- Removed Avalon-ST local_adaptations_pkg and moved content to adaptations_pkg.
+- Deprecated Spec Cov local_adaptations_pkg and moved content to adaptations_pkg.
+- Reorganized adaptations_pkg for better overview and moved internal UVVM constants and types to other packages.
+- Fixed strictness 2 in spec cov.
+- Decreased C_MAX_TUSER_BITS to 32 in Axistream BFM which allows GHDL to run without storage errors.
+- Updated Utility Library documentation on how to enable report_check_counters().
+- Added comment support and updated handling of omitted requirements in spec cov.
+- Various changes to spec cov output files.
+- Added await_change_to_value() to uvvm_util with same parameters as await_value() with a req of change
+- Added completion detection functionality to wait for all the VVCs to be inactive with no pending commands to be executed, and
+  for all the enabled scoreboards to be empty: await_uvvm_completion(), await_sb_completion(), check_sb_completion().
+- Added completion detection test to UVVM demo tb.
+- Added new msg_id in adaptations_pkg: ID_AWAIT_UVVM_COMPLETION.
+- Added PR from @aghoras fixing a problem with Avalon-MM BFM sampling readdata one cycle too early when waitrequest is not asserted.
+- Fixed avalon_mm_read_response() sampling the same data in several pipelined commands.
+- Use dedicated scope in Avalon-MM, AXI and AXI-Lite VVC pipeline processes.
+- Fixed initialization check in tickoff procedure in spec cov.
+- Changed behavior for explicit fail at tickoff in spec cov.
+- Added unwanted activity detection functionality to VVCs to give an alert if the DUT generates any unexpected bus activity.
+- Added unwanted activity detection test to UVVM demo tb.
+- Added unwanted activity detection in VVC generator.
+- Removed "omitted requirement"-functionality in spec cov.
+- Converted Spec Cov documentation to RST format.
+
+
+v2 2024.03.08
+--------------------
+Released: 2024-03-08
+- Updated vvc_transaction_info in all VVCs to also trigger after the BFM call with updated data and the status
+  COMPLETED. Updated vvc_generator.py script. NOTE that this change can cause older testbenches to fail due to the extra trigger,
+  see the VVC Framework - Essential Mechanisms documentation for examples of the updated recommended usage.
+- Added missing scope to alert in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
+- Removed unnecessary constraining in set_global_vvc_transaction_info procedure in all VVCs. Updated vvc_generator.py script.
+- Moved t_transaction_status type from all VVCs to types_pkg and added COMPLETED. Updated vvc_generator.py script.
+- Fixed incorrect log messages in AXI-Stream BFM package.
+- Removed ethernet_sb_pkg file, package already defined in vvc_methods_pkg.
+- Fixed compilation warning vcom-1090. Updated vvc_generator.py script.
+- Use the function get_scope_for_log() to generate all the VVCs scopes. Updated vvc_generator.py script.
+- Added an assertion to VVCs with the GC_CHANNEL generic to check it is used correctly. Updated vvc_generator.py script.
+- Removed constant C_DATA_WIDTH in uart_tx_vvc and use generic GC_DATA_WIDTH instead.
+- Normalized the data parameter in the uart_transmit and uart_expect BFM procedure.
+- Fixed the wrong example for uart_expect in UART BFM Quick Reference.
+- Fixed data length typo in Axistream BFM- and VVC Quick Reference.
+- Updated Section 10.2 in Spec_Coverage QuickRef.
+- Added an alert when Spec Cov CSV file line length is greater than the maximum supported size.
+- Skip leading whitespace in all fields when reading the Spec Cov CSV file.
+- Fixed typo in Figure 6, section 2.3.2 in VVC_Framework_Manual.
+- Added switch for displaying full received error frame in streaming interfaces.
+- Implemented functionality for displaying full received error frame in rgmii bfm.
+- Added functionality for extended error message, as default, to RGMII, GMII, Axi-Stream and Avalon stream.
+- Fixed crash in run_spec_cov.py that could occur when partial_cov file and spec_cov file are missing.
+- Added a feature for detection of reading old partial coverage files in the run_spec_cov.py script.
+- Updated spec_cov reporting in the run_spec_cov.py script.
+- Added functionality in check_value and check_value_in_range to print closest fitting time units wrt. time type checks.
+- Updated spec cov log messages and use new msg IDs for better verbosity.
+- Updated vvc_generator.py to add missing scoreboard support in multiple executors.
+- Moved sb_pkg and pad_xxx_sb function in all VVCs from methods_pkg to new vvc_sb_pkg. Updated vvc_generator.py script.
+- Added 7-bit data functionality to bitvis_uart
+- Added subtypes used as null vectors to reduce the number of compilation warnings in rand_pkg.
+- Fixed a bug in func_cov_pkg when using Modelsim 2023.4 which caused transition bins to be sampled incorrectly.
+- Updated spec cov documentation for modified clean parameter to run_spec_cov.py
+- Added function to util check_value to properly display signed values
+- Added general_severity to AXI bfm config record. Replaces error as default alert level in BFM and VVC. From pull request by user EMAZAC.
+- Increased C_MAX_TUSER_BITS to 64 in Axistream BFM. (allows for higher GC_USER_WIDTH)
+- Updated vvc_generator.py generation of vvc_context file.
+- Minor fixes in vvc_generator.py including scoreboard being configured in all sub-channel VVCs.
+- Added executor_is_busy to interpreter_terminate_current_command() missing in some VVCs.
+- Thanks to @m-kru, @malsheimer, @am9417 and @EMAZAC for PR and contributions.
+
+
 v2 2023.09.16
 --------------------
 Released: 2023-09-16

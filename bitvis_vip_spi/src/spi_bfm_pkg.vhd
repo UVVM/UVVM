@@ -50,7 +50,7 @@ package spi_bfm_pkg is
     ss_n_to_sclk             : time;            -- Time from SS active until SCLK active
     sclk_to_ss_n             : time;            -- Last SCLK until SS off
     inter_word_delay         : time;            -- Minimum time between words, from ss_n inactive to ss_n active
-    general_error_severity   : t_alert_level;   -- Internal error severity
+    general_severity         : t_alert_level;   -- Internal error severity
     match_strictness         : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
     id_for_bfm               : t_msg_id;        -- The message ID used as a general message ID in the SPI BFM
     id_for_bfm_wait          : t_msg_id;        -- The message ID used for logging waits in the SPI BFM
@@ -64,7 +64,7 @@ package spi_bfm_pkg is
     ss_n_to_sclk           => 20 ns,
     sclk_to_ss_n           => 20 ns,
     inter_word_delay       => 0 ns,
-    general_error_severity => ERROR,
+    general_severity       => ERROR,
     match_strictness       => MATCH_EXACT,
     id_for_bfm             => ID_BFM,
     id_for_bfm_wait        => ID_BFM_WAIT,
@@ -288,7 +288,7 @@ package spi_bfm_pkg is
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
 
-  -- Overload without aborted 
+  -- Overload with terminate_access and without aborted 
   procedure spi_slave_transmit_and_receive(
     constant tx_data                : in std_logic_vector;
     variable rx_data                : out std_logic_vector;
@@ -298,23 +298,6 @@ package spi_bfm_pkg is
     signal   mosi                   : inout std_logic;
     signal   miso                   : inout std_logic;
     signal   terminate_access       : in std_logic;
-    constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_BFM_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
-    constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
-  );
-
-  -- Overload without terminate_access 
-  procedure spi_slave_transmit_and_receive(
-    constant tx_data                : in std_logic_vector;
-    variable rx_data                : out std_logic_vector;
-    variable aborted                : out boolean;
-    constant msg                    : in string;
-    signal   sclk                   : inout std_logic;
-    signal   ss_n                   : inout std_logic;
-    signal   mosi                   : inout std_logic;
-    signal   miso                   : inout std_logic;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -352,7 +335,7 @@ package spi_bfm_pkg is
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
 
-  -- Overload without aborted 
+  -- Overload with terminate_access and without aborted 
   procedure spi_slave_transmit_and_receive(
     constant tx_data                : in std_logic_vector;
     variable rx_data                : out std_logic_vector;
@@ -366,21 +349,7 @@ package spi_bfm_pkg is
     constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
   );
 
-  -- Overload without terminate_access
-  procedure spi_slave_transmit_and_receive(
-    constant tx_data                : in std_logic_vector;
-    variable rx_data                : out std_logic_vector;
-    variable aborted                : out boolean;
-    constant msg                    : in string;
-    signal   spi_if                 : inout t_spi_if;
-    constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_BFM_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
-    constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
-  );
-
-  -- Overload without terminate_access  and without aborted
+  -- Overload without terminate_access and without aborted
   procedure spi_slave_transmit_and_receive(
     constant tx_data                : in std_logic_vector;
     variable rx_data                : out std_logic_vector;
@@ -495,7 +464,7 @@ package spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
 
-  -- Overload without without aborted
+  -- Overload with terminate_access without aborted
   procedure spi_slave_transmit(
     constant tx_data                : in std_logic_vector;
     constant msg                    : in string;
@@ -510,18 +479,6 @@ package spi_bfm_pkg is
   -- Overload without terminate_access and without aborted
   procedure spi_slave_transmit(
     constant tx_data                : in std_logic_vector;
-    constant msg                    : in string;
-    signal   spi_if                 : inout t_spi_if;
-    constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_BFM_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
-    constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
-  );
-
-  -- Overload without terminate_access
-  procedure spi_slave_transmit(
-    constant tx_data                : in std_logic_vector;
-    variable aborted                : out boolean;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
@@ -570,24 +527,12 @@ package spi_bfm_pkg is
     constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
   );
 
-  -- Overload without aborted
+  -- Overload with terminate_access and without aborted
   procedure spi_slave_receive(
     variable rx_data                : out std_logic_vector;
     constant msg                    : in string;
     signal   spi_if                 : inout t_spi_if;
     signal   terminate_access       : in std_logic;
-    constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_BFM_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
-    constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
-  );
-
-  -- Overload without terminate_access
-  procedure spi_slave_receive(
-    variable rx_data                : out std_logic_vector;
-    variable aborted                : out boolean;
-    constant msg                    : in string;
-    signal   spi_if                 : inout t_spi_if;
     constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
     constant scope                  : in string                   := C_BFM_SCOPE;
     constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
@@ -847,7 +792,7 @@ package body spi_bfm_pkg is
         rx_data := v_rx_data;
       end if;
     else
-      alert(config.general_error_severity, local_proc_name & " ss_n not low when expected.");
+      alert(config.general_severity, local_proc_name & " ss_n not low when expected.");
     end if;
 
     if ext_proc_call = "" then
@@ -1340,10 +1285,10 @@ package body spi_bfm_pkg is
     if v_terminated then
       -- terminated
     elsif (v_tx_count < C_ACCESS_SIZE - 1) then
-      alert(config.general_error_severity, v_proc_call.all & " ss_n not kept active for tx_data size duration " & add_msg_delimiter(msg), scope);
+      alert(config.general_severity, v_proc_call.all & " ss_n not kept active for tx_data size duration " & add_msg_delimiter(msg), scope);
       aborted := true;
     elsif (v_rx_count < C_ACCESS_SIZE) then
-      alert(config.general_error_severity, v_proc_call.all & " ss_n not kept active for rx_data size duration " & add_msg_delimiter(msg), scope);
+      alert(config.general_severity, v_proc_call.all & " ss_n not kept active for rx_data size duration " & add_msg_delimiter(msg), scope);
       aborted := true;
     else
       rx_data := v_rx_data;
@@ -1365,7 +1310,7 @@ package body spi_bfm_pkg is
     DEALLOCATE(v_proc_call);
   end procedure;
 
-  -- Overload without aborted
+  -- Overload with terminate_access and without aborted
   procedure spi_slave_transmit_and_receive(
     constant tx_data                : in std_logic_vector;
     variable rx_data                : out std_logic_vector;
@@ -1384,28 +1329,6 @@ package body spi_bfm_pkg is
   begin
     spi_slave_transmit_and_receive(tx_data, rx_data, v_NO_aborted, msg,
                                   sclk, ss_n, mosi, miso, terminate_access, when_to_start_transfer, scope,
-                                  msg_id_panel, config, ext_proc_call);
-  end procedure;
-
-  -- Overload without terminate_access
-  procedure spi_slave_transmit_and_receive(
-    constant tx_data                : in std_logic_vector;
-    variable rx_data                : out std_logic_vector;
-    variable aborted                : out boolean;
-    constant msg                    : in string;
-    signal   sclk                   : inout std_logic;
-    signal   ss_n                   : inout std_logic;
-    signal   mosi                   : inout std_logic;
-    signal   miso                   : inout std_logic;
-    constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_BFM_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
-    constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
-  ) is
-  begin
-    spi_slave_transmit_and_receive(tx_data, rx_data, aborted, msg,
-                                  sclk, ss_n, mosi, miso, NO_ACCESS_TERMINATION, when_to_start_transfer, scope,
                                   msg_id_panel, config, ext_proc_call);
   end procedure;
 
@@ -1449,7 +1372,7 @@ package body spi_bfm_pkg is
                                    when_to_start_transfer, scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
-  -- Overload without aborted
+  -- Overload with terminate_access without aborted
   procedure spi_slave_transmit_and_receive(
     constant tx_data                : in std_logic_vector;
     variable rx_data                : out std_logic_vector;
@@ -1465,25 +1388,6 @@ package body spi_bfm_pkg is
   begin
     spi_slave_transmit_and_receive(tx_data, rx_data, v_NO_aborted, msg,
                                    spi_if.sclk, spi_if.ss_n, spi_if.mosi, spi_if.miso, terminate_access,
-                                   when_to_start_transfer, scope, msg_id_panel, config, ext_proc_call);
-  end procedure;
-
-  -- Overload without terminate_access
-  procedure spi_slave_transmit_and_receive(
-    constant tx_data                : in std_logic_vector;
-    variable rx_data                : out std_logic_vector;
-    variable aborted                : out boolean;  
-    constant msg                    : in string;
-    signal   spi_if                 : inout t_spi_if;
-    constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_BFM_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
-    constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT;
-    constant ext_proc_call          : in string                   := "" -- External proc_call. Overwrite if called from another BFM procedure
-  ) is
-  begin
-    spi_slave_transmit_and_receive(tx_data, rx_data, aborted, msg,
-                                   spi_if.sclk, spi_if.ss_n, spi_if.mosi, spi_if.miso, NO_ACCESS_TERMINATION,
                                    when_to_start_transfer, scope, msg_id_panel, config, ext_proc_call);
   end procedure;
 
@@ -1687,7 +1591,7 @@ package body spi_bfm_pkg is
     spi_slave_transmit_and_receive(tx_data, v_rx_data, aborted, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
   end procedure;
 
-  -- Overload without aborted
+  -- Overload with terminate_access and without aborted
   procedure spi_slave_transmit(
     constant tx_data                : in std_logic_vector;
     constant msg                    : in string;
@@ -1704,23 +1608,6 @@ package body spi_bfm_pkg is
     variable v_rx_data       : std_logic_vector(tx_data'length - 1 downto 0); -- := (others => '0');
   begin
     spi_slave_transmit_and_receive(tx_data, v_rx_data, v_NO_aborted, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
-  end procedure;
-
-  -- Overload without terminate_access
-  procedure spi_slave_transmit(
-    constant tx_data                : in std_logic_vector;
-    variable aborted                : out boolean;
-    constant msg                    : in string;
-    signal   spi_if                 : inout t_spi_if;
-    constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_BFM_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
-    constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
-  ) is
-  begin
-    spi_slave_transmit(tx_data, aborted, msg, spi_if,
-                      NO_ACCESS_TERMINATION, when_to_start_transfer,
-                      scope, msg_id_panel, config);
   end procedure;
 
   -- Overload without terminate_access without aborted
@@ -1797,24 +1684,7 @@ package body spi_bfm_pkg is
     spi_slave_transmit_and_receive(v_tx_data, rx_data, aborted, msg, spi_if, terminate_access, when_to_start_transfer, scope, msg_id_panel, config, local_proc_call);
   end;
 
-  -- Overload without terminate_access
-  procedure spi_slave_receive (
-    variable rx_data                : out std_logic_vector;
-    variable aborted                : out boolean;
-    constant msg                    : in string;
-    signal   spi_if                 : inout t_spi_if;
-    constant when_to_start_transfer : in t_when_to_start_transfer := START_TRANSFER_ON_NEXT_SS;
-    constant scope                  : in string                   := C_BFM_SCOPE;
-    constant msg_id_panel           : in t_msg_id_panel           := shared_msg_id_panel;
-    constant config                 : in t_spi_bfm_config         := C_SPI_BFM_CONFIG_DEFAULT
-  ) is
-  begin
-    spi_slave_receive(rx_data, aborted, msg, spi_if,
-                    NO_ACCESS_TERMINATION, when_to_start_transfer,
-                    scope, msg_id_panel, config);
-  end procedure;
-
-  -- Overload without aborted
+  -- Overload with terminate_access and without aborted
   procedure spi_slave_receive (
     variable rx_data                : out std_logic_vector;
     constant msg                    : in string;

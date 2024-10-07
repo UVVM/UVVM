@@ -20,7 +20,7 @@ num_errors = 0
 try:
     from hdlregression import HDLRegression
 
-    hr = HDLRegression()
+    hr = HDLRegression(simulator='modelsim')
 
     # Add Util, VVC Framework and Scoreboard VIP
     hr.add_files("../../uvvm_util/src/*.vhd", "uvvm_util")

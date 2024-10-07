@@ -2,15 +2,6 @@ Bitvis VIP Axi (AXI4) - Overview on Versions and Changes
 ==============================================================
 
 
-v3.1.0
-----------
-Released: 2024-09-19
-- Removed old await_completion code from VVC.
-- Moved update_vvc_activity_register procedure to a common package for all VVCs.
-- Update the VVC activity register in each executor individually using an ID to avoid problems with race conditions.
-- Check correctly whether a cmd_idx in this VVC has been executed in await_completion and fetch_result procedures.
-- Updated unwanted activity detection to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
-
 v3.0.1
 ----------
 Released: 2024-08-16

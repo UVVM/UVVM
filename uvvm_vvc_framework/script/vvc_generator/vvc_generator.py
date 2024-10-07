@@ -179,7 +179,7 @@ def set_channels(number_of_channels):
 
 
 def print_multiple_executor_info():
-    print("\nMultiple executors (and queues) are used when concurrent command operations are needed.\nE.g. Avalon-MM uses two executors because multiple read" +
+    print("\nMultiple executors (and queues) are used when concurrent command operations are needed.\nE.g. Avalon MM uses two executors because multiple read" +
           " requests might be sent before receiving the responses.\nThus the first executor is sending out the commands, whereas the second executor is receiving" +
           " the response.\nBoth are required because the first executor may be busy issuing a new command at the same time the second executor is receiving a" +
           " response on a previous command.")
@@ -231,7 +231,7 @@ def is_multi_queue_channel():
     input_accepted = False
     choice = ''
     while not input_accepted:
-        print("\nMultiple executors (and queues) are used when concurrent command operations are needed.\nE.g. Avalon-MM uses two executors because multiple" +
+        print("\nMultiple executors (and queues) are used when concurrent command operations are needed.\nE.g. Avalon MM uses two executors because multiple" +
               " read requests might be sent before receiving the responses.\nThus the first executor is sending out the commands, whereas the second executor" +
               " is receiving the response.\nBoth are required because the first executor may be busy issuing a new command at the same time the second executor" +
               " is receiving a response on a previous command.")
@@ -418,6 +418,9 @@ def add_architecture_declaration(file_handle, vvc_name, vvc_channel, features, n
     file_handle.write("  signal queue_is_increasing    : boolean := false;\n")
     file_handle.write("  signal last_cmd_idx_executed  : natural := 0;\n")
 
+    if num_of_queues > 1:
+        file_handle.write("  signal last_read_response_idx_executed  : natural := 0;\n")
+
     if number_of_executors > 1:
         for i in range(1, number_of_executors):
             file_handle.write("  signal " + vvc_channel.executor_names[i] + "_is_busy       : boolean := false;\n")
@@ -526,11 +529,7 @@ def add_vvc_interpreter(file_handle, vvc_channel, features, num_of_queues):
     file_handle.write("    entry_num_in_vvc_activity_register <= shared_vvc_activity_register.priv_register_vvc(name      => C_VVC_NAME,\n")
     if vvc_channel.name != "NA":
         file_handle.write("                                                                                         channel   => GC_CHANNEL,\n")
-    if num_of_queues == 1:
-        file_handle.write("                                                                                         instance  => GC_INSTANCE_IDX);\n")
-    else:
-        file_handle.write("                                                                                         instance  => GC_INSTANCE_IDX,\n")
-        file_handle.write("                                                                                         num_executors => " + str(num_of_queues) + ");\n")
+    file_handle.write("                                                                                         instance  => GC_INSTANCE_IDX);\n")
     file_handle.write("    -- Set initial value of v_msg_id_panel to msg_id_panel in config\n")
     file_handle.write("    v_msg_id_panel := vvc_config.msg_id_panel;\n")
     print_linefeed(file_handle)
@@ -579,8 +578,8 @@ def add_vvc_interpreter(file_handle, vvc_channel, features, num_of_queues):
                       " terminate_current_cmd, executor_is_busy);\n")
     print_linefeed(file_handle)
     file_handle.write("          when FETCH_RESULT =>\n")
-    file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, entry_num_in_vvc_activity_register, v_local_vvc_cmd, vvc_config," +
-                      " C_VVC_LABELS, shared_vvc_response);\n")
+    file_handle.write("            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS," +
+                      " last_cmd_idx_executed, shared_vvc_response);\n")
     print_linefeed(file_handle)
     file_handle.write("          when others =>\n")
     file_handle.write("            tb_error(\"Unsupported command received for IMMEDIATE execution: '\" & to_string(v_local_vvc_cmd.operation) & \"'\", C_SCOPE);\n")
@@ -614,7 +613,6 @@ def add_vvc_executor(file_handle, vvc_name, vvc_channel, vvc_channel_idx, featur
     file_handle.write("-- - Fetch and execute the commands\n")
     file_handle.write(division_line + "\n")
     file_handle.write("  cmd_executor : process\n")
-    file_handle.write("    constant C_EXECUTOR_ID                            : natural := 0;\n")
     file_handle.write("    variable v_cmd                                    : t_vvc_cmd_record;\n")
     file_handle.write("    -- variable v_result                              : t_vvc_result; -- See vvc_cmd_pkg\n")
     file_handle.write("    variable v_timestamp_start_of_current_bfm_access  : time := 0 ns;\n")
@@ -648,7 +646,7 @@ def add_vvc_executor(file_handle, vvc_name, vvc_channel, vvc_channel_idx, featur
 
     file_handle.write("      -- update vvc activity\n")
     file_handle.write("      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register," +
-                      " C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
+                      " last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
     print_linefeed(file_handle)
 
     file_handle.write("      -- 1. Set defaults, fetch command and log\n")
@@ -659,7 +657,7 @@ def add_vvc_executor(file_handle, vvc_name, vvc_channel, vvc_channel_idx, featur
 
     file_handle.write("      -- update vvc activity\n")
     file_handle.write("      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register," +
-                      " C_EXECUTOR_ID, last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
+                      " last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
     print_linefeed(file_handle)
 
     file_handle.write("      -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the\n")
@@ -727,7 +725,7 @@ def add_vvc_executor(file_handle, vvc_name, vvc_channel, vvc_channel_idx, featur
         print_linefeed(file_handle)
 
     if number_of_executors > 1:
-        file_handle.write("        --  Example of pipelined read from Avalon-MM interface.\n")
+        file_handle.write("        --  Example of pipelined read, eg. Avalon interface.\n")
     else:
         file_handle.write("        --  -- If the result from the BFM call is to be stored, e.g. in a read call, use the additional procedure illustrated in this" +
                           " read example\n")
@@ -868,19 +866,7 @@ def add_vvc_executor(file_handle, vvc_name, vvc_channel, vvc_channel_idx, featur
     file_handle.write("        uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);\n")
     file_handle.write("      end if;\n")
     print_linefeed(file_handle)
-    if number_of_executors > 1:
-        file_handle.write("      --<USER_INPUT> Fill out which operations are pipelined in other executors\n")
-        file_handle.write("      -- Example of pipelined read from Avalon-MM interface.\n")
-        file_handle.write("      -- Pipelined read commands are divided into read requests executed here and read responses executed in another executor.\n")
-        file_handle.write("      -- Since the commands can finish in any order, to detect when this specific command has finished, we store the cmd_idx\n")
-        file_handle.write("      -- in a list with pending commands which will be cleared in the corresponding executor when it has finished.\n")
-        file_handle.write("      -- if (v_cmd.operation = READ or v_cmd.operation = CHECK) and vvc_config.use_read_pipeline = true then\n")
-        file_handle.write("      --   shared_vvc_activity_register.priv_add_pending_cmd_idx(entry_num_in_vvc_activity_register, v_cmd.cmd_idx);\n")
-        file_handle.write("      -- else\n")
-        file_handle.write("      --   last_cmd_idx_executed <= v_cmd.cmd_idx; -- Only updated for commands completed in this executor\n")
-        file_handle.write("      -- end if;\n")
-    else:
-        file_handle.write("      last_cmd_idx_executed <= v_cmd.cmd_idx;\n")
+    file_handle.write("      last_cmd_idx_executed <= v_cmd.cmd_idx;\n")
     print_linefeed(file_handle)
     if features["transaction_info"]:
         file_handle.write("      --    -- Set vvc_transaction_info back to default values\n")
@@ -894,13 +880,12 @@ def add_vvc_executor(file_handle, vvc_name, vvc_channel, vvc_channel_idx, featur
     print_linefeed(file_handle)
 
 
-def add_vvc_pipeline_step(file_handle, vvc_name, queue_name, executor_idx, features):
+def add_vvc_pipeline_step(file_handle, vvc_name, queue_name, features):
     file_handle.write(division_line + "\n")
     file_handle.write("-- Pipelined step\n")
     file_handle.write("-- - Fetch and execute the commands in the " + queue_name + " executor\n")
     file_handle.write(division_line + "\n")
     file_handle.write("  " + queue_name + "_executor : process\n")
-    file_handle.write("    constant C_EXECUTOR_ID        : natural := " + str(executor_idx) + ";\n")
     file_handle.write("    variable v_cmd                : t_vvc_cmd_record;\n")
     file_handle.write("    variable v_msg_id_panel       : t_msg_id_panel;\n")
     file_handle.write("    -- variable v_result             : t_vvc_result; -- See vvc_cmd_pkg\n")
@@ -922,7 +907,7 @@ def add_vvc_pipeline_step(file_handle, vvc_name, queue_name, executor_idx, featu
 
     file_handle.write("      -- update vvc activity\n")
     file_handle.write("       update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register," +
-                      " C_EXECUTOR_ID, last_" + queue_name + "_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
+                      " last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
     print_linefeed(file_handle)
 
     file_handle.write("      -- Fetch commands\n")
@@ -937,7 +922,7 @@ def add_vvc_pipeline_step(file_handle, vvc_name, queue_name, executor_idx, featu
 
     file_handle.write("      -- update vvc activity\n")
     file_handle.write("      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register," +
-                      " C_EXECUTOR_ID, last_" + queue_name + "_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
+                      " last_cmd_idx_executed, command_queue.is_empty(VOID), C_SCOPE);\n")
     print_linefeed(file_handle)
 
     print_linefeed(file_handle)
@@ -945,7 +930,7 @@ def add_vvc_pipeline_step(file_handle, vvc_name, queue_name, executor_idx, featu
     file_handle.write("      -------------------------------------------------------------------------\n")
     file_handle.write("      case v_cmd.operation is  -- Only operations in the dedicated record are relevant\n")
     file_handle.write("        --<USER_INPUT>: Insert BFM procedure calls here\n")
-    file_handle.write("        -- Example of pipelined step used for read operations on the Avalon-MM interface:\n")
+    file_handle.write("        -- Example of pipelined step used for read operations on the Avalon interface:\n")
     file_handle.write("        --   when READ =>\n")
 
     if features["transaction_info"]:
@@ -1071,7 +1056,7 @@ def add_unwanted_activity_detection(file_handle, vvc_name, vvc_channel):
     file_handle.write(division_line + "\n")
     file_handle.write("  p_unwanted_activity : process\n")
     file_handle.write("  begin\n")
-    file_handle.write("    -- Add a delay to allow the VVC to be registered in the activity register\n")
+    file_handle.write("    -- Add a delay to avoid detecting the first transition from the undefined value to initial value\n") 
     file_handle.write("    wait for std.env.resolution_limit;\n")
     print_linefeed(file_handle)
     file_handle.write("    loop\n")
@@ -1096,26 +1081,26 @@ def add_unwanted_activity_detection(file_handle, vvc_name, vvc_channel):
     print_linefeed(file_handle)
     file_handle.write("      -- Check the changes on the DUT outputs only when the vvc is inactive\n")
     file_handle.write("      if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then\n")
-    file_handle.write("        --<USER_INPUT> Use the check_unwanted_activity() procedure defined in the VVC framework support package to check the changes on the DUT outputs\n")
+    file_handle.write("        --<USER_INPUT> Use the check_value() method to check the changes on the DUT outputs\n")
     file_handle.write("        -- Example:\n")
     if vvc_channel != "NA":
-        file_handle.write("        -- check_unwanted_activity(t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.last, vvc_config.unwanted_activity_severity, \"last\", C_SCOPE);\n")
-        file_handle.write("        -- check_unwanted_activity(t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data, vvc_config.unwanted_activity_severity, \"data\", C_SCOPE);\n")
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.last'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on last\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
     else:
-        file_handle.write("        -- check_unwanted_activity(t_" + vvc_name.lower() + "_if.last, vvc_config.unwanted_activity_severity, \"last\", C_SCOPE);\n")
-        file_handle.write("        -- check_unwanted_activity(t_" + vvc_name.lower() + "_if.data, vvc_config.unwanted_activity_severity, \"data\", C_SCOPE);\n")
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_if.last'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on last\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        -- check_value(not t_" + vvc_name.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
     print_linefeed(file_handle)
     file_handle.write("        -- Note: Use the following example instead if the interface has a valid signal, e.g. tvalid in AXI-Stream\n")
     file_handle.write("        -- Example:\n")
     file_handle.write("        -- Skip checking the changes if the valid signal goes low within one clock period after the VVC becomes inactive\n")
     if vvc_channel != "NA":
         file_handle.write("        -- if not (falling_edge(" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
-        file_handle.write("        --   check_unwanted_activity(t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid, vvc_config.unwanted_activity_severity, \"valid\", C_SCOPE);\n")
-        file_handle.write("        --   check_unwanted_activity(t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data, vvc_config.unwanted_activity_severity, \"data\", C_SCOPE);\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.valid'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on valid\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_" + vvc_channel.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
     else:
         file_handle.write("        -- if not (falling_edge(" + vvc_name.lower() + "_if.valid'event) and global_trigger_vvc_activity_register'last_event < clock_period) then\n")
-        file_handle.write("        --   check_unwanted_activity(t_" + vvc_name.lower() + "_if.valid, vvc_config.unwanted_activity_severity, \"valid\", C_SCOPE);\n")
-        file_handle.write("        --   check_unwanted_activity(t_" + vvc_name.lower() + "_if.data, vvc_config.unwanted_activity_severity, \"data\", C_SCOPE);\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_if.valid'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on valid\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
+        file_handle.write("        --   check_value(not t_" + vvc_name.lower() + "_if.data'event, vvc_config.unwanted_activity_severity, \"Unwanted activity detected on data\", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);\n")
     file_handle.write("        -- end if;\n")
     file_handle.write("      end if;\n")
     file_handle.write("    end loop;\n")
@@ -1512,6 +1497,18 @@ def add_methods_pkg_header(file_handle, vvc_name, vvc_channels, features):
         file_handle.write("    constant vvc_cmd                     : in t_vvc_cmd_record);\n")
         print_linefeed(file_handle)
 
+    file_handle.write(division_line + "\n")
+    file_handle.write("  -- VVC Activity\n")
+    file_handle.write(division_line + "\n")
+    file_handle.write("  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;\n")
+    file_handle.write("                                          variable vvc_status                         : inout t_vvc_status;\n")
+    file_handle.write("                                          constant activity                           : in    t_activity;\n")
+    file_handle.write("                                          constant entry_num_in_vvc_activity_register : in    integer;\n")
+    file_handle.write("                                          constant last_cmd_idx_executed              : in    natural;\n")
+    file_handle.write("                                          constant command_queue_is_empty             : in    boolean;\n")
+    file_handle.write("                                          constant scope                              : in string := C_VVC_NAME);\n")
+    print_linefeed(file_handle)
+
     file_handle.write("end package vvc_methods_pkg;\n")
     print_linefeed(file_handle)
 
@@ -1661,6 +1658,36 @@ def add_methods_pkg_body(file_handle, vvc_name, features):
 
         print_linefeed(file_handle)
 
+    file_handle.write(division_line + "\n")
+    file_handle.write("  -- VVC Activity\n")
+    file_handle.write(division_line + "\n")
+    file_handle.write("  procedure update_vvc_activity_register( signal global_trigger_vvc_activity_register : inout std_logic;\n")
+    file_handle.write("                                          variable vvc_status                         : inout t_vvc_status;\n")
+    file_handle.write("                                          constant activity                           : in    t_activity;\n")
+    file_handle.write("                                          constant entry_num_in_vvc_activity_register : in    integer;\n")
+    file_handle.write("                                          constant last_cmd_idx_executed              : in    natural;\n")
+    file_handle.write("                                          constant command_queue_is_empty             : in    boolean;\n")
+    file_handle.write("                                          constant scope                              : in string := C_VVC_NAME) is\n")
+    file_handle.write("    variable v_activity   : t_activity := activity;\n")
+    file_handle.write("  begin\n")
+    file_handle.write("    -- Update vvc_status after a command has finished (during same delta cycle the activity register is updated)\n")
+    file_handle.write("    if activity = INACTIVE then\n")
+    file_handle.write("      vvc_status.previous_cmd_idx := last_cmd_idx_executed;\n")
+    file_handle.write("      vvc_status.current_cmd_idx  := 0;  \n")
+    file_handle.write("    end if;\n")
+    print_linefeed(file_handle)
+    file_handle.write("    if v_activity = INACTIVE and not(command_queue_is_empty) then\n")
+    file_handle.write("      v_activity := ACTIVE;\n")
+    file_handle.write("    end if;\n")
+    file_handle.write("    shared_vvc_activity_register.priv_report_vvc_activity(vvc_idx               => entry_num_in_vvc_activity_register,\n")
+    file_handle.write("                                                          activity              => v_activity,\n")
+    file_handle.write("                                                          last_cmd_idx_executed => last_cmd_idx_executed);\n")
+    file_handle.write("    if global_trigger_vvc_activity_register /= 'L' then\n")
+    file_handle.write("      wait until global_trigger_vvc_activity_register = 'L';\n")
+    file_handle.write("    end if;\n")
+    file_handle.write("    gen_pulse(global_trigger_vvc_activity_register, 0 ns, \"pulsing global trigger for vvc activity\", scope, ID_NEVER);\n")
+    file_handle.write("  end procedure;\n")
+    print_linefeed(file_handle)
     file_handle.write("end package body vvc_methods_pkg;\n")
 
 
@@ -2015,7 +2042,7 @@ def generate_vvc_file(vvc_name, vvc_channels, features):
         add_vvc_executor(f, vvc_name, channel, channel_idx, features)
         if (num_of_queues > 1):
             for i in range(1, num_of_queues):
-                add_vvc_pipeline_step(f, vvc_name, channel.executor_names[i], i, features)
+                add_vvc_pipeline_step(f, vvc_name, channel.executor_names[i], features)
 
         add_vvc_terminator(f)
         if features["unwanted_activity"]:

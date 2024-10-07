@@ -2,13 +2,6 @@ Bitvis VIP I2C - Overview on Versions and Changes
 ==============================================================
 
 
-v4.1.0
-----------
-Released: 2024-09-19
-- Removed old await_completion code from VVC.
-- Moved update_vvc_activity_register procedure to a common package for all VVCs.
-- Updated unwanted activity detection to ignore signal transitions from 'U', 'L' to/from '0', 'H' to/from '1'.
-
 v4.0.0
 ----------
 Released: 2024-07-03

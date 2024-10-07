@@ -86,6 +86,7 @@ architecture behave of axilite_vvc is
   signal write_response_channel_queue_is_increasing : boolean := false;
   signal read_address_channel_queue_is_increasing   : boolean := false;
   signal read_data_channel_queue_is_increasing      : boolean := false;
+  signal last_cmd_idx_executed                      : natural := natural'high;
   signal last_write_response_channel_idx_executed   : natural := 0;
   signal last_read_data_channel_idx_executed        : natural := 0;
   signal terminate_current_cmd                      : t_flag_record;
@@ -121,6 +122,14 @@ architecture behave of axilite_vvc is
     else
       return vvc_config.msg_id_panel;
     end if;
+  end function;
+
+  impure function queues_are_empty(
+    constant void : t_void
+  ) return boolean is
+    variable v_return : boolean := false;
+  begin
+    return command_queue.is_empty(VOID) and write_address_channel_queue.is_empty(VOID) and write_data_channel_queue.is_empty(VOID) and write_response_channel_queue.is_empty(VOID) and read_address_channel_queue.is_empty(VOID) and read_data_channel_queue.is_empty(VOID);
   end function;
 
 begin
@@ -169,9 +178,9 @@ begin
     -- initialise shared_vvc_last_received_cmd_idx for channel and instance
     shared_vvc_last_received_cmd_idx(NA, GC_INSTANCE_IDX) := 0;
     -- Register VVC in vvc activity register
-    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name          => C_VVC_NAME,
-                                                                                                            instance      => GC_INSTANCE_IDX,
-                                                                                                            num_executors => 6);
+    entry_num_in_vvc_activity_register                    <= shared_vvc_activity_register.priv_register_vvc(name                     => C_VVC_NAME,
+                                                                                                            instance                 => GC_INSTANCE_IDX,
+                                                                                                            await_selected_supported => false);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel                                        := vvc_config.msg_id_panel;
 
@@ -206,6 +215,17 @@ begin
 
         case v_local_vvc_cmd.operation is
 
+          when AWAIT_COMPLETION =>
+            work.td_vvc_entity_support_pkg.interpreter_await_completion(v_local_vvc_cmd, command_queue, vvc_config, any_executors_busy, C_VVC_LABELS, last_cmd_idx_executed);
+
+          when AWAIT_ANY_COMPLETION =>
+            if not v_local_vvc_cmd.gen_boolean then
+              -- Called with lastness = NOT_LAST: Acknowledge immediately to let the sequencer continue
+              work.td_target_support_pkg.acknowledge_cmd(global_vvc_ack, v_local_vvc_cmd.cmd_idx);
+              v_cmd_has_been_acked := true;
+            end if;
+            work.td_vvc_entity_support_pkg.interpreter_await_any_completion(v_local_vvc_cmd, command_queue, vvc_config, any_executors_busy, C_VVC_LABELS, last_cmd_idx_executed, global_awaiting_completion);
+
           when DISABLE_LOG_MSG =>
             uvvm_util.methods_pkg.disable_log_msg(v_local_vvc_cmd.msg_id, vvc_config.msg_id_panel, to_string(v_local_vvc_cmd.msg) & format_command_idx(v_local_vvc_cmd), C_SCOPE, v_local_vvc_cmd.quietness);
 
@@ -224,7 +244,7 @@ begin
             work.td_vvc_entity_support_pkg.interpreter_terminate_current_command(v_local_vvc_cmd, vvc_config, C_VVC_LABELS, terminate_current_cmd, executor_is_busy);
 
           when FETCH_RESULT =>
-            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, entry_num_in_vvc_activity_register, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, shared_vvc_response);
+            work.td_vvc_entity_support_pkg.interpreter_fetch_result(result_queue, v_local_vvc_cmd, vvc_config, C_VVC_LABELS, last_cmd_idx_executed, shared_vvc_response);
 
           when others =>
             tb_error("Unsupported command received for IMMEDIATE execution: '" & to_string(v_local_vvc_cmd.operation) & "'", C_SCOPE);
@@ -251,13 +271,33 @@ begin
   end process;
   --===============================================================================================
 
+  --===============================================================================================
+  -- Updating the activity register
+  --===============================================================================================
+  p_activity_register_update : process
+    variable v_cmd_queues_are_empty : boolean;
+  begin
+    -- Wait until active and set the activity register to ACTIVE
+    if not any_executors_busy then
+      wait until any_executors_busy;
+    end if;
+    v_cmd_queues_are_empty := queues_are_empty(VOID);
+    update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
+    -- Wait until inactive and set the activity register to INACTIVE
+    while any_executors_busy loop
+      wait until not any_executors_busy;
+      wait for 0 ps;
+      exit when not any_executors_busy;
+    end loop;
+    v_cmd_queues_are_empty := queues_are_empty(VOID);
+    update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, last_cmd_idx_executed, v_cmd_queues_are_empty, C_SCOPE);
+  end process p_activity_register_update;
 
   --===============================================================================================
   -- Command executor
   -- - Fetch and execute the commands
   --===============================================================================================
   cmd_executor : process
-    constant C_EXECUTOR_ID                           : natural                                      := 0;
     variable v_cmd                                   : t_vvc_cmd_record;
     variable v_read_data                             : t_vvc_result; -- See vvc_cmd_pkg
     variable v_timestamp_start_of_current_bfm_access : time                                         := 0 ns;
@@ -284,15 +324,9 @@ begin
 
     loop
 
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, 0, command_queue.is_empty(VOID), C_SCOPE);
-
       -- 1. Set defaults, fetch command and log
       -------------------------------------------------------------------------
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, command_queue, vvc_config, vvc_status, queue_is_increasing, executor_is_busy, C_VVC_LABELS);
-
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, 0, command_queue.is_empty(VOID), C_SCOPE);
 
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
@@ -392,13 +426,6 @@ begin
         uvvm_vvc_framework.ti_vvc_framework_support_pkg.reset_flag(terminate_current_cmd);
       end if;
 
-      -- These commands are sent to other executors where they are executed.
-      -- Since the commands can finish in any order, to detect when this specific command has finished, we store the cmd_idx
-      -- in a list with pending commands which will be cleared in the corresponding executor when it has finished.
-      if v_cmd.operation = WRITE or v_cmd.operation = READ or v_cmd.operation = CHECK then
-        shared_vvc_activity_register.priv_add_pending_cmd_idx(entry_num_in_vvc_activity_register, v_cmd.cmd_idx);
-      end if;
-
       -- In case we only allow a single pending transaction, wait here until every channel is finished. 
       -- Even though this wait doesn't have a timeout, each of the executors have timeouts.
       if vvc_config.force_single_pending_transaction and v_command_is_bfm_access then
@@ -414,7 +441,6 @@ begin
   -- - Fetch and execute the read address channel transactions
   --===============================================================================================
   read_address_channel_executor : process
-    constant C_EXECUTOR_ID          : natural                              := 1;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_normalised_addr      : unsigned(GC_ADDR_WIDTH - 1 downto 0) := (others => '0');
@@ -430,15 +456,9 @@ begin
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
-
     loop
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, 0, read_address_channel_queue.is_empty(VOID), C_SCOPE);
       -- Fetch commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, read_address_channel_queue, vvc_config, vvc_status, read_address_channel_queue_is_increasing, read_address_channel_executor_is_busy, C_CHANNEL_VVC_LABELS, shared_msg_id_panel, ID_CHANNEL_EXECUTOR, ID_CHANNEL_EXECUTOR_WAIT);
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, 0, read_address_channel_queue.is_empty(VOID), C_SCOPE);
-
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel    := get_msg_id_panel(v_cmd, vvc_config);
@@ -476,7 +496,6 @@ begin
   -- - Fetch and execute the read data channel transactions
   --===============================================================================================
   read_data_channel_executor : process
-    constant C_EXECUTOR_ID          : natural                                      := 2;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_read_data            : t_vvc_result; -- See vvc_cmd_pkg
@@ -493,15 +512,9 @@ begin
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
-
     loop
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_read_data_channel_idx_executed, read_data_channel_queue.is_empty(VOID), C_SCOPE);
       -- Fetch commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, read_data_channel_queue, vvc_config, vvc_status, read_data_channel_queue_is_increasing, read_data_channel_executor_is_busy, C_CHANNEL_VVC_LABELS, shared_msg_id_panel, ID_CHANNEL_EXECUTOR, ID_CHANNEL_EXECUTOR_WAIT);
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_read_data_channel_idx_executed, read_data_channel_queue.is_empty(VOID), C_SCOPE);
-
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel    := get_msg_id_panel(v_cmd, vvc_config);
@@ -572,7 +585,6 @@ begin
   -- - Fetch and execute the write address channel transactions
   --===============================================================================================
   write_address_channel_executor : process
-    constant C_EXECUTOR_ID          : natural                              := 3;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_normalised_addr      : unsigned(GC_ADDR_WIDTH - 1 downto 0) := (others => '0');
@@ -588,15 +600,9 @@ begin
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
-
     loop
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, 0, write_address_channel_queue.is_empty(VOID), C_SCOPE);
       -- Fetch commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, write_address_channel_queue, vvc_config, vvc_status, write_address_channel_queue_is_increasing, write_address_channel_executor_is_busy, C_CHANNEL_VVC_LABELS, shared_msg_id_panel, ID_CHANNEL_EXECUTOR, ID_CHANNEL_EXECUTOR_WAIT);
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, 0, write_address_channel_queue.is_empty(VOID), C_SCOPE);
-
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel    := get_msg_id_panel(v_cmd, vvc_config);
@@ -629,7 +635,6 @@ begin
   -- - Fetch and execute the write data channel transactions
   --===============================================================================================
   write_data_channel_executor : process
-    constant C_EXECUTOR_ID          : natural                                      := 4;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
@@ -645,15 +650,9 @@ begin
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
-
     loop
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, 0, write_data_channel_queue.is_empty(VOID), C_SCOPE);
       -- Fetch commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, write_data_channel_queue, vvc_config, vvc_status, write_data_channel_queue_is_increasing, write_data_channel_executor_is_busy, C_CHANNEL_VVC_LABELS, shared_msg_id_panel, ID_CHANNEL_EXECUTOR, ID_CHANNEL_EXECUTOR_WAIT);
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, 0, write_data_channel_queue.is_empty(VOID), C_SCOPE);
-
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel    := get_msg_id_panel(v_cmd, vvc_config);
@@ -687,7 +686,6 @@ begin
   -- - Fetch and execute the write response channel transactions
   --===============================================================================================
   write_response_channel_executor : process
-    constant C_EXECUTOR_ID          : natural                                      := 5;
     variable v_cmd                  : t_vvc_cmd_record;
     variable v_msg_id_panel         : t_msg_id_panel;
     variable v_normalised_data      : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
@@ -703,15 +701,9 @@ begin
     wait until entry_num_in_vvc_activity_register >= 0;
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
-
     loop
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, INACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_write_response_channel_idx_executed, write_response_channel_queue.is_empty(VOID), C_SCOPE);
       -- Fetch commands
       work.td_vvc_entity_support_pkg.fetch_command_and_prepare_executor(v_cmd, write_response_channel_queue, vvc_config, vvc_status, write_response_channel_queue_is_increasing, write_response_channel_executor_is_busy, C_CHANNEL_VVC_LABELS, shared_msg_id_panel, ID_CHANNEL_EXECUTOR, ID_CHANNEL_EXECUTOR_WAIT);
-      -- update vvc activity
-      update_vvc_activity_register(global_trigger_vvc_activity_register, vvc_status, ACTIVE, entry_num_in_vvc_activity_register, C_EXECUTOR_ID, last_write_response_channel_idx_executed, write_response_channel_queue.is_empty(VOID), C_SCOPE);
-
       -- Select between a provided msg_id_panel via the vvc_cmd_record from a VVC with a higher hierarchy or the
       -- msg_id_panel in this VVC's config. This is to correctly handle the logging when using Hierarchical-VVCs.
       v_msg_id_panel := get_msg_id_panel(v_cmd, vvc_config);
@@ -767,7 +759,7 @@ begin
   --===============================================================================================
   p_unwanted_activity : process
   begin
-    -- Add a delay to allow the VVC to be registered in the activity register
+    -- Add a delay to avoid detecting the first transition from the undefined value to initial value
     wait for std.env.resolution_limit;
 
     loop
@@ -790,15 +782,15 @@ begin
       if shared_vvc_activity_register.priv_get_vvc_activity(entry_num_in_vvc_activity_register) = INACTIVE then
         -- Skip checking the changes if the bvalid signal goes low within one clock period after the VVC becomes inactive
         if not (falling_edge(axilite_vvc_master_if.write_response_channel.bvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
-          check_unwanted_activity(axilite_vvc_master_if.write_response_channel.bvalid, vvc_config.unwanted_activity_severity, "bvalid", C_SCOPE);
-          check_unwanted_activity(axilite_vvc_master_if.write_response_channel.bresp, vvc_config.unwanted_activity_severity, "bresp", C_SCOPE);
+          check_value(not axilite_vvc_master_if.write_response_channel.bvalid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on bvalid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.write_response_channel.bresp'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on bresp", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
         end if;
 
         -- Skip checking the changes if the rvalid signal goes low within one clock period after the VVC becomes inactive
         if not (falling_edge(axilite_vvc_master_if.read_data_channel.rvalid) and global_trigger_vvc_activity_register'last_event < clock_period) then
-          check_unwanted_activity(axilite_vvc_master_if.read_data_channel.rvalid, vvc_config.unwanted_activity_severity, "rvalid", C_SCOPE);
-          check_unwanted_activity(axilite_vvc_master_if.read_data_channel.rdata, vvc_config.unwanted_activity_severity, "rdata", C_SCOPE);
-          check_unwanted_activity(axilite_vvc_master_if.read_data_channel.rresp, vvc_config.unwanted_activity_severity, "rresp", C_SCOPE);
+          check_value(not axilite_vvc_master_if.read_data_channel.rvalid'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rvalid", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.read_data_channel.rdata'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rdata", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
+          check_value(not axilite_vvc_master_if.read_data_channel.rresp'event, vvc_config.unwanted_activity_severity, "Unwanted activity detected on rresp", C_SCOPE, ID_NEVER, vvc_config.msg_id_panel);
         end if;
       end if;
     end loop;

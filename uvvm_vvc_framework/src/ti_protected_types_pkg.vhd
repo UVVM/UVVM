@@ -30,38 +30,17 @@ package ti_protected_types_pkg is
 
     -- Add a new VVC to the activity register and return its index
     impure function priv_register_vvc(
-      constant name          : in string;
-      constant instance      : in natural;
-      constant channel       : in t_channel := NA;
-      constant num_executors : in positive  := 1
+      constant name                     : in string;
+      constant instance                 : in natural;
+      constant channel                  : in t_channel := NA;
+      constant await_selected_supported : in boolean   := true
     ) return integer;
 
     -- Update a VVC's state
     procedure priv_report_vvc_activity(
-      constant vvc_idx                : in natural;
-      constant executor_id            : in natural;
-      constant activity               : in t_activity;
-      constant last_cmd_idx_executed  : in integer;
-      constant cmd_completed          : in boolean
-    );
-
-    -- DEPRECATE: will be removed in v3
-    procedure priv_report_vvc_activity(
       constant vvc_idx               : in natural;
       constant activity              : in t_activity;
       constant last_cmd_idx_executed : in integer
-    );
-
-    -- Add a cmd_idx to the pending command index list
-    procedure priv_add_pending_cmd_idx(
-      constant vvc_idx         : in natural;
-      constant pending_cmd_idx : in integer
-    );
-
-    -- Remove a cmd_idx from the pending command index list
-    procedure priv_remove_pending_cmd_idx(
-      constant vvc_idx         : in natural;
-      constant pending_cmd_idx : in integer
     );
 
     -- Print the list of registered VVCs
@@ -105,10 +84,14 @@ package ti_protected_types_pkg is
       constant vvc_idx : in natural
     ) return t_activity;
 
-    -- Check if the cmd_idx has been executed
-    impure function priv_is_cmd_idx_executed(
-      constant vvc_idx : in natural;
-      constant cmd_idx : in integer
+    -- Get a VVC's last_cmd_idx_executed
+    impure function priv_get_vvc_last_cmd_idx_executed(
+      constant vvc_idx : in natural
+    ) return integer;
+
+    -- Get information if the VVC supports await selected (waiting for a specific command) or not
+    impure function priv_get_vvc_await_selected_supported(
+      constant vvc_idx : in natural
     ) return boolean;
 
     -- Get a VVC's name, instance and channel
@@ -200,41 +183,36 @@ package body ti_protected_types_pkg is
   ------------------------------------------------------------
   type t_vvc_activity is protected body
 
-    type t_activity_array is array (natural range <>) of t_activity;
-
-    type t_activity_array_ptr is access t_activity_array;
-
-    type t_cmd_idx_list_ptr is access integer_vector;
-
     type t_vvc_id is record
       name     : string(1 to C_MAX_VVC_NAME_LENGTH);
       instance : natural;
       channel  : t_channel;
     end record;
-
-    type t_vvc_state is record
-      activity              : t_activity_array_ptr; -- Each executor inside a VVC has its own activity status.
-      last_cmd_idx_executed : integer;              -- Last (highest) command index executed inside a VVC. Not exactly true when using out-of-order commands.
-      pending_cmd_idx_list  : t_cmd_idx_list_ptr;   -- Pending command indexes running in the VVC executors. Not used in VVCs with a single executor.
-    end record;
-
+    constant C_VVC_ID_DEFAULT : t_vvc_id := (
+      name     => (others => NUL),
+      instance => 0,
+      channel  => NA
+    );
     type t_vvc_item is record
       vvc_id    : t_vvc_id;
       vvc_state : t_vvc_state;
     end record;
-
+    constant C_VVC_ITEM_DEFAULT : t_vvc_item := (
+      vvc_id    => C_VVC_ID_DEFAULT,
+      vvc_state => C_VVC_STATE_DEFAULT
+    );
     type t_registered_vvc_array is array (natural range <>) of t_vvc_item;
 
     -- Array holding all registered VVCs
-    variable priv_registered_vvc          : t_registered_vvc_array(0 to C_MAX_TB_VVC_NUM);
+    variable priv_registered_vvc          : t_registered_vvc_array(0 to C_MAX_TB_VVC_NUM) := (others => C_VVC_ITEM_DEFAULT);
     -- Counter for the number of VVCs that has registered
     variable priv_last_registered_vvc_idx : integer                                       := -1;
 
     impure function priv_register_vvc(
-      constant name          : in string;
-      constant instance      : in natural;
-      constant channel       : in t_channel := NA;
-      constant num_executors : in positive  := 1
+      constant name                     : in string;
+      constant instance                 : in natural;
+      constant channel                  : in t_channel := NA;
+      constant await_selected_supported : in boolean   := true
     ) return integer is
     begin
       if priv_last_registered_vvc_idx >= C_MAX_TB_VVC_NUM then
@@ -242,100 +220,29 @@ package body ti_protected_types_pkg is
       end if;
 
       -- Set registered VVC index
-      priv_last_registered_vvc_idx                                                          := priv_last_registered_vvc_idx + 1;
+      priv_last_registered_vvc_idx                                                         := priv_last_registered_vvc_idx + 1;
       -- Update register
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name                         := (others => NUL);
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)       := to_upper(name);
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                     := instance;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                      := channel;
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.activity                  := new t_activity_array(0 to num_executors - 1);
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.activity.all              := (0 to num_executors - 1 => INACTIVE);
-      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.last_cmd_idx_executed     := -1;
-      if num_executors > 1 then -- Only VVCs with multiple executors use this list
-        priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.pending_cmd_idx_list    := new integer_vector(0 to 0); -- Start with one element, it expands automatically
-        priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.pending_cmd_idx_list(0) := 0;
-      end if;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.name(1 to name'length)      := to_upper(name);
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.instance                    := instance;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_id.channel                     := channel;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.activity                 := INACTIVE;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.last_cmd_idx_executed    := -1;
+      priv_registered_vvc(priv_last_registered_vvc_idx).vvc_state.await_selected_supported := await_selected_supported;
       -- Return index
       return priv_last_registered_vvc_idx;
     end function;
 
-    procedure priv_report_vvc_activity(
-      constant vvc_idx                : in natural;
-      constant executor_id            : in natural;
-      constant activity               : in t_activity;
-      constant last_cmd_idx_executed  : in integer;
-      constant cmd_completed          : in boolean
-    ) is
-    begin
-      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR,
-                           "priv_report_vvc_activity() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      check_value_in_range(executor_id, 0, priv_registered_vvc(vvc_idx).vvc_state.activity'length - 1, TB_ERROR,
-                           "priv_report_vvc_activity() => executor_id invalid range: " & to_string(executor_id) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      -- Update VVC status
-      priv_registered_vvc(vvc_idx).vvc_state.activity(executor_id)   := activity;
-      -- Since cmd_idx is always incrementing, the highest index will be the last executed
-      -- Note that in case of VVCs with multiple executors, any pending commands with a lower index will be identified in the pending_cmd_idx_list
-      if last_cmd_idx_executed > priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed then
-        priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed := last_cmd_idx_executed;
-      end if;
-      -- In VVCs with multiple executors, remove the last_cmd_idx_executed from the pending_cmd_idx_list when it is completed
-      if executor_id > 0 and last_cmd_idx_executed > 0 and cmd_completed then
-        priv_remove_pending_cmd_idx(vvc_idx, last_cmd_idx_executed);
-      end if;
-    end procedure;
-
-    -- DEPRECATE: will be removed in v3
     procedure priv_report_vvc_activity(
       constant vvc_idx               : in natural;
       constant activity              : in t_activity;
       constant last_cmd_idx_executed : in integer
     ) is
     begin
-      priv_report_vvc_activity(vvc_idx, 0, activity, last_cmd_idx_executed, false);
-    end procedure;
-
-    procedure priv_add_pending_cmd_idx(
-      constant vvc_idx         : in natural;
-      constant pending_cmd_idx : in integer
-    ) is
-      variable v_copy_ptr : t_cmd_idx_list_ptr;
-    begin
       check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR,
-                           "priv_add_pending_cmd_idx() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-
-      -- Add the pending_cmd_idx to an empty element in the list
-      for i in priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list'range loop
-        if priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list(i) = 0 then
-          priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list(i) := pending_cmd_idx;
-          return;
-        end if;
-      end loop;
-
-      -- Expand the list if no more empty elements in the list and add the pending_cmd_idx
-      v_copy_ptr := priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list;
-      priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list                             := new integer_vector(0 to v_copy_ptr'length);
-      priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list(0 to v_copy_ptr'length - 1) := v_copy_ptr.all;
-      priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list(v_copy_ptr'length)          := pending_cmd_idx;
-      DEALLOCATE(v_copy_ptr);
-    end procedure;
-
-    procedure priv_remove_pending_cmd_idx(
-      constant vvc_idx         : in natural;
-      constant pending_cmd_idx : in integer
-    ) is
-    begin
-      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR,
-                           "priv_remove_pending_cmd_idx() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-
-      -- Remove the pending_cmd_idx from the list
-      for i in priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list'range loop
-        if priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list(i) = pending_cmd_idx then
-          priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list(i) := 0;
-          return;
-        end if;
-      end loop;
-      alert(TB_ERROR, "priv_remove_pending_cmd_idx() => Trying to remove pending_cmd_idx, but not found in the pending_cmd_idx_list.\n" &
-            "Make sure priv_add_pending_cmd_idx() is used in the VVC.", C_TB_SCOPE_DEFAULT);
+                           "priv_report_vvc_activity() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      -- Update VVC status
+      priv_registered_vvc(vvc_idx).vvc_state.activity              := activity;
+      priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed := last_cmd_idx_executed;
     end procedure;
 
     procedure priv_list_registered_vvc(
@@ -424,39 +331,25 @@ package body ti_protected_types_pkg is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR,
                            "priv_get_vvc_activity() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      for i in priv_registered_vvc(vvc_idx).vvc_state.activity'range loop
-        if priv_registered_vvc(vvc_idx).vvc_state.activity(i) = ACTIVE then
-          return ACTIVE;
-        end if;
-      end loop;
-      return INACTIVE;
+      return priv_registered_vvc(vvc_idx).vvc_state.activity;
     end function;
 
-    impure function priv_is_cmd_idx_executed(
-      constant vvc_idx : in natural;
-      constant cmd_idx : in integer
-    ) return boolean is
+    impure function priv_get_vvc_last_cmd_idx_executed(
+      constant vvc_idx : in natural
+    ) return integer is
     begin
       check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR,
                            "priv_get_vvc_last_cmd_idx_executed() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
-      -- In VVCs with a single executor, when last_cmd_idx_executed is less
-      -- than the cmd_idx, it means that the command hasn't been executed
-      if priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed < cmd_idx then
-        return false;
-      end if;
-      -- In VVCs with multiple executors, a command with cmd_idx could be still running in
-      -- one executor while a different executor has completed another command and updated
-      -- last_cmd_idx_executed with a higher value.
-      -- To ensure that the command with cmd_idx has indeed completed, we check pending_cmd_idx_list
-      if priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list /= null then
-        for i in priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list'range loop
-          if cmd_idx = priv_registered_vvc(vvc_idx).vvc_state.pending_cmd_idx_list(i) then
-            return false;
-          end if;
-        end loop;
-      end if;
+      return priv_registered_vvc(vvc_idx).vvc_state.last_cmd_idx_executed;
+    end function;
 
-      return true;
+    impure function priv_get_vvc_await_selected_supported(
+      constant vvc_idx : in natural
+    ) return boolean is
+    begin
+      check_value_in_range(vvc_idx, 0, priv_last_registered_vvc_idx, TB_ERROR,
+                           "priv_get_vvc_await_selected_supported() => vvc_idx invalid range: " & to_string(vvc_idx) & ".", C_TB_SCOPE_DEFAULT, ID_NEVER);
+      return priv_registered_vvc(vvc_idx).vvc_state.await_selected_supported;
     end function;
 
     impure function priv_get_vvc_info(
@@ -502,11 +395,9 @@ package body ti_protected_types_pkg is
       check_value(priv_last_registered_vvc_idx /= -1, TB_ERROR, "No VVCs in activity register", C_TB_SCOPE_DEFAULT, ID_NEVER);
 
       for idx in 0 to priv_last_registered_vvc_idx loop
-        for sub_idx in priv_registered_vvc(idx).vvc_state.activity'range loop
-          if priv_registered_vvc(idx).vvc_state.activity(sub_idx) = ACTIVE then
-            return false;
-          end if;
-        end loop;
+        if priv_registered_vvc(idx).vvc_state.activity = ACTIVE then
+          return false;
+        end if;
       end loop;
       return true;
     end function;

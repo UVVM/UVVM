@@ -2,12 +2,6 @@ Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
 
-v0.4.0
-----------
-Released: 2024-09-19
-- Removed old await_completion code from VVC.
-- Moved update_vvc_activity_register procedure to a common package for all VVCs.
-
 v0.3.1
 ----------
 Released: 2024-07-03

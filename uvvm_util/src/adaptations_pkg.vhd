@@ -30,8 +30,8 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   -- Alert and Log files
   --------------------------------------------------------------------------------------------------------------------------------
-  constant C_ALERT_FILE_NAME                          : string := "UVVM_Alert.txt";
-  constant C_LOG_FILE_NAME                            : string := "UVVM_Log.txt";
+  constant C_ALERT_FILE_NAME                          : string := "_Alert.txt";
+  constant C_LOG_FILE_NAME                            : string := "_Log.txt";
   constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
 
   shared variable shared_default_log_destination : t_log_destination := CONSOLE_AND_LOG;

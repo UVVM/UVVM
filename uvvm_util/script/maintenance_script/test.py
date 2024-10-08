@@ -53,7 +53,8 @@ hr.add_generics(entity='func_cov_tb',
                 architecture='func',
                 generics=['GC_FILE_PATH', (path_called_from + os.sep, 'PATH')])
 
-sim_options = None
+sim_options    = None
+global_options = None
 simulator_name = hr.settings.get_simulator_name()
 # Set simulator name and compile options
 if simulator_name in ["MODELSIM", "RIVIERA"]:
@@ -61,9 +62,9 @@ if simulator_name in ["MODELSIM", "RIVIERA"]:
     com_options = ["-suppress", "1346,1246,1236", "-2008"]
     hr.set_simulator(simulator=simulator_name, com_options=com_options)
 elif simulator_name == "NVC":
-    sim_options = ["-M64m", "-H2g"]
+    global_options = ["--stderr=error", "--messages=compact", "-M64m", "-H2g"]
 
-hr.start(sim_options=sim_options)
+hr.start(sim_options=sim_options, global_options=global_options)
 
 # Run coverage accumulation script
 hr.run_command("python ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_verbose.txt -r")

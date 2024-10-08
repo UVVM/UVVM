@@ -65,7 +65,8 @@ def test_vvc_framework():
 
     hr.add_files("../../tb/maintenance_tb/reference_vvcs/src/*sbi*.vhd", "bitvis_vip_sbi")
     hr.add_files("../../tb/maintenance_tb/reference_vvcs/src/*uart*.vhd", "bitvis_vip_uart")
-    hr.add_files("../../tb/maintenance_tb/*.vhd", "testbench_lib")
+    hr.add_files("../../tb/maintenance_tb/vvc_th.vhd", "testbench_lib")
+    hr.add_files("../../tb/maintenance_tb/*vvc_tb.vhd", "testbench_lib")
 
     sim_options = None
     simulator_name = hr.settings.get_simulator_name()
@@ -213,55 +214,50 @@ def test_vvc_generator():
     hr.add_files("../../../bitvis_vip_scoreboard/src/*.vhd", "bitvis_vip_scoreboard")
 
     # Add generated files
-    hr.add_files("../../sim/generated_vip_1/*.vhd", "bitvis_vip_test_1")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_1")
+    hr.add_files("../../sim/generated_vip_1/*.vhd", "vip_test_1")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_1")
 
-    hr.add_files("../../sim/generated_vip_2/*.vhd", "bitvis_vip_test_2")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_2")
+    hr.add_files("../../sim/generated_vip_2/*.vhd", "vip_test_2")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_2")
 
-    hr.add_files("../../sim/generated_vip_3/*.vhd", "bitvis_vip_test_3")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_3")
+    hr.add_files("../../sim/generated_vip_3/*.vhd", "vip_test_3")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_3")
 
-    hr.add_files("../../sim/generated_vip_4/*.vhd", "bitvis_vip_test_4")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_4")
+    hr.add_files("../../sim/generated_vip_4/*.vhd", "vip_test_4")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_4")
 
-    hr.add_files("../../sim/generated_vip_5/*.vhd", "bitvis_vip_test_5")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_5")
+    hr.add_files("../../sim/generated_vip_5/*.vhd", "vip_test_5")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_5")
 
-    hr.add_files("../../sim/generated_vip_6/*.vhd", "bitvis_vip_test_6")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_6")
+    hr.add_files("../../sim/generated_vip_6/*.vhd", "vip_test_6")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_6")
 
-    hr.add_files("../../sim/generated_vip_7/*.vhd", "bitvis_vip_test_7")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_7")
+    hr.add_files("../../sim/generated_vip_7/*.vhd", "vip_test_7")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_7")
 
-    hr.add_files("../../sim/generated_vip_8/*.vhd", "bitvis_vip_test_8")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_8")
+    hr.add_files("../../sim/generated_vip_8/*.vhd", "vip_test_8")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_8")
 
-    hr.add_files("../../sim/generated_vip_9/*.vhd", "bitvis_vip_test_9")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_9")
+    hr.add_files("../../sim/generated_vip_9/*.vhd", "vip_test_9")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_9")
 
-    hr.add_files("../../sim/generated_vip_10/*.vhd", "bitvis_vip_test_10")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_10")
+    hr.add_files("../../sim/generated_vip_10/*.vhd", "vip_test_10")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_10")
 
-    hr.add_files("../../sim/generated_vip_11/*.vhd", "bitvis_vip_test_11")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_11")
+    hr.add_files("../../sim/generated_vip_11/*.vhd", "vip_test_11")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_11")
 
-    hr.add_files("../../sim/generated_vip_12/*.vhd", "bitvis_vip_test_12")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_12")
+    hr.add_files("../../sim/generated_vip_12/*.vhd", "vip_test_12")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_12")
 
-    hr.add_files("../../sim/generated_vip_13/*.vhd", "bitvis_vip_test_13")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_13")
+    hr.add_files("../../sim/generated_vip_13/*.vhd", "vip_test_13")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_13")
 
-    hr.add_files("../../sim/generated_vip_14/*.vhd", "bitvis_vip_test_14")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_test_14")
+    hr.add_files("../../sim/generated_vip_14/*.vhd", "vip_test_14")
+    hr.add_files("../../src_target_dependent/*.vhd", "vip_test_14")
 
     # Add a testbench to detect whether compilation passed or failed using get_num_pass_tests()
-    hr.add_files("../../../bitvis_vip_uart/src/*.vhd", "bitvis_vip_uart")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_uart")
-    hr.add_files("../../../bitvis_vip_sbi/src/*.vhd", "bitvis_vip_sbi")
-    hr.add_files("../../src_target_dependent/*.vhd", "bitvis_vip_sbi")
-    hr.add_files("../../../bitvis_uart/src/*.vhd", "bitvis_uart")
-    hr.add_files("../../../uvvm_util/tb/cr_fc_demo_tb.vhd", "testbench_lib")
+    hr.add_files("../../tb/maintenance_tb/vvc_generator_tb.vhd", "testbench_lib")
 
     sim_options = None
     simulator_name = hr.settings.get_simulator_name()

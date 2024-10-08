@@ -78,7 +78,8 @@ hr.add_files("../../../uvvm_vvc_framework/src_target_dependent/*.vhd", "bitvis_v
 # Add TB/TH
 hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_avalon_st")
 
-sim_options = None
+sim_options    = None
+global_options = None
 simulator_name = hr.settings.get_simulator_name()
 # Set simulator name and compile options
 if simulator_name in ["MODELSIM", "RIVIERA"]:
@@ -86,9 +87,9 @@ if simulator_name in ["MODELSIM", "RIVIERA"]:
     com_options = ["-suppress", "1346,1246,1236", "-2008"]
     hr.set_simulator(simulator=simulator_name, com_options=com_options)
 elif simulator_name == "NVC":
-    sim_options = ["-M64m", "-H512m"]
+    global_options = ["--stderr=error", "--messages=compact", "-M64m", "-H512m"]
 
-hr.start(sim_options=sim_options)
+hr.start(sim_options=sim_options, global_options=global_options)
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()

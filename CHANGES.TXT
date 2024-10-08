@@ -10,6 +10,12 @@ CHANGES.TXT in each module's sub-directory.
 ----------------------------------------------------------------------
 
 
+v2 2024.10.08
+--------------------
+Released: 2024-10-08
+- Updated vvc_generator.py with fixes for runtime errors in the VVCs.
+
+
 v2 2024.09.19
 --------------------
 Released: 2024-09-19

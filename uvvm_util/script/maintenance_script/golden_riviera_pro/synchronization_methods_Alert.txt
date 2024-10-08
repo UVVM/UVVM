@@ -1,0 +1,18 @@
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:            10 ns   TB seq
+UVVM:                    The flag FLAG_A was already blocked. 'This flag should already be blocked.'
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #2  ***
+UVVM:           130 ns   TB sync_seq
+UVVM:                    check_value() => Failed. Boolean was false. 'FLAG_A timed out. 'It will timeout.''
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:           170 ns   TB seq.
+UVVM:                    The flag FLAG_99 was not found and the maximum number of flags (100) have been used. Configure in adaptations_pkg. 
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 

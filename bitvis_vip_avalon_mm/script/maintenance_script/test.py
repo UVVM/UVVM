@@ -54,17 +54,9 @@ hr.add_generics(entity="avalon_mm_vvc_pipeline_tb",
                 architecture=None,
                 generics=["GC_DELTA_DELAYED_VVC_CLK", True])
 
-hr.add_generics(
-    entity="avalon_mm_vvc_pipeline_tb",
-    architecture=None,
-    generics=["GC_DELTA_DELAYED_VVC_CLK", True],
-)
-
-hr.add_generics(
-    entity="avalon_mm_vvc_pipeline_tb",
-    architecture=None,
-    generics=["GC_DELTA_DELAYED_VVC_CLK", False],
-)
+hr.add_generics(entity="avalon_mm_vvc_pipeline_tb",
+                architecture=None,
+                generics=["GC_DELTA_DELAYED_VVC_CLK", False])
 
 sim_options = None
 simulator_name = hr.settings.get_simulator_name()

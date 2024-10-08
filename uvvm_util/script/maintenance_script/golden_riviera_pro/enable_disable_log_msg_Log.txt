@@ -1,0 +1,167 @@
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Sub-program randomise is outdated and has been replaced by another sub-program.
+UVVM:                                                                           Use randomize().
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 14, 12
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF GLOBAL CTRL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                                IGNORE    STOP_LIMIT
+UVVM:                NOTE         :  REGARD         0
+UVVM:                TB_NOTE      :  REGARD         0
+UVVM:                WARNING      :  REGARD         0
+UVVM:                TB_WARNING   :  REGARD         0
+UVVM:                MANUAL_CHECK :  REGARD         0
+UVVM:                ERROR        :  REGARD         1
+UVVM:                TB_ERROR     :  REGARD         1
+UVVM:                FAILURE      :  REGARD         1
+UVVM:                TB_FAILURE   :  REGARD         1
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF MSG ID PANEL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                ID                             Status
+UVVM:                ------------------------       ------
+UVVM:                ID_UTIL_BURIED               : DISABLED
+UVVM:                ID_BITVIS_DEBUG              : DISABLED
+UVVM:                ID_UTIL_SETUP                : ENABLED
+UVVM:                ID_LOG_MSG_CTRL              : ENABLED
+UVVM:                ID_ALERT_CTRL                : ENABLED
+UVVM:                ID_FINISH_OR_STOP            : ENABLED
+UVVM:                ID_CLOCK_GEN                 : ENABLED
+UVVM:                ID_GEN_PULSE                 : ENABLED
+UVVM:                ID_BLOCKING                  : ENABLED
+UVVM:                ID_WATCHDOG                  : ENABLED
+UVVM:                ID_POS_ACK                   : ENABLED
+UVVM:                ID_LOG_HDR                   : ENABLED
+UVVM:                ID_LOG_HDR_LARGE             : ENABLED
+UVVM:                ID_LOG_HDR_XL                : ENABLED
+UVVM:                ID_SEQUENCER                 : ENABLED
+UVVM:                ID_SEQUENCER_SUB             : ENABLED
+UVVM:                ID_BFM                       : ENABLED
+UVVM:                ID_BFM_WAIT                  : ENABLED
+UVVM:                ID_BFM_POLL                  : ENABLED
+UVVM:                ID_BFM_POLL_SUMMARY          : ENABLED
+UVVM:                ID_CHANNEL_BFM               : ENABLED
+UVVM:                ID_TERMINATE_CMD             : ENABLED
+UVVM:                ID_SEGMENT_INITIATE          : ENABLED
+UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
+UVVM:                ID_SEGMENT_HDR               : ENABLED
+UVVM:                ID_SEGMENT_DATA              : ENABLED
+UVVM:                ID_PACKET_INITIATE           : ENABLED
+UVVM:                ID_PACKET_PREAMBLE           : ENABLED
+UVVM:                ID_PACKET_COMPLETE           : ENABLED
+UVVM:                ID_PACKET_HDR                : ENABLED
+UVVM:                ID_PACKET_DATA               : ENABLED
+UVVM:                ID_PACKET_CHECKSUM           : ENABLED
+UVVM:                ID_PACKET_GAP                : ENABLED
+UVVM:                ID_FRAME_INITIATE            : ENABLED
+UVVM:                ID_FRAME_COMPLETE            : ENABLED
+UVVM:                ID_FRAME_HDR                 : ENABLED
+UVVM:                ID_FRAME_DATA                : ENABLED
+UVVM:                ID_COVERAGE_MAKEBIN          : DISABLED
+UVVM:                ID_COVERAGE_ADDBIN           : DISABLED
+UVVM:                ID_COVERAGE_ICOVER           : DISABLED
+UVVM:                ID_COVERAGE_CONFIG           : ENABLED
+UVVM:                ID_COVERAGE_SUMMARY          : ENABLED
+UVVM:                ID_COVERAGE_HOLES            : ENABLED
+UVVM:                ID_UVVM_SEND_CMD             : ENABLED
+UVVM:                ID_UVVM_CMD_ACK              : ENABLED
+UVVM:                ID_UVVM_CMD_RESULT           : ENABLED
+UVVM:                ID_CMD_INTERPRETER           : ENABLED
+UVVM:                ID_CMD_INTERPRETER_WAIT      : ENABLED
+UVVM:                ID_IMMEDIATE_CMD             : ENABLED
+UVVM:                ID_IMMEDIATE_CMD_WAIT        : ENABLED
+UVVM:                ID_CMD_EXECUTOR              : ENABLED
+UVVM:                ID_CMD_EXECUTOR_WAIT         : ENABLED
+UVVM:                ID_CHANNEL_EXECUTOR          : ENABLED
+UVVM:                ID_CHANNEL_EXECUTOR_WAIT     : ENABLED
+UVVM:                ID_NEW_HVVC_CMD_SEQ          : ENABLED
+UVVM:                ID_INSERTED_DELAY            : ENABLED
+UVVM:                ID_OLD_AWAIT_COMPLETION      : ENABLED
+UVVM:                ID_AWAIT_COMPLETION          : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_LIST     : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_WAIT     : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_END      : ENABLED
+UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
+UVVM:                ID_CONSTRUCTOR               : ENABLED
+UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
+UVVM:                ID_VVC_ACTIVITY              : ENABLED
+UVVM:                ID_MONITOR                   : ENABLED
+UVVM:                ID_MONITOR_ERROR             : ENABLED
+UVVM:                ID_DATA                      : ENABLED
+UVVM:                ID_CTRL                      : ENABLED
+UVVM:                ID_FILE_OPEN_CLOSE           : ENABLED
+UVVM:                ID_FILE_PARSER               : ENABLED
+UVVM:                ID_SPEC_COV                  : ENABLED
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         1.0 ns  (non scoped)                   Verifying disable_log_msg and enable_log_msg
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_BFM                             1.0 ns  My scope                       ID_BFM enabled
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check ID_BFM enabled'
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        disable_log_msg(ID_BFM). 
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean false. 'check ID_BFM disabled'
+UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for boolean true. 'check ID_LOG_HDR enabled'
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        enable_log_msg(ID_BFM). 
+UVVM: ID_BFM                             1.0 ns  My scope                       ID_BFM re-enabled. Should be written
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Verifying disable_log_msg() with QUIET. Next line should be empty.
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This shall be visible
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This log message shall be visible
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Verifying that attempting to enable ID_NEVER triggers an alert.
+UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             1 ns   TB seq.
+UVVM:                    enable_log_msg() ignored for ID_NEVER (not allowed). 'This shall trigger a TB_WARNING.'
+UVVM: 
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Testing ID_LOG_MSG_CTRL and ALL_MESSAGES
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        enable_log_msg(ID_SEQUENCER). 
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This should be visible (and enabling of ID_SEQUENCER should be visible)
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Testing ID_LOG_MSG_CTRL and ALL_MESSAGES with QUIET
+UVVM: ID_LOG_MSG_CTRL                    1.0 ns  TB seq.                        disable_log_msg(ALL_MESSAGES). 
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        This should be visible (and enabling of ID_SEQUENCER should not be visible)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      1         1         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      

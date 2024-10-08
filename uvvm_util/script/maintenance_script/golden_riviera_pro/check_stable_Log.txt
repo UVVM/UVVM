@@ -1,0 +1,231 @@
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Sub-program randomise is outdated and has been replaced by another sub-program.
+UVVM:                                                                           Use randomize().
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 14, 12
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF GLOBAL CTRL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                                IGNORE    STOP_LIMIT
+UVVM:                NOTE         :  REGARD         0
+UVVM:                TB_NOTE      :  REGARD         0
+UVVM:                WARNING      :  REGARD         0
+UVVM:                TB_WARNING   :  REGARD         0
+UVVM:                MANUAL_CHECK :  REGARD         0
+UVVM:                ERROR        :  REGARD         1
+UVVM:                TB_ERROR     :  REGARD         1
+UVVM:                FAILURE      :  REGARD         1
+UVVM:                TB_FAILURE   :  REGARD         1
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF MSG ID PANEL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                ID                             Status
+UVVM:                ------------------------       ------
+UVVM:                ID_UTIL_BURIED               : DISABLED
+UVVM:                ID_BITVIS_DEBUG              : DISABLED
+UVVM:                ID_UTIL_SETUP                : ENABLED
+UVVM:                ID_LOG_MSG_CTRL              : ENABLED
+UVVM:                ID_ALERT_CTRL                : ENABLED
+UVVM:                ID_FINISH_OR_STOP            : ENABLED
+UVVM:                ID_CLOCK_GEN                 : ENABLED
+UVVM:                ID_GEN_PULSE                 : ENABLED
+UVVM:                ID_BLOCKING                  : ENABLED
+UVVM:                ID_WATCHDOG                  : ENABLED
+UVVM:                ID_POS_ACK                   : ENABLED
+UVVM:                ID_LOG_HDR                   : ENABLED
+UVVM:                ID_LOG_HDR_LARGE             : ENABLED
+UVVM:                ID_LOG_HDR_XL                : ENABLED
+UVVM:                ID_SEQUENCER                 : ENABLED
+UVVM:                ID_SEQUENCER_SUB             : ENABLED
+UVVM:                ID_BFM                       : ENABLED
+UVVM:                ID_BFM_WAIT                  : ENABLED
+UVVM:                ID_BFM_POLL                  : ENABLED
+UVVM:                ID_BFM_POLL_SUMMARY          : ENABLED
+UVVM:                ID_CHANNEL_BFM               : ENABLED
+UVVM:                ID_TERMINATE_CMD             : ENABLED
+UVVM:                ID_SEGMENT_INITIATE          : ENABLED
+UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
+UVVM:                ID_SEGMENT_HDR               : ENABLED
+UVVM:                ID_SEGMENT_DATA              : ENABLED
+UVVM:                ID_PACKET_INITIATE           : ENABLED
+UVVM:                ID_PACKET_PREAMBLE           : ENABLED
+UVVM:                ID_PACKET_COMPLETE           : ENABLED
+UVVM:                ID_PACKET_HDR                : ENABLED
+UVVM:                ID_PACKET_DATA               : ENABLED
+UVVM:                ID_PACKET_CHECKSUM           : ENABLED
+UVVM:                ID_PACKET_GAP                : ENABLED
+UVVM:                ID_FRAME_INITIATE            : ENABLED
+UVVM:                ID_FRAME_COMPLETE            : ENABLED
+UVVM:                ID_FRAME_HDR                 : ENABLED
+UVVM:                ID_FRAME_DATA                : ENABLED
+UVVM:                ID_COVERAGE_MAKEBIN          : DISABLED
+UVVM:                ID_COVERAGE_ADDBIN           : DISABLED
+UVVM:                ID_COVERAGE_ICOVER           : DISABLED
+UVVM:                ID_COVERAGE_CONFIG           : ENABLED
+UVVM:                ID_COVERAGE_SUMMARY          : ENABLED
+UVVM:                ID_COVERAGE_HOLES            : ENABLED
+UVVM:                ID_UVVM_SEND_CMD             : ENABLED
+UVVM:                ID_UVVM_CMD_ACK              : ENABLED
+UVVM:                ID_UVVM_CMD_RESULT           : ENABLED
+UVVM:                ID_CMD_INTERPRETER           : ENABLED
+UVVM:                ID_CMD_INTERPRETER_WAIT      : ENABLED
+UVVM:                ID_IMMEDIATE_CMD             : ENABLED
+UVVM:                ID_IMMEDIATE_CMD_WAIT        : ENABLED
+UVVM:                ID_CMD_EXECUTOR              : ENABLED
+UVVM:                ID_CMD_EXECUTOR_WAIT         : ENABLED
+UVVM:                ID_CHANNEL_EXECUTOR          : ENABLED
+UVVM:                ID_CHANNEL_EXECUTOR_WAIT     : ENABLED
+UVVM:                ID_NEW_HVVC_CMD_SEQ          : ENABLED
+UVVM:                ID_INSERTED_DELAY            : ENABLED
+UVVM:                ID_OLD_AWAIT_COMPLETION      : ENABLED
+UVVM:                ID_AWAIT_COMPLETION          : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_LIST     : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_WAIT     : ENABLED
+UVVM:                ID_AWAIT_COMPLETION_END      : ENABLED
+UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
+UVVM:                ID_CONSTRUCTOR               : ENABLED
+UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
+UVVM:                ID_VVC_ACTIVITY              : ENABLED
+UVVM:                ID_MONITOR                   : ENABLED
+UVVM:                ID_MONITOR_ERROR             : ENABLED
+UVVM:                ID_DATA                      : ENABLED
+UVVM:                ID_CTRL                      : ENABLED
+UVVM:                ID_FILE_OPEN_CLOSE           : ENABLED
+UVVM:                ID_FILE_PARSER               : ENABLED
+UVVM:                ID_SPEC_COV                  : ENABLED
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
+UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         1.0 ns  (non scoped)                   Verifying check_stable
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at true. 'Stable boolean OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at xFF. 'Stable slv OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at xFF. 'Stable unsigned OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at xFF. 'Stable signed OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK.14 stable at 14. 'Stable integer OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK.1337.14 stable at 1337.14. 'Stable real OK'
+UVVM: ID_POS_ACK                        11.0 ns  TB seq                         check_stable() => OK. Stable at 1. 'Stable std_logic OK'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:            11 ns   TB seq
+UVVM:                    check_stable() => Failed. Switched from false to true 10 ns ago. Expected stable for 11000 ps
+UVVM:                    Stable boolean Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #2  ***
+UVVM:            11 ns   TB seq
+UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11000 ps
+UVVM:                    Stable slv Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #3  ***
+UVVM:            11 ns   TB seq
+UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11000 ps
+UVVM:                    Stable unsigned Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #4  ***
+UVVM:            11 ns   TB seq
+UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11000 ps
+UVVM:                    Stable signed Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #5  ***
+UVVM:            11 ns   TB seq
+UVVM:                    check_stable() => Failed. Switched from 0 to 14 10 ns ago. Expected stable for 11000 ps
+UVVM:                    Stable integer Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #6  ***
+UVVM:            11 ns   TB seq
+UVVM:                    check_stable() => Failed. Switched from 0 to 1337.14 10 ns ago. Expected stable for 11000 ps
+UVVM:                    Stable real Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #7  ***
+UVVM:            11 ns   TB seq
+UVVM:                    check_stable() => Failed. Switched from 0 to 1 10 ns ago. Expected stable for 11000 ps
+UVVM:                    Stable std_logic Fail
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_POS_ACK                        31.0 ns  TB seq                         check_stable() => OK. Stable at xCC. 'Stable slv OK'
+UVVM: ID_POS_ACK                        51.0 ns  TB seq                         check_stable() => OK. Stable at xCC. 'Stable slv OK'
+UVVM: ID_UTIL_SETUP                     51.0 ns  TB seq.                        incremented expected ERRORs by 7. 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL CHECK COUNTERS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                CHECK_VALUE           :         32    
+UVVM:                CHECK_VALUE_IN_RANGE  :          0    
+UVVM:                CHECK_STABLE          :         16    
+UVVM:                CHECK_TIME_WINDOW     :          0    
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      7         7         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      7         7         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1051.0 ns  TB seq                         SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

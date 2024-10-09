@@ -450,11 +450,15 @@ def write_single_listed_spec_cov_files(run_configuration, container, delimiter):
         with open(spec_cov_single_tc_vs_single_req_filename, mode='w', newline='') as to_file:
             csv_writer = csv.writer(to_file, delimiter=delimiter)
             csv_writer.writerow(["Testcase", "Requirement", "Result"])
-            for tc, req in (run_test_case_list + not_run_test_case_list):
-                if req:
-                    csv_writer.writerow([tc.name, req.name, tc.result])
+            for tc in container.get_testcase_list():
+                # Check if the testcase has been run
+                req_list = tc.get_all_requirement_list()
+                expected_req_list = tc.get_expected_requirement_list()
+                if req_list:
+                    csv_writer.writerow([tc.name, req_list[0].name, tc.result])
                 else:
-                    csv_writer.writerow([tc.name, "", testcase_not_run_string])
+                    csv_writer.writerow([tc.name, "", tc.result])
+
     except:
         error_msg = ("Error %s occurred with file %s" %(sys.exc_info()[0], spec_cov_single_tc_vs_single_req_filename))
         abort(error_code = 1, msg = error_msg)

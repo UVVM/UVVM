@@ -849,6 +849,25 @@ as shown below example. Note that the unwanted activity detection must be enable
     shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
     shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
 
+When the reset signal is set, signal transitions may occur from the uninitialized value 'U'. Additionally, using pull-up or pull-down 
+resistors in the design may cause signal transitions from the weak 1 state 'H' to the logic high '1' or from the weak 0 state 'L' 
+to the logic low '0', and vice versa. These are intended behaviors that should not be monitored by the unwanted activity detection. 
+The signal transitions that are excluded from unwanted activity detection are summarized below.
+
++----------------+-----------------------------------+
+| From           | To                                |
++================+===================================+
+| 'U'            | 'X', '0', '1', 'Z', 'W', 'L', 'H' |
++----------------+-----------------------------------+
+| 'L'            | '0'                               |
++----------------+-----------------------------------+
+| '0'            | 'L'                               |
++----------------+-----------------------------------+
+| 'H'            | '1'                               |
++----------------+-----------------------------------+
+| '1'            | 'H'                               |
++----------------+-----------------------------------+
+
 For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.
 
 .. note::

@@ -679,6 +679,15 @@ to NON_QUIET.
 Alert handling
 ==================================================================================================================================
 
+The available alert levels are defined in the type :ref:`t_alert_level`. The behavior for each type of alert can be configured in
+adaptations_pkg.vhd. The simulation will be stopped when the occurences of an alert type reaches the number configured in
+C_DEFAULT_STOP_LIMIT. By default, the simulation will be stopped after one occurence of either ERROR, TB_ERROR, FAILURE or TB_FAILURE.
+Alert levels with the prefix TB\_ are intended to be used in cases where the cause of the alert is known to be a testbench issue.
+
+The MANUAL_CHECK alert type is intended for cases where a manual check, e.g. a waveform inspection, is required. When an alert of this
+type is encountered, the simulation will be stopped and the user will be prompted to carry out a manual check before resuming the
+simulation.
+
 set_alert_file_name()
 ----------------------------------------------------------------------------------------------------------------------------------
 Sets the alert file name. To ensure that the entire log transcript is written to a single file, this should be called prior to any 

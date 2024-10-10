@@ -1354,6 +1354,19 @@ package methods_pkg is
     ) return boolean;
 
   impure function check_value_in_range(
+      constant value        : std_logic_vector;
+      constant min_value    : std_logic_vector;
+      constant max_value    : std_logic_vector;
+      constant alert_level  : t_alert_level;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value_in_range()";
+      constant value_type   : string         := "std_logic_vector"
+    ) return boolean;
+
+  impure function check_value_in_range(
       constant value        : unsigned;
       constant min_value    : unsigned;
       constant max_value    : unsigned;
@@ -1417,6 +1430,18 @@ package methods_pkg is
     ) return boolean;
 
   impure function check_value_in_range(
+      constant value        : std_logic_vector;
+      constant min_value    : std_logic_vector;
+      constant max_value    : std_logic_vector;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value_in_range()";
+      constant value_type   : string         := "std_logic_vector"
+    ) return boolean;
+
+  impure function check_value_in_range(
       constant value        : unsigned;
       constant min_value    : unsigned;
       constant max_value    : unsigned;
@@ -1467,6 +1492,18 @@ package methods_pkg is
       constant value        : integer;
       constant min_value    : integer;
       constant max_value    : integer;
+      constant alert_level  : t_alert_level;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value_in_range()"
+    );
+
+  procedure check_value_in_range(
+      constant value        : std_logic_vector;
+      constant min_value    : std_logic_vector;
+      constant max_value    : std_logic_vector;
       constant alert_level  : t_alert_level;
       constant msg          : string;
       constant scope        : string         := C_TB_SCOPE_DEFAULT;
@@ -1528,6 +1565,17 @@ package methods_pkg is
       constant value        : integer;
       constant min_value    : integer;
       constant max_value    : integer;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value_in_range()"
+    );
+
+  procedure check_value_in_range(
+      constant value        : std_logic_vector;
+      constant min_value    : std_logic_vector;
+      constant max_value    : std_logic_vector;
       constant msg          : string;
       constant scope        : string         := C_TB_SCOPE_DEFAULT;
       constant msg_id       : t_msg_id       := ID_POS_ACK;
@@ -6262,6 +6310,39 @@ package body methods_pkg is
   end function;
 
   impure function check_value_in_range(
+      constant value        : std_logic_vector;
+      constant min_value    : std_logic_vector;
+      constant max_value    : std_logic_vector;
+      constant alert_level  : t_alert_level;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value_in_range()";
+      constant value_type   : string         := "std_logic_vector"
+    ) return boolean is
+    constant C_VALUE_STR     : string := to_string(value);
+    constant C_MIN_VALUE_STR : string := to_string(min_value);
+    constant C_MAX_VALUE_STR : string := to_string(max_value);
+  begin
+    protected_check_counters.increment(CHECK_VALUE_IN_RANGE);
+
+    -- Sanity check
+    check_value(max_value >= min_value, TB_ERROR, scope,
+                " => min_value (" & C_MIN_VALUE_STR & ") must be less than max_value(" & C_MAX_VALUE_STR & ")" & LF & msg, ID_NEVER, msg_id_panel, caller_name);
+    -- do not count CHECK_VALUE from CHECK_VALUE_IN_RANGE
+    protected_check_counters.decrement(CHECK_VALUE);
+
+    if (value >= min_value and value <= max_value) then
+      log(msg_id, caller_name & " => OK, for " & value_type & " " & C_VALUE_STR & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
+      return true;
+    else
+      alert(alert_level, caller_name & " => Failed. " & value_type & "  Was " & C_VALUE_STR & ". Expected between " & C_MIN_VALUE_STR & " and " & C_MAX_VALUE_STR & LF & msg, scope);
+      return false;
+    end if;
+  end function;
+
+  impure function check_value_in_range(
       constant value        : unsigned;
       constant min_value    : unsigned;
       constant max_value    : unsigned;
@@ -6426,6 +6507,23 @@ package body methods_pkg is
   end function;
 
   impure function check_value_in_range(
+      constant value        : std_logic_vector;
+      constant min_value    : std_logic_vector;
+      constant max_value    : std_logic_vector;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value_in_range()";
+      constant value_type   : string         := "std_logic_vector"
+    ) return boolean is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name, value_type);
+    return v_check_ok;
+  end function;
+
+  impure function check_value_in_range(
       constant value        : unsigned;
       constant min_value    : unsigned;
       constant max_value    : unsigned;
@@ -6510,6 +6608,21 @@ package body methods_pkg is
     v_check_ok := check_value_in_range(value, min_value, max_value, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
   end procedure;
   procedure check_value_in_range(
+      constant value        : std_logic_vector;
+      constant min_value    : std_logic_vector;
+      constant max_value    : std_logic_vector;
+      constant alert_level  : t_alert_level;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value_in_range()"
+    ) is
+    variable v_check_ok : boolean;
+  begin
+    v_check_ok := check_value_in_range(value, min_value, max_value, alert_level, msg, scope, msg_id, msg_id_panel, caller_name);
+  end procedure;
+  procedure check_value_in_range(
       constant value        : unsigned;
       constant min_value    : unsigned;
       constant max_value    : unsigned;
@@ -6575,6 +6688,19 @@ package body methods_pkg is
       constant value        : integer;
       constant min_value    : integer;
       constant max_value    : integer;
+      constant msg          : string;
+      constant scope        : string         := C_TB_SCOPE_DEFAULT;
+      constant msg_id       : t_msg_id       := ID_POS_ACK;
+      constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel;
+      constant caller_name  : string         := "check_value_in_range()"
+    ) is
+  begin
+    check_value_in_range(value, min_value, max_value, error, msg, scope, msg_id, msg_id_panel, caller_name);
+  end procedure;
+  procedure check_value_in_range(
+      constant value        : std_logic_vector;
+      constant min_value    : std_logic_vector;
+      constant max_value    : std_logic_vector;
       constant msg          : string;
       constant scope        : string         := C_TB_SCOPE_DEFAULT;
       constant msg_id       : t_msg_id       := ID_POS_ACK;

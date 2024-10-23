@@ -602,7 +602,7 @@ package body string_methods_pkg is
     vector : string
   ) return natural is
   begin
-    return pos_of_leftmost(NUL, vector, vector'length) - 1;
+    return pos_of_leftmost(NUL, vector, vector'length + 1) - 1;
   end;
 
   function string_contains_char(

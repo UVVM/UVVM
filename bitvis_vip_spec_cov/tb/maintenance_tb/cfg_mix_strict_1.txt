@@ -1,0 +1,5 @@
+-r ../tb/maintenance_tb/mix_req_file.csv
+-m ../tb/maintenance_tb/mix_map_file.csv
+-p ../tb/maintenance_tb/pc_mix_files.txt
+-s ../sim/sc_mix.csv
+--strictness 1

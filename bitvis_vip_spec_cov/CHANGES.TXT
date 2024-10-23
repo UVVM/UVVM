@@ -1,6 +1,12 @@
 Bitvis VIP Specification Coverage - Overview on Versions and Changes
 ==============================================================
 
+v2.0.0
+----------
+Released: 2024-10-23
+ - Support compound requirements in req file
+ - New output formats
+ - Check number of requirement lines in spec_cov_pkg.
 
 v1.1.2
 ----------

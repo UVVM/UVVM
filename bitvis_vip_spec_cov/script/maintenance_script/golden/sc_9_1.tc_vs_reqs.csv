@@ -1,3 +1,0 @@
-Testcase,Requirement(s),Result
-TC_1,REQ_1A & REQ_1B & REQ_2A & REQ_2B,PASS
-TC_2,REQ_2A & REQ_2B,NOT_EXECUTED

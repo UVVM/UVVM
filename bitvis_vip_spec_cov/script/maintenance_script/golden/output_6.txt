@@ -1,10 +1,10 @@
 
 Configuration:
 ----------------------------------------------
-requirement_list     : ../tb/maintenance_tb/req_file.csv
-partial_cov          : ../sim/pc_6.csv
+requirement_list     : ../tb/maintenance_tb/tb_tests_req_file.csv
+partial_cov          : ../sim/pc_list_single_tickoff.csv
 requirement_map_list : None
-spec_cov             : ../sim/sc_6.csv
+spec_cov             : ../sim/sc_list_single_tickoff.csv
 clean                : None
 strictness           : 0
 config               : None
@@ -12,24 +12,28 @@ config               : None
 
 SUMMARY:
 ----------------------------------------------
-Number of compliant requirements     : 0
+Number of compliant requirements     : 1
 Number of non compliant requirements : 1
-Number of non verified requirements  : 9
+Number of non verified requirements  : 4
 Number of not listed requirements    : 0
-Number of passing testcases : 0
-Number of failing testcases : 1
-Number of not run testcases : 10
+Number of passing testcases : 1
+Number of failing testcases : 0
+Number of not run testcases : 3
 
+
+Compliant requirement(s) :
+REQ_LIST_SINGLE_TICKOFF, 
 
 Non compliant requirement(s) :
-REQ_6, 
+REQ_LIST_SINGLE_TICKOFF_PF, 
 
 Not verified requirement(s) :
-REQ_1, REQ_2, REQ_3, REQ_4, REQ_5, REQ_7, REQ_88, REQ_9, REQ_10, 
+REQ_ERROR_BEFORE_TC, REQ_ERROR_DURING_TC, REQ_COND_TICKOFF, REQ_ALWAYS_TICKOFF, 
 
-Failing testcase(s) :
-TC_6, 
+Passing testcase(s) :
+TC_LIST_SINGLE_TICKOFF, 
 
 Not run testcase(s) :
-TC_1, TC_2, TC_3, TC_4, TC_4_FAIL, TC_5, TC_7, TC_8, TC_9, TC_10, 
+TC_ERROR_BEFORE_TC, TC_ERROR_DURING_TC, TC_COND_TICKOFF, 
 
+Non-compliant or not verified requirements found. Please see ../sim/sc_list_single_tickoff.req_non_compliance.csv for details.

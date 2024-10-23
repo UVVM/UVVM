@@ -1,39 +1,30 @@
 
 Configuration:
 ----------------------------------------------
-requirement_list     : ../tb/maintenance_tb/sub_req_file.csv
-partial_cov          : ../sim/pc_8.csv
-requirement_map_list : ../tb/maintenance_tb/sub_req_map_file.csv
-spec_cov             : ../sim/sc_8_1.csv
+requirement_list     : None
+partial_cov          : ../sim/pc_no_req_file.csv
+requirement_map_list : None
+spec_cov             : ../sim/sc_no_req_file.csv
 clean                : None
-strictness           : 1
-config               : ../tb/maintenance_tb/cfg_1_strict_1.txt
+strictness           : 0
+config               : None
 
 
 SUMMARY:
 ----------------------------------------------
-Number of compliant requirements     : 3
+Number of compliant requirements     : 0
 Number of non compliant requirements : 0
-Number of non verified requirements  : 3
-Number of not listed requirements    : 0
+Number of non verified requirements  : 0
+Number of not listed requirements    : 1
 Number of passing testcases : 1
 Number of failing testcases : 0
-Number of not run testcases : 1
+Number of not run testcases : 0
 
 
-Compliant requirement(s) :
-REQ_1A, REQ_1B, REQ_1, 
-
-Not verified requirement(s) :
-REQ_2A, REQ_2B, REQ_2, 
+Not listed requirement(s) :
+REQ_1, 
 
 Passing testcase(s) :
-TC_1, 
+TC_NO_REQ_FILE, 
 
-Not run testcase(s) :
-TC_2, 
-
-Following 1 partial coverage file(s) have been previously executed :
-../sim/pc_8.csv
-
-
+Potential problems found. Please see ../sim/sc_no_req_file.warnings.csv.

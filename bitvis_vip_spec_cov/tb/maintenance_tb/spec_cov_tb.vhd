@@ -27,13 +27,13 @@ use bitvis_vip_spec_cov.spec_cov_pkg.all;
 --hdlregression:tb
 entity spec_cov_tb is
   generic(
-    GC_TESTCASE       : string := "UVVM";
-    GC_REQ_FILE       : string := "";     -- "../tb/maintenance_tb/req_file.csv";
-    GC_REQ_FILE_EMPTY : string := "";     -- "../tb/maintenance_tb/req_file_empty.csv"
-    GC_SUB_REQ_FILE   : string := "";     -- "../tb/maintenance_tb/sub_req_file.csv";
-    GC_UART_REQ_FILE  : string := "";     -- "../tb/maintenance_tb/uart_req_file.csv";
-    GC_COMBI_REQ_FILE : string := "";     -- "../tb/maintenance_tb/combi_req_file.csv";
-    GC_REQ_OMIT_MAP   : string := ""      -- "../tb/maintenance_tb/uart_omit_map_file.csv"
+    GC_TESTCASE         : string := "UVVM";
+    GC_TB_REQ_FILE      : string := "";     -- "../tb/maintenance_tb/tb_tests_req_file.csv";
+    GC_REQ_FILE_EMPTY   : string := "";     -- "../tb/maintenance_tb/req_file_empty.csv"
+    GC_MIX_REQ_FILE     : string := "";     -- "../tb/maintenance_tb/mix_req_file.csv";
+    GC_MIX_MAP_FILE     : string := "";     -- "../tb/maintenance_tb/mix_map_file.csv";
+    GC_GENERAL_REQ_FILE : string := "";
+    GC_GENERAL_MAP_FILE : string := ""
   );
 end entity spec_cov_tb;
 
@@ -69,61 +69,94 @@ begin
       --
       log(ID_LOG_HDR, "Testing initialize_req_cov() with no requirement file.", C_SCOPE);
       -- Run testcase
-      initialize_req_cov("TC_1", "pc_1.csv");
+      initialize_req_cov("TC_NO_REQ_FILE", "pc_no_req_file.csv");
       tick_off_req_cov("REQ_1");
       -- End testcase
       finalize_req_cov(VOID);
 
-    elsif GC_TESTCASE = "test_init_with_requirement_file" then
+    elsif GC_TESTCASE = "general_tests" then
       --
-      -- This test will test initialize_req_cov() with a requirement input file
+      -- This test will test a series of different requirement types and scenarios based on
+      -- general_req_file.csv and general_map_file.csv
       --
-      log(ID_LOG_HDR, "Testing initialize_req_cov() with a requirement file.", C_SCOPE);
+      log(ID_LOG_HDR, "Testing various scenarios.", C_SCOPE);
 
-      if GC_REQ_FILE = "" then
+      if GC_GENERAL_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
-        -- Run testcase
-        initialize_req_cov("TC_2", GC_REQ_FILE, "pc_2.csv");
-        tick_off_req_cov("REQ_2");
-        -- End testcase      
-        finalize_req_cov(VOID);
-      end if;
+        --------------
+        -- Run TC_1
+        --------------
+        initialize_req_cov("TC_1", GC_GENERAL_REQ_FILE, "pc_tc_1.csv", GC_GENERAL_MAP_FILE);
+        tick_off_req_cov("REQ_NO_TCS");
+        tick_off_req_cov("REQ_ANDOR_COMPLIANT");
+        tick_off_req_cov("REQ_ANDOR_NONCOMPLIANT");
+        tick_off_req_cov("REQ_EXTRA_TICKOFFS");
+        tick_off_req_cov("REQ_WRONG_TC");
+        tick_off_req_cov("REQ_SUB_1");
+        tick_off_req_cov("REQ_SUB_ANDOR");
 
-    elsif GC_TESTCASE = "test_log_listed_and_not_listed_requirements" then
-      --
-      -- This test will test tick_off_req_cov() with listed and not listed requirements.
-      --
-      log(ID_LOG_HDR, "Testing tick_off_req_cov() with default testcase, unknown testcase and unknown requirement label.", C_SCOPE);
+        -- Tick off with explicit fail
+        tick_off_req_cov("REQ_TICKOFF_FAIL", FAIL);
 
-      if GC_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_3", GC_REQ_FILE, "pc_3.csv");
-        -- 1: testing default testcase
-        tick_off_req_cov("REQ_3");
-        -- 2: testing unknown requirement
-        -- Increment expected alerts so test will pass with missing requirement
+        -- Tick off compound requirement. Expect warning
         increment_expected_alerts(TB_WARNING, 1);
-        tick_off_req_cov("REQ_99", NA, "logging unknown requirement."); --, C_SCOPE);
+        tick_off_req_cov("REQ_COMPOUND_TICKOFF");
+
+        -- Tick off unlisted requirement. Expect warning
+        increment_expected_alerts(TB_WARNING, 1);
+        tick_off_req_cov("REQ_UNLISTED_PASS", NA, "Tick off unlisted requirement");
+
+        -- Tick off requirements with same name as existing req +/- one character
+        increment_expected_alerts(TB_WARNING, 2);
+        log(ID_SEQUENCER, "Tick of requirement name part of non-existing requirement name, expecting raised alert.", C_SCOPE);
+        tick_off_req_cov("REQ_BASIC2");
+        log(ID_SEQUENCER, "Tick of with only part of requirement name, expecting raised alert.", C_SCOPE);
+        tick_off_req_cov("REQ_BASI");
+        log(ID_SEQUENCER, "Tick of with correct requirement name.", C_SCOPE);
+        tick_off_req_cov("REQ_BASIC", PASS);
+
         -- End testcase
         finalize_req_cov(VOID);
-      end if;
 
-    elsif GC_TESTCASE = "test_log_testcase_pass_and_fail" then
-      --
-      -- This test will test tick_off_req_cov() with default (NA, i.e. PASS) and explicit FAIL.
-      --
-      log(ID_LOG_HDR, "Testing tick_off_req_cov() with no test_status (i.e. PASS) and test_status=FAIL.", C_SCOPE);
-      if GC_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_4", GC_REQ_FILE, "pc_4.csv");
-        tick_off_req_cov("REQ_4", FAIL);
-        tick_off_req_cov("REQ_4", PASS);
-        -- End testcase
+        --------------
+        -- Run TC_2
+        --------------
+        initialize_req_cov("TC_2", GC_GENERAL_REQ_FILE, "pc_tc_2.csv", GC_GENERAL_MAP_FILE);
+        tick_off_req_cov("REQ_ANDOR_COMPLIANT");
+        tick_off_req_cov("REQ_ANDOR_MISSING_TC");
+        tick_off_req_cov("REQ_ANDOR_NONCOMPLIANT");
+        tick_off_req_cov("REQ_EXTRA_TICKOFFS");
+        tick_off_req_cov("REQ_SUB_2");
+        tick_off_req_cov("REQ_SUB_ANDOR");
+        finalize_req_cov(VOID);
+
+        --------------
+        -- Run TC_3
+        --------------
+
+        initialize_req_cov("TC_3", GC_GENERAL_REQ_FILE, "pc_tc_3.csv", GC_GENERAL_MAP_FILE);
+        tick_off_req_cov("REQ_ANDOR_COMPLIANT");
+        tick_off_req_cov("REQ_EXTRA_TICKOFFS");
+        tick_off_req_cov("REQ_SUB_ANDOR");
+        finalize_req_cov(VOID);
+
+        --------------
+        -- Run TC_FAIL
+        --------------
+
+        initialize_req_cov("TC_FAIL", GC_GENERAL_REQ_FILE, "pc_tc_fail.csv", GC_GENERAL_MAP_FILE);
+        tick_off_req_cov("REQ_ANDOR_NONCOMPLIANT");
+        tick_off_req_cov("REQ_NONCOMPLIANT");
+
+        increment_expected_alerts(TB_WARNING, 1);
+        tick_off_req_cov("REQ_UNLISTED_FAIL", NA, "Tick of unlisted requirement");
+
+
+        log(ID_SEQUENCER, "\nProvoking a TB_ERROR to stop simulations.");
+        -- Provoking tb_error to make testcase fail and simulation abort
+        provoke_uvvm_status_error(TB_ERROR);
+
         finalize_req_cov(VOID);
       end if;
 
@@ -132,15 +165,15 @@ begin
       -- This test will test Spec Cov with an UVVM status error set prior to testcase.
       --
       log(ID_LOG_HDR, "Testing tick_off_req_cov() with UVVM status error triggered prior to initialize_req_cov().", C_SCOPE);
-      if GC_REQ_FILE = "" then
+      if GC_TB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Provoking tb_error and incrementing alert stop limit
         set_alert_stop_limit(TB_ERROR, 2);
         provoke_uvvm_status_error(TB_ERROR);
         -- Run testcase
-        initialize_req_cov("TC_5", GC_REQ_FILE, "pc_5.csv");
-        tick_off_req_cov("REQ_5");
+        initialize_req_cov("TC_ERROR_BEFORE_TC", GC_TB_REQ_FILE, "pc_error_before_tc.csv");
+        tick_off_req_cov("REQ_ERROR_BEFORE_TC");
         -- End testcase
         finalize_req_cov(VOID);
         -- Increment expected alerts so test will pass with provoked UVVM TB_ERROR
@@ -152,12 +185,12 @@ begin
       -- This test will test Spec Cov with an UVVM status error set during testcase.
       --
       log(ID_LOG_HDR, "Testing tick_off_req_cov() with UVVM status error triggered after tick_off_req_cov() and prior to finalize_req_cov().", C_SCOPE);
-      if GC_REQ_FILE = "" then
+      if GC_TB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_6", GC_REQ_FILE, "pc_6.csv");
-        tick_off_req_cov("REQ_6", PASS);
+        initialize_req_cov("TC_ERROR_DURING_TC", GC_TB_REQ_FILE, "pc_error_during_tc.csv");
+        tick_off_req_cov("REQ_ERROR_DURING_TC", PASS);
         -- Provoking tb_error and incrementing alert stop limit
         set_alert_stop_limit(TB_ERROR, 2);
         provoke_uvvm_status_error(TB_ERROR);
@@ -174,113 +207,72 @@ begin
       log(ID_LOG_HDR, "Testing initialize_req_cov() with non-existing requirement file.", C_SCOPE);
       increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
       -- Run testcase
-      initialize_req_cov("TC_7", "../tb/maintenance_tb/non_existing_req_file.csv", "pc_7.csv");
+      initialize_req_cov("TC_NONEXISTING_REQ_FILE", "../tb/maintenance_tb/non_existing_req_file.csv", "pc_nonexisting_req_file.csv");
       -- End testcase
       finalize_req_cov(VOID);
-
-    elsif GC_TESTCASE = "test_requirement_name_match" then
-      --
-      -- This test check if partial requirement names, and that don't exist, will trigger an alert.
-      --
-      log(ID_LOG_HDR, "Testing requirement name matching.", C_SCOPE);
-
-      if GC_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        increment_expected_alerts(TB_WARNING, 2);
-        -- Run testcase
-        initialize_req_cov("TC_8", GC_REQ_FILE, "pc_12.csv");
-
-        log(ID_SEQUENCER, "Tick of with only part of requirement name, expecting raised alert.", C_SCOPE);
-        tick_off_req_cov("REQ_8");
-
-        log(ID_SEQUENCER, "Tick of requirement name part of non-existing requirement name, expecting raised alert.", C_SCOPE);
-        tick_off_req_cov("REQ_888");
-
-        log(ID_SEQUENCER, "Tick of with correct requirement name.", C_SCOPE);
-        tick_off_req_cov("REQ_88");
-
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
 
     elsif GC_TESTCASE = "test_list_single_tick_off" then
       --
       -- This test create Partial coverage file with the LIST_SINGLE_TICKOFF parameter
       --
       log(ID_LOG_HDR, "Testing single tick off.", C_SCOPE);
-      if GC_REQ_FILE = "" then
+      if GC_TB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_9", GC_REQ_FILE, "pc_13.csv");
+        initialize_req_cov("TC_LIST_SINGLE_TICKOFF", GC_TB_REQ_FILE, "pc_list_single_tickoff.csv");
 
         for tick_off_idx in 1 to 5 loop
-          tick_off_req_cov("REQ_9", PASS, "tick_off_req_cov() run #" & to_string(tick_off_idx) & ".", LIST_SINGLE_TICKOFF, C_SCOPE);
+          tick_off_req_cov("REQ_LIST_SINGLE_TICKOFF", PASS, "tick_off_req_cov() run #" & to_string(tick_off_idx) & ".", LIST_SINGLE_TICKOFF, C_SCOPE);
         end loop;
+
+        -- Tick off with LIST_SINGLE_TICKOFF, pass then fail
+        for tick_off_idx in 1 to 5 loop
+            tick_off_req_cov("REQ_LIST_SINGLE_TICKOFF_PF", PASS, "tick_off_req_cov() run #" & to_string(tick_off_idx) & ".", LIST_SINGLE_TICKOFF, C_SCOPE);
+        end loop;
+
+        tick_off_req_cov("REQ_LIST_SINGLE_TICKOFF_PF", FAIL, "tick_off_req_cov() TC failed.", LIST_SINGLE_TICKOFF, C_SCOPE);
 
         -- End testcase
         finalize_req_cov(VOID);
       end if;
 
-    elsif GC_TESTCASE = "test_list_single_tick_off_pass_then_fail" then
-      --
-      -- This test create Partial coverage file with the LIST_SINGLE_TICKOFF parameter as PASS,
-      -- followed by LIST_SINGLE_TICK_OFF parameter as FAIL.
-      --
-      log(ID_LOG_HDR, "Testing single tick off.", C_SCOPE);
-      if GC_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_10", GC_REQ_FILE, "pc_14.csv");
-
-        for tick_off_idx in 1 to 5 loop
-          tick_off_req_cov("REQ_10", PASS, "tick_off_req_cov() run #" & to_string(tick_off_idx) & ".", LIST_SINGLE_TICKOFF, C_SCOPE);
-        end loop;
-
-        tick_off_req_cov("REQ_10", FAIL, "tick_off_req_cov() TC failed.", LIST_SINGLE_TICKOFF, C_SCOPE);
-
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
-
-    elsif GC_TESTCASE = "test_list_tick_off_disable" then
+    elsif GC_TESTCASE = "test_cond_tick_off" then
       --
       -- This test ........
       --
-      log(ID_LOG_HDR, "Testing disabled and enabled tick_off().", C_SCOPE);
-      if GC_REQ_FILE = "" then
+      log(ID_LOG_HDR, "Testing disabled and enabled cond_tick_off().", C_SCOPE);
+      if GC_TB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         -- Run testcase
-        initialize_req_cov("TC_10", GC_REQ_FILE, "pc_15.csv");
+        initialize_req_cov("TC_COND_TICKOFF", GC_TB_REQ_FILE, "pc_cond_tickoff.csv");
 
-        log(ID_SEQUENCER, "Call disable_cond_tick_off_req_cov(REQ_10) and expect warning for second call.", C_SCOPE);
+        log(ID_SEQUENCER, "Call disable_cond_tick_off_req_cov(REQ_COND_TICKOFF) and expect warning for second call.", C_SCOPE);
         increment_expected_alerts(TB_WARNING, 1);
-        disable_cond_tick_off_req_cov("REQ_10");
-        disable_cond_tick_off_req_cov("REQ_10"); -- expect tb_warning for this call
+        disable_cond_tick_off_req_cov("REQ_COND_TICKOFF");
+        disable_cond_tick_off_req_cov("REQ_COND_TICKOFF"); -- expect tb_warning for this call
 
-        log(ID_SEQUENCER, "Call cond_tick_off_req_cov(REQ_10) expecting no tick off.", C_SCOPE);
+        log(ID_SEQUENCER, "Call cond_tick_off_req_cov(REQ_COND_TICKOFF) expecting no tick off.", C_SCOPE);
         for tick_off_idx in 1 to 5 loop
           -- expecting no tick off
-          cond_tick_off_req_cov("REQ_10", PASS, "cond_tick_off_req_cov() run #" & to_string(tick_off_idx) & ", with conditional disabled REQ_10 tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
+          cond_tick_off_req_cov("REQ_COND_TICKOFF", PASS, "cond_tick_off_req_cov() run #" & to_string(tick_off_idx) & ", with conditional disabled REQ_COND_TICKOFF tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
         end loop;
 
-        log(ID_SEQUENCER, "Call tick_off_req_cov(REQ_10) expecting tick off.", C_SCOPE);
+        log(ID_SEQUENCER, "Call tick_off_req_cov(REQ_COND_TICKOFF) expecting tick off.", C_SCOPE);
         -- expecting tick off
-        tick_off_req_cov("REQ_10", PASS, "tick_off_req_cov(), with conditional disabled REQ_10 tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
+        tick_off_req_cov("REQ_COND_TICKOFF", PASS, "tick_off_req_cov(), with conditional disabled REQ_TICKOFF tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
 
-        log(ID_SEQUENCER, "Call cond_tick_off_req_cov(REQ_9) expecting tick off.", C_SCOPE);
+        log(ID_SEQUENCER, "Call cond_tick_off_req_cov(REQ_ALWAYS_TICKOFF) expecting tick off.", C_SCOPE);
         -- expecting tick off
-        cond_tick_off_req_cov("REQ_9", PASS, "cond_tick_off_req_cov(), with no conditional disabled REQ_9 tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
+        cond_tick_off_req_cov("REQ_ALWAYS_TICKOFF", PASS, "cond_tick_off_req_cov(), with no conditional disabled REQ_ALWAYS_TICKOFF tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
 
-        log(ID_SEQUENCER, "Call enable_cond_tick_off_req_cov(REQ_10).", C_SCOPE);
-        enable_cond_tick_off_req_cov("REQ_10");
+        log(ID_SEQUENCER, "Call enable_cond_tick_off_req_cov(REQ_COND_TICKOFF).", C_SCOPE);
+        enable_cond_tick_off_req_cov("REQ_COND_TICKOFF");
 
-        log(ID_SEQUENCER, "Call cond_tick_off_req_cov(REQ_10) expecting tick off.", C_SCOPE);
+        log(ID_SEQUENCER, "Call cond_tick_off_req_cov(REQ_COND_TICKOFF) expecting tick off.", C_SCOPE);
         -- expecting tick off
-        cond_tick_off_req_cov("REQ_10", PASS, "tick_off_req_cov(), with conditional disabled REQ_10 tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
+        cond_tick_off_req_cov("REQ_COND_TICKOFF", PASS, "tick_off_req_cov(), with conditional disabled REQ_COND_TICKOFF tick off.", LIST_EVERY_TICKOFF, C_SCOPE);
 
         -- End testcase
         finalize_req_cov(VOID);
@@ -297,7 +289,7 @@ begin
       else
         increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
         -- Run testcase
-        initialize_req_cov("TC_11", GC_REQ_FILE_EMPTY, "pc_20.csv");
+        initialize_req_cov("TC_EMPTY_REQ_FILE", GC_REQ_FILE_EMPTY, "pc_empty_req_file.csv");
         -- End testcase
         finalize_req_cov(VOID);
       end if;
@@ -308,12 +300,12 @@ begin
       --
       log(ID_LOG_HDR, "Testing initialize_req_cov() with non-existing partial coverage directory.", C_SCOPE);
 
-      if GC_REQ_FILE = "" then
+      if GC_TB_REQ_FILE = "" then
         alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
       else
         increment_expected_alerts_and_stop_limit(TB_ERROR, 1);
         -- Run testcase
-        initialize_req_cov("TC_12", GC_REQ_FILE, "/missing_dir/pc_21.csv");
+        initialize_req_cov("TC_NONEXISTING_PC_DIR", GC_TB_REQ_FILE, "/missing_dir/pc_missing_dir.csv");
         -- End testcase
         finalize_req_cov(VOID);
       end if;
@@ -324,201 +316,39 @@ begin
     -- processing script, and will not explicitly test the spec_cov_pkg.
     --
     ---==========================================================================
-    elsif GC_TESTCASE = "test_sub_requirement_pass" then
-      --
-      -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
-      --
-      log(ID_LOG_HDR, "Testing passing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);
-      if GC_SUB_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_1", GC_SUB_REQ_FILE, "pc_8.csv");
-        tick_off_req_cov("REQ_1A", NA);
-        tick_off_req_cov("REQ_1B", NA, "testing REQ_1B without scope");
-        tick_off_req_cov("REQ_2A", PASS, "testing REQ_2A with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("REQ_2B", PASS, "testing REQ_2B with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
 
-    elsif GC_TESTCASE = "test_sub_requirement_fail" then
-      --
-      -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
-      --
-      log(ID_LOG_HDR, "Testing failing sub-requirement with test_status=NA, msg and SCOPE.", C_SCOPE);
-      if GC_SUB_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_1", GC_SUB_REQ_FILE, "pc_9.csv");
-        tick_off_req_cov("REQ_1A", NA);
-        tick_off_req_cov("REQ_1B", NA, "testing REQ_1B without scope");
-        tick_off_req_cov("REQ_2A", FAIL, "testing REQ_2A with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("REQ_2B", PASS, "testing REQ_2B with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
-
-    elsif GC_TESTCASE = "test_sub_requirement_incomplete" then
-      --
-      -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
-      --
-      log(ID_LOG_HDR, "Testing incomplete sub-requirement tick off.", C_SCOPE);
-      if GC_UART_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_SUB_REQ", GC_UART_REQ_FILE, "pc_19.csv");
-        tick_off_req_cov("UART_REQ_BR_A", PASS, "testing UART_REQ_BR_A with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-
-        log(ID_SEQUENCER, "Not ticking off UART_REQ_BR_B.", C_SCOPE);
-        --tick_off_req_cov("UART_REQ_BR_B", PASS, "testing UART_REQ_BR_B with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-
-        tick_off_req_cov("UART_REQ_ODD", PASS, "testing UART_REQ_ODD with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_EVEN", PASS, "testing UART_REQ_EVEN with scope", LIST_EVERY_TICKOFF, C_SCOPE);
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
-
-    elsif GC_TESTCASE = "test_sub_requirement_omitted" then
-      --
-      -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
-      --
-      log(ID_LOG_HDR, "Testing req file with out-commented sub-requirement: UART_REQ_OMIT.", C_SCOPE);
-      if GC_UART_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_UART_REQ_FILE, "pc_16.csv");
-        tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_EVEN", PASS, "ticking off UART_REQ_EVEN", LIST_EVERY_TICKOFF, C_SCOPE);
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
-
-    elsif GC_TESTCASE = "test_sub_requirement_omitted_check_pass" then
-      --
-      -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
-      --
-      log(ID_LOG_HDR, "Testing out-commented sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
-      if GC_UART_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_UART_REQ_FILE, "pc_17.csv");
-        tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_EVEN", PASS, "ticking off UART_REQ_EVEN", LIST_EVERY_TICKOFF, C_SCOPE);
-
-        -- Expecting 1 TB_WARNING for omitted requirement UART_REQ_OMIT in this testcase
-        increment_expected_alerts(TB_WARNING, 1);
-        tick_off_req_cov("UART_REQ_OMIT", PASS, "ticking off UART_REQ_OMIT", LIST_EVERY_TICKOFF, C_SCOPE);
-        
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
-
-    elsif GC_TESTCASE = "test_sub_requirement_omitted_check_fail" then
-      --
-      -- This test will run requirements for testing sub-requirement processing with run_spec_cov.py
-      --
-      log(ID_LOG_HDR, "Testing out-commented sub-requirement checked: UART_REQ_OMIT.", C_SCOPE);
-      if GC_UART_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_SUB_REQ_OMIT", GC_UART_REQ_FILE, "pc_18.csv");
-        tick_off_req_cov("UART_REQ_BR_A", PASS, "ticking off UART_REQ_BR_A", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_BR_B", PASS, "ticking off UART_REQ_BR_B", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_ODD", PASS, "ticking off UART_REQ_ODD", LIST_EVERY_TICKOFF, C_SCOPE);
-        tick_off_req_cov("UART_REQ_EVEN", PASS, "ticking off UART_REQ_EVEN", LIST_EVERY_TICKOFF, C_SCOPE);
-        
-        -- Expecting 1 TB_WARNING for omitted requirement UART_REQ_OMIT in this testcase
-        increment_expected_alerts(TB_WARNING, 1);        
-        tick_off_req_cov("UART_REQ_OMIT", FAIL, "ticking off UART_REQ_OMIT", LIST_EVERY_TICKOFF, C_SCOPE);
-        
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
-
-    elsif GC_TESTCASE = "test_incomplete_testcase" then
-      --
-      -- This test will run requirements for testing incomplete testcase with run_spec_cov.py
-      --
-      log(ID_LOG_HDR, "Testing failing simulations with incomplete testcase.", C_SCOPE);
-      if GC_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_1", GC_REQ_FILE, "pc_10.csv");
-        tick_off_req_cov("REQ_1");
-        log(ID_SEQUENCER, "\nProvoking a TB_ERROR to stop simulations.", C_SCOPE);
-        -- Provoking tb_error to make testcase fail and simulation abort
-        provoke_uvvm_status_error(TB_ERROR);
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
-
-    elsif GC_TESTCASE = "test_testcase_with_multiple_reqs" then
-      --
-      -- This test will run requirements for testing incomplete testcase with run_spec_cov.py
-      --
-      log(ID_LOG_HDR, "Testing logging multiple requirements with one testcase.", C_SCOPE);
-      if GC_REQ_FILE = "" then
-        alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-      else
-        -- Run testcase
-        initialize_req_cov("TC_1", GC_REQ_FILE, "pc_11.csv");
-        tick_off_req_cov("REQ_1");
-        tick_off_req_cov("REQ_2");
-        tick_off_req_cov("REQ_3");
-        tick_off_req_cov("REQ_4");
-        -- End testcase
-        finalize_req_cov(VOID);
-      end if;
-
-    elsif GC_TESTCASE = "test_combined_and_or_listed_testcases" then
+    elsif GC_TESTCASE = "test_mix_listed_input_reqs" then
         --
-        -- This test will test requirements listed with a combination AND-listed and OR-listed testcases
+        -- This test will use req/map-files with a mix between the old and the new requirement listing formats.
         --
-        log(ID_LOG_HDR, "Testing combination of AND- and OR- listed testcases.", C_SCOPE);
-        if GC_COMBI_REQ_FILE = "" then
-          alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
-        else
-          -- Run testcase
-          initialize_req_cov("TC_1", GC_COMBI_REQ_FILE, "pc_combi.csv");
-          tick_off_req_cov("REQ_1");
-          tick_off_req_cov("REQ_2");
-          tick_off_req_cov("REQ_3");
-          tick_off_req_cov("REQ_4");
-          -- End testcase
-          finalize_req_cov(VOID);
-        end if;
-
-    elsif GC_TESTCASE = "test_strictness" then
-        --
-        -- This test will tick of requirements specified with the same TC, different TC and no TC
-        -- For post-processing with various strictness levels
-        --
-        log(ID_LOG_HDR, "Testing tickoff in various TCs, for strictness testing.", C_SCOPE);
-        if GC_REQ_FILE = "" then
+        log(ID_LOG_HDR, "Testing input with mixed requirement listing formats.", C_SCOPE);
+        if GC_MIX_REQ_FILE = "" then
             alert(TB_NOTE, "Missing requirement file for testcase " & GC_TESTCASE);
+        elsif GC_MIX_MAP_FILE = "" then
+            alert(TB_NOTE, "Missing map file for testcase " & GC_TESTCASE);
         else
             -- Run testcase
-            initialize_req_cov("TC_1", GC_REQ_FILE, "pc_20a.csv");
-            tick_off_req_cov("REQ_1");  -- TC_1 specified -> Correct TC
-            tick_off_req_cov("REQ_2");  -- TC_2 specified -> Wrong TC
-            tick_off_req_cov("REQ_3");  -- TC_3 specified -> Wrong TC
+            initialize_req_cov("TC_1", GC_MIX_REQ_FILE, "pc_mixed_format_a.csv", GC_MIX_MAP_FILE);
+            -- Expecting 1 TB_WARNING for compound requirement tickoff
+            increment_expected_alerts(TB_WARNING, 1);    
+            tick_off_req_cov("REQ_1"); -- Compound requirement tickoff. Expect alert. 
+            tick_off_req_cov("REQ_1A");
+            tick_off_req_cov("REQ_1B"); -- Wrong TC
+            tick_off_req_cov("REQ_2A");
+            tick_off_req_cov("REQ_2B");
+            tick_off_req_cov("REQ_3"); -- Wrong TC
+            tick_off_req_cov("REQ_4A");
+            tick_off_req_cov("REQ_4B");
+            tick_off_req_cov("REQ_5A", FAIL); -- Fail 5A
+            
             -- End testcase
             finalize_req_cov(VOID);
 
             -- Run different testcase
-            initialize_req_cov("TC_2", GC_REQ_FILE, "pc_20b.csv");
-            tick_off_req_cov("REQ_2"); -- TC_2 specified -> Correct TC
+            initialize_req_cov("TC_2", GC_MIX_REQ_FILE, "pc_mixed_format_b.csv", GC_MIX_MAP_FILE);
+            tick_off_req_cov("REQ_2A");
+            tick_off_req_cov("REQ_2B");
+
             -- End testcase
             finalize_req_cov(VOID);
         end if;

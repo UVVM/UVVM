@@ -1,0 +1,30 @@
+Requirement,Covering testcases(all),Compliance
+REQ_BASIC,TC_1,COMPLIANT
+REQ_NO_TCS,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_NO_TCS_NO_TICKOFFS,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_NO_TICKOFF_IN_TC,check *.req_non_compliance.csv,NOT_TESTED
+REQ_3_MISSING_TCS,check *.req_non_compliance.csv,NOT_TESTED
+REQ_ANDOR_COMPLIANT,TC_1,COMPLIANT
+REQ_ANDOR_COMPLIANT,TC_2 & TC_3,COMPLIANT
+REQ_ANDOR_MISSING_TC,check *.req_non_compliance.csv,NOT_TESTED
+REQ_ANDOR_NONCOMPLIANT,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_EXTRA_TICKOFFS,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_WRONG_TC,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_TICKOFF_FAIL,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_COMPOUND_BASIC,tested through sub-requirement(s),COMPLIANT
+REQ_COMPOUND_TICKOFF,tested through sub-requirement(s),NON_COMPLIANT
+REQ_COMPOUND_NONCOMPLIANT,tested through sub-requirement(s),NON_COMPLIANT
+REQ_COMPOUND_NOT_TESTED,tested through sub-requirement(s),NOT_TESTED
+REQ_COMPOUND_ANDOR,tested through sub-requirement(s),COMPLIANT
+
+
+Requirement,Sub-requirement,Covering testcases(all),Sub-req compliance
+REQ_COMPOUND_BASIC,REQ_SUB_1,TC_1,COMPLIANT
+REQ_COMPOUND_BASIC,REQ_SUB_2,TC_2,COMPLIANT
+REQ_COMPOUND_TICKOFF,REQ_NOT_TESTED,check *.req_non_compliance.csv,NOT_TESTED
+REQ_COMPOUND_NONCOMPLIANT,REQ_SUB_1,TC_1,COMPLIANT
+REQ_COMPOUND_NONCOMPLIANT,REQ_NONCOMPLIANT,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_COMPOUND_NOT_TESTED,REQ_NOT_TESTED,check *.req_non_compliance.csv,NOT_TESTED
+REQ_COMPOUND_ANDOR,REQ_SUB_1,TC_1,COMPLIANT
+REQ_COMPOUND_ANDOR,REQ_SUB_ANDOR,TC_1,COMPLIANT
+REQ_COMPOUND_ANDOR,REQ_SUB_ANDOR,TC_2 & TC_3,COMPLIANT

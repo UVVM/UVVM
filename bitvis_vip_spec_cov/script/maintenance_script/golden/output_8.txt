@@ -1,32 +1,40 @@
 
 Configuration:
 ----------------------------------------------
-requirement_list     : ../tb/maintenance_tb/sub_req_file.csv
-partial_cov          : ../sim/pc_8.csv
-requirement_map_list : ../tb/maintenance_tb/sub_req_map_file.csv
-spec_cov             : ../sim/sc_8_0.csv
+requirement_list     : ../tb/maintenance_tb/mix_req_file.csv
+partial_cov          : ../tb/maintenance_tb/pc_mix_files.txt
+requirement_map_list : ../tb/maintenance_tb/mix_map_file.csv
+spec_cov             : ../sim/sc_mix.csv
 clean                : None
-strictness           : 0
-config               : ../tb/maintenance_tb/cfg_1_strict_0.txt
+strictness           : 1
+config               : ../tb/maintenance_tb/cfg_mix_strict_1.txt
 
 
 SUMMARY:
 ----------------------------------------------
-Number of compliant requirements     : 6
-Number of non compliant requirements : 0
-Number of non verified requirements  : 0
+Number of compliant requirements     : 7
+Number of non compliant requirements : 2
+Number of non verified requirements  : 3
 Number of not listed requirements    : 0
-Number of passing testcases : 1
+Number of passing testcases : 2
 Number of failing testcases : 0
-Number of not run testcases : 1
+Number of not run testcases : 2
 
 
 Compliant requirement(s) :
-REQ_1A, REQ_1B, REQ_2A, REQ_2B, REQ_1, REQ_2, 
+REQ_2A, REQ_2B, REQ_4, REQ_1A, REQ_4A, REQ_4B, REQ_2, 
+
+Non compliant requirement(s) :
+REQ_5, REQ_5A, 
+
+Not verified requirement(s) :
+REQ_1, REQ_3, REQ_1B, 
 
 Passing testcase(s) :
-TC_1, 
+TC_1, TC_2, 
 
 Not run testcase(s) :
-TC_2, 
+TC_3, TC_1B, 
 
+Potential problems found. Please see ../sim/sc_mix.warnings.csv.
+Non-compliant or not verified requirements found. Please see ../sim/sc_mix.req_non_compliance.csv for details.

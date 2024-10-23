@@ -1,32 +1,46 @@
 
 Configuration:
 ----------------------------------------------
-requirement_list     : None
-partial_cov          : ../sim/pc_1.csv
-requirement_map_list : None
-spec_cov             : ../sim/sc_1.csv
+requirement_list     : ../tb/maintenance_tb/general_req_file.csv
+partial_cov          : ../tb/maintenance_tb/general_pc_list.txt
+requirement_map_list : ../tb/maintenance_tb/general_map_file.csv
+spec_cov             : ../sim/sc_general_strict0.csv
 clean                : None
 strictness           : 0
-config               : None
+config               : ../tb/maintenance_tb/cfg_general_strict_0.txt
 
 
 SUMMARY:
 ----------------------------------------------
-Number of compliant requirements     : 1
-Number of non compliant requirements : 0
-Number of non verified requirements  : 0
-Number of not listed requirements    : 1
-Number of passing testcases : 1
-Number of failing testcases : 0
-Number of not run testcases : 0
+Number of compliant requirements     : 11
+Number of non compliant requirements : 4
+Number of non verified requirements  : 6
+Number of not listed requirements    : 4
+Number of passing testcases : 3
+Number of failing testcases : 1
+Number of not run testcases : 1
 
 
 Compliant requirement(s) :
-REQ_1, 
+REQ_BASIC, REQ_NO_TCS, REQ_ANDOR_COMPLIANT, REQ_ANDOR_MISSING_TC, REQ_EXTRA_TICKOFFS, REQ_WRONG_TC, REQ_COMPOUND_BASIC, REQ_COMPOUND_ANDOR, REQ_SUB_1, REQ_SUB_ANDOR, REQ_SUB_2, 
+
+Non compliant requirement(s) :
+REQ_ANDOR_NONCOMPLIANT, REQ_TICKOFF_FAIL, REQ_COMPOUND_NONCOMPLIANT, REQ_NONCOMPLIANT, 
+
+Not verified requirement(s) :
+REQ_NO_TCS_NO_TICKOFFS, REQ_NO_TICKOFF_IN_TC, REQ_3_MISSING_TCS, REQ_COMPOUND_TICKOFF, REQ_COMPOUND_NOT_TESTED, REQ_NOT_TESTED, 
 
 Not listed requirement(s) :
-REQ_1, 
+REQ_UNLISTED_PASS, REQ_BASIC2, REQ_BASI, REQ_UNLISTED_FAIL, 
 
 Passing testcase(s) :
-TC_1, 
+TC_1, TC_2, TC_3, 
 
+Failing testcase(s) :
+TC_FAIL, 
+
+Not run testcase(s) :
+TC_NOT_RUN, 
+
+Potential problems found. Please see ../sim/sc_general_strict0.warnings.csv.
+Non-compliant or not verified requirements found. Please see ../sim/sc_general_strict0.req_non_compliance.csv for details.

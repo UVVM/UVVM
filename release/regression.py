@@ -1,8 +1,3 @@
-#
-# UVVM regression runner script
-# Written by Marius Elvegård, Inventas AS
-#
-
 import os
 import subprocess
 import glob
@@ -39,7 +34,16 @@ def find_and_run_tests(base_dir="..", script_args=[], python_exec="Python3"):
 
         sim_dir = os.path.relpath(sim_dir_relative_path, start=original_cwd)
 
-        module_name = test_script.split(os.sep)[3].upper()
+        # Get module name relative to base_dir
+        module_name = os.path.relpath(test_script, base_dir).split(os.sep)[0]
+
+        # Determine the part name
+        if module_name.startswith('bitvis_vip'):
+            part_name = 'bitvis_vip'
+        elif module_name in ['uvvm_util', 'uvvm_vvc_framework']:
+            part_name = module_name
+        else:
+            part_name = 'others'
 
         if not os.path.exists(sim_dir):
             print("Creating missing sim directory: {}".format(sim_dir))
@@ -50,18 +54,25 @@ def find_and_run_tests(base_dir="..", script_args=[], python_exec="Python3"):
         try:
             return_code = subprocess.run([python_exec, os.path.relpath(test_script, start=sim_dir)] + script_args, cwd=sim_dir).returncode
 
-            results_dict[module_name] = return_code
+            # Store results per module and per part
+            if part_name not in results_dict:
+                results_dict[part_name] = {}
+            results_dict[part_name][module_name] = return_code
 
             if return_code != 0:
                 non_zero_exit_codes += 1
                 print("\n\n===>> WARNING!! Script {} exited with error code {}".format(test_script, return_code), file=sys.stderr)
 
         except subprocess.CalledProcessError as e:
-            results_dict[module_name] = "Error"
+            if part_name not in results_dict:
+                results_dict[part_name] = {}
+            results_dict[part_name][module_name] = "Error"
             non_zero_exit_codes += 1  # Increment for timeout as well
-            print("\n\n===>> WARNING!! Error executing {} (Module: {}): {e}".format(test_script, module_name, e), file=sys.stderr)
+            print("\n\n===>> WARNING!! Error executing {} (Module: {}): {}".format(test_script, module_name, e), file=sys.stderr)
         except Exception as e:
-            results_dict[module_name] = "Exception"
+            if part_name not in results_dict:
+                results_dict[part_name] = {}
+            results_dict[part_name][module_name] = "Exception"
             non_zero_exit_codes += 1  # Increment for any other exceptions
             print("\n\n===>> WARNING!! Error executing {}: {}".format(test_script, e))
 
@@ -74,6 +85,12 @@ def find_and_run_tests(base_dir="..", script_args=[], python_exec="Python3"):
 
     print("\nSummary of test execution results:")
     print(json.dumps(results_dict, indent=4))
+
+    print("\nModules with errors:")
+    for part, modules in results_dict.items():
+        for module, return_code in modules.items():
+            if return_code != 0:
+                print(f"Part: {part}, Module: {module}, Error Code: {return_code}")
 
 
 if __name__ == "__main__":

@@ -104,12 +104,12 @@ hr.add_files("../../tb/maintenance_tb/*.vhd", "bitvis_vip_spec_cov")
 hr.add_generics(
     entity="spec_cov_tb",
     generics=[
-        "GC_REQ_FILE", ("../../tb/maintenance_tb/req_file.csv", "PATH"),
+        "GC_TB_REQ_FILE", ("../../tb/maintenance_tb/tb_tests_req_file.csv", "PATH"),
         "GC_REQ_FILE_EMPTY", ("../../tb/maintenance_tb/req_file_empty.csv", "PATH"),
-        "GC_SUB_REQ_FILE", ("../../tb/maintenance_tb/sub_req_file.csv", "PATH"),
-        "GC_UART_REQ_FILE", ("../../tb/maintenance_tb/uart_req_file.csv", "PATH"),
-        "GC_COMBI_REQ_FILE", ("../../tb/maintenance_tb/combi_req_file.csv", "PATH"),
-        "GC_REQ_OMIT_MAP", ("../../tb/maintenance_tb/sub_req_omit_map_file.csv", "PATH"),
+        "GC_MIX_REQ_FILE", ("../../tb/maintenance_tb/mix_req_File.csv", "PATH"),
+        "GC_MIX_MAP_FILE", ("../../tb/maintenance_tb/mix_map_file.csv", "PATH"),
+        "GC_GENERAL_REQ_FILE", ("../../tb/maintenance_tb/general_req_file.csv", "PATH"),
+        "GC_GENERAL_MAP_FILE", ("../../tb/maintenance_tb/general_map_file.csv", "PATH"),
     ],
 )
 

@@ -1,4 +1,0 @@
--r ../tb/maintenance_tb/req_file.csv 
--p ../tb/maintenance_tb/pc_20_files.txt
--s ../sim/sc_20_0.csv
---strictness 0

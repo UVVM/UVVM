@@ -1,0 +1,16 @@
+Requirement,Covering testcases(all),Compliance
+REQ_1,tested through sub-requirement(s),NOT_TESTED
+REQ_3,check *.req_non_compliance.csv,NOT_TESTED
+REQ_4,tested through sub-requirement(s),COMPLIANT
+REQ_5,tested through sub-requirement(s),NON_COMPLIANT
+REQ_2,tested through sub-requirement(s),COMPLIANT
+
+
+Requirement,Sub-requirement,Covering testcases(all),Sub-req compliance
+REQ_1,REQ_1A,TC_1,COMPLIANT
+REQ_1,REQ_1B,check *.req_non_compliance.csv,NOT_TESTED
+REQ_4,REQ_4A,TC_1,COMPLIANT
+REQ_4,REQ_4B,TC_1,COMPLIANT
+REQ_5,REQ_5A,check *.req_non_compliance.csv,NON_COMPLIANT
+REQ_2,REQ_2A,TC_1,COMPLIANT
+REQ_2,REQ_2B,TC_1,COMPLIANT

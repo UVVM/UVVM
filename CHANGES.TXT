@@ -9,6 +9,18 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2024.10.23
+--------------------
+Released: 2024-10-23
+ - Spec cov: New output formats. Support compound reqs in req list.
+ - Spec cov: Check that number of requirement lines is below max limit in VHDL package.
+
+
+v2 2024.10.08
+--------------------
+Released: 2024-10-08
+- Updated vvc_generator.py with fixes for runtime errors in the VVCs.
+
 
 v2 2024.10.08
 --------------------

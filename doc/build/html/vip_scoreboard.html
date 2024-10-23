@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitvis VIP Scoreboard &mdash; UVVM  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bitvis VIP Specification Coverage" href="vip_spec_cov.html" />
+    <link rel="prev" title="Bitvis VIP SBI" href="vip_sbi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_sbi.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Scoreboard</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simple-usage">Simple usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-methods">Basic methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#config">config()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enable">enable()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#disable">disable()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-expected">add_expected()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#check-received">check_received()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flush">flush()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reset">reset()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#is-empty">is_empty()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-entered-count">get_entered_count()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-pending-count">get_pending_count()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-match-count">get_match_count()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-mismatch-count">get_mismatch_count()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-drop-count">get_drop_count()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-initial-garbage-count">get_initial_garbage_count()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-delete-count">get_delete_count()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-scope">set_scope()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-scope">get_scope()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enable-log-msg">enable_log_msg()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#disable-log-msg">disable_log_msg()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#report-counters">report_counters()</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-methods">Advanced methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#insert-expected">insert_expected()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete-expected">delete_expected()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#find-expected-entry-num">find_expected_entry_num()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#find-expected-position">find_expected_position()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#peek-expected">peek_expected()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#peek-source">peek_source()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#peek-tag">peek_tag()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fetch-expected">fetch_expected()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fetch-source">fetch_source()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fetch-tag">fetch_tag()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exists">exists()</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-documentation">Additional Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#use-cases">Use-cases</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #F5F5F5" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Bitvis VIP Scoreboard</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/vip_scoreboard.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bitvis-vip-scoreboard">
+<span id="vip-scoreboard"></span><h1>Bitvis VIP Scoreboard<a class="headerlink" href="#bitvis-vip-scoreboard" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>All Scoreboard functions and procedures commonly referred to as methods are defined in the UVVM Scoreboard package, generic_sb_pkg.vhd</p>
+<p>The scoreboard can be used with a single instance or with multiple instances. An instance is a separate queue with its own statistics.
+When multiple instances are used, the methods are called with the instance parameter. When only using a single scoreboard instance,
+the instance parameter may be omitted if that instance index is 1. Multiple instances are typically used when multiple scoreboards
+with the same data types are needed. Note that scoreboard instance numbering is in the range of 0 to N, with 1 as default.</p>
+<p>All parameters in brackets are optional. No optional parameter can be used without using the preceding optional parameter, with the
+exception of the instance parameter.</p>
+<p>Each entry in the scoreboard instance consists of an expected element, source element and tag. Each entry also has an entry number,
+which is specific for each entry. The entry number is used as an identifier for a specific entry in some of the advanced methods.</p>
+<p>A message parameter can be used for print to transcript for all methods that affect the data or the functionality of the scoreboard.</p>
+</section>
+<section id="simple-usage">
+<h2>Simple usage<a class="headerlink" href="#simple-usage" title="Link to this heading"></a></h2>
+<p>In the predefined_sb.vhd file there is a slv and an integer predefined scoreboard, and setting up a scoreboard is fast and has only
+a few mandatory steps:</p>
+<ol class="arabic simple">
+<li><p>Declare the scoreboard package and the generics</p></li>
+<li><p>Define the scoreboard as a shared variable</p></li>
+<li><p>Set the configuration, scope and enable the scoreboard</p></li>
+<li><p>Start using the scoreboard</p></li>
+</ol>
+<p>Scoreboard declaration:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">package</span><span class="w"> </span><span class="n">slv_sb_pkg</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">bitvis_vip_scoreboard</span><span class="p">.</span><span class="n">generic_sb_pkg</span>
+<span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="p">(</span><span class="n">t_element</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="mi">7</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">            </span><span class="n">element_match</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">std_match</span><span class="p">,</span>
+<span class="w">            </span><span class="n">to_string_element</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">to_string</span><span class="p">,</span>
+<span class="w">            </span><span class="n">sb_config_default</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SLV_SB_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="k">use</span><span class="w"> </span><span class="nn">slv_sb_pkg.</span><span class="k">all</span><span class="p">;</span>
+<span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">slv_sb</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">slv_sb_pkg</span><span class="p">.</span><span class="n">t_generic_sb</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>In sequencer:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">bitvis_vip_scoreboard</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">bitvis_vip_scoreboard.generic_sb_support_pkg.</span><span class="k">all</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="n">C_SB_CONFIG_DEFAULT</span><span class="p">);</span><span class="w"> </span><span class="c1">-- initialize scoreboard</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span><span class="w">                </span><span class="c1">-- enable scoreboard</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">set_scope</span><span class="p">(</span><span class="s">&quot;SLV SB&quot;</span><span class="p">);</span><span class="w">         </span><span class="c1">-- set name of scoreboard</span>
+<span class="p">...</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">v_output</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking DUT output&quot;</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">check_value</span><span class="p">(</span><span class="n">slv_sb</span><span class="p">.</span><span class="n">is_empty</span><span class="p">(</span><span class="n">VOID</span><span class="p">),</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check that scoreboard is empty&quot;</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">slv_sb</span><span class="p">.</span><span class="n">report_counters</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>For more advanced examples see VHDL example code file.</p>
+</section>
+<section id="configuration-record">
+<span id="t-sb-config"></span><h2>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h2>
+<p><strong>t_sb_config</strong></p>
+<p>Default value for the record is C_SB_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mismatch_alert_level</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+<td><p>The severity level of alert if mismatch between
+expected and received</p></td>
+</tr>
+<tr class="row-odd"><td><p>allow_lossy</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>If TRUE, all entries are searched until a
+matching entry is found, all entries before the
+match are dropped. If no matching entry is found
+a mismatch is registered.</p></td>
+</tr>
+<tr class="row-even"><td><p>allow_out_of_order</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>If TRUE, all entries are searched until match.
+If no matching entry is found, a mismatch is
+registered</p></td>
+</tr>
+<tr class="row-odd"><td><p>overdue_check_alert_level</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+<td><p>The severity level of alert if the time between
+entry and check is more than limit</p></td>
+</tr>
+<tr class="row-even"><td><p>overdue_check_time_limit</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>The time limit of which the entries should be in
+scoreboard. 0 ns indicates no time limit.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ignore_initial_garbage</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>If TRUE, all mismatches before first match are
+ignored and increment the initial drop count.
+Typically used if garbage data is expected at
+start-up.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The configuration cannot be set with true for both allow_lossy and allow_out_of_order.</p></li>
+<li><p>This will raise a TB_ERROR when running the config method.</p></li>
+</ul>
+</div>
+</section>
+<section id="generics">
+<h2>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>N/A</p></td>
+<td><p>t_element</p></td>
+<td><p>N/A</p></td>
+<td><p>Type used for the scoreboard elements</p></td>
+</tr>
+<tr class="row-odd"><td><p>element_match</p></td>
+<td><p>function</p></td>
+<td><p>N/A</p></td>
+<td><p>Function for comparing two t_element values. For
+std_logic_vector one can use std_match.</p></td>
+</tr>
+<tr class="row-even"><td><p>to_string_element</p></td>
+<td><p>function</p></td>
+<td><p>N/A</p></td>
+<td><p>Function for printing the t_element value. If it
+is a VHDL type, one can use to_string, otherwise
+create a dedicated function.</p></td>
+</tr>
+<tr class="row-odd"><td><p>sb_config_default</p></td>
+<td><p><a class="reference internal" href="#t-sb-config"><span class="std std-ref">t_sb_config</span></a></p></td>
+<td><p>C_SB_CONFIG_DEFAULT</p></td>
+<td><p>Default configuration of the scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>1000</p></td>
+<td><p>Absolute maximum number of elements in the
+Scoreboard queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>950</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the scoreboard queue
+is almost full. The queue will still accept new
+commands until it reaches GC_QUEUE_COUNT_MAX.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="basic-methods">
+<h2>Basic methods<a class="headerlink" href="#basic-methods" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="config">
+<h3>config()<a class="headerlink" href="#config" title="Link to this heading"></a></h3>
+<p>This method updates the scoreboard instance with the configuration input. The method with sb_config parameter can be called with
+an instance parameter, and the sb_config is then applied to the specified instance. If there is no instance parameter, the config
+is applied to instance 1. If the parameter is an array, the config at index n is applied to instance n.
+This method uses the ID_CTRL message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">sb_config</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+<span class="n">config</span><span class="p">(</span><span class="n">sb_config_array</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>sb_config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-sb-config"><span class="std std-ref">t_sb_config</span></a></p></td>
+<td><p>Configuration of the scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>sb_config_array</p></td>
+<td><p>in</p></td>
+<td><p>t_sb_config_array</p></td>
+<td><p>Array of configurations for several instances of the
+scoreboard</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="n">C_UART_SB_CONFIG</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_SB_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Initialize config on instance 2&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="n">C_UART_SB_CONFIG_ARRAY</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Initialize config on instances 1-5&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="enable">
+<h3>enable()<a class="headerlink" href="#enable" title="Link to this heading"></a></h3>
+<p>Enables the specified instance and must be called before any other method is called, except config(). This method can be called
+with ALL_INSTANCES as parameter. If there is no instance parameter, instance 1 is enabled.
+This method uses the ID_CTRL message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">enable</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">enable</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enable instance 2&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enable all instances&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="disable">
+<h3>disable()<a class="headerlink" href="#disable" title="Link to this heading"></a></h3>
+<p>Disables the specified instance. This method can be called with ALL_INSTANCES as parameter. If there is no instance parameter,
+instance 1 is disabled.
+This method uses the ID_CTRL message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">disable</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">disable</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Disable instance 2&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Disable all instances&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="add-expected">
+<h3>add_expected()<a class="headerlink" href="#add-expected" title="Link to this heading"></a></h3>
+<p>Inserts expected element at the end of scoreboard. If there is no instance parameter, instance 1 is used.
+This method uses the ID_DATA message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">add_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">source</span><span class="p">]])</span>
+<span class="n">add_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">source</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>expected_element</p></td>
+<td><p>in</p></td>
+<td><p>t_element</p></td>
+<td><p>The element that shall be pushed to the queue</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>tag_usage</p></td>
+<td><p>in</p></td>
+<td><p>t_tag_usage</p></td>
+<td><p>Enumerated type used before every tag is entered. Only
+‘TAG’ can be used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>tag</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Tag of the scoreboard element</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>source</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>The element that is the raw-input to the DUT, before
+DUT-processing. For debugging and logging only.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Insert byte 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;A&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Insert byte 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;A&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="check-received">
+<h3>check_received()<a class="headerlink" href="#check-received" title="Link to this heading"></a></h3>
+<p>Checks received data against oldest element in the scoreboard. If the element is found, it is removed from the scoreboard and the
+matched-counter is incremented. If the element is not found, an alert is triggered and the mismatch-counter is incremented. If
+out-of-order is allowed, the scoreboard is searched from front to back. The mismatch-counter is incremented if no match is found.
+If lossy is allowed, the scoreboard is searched from front to back. If a match occurs, the match counter is incremented and the
+preceding entries dropped. If no match occurs, the mismatch counter is incremented. If there is no instance parameter, instance 1
+is used.
+This method uses the ID_DATA message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">check_received</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">received_element</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+<span class="n">check_received</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">received_element</span><span class="p">,</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>received_element</p></td>
+<td><p>in</p></td>
+<td><p>t_element</p></td>
+<td><p>The element that shall be checked in scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>tag_usage</p></td>
+<td><p>in</p></td>
+<td><p>t_tag_usage</p></td>
+<td><p>Enumerated type used before every tag is entered. Only
+‘TAG’ can be used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>tag</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Tag of the scoreboard element</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="n">v_received_byte</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">v_received_byte</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check byte1&quot;</span><span class="p">);</span><span class="w">                </span><span class="c1">-- Check received data against scoreboard elements in instance 2</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">check_received</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">v_received_byte</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check byte 1&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Check received data against scoreboard elements with the TAG &quot;byte1&quot; in instance 3</span>
+</pre></div>
+</div>
+</section>
+<section id="flush">
+<h3>flush()<a class="headerlink" href="#flush" title="Link to this heading"></a></h3>
+<p>Deletes all entries in the specified instance. Can also be called with parameter ALL_INSTANCES. If there is no instance parameter,
+instance 1 is used.
+This method uses the ID_DATA message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">flush</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">flush</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">flush</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">flush</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">flush</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Flushing all instances&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="reset">
+<h3>reset()<a class="headerlink" href="#reset" title="Link to this heading"></a></h3>
+<p>Deletes all entries and resets the statistics in the specified instance. Config is not affected. Can also be called with parameter
+ALL_INSTANCES. If there is no instance parameter, instance 1 is used.
+This method uses the ID_CTRL message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">reset</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">reset</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Resetting all instances&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="is-empty">
+<h3>is_empty()<a class="headerlink" href="#is-empty" title="Link to this heading"></a></h3>
+<p>Returns true if the scoreboard instance is empty. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">is_empty</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">is_empty</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="k">if</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">is_empty</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="p">...</span>
+</pre></div>
+</div>
+</section>
+<section id="get-entered-count">
+<h3>get_entered_count()<a class="headerlink" href="#get-entered-count" title="Link to this heading"></a></h3>
+<p>Returns the total number of entries that have been added or inserted into the scoreboard. If there is no instance parameter,
+instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_entered_count</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_entered_count</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_entered_count</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">get_entered_count</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get-pending-count">
+<h3>get_pending_count()<a class="headerlink" href="#get-pending-count" title="Link to this heading"></a></h3>
+<p>Returns the number of remaining entries in scoreboard. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_pending_count</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_pending_count</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_pending_count</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">get_pending_count</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get-match-count">
+<h3>get_match_count()<a class="headerlink" href="#get-match-count" title="Link to this heading"></a></h3>
+<p>Returns the number of checks with match in scoreboard. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_match_count</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_match_count</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_match_count</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">get_match_count</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get-mismatch-count">
+<h3>get_mismatch_count()<a class="headerlink" href="#get-mismatch-count" title="Link to this heading"></a></h3>
+<p>Returns the number of checks without match in scoreboard. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_mismatch_count</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_mismatch_count</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_mismatch_count</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">get_mismatch_count</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get-drop-count">
+<h3>get_drop_count()<a class="headerlink" href="#get-drop-count" title="Link to this heading"></a></h3>
+<p>Returns the number of dropped items during lossy mode. Initial drop count is not included. If there is no instance parameter,
+instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_drop_count</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_drop_count</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_drop_count</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">get_drop_count</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get-initial-garbage-count">
+<h3>get_initial_garbage_count()<a class="headerlink" href="#get-initial-garbage-count" title="Link to this heading"></a></h3>
+<p>Returns the number of dropped items before first match when ignore_initial_mismatch in config is TRUE. If there is no instance
+parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_initial_garbage_count</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_initial_garbage_count</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_initial_garbage_count</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">get_initial_garbage_count</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get-delete-count">
+<h3>get_delete_count()<a class="headerlink" href="#get-delete-count" title="Link to this heading"></a></h3>
+<p>Returns the number of explicitly deleted items by delete and flush methods. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_delete_count</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_delete_count</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_delete_count</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">get_delete_count</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="set-scope">
+<h3>set_scope()<a class="headerlink" href="#set-scope" title="Link to this heading"></a></h3>
+<p>Sets the scope of the scoreboard.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the logs/alerts of the
+scoreboard originate</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">set_scope</span><span class="p">(</span><span class="s">&quot;UART_SB&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="get-scope">
+<h3>get_scope()<a class="headerlink" href="#get-scope" title="Link to this heading"></a></h3>
+<p>Returns the scope of the scoreboard.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_scope</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_scope</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">get_scope</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="enable-log-msg">
+<h3>enable_log_msg()<a class="headerlink" href="#enable-log-msg" title="Link to this heading"></a></h3>
+<p>Enables the message id for the specified instance. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">enable_log_msg</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">msg_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID used in the log, defined in adaptations_pkg.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable_log_msg</span><span class="p">(</span><span class="n">ID_CTRL</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable_log_msg</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ID_DATA</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">enable_log_msg</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="n">ID_CTRL</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="disable-log-msg">
+<h3>disable_log_msg()<a class="headerlink" href="#disable-log-msg" title="Link to this heading"></a></h3>
+<p>Disables the message id for the specified instance. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">disable_log_msg</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">msg_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>Message ID used in the log, defined in adaptations_pkg.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable_log_msg</span><span class="p">(</span><span class="n">ID_CTRL</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable_log_msg</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ID_DATA</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">disable_log_msg</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">,</span><span class="w"> </span><span class="n">ID_CTRL</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="report-counters">
+<h3>report_counters()<a class="headerlink" href="#report-counters" title="Link to this heading"></a></h3>
+<p>Prints the scoreboard results. If there is no instance parameter, instance 1 is reported.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">report_counters</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">report_counters</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">report_counters</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">report_counters</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">report_counters</span><span class="p">(</span><span class="n">ALL_INSTANCES</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-methods">
+<h2>Advanced methods<a class="headerlink" href="#advanced-methods" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="insert-expected">
+<h3>insert_expected()<a class="headerlink" href="#insert-expected" title="Link to this heading"></a></h3>
+<p>Inserts an expected element into the scoreboard in the specified position or after the entry specified by the entry number, depending
+on whether the parameter identifier is POSITION or ENTRY_NUM respectively. If there is no instance parameter, instance 1 is used.
+This method uses the ID_DATA message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">insert_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">source</span><span class="p">]])</span>
+<span class="n">insert_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">source</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>identifier_option</p></td>
+<td><p>in</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>Option for type of identifier used. Can only be POSITION
+or ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>identifier</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Describes the position or entry number, depending on
+identifier_option</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>expected_element</p></td>
+<td><p>in</p></td>
+<td><p>t_element</p></td>
+<td><p>The element that shall be pushed to the queue</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>tag_usage</p></td>
+<td><p>in</p></td>
+<td><p>t_tag_usage</p></td>
+<td><p>Enumerated type used before every tag is entered. Only
+‘TAG’ can be used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>tag</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Tag of the scoreboard element</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>source</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>The element that is the raw-input to the DUT, before
+DUT-processing. For debugging and logging only.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">insert_expected</span><span class="p">(</span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">);</span><span class="w">                                           </span><span class="c1">-- Insert element with value x&quot;AA&quot; at position 5</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">insert_expected</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="mi">23</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Insert byte 4&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;A&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Insert element with value x&quot;AA&quot;, tag &quot;byte3&quot; and source element x&quot;A&quot; after element with entry number 23</span>
+</pre></div>
+</div>
+</section>
+<section id="delete-expected">
+<h3>delete_expected()<a class="headerlink" href="#delete-expected" title="Link to this heading"></a></h3>
+<p>Deletes the foremost matching entry from the scoreboard queue. When both tag and element parameters are specified, both have to
+match. If identifier parameter is used, the specified entry is deleted. Identifier can be used with range_option set as SINGLE,
+AND_HIGHER and AND_LOWER. A range between identifier_min and identifier_max can also be defined, entries between and including
+these values are deleted. A TB_ERROR alert is reported if identifier is not found. If there is no instance parameter, instance 1
+is used.
+This method uses the ID_DATA message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">delete_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span><span class="w">                                                                                                                                    </span><span class="o">*</span><span class="n">NOTE</span><span class="o">:</span><span class="w"> </span><span class="n">tag_usage</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">TAG</span>
+<span class="n">delete_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+<span class="n">delete_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+<span class="n">delete_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier_min</span><span class="p">,</span><span class="w"> </span><span class="n">identifier_max</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+<span class="n">delete_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">range_option</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>expected_element</p></td>
+<td><p>in</p></td>
+<td><p>t_element</p></td>
+<td><p>The element that shall be pushed to the queue</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>tag_usage</p></td>
+<td><p>in</p></td>
+<td><p>t_tag_usage</p></td>
+<td><p>Enumerated type used before every tag is entered. Only
+‘TAG’ can be used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>tag</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Tag of the scoreboard element</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>identifier_option</p></td>
+<td><p>in</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>Option for type of identifier used. Can only be POSITION
+or ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><div class="line-block">
+<div class="line">identifier,</div>
+<div class="line">identifier_min,</div>
+<div class="line">identifier_max</div>
+</div>
+</td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Describes the position or entry number, depending on
+identifier_option</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>range_option</p></td>
+<td><p>in</p></td>
+<td><p>t_range_option</p></td>
+<td><p>Enumerated type used to describe the range. Possible
+options: SINGLE, AND_HIGHER, AND_LOWER.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="n">v_received_data</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">);</span>
+<span class="n">uart_sb</span><span class="p">.</span><span class="n">delete_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">,</span><span class="w"> </span><span class="n">AND_LOWER</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Delete entry in specified position and positions lower&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="find-expected-entry-num">
+<h3>find_expected_entry_num()<a class="headerlink" href="#find-expected-entry-num" title="Link to this heading"></a></h3>
+<p>Returns the entry number of the element and/or tag specified, if nothing is found returns -1. The search parameter can be tag,
+element or both. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">find_expected_entry_num</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">find_expected_entry_num</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">find_expected_entry_num</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>expected_element</p></td>
+<td><p>in</p></td>
+<td><p>t_element</p></td>
+<td><p>The element that shall be pushed to the queue</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>tag_usage</p></td>
+<td><p>in</p></td>
+<td><p>t_tag_usage</p></td>
+<td><p>Enumerated type used before every tag is entered. Only
+‘TAG’ can be used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>tag</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Tag of the scoreboard element</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">);</span>
+<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
+<span class="n">v_entry_num</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_entry_num</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="find-expected-position">
+<h3>find_expected_position()<a class="headerlink" href="#find-expected-position" title="Link to this heading"></a></h3>
+<p>Returns the position of the element and/or tag specified, if nothing is found returns -1. The search parameter can be tag,
+element or both. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">find_expected_position</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">find_expected_position</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">)</span>
+<span class="kt">integer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">find_expected_position</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>expected_element</p></td>
+<td><p>in</p></td>
+<td><p>t_element</p></td>
+<td><p>The element that shall be pushed to the queue</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>tag_usage</p></td>
+<td><p>in</p></td>
+<td><p>t_tag_usage</p></td>
+<td><p>Enumerated type used before every tag is entered. Only
+‘TAG’ can be used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>tag</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Tag of the scoreboard element</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">);</span>
+<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
+<span class="n">v_position</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">find_expected_position</span><span class="p">(</span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="peek-expected">
+<h3>peek_expected()<a class="headerlink" href="#peek-expected" title="Link to this heading"></a></h3>
+<p>Returns the expected element of the specified entry in the scoreboard without deleting the entry. Returns the front entry
+expected element in the scoreboard queue if no identifier specified. If the identifier is not found, TB_ERROR alert is reported and
+‘undefined’ is returned. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_expected</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">t_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_expected</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+<span class="n">t_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>identifier_option</p></td>
+<td><p>in</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>Option for type of identifier used. Can only be POSITION
+or ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>identifier</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Describes the position or entry number, depending on
+identifier_option</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_expected</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
+<span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="peek-source">
+<h3>peek_source()<a class="headerlink" href="#peek-source" title="Link to this heading"></a></h3>
+<p>Returns the source element of the specified entry in the scoreboard without deleting the entry. Returns the front entry
+source element in the scoreboard queue if no identifier specified. If the identifier is not found, TB_ERROR alert is reported and
+‘undefined’ is returned. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_source</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_source</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+<span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_source</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>identifier_option</p></td>
+<td><p>in</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>Option for type of identifier used. Can only be POSITION
+or ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>identifier</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Describes the position or entry number, depending on
+identifier_option</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_source</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
+<span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="peek-tag">
+<h3>peek_tag()<a class="headerlink" href="#peek-tag" title="Link to this heading"></a></h3>
+<p>Returns the tag of the specified entry in the scoreboard without deleting the entry. Returns the front entry
+tag in the scoreboard queue if no identifier specified. If the identifier is not found, TB_ERROR alert is reported and
+‘undefined’ is returned. If there is no instance parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_tag</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_tag</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+<span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">peek_tag</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>identifier_option</p></td>
+<td><p>in</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>Option for type of identifier used. Can only be POSITION
+or ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>identifier</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Describes the position or entry number, depending on
+identifier_option</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_tag</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_tag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
+<span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">peek_tag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="fetch-expected">
+<h3>fetch_expected()<a class="headerlink" href="#fetch-expected" title="Link to this heading"></a></h3>
+<p>Returns the expected element of the specified entry in the scoreboard and deletes the entry. Returns the front entry expected element
+in the scoreboard queue if no identifier specified. If the identifier is not found, TB_ERROR alert is reported and
+‘undefined’ is returned. This method deletes the entry. If all information from an entry shall be retrieved, peek must be used for
+the first two entry elements. If there is no instance parameter, instance 1 is used.
+This method uses the ID_DATA message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_expected</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="n">t_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_expected</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+<span class="n">t_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_expected</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>identifier_option</p></td>
+<td><p>in</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>Option for type of identifier used. Can only be POSITION
+or ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>identifier</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Describes the position or entry number, depending on
+identifier_option</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_expected</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
+<span class="n">v_expected_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_expected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetch expected&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="fetch-source">
+<h3>fetch_source()<a class="headerlink" href="#fetch-source" title="Link to this heading"></a></h3>
+<p>Returns the source element of the specified entry in the scoreboard and deletes the entry. Returns the front entry source element
+in the scoreboard queue if no identifier specified. If the identifier is not found, TB_ERROR alert is reported and
+‘undefined’ is returned. This method deletes the entry. If all information from an entry shall be retrieved, peek must be used for
+the first two entry elements. If there is no instance parameter, instance 1 is used.
+This method uses the ID_DATA message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_source</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_source</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+<span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_source</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>identifier_option</p></td>
+<td><p>in</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>Option for type of identifier used. Can only be POSITION
+or ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>identifier</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Describes the position or entry number, depending on
+identifier_option</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_source</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
+<span class="n">v_source_element</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetch source&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="fetch-tag">
+<h3>fetch_tag()<a class="headerlink" href="#fetch-tag" title="Link to this heading"></a></h3>
+<p>Returns the tag of the specified entry in the scoreboard and deletes the entry. Returns the front entry tag
+in the scoreboard queue if no identifier specified. If the identifier is not found, TB_ERROR alert is reported and
+‘undefined’ is returned. This method deletes the entry. If all information from an entry shall be retrieved, peek must be used for
+the first two entry elements. If there is no instance parameter, instance 1 is used.
+This method uses the ID_DATA message ID.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_tag</span><span class="p">(</span><span class="n">VOID</span><span class="p">)</span>
+<span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_tag</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+<span class="kt">string</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">fetch_tag</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">identifier_option</span><span class="p">,</span><span class="w"> </span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>VOID</p></td>
+<td><p>in</p></td>
+<td><p>t_void</p></td>
+<td><p>A dummy parameter for easier reading syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>identifier_option</p></td>
+<td><p>in</p></td>
+<td><p>t_identifier_option</p></td>
+<td><p>Option for type of identifier used. Can only be POSITION
+or ENTRY_NUM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>identifier</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Describes the position or entry number, depending on
+identifier_option</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_tag</span><span class="p">(</span><span class="n">VOID</span><span class="p">);</span>
+<span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_tag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION</span><span class="p">,</span><span class="w"> </span><span class="n">v_position</span><span class="p">);</span>
+<span class="n">v_tag</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">fetch_tag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ENTRY_NUM</span><span class="p">,</span><span class="w"> </span><span class="n">v_entry_num</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetch tag&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="exists">
+<h3>exists()<a class="headerlink" href="#exists" title="Link to this heading"></a></h3>
+<p>Returns true if the entry is found, false if not. If element and tag parameter is entered, both must match. If there is no instance
+parameter, instance 1 is used.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">exists</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">expected_element</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">tag</span><span class="p">]])</span>
+<span class="kt">boolean</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">exists</span><span class="p">([</span><span class="n">instance</span><span class="p">],</span><span class="w"> </span><span class="n">tag_usage</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>instance</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><div class="line-block">
+<div class="line">The instance number of the scoreboard. The scoreboard
+can have several instances,</div>
+<div class="line">each instance acts as an independent scoreboard with
+own queue and statistics.</div>
+<div class="line">Can also be ALL_INSTANCES.  Note that instance index 0
+is allowed, but will have to</div>
+<div class="line">be specified in all method calls, and that instance
+index 1 is default.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>expected_element</p></td>
+<td><p>in</p></td>
+<td><p>t_element</p></td>
+<td><p>The element that shall be pushed to the queue</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>tag_usage</p></td>
+<td><p>in</p></td>
+<td><p>t_tag_usage</p></td>
+<td><p>Enumerated type used before every tag is entered. Only
+‘TAG’ can be used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>tag</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Tag of the scoreboard element</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="k">if</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="p">...</span>
+<span class="k">if</span><span class="w"> </span><span class="n">uart_sb</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TAG</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;byte1&quot;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="p">...</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h2>
+<p>The Generic Scoreboard must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the Generic Scoreboard, assure that uvvm_util has been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Compile order for the Generic Scoreboard</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_scoreboard</p></td>
+<td><p>generic_sb_support_pkg.vhd</p></td>
+<td><p>Config declaration</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_scoreboard</p></td>
+<td><p>generic_sb_pkg.vhd</p></td>
+<td><p>Generic scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_scoreboard</p></td>
+<td><p>predefined_sb.vhd</p></td>
+<td><p>Predefined packages with SLV and integer</p></td>
+</tr>
+</tbody>
+</table>
+<section id="simulator-compatibility-and-setup">
+<h3>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<h2>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h2>
+<p>A verification scoreboard typically includes some way to store expected outputs generated by e.g. the sequencer or a reference model,
+compare the expected outputs to received outputs, and to keep track of pass and failure rates identified in the comparison process.
+The advantage of using a scoreboard is that the checking/monitor side remains simple and has no need to know what the test/stimulus
+generation side is doing. Figure 1 shows the data-flow through the scoreboard and its main functions.</p>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="_images/scoreboard.png"><img alt="Basic scoreboard" src="_images/scoreboard.png" style="width: 500pt;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 1 Basic scoreboard</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The Scoreboard operates as a queue that holds generic elements. It is implemented as a protected type in a generic package, and a
+package declaration has to be made for each element type. The scoreboard offers advanced functionality for checking received data
+against expected data.</p>
+<p><strong>Out-of-order</strong>: Data can be checked out-of-order by enabling the allow_out_of_order parameter in <a class="reference internal" href="#t-sb-config"><span class="std std-ref">t_sb_config</span></a>.</p>
+<p><strong>Lossy</strong>: Lossy protocols, where data can be dropped during transfer, is supported by enabling allow_lossy parameter in
+<a class="reference internal" href="#t-sb-config"><span class="std std-ref">Configuration Record</span></a> &lt;t_sb_config&gt;.</p>
+<p>Out-of-order and lossy cannot both be enabled at the same time; the scoreboard can’t know if something is loss or out-of-order. In
+the case of both out-of-order and lossy, enable out-of-order. The number of remaining entries in the scoreboard at the end of the
+simulation is the number of dropped data elements.</p>
+<section id="use-cases">
+<h3>Use-cases<a class="headerlink" href="#use-cases" title="Link to this heading"></a></h3>
+<p>Scenarios where a scoreboard with out-of-order function is applicable:</p>
+<ul class="simple">
+<li><p>DUT with multiple execution paths:
+Data can take multiple paths inside DUT which affects the execution time. Modulating packet-order may be complex and all that is
+needed is a check that all data is getting through independent of order.</p></li>
+<li><p>Many-to-one interfaces:
+Data from multiple asynchronous interfaces into the DUT is being re-transmitted in one interface out of the DUT.</p></li>
+</ul>
+<p>Scenarios where a scoreboard with lossy function is applicable:</p>
+<ul class="simple">
+<li><p>Interfaces with packet-loss:
+Packet-loss is accepted and handled at a higher abstraction level. E.g. TCP.</p></li>
+<li><p>Non-monitored error-injection:
+Error is injected at a level that is not monitored into the DUT and the DUT stops all packets with wrong parity/CRC. Which packets
+that are lost is unpredictable.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generic scoreboard was inspired by similar functionality in SystemVerilog and OSVVM.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
+not limited to the warranties of merchantability, fitness for a particular purpose and non-infringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
+otherwise, arising from, out of or in connection with this IP.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vip_sbi.html" class="btn btn-neutral float-left" title="Bitvis VIP SBI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vip_spec_cov.html" class="btn btn-neutral float-right" title="Bitvis VIP Specification Coverage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, UVVM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

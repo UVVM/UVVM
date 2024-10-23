@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitvis VIP Avalon-ST &mdash; UVVM  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bitvis VIP AXI4" href="vip_axi.html" />
+    <link rel="prev" title="Bitvis VIP Avalon-MM" href="vip_avalon_mm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Avalon-ST</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#signal-record">Signal Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#avalon-st-transmit">avalon_st_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#avalon-st-receive">avalon_st_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#avalon-st-expect">avalon_st_expect()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#init-avalon-st-if-signals">init_avalon_st_if_signals()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-overloads">Local BFM overloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#instantiation">Instantiation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#avalon-st-transmit-vvc">avalon_st_transmit()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#avalon-st-receive-vvc">avalon_st_receive()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#avalon-st-expect-vvc">avalon_st_expect()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Additional Documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_sbi.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_scoreboard.html">Bitvis VIP Scoreboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #F5F5F5" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Bitvis VIP Avalon-ST</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/vip_avalon_st.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bitvis-vip-avalon-st">
+<h1>Bitvis VIP Avalon-ST<a class="headerlink" href="#bitvis-vip-avalon-st" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#bfm">BFM</a></p>
+<ul>
+<li><p><a class="reference internal" href="#avalon-st-transmit-bfm"><span class="std std-ref">avalon_st_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#avalon-st-receive-bfm"><span class="std std-ref">avalon_st_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#avalon-st-expect-bfm"><span class="std std-ref">avalon_st_expect()</span></a></p></li>
+<li><p><a class="reference internal" href="#init-avalon-st-if-signals-bfm"><span class="std std-ref">init_avalon_st_if_signals()</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vvc">VVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#avalon-st-transmit-vvc"><span class="std std-ref">avalon_st_transmit()</span></a></p></li>
+<li><p><a class="reference internal" href="#avalon-st-receive-vvc"><span class="std std-ref">avalon_st_receive()</span></a></p></li>
+<li><p><a class="reference internal" href="#avalon-st-expect-vvc"><span class="std std-ref">avalon_st_expect()</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+<section id="bfm">
+<h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
+<p>BFM functionality is implemented in avalon_st_bfm_pkg.vhd</p>
+<section id="signal-record">
+<span id="t-avalon-st-if"></span><h3>Signal Record<a class="headerlink" href="#signal-record" title="Link to this heading"></a></h3>
+<p><strong>t_avalon_st_if</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>channel</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>data</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-even"><td><p>data_error</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>ready</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>valid</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>empty</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-even"><td><p>end_of_packet</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>start_of_packet</p></td>
+<td><p>std_logic</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>All supported signals, including channel and data_error are included in the record type, even when not used or connected to
+the DUT.</p></li>
+<li><p>For more information on the Avalon-ST signals, refer to “Avalon® Interface Specifications, Chapter: Avalon Streaming
+Interfaces” (MNL-AVABUSREF), available from Intel.</p></li>
+</ul>
+</div>
+</section>
+<section id="configuration-record">
+<span id="t-avalon-st-bfm-config"></span><h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>t_avalon_st_bfm_config</strong></p>
+<p>Default value for the record is C_AVALON_ST_BFM_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>max_wait_cycles</p></td>
+<td><p>natural</p></td>
+<td><p>100</p></td>
+<td><p>The maximum number of clock cycles to wait for
+the DUT ready or valid signal before reporting
+a timeout alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_wait_cycles_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+<td><p>The above timeout will have this severity</p></td>
+</tr>
+<tr class="row-even"><td><p>clock_period</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Period of the clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>clock_period_margin</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Input clock period margin to specified
+clock_period. Will check ‘T/2’ if input clock is
+low when BFM is called and ‘T’ if input clock is
+high.</p></td>
+</tr>
+<tr class="row-even"><td><p>clock_margin_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>TB_ERROR</p></td>
+<td><p>The above margin will have this severity</p></td>
+</tr>
+<tr class="row-odd"><td><p>setup_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Generated signals setup time. Suggested value
+is clock_period/4. An alert is reported if
+setup_time exceeds clock_period/2.</p></td>
+</tr>
+<tr class="row-even"><td><p>hold_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Generated signals hold time. Suggested value
+is clock_period/4. An alert is reported if
+hold_time exceeds clock_period/2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_sync</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
+<td><p>SYNC_ON_CLOCK_ONLY</p></td>
+<td><div class="line-block">
+<div class="line">When set to SYNC_ON_CLOCK_ONLY the BFM will
+enter on the first falling edge, estimate the
+clock period,</div>
+<div class="line">synchronize the output signals and exit ¼
+clock period after a succeeding rising edge.</div>
+<div class="line">When set to SYNC_WITH_SETUP_AND_HOLD the BFM
+will use the configured setup_time, hold_time
+and</div>
+<div class="line">clock_period to synchronize output signals
+with clock edges.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>match_strictness</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
+<td><p>MATCH_EXACT</p></td>
+<td><div class="line-block">
+<div class="line">Matching strictness for std_logic values in
+check procedures.</div>
+<div class="line">MATCH_EXACT requires both values to be the
+same. Note that the expected value can contain
+the don’t care operator ‘-‘.</div>
+<div class="line">MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>symbol_width</p></td>
+<td><p>natural</p></td>
+<td><p>8</p></td>
+<td><p>Number of data bits per symbol</p></td>
+</tr>
+<tr class="row-even"><td><p>first_symbol_in_msb</p></td>
+<td><p>boolean</p></td>
+<td><p>true</p></td>
+<td><p>Symbol ordering. When true, first-order symbol
+is in most significant bits.</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_channel</p></td>
+<td><p>natural</p></td>
+<td><p>0</p></td>
+<td><p>Maximum number of channels that the interface
+supports</p></td>
+</tr>
+<tr class="row-even"><td><p>use_packet_transfer</p></td>
+<td><p>boolean</p></td>
+<td><p>true</p></td>
+<td><p>When true, packet signals are enabled:
+start_of_packet, end_of_packet &amp; empty</p></td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM</p></td>
+<td><p>Message ID used for logging general messages in
+the BFM</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul>
+<li><p>All signals are active high.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+<li><p>For clarity, data_array is required to be ascending, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">variable</span><span class="w"> </span><span class="n">v_data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_MAX_WORDS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)(</span><span class="n">C_MAX_WORD_LENGTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>For simplicity, the word_length can only be the size of the configured symbol (usually with packet-based transfers) or the size
+of the data bus (usually with data-based transfers), e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">variable</span><span class="w"> </span><span class="n">v_data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_MAX_WORDS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)(</span><span class="n">C_SYMBOL_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_MAX_WORDS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)(</span><span class="n">C_DATA_BUS_LENGTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<section id="avalon-st-transmit">
+<span id="avalon-st-transmit-bfm"></span><h4>avalon_st_transmit()<a class="headerlink" href="#avalon-st-transmit" title="Link to this heading"></a></h4>
+<p>Transmits a stream/packet on the Avalon-ST interface. The length and data are defined by the “data_array” argument, which is a
+t_slv_array. data_array(0) is sent first. data_array(data_array’high) is sent last.</p>
+<p>When the config use_packet_transfer is enabled:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>During the first word, the BFM asserts the start_of_packet signal.</p></li>
+<li><p>During the last word, the BFM asserts the end_of_packet signal and it sets the number of invalid symbols in the word on the
+empty signal.</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_st_transmit</span><span class="p">([</span><span class="n">channel_value</span><span class="p">,]</span><span class="w"> </span><span class="n">data_array</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Channel number for the data being transferred. The value
+is limited by max_channel in the BFM config</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_array</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of SLVs containing the data to be sent</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the Avalon-ST BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>avalon_st_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-if"><span class="std std-ref">t_avalon_st_if</span></a></p></td>
+<td><p>Avalon-ST signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“AVALON_ST BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-bfm-config"><span class="std std-ref">t_avalon_st_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_AVALON_ST_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">v_tx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to sink&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">);</span>
+<span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">C_CH0</span><span class="p">,</span><span class="w"> </span><span class="n">v_tx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to sink&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_ST_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">C_CH0</span><span class="p">,</span><span class="w"> </span><span class="n">v_tx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to sink&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="avalon-st-receive">
+<span id="avalon-st-receive-bfm"></span><h4>avalon_st_receive()<a class="headerlink" href="#avalon-st-receive" title="Link to this heading"></a></h4>
+<p>Receives a stream/packet on the Avalon-ST interface. The received data is stored in the data_array output, which is a t_slv_array.
+data_array(0) is received first. data_array(data_array’high) is received last.</p>
+<p>When the config use_packet_transfer is enabled:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The signal start_of_packet is expected to be set during the first word.</p></li>
+<li><p>The signal end_of_packet is expected to be set during the last word. Also during this word the empty signal is used to
+determine the number of invalid symbols.</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_st_receive</span><span class="p">([</span><span class="n">channel_value</span><span class="p">,]</span><span class="w"> </span><span class="n">data_array</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>variable</p></td>
+<td><p>channel_value</p></td>
+<td><p>out</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Channel number for the data being received</p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
+<td><p>data_array</p></td>
+<td><p>out</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of SLVs containing the data to be received</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the Avalon-ST BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>avalon_st_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-if"><span class="std std-ref">t_avalon_st_if</span></a></p></td>
+<td><p>Avalon-ST signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“AVALON_ST BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-bfm-config"><span class="std std-ref">t_avalon_st_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_AVALON_ST_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">avalon_st_receive</span><span class="p">(</span><span class="n">v_rx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving data from source&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">);</span>
+<span class="n">avalon_st_receive</span><span class="p">(</span><span class="n">v_rx_ch</span><span class="p">,</span><span class="w"> </span><span class="n">v_rx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving data from source&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_ST_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">avalon_st_receive</span><span class="p">(</span><span class="n">v_rx_ch</span><span class="p">,</span><span class="w"> </span><span class="n">v_tx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving data from source&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="avalon-st-expect">
+<span id="avalon-st-expect-bfm"></span><h4>avalon_st_expect()<a class="headerlink" href="#avalon-st-expect" title="Link to this heading"></a></h4>
+<p>Calls the <a class="reference internal" href="#avalon-st-receive-bfm"><span class="std std-ref">avalon_st_receive()</span></a> procedure, then compares the received data with data_exp and the optional channel with
+channel_exp.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_st_expect</span><span class="p">([</span><span class="n">channel_exp</span><span class="p">,]</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Expected channel number for the data being received</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of SLVs containing the expected data</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the Avalon-ST BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>avalon_st_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-if"><span class="std std-ref">t_avalon_st_if</span></a></p></td>
+<td><p>Avalon-ST signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“AVALON_ST BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-bfm-config"><span class="std std-ref">t_avalon_st_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_AVALON_ST_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">avalon_st_expect</span><span class="p">(</span><span class="n">v_exp_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting data from source&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">);</span>
+<span class="n">avalon_st_expect</span><span class="p">(</span><span class="n">v_exp_ch</span><span class="p">,</span><span class="w"> </span><span class="n">v_exp_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting data from source&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_ST_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">avalon_st_expect</span><span class="p">(</span><span class="n">v_exp_ch</span><span class="p">,</span><span class="w"> </span><span class="n">v_exp_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting data from source&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="init-avalon-st-if-signals">
+<span id="init-avalon-st-if-signals-bfm"></span><h4>init_avalon_st_if_signals()<a class="headerlink" href="#init-avalon-st-if-signals" title="Link to this heading"></a></h4>
+<p>Initializes the Avalon-ST interface. All the BFM outputs are set to ‘0’, and BFM inputs are set to ‘Z’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_avalon_st_if</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">init_avalon_st_if_signals</span><span class="p">(</span><span class="n">is_master</span><span class="p">,</span><span class="w"> </span><span class="n">channel_width</span><span class="p">,</span><span class="w"> </span><span class="n">data_width</span><span class="p">,</span><span class="w"> </span><span class="n">data_error_width</span><span class="p">,</span><span class="w"> </span><span class="n">empty_width</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>is_master</p></td>
+<td><p>in</p></td>
+<td><p>boolean</p></td>
+<td><p>Whether the VVC is a master or slave interface</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>channel_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the channel signal</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the data signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_error_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the data error signal</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>empty_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the empty signal</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">avalon_st_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_avalon_st_if_signals</span><span class="p">(</span><span class="n">true</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">.</span><span class="n">channel</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">.</span><span class="n">data</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">.</span><span class="n">data_error</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">.</span><span class="n">empty</span><span class="na">&#39;length</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="local-bfm-overloads">
+<h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
+<p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
+process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">C_CH0</span><span class="p">,</span><span class="w"> </span><span class="n">v_tx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to sink&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>rather than</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">C_CH0</span><span class="p">,</span><span class="w"> </span><span class="n">v_tx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to sink&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_AVALON_ST_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>By defining the local overload as e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">procedure</span><span class="w"> </span><span class="n">avalon_st_transmit</span><span class="p">(</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">channel_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data_array</span><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">msg</span><span class="w">           </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">channel_value</span><span class="p">,</span><span class="w">             </span><span class="c1">-- Keep as is</span>
+<span class="w">                     </span><span class="n">data_array</span><span class="p">,</span><span class="w">                </span><span class="c1">-- Keep as is</span>
+<span class="w">                     </span><span class="n">msg</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Keep as is</span>
+<span class="w">                     </span><span class="n">clk</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">                     </span><span class="n">avalon_st_if</span><span class="p">,</span><span class="w">              </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">                     </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w">                   </span><span class="c1">-- Use the default</span>
+<span class="w">                     </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w">       </span><span class="c1">-- Use global, shared msg_id_panel</span>
+<span class="w">                     </span><span class="n">C_AVALON_ST_CONFIG_LOCAL</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Use locally defined configuration or C_AVALON_ST_BFM_CONFIG_DEFAULT</span>
+<span class="k">end</span><span class="w"> </span><span class="k">procedure</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Using a local overload like this also allows the following – if wanted:</p>
+<ul class="simple">
+<li><p>Have channel value as natural – and convert in the overload</p></li>
+<li><p>Set up defaults for constants. May be different for two overloads of the same BFM</p></li>
+<li><p>Apply dedicated message ID panel to allow dedicated verbosity control</p></li>
+</ul>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>This BFM package may only be compiled with VHDL-2008 or newer. It is dependent on the <a class="reference internal" href="utility_library.html#utility-library"><span class="std std-ref">Utility Library</span></a>, which is only
+compatible with VHDL-2008 or newer.</p></li>
+<li><p>After UVVM-Util has been compiled, the BFM package can be compiled into any desired library.</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p></li>
+</ul>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<h3>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h3>
+<p>The following signals from the Avalon-ST interface are supported:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Source</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Supported by BFM</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>associatedClock</p></td>
+<td><p>Clock</p></td>
+<td><p>1</p></td>
+<td><p>Yes</p></td>
+<td><p>Sample on the rising edge</p></td>
+</tr>
+<tr class="row-odd"><td><p>associatedReset</p></td>
+<td><p>Reset</p></td>
+<td><p>1</p></td>
+<td><p>No</p></td>
+<td><p>BFM doesn’t control the reset</p></td>
+</tr>
+<tr class="row-even"><td><p>channel</p></td>
+<td><p>Master</p></td>
+<td><p>1-128</p></td>
+<td><p>Yes</p></td>
+<td><p>Channel number for the data being transferred on the current cycle</p></td>
+</tr>
+<tr class="row-odd"><td><p>data</p></td>
+<td><p>Master</p></td>
+<td><p>1-4096</p></td>
+<td><p>Yes</p></td>
+<td><p>Data word. It can consist of several symbols</p></td>
+</tr>
+<tr class="row-even"><td><p>error</p></td>
+<td><p>Master</p></td>
+<td><p>1-256</p></td>
+<td><p>No</p></td>
+<td><p>Bit mask to mark errors affecting the data being transferred on the
+current cycle. The error_descriptor in the BFM config defines the error
+signal properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ready</p></td>
+<td><p>Slave</p></td>
+<td><p>1</p></td>
+<td><p>Yes</p></td>
+<td><p>Indicates that the slave can accept data. A transfer takes place when
+both valid and ready are asserted.</p></td>
+</tr>
+<tr class="row-even"><td><p>valid</p></td>
+<td><p>Master</p></td>
+<td><p>1</p></td>
+<td><p>Yes</p></td>
+<td><p>This signal qualifies all other master to slave signals. A transfer
+takes place when both valid and ready are asserted.</p></td>
+</tr>
+<tr class="row-odd"><td><p>empty</p></td>
+<td><p>Master</p></td>
+<td><p>1-5</p></td>
+<td><p>Yes</p></td>
+<td><div class="line-block">
+<div class="line">Number of symbols that are empty during the end_of_packet cycle. The
+signal width in bits is ceil[log2(symbols_per_cycle)].</div>
+<div class="line">Only required when the data signal carries more than one symbol of
+data per cycle and has a variable packet length.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>end_of_packet</p></td>
+<td><p>Master</p></td>
+<td><p>1</p></td>
+<td><p>Yes</p></td>
+<td><p>When ‘1’, it indicates that the data is the last word of the packet</p></td>
+</tr>
+<tr class="row-odd"><td><p>start_of_packet</p></td>
+<td><p>Master</p></td>
+<td><p>1</p></td>
+<td><p>Yes</p></td>
+<td><p>When ‘1’, it indicates that the data is the first word of the packet</p></td>
+</tr>
+</tbody>
+</table>
+<p>For more information on the Avalon-ST specification, refer to “Avalon® Interface Specifications, Chapter: Avalon Streaming
+Interfaces” (MNL-AVABUSREF), available from Intel.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Bus Functional Model (BFM) for Avalon-ST.</p></li>
+<li><p>The given BFM complies with the basic Avalon-ST protocol and thus allows a normal access towards an Avalon-ST interface.</p></li>
+<li><p>This BFM is not an Avalon-ST protocol checker.</p></li>
+<li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="vvc">
+<h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>VVC functionality is implemented in avalon_st_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_VVC_IS_MASTER</p></td>
+<td><p>boolean</p></td>
+<td><p>N/A</p></td>
+<td><p>Set to true when data shall be output from this
+VVC. Set to false when data shall be input to
+this VVC.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CHANNEL_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>1</p></td>
+<td><div class="line-block">
+<div class="line">Width of the Avalon-ST channel signal.</div>
+<div class="line">Note 1: if CHANNEL is wider than 8, increase
+the value of the constant C_AVALON_ST_CHANNEL_MAX_LENGTH in the local_adaptations_pkg.</div>
+<div class="line">Note 2: If the CHANNEL signal is not used,
+refer to <a class="reference internal" href="#signals">Signals</a></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>GC_DATA_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>N/A</p></td>
+<td><div class="line-block">
+<div class="line">Width of the Avalon-ST data bus.</div>
+<div class="line">Note: if DATA is wider than 512, increase the
+value of the constant C_AVALON_ST_WORD_MAX_LEGTH in the local_adaptations_pkg</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>GC_DATA_ERROR_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>1</p></td>
+<td><div class="line-block">
+<div class="line">Width of the Avalon-ST data error signal.</div>
+<div class="line">Note: If the DATA_ERROR signal is not used,
+refer to <a class="reference internal" href="#signals">Signals</a></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>GC_EMPTY_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>1</p></td>
+<td><div class="line-block">
+<div class="line">Width of the Avalon-ST empty signal.</div>
+<div class="line">Note: If the EMPTY signal is not used, refer
+to <a class="reference internal" href="#signals">Signals</a></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>N/A</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_AVALON_ST_BFM_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-bfm-config"><span class="std std-ref">t_avalon_st_bfm_config</span></a></p></td>
+<td><p>C_AVALON_ST_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the Avalon-ST BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>VVC Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>avalon_st_vvc_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-if"><span class="std std-ref">t_avalon_st_if</span></a></p></td>
+<td><p>Avalon-ST signal interface record</p></td>
+</tr>
+</tbody>
+</table>
+<p>In this VVC, the interface has been encapsulated in a signal record of type t_avalon_st_if in order to improve readability of the code.
+Since the Avalon-ST interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained
+vectors need to be constrained when the interface signals are instantiated. For this interface, this could look like:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">signal</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_avalon_st_if</span><span class="p">(</span><span class="n">channel</span><span class="p">(</span><span class="n">C_CHANNEL_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                     </span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                     </span><span class="n">data_error</span><span class="p">(</span><span class="n">C_ERROR_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                     </span><span class="n">empty</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">C_SYMBOL_WIDTH</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>If the interface signals channel, data_error or empty are not used or not connected to the DUT, the same signal record shall be
+used by setting the widths of the unused signals to 1, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">signal</span><span class="w"> </span><span class="n">avalon_st_if</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_avalon_st_if</span><span class="p">(</span><span class="n">channel</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                     </span><span class="n">data</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                     </span><span class="n">data_error</span><span class="p">(</span><span class="n">C_ERROR_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                     </span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+<section id="instantiation">
+<h4>Instantiation<a class="headerlink" href="#instantiation" title="Link to this heading"></a></h4>
+<p>In order to select between the master and slave modes, the VVC must be instantiated using the correct value of the generic constant
+GC_VVC_IS_MASTER in the testbench or test-harness. Example instantiations of the VVC in both operation supplied for ease of reference.</p>
+<p><strong>Master mode</strong></p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i_avalon_st_vvc_master</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">work</span><span class="p">.</span><span class="n">avalon_st_vvc</span>
+<span class="w">    </span><span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">      </span><span class="n">GC_VVC_IS_MASTER</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">true</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_CHANNEL_WIDTH</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_CHANNEL_WIDTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_DATA_WIDTH</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_DATA_WIDTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_DATA_ERROR_WIDTH</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_ERROR_WIDTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_EMPTY_WIDTH</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_EMPTY_WIDTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_INSTANCE_IDX</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">port</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">      </span><span class="n">clk</span><span class="w">               </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">      </span><span class="n">avalon_st_vvc_if</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">avalon_st_master_if</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Slave mode</strong></p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">i_avalon_st_vvc_slave</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">work</span><span class="p">.</span><span class="n">avalon_st_vvc</span>
+<span class="w">    </span><span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">      </span><span class="n">GC_VVC_IS_MASTER</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">false</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_CHANNEL_WIDTH</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_CHANNEL_WIDTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_DATA_WIDTH</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_DATA_WIDTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_DATA_ERROR_WIDTH</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_ERROR_WIDTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_EMPTY_WIDTH</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_EMPTY_WIDTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_INSTANCE_IDX</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="k">port</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">      </span><span class="n">clk</span><span class="w">               </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">      </span><span class="n">avalon_st_vvc_if</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">avalon_st_slave_if</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id1">
+<h3>Configuration Record<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_avalon_st_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_AVALON_ST_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><div class="line-block">
+<div class="line">Delay between any requested BFM accesses
+towards the DUT.</div>
+<div class="line">TIME_START2START: Time from a BFM start to the
+next BFM start (a TB_WARNING will be issued if
+access takes longer than TIME_START2START).</div>
+<div class="line">TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</div>
+<div class="line">Any insert_delay() command will add to the
+above minimum delays, giving for instance the
+ability to skew the BFM starting time.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p><a class="reference internal" href="#t-avalon-st-bfm-config"><span class="std std-ref">t_avalon_st_bfm_config</span></a></p></td>
+<td><p>C_AVALON_ST_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the Avalon-ST BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<td><p>Severity of alert to be issued if unwanted
+activity on the DUT outputs is detected. It is
+enabled with ERROR severity by default.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_avalon_st_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_avalon_st_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_avalon_st_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h3>Methods<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul>
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+<li><p>For clarity, data_array is required to be ascending, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">variable</span><span class="w"> </span><span class="n">v_data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_MAX_WORDS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)(</span><span class="n">C_MAX_WORD_LENGTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>For simplicity, the word_length can only be the size of the configured symbol (usually with packet-based transfers) or the size
+of the data bus (usually with data-based transfers), e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">variable</span><span class="w"> </span><span class="n">v_data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_MAX_WORDS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)(</span><span class="n">C_SYMBOL_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_data_array</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">C_MAX_WORDS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)(</span><span class="n">C_DATA_BUS_LENGTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<section id="avalon-st-transmit-vvc">
+<span id="id3"></span><h4>avalon_st_transmit()<a class="headerlink" href="#avalon-st-transmit-vvc" title="Link to this heading"></a></h4>
+<p>Adds a transmit command to the Avalon-ST VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#avalon-st-transmit-bfm"><span class="std std-ref">avalon_st_transmit()</span></a> procedure.
+The avalon_st_transmit() procedure can only be called when the Avalon-ST VVC is instantiated in master mode, i.e. setting the
+generic constant ‘GC_VVC_IS_MASTER’ to true.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">channel_value</span><span class="p">,]</span><span class="w"> </span><span class="n">data_array</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Channel number for the data being transferred. The value
+is limited by max_channel in the BFM config</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_array</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of SLVs containing the data to be sent</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_tx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to sink&quot;</span><span class="p">);</span>
+<span class="n">avalon_st_transmit</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_CH0</span><span class="p">,</span><span class="w"> </span><span class="n">v_tx_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data to sink&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="avalon-st-receive-vvc">
+<span id="id4"></span><h4>avalon_st_receive()<a class="headerlink" href="#avalon-st-receive-vvc" title="Link to this heading"></a></h4>
+<p>Adds a receive command to the Avalon-ST VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the <a class="reference internal" href="#avalon-st-receive-bfm"><span class="std std-ref">avalon_st_receive()</span></a> procedure. The avalon_st_receive() procedure
+can only be called when the Avalon-ST VVC is instantiated in slave mode, i.e. setting the generic constant ‘GC_VVC_IS_MASTER’ to
+false.</p>
+<p>The value received from the DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but
+the received data and metadata will be stored in the VVC for a potential future fetch (see example with fetch_result below).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_st_receive</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_array_len</span><span class="p">,</span><span class="w"> </span><span class="n">data_word_size</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_array_len</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Length of the data_array expected to be received (number
+of words)</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_word_size</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Size in bits of the data words in the data_array
+expected to be received</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">avalon_st_receive</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receiving data from source&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last receive</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from receive (data and metadata)</span>
+<span class="p">...</span>
+<span class="n">avalon_st_receive</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Receive data in VVC&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from receive operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="avalon-st-expect-vvc">
+<span id="id5"></span><h4>avalon_st_expect()<a class="headerlink" href="#avalon-st-expect-vvc" title="Link to this heading"></a></h4>
+<p>Adds an expect command to the Avalon-ST VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the <a class="reference internal" href="#avalon-st-expect-bfm"><span class="std std-ref">avalon_st_expect()</span></a> procedure.
+The avalon_st_expect() procedure can only be called when the Avalon-ST VVC is instantiated in slave mode, i.e. setting the
+generic constant ‘GC_VVC_IS_MASTER’ to false.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">avalon_st_expect</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">channel_exp</span><span class="p">,]</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>channel_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Expected channel number for the data being received</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>An array of SLVs containing the expected data</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">avalon_st_expect</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_exp_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting data from source&quot;</span><span class="p">);</span>
+<span class="n">avalon_st_expect</span><span class="p">(</span><span class="n">AVALON_ST_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_exp_ch</span><span class="p">,</span><span class="w"> </span><span class="n">v_exp_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Expecting data from source&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="activity-watchdog">
+<h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
+<p>The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered
+within the specified timeout period.</p>
+<p>Include <code class="docutils literal notranslate"><span class="pre">activity_watchdog(num_exp_vvc,</span> <span class="pre">timeout,</span> <span class="pre">[alert_level,</span> <span class="pre">[msg]])</span></code> in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-activity-watchdog"><span class="std std-ref">Essential Mechanisms - Activity Watchdog</span></a>.</p>
+</section>
+<section id="transaction-info">
+<h3>Transaction Info<a class="headerlink" href="#transaction-info" title="Link to this heading"></a></h3>
+<p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
+information directly from the VVC to a DUT model.</p>
+<table class="docutils align-default" id="id9">
+<caption><span class="caption-text">Avalon-ST transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_avalon_st_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id9" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>channel_value</p></td>
+<td><p>std_logic_vector(7 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Channel number for the data being transferred or
+expected</p></td>
+</tr>
+<tr class="row-even"><td><p>data_array</p></td>
+<td><p>t_slv_array(0 to 1024)(512
+downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>An array of SLVs containing the data to be sent
+/received</p></td>
+</tr>
+<tr class="row-odd"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="unwanted-activity-detection">
+<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
+not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
+VVC issues an alert.</p>
+<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To disable this feature in the testbench, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_avalon_st_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Note that the ready signal is not monitored in this VVC. The ready signal is allowed to be set independently of the valid signal,
+and there is no method to differentiate between the unwanted activity and intended activity. See the Avalon-ST protocol specification
+for more information on the ready signal.</p>
+<p>The unwanted activity detection is ignored when the valid signal goes low within one clock period after the VVC becomes inactive.
+This is to handle the situation when the read command exits before the next rising edge, causing signal transitions during the
+first clock cycle after the VVC is inactive.</p>
+<p>For Avalon-ST VVC, the unwanted activity detection is enabled by default with severity ERROR.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+</section>
+<section id="id6">
+<h3>Compilation<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>The Avalon-ST VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Avalon-ST BFM</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the Avalon-ST VVC, assure that uvvm_util and uvvm_vvc_framework have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-text">Compile order for the Avalon-ST VVC</span><a class="headerlink" href="#id10" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>avalon_st_bfm_pkg.vhd</p></td>
+<td><p>Avalon-ST BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>Avalon-ST transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>Avalon-ST VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>Avalon-ST VVC methods</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>avalon_st_vvc.vhd</p></td>
+<td><p>Avalon-ST VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_avalon_st</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>Avalon-ST VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id7">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="id8">
+<h3>Additional Documentation<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>For more information on the Avalon-ST specification, refer to “Avalon® Interface Specifications, Chapter: Avalon Streaming
+Interfaces” (MNL-AVABUSREF), available from Intel.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Verification IP (VIP) for Avalon-ST.</p></li>
+<li><p>The given VIP complies with the basic Avalon-ST protocol and thus allows a normal access towards an Avalon-ST interface.</p></li>
+<li><p>This VIP is not an Avalon-ST protocol checker.</p></li>
+<li><p>For a more advanced VIP please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
+not limited to the warranties of merchantability, fitness for a particular purpose and non-infringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
+otherwise, arising from, out of or in connection with this IP.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vip_avalon_mm.html" class="btn btn-neutral float-left" title="Bitvis VIP Avalon-MM" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vip_axi.html" class="btn btn-neutral float-right" title="Bitvis VIP AXI4" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, UVVM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

@@ -1,0 +1,2717 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitvis VIP AXI4 &mdash; UVVM  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bitvis VIP AXI4-Lite" href="vip_axilite.html" />
+    <link rel="prev" title="Bitvis VIP Avalon-ST" href="vip_avalon_st.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP AXI4</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#signal-record">Signal Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#axi-write">axi_write()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#axi-read">axi_read()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#axi-check">axi_check()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#init-axi-if-signals">init_axi_if_signals()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-types">Local types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-axi-write-address-channel">t_axi_write_address_channel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-axi-write-data-channel">t_axi_write_data_channel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-axi-write-response-channel">t_axi_write_response_channel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-axi-read-address-channel">t_axi_read_address_channel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-axi-read-data-channel">t_axi_read_data_channel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-axburst">t_axburst</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-axlock">t_axlock</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-axprot">t_axprot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-xresp">t_xresp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-xresp-array">t_xresp_array</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-overloads">Local BFM overloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-documentation">Additional Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#axi-write-vvc">axi_write()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#axi-read-vvc">axi_read()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#axi-check-vvc">axi_check()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Additional Documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_sbi.html">Bitvis VIP SBI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_scoreboard.html">Bitvis VIP Scoreboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #F5F5F5" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Bitvis VIP AXI4</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/vip_axi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bitvis-vip-axi4">
+<h1>Bitvis VIP AXI4<a class="headerlink" href="#bitvis-vip-axi4" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#bfm">BFM</a></p>
+<ul>
+<li><p><a class="reference internal" href="#axi-write-bfm"><span class="std std-ref">axi_write()</span></a></p></li>
+<li><p><a class="reference internal" href="#axi-read-bfm"><span class="std std-ref">axi_read()</span></a></p></li>
+<li><p><a class="reference internal" href="#axi-check-bfm"><span class="std std-ref">axi_check()</span></a></p></li>
+<li><p><a class="reference internal" href="#init-axi-if-signals-bfm"><span class="std std-ref">init_axi_if_signals()</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vvc">VVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#axi-write-vvc"><span class="std std-ref">axi_write()</span></a></p></li>
+<li><p><a class="reference internal" href="#axi-read-vvc"><span class="std std-ref">axi_read()</span></a></p></li>
+<li><p><a class="reference internal" href="#axi-check-vvc"><span class="std std-ref">axi_check()</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+<section id="bfm">
+<h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
+<p>BFM functionality is implemented in axi_bfm_pkg.vhd</p>
+<section id="signal-record">
+<span id="t-axi-if"></span><h3>Signal Record<a class="headerlink" href="#signal-record" title="Link to this heading"></a></h3>
+<p><strong>t_axi_if</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>write_address_channel</p></td>
+<td><p><a class="reference internal" href="#t-axi-write-address-channel">t_axi_write_address_channel</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>write_data_channel</p></td>
+<td><p><a class="reference internal" href="#t-axi-write-data-channel">t_axi_write_data_channel</a></p></td>
+</tr>
+<tr class="row-even"><td><p>write_response_channel</p></td>
+<td><p><a class="reference internal" href="#t-axi-write-response-channel">t_axi_write_response_channel</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>read_address_channel</p></td>
+<td><p><a class="reference internal" href="#t-axi-read-address-channel">t_axi_read_address_channel</a></p></td>
+</tr>
+<tr class="row-even"><td><p>read_data_channel</p></td>
+<td><p><a class="reference internal" href="#t-axi-read-data-channel">t_axi_read_data_channel</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>For more information on the AXI4 signals, refer to “AMBA® AXI™ and ACE™ Protocol Specification”, Part A (ARM IHI 0022G)
+available from ARM.</p></li>
+</ul>
+</div>
+</section>
+<section id="configuration-record">
+<span id="t-axi-bfm-config"></span><h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>t_axi_bfm_config</strong></p>
+<p>Default value for the record is C_AXI_BFM_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>general_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>ERROR</p></td>
+<td><p>Severity level for various checks of expected
+behavior in AXI4 transactions</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_wait_cycles</p></td>
+<td><p>natural</p></td>
+<td><p>1000</p></td>
+<td><p>The maximum number of clock cycles to wait for
+the DUT ready or valid signals before reporting
+a timeout alert</p></td>
+</tr>
+<tr class="row-even"><td><p>max_wait_cycles_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>TB_FAILURE</p></td>
+<td><p>The above timeout will have this severity</p></td>
+</tr>
+<tr class="row-odd"><td><p>clock_period</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Period of the clock signal</p></td>
+</tr>
+<tr class="row-even"><td><p>clock_period_margin</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Input clock period margin to specified
+clock_period. Will check ‘T/2’ if input clock is
+low when BFM is called and ‘T’ if input clock is
+high.</p></td>
+</tr>
+<tr class="row-odd"><td><p>clock_margin_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>TB_ERROR</p></td>
+<td><p>The above margin will have this severity</p></td>
+</tr>
+<tr class="row-even"><td><p>setup_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Generated signals setup time. Suggested value
+is clock_period/4. An alert is reported if
+setup_time exceeds clock_period/2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hold_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Generated signals hold time. Suggested value
+is clock_period/4. An alert is reported if
+hold_time exceeds clock_period/2.</p></td>
+</tr>
+<tr class="row-even"><td><p>bfm_sync</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
+<td><p>SYNC_ON_CLOCK_ONLY</p></td>
+<td><div class="line-block">
+<div class="line">When set to SYNC_ON_CLOCK_ONLY the BFM will
+enter on the first falling edge, estimate the
+clock period,</div>
+<div class="line">synchronize the output signals and exit ¼
+clock period after a succeeding rising edge.</div>
+<div class="line">When set to SYNC_WITH_SETUP_AND_HOLD the BFM
+will use the configured setup_time, hold_time
+and</div>
+<div class="line">clock_period to synchronize output signals
+with clock edges.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>match_strictness</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
+<td><p>MATCH_EXACT</p></td>
+<td><div class="line-block">
+<div class="line">Matching strictness for std_logic values in
+check procedures.</div>
+<div class="line">MATCH_EXACT requires both values to be the
+same. Note that the expected value can contain
+the don’t care operator ‘-‘.</div>
+<div class="line">MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>num_aw_pipe_stages</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Write Address Channel pipeline steps</p></td>
+</tr>
+<tr class="row-odd"><td><p>num_w_pipe_stages</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Write Data Channel pipeline steps</p></td>
+</tr>
+<tr class="row-even"><td><p>num_ar_pipe_stages</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Read Address Channel pipeline steps</p></td>
+</tr>
+<tr class="row-odd"><td><p>num_r_pipe_stages</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Read Data Channel pipeline steps</p></td>
+</tr>
+<tr class="row-even"><td><p>num_b_pipe_stages</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Response Channel pipeline steps</p></td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM</p></td>
+<td><p>Message ID used for logging general messages in
+the BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>id_for_bfm_wait</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_WAIT</p></td>
+<td><p>Message ID used for logging waits in the BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm_poll</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_POLL</p></td>
+<td><p>Message ID used for logging polling in the BFM</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All signals are active high.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="axi-write">
+<span id="axi-write-bfm"></span><h4>axi_write()<a class="headerlink" href="#axi-write" title="Link to this heading"></a></h4>
+<p>Writes the given data to the given address of the DUT, using the AXI4 protocol. For protocol details, see the AXI4 specification.</p>
+<p>The procedure reports an alert if:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>wready does not occur within max_wait_cycles clock cycles (alert level: max_wait_cycles_severity, set in the config)</p></li>
+<li><p>awready does not occur within max_wait_cycles clock cycles (alert level: max_wait_cycles_severity, set in the config)</p></li>
+<li><p>bvalid is not set within max_wait_cycles clock cycles (alert level: max_wait_cycles_severity, set in the config)</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_write</span><span class="p">(</span><span class="n">awid_value</span><span class="p">,</span><span class="w"> </span><span class="n">awaddr_value</span><span class="p">,</span><span class="w"> </span><span class="n">awlen_value</span><span class="p">,</span><span class="w"> </span><span class="n">awsize_value</span><span class="p">,</span><span class="w"> </span><span class="n">awburst_value</span><span class="p">,</span><span class="w"> </span><span class="n">awlock_value</span><span class="p">,</span><span class="w"> </span><span class="n">awcache_value</span><span class="p">,</span><span class="w"> </span><span class="n">awprot_value</span><span class="p">,</span>
+<span class="w">          </span><span class="n">awqos_value</span><span class="p">,</span><span class="w"> </span><span class="n">awregion_value</span><span class="p">,</span><span class="w"> </span><span class="n">awuser_value</span><span class="p">,</span><span class="w"> </span><span class="n">wdata_value</span><span class="p">,</span><span class="w"> </span><span class="n">wstrb_value</span><span class="p">,</span><span class="w"> </span><span class="n">wuser_value</span><span class="p">,</span><span class="w"> </span><span class="n">buser_value</span><span class="p">,</span><span class="w"> </span><span class="n">bresp_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">          </span><span class="n">axi_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awid_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Identification tag for a write transaction. Default
+value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awaddr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of the first transfer in a write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awlen_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(7 downto 0)</p></td>
+<td><p>The number of data transfers in a write transaction
+transaction. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awsize_value</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The number of bytes in each data transfer in a write
+transaction (must be a power of 2). Default value is 4.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awburst_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axburst">t_axburst</a></p></td>
+<td><p>Burst type, indicates how address changes between each
+transfer in a write transaction. Default value is INCR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awlock_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axlock">t_axlock</a></p></td>
+<td><p>Provides information about the atomic characteristics of
+a write transaction. Default value is NORMAL.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awcache_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Indicates how a write transaction is required to
+progress through a system. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awprot_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axprot">t_axprot</a></p></td>
+<td><p>Protection attributes of a write transaction. Privilege,
+security level and access type. Default value is
+UNPRIVILEGED_NONSECURE_DATA.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awqos_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Quality of Service identifier for a write transaction.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awregion_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Region indicator for a write transaction. Default value
+is 0x0.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awuser_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>User-defined extension for the write address channel.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>wdata_value</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of data values to be written to the addressed
+registers</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>wstrb_value</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of write strobes, indicates which byte lanes hold
+valid data (all ‘1’ means all bytes are updated).
+Default value is C_EMPTY_SLV_ARRAY.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>wuser_value</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of user-defined extension for the write data
+channel. Default value is C_EMPTY_SLV_ARRAY.</p></td>
+</tr>
+<tr class="row-even"><td><p>variable</p></td>
+<td><p>buser_value</p></td>
+<td><p>out</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Output variable containing the user-defined extension
+for the write response channel</p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
+<td><p>bresp_value</p></td>
+<td><p>out</p></td>
+<td><p><a class="reference internal" href="#t-xresp">t_xresp</a></p></td>
+<td><p>Output variable containing the write response which
+indicates the status of a write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the AXI4 BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>axi_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-axi-if"><span class="std std-ref">t_axi_if</span></a></p></td>
+<td><p>AXI4 signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“AXI_BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axi-bfm-config"><span class="std std-ref">t_axi_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">axi_write</span><span class="p">(</span>
+<span class="w">  </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;F&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">buser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_buser_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">bresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span>
+<span class="w">  </span><span class="n">scope</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg_id_panel</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span>
+<span class="w">  </span><span class="n">config</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_AXI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="n">axi_write</span><span class="p">(</span>
+<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">buser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_buser_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">bresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_DMA</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AAAA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing data to DMA&quot;</span><span class="p">);</span>
+<span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FF&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Writing 256 data words to MEMORY&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="axi-read">
+<span id="axi-read-bfm"></span><h4>axi_read()<a class="headerlink" href="#axi-read" title="Link to this heading"></a></h4>
+<p>Reads data from the DUT at the given address, using the AXI4 protocol. For protocol details, see the AXI4 specification. The read
+data is placed on the output ‘rdata_value’ when the read has completed.</p>
+<p>The procedure reports an alert if:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The received rid is different from the transmitted arid_value</p></li>
+<li><p>arready does not occur within max_wait_cycles clock cycles (alert level: max_wait_cycles_severity, set in the config)</p></li>
+<li><p>rvalid is not set within max_wait_cycles clock cycles (alert level: max_wait_cycles_severity, set in the config)</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_read</span><span class="p">(</span><span class="n">arid_value</span><span class="p">,</span><span class="w"> </span><span class="n">araddr_value</span><span class="p">,</span><span class="w"> </span><span class="n">arlen_value</span><span class="p">,</span><span class="w"> </span><span class="n">arsize_value</span><span class="p">,</span><span class="w"> </span><span class="n">arburst_value</span><span class="p">,</span><span class="w"> </span><span class="n">arlock_value</span><span class="p">,</span><span class="w"> </span><span class="n">arcache_value</span><span class="p">,</span><span class="w"> </span><span class="n">arprot_value</span><span class="p">,</span><span class="w"> </span><span class="n">arqos_value</span><span class="p">,</span>
+<span class="w">         </span><span class="n">arregion_value</span><span class="p">,</span><span class="w"> </span><span class="n">aruser_value</span><span class="p">,</span><span class="w"> </span><span class="n">rdata_value</span><span class="p">,</span><span class="w"> </span><span class="n">rresp_value</span><span class="p">,</span><span class="w"> </span><span class="n">ruser_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arid_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Identification tag for a read transaction. Default
+value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>araddr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of the first transfer in a read transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arlen_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(7 downto 0)</p></td>
+<td><p>The number of data transfers in a read transaction
+transaction. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arsize_value</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The number of bytes in each data transfer in a read
+transaction (must be a power of 2). Default value is 4.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arburst_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axburst">t_axburst</a></p></td>
+<td><p>Burst type, indicates how address changes between each
+transfer in a read transaction. Default value is INCR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arlock_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axlock">t_axlock</a></p></td>
+<td><p>Provides information about the atomic characteristics of
+a read transaction. Default value is NORMAL.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arcache_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Indicates how a read transaction is required to
+progress through a system. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arprot_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axprot">t_axprot</a></p></td>
+<td><p>Protection attributes of a read transaction. Privilege,
+security level and access type. Default value is
+UNPRIVILEGED_NONSECURE_DATA.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arqos_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Quality of Service identifier for a read transaction.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arregion_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Region indicator for a read transaction. Default value
+is 0x0.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>aruser_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>User-defined extension for the read address channel.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
+<td><p>rdata_value</p></td>
+<td><p>out</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Output variable containing an array of read data</p></td>
+</tr>
+<tr class="row-even"><td><p>variable</p></td>
+<td><p>rresp_value</p></td>
+<td><p>out</p></td>
+<td><p><a class="reference internal" href="#t-xresp-array">t_xresp_array</a></p></td>
+<td><p>Output variable containing an array of read responses
+which indicates the status of a read transfer</p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
+<td><p>ruser_value</p></td>
+<td><p>out</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Output variable containing an array of user-defined
+extensions for the read data channel</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the AXI4 BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>axi_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-axi-if"><span class="std std-ref">t_axi_if</span></a></p></td>
+<td><p>AXI4 signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“AXI_BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axi-bfm-config"><span class="std std-ref">t_axi_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">axi_read</span><span class="p">(</span>
+<span class="w">  </span><span class="n">arid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">aruser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rdata_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rresp_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">ruser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_ruser_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span>
+<span class="w">  </span><span class="n">scope</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg_id_panel</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span>
+<span class="w">  </span><span class="n">config</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_AXI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="n">axi_read</span><span class="p">(</span>
+<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rdata_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rresp_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">ruser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_ruser_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">axi_read</span><span class="p">(</span><span class="n">C_ADDR_IO</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Reading from IO device&quot;</span><span class="p">);</span>
+<span class="n">axi_read</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FF&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Reading 256 data words from MEMORY&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="axi-check">
+<span id="axi-check-bfm"></span><h4>axi_check()<a class="headerlink" href="#axi-check" title="Link to this heading"></a></h4>
+<p>Reads data from the DUT at the given address, using the AXI4 protocol. For protocol details, see the AXI4 specification. After
+reading data from the AXI4 bus, the read data is compared with the expected data, and if they don’t match, an alert with severity
+‘alert_level’ is reported. The procedure also report alerts for the same conditions as the <a class="reference internal" href="#axi-read-bfm"><span class="std std-ref">axi_read()</span></a> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_check</span><span class="p">(</span><span class="n">arid_value</span><span class="p">,</span><span class="w"> </span><span class="n">araddr_value</span><span class="p">,</span><span class="w"> </span><span class="n">arlen_value</span><span class="p">,</span><span class="w"> </span><span class="n">arsize_value</span><span class="p">,</span><span class="w"> </span><span class="n">arburst_value</span><span class="p">,</span><span class="w"> </span><span class="n">arlock_value</span><span class="p">,</span><span class="w"> </span><span class="n">arcache_value</span><span class="p">,</span><span class="w"> </span><span class="n">arprot_value</span><span class="p">,</span><span class="w"> </span><span class="n">arqos_value</span><span class="p">,</span>
+<span class="w">          </span><span class="n">arregion_value</span><span class="p">,</span><span class="w"> </span><span class="n">aruser_value</span><span class="p">,</span><span class="w"> </span><span class="n">rdata_exp</span><span class="p">,</span><span class="w"> </span><span class="n">rresp_exp</span><span class="p">,</span><span class="w"> </span><span class="n">ruser_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arid_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Identification tag for a read transaction. Default
+value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>araddr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of the first transfer in a read transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arlen_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(7 downto 0)</p></td>
+<td><p>The number of data transfers in a read transaction
+transaction. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arsize_value</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The number of bytes in each data transfer in a read
+transaction (must be a power of 2). Default value is 4.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arburst_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axburst">t_axburst</a></p></td>
+<td><p>Burst type, indicates how address changes between each
+transfer in a read transaction. Default value is INCR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arlock_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axlock">t_axlock</a></p></td>
+<td><p>Provides information about the atomic characteristics of
+a read transaction. Default value is NORMAL.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arcache_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Indicates how a read transaction is required to
+progress through a system. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arprot_value</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axprot">t_axprot</a></p></td>
+<td><p>Protection attributes of a read transaction. Privilege,
+security level and access type. Default value is
+UNPRIVILEGED_NONSECURE_DATA.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arqos_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Quality of Service identifier for a read transaction.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arregion_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Region indicator for a read transaction. Default value
+is 0x0.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>aruser_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>User-defined extension for the read address channel.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>rdata_exp</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of expected read data values. A mismatch results
+in an alert ‘alert_level’</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>rresp_exp</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-xresp-array">t_xresp_array</a></p></td>
+<td><p>Array of expected read responses which indicates the
+status of a read transfer. Default value is OKAY for
+all words.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>ruser_exp</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of expected user-defined extensions for the read
+data channel. Default value is 0x0 for all words.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the AXI4 BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>axi_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-axi-if"><span class="std std-ref">t_axi_if</span></a></p></td>
+<td><p>AXI4 signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is
+C_AXI_BFM_CONFIG_DEFAULT.general_severity.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“AXI_BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axi-bfm-config"><span class="std std-ref">t_axi_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_AXI_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">axi_check</span><span class="p">(</span>
+<span class="w">  </span><span class="n">arid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">aruser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">rresp_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_xresp_array</span><span class="p">&#39;(</span><span class="n">OKAY</span><span class="p">,</span><span class="w"> </span><span class="n">OKAY</span><span class="p">),</span>
+<span class="w">  </span><span class="n">ruser_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;00&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span>
+<span class="w">  </span><span class="n">alert_level</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">scope</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg_id_panel</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span>
+<span class="w">  </span><span class="n">config</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_AXI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="n">axi_check</span><span class="p">(</span>
+<span class="w">  </span><span class="n">araddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_exp</span><span class="w">      </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_rdata_exp</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">axi_check</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking data in UART RX register&quot;</span><span class="p">);</span>
+<span class="n">axi_check</span><span class="p">(</span><span class="n">C_ADDR_MEMORY</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;FF&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_rdata_exp_array</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Checking 256 data words from MEMORY&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="init-axi-if-signals">
+<span id="init-axi-if-signals-bfm"></span><h4>init_axi_if_signals()<a class="headerlink" href="#init-axi-if-signals" title="Link to this heading"></a></h4>
+<p>Initializes the AXI4 interface. All the BFM outputs are set to ‘0’, and BFM inputs are set to ‘Z’. This function assumes that awid,
+bid, arid and rid shares a common width (id_width) and that awuser, buser, aruser, ruser also share a common width (user_width).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_axi_if</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">init_axi_if_signals</span><span class="p">(</span><span class="n">addr_width</span><span class="p">,</span><span class="w"> </span><span class="n">data_width</span><span class="p">,</span><span class="w"> </span><span class="n">id_width</span><span class="p">,</span><span class="w"> </span><span class="n">user_width</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the address signals</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the data signals</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>id_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the id signals</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>user_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the user signals</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">axi_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_axi_if_signals</span><span class="p">(</span><span class="n">addr_width</span><span class="p">,</span><span class="w"> </span><span class="n">data_width</span><span class="p">,</span><span class="w"> </span><span class="n">id_width</span><span class="p">,</span><span class="w"> </span><span class="n">user_width</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="local-types">
+<h3>Local types<a class="headerlink" href="#local-types" title="Link to this heading"></a></h3>
+<section id="t-axi-write-address-channel">
+<h4>t_axi_write_address_channel<a class="headerlink" href="#t-axi-write-address-channel" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>awid</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>awaddr</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-even"><td><p>awlen</p></td>
+<td><p>std_logic_vector(7 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>awsize</p></td>
+<td><p>std_logic_vector(2 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>awburst</p></td>
+<td><p>std_logic_vector(1 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>awlock</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>awcache</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>awprot</p></td>
+<td><p>std_logic_vector(2 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>awqos</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>awregion</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>awuser</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>awvalid</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>awready</p></td>
+<td><p>std_logic</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="t-axi-write-data-channel">
+<h4>t_axi_write_data_channel<a class="headerlink" href="#t-axi-write-data-channel" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>wdata</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>wstrb</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-even"><td><p>wlast</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>wuser</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-even"><td><p>wvalid</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>wready</p></td>
+<td><p>std_logic</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="t-axi-write-response-channel">
+<h4>t_axi_write_response_channel<a class="headerlink" href="#t-axi-write-response-channel" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bid</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>bresp</p></td>
+<td><p>std_logic_vector(1 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>buser</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>bvalid</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>bready</p></td>
+<td><p>std_logic</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="t-axi-read-address-channel">
+<h4>t_axi_read_address_channel<a class="headerlink" href="#t-axi-read-address-channel" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>arid</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>araddr</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-even"><td><p>arlen</p></td>
+<td><p>std_logic_vector(7 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>arsize</p></td>
+<td><p>std_logic_vector(2 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>arburst</p></td>
+<td><p>std_logic_vector(1 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>arlock</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>arcache</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>arprot</p></td>
+<td><p>std_logic_vector(2 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>arqos</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>arregion</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>aruser</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>arvalid</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>arready</p></td>
+<td><p>std_logic</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="t-axi-read-data-channel">
+<h4>t_axi_read_data_channel<a class="headerlink" href="#t-axi-read-data-channel" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rid</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>rdata</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-even"><td><p>rresp</p></td>
+<td><p>std_logic_vector(1 downto 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p>rlast</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>ruser</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>rvalid</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>rready</p></td>
+<td><p>std_logic</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="t-axburst">
+<h4>t_axburst<a class="headerlink" href="#t-axburst" title="Link to this heading"></a></h4>
+<p>FIXED, INCR, WRAP</p>
+</section>
+<section id="t-axlock">
+<h4>t_axlock<a class="headerlink" href="#t-axlock" title="Link to this heading"></a></h4>
+<p>NORMAL, EXCLUSIVE</p>
+</section>
+<section id="t-axprot">
+<h4>t_axprot<a class="headerlink" href="#t-axprot" title="Link to this heading"></a></h4>
+<p>UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION,
+PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION</p>
+</section>
+<section id="t-xresp">
+<h4>t_xresp<a class="headerlink" href="#t-xresp" title="Link to this heading"></a></h4>
+<p>OKAY, EXOKAY, SLVERR, DECERR, ILLEGAL</p>
+</section>
+<section id="t-xresp-array">
+<span id="id1"></span><h4>t_xresp_array<a class="headerlink" href="#t-xresp-array" title="Link to this heading"></a></h4>
+<p>array (natural range &lt;&gt;) of t_xresp;</p>
+</section>
+</section>
+<section id="local-bfm-overloads">
+<h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
+<p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
+process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_write</span><span class="p">(</span><span class="n">C_ADDR_PERIPHERAL_1</span><span class="p">,</span><span class="w"> </span><span class="n">C_TEST_DATA</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sending data to Peripheral 1&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>rather than</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_write</span><span class="p">(</span>
+<span class="w">  </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;F&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">buser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_buser_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">bresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">  </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span>
+<span class="w">  </span><span class="n">scope</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg_id_panel</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span>
+<span class="w">  </span><span class="n">config</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_AXI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>By defining the local overload as e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">procedure</span><span class="w"> </span><span class="n">axi_write</span><span class="p">(</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">addr_value</span><span class="w">   </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">unsigned</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data_value</span><span class="w">   </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">msg</span><span class="w">          </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">string</span>
+<span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">v_buser_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="n">C_USER_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="k">variable</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_xresp</span><span class="p">;</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="n">axi_write</span><span class="p">(</span>
+<span class="w">    </span><span class="n">awid_value</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awaddr_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">addr_value</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Keep as is</span>
+<span class="w">    </span><span class="n">awlen_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Set to length=1</span>
+<span class="w">    </span><span class="n">awsize_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">                           </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awburst_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span><span class="w">                        </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awlock_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awcache_value</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awprot_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awqos_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awregion_value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">awuser_value</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">wdata_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">data_value</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Keep as is</span>
+<span class="w">    </span><span class="n">wstrb_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;f&quot;</span><span class="w">                         </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">wuser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w">                       </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">buser_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_buser_value</span><span class="p">,</span><span class="w">               </span><span class="c1">-- Assigning to a local variable</span>
+<span class="w">    </span><span class="n">bresp_value</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v_bresp_value</span><span class="p">,</span><span class="w">               </span><span class="c1">-- Assigning to a local variable</span>
+<span class="w">    </span><span class="n">msg</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w">                         </span><span class="c1">-- Keep as is</span>
+<span class="w">    </span><span class="n">clk</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w">                         </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">    </span><span class="n">axi_if</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">axi_if</span><span class="p">,</span><span class="w">                      </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">    </span><span class="n">scope</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w">                     </span><span class="c1">-- Setting a default value</span>
+<span class="w">    </span><span class="n">msg_id_panel</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w">         </span><span class="c1">-- Use global, shared msg_id_panel</span>
+<span class="w">    </span><span class="n">config</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_AXI_BFM_CONFIG_LOCAL</span><span class="p">);</span><span class="w">     </span><span class="c1">-- Use locally defined configuration or C_AXI_BFM_CONFIG_DEFAULT</span>
+<span class="k">end</span><span class="w"> </span><span class="k">procedure</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Using a local overload like this also allows the following – if wanted:</p>
+<ul class="simple">
+<li><p>Have address value as natural – and convert in the overload</p></li>
+<li><p>Set up defaults for constants. May be different for two overloads of the same BFM</p></li>
+<li><p>Apply dedicated message ID panel to allow dedicated verbosity control</p></li>
+</ul>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>This BFM package may only be compiled with VHDL-2008 or newer. It is dependent on the <a class="reference internal" href="utility_library.html#utility-library"><span class="std std-ref">Utility Library</span></a>, which is only
+compatible with VHDL-2008 or newer.</p></li>
+<li><p>After UVVM-Util has been compiled, the BFM package can be compiled into any desired library.</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p></li>
+</ul>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<h3>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h3>
+<p>For more information on the AXI4 specification, refer to “AMBA® AXI™ and ACE™ Protocol Specification”, Part A (ARM IHI 0022G),
+available from ARM.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Bus Functional Model (BFM) for AXI4.</p></li>
+<li><p>The given BFM complies with the basic AXI4 protocol and thus allows a normal access towards an AXI4 interface.</p></li>
+<li><p>This BFM is not an AXI4 protocol checker.</p></li>
+<li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="vvc">
+<h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>VVC functionality is implemented in axi_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_ADDR_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>8</p></td>
+<td><p>Width of the AXI4 address bus (AWADDR, ARADDR)</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_DATA_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>32</p></td>
+<td><p>Width of the AXI4 data bus (WDATA, RDATA). The
+write strobe (WSTRB) is derived from this
+(GC_DATA_WIDTH/8)</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_ID_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>8</p></td>
+<td><p>Width of the AXI4 ID signals (AWID, BID, ARID,
+RID)</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_USER_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>8</p></td>
+<td><p>Width of the AXI4 User signals (AWUSER, WUSER,
+BUSER, ARUSER, RUSER)</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_AXI_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-axi-bfm-config"><span class="std std-ref">t_axi_bfm_config</span></a></p></td>
+<td><p>C_AXI_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the AXI4 BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>VVC Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>axi_vvc_master_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-axi-if"><span class="std std-ref">t_axi_if</span></a></p></td>
+<td><p>AXI4 signal interface record</p></td>
+</tr>
+</tbody>
+</table>
+<p>In this VVC, the interface has been encapsulated in a signal record of type t_axi_if in order to improve readability of the code.
+Since the AXI4 interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained
+vectors need to be constrained when the interface signals are instantiated. For this interface, it could look like:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">signal</span><span class="w"> </span><span class="n">axi_if</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_axi_if</span><span class="p">(</span><span class="n">write_address_channel</span><span class="p">(</span><span class="n">awid</span><span class="w">  </span><span class="p">(</span><span class="n">C_ID_WIDTH</span><span class="w">      </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                               </span><span class="n">awaddr</span><span class="p">(</span><span class="n">C_ADDR_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                               </span><span class="n">awuser</span><span class="p">(</span><span class="n">C_USER_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)),</span>
+<span class="w">                         </span><span class="n">write_data_channel</span><span class="w">   </span><span class="p">(</span><span class="n">wdata</span><span class="w"> </span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                               </span><span class="n">wstrb</span><span class="w"> </span><span class="p">((</span><span class="n">C_DATA_WIDTH</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                               </span><span class="n">wuser</span><span class="w"> </span><span class="p">(</span><span class="n">C_USER_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)),</span>
+<span class="w">                         </span><span class="n">write_response_channel</span><span class="p">(</span><span class="n">bid</span><span class="w">  </span><span class="p">(</span><span class="n">C_ID_WIDTH</span><span class="w">      </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                                </span><span class="n">buser</span><span class="p">(</span><span class="n">C_USER_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)),</span>
+<span class="w">                         </span><span class="n">read_address_channel</span><span class="w"> </span><span class="p">(</span><span class="n">arid</span><span class="w">  </span><span class="p">(</span><span class="n">C_ID_WIDTH</span><span class="w">      </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                               </span><span class="n">araddr</span><span class="p">(</span><span class="n">C_ADDR_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                               </span><span class="n">aruser</span><span class="p">(</span><span class="n">C_USER_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)),</span>
+<span class="w">                         </span><span class="n">read_data_channel</span><span class="w">    </span><span class="p">(</span><span class="n">rid</span><span class="w">   </span><span class="p">(</span><span class="n">C_ID_WIDTH</span><span class="w">      </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                               </span><span class="n">rdata</span><span class="w"> </span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                               </span><span class="n">ruser</span><span class="w"> </span><span class="p">(</span><span class="n">C_USER_WIDTH</span><span class="w">    </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)));</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id2">
+<h3>Configuration Record<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_axi_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_AXI_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><div class="line-block">
+<div class="line">Delay between any requested BFM accesses
+towards the DUT.</div>
+<div class="line">TIME_START2START: Time from a BFM start to the
+next BFM start (a TB_WARNING will be issued if
+access takes longer than TIME_START2START).</div>
+<div class="line">TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</div>
+<div class="line">Any insert_delay() command will add to the
+above minimum delays, giving for instance the
+ability to skew the BFM starting time.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p><a class="reference internal" href="#t-axi-bfm-config"><span class="std std-ref">t_axi_bfm_config</span></a></p></td>
+<td><p>C_AXI_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the AXI4 BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-odd"><td><p>force_single_pending_transac/
+tion</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>Waits until the previous transaction is
+completed before starting the next one</p></td>
+</tr>
+<tr class="row-even"><td><p>unwanted_activity_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<td><p>Severity of alert to be issued if unwanted
+activity on the DUT outputs is detected. It is
+enabled with ERROR severity by default.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_axi_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_axi_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_axi_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h3>Methods<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="axi-write-vvc">
+<span id="id4"></span><h4>axi_write()<a class="headerlink" href="#axi-write-vvc" title="Link to this heading"></a></h4>
+<p>Adds a write command to the AXI4 VVC executor queue, which will distribute this command to the various channel executors which in
+turn will run as soon as all preceding commands have completed. When the command is scheduled to run, the executors call the AXI4
+procedures in axi_channel_handler_pkg.vhd. This procedure can be called with or without parameters that already have a default value.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_write</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">awid</span><span class="p">,</span><span class="w"> </span><span class="n">awaddr</span><span class="p">,</span><span class="w"> </span><span class="n">awlen</span><span class="p">,</span><span class="w"> </span><span class="n">awsize</span><span class="p">,</span><span class="w"> </span><span class="n">awburst</span><span class="p">,</span><span class="w"> </span><span class="n">awlock</span><span class="p">,</span><span class="w"> </span><span class="n">awcache</span><span class="p">,</span><span class="w"> </span><span class="n">awprot</span><span class="p">,</span><span class="w"> </span><span class="n">awqos</span><span class="p">,</span><span class="w"> </span><span class="n">awregion</span><span class="p">,</span><span class="w"> </span><span class="n">awuser</span><span class="p">,</span><span class="w"> </span><span class="n">wdata</span><span class="p">,</span>
+<span class="w">          </span><span class="n">wstrb</span><span class="p">,</span><span class="w"> </span><span class="n">wuser</span><span class="p">,</span><span class="w"> </span><span class="n">bresp_exp</span><span class="p">,</span><span class="w"> </span><span class="n">buser_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awid</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Identification tag for a write transaction. Default
+value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awaddr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of the first transfer in a write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awlen</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(7 downto 0)</p></td>
+<td><p>The number of data transfers in a write transaction
+transaction. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awsize</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The number of bytes in each data transfer in a write
+transaction (must be a power of 2). Default value is 4.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awburst</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axburst">t_axburst</a></p></td>
+<td><p>Burst type, indicates how address changes between each
+transfer in a write transaction. Default value is INCR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awlock</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axlock">t_axlock</a></p></td>
+<td><p>Provides information about the atomic characteristics of
+a write transaction. Default value is NORMAL.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awcache</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Indicates how a write transaction is required to
+progress through a system. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awprot</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axprot">t_axprot</a></p></td>
+<td><p>Protection attributes of a write transaction. Privilege,
+security level and access type. Default value is
+UNPRIVILEGED_NONSECURE_DATA.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awqos</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Quality of Service identifier for a write transaction.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>awregion</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Region indicator for a write transaction. Default value
+is 0x0.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>awuser</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>User-defined extension for the write address channel.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>wdata</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of data values to be written to the addressed
+registers</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>wstrb</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of write strobes, indicates which byte lanes hold
+valid data (all ‘1’ means all bytes are updated).
+Default value is C_EMPTY_SLV_ARRAY.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>wuser</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of user-defined extension for the write data
+channel. Default value is C_EMPTY_SLV_ARRAY.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>bresp_exp</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-xresp">t_xresp</a></p></td>
+<td><p>Expected write response which indicates the status of a
+write transaction. Default value is OKAY.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>buser_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Expected user-defined extension for the write response
+channel. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">axi_write</span><span class="p">(</span>
+<span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awaddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awsize</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awburst</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awlock</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awprot</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awuser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wstrb</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;F&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">wuser</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;01&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">bresp_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">OKAY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">buser_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">);</span>
+
+<span class="n">axi_write</span><span class="p">(</span>
+<span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">awaddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wdata</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Writing data to Peripheral 1&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="axi-read-vvc">
+<span id="id5"></span><h4>axi_read()<a class="headerlink" href="#axi-read-vvc" title="Link to this heading"></a></h4>
+<p>Adds a read command to the AXI4 VVC executor queue, which will distribute this command to the various channel executors which in
+turn will run as soon as all preceding commands have completed. When the command is scheduled to run, the executors call the AXI4
+procedures in axi_channel_handler_pkg.vhd.</p>
+<p>The value read from the DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller. If the
+data_routing parameter is set to TO_BUFFER, the read data will be stored in the VVC for a potential future fetch (see example with
+fetch_result below). If the data_routing parameter is set to TO_SB, the received data will be sent to the AXI4 VVC dedicated
+scoreboard where it will be checked against the expected value (provided by the testbench).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_read</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">arid</span><span class="p">,</span><span class="w"> </span><span class="n">araddr</span><span class="p">,</span><span class="w"> </span><span class="n">arlen</span><span class="p">,</span><span class="w"> </span><span class="n">arsize</span><span class="p">,</span><span class="w"> </span><span class="n">arburst</span><span class="p">,</span><span class="w"> </span><span class="n">arlock</span><span class="p">,</span><span class="w"> </span><span class="n">arcache</span><span class="p">,</span><span class="w"> </span><span class="n">arprot</span><span class="p">,</span><span class="w"> </span><span class="n">arqos</span><span class="p">,</span><span class="w"> </span><span class="n">arregion</span><span class="p">,</span><span class="w"> </span><span class="n">aruser</span><span class="p">,</span><span class="w"> </span><span class="n">data_routing</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arid</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Identification tag for a read transaction. Default
+value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>araddr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of the first transfer in a read transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arlen</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(7 downto 0)</p></td>
+<td><p>The number of data transfers in a read transaction
+transaction. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arsize</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The number of bytes in each data transfer in a read
+transaction (must be a power of 2). Default value is 4.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arburst</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axburst">t_axburst</a></p></td>
+<td><p>Burst type, indicates how address changes between each
+transfer in a read transaction. Default value is INCR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arlock</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axlock">t_axlock</a></p></td>
+<td><p>Provides information about the atomic characteristics of
+a read transaction. Default value is NORMAL.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arcache</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Indicates how a read transaction is required to
+progress through a system. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arprot</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axprot">t_axprot</a></p></td>
+<td><p>Protection attributes of a read transaction. Privilege,
+security level and access type. Default value is
+UNPRIVILEGED_NONSECURE_DATA.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arqos</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Quality of Service identifier for a read transaction.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arregion</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Region indicator for a read transaction. Default value
+is 0x0.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>aruser</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>User-defined extension for the read address channel.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_routing</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-data-routing"><span class="std std-ref">t_data_routing</span></a></p></td>
+<td><p>Selects the destination of the read data</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">axi_read</span><span class="p">(</span>
+<span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arsize</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arburst</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlock</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arprot</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_UNSECURE_DATA</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">aruser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data_routing</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1 and send result to scoreboard&quot;</span><span class="p">);</span>
+
+<span class="n">axi_read</span><span class="p">(</span>
+<span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data_routing</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1 and send result to read buffer&quot;</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last read</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from read.</span>
+<span class="p">...</span>
+<span class="n">axi_read</span><span class="p">(</span>
+<span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data_routing</span><span class="w">     </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TO_BUFFER</span><span class="p">,</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1 and send result to read buffer&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">AXI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">AXI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for read to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">AXI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from read operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="axi-check-vvc">
+<span id="id6"></span><h4>axi_check()<a class="headerlink" href="#axi-check-vvc" title="Link to this heading"></a></h4>
+<p>Adds a check command to the AXI4 VVC executor queue, which will distribute this command to the various channel executors which in
+turn will run as soon as all preceding commands have completed. When the command is scheduled to run, the executors call the AXI4
+procedures in axi_channel_handler_pkg.vhd. The axi_check() procedure will perform a read operation, then check if the read result
+is equal to the rdata_exp, rresp_exp and ruser_exp parameters. If the result is not equal to the expected result, an alert with
+severity ‘alert_level’ will be issued. The read data will not be stored by this procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">axi_check</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">arid</span><span class="p">,</span><span class="w"> </span><span class="n">araddr</span><span class="p">,</span><span class="w"> </span><span class="n">arlen</span><span class="p">,</span><span class="w"> </span><span class="n">arsize</span><span class="p">,</span><span class="w"> </span><span class="n">arburst</span><span class="p">,</span><span class="w"> </span><span class="n">arlock</span><span class="p">,</span><span class="w"> </span><span class="n">arcache</span><span class="p">,</span><span class="w"> </span><span class="n">arprot</span><span class="p">,</span><span class="w"> </span><span class="n">arqos</span><span class="p">,</span><span class="w"> </span><span class="n">arregion</span><span class="p">,</span><span class="w"> </span><span class="n">aruser</span><span class="p">,</span><span class="w"> </span><span class="n">rdata_exp</span><span class="p">,</span>
+<span class="w">          </span><span class="n">rresp_exp</span><span class="p">,</span><span class="w"> </span><span class="n">ruser_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arid</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>Identification tag for a read transaction. Default
+value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>araddr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of the first transfer in a read transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arlen</p></td>
+<td><p>in</p></td>
+<td><p>unsigned(7 downto 0)</p></td>
+<td><p>The number of data transfers in a read transaction
+transaction. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arsize</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The number of bytes in each data transfer in a read
+transaction (must be a power of 2). Default value is 4.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arburst</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axburst">t_axburst</a></p></td>
+<td><p>Burst type, indicates how address changes between each
+transfer in a read transaction. Default value is INCR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arlock</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axlock">t_axlock</a></p></td>
+<td><p>Provides information about the atomic characteristics of
+a read transaction. Default value is NORMAL.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arcache</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Indicates how a read transaction is required to
+progress through a system. Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arprot</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-axprot">t_axprot</a></p></td>
+<td><p>Protection attributes of a read transaction. Privilege,
+security level and access type. Default value is
+UNPRIVILEGED_NONSECURE_DATA.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>arqos</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Quality of Service identifier for a read transaction.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>arregion</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>Region indicator for a read transaction. Default value
+is 0x0.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>aruser</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>User-defined extension for the read address channel.
+Default value is 0x0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>rdata_exp</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of expected read data values. A mismatch results
+in an alert ‘alert_level’</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>rresp_exp</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-xresp-array">t_xresp_array</a></p></td>
+<td><p>Array of expected read responses which indicates the
+status of a read transfer. Default value is OKAY for
+all words.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>ruser_exp</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Array of expected user-defined extensions for the read
+data channel. Default value is 0x0 for all words.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">axi_check</span><span class="p">(</span>
+<span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arid</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlen</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arsize</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arburst</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arlock</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">NORMAL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arcache</span><span class="w">          </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arprot</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">UNPRIVILEGED_UNSECURE_DATA</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arqos</span><span class="w">            </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">arregion</span><span class="w">         </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;0000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">aruser</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;01&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">rresp_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_xresp_array</span><span class="p">&#39;(</span><span class="n">OKAY</span><span class="p">,</span><span class="w"> </span><span class="n">OKAY</span><span class="p">),</span>
+<span class="w">  </span><span class="n">ruser_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;00&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;00&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">);</span>
+
+<span class="n">axi_check</span><span class="p">(</span>
+<span class="w">  </span><span class="n">VVCT</span><span class="w">             </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">AXI_VVCT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">vvc_instance_idx</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">araddr</span><span class="w">           </span><span class="o">=&gt;</span><span class="w"> </span><span class="mh">x&quot;00000004&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdata_exp</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t_slv_array</span><span class="p">&#39;(</span><span class="mh">x&quot;12345678&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;33333333&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">msg</span><span class="w">              </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="activity-watchdog">
+<h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
+<p>The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered
+within the specified timeout period.</p>
+<p>Include <code class="docutils literal notranslate"><span class="pre">activity_watchdog(num_exp_vvc,</span> <span class="pre">timeout,</span> <span class="pre">[alert_level,</span> <span class="pre">[msg]])</span></code> in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-activity-watchdog"><span class="std std-ref">Essential Mechanisms - Activity Watchdog</span></a>.</p>
+</section>
+<section id="transaction-info">
+<h3>Transaction Info<a class="headerlink" href="#transaction-info" title="Link to this heading"></a></h3>
+<p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
+information directly from the VVC to a DUT model.</p>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-text">AXI4 transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_axi_vvc_transaction_info.bt_wr</strong> and
+       <strong>shared_axi_vvc_transaction_info.bt_rd</strong></span><a class="headerlink" href="#id10" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default" id="id11">
+<caption><span class="caption-text">AXI4 transaction info record fields. Transaction type: t_arw_transaction (ST) - accessible via <strong>shared_axi_vvc_transaction_info.st_aw</strong> and
+       <strong>shared_axi_vvc_transaction_info.st_ar</strong></span><a class="headerlink" href="#id11" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>arwid</p></td>
+<td><p>std_logic_vector(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Identification tag for a read or write
+transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>arwaddr</p></td>
+<td><p>unsigned(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>The address for a read or write transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>arwlen</p></td>
+<td><p>unsigned(7 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Burst length for a read or write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>arwsize</p></td>
+<td><p>integer</p></td>
+<td><p>4</p></td>
+<td><p>Burst size for a read or write transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>arwburst</p></td>
+<td><p><a class="reference internal" href="#t-axburst">t_axburst</a></p></td>
+<td><p>INCR</p></td>
+<td><p>Burst type for a read or write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>arwlock</p></td>
+<td><p><a class="reference internal" href="#t-axlock">t_axlock</a></p></td>
+<td><p>NORMAL</p></td>
+<td><p>Lock value for a read or write transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>arwcache</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Cache value for a read or write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>arwprot</p></td>
+<td><p><a class="reference internal" href="#t-axprot">t_axprot</a></p></td>
+<td><p>UNPRIVILEGED_NONSECURE_DATA</p></td>
+<td><p>Protection value for a read or write transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>arwqos</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>QoS value for a read or write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>arwregion</p></td>
+<td><p>std_logic_vector(3 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Region value for a read or write transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>arwuser</p></td>
+<td><p>std_logic_vector(127 downto
+0)</p></td>
+<td><p>0x0</p></td>
+<td><p>User value for a read or write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default" id="id12">
+<caption><span class="caption-text">AXI4 transaction info record fields. Transaction type: t_w_transaction (ST) - accessible via <strong>shared_axi_vvc_transaction_info.st_w</strong></span><a class="headerlink" href="#id12" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>wdata</p></td>
+<td><p>t_slv_array(0 to 255)(255 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Write data</p></td>
+</tr>
+<tr class="row-even"><td><p>wstrb</p></td>
+<td><p>t_slv_array(0 to 255)(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Write strobe</p></td>
+</tr>
+<tr class="row-odd"><td><p>wuser</p></td>
+<td><p>t_slv_array(0 to 255)(127 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>User value</p></td>
+</tr>
+<tr class="row-even"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default" id="id13">
+<caption><span class="caption-text">AXI4 transaction info record fields. Transaction type: t_b_transaction (ST) - accessible via <strong>shared_axi_vvc_transaction_info.st_b</strong></span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>bid</p></td>
+<td><p>std_logic_vector(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Identification tag</p></td>
+</tr>
+<tr class="row-even"><td><p>bresp</p></td>
+<td><p><a class="reference internal" href="#t-xresp">t_xresp</a></p></td>
+<td><p>OKAY</p></td>
+<td><p>Write response</p></td>
+</tr>
+<tr class="row-odd"><td><p>buser</p></td>
+<td><p>std_logic_vector(127 downto
+0)</p></td>
+<td><p>0x0</p></td>
+<td><p>User value for write response channel</p></td>
+</tr>
+<tr class="row-even"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default" id="id14">
+<caption><span class="caption-text">AXI4 transaction info record fields. Transaction type: t_r_transaction (ST) - accessible via <strong>shared_axi_vvc_transaction_info.st_r</strong></span><a class="headerlink" href="#id14" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>rid</p></td>
+<td><p>std_logic_vector(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Identification tag for read data channel</p></td>
+</tr>
+<tr class="row-even"><td><p>rdata</p></td>
+<td><p>t_slv_array(0 to 255)(255 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Read data array</p></td>
+</tr>
+<tr class="row-odd"><td><p>rresp</p></td>
+<td><p><a class="reference internal" href="#t-xresp-array"><span class="std std-ref">t_xresp_array(0 to 255)</span></a></p></td>
+<td><p>OKAY</p></td>
+<td><p>Read response array</p></td>
+</tr>
+<tr class="row-even"><td><p>ruser</p></td>
+<td><p>t_slv_array(0 to 255)(127 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Read user extension array</p></td>
+</tr>
+<tr class="row-odd"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="scoreboard">
+<h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
+<p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
+i.e. axi_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
+TO_SB parameter is applied. The AXI4 scoreboard is accessible from the testbench as a shared variable AXI_VVC_SB, located in the
+vvc_methods_pkg.vhd, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">AXI_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_AXI_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">v_expected</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The AXI4 scoreboard is per default the maximum width of rid, rdata, rresp and ruser. When sending expected result to the scoreboard,
+where the result width is smaller than the default scoreboard width, we recommend zero-padding the data.</p>
+<p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
+Scoreboard commands are available for the AXI4 VVC scoreboard using the AXI_VVC_SB.</p>
+</section>
+<section id="unwanted-activity-detection">
+<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
+not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
+VVC issues an alert.</p>
+<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To disable this feature in the testbench, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_axi_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Note that the ready signals (awready, wready, arready) are not monitored in this VVC. The ready signals are allowed to be set
+independently of the valid signals (awvalid, wvalid, arvalid), and there is no method to differentiate between the unwanted activity
+and intended activity. See the AXI4 protocol specification for more information.</p>
+<p>The unwanted activity detection is ignored when the valid signals (bvalid, rvalid) go low within one clock period after the VVC
+becomes inactive. This is to handle the situation when the read command exits before the next rising edge, causing signal transitions
+during the first clock cycle after the VVC is inactive.</p>
+<p>For AXI4 VVC, the unwanted activity detection is enabled by default with severity ERROR.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+</section>
+<section id="id7">
+<h3>Compilation<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>The AXI4 VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard</p></li>
+<li><p>AXI4 BFM</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the AXI4 VVC, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id15">
+<caption><span class="caption-text">Compile order for the AXI4 VVC</span><a class="headerlink" href="#id15" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_axi</p></td>
+<td><p>axi_bfm_pkg.vhd</p></td>
+<td><p>AXI4 BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_axi</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>AXI4 transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_axi</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>AXI4 VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_axi</p></td>
+<td><p>axi_read_data_queue_pkg.vhd</p></td>
+<td><p>Package for storing read data responses in a
+queue to support out-of-order read data</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_axi</p></td>
+<td><p>axi_channel_handler_pkg.vhd</p></td>
+<td><p>Package containing procedures for accessing AXI4
+channels. Only for use by the VVC.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_axi</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_axi</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_axi</p></td>
+<td><p>vvc_sb_pkg.vhd</p></td>
+<td><p>AXI4 VVC scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_axi</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>AXI4 VVC methods</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_axi</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_axi</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_axi</p></td>
+<td><p>axi_vvc.vhd</p></td>
+<td><p>AXI4 VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_axi</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>AXI4 VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id8">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="id9">
+<h3>Additional Documentation<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>For more information on the AXI4 specification, refer to “AMBA® AXI™ and ACE™ Protocol Specification”, Part A (ARM IHI 0022G),
+available from ARM.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Verification IP (VIP) for AXI4.</p></li>
+<li><p>The given VIP complies with the basic AXI4 protocol and thus allows a normal access towards an AXI4 interface.</p></li>
+<li><p>This VIP is not an AXI4 protocol checker.</p></li>
+<li><p>For a more advanced VIP please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
+not limited to the warranties of merchantability, fitness for a particular purpose and non-infringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
+otherwise, arising from, out of or in connection with this IP.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vip_avalon_st.html" class="btn btn-neutral float-left" title="Bitvis VIP Avalon-ST" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vip_axilite.html" class="btn btn-neutral float-right" title="Bitvis VIP AXI4-Lite" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, UVVM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

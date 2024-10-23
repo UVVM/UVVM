@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitvis VIP SBI &mdash; UVVM  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bitvis VIP Scoreboard" href="vip_scoreboard.html" />
+    <link rel="prev" title="Bitvis VIP RGMII" href="vip_rgmii.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #F5F5F5" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/uvvm.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="uvvm_intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifo_collection.html">UVVM FIFO Collection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generic_queue.html">UVVM Generic Queue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP SBI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#signal-record">Signal Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-write">sbi_write()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-read">sbi_read()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-check">sbi_check()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-poll-until">sbi_poll_until()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#init-sbi-if-signals">init_sbi_if_signals()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-overloads">Local BFM overloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-documentation">Additional Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-protocol">SBI protocol</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-write-vvc">sbi_write()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-read-vvc">sbi_read()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-check-vvc">sbi_check()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sbi-poll-until-vvc">sbi_poll_until()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Additional Documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vip_scoreboard.html">Bitvis VIP Scoreboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spec_cov.html">Bitvis VIP Specification Coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_spi.html">Bitvis VIP SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #F5F5F5" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UVVM</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Bitvis VIP SBI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/vip_sbi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bitvis-vip-sbi">
+<h1>Bitvis VIP SBI<a class="headerlink" href="#bitvis-vip-sbi" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#bfm">BFM</a></p>
+<ul>
+<li><p><a class="reference internal" href="#sbi-write-bfm"><span class="std std-ref">sbi_write()</span></a></p></li>
+<li><p><a class="reference internal" href="#sbi-read-bfm"><span class="std std-ref">sbi_read()</span></a></p></li>
+<li><p><a class="reference internal" href="#sbi-check-bfm"><span class="std std-ref">sbi_check()</span></a></p></li>
+<li><p><a class="reference internal" href="#sbi-poll-until-bfm"><span class="std std-ref">sbi_poll_until()</span></a></p></li>
+<li><p><a class="reference internal" href="#init-sbi-if-signals-bfm"><span class="std std-ref">init_sbi_if_signals()</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vvc">VVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#sbi-write-vvc"><span class="std std-ref">sbi_write()</span></a></p></li>
+<li><p><a class="reference internal" href="#sbi-read-vvc"><span class="std std-ref">sbi_read()</span></a></p></li>
+<li><p><a class="reference internal" href="#sbi-check-vvc"><span class="std std-ref">sbi_check()</span></a></p></li>
+<li><p><a class="reference internal" href="#sbi-poll-until-vvc"><span class="std std-ref">sbi_poll_until()</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+<section id="bfm">
+<h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
+<p>BFM functionality is implemented in sbi_bfm_pkg.vhd</p>
+<section id="signal-record">
+<span id="t-sbi-if"></span><h3>Signal Record<a class="headerlink" href="#signal-record" title="Link to this heading"></a></h3>
+<p><strong>t_sbi_if</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cs</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>addr</p></td>
+<td><p>unsigned</p></td>
+</tr>
+<tr class="row-even"><td><p>wena</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>rena</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>wdata</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>ready</p></td>
+<td><p>std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>rdata</p></td>
+<td><p>std_logic_vector</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>BFM calls can also be made with listing of single signals rather than t_sbi_if.</p></li>
+<li><p>If using non-ready version, set ready to ‘1’ or set use_ready_signal to false.</p></li>
+</ul>
+</div>
+</section>
+<section id="configuration-record">
+<span id="t-sbi-bfm-config"></span><h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>t_sbi_bfm_config</strong></p>
+<p>Default value for the record is C_SBI_BFM_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>max_wait_cycles</p></td>
+<td><p>integer</p></td>
+<td><p>10</p></td>
+<td><p>The maximum number of clock cycles to wait for
+the DUT ready signal before reporting a timeout
+alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_wait_cycles_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>FAILURE</p></td>
+<td><p>The above timeout will have this severity</p></td>
+</tr>
+<tr class="row-even"><td><p>use_fixed_wait_cycles_read</p></td>
+<td><p>boolean</p></td>
+<td><p>false</p></td>
+<td><p>When true, wait ‘fixed_wait_cycles_read’ after
+asserting rena signal, before sampling rdata</p></td>
+</tr>
+<tr class="row-odd"><td><p>fixed_wait_cycles_read</p></td>
+<td><p>natural</p></td>
+<td><p>0</p></td>
+<td><p>Number of clock cycles to wait after asserting
+rena signal, before sampling rdata</p></td>
+</tr>
+<tr class="row-even"><td><p>clock_period</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Period of the clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>clock_period_margin</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Input clock period margin to specified
+clock_period. Will check ‘T/2’ if input clock is
+low when BFM is called and ‘T’ if input clock is
+high.</p></td>
+</tr>
+<tr class="row-even"><td><p>clock_margin_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>TB_ERROR</p></td>
+<td><p>The above margin will have this severity</p></td>
+</tr>
+<tr class="row-odd"><td><p>setup_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Generated signals setup time. Suggested value
+is clock_period/4. An alert is reported if
+setup_time exceeds clock_period/2.</p></td>
+</tr>
+<tr class="row-even"><td><p>hold_time</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Generated signals hold time. Suggested value
+is clock_period/4. An alert is reported if
+hold_time exceeds clock_period/2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_sync</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-bfm-sync"><span class="std std-ref">t_bfm_sync</span></a></p></td>
+<td><p>SYNC_ON_CLOCK_ONLY</p></td>
+<td><div class="line-block">
+<div class="line">When set to SYNC_ON_CLOCK_ONLY the BFM will
+enter on the first falling edge, estimate the
+clock period,</div>
+<div class="line">synchronize the output signals and exit ¼
+clock period after a succeeding rising edge.</div>
+<div class="line">When set to SYNC_WITH_SETUP_AND_HOLD the BFM
+will use the configured setup_time, hold_time
+and</div>
+<div class="line">clock_period to synchronize output signals
+with clock edges.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>match_strictness</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
+<td><p>MATCH_EXACT</p></td>
+<td><div class="line-block">
+<div class="line">Matching strictness for std_logic values in
+check procedures.</div>
+<div class="line">MATCH_EXACT requires both values to be the
+same. Note that the expected value can contain
+the don’t care operator ‘-‘.</div>
+<div class="line">MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM</p></td>
+<td><p>Message ID used for logging general messages in
+the BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>id_for_bfm_wait</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_WAIT</p></td>
+<td><p>Message ID used for logging waits in the BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>id_for_bfm_poll</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM_POLL</p></td>
+<td><p>Message ID used for logging polling in the BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>use_ready_signal</p></td>
+<td><p>boolean</p></td>
+<td><p>true</p></td>
+<td><p>Whether or not to use the interface ‘ready’
+signal</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>The record <a class="reference internal" href="#t-sbi-if"><span class="std std-ref">t_sbi_if</span></a> can be replaced with the signals listed in said record.</p></li>
+<li><p>All signals are active high.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="sbi-write">
+<span id="sbi-write-bfm"></span><h4>sbi_write()<a class="headerlink" href="#sbi-write" title="Link to this heading"></a></h4>
+<p>Writes the given data to the given address on the DUT, using the SBI protocol:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. - At &#39;config.clock_period&#39;/4 before the first rising clock edge the bus lines are set:
+    a. cs and wena are set to &#39;1&#39;
+    b. rena is set to &#39;0&#39;
+    c. addr is set to addr_value
+    d. wdata is set to data_value
+2a. - With ready-signalling:
+    a. on the first rising edge the DUT ready signal is evaluated:
+        * If ready is &#39;1&#39;, cs and wena are set to &#39;0&#39; again &#39;config.clock_period&#39;/4 after the last rising edge and the write
+          procedure was successful.
+        * If ready is &#39;0&#39;, the procedure will wait one clock cycle and evaluate the ready signal again. This will repeat until
+          ready is set to &#39;1&#39;, or invoke an error if the process has repeated &#39;config.max_wait_cycles times&#39;. A log message with ID
+          &#39;config.id_for_bfm_wait&#39; is logged at the first wait.
+2b. - Without ready-signalling:
+    a. cs and wena are set to &#39;0&#39; again &#39;config.clock_period&#39;/4 after the first rising edge
+</pre></div>
+</div>
+<p>The procedure reports an alert if ready signal is not set to ‘1’ within ‘config.max_wait_cycles’ after cs and wena are set to ‘1’
+(alert_level: config.max_wait_cycles_severity).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_write</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w"> </span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of a software accessible register</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be written to the addressed register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the SBI BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>sbi_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-sbi-if"><span class="std std-ref">t_sbi_if</span></a></p></td>
+<td><p>SBI signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“SBI BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-sbi-bfm-config"><span class="std std-ref">t_sbi_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_SBI_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="mh">x&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Write data to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">);</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="mh">x&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;55&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Write data to Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_SBI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="n">C_ADDR_UART_TX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;40&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Set baud rate to 9600&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="sbi-read">
+<span id="sbi-read-bfm"></span><h4>sbi_read()<a class="headerlink" href="#sbi-read" title="Link to this heading"></a></h4>
+<p>Reads data from the DUT at the given address, using the SBI protocol:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. At &#39;config.clock_period&#39;/4 before the first rising clock edge the bus lines are set:
+    a. cs and rena are set to &#39;1&#39;
+    b. wena is set to &#39;0&#39;
+    c. addr is set to addr_value
+2a. With ready-signalling:
+    a. On the first rising edge the DUT ready signal is evaluated:
+        * If ready is &#39;1&#39;, the data on the rdata line is returned to the reader in data_value.
+        * If ready is &#39;0&#39;, the procedure will wait one clock cycle and evaluate the ready signal again. This will repeat until
+          ready is set to &#39;1&#39;, or invoke an error if the process has repeated &#39;config.max_wait_cycles&#39; times. A log message with
+          ID &#39;config.id_for_bfm_wait&#39; is logged at the first wait.
+2b. Without ready-signalling:
+    a. On the first rising edge the data on the rdata line is returned to the reader in data_value.
+3. After &#39;config.clock_period&#39;/4 cs and rena are set to &#39;0&#39; again
+</pre></div>
+</div>
+<p>The procedure reports an alert if ready signal is not set to ‘1’ within ‘config.max_wait_cycles’ after cs and wena are set to ‘1’
+(alert_level: config.max_wait_cycles_severity).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_read</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w"> </span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of a software accessible register</p></td>
+</tr>
+<tr class="row-odd"><td><p>variable</p></td>
+<td><p>data_value</p></td>
+<td><p>out</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value read from the addressed register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the SBI BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>sbi_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-sbi-if"><span class="std std-ref">t_sbi_if</span></a></p></td>
+<td><p>SBI signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“SBI BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-sbi-bfm-config"><span class="std std-ref">t_sbi_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_SBI_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_read</span><span class="p">(</span><span class="mh">x&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">);</span>
+<span class="n">sbi_read</span><span class="p">(</span><span class="mh">x&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_SBI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">sbi_read</span><span class="p">(</span><span class="n">C_ADDR_UART_BAUD</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART baud rate&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="sbi-check">
+<span id="sbi-check-bfm"></span><h4>sbi_check()<a class="headerlink" href="#sbi-check" title="Link to this heading"></a></h4>
+<p>Reads data from the DUT at the given address, using the SBI protocol described under <a class="reference internal" href="#sbi-read-bfm"><span class="std std-ref">sbi_read()</span></a>. After reading data from
+the SBI bus, the read data is compared with the expected data.</p>
+<ul class="simple">
+<li><p>If the check was successful, and the read data matches the expected data, a log message is written with ID ‘config.id_for_bfm’.</p></li>
+<li><p>If the read data did not match the expected data, an alert with severity ‘alert_level’ will be reported.</p></li>
+<li><p>The procedure will also report alerts for the same conditions as the <a class="reference internal" href="#sbi-read-bfm"><span class="std std-ref">sbi_read()</span></a> procedure.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_check</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of a software accessible register</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when reading the addressed
+register. A mismatch results in an alert with severity
+‘alert_level’.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the SBI BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>sbi_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-sbi-if"><span class="std std-ref">t_sbi_if</span></a></p></td>
+<td><p>SBI signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“SBI BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-sbi-bfm-config"><span class="std std-ref">t_sbi_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_SBI_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_check</span><span class="p">(</span><span class="mh">x&quot;1155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">);</span>
+<span class="n">sbi_check</span><span class="p">(</span><span class="mh">x&quot;1155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_SBI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">sbi_check</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX buffer&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="sbi-poll-until">
+<span id="sbi-poll-until-bfm"></span><h4>sbi_poll_until()<a class="headerlink" href="#sbi-poll-until" title="Link to this heading"></a></h4>
+<p>Reads data from the DUT at the given address, using the SBI protocol described under <a class="reference internal" href="#sbi-read-bfm"><span class="std std-ref">sbi_read()</span></a>. After reading data from
+the DUT, the read data is compared with the expected data. If the read data does not match the expected data, the process is
+repeated until one or more of the following occurs:</p>
+<ol class="arabic simple">
+<li><p>The read data matches the expected data</p></li>
+<li><p>The number of read retries is equal to ‘max_polls’</p></li>
+<li><p>The time between start of sbi_poll_until procedure and now is greater than ‘timeout’</p></li>
+<li><p>The terminate_loop signal is set to ‘1’</p></li>
+</ol>
+<p>If the procedure exits because of 2. or 3. an alert with severity ‘alert_level’ is issued. If either ‘max_polls’ or ‘timeout’ is
+set to 0 (ns), this constraint will be ignored and interpreted as no limit.</p>
+<ul class="simple">
+<li><p>If the check was successful, and the read data matches the expected data, a log message is written with ID ‘config.id_for_bfm’.</p></li>
+<li><p>If the read data did not match the expected data, an alert with severity ‘alert_level’ will be reported.</p></li>
+<li><p>If the procedure is terminated using ‘terminate_loop’ a log message with ID ID_TERMINATE_CMD will be issued.</p></li>
+<li><p>The procedure will also report alerts for the same conditions as the <a class="reference internal" href="#sbi-read-bfm"><span class="std std-ref">sbi_read()</span></a> procedure.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_poll_until</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">max_polls</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_loop</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_value</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of a software accessible register</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when reading the addressed
+register. A mismatch results in an alert with severity
+‘alert_level’.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>max_polls</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The maximum number of polls (reads) before the expected
+data must be found. Exceeding this limit results in an
+alert with severity ‘alert_level’. Note that 0 means no
+limit.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum time to pass before the expected data must
+be found. Exceeding this limit results in an alert with
+severity ‘alert_level’. Note that 0 ns means no timeout.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>The clock signal used to read and write data in/out of
+the SBI BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>sbi_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-sbi-if"><span class="std std-ref">t_sbi_if</span></a></p></td>
+<td><p>SBI signal interface record</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>terminate_loop</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>External control of loop termination to e.g. stop
+polling prematurely</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“SBI BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-sbi-bfm-config"><span class="std std-ref">t_sbi_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_SBI_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_poll_until</span><span class="p">(</span><span class="mh">x&quot;1155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Poll for data from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_loop</span><span class="p">);</span>
+<span class="n">sbi_poll_until</span><span class="p">(</span><span class="mh">x&quot;1155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Poll for data from Peripheral 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="n">terminate_loop</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_SBI_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">sbi_poll_until</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Poll UART RX buffer until CR is found&quot;</span><span class="p">);</span>
+<span class="n">sbi_poll_until</span><span class="p">(</span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_MAX_POLLS</span><span class="p">,</span><span class="w"> </span><span class="n">C_TIMEOUT</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Poll UART RX buffer until CR is found&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="init-sbi-if-signals">
+<span id="init-sbi-if-signals-bfm"></span><h4>init_sbi_if_signals()<a class="headerlink" href="#init-sbi-if-signals" title="Link to this heading"></a></h4>
+<p>Initializes the SBI interface. All the BFM outputs are set to ‘0’, and BFM inputs are set to ‘Z’.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">t_sbi_if</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">init_sbi_if_signals</span><span class="p">(</span><span class="n">addr_width</span><span class="p">,</span><span class="w"> </span><span class="n">data_width</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the address signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_width</p></td>
+<td><p>in</p></td>
+<td><p>natural</p></td>
+<td><p>Width of the data signals</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_if</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">init_sbi_if_signals</span><span class="p">(</span><span class="n">sbi_if</span><span class="p">.</span><span class="n">addr</span><span class="na">&#39;length</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">.</span><span class="n">wdata</span><span class="na">&#39;length</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="local-bfm-overloads">
+<h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
+<p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
+process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_write</span><span class="p">(</span><span class="n">C_ADDR_UART_BAUDRATE</span><span class="p">,</span><span class="w"> </span><span class="n">C_BAUDRATE_9600</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Set Baud-rate to 9600&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>rather than</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_write</span><span class="p">(</span><span class="n">C_ADDR_UART_BAUDRATE</span><span class="p">,</span><span class="w"> </span><span class="n">C_BAUDRATE_9600</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Set Baud-rate to 9600&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">sbi_if</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_SBI_CONFIG_DEFAULT</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>By defining the local overload as e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">procedure</span><span class="w"> </span><span class="n">sbi_write</span><span class="p">(</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">addr_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">unsigned</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">msg</span><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="n">sbi_write</span><span class="p">(</span><span class="n">addr_value</span><span class="p">,</span><span class="w">          </span><span class="c1">-- Keep as is</span>
+<span class="w">            </span><span class="n">data_value</span><span class="p">,</span><span class="w">          </span><span class="c1">-- Keep as is</span>
+<span class="w">            </span><span class="n">msg</span><span class="p">,</span><span class="w">                 </span><span class="c1">-- Keep as is</span>
+<span class="w">            </span><span class="n">clk</span><span class="p">,</span><span class="w">                 </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">            </span><span class="n">sbi_if</span><span class="p">,</span><span class="w">              </span><span class="c1">-- Signal must be visible in local process scope</span>
+<span class="w">            </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w">             </span><span class="c1">-- Use the default</span>
+<span class="w">            </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Use global, shared msg_id_panel</span>
+<span class="w">            </span><span class="n">C_SBI_CONFIG_LOCAL</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Use locally defined configuration or C_SBI_CONFIG_DEFAULT</span>
+<span class="k">end</span><span class="w"> </span><span class="k">procedure</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Using a local overload like this also allows the following – if wanted:</p>
+<ul class="simple">
+<li><p>Have address value as natural – and convert in the overload</p></li>
+<li><p>Set up defaults for constants. May be different for two overloads of the same BFM</p></li>
+<li><p>Apply dedicated message ID panel to allow dedicated verbosity control</p></li>
+</ul>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>This BFM package may only be compiled with VHDL-2008 or newer. It is dependent on the <a class="reference internal" href="utility_library.html#utility-library"><span class="std std-ref">Utility Library</span></a>, which is only
+compatible with VHDL-2008 or newer.</p></li>
+<li><p>After UVVM-Util has been compiled, the BFM package can be compiled into any desired library.</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p></li>
+</ul>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<h3>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h3>
+<p>The SBI BFM is used in the IRQC example provided with the UVVM Utility Library. Thus, you can find info under:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Making a simple, structured and efficient VHDL testbench – Step-by-step [PPT]  <em>(located in /uvvm_util/doc/Simple_TB_step_by_step.pps)</em></p></li>
+</ul>
+</div></blockquote>
+<p>There is also a webinar available on ‘Making a simple, structured and efficient VHDL testbench – Step-by-step’ (via Aldec <a class="footnote-reference brackets" href="#f1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>)</p>
+<section id="sbi-protocol">
+<h4>SBI protocol<a class="headerlink" href="#sbi-protocol" title="Link to this heading"></a></h4>
+<p>SBI is our name for the simplest bus interface possible, one that has been used for decades in the electronics industry. Some
+think of it as a simple SRAM interface, but that is not a standard, and is probably understood and used in many different ways.
+Thus, we have defined a name and an exact behavior, with some flexibility.</p>
+<p>SBI is a single cycle bus with an optional ready-signalling. The protocol for SBI with and without ready-signalling is given below.
+(Note that ready is always high in the without case). Data is sampled on rising edge <strong>a</strong> and <strong>b</strong>.</p>
+<a class="reference internal image-reference" href="_images/sbi_protocol_1.png"><img alt="SBI protocol without ready" class="align-center" src="_images/sbi_protocol_1.png" style="width: 450pt;" /></a>
+<a class="reference internal image-reference" href="_images/sbi_protocol_2.png"><img alt="SBI protocol with ready" class="align-center" src="_images/sbi_protocol_2.png" style="width: 750pt;" /></a>
+<p>As can be seen from the figure all required signals including data input must be ready on the rising edge of the clock. This also
+applies for a read access, but the actual data output is provided combinatorial as soon as the combinational logic allows.
+Note that an active ‘cs’, a valid ‘addr’ and an active ‘wena’ or ‘rena’ is needed on the same active clock edge to be registered
+as a valid read or write. (Being active on two consecutive rising clocks will result in two consecutive accesses - with or without
+side-effects depending on the module’s internal functional logic.) ‘rdata’ will just ripple out for the right combination of ‘cs’,
+‘addr’ and ‘rena’.</p>
+<p>With this simple version, the designer has the option to provide input and/or output registers externally to allow a higher
+frequency (with added latency). SBI has optional ready-signalling (you may choose to have ready always high). When ‘ready’ is used
+it applies to both read and write accesses. For both read and write accesses all input signals must be held until ‘ready’ is active.
+For a read access, the output data may not be used (sampled) until ‘ready’ is active, but must do so on the first rising edge of
+the clock after ‘ready’ active.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Bus Functional Model (BFM) for SBI.</p></li>
+<li><p>The given BFM complies with the basic SBI protocol and thus allows a normal access towards a SBI interface.</p></li>
+<li><p>This BFM is not a SBI protocol checker.</p></li>
+<li><p>For a more advanced BFM please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+</section>
+<section id="vvc">
+<h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>VVC functionality is implemented in sbi_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_ADDR_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>8</p></td>
+<td><p>Width of the SBI address bus</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_DATA_WIDTH</p></td>
+<td><p>integer</p></td>
+<td><p>32</p></td>
+<td><p>Width of the SBI data bus</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_SBI_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-sbi-bfm-config"><span class="std std-ref">t_sbi_bfm_config</span></a></p></td>
+<td><p>C_SBI_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the SBI BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>in</p></td>
+<td><p>std_logic</p></td>
+<td><p>VVC Clock signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>sbi_vvc_master_if</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-sbi-if"><span class="std std-ref">t_sbi_if</span></a></p></td>
+<td><p>SBI signal interface record</p></td>
+</tr>
+</tbody>
+</table>
+<p>In this VVC, the interface has been encapsulated in a signal record of type t_sbi_if in order to improve readability of the code.
+Since the SBI interface buses can be of arbitrary size, the interface vectors have been left unconstrained. These unconstrained
+vectors need to be constrained when the interface signals are instantiated. For this interface, it could look like:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">signal</span><span class="w"> </span><span class="n">sbi_if</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_sbi_if</span><span class="p">(</span><span class="n">addr</span><span class="p">(</span><span class="n">C_ADDR_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                         </span><span class="n">wdata</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                         </span><span class="n">rdata</span><span class="p">(</span><span class="n">C_DATA_WIDTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id2">
+<h3>Configuration Record<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_sbi_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_SBI_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><div class="line-block">
+<div class="line">Delay between any requested BFM accesses
+towards the DUT.</div>
+<div class="line">TIME_START2START: Time from a BFM start to the
+next BFM start (a TB_WARNING will be issued if
+access takes longer than TIME_START2START).</div>
+<div class="line">TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</div>
+<div class="line">Any insert_delay() command will add to the
+above minimum delays, giving for instance the
+ability to skew the BFM starting time.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p><a class="reference internal" href="#t-sbi-bfm-config"><span class="std std-ref">t_sbi_bfm_config</span></a></p></td>
+<td><p>C_SBI_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the SBI BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<td><p>Severity of alert to be issued if unwanted
+activity on the DUT outputs is detected. It is
+enabled with ERROR severity by default.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_sbi_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_sbi_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">id_for_bfm</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">ID_BFM</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_sbi_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h3>Methods<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Orange description is preliminary.</p>
+</div>
+<style> .orange {color:orange} </style><section id="sbi-write-vvc">
+<span id="id4"></span><h4>sbi_write()<a class="headerlink" href="#sbi-write-vvc" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line">Adds a write command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. It has two
+variants using either just data for a basic single transaction, or num_words + randomization for a more advanced version.</div>
+<div class="line">When the basic write command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#sbi-write-bfm"><span class="std std-ref">sbi_write()</span></a> procedure.</div>
+<div class="line"><span class="orange">When the more advanced randomization command is applied, the basic BFM sbi_write() transaction is executed num_words
+times with new random data each time – according to the given randomization profile. Current defined randomization profiles are:
+RANDOM: Standard uniform random. This is provided as an example.</span></div>
+</div>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_write</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">num_words</span><span class="p">,</span><span class="w"> </span><span class="n">randomisation</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of a SW accessible register. Could be offset
+or full address depending on the DUT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be written to the addressed register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;40&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Set UART baud rate to 9600&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1001&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="n">RANDOM</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Write 7 random bytes to UART TX&quot;</span><span class="p">);</span>
+
+<span class="c1">-- It is recommended to use constants to improve the readability of the code, e.g.:</span>
+<span class="n">sbi_write</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_UART_BAUDRATE</span><span class="p">,</span><span class="w"> </span><span class="n">C_BAUDRATE_9600</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Set UART baud rate to 9600&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="sbi-read-vvc">
+<span id="id5"></span><h4>sbi_read()<a class="headerlink" href="#sbi-read-vvc" title="Link to this heading"></a></h4>
+<p>Adds a read command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#sbi-read-bfm"><span class="std std-ref">sbi_read()</span></a> procedure.</p>
+<p>The value read from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the
+read data will be stored in the VVC for a potential future fetch (see example with fetch_result below).
+<span class="orange">If the data_routing is set to TO_SB, the read data will be sent to the SBI VVC dedicated scoreboard where it will be
+checked against the expected value (provided by the testbench).</span></p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_read</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">data_routing</span><span class="p">,]</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of a SW accessible register. Could be offset
+or full address depending on the DUT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data_routing</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-data-routing"><span class="std std-ref">t_data_routing</span></a></p></td>
+<td><p>Selects the destination of the read data</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_read</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1000&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART baud rate&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">sbi_read</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1002&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX and send to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="c1">-- It is recommended to use constants to improve the readability of the code, e.g.:</span>
+<span class="n">sbi_read</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_UART_BAUDRATE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART baud rate&quot;</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last read</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from read.</span>
+<span class="p">...</span>
+<span class="n">sbi_read</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_UART_BAUDRATE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read from Peripheral 1&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for read to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from read operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="sbi-check-vvc">
+<span id="id6"></span><h4>sbi_check()<a class="headerlink" href="#sbi-check-vvc" title="Link to this heading"></a></h4>
+<p>Adds a check command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#sbi-check-bfm"><span class="std std-ref">sbi_check()</span></a> procedure. The sbi_check() procedure will perform a
+read operation, then check if the read data is equal to the expected data in the data parameter. If the read data is not equal to
+the expected data parameter, an alert with severity ‘alert_level’ will be issued. The read data will not be stored in this procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_check</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of a SW accessible register. Could be offset
+or full address depending on the DUT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The expected data value to be read from the addressed
+register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_check</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX&quot;</span><span class="p">);</span>
+<span class="n">sbi_check</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">)</span><span class="o">:</span>
+
+<span class="c1">-- It is recommended to use constants to improve the readability of the code, e.g.:</span>
+<span class="n">sbi_check</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_UART_START_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="sbi-poll-until-vvc">
+<span id="id7"></span><h4>sbi_poll_until()<a class="headerlink" href="#sbi-poll-until-vvc" title="Link to this heading"></a></h4>
+<p>Adds a poll_until command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#sbi-poll-until-bfm"><span class="std std-ref">sbi_poll_until()</span></a> procedure. The sbi_poll_until() procedure will
+perform a read operation, then check if the read data is equal to the data in the data parameter. If the read data is not equal to
+the expected data parameter, the process will be repeated until the read data is equal to the expected data, or the procedure is
+terminated by either a terminate command, a timeout or the poll limit set in max_polls. The read data will not be stored by this
+procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">sbi_poll_until</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">max_polls</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>addr</p></td>
+<td><p>in</p></td>
+<td><p>unsigned</p></td>
+<td><p>The address of a SW accessible register. Could be offset
+or full address depending on the DUT.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The expected data value to be read from the addressed
+register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>max_polls</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>The maximum number of polls (reads) before the expected
+data must be found. Exceeding this limit results in an
+alert with severity ‘alert_level’. Note that 0 means no
+limit. Default value is 100.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum time to pass before the expected data must
+be found. Exceeding this limit results in an alert with
+severity ‘alert_level’. Note that 0 ns means no timeout.
+Default value is 1 us.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">sbi_poll_until</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found&quot;</span><span class="p">);</span>
+<span class="n">sbi_poll_until</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;1155&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="n">TB_WARNING</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="c1">-- It is recommended to use constants to improve the readability of the code, e.g.:</span>
+<span class="n">sbi_poll_until</span><span class="p">(</span><span class="n">SBI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_ADDR_UART_RX</span><span class="p">,</span><span class="w"> </span><span class="n">C_CR_BYTE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="activity-watchdog">
+<h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
+<p>The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered
+within the specified timeout period.</p>
+<p>Include <code class="docutils literal notranslate"><span class="pre">activity_watchdog(num_exp_vvc,</span> <span class="pre">timeout,</span> <span class="pre">[alert_level,</span> <span class="pre">[msg]])</span></code> in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-activity-watchdog"><span class="std std-ref">Essential Mechanisms - Activity Watchdog</span></a>.</p>
+</section>
+<section id="transaction-info">
+<h3>Transaction Info<a class="headerlink" href="#transaction-info" title="Link to this heading"></a></h3>
+<p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
+information directly from the VVC to a DUT model.</p>
+<table class="docutils align-default" id="id11">
+<caption><span class="caption-text">SBI transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_sbi_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id11" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>address</p></td>
+<td><p>unsigned(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Address of the SBI read or write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>std_logic_vector(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Data for SBI read or write transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default" id="id12">
+<caption><span class="caption-text">SBI transaction info record fields. Transaction type: t_compound_transaction (CT) - accessible via <strong>shared_sbi_vvc_transaction_info.ct</strong></span><a class="headerlink" href="#id12" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>address</p></td>
+<td><p>unsigned(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Address of the SBI read or write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>std_logic_vector(31 downto 0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Data for SBI read or write transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>randomisation</p></td>
+<td><p>t_randomisation</p></td>
+<td><p>NA</p></td>
+<td><p>sbi_write() will generate random data when set
+to RANDOM</p></td>
+</tr>
+<tr class="row-even"><td><p>num_words</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Use with randomization to write a number of
+random words using a single sbi_write() command</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_polls</p></td>
+<td><p>integer</p></td>
+<td><p>1</p></td>
+<td><p>Maximum number of polls allowed in the
+sbi_poll_until() procedure. 0 means no limit.</p></td>
+</tr>
+<tr class="row-even"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="scoreboard">
+<h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
+<p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
+i.e. sbi_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
+TO_SB parameter is applied. The SBI scoreboard is accessible from the testbench as a shared variable SBI_VVC_SB, located in the
+vvc_methods_pkg.vhd, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SBI_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_SBI_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_sbi_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The SBI scoreboard is per default a 32 bits wide standard logic vector. When sending expected data to the scoreboard, where the
+data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_sbi_sb() function, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">SBI_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="o">&lt;</span><span class="n">SBI</span><span class="w"> </span><span class="n">VVC</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="n">number</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">pad_sbi_sb</span><span class="p">(</span><span class="o">&lt;</span><span class="n">exp</span><span class="w"> </span><span class="n">data</span><span class="o">&gt;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
+Scoreboard commands are available for the SBI VVC scoreboard using the SBI_VVC_SB.</p>
+</section>
+<section id="unwanted-activity-detection">
+<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
+not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
+VVC issues an alert.</p>
+<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To disable this feature in the testbench, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_sbi_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Note that the ready signal is not monitored in this VVC. When the ready signal is in use, i.e. <em>sbi_bfm_config.use_ready_signal := true</em>,
+the ready signal is allowed to be set independently of the enable signal (wena, rena), and there is no method to differentiate
+between the unwanted activity and intended activity. When the ready signal is not in use, i.e. <em>sbi_bfm_config.use_ready_signal := false</em>,
+the ready signal holds its level high. See <a class="reference internal" href="#sbi-protocol">SBI protocol</a> for more information on the ready signal.</p>
+<p>For SBI VVC, the unwanted activity detection is enabled by default with severity ERROR.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+</section>
+<section id="id8">
+<h3>Compilation<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>The SBI VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard</p></li>
+<li><p>SBI BFM</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the SBI VVC, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id13">
+<caption><span class="caption-text">Compile order for the SBI VVC</span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_sbi</p></td>
+<td><p>sbi_bfm_pkg.vhd</p></td>
+<td><p>SBI BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_sbi</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>SBI transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_sbi</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>SBI VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_sbi</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_sbi</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_sbi</p></td>
+<td><p>vvc_sb_pkg.vhd</p></td>
+<td><p>SBI VVC scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_sbi</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>SBI VVC methods</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_sbi</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_sbi</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_sbi</p></td>
+<td><p>sbi_vvc.vhd</p></td>
+<td><p>SBI VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_sbi</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>SBI VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id9">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="id10">
+<h3>Additional Documentation<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>For additional documentation on the SBI protocol, please see <a class="reference internal" href="#sbi-protocol">SBI protocol</a>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>This is a simplified Verification IP (VIP) for SBI.</p></li>
+<li><p>The given VIP complies with the basic SBI protocol and thus allows a normal access towards a SBI interface.</p></li>
+<li><p>This VIP is not a SBI protocol checker.</p></li>
+<li><p>For a more advanced VIP please contact UVVM support at <a class="reference external" href="mailto:info&#37;&#52;&#48;uvvm&#46;org">info<span>&#64;</span>uvvm<span>&#46;</span>org</a></p></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
+not limited to the warranties of merchantability, fitness for a particular purpose and non-infringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
+otherwise, arising from, out of or in connection with this IP.</p>
+</div>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="f1" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://www.aldec.com/en/support/resources/multimedia/webinars/1673">https://www.aldec.com/en/support/resources/multimedia/webinars/1673</a></p>
+</aside>
+</aside>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vip_rgmii.html" class="btn btn-neutral float-left" title="Bitvis VIP RGMII" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vip_scoreboard.html" class="btn btn-neutral float-right" title="Bitvis VIP Scoreboard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, UVVM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+         .wy-nav-content { max-width: none; }
+  </style>
+
+
+
+</body>
+</html>

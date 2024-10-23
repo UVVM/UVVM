@@ -17,7 +17,7 @@ This project uses the following versions:
   bitvis_vip_scoreboard, version v2.3.3
   bitvis_vip_spi, version v5.1.0
   bitvis_vip_uart, version v4.1.0
-  bitvis_vip_spec_cov, version v1.1.2
+  bitvis_vip_spec_cov, version v2.0.0
   bitvis_vip_hvvc_to_vvc_bridge, version v0.1.1
   bitvis_vip_ethernet, version v0.4.0
   bitvis_vip_axi, version v3.1.0

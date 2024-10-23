@@ -164,8 +164,8 @@ const _orderResultsByScoreThenName = (a, b) => {
  */
 if (typeof splitQuery === "undefined") {
   var splitQuery = (query) => query
-    .split(/[^\p{Letter}\p{Number}_\p{Emoji_Presentation}]+/gu)
-    .filter(term => term)  // remove remaining empty strings
+      .split(/[^\p{Letter}\p{Number}_\p{Emoji_Presentation}]+/gu)
+      .filter(term => term)  // remove remaining empty strings
 }
 
 /**
@@ -326,7 +326,7 @@ const Search = {
 
     const queryLower = query.toLowerCase().trim();
     for (const [title, foundTitles] of Object.entries(allTitles)) {
-      if (title.toLowerCase().trim().includes(queryLower) && (queryLower.length >= title.length / 2)) {
+      if (title.toLowerCase().trim().includes(queryLower) && (queryLower.length >= title.length/2)) {
         for (const [file, id] of foundTitles) {
           let score = Math.round(100 * queryLower.length / title.length)
           normalResults.push([
@@ -343,7 +343,7 @@ const Search = {
 
     // search for explicit entries in index directives
     for (const [entry, foundEntries] of Object.entries(indexEntries)) {
-      if (entry.includes(queryLower) && (queryLower.length >= entry.length / 2)) {
+      if (entry.includes(queryLower) && (queryLower.length >= entry.length/2)) {
         for (const [file, id, isMain] of foundEntries) {
           const score = Math.round(100 * queryLower.length / entry.length);
           const result = [
@@ -404,20 +404,6 @@ const Search = {
   query: (query) => {
     const [searchQuery, searchTerms, excludedTerms, highlightTerms, objectTerms] = Search._parseQuery(query);
     const results = Search._performSearch(searchQuery, searchTerms, excludedTerms, highlightTerms, objectTerms);
-
-    // remove duplicate search results
-    // note the reversing of results, so that in the case of duplicates, the highest-scoring entry is kept
-    let seen = new Set();
-    results = results.reverse().reduce((acc, result) => {
-      let resultStr = result.slice(0, 4).concat([result[5]]).map(v => String(v)).join(',');
-      if (!seen.has(resultStr)) {
-        acc.push(result);
-        seen.add(resultStr);
-      }
-      return acc;
-    }, []);
-
-    results = results.reverse();
 
     // for debugging
     //Search.lastresults = results.slice();  // a copy

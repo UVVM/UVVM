@@ -5024,8 +5024,8 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope, ID_NEVER, msg_id_panel);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope, ID_NEVER, msg_id_panel);
 
     if v_len_check_ok and v_dir_check_ok then
       for idx in exp'range loop
@@ -5082,8 +5082,8 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope, ID_NEVER, msg_id_panel);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope, ID_NEVER, msg_id_panel);
 
     if v_len_check_ok and v_dir_check_ok then
       for idx in exp'range loop
@@ -5140,8 +5140,8 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope, ID_NEVER, msg_id_panel);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope, ID_NEVER, msg_id_panel);
 
     for idx in exp'range loop
       -- do not count CHECK_VALUE multiple times
@@ -5779,8 +5779,8 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope);
+    check_value(v_dir_check_ok = true, TB_WARNING, "array directions do not match", scope, ID_NEVER, msg_id_panel);
+    check_value(v_len_check_ok = true, TB_ERROR, "array lengths do not match", scope, ID_NEVER, msg_id_panel);
     -- do not count called CHECK_VALUE
     protected_check_counters.decrement(CHECK_VALUE, 2);
 
@@ -5833,8 +5833,8 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope, ID_NEVER, msg_id_panel);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope, ID_NEVER, msg_id_panel);
     -- do not count called CHECK_VALUE
     protected_check_counters.decrement(CHECK_VALUE, 2);
 
@@ -5887,8 +5887,8 @@ package body methods_pkg is
   begin
     protected_check_counters.increment(CHECK_VALUE);
 
-    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope);
-    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope);
+    check_value(v_dir_check_ok = true, warning, "array directions do not match", scope, ID_NEVER, msg_id_panel);
+    check_value(v_len_check_ok = true, warning, "array lengths do not match", scope, ID_NEVER, msg_id_panel);
     -- do not count called CHECK_VALUE
     protected_check_counters.decrement(CHECK_VALUE, 2);
 

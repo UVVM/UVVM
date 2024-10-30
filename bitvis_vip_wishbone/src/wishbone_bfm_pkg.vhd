@@ -178,7 +178,7 @@ package body wishbone_bfm_pkg is
 
     -- check if enough room for setup_time in low period
     if (clk = '1') and (config.setup_time > (config.clock_period / 2 - clk'last_event)) then
-      await_value(clk, '0', 0 ns, config.clock_period / 2, TB_FAILURE, proc_name & ": timeout waiting for clk low period for setup_time.");
+      await_value(clk, '0', 0 ns, config.clock_period / 2, TB_FAILURE, proc_name & ": timeout waiting for clk low period for setup_time.", scope, ID_NEVER, msg_id_panel);
     end if;
     -- Wait setup_time specified in config record  --wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
     wait_until_given_time_after_rising_edge(clk, config.setup_time);
@@ -192,7 +192,7 @@ package body wishbone_bfm_pkg is
     wait until falling_edge(clk);       -- wait for DUT update of signal
     -- check if clk period since last rising edge is within specifications and take a new time stamp
     if v_last_falling_edge > -1 ns then
-      check_value_in_range(now - v_last_falling_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+      check_value_in_range(now - v_last_falling_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
     end if;
     v_last_falling_edge := now;         -- time stamp for clk period checking
 
@@ -201,7 +201,7 @@ package body wishbone_bfm_pkg is
         wait until falling_edge(clk);
         -- check if clk period since last rising edge is within specifications and take a new time stamp
         if v_last_falling_edge > -1 ns then
-          check_value_in_range(now - v_last_falling_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+          check_value_in_range(now - v_last_falling_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
         end if;
         v_last_falling_edge := now;     -- time stamp for clk period checking
       else
@@ -267,7 +267,7 @@ package body wishbone_bfm_pkg is
 
     -- check if enough room for setup_time in low period
     if (clk = '1') and (config.setup_time > (config.clock_period / 2 - clk'last_event)) then
-      await_value(clk, '0', 0 ns, config.clock_period / 2, TB_FAILURE, local_proc_name & ": timeout waiting for clk low period for setup_time.");
+      await_value(clk, '0', 0 ns, config.clock_period / 2, TB_FAILURE, local_proc_name & ": timeout waiting for clk low period for setup_time.", scope, ID_NEVER, msg_id_panel);
     end if;
     -- Wait setup_time specified in config record -- wait_until_given_time_after_rising_edge(clk, config.clock_period/4);
     wait_until_given_time_after_rising_edge(clk, config.setup_time);
@@ -280,7 +280,7 @@ package body wishbone_bfm_pkg is
     wait until falling_edge(clk);       -- wait for DUT update of signal
     -- check if clk period since last rising edge is within specifications and take a new time stamp
     if v_last_falling_edge > -1 ns then
-      check_value_in_range(now - v_last_falling_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+      check_value_in_range(now - v_last_falling_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
     end if;
     v_last_falling_edge := now;         -- time stamp for clk period checking
 
@@ -289,7 +289,7 @@ package body wishbone_bfm_pkg is
         wait until falling_edge(clk);
         -- check if clk period since last rising edge is within specifications and take a new time stamp
         if v_last_falling_edge > -1 ns then
-          check_value_in_range(now - v_last_falling_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+          check_value_in_range(now - v_last_falling_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
         end if;
         v_last_falling_edge := now;     -- time stamp for clk period checking
       else
@@ -307,7 +307,7 @@ package body wishbone_bfm_pkg is
       wait until rising_edge(clk);
       -- check if clk period since last rising edge is within specifications and take a new time stamp
       if v_last_rising_edge > -1 ns then
-        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.");
+        check_value_in_range(now - v_last_rising_edge, config.clock_period - config.clock_period_margin, config.clock_period + config.clock_period_margin, config.clock_margin_severity, "checking clk period is within requirement.", scope, ID_NEVER, msg_id_panel);
       end if;
       v_last_rising_edge := now;        -- time stamp for clk period checking
 
@@ -353,7 +353,7 @@ package body wishbone_bfm_pkg is
 
     for i in v_normalized_data'range loop
       -- Allow don't care in expected value and use match strictness from config for comparison
-      if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg) then
+      if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER, msg_id_panel) then
         v_check_ok := true;
       else
         v_check_ok := false;
@@ -363,7 +363,7 @@ package body wishbone_bfm_pkg is
 
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg) else HEX;
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER, msg_id_panel) else HEX;
       alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);

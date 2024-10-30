@@ -600,7 +600,7 @@ begin
             for i in 1 to v_queue_count loop
               v_cmd            := read_data_channel_queue.peek(POSITION, i);
               v_normalized_rid := normalize_and_check(v_cmd.id, v_normalized_rid, ALLOW_WIDER_NARROWER, "v_cmd.id", "v_normalized_rid", v_cmd.msg);
-              if check_value(v_result.rid, v_normalized_rid, vvc_config.bfm_config.match_strictness, NO_ALERT, "Checking if the correct ID is found in the command queue", C_CHANNEL_SCOPE) then
+              if check_value(v_result.rid, v_normalized_rid, vvc_config.bfm_config.match_strictness, NO_ALERT, "Checking if the correct ID is found in the command queue", C_CHANNEL_SCOPE, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER, v_msg_id_panel) then
                 -- Correct ID found. We stop searching for the ID
                 read_data_channel_queue.delete(POSITION, i, SINGLE);
                 exit;
@@ -654,7 +654,7 @@ begin
             for i in 1 to v_queue_count loop
               v_cmd            := read_data_channel_queue.peek(POSITION, i);
               v_normalized_rid := normalize_and_check(v_cmd.id, v_normalized_rid, ALLOW_WIDER_NARROWER, "v_cmd.id", "v_normalized_rid", v_cmd.msg);
-              if check_value(v_result.rid, v_normalized_rid, vvc_config.bfm_config.match_strictness, NO_ALERT, "Checking if the correct ID is found in the command queue", C_CHANNEL_SCOPE) then
+              if check_value(v_result.rid, v_normalized_rid, vvc_config.bfm_config.match_strictness, NO_ALERT, "Checking if the correct ID is found in the command queue", C_CHANNEL_SCOPE, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER, v_msg_id_panel) then
                 -- Correct ID found. We stop searching for the ID
                 read_data_channel_queue.delete(POSITION, i, SINGLE);
                 exit;
@@ -925,7 +925,7 @@ begin
         for i in 1 to v_queue_count loop
           v_cmd            := write_response_channel_queue.peek(POSITION, i);
           v_normalized_bid := normalize_and_check(v_cmd.id, v_normalized_bid, ALLOW_WIDER_NARROWER, "v_cmd.id", "v_normalized_bid", v_cmd.msg);
-          if check_value(v_bid_value, v_normalized_bid, vvc_config.bfm_config.match_strictness, NO_ALERT, "Checking if the correct ID is found in the command queue", C_CHANNEL_SCOPE) then
+          if check_value(v_bid_value, v_normalized_bid, vvc_config.bfm_config.match_strictness, NO_ALERT, "Checking if the correct ID is found in the command queue", C_CHANNEL_SCOPE, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER, v_msg_id_panel) then
             -- Correct ID found. We stop searching for the ID
             write_response_channel_queue.delete(POSITION, i, SINGLE);
             exit;

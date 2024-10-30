@@ -58,7 +58,7 @@ package body generic_sb_support_pkg is
   ) return std_logic_vector is
     variable v_padded_slv : std_logic_vector(pad_width - 1 downto 0) := (others => '0');
   begin
-    check_value(pad_data'length <= pad_width, TB_WARNING, "check: pad_data width exceed pad_width");
+    check_value(pad_data'length <= pad_width, TB_WARNING, "check: pad_data width exceed pad_width", C_VVC_CMD_SCOPE_DEFAULT, ID_NEVER);
 
     v_padded_slv(pad_data'length - 1 downto 0) := pad_data;
     return v_padded_slv;

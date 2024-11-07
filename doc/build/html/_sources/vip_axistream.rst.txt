@@ -992,9 +992,9 @@ the received data and metadata will be stored in the VVC for a potential future 
     variable v_result  : work.vvc_cmd_pkg.t_vvc_result; -- Result from receive (data and metadata)
     ...
     axistream_receive(AXISTREAM_VVCT, 0, "Receive data in VVC");
-    v_cmd_idx := get_last_received_cmd_idx(AXISTREAN_VVCT, 0);               
-    await_completion(AXISTREAN_VVCT, 0, v_cmd_idx, 1 ms, "Wait for receive to finish");
-    fetch_result(AXISTREAN_VVCT, 0, v_cmd_idx, v_result, "Fetching result from receive operation");
+    v_cmd_idx := get_last_received_cmd_idx(AXISTREAM_VVCT, 0);               
+    await_completion(AXISTREAM_VVCT, 0, v_cmd_idx, 1 ms, "Wait for receive to finish");
+    fetch_result(AXISTREAM_VVCT, 0, v_cmd_idx, v_result, "Fetching result from receive operation");
 
 .. hint::
 

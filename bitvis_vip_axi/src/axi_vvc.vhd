@@ -607,8 +607,10 @@ begin
               elsif i = v_queue_count then
                 -- We didn't find the correct RID
                 alert(vvc_config.bfm_config.general_severity,"Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
-                alert(vvc_config.bfm_config.general_severity,"Removing read_data_channel_queue(" & to_string(i) & ") element", C_CHANNEL_SCOPE);
-                read_data_channel_queue.delete(POSITION, i, SINGLE);
+                for ii in 1 to v_queue_count loop
+                    alert(vvc_config.bfm_config.general_severity,"Removing read_data_channel_queue(" & to_string(ii) & ") element", C_CHANNEL_SCOPE);
+                    read_data_channel_queue.delete(POSITION, ii, SINGLE);
+                end loop;
               end if;
             end loop;
           else
@@ -663,8 +665,10 @@ begin
               elsif i = v_queue_count then
                 -- We didn't find the correct RID
                 alert(vvc_config.bfm_config.general_severity,"Unexpected read data with RID: " & to_string(v_result.rid), C_CHANNEL_SCOPE);
-                alert(vvc_config.bfm_config.general_severity,"Removing read_data_channel_queue(" & to_string(i) & ") element", C_CHANNEL_SCOPE);
-                read_data_channel_queue.delete(POSITION, i, SINGLE);
+                for ii in 1 to v_queue_count loop
+                    alert(vvc_config.bfm_config.general_severity,"Removing read_data_channel_queue(" & to_string(ii) & ") element", C_CHANNEL_SCOPE);
+                    read_data_channel_queue.delete(POSITION, ii, SINGLE);
+                end loop;
               end if;
             end loop;
           else

@@ -283,6 +283,13 @@ package string_methods_pkg is
     prefix : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
   ) return string;
 
+  impure function to_string(
+    val    : t_positive_vector;
+    radix  : t_radix        := DEC;
+    format : t_format_zeros := SKIP_LEADING_0; -- | KEEP_LEADING_0
+    prefix : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+  ) return string;
+
   function to_string(
     val : real_vector
   ) return string;
@@ -1487,6 +1494,16 @@ package body string_methods_pkg is
 
   impure function to_string(
     val    : t_natural_vector;
+    radix  : t_radix        := DEC;
+    format : t_format_zeros := SKIP_LEADING_0; -- | KEEP_LEADING_0
+    prefix : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?
+  ) return string is
+  begin
+    return to_string(integer_vector(val), radix, format, prefix);
+  end function;
+
+  impure function to_string(
+    val    : t_positive_vector;
     radix  : t_radix        := DEC;
     format : t_format_zeros := SKIP_LEADING_0; -- | KEEP_LEADING_0
     prefix : t_radix_prefix := EXCL_RADIX -- Insert radix prefix in string?

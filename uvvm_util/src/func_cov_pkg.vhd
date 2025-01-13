@@ -659,16 +659,17 @@ package body func_cov_pkg is
     constant value     : integer;
     constant proc_call : string)
   return t_new_bin_array is
+    constant C_PROC_CALL_NORMALISED : string(1 to proc_call'length) := proc_call;
     variable v_ret : t_new_bin_array(0 to 0);
   begin
     v_ret(0).bin_vector(0).contains   := contains;
     v_ret(0).bin_vector(0).values(0)  := value;
     v_ret(0).bin_vector(0).num_values := 1;
     v_ret(0).num_bins                 := 1;
-    if proc_call'length > C_FC_MAX_PROC_CALL_LENGTH then
-      v_ret(0).proc_call := proc_call(1 to C_FC_MAX_PROC_CALL_LENGTH - 3) & "...";
+    if C_PROC_CALL_NORMALISED'length > C_FC_MAX_PROC_CALL_LENGTH then
+      v_ret(0).proc_call := C_PROC_CALL_NORMALISED(1 to C_FC_MAX_PROC_CALL_LENGTH - 3) & "...";
     else
-      v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+      v_ret(0).proc_call(1 to C_PROC_CALL_NORMALISED'length) := C_PROC_CALL_NORMALISED;
     end if;
     return v_ret;
   end function;
@@ -679,22 +680,24 @@ package body func_cov_pkg is
     constant set_of_values : integer_vector;
     constant proc_call     : string)
   return t_new_bin_array is
-    variable v_ret : t_new_bin_array(0 to 0);
+    constant C_SET_OF_VALUES_NORMALISED : integer_vector(0 to set_of_values'length-1) := set_of_values;
+    constant C_PROC_CALL_NORMALISED     : string(1 to proc_call'length) := proc_call;
+    variable v_ret                      : t_new_bin_array(0 to 0);
   begin
     v_ret(0).bin_vector(0).contains := contains;
-    if set_of_values'length <= C_FC_MAX_NUM_BIN_VALUES then
-      v_ret(0).bin_vector(0).values(0 to set_of_values'length - 1) := set_of_values;
-      v_ret(0).bin_vector(0).num_values                            := set_of_values'length;
+    if C_SET_OF_VALUES_NORMALISED'length <= C_FC_MAX_NUM_BIN_VALUES then
+      v_ret(0).bin_vector(0).values(0 to C_SET_OF_VALUES_NORMALISED'length - 1) := C_SET_OF_VALUES_NORMALISED;
+      v_ret(0).bin_vector(0).num_values                                         := C_SET_OF_VALUES_NORMALISED'length;
     else
-      v_ret(0).bin_vector(0).values     := set_of_values(0 to C_FC_MAX_NUM_BIN_VALUES - 1);
+      v_ret(0).bin_vector(0).values     := C_SET_OF_VALUES_NORMALISED(0 to C_FC_MAX_NUM_BIN_VALUES - 1);
       v_ret(0).bin_vector(0).num_values := C_FC_MAX_NUM_BIN_VALUES;
-      alert(TB_WARNING, proc_call & "=> Number of values (" & to_string(set_of_values'length) & ") exceeds C_FC_MAX_NUM_BIN_VALUES.\n Increase C_FC_MAX_NUM_BIN_VALUES in adaptations package.", C_TB_SCOPE_DEFAULT);
+      alert(TB_WARNING, C_PROC_CALL_NORMALISED & "=> Number of values (" & to_string(C_SET_OF_VALUES_NORMALISED'length) & ") exceeds C_FC_MAX_NUM_BIN_VALUES.\n Increase C_FC_MAX_NUM_BIN_VALUES in adaptations package.", C_TB_SCOPE_DEFAULT);
     end if;
     v_ret(0).num_bins               := 1;
-    if proc_call'length > C_FC_MAX_PROC_CALL_LENGTH then
-      v_ret(0).proc_call := proc_call(1 to C_FC_MAX_PROC_CALL_LENGTH - 3) & "...";
+    if C_PROC_CALL_NORMALISED'length > C_FC_MAX_PROC_CALL_LENGTH then
+      v_ret(0).proc_call := C_PROC_CALL_NORMALISED(1 to C_FC_MAX_PROC_CALL_LENGTH - 3) & "...";
     else
-      v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+      v_ret(0).proc_call(1 to C_PROC_CALL_NORMALISED'length) := C_PROC_CALL_NORMALISED;
     end if;
     return v_ret;
   end function;
@@ -707,13 +710,14 @@ package body func_cov_pkg is
     constant num_bins  : natural;
     constant proc_call : string)
   return t_new_bin_array is
-    constant C_RANGE_WIDTH     : integer := abs (max_value - min_value) + 1;
-    variable v_div_range       : integer;
-    variable v_div_residue     : integer := 0;
-    variable v_div_residue_min : integer := 0;
-    variable v_div_residue_max : integer := 0;
-    variable v_num_bins        : integer := 0;
-    variable v_ret             : t_new_bin_array(0 to 0);
+    constant C_PROC_CALL_NORMALISED : string(1 to proc_call'length) := proc_call;
+    constant C_RANGE_WIDTH          : integer := abs (max_value - min_value) + 1;
+    variable v_div_range            : integer;
+    variable v_div_residue          : integer := 0;
+    variable v_div_residue_min      : integer := 0;
+    variable v_div_residue_max      : integer := 0;
+    variable v_num_bins             : integer := 0;
+    variable v_ret                  : t_new_bin_array(0 to 0);
   begin
     check_value(contains = RAN or contains = RAN_IGNORE or contains = RAN_ILLEGAL, TB_FAILURE, "This function should only be used with range types.",
                 C_TB_SCOPE_DEFAULT, ID_NEVER, caller_name => "create_bin_range()");
@@ -722,7 +726,7 @@ package body func_cov_pkg is
       -- Create a bin for each value in the range (when num_bins is not defined or range is smaller than the number of bins)
       if num_bins = 0 or C_RANGE_WIDTH <= num_bins then
         if C_RANGE_WIDTH > C_FC_MAX_NUM_NEW_BINS then
-          alert(TB_ERROR, proc_call & "=> Failed. Number of bins (" & to_string(C_RANGE_WIDTH) & ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          alert(TB_ERROR, C_PROC_CALL_NORMALISED & "=> Failed. Number of bins (" & to_string(C_RANGE_WIDTH) & ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
           return C_EMPTY_NEW_BIN_ARRAY;
         end if;
         for i in min_value to max_value loop
@@ -736,7 +740,7 @@ package body func_cov_pkg is
       -- Create several bins by diving the range
       else
         if num_bins > C_FC_MAX_NUM_NEW_BINS then
-          alert(TB_ERROR, proc_call & "=> Failed. Number of bins (" & to_string(num_bins) & ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
+          alert(TB_ERROR, C_PROC_CALL_NORMALISED & "=> Failed. Number of bins (" & to_string(num_bins) & ") added in a single procedure call exceeds C_FC_MAX_NUM_NEW_BINS.\n Increase C_FC_MAX_NUM_NEW_BINS in adaptations package.", C_TB_SCOPE_DEFAULT);
           return C_EMPTY_NEW_BIN_ARRAY;
         end if;
         v_div_residue := C_RANGE_WIDTH mod num_bins;
@@ -757,13 +761,13 @@ package body func_cov_pkg is
         end loop;
       end if;
       v_ret(0).num_bins := v_num_bins;
-      if proc_call'length > C_FC_MAX_PROC_CALL_LENGTH then
-        v_ret(0).proc_call := proc_call(1 to C_FC_MAX_PROC_CALL_LENGTH - 3) & "...";
+      if C_PROC_CALL_NORMALISED'length > C_FC_MAX_PROC_CALL_LENGTH then
+        v_ret(0).proc_call := C_PROC_CALL_NORMALISED(1 to C_FC_MAX_PROC_CALL_LENGTH - 3) & "...";
       else
-        v_ret(0).proc_call(1 to proc_call'length) := proc_call;
+        v_ret(0).proc_call(1 to C_PROC_CALL_NORMALISED'length) := C_PROC_CALL_NORMALISED;
       end if;
     else
-      alert(TB_ERROR, proc_call & "=> Failed. min_value must be less or equal than max_value", C_TB_SCOPE_DEFAULT);
+      alert(TB_ERROR, C_PROC_CALL_NORMALISED & "=> Failed. min_value must be less or equal than max_value", C_TB_SCOPE_DEFAULT);
       return C_EMPTY_NEW_BIN_ARRAY;
     end if;
     return v_ret;
@@ -1217,14 +1221,15 @@ package body func_cov_pkg is
       constant bin_name : string;
       constant bin_idx  : string)
     return string is
+      constant C_BIN_NAME_NORMALISED : string(1 to bin_name'length) := bin_name;
     begin
-      if bin_name = "" then
+      if C_BIN_NAME_NORMALISED = "" then
         return "bin_" & bin_idx & fill_string(NUL, C_FC_MAX_NAME_LENGTH - 4 - bin_idx'length);
       else
-        if bin_name'length > C_FC_MAX_NAME_LENGTH then
-          return bin_name(1 to C_FC_MAX_NAME_LENGTH);
+        if C_BIN_NAME_NORMALISED'length > C_FC_MAX_NAME_LENGTH then
+          return C_BIN_NAME_NORMALISED(1 to C_FC_MAX_NAME_LENGTH);
         else
-          return bin_name & fill_string(NUL, C_FC_MAX_NAME_LENGTH - bin_name'length);
+          return C_BIN_NAME_NORMALISED & fill_string(NUL, C_FC_MAX_NAME_LENGTH - C_BIN_NAME_NORMALISED'length);
         end if;
       end if;
     end function;
@@ -1632,12 +1637,13 @@ package body func_cov_pkg is
     ------------------------------------------------------------
     procedure set_name(
       constant name : in string) is
-      constant C_LOCAL_CALL : string := "set_name(" & name & ")";
+      constant C_NAME_NORMALISED  : string(1 to name'length) := name;
+      constant C_LOCAL_CALL       : string := "set_name(" & name & ")";
     begin
-      if name'length > C_FC_MAX_NAME_LENGTH then
-        priv_name := name(1 to C_FC_MAX_NAME_LENGTH);
+      if C_NAME_NORMALISED'length > C_FC_MAX_NAME_LENGTH then
+        priv_name := C_NAME_NORMALISED(1 to C_FC_MAX_NAME_LENGTH);
       else
-        priv_name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH - name'length);
+        priv_name := C_NAME_NORMALISED & fill_string(NUL, C_FC_MAX_NAME_LENGTH - C_NAME_NORMALISED'length);
       end if;
       initialize_coverpoint(C_LOCAL_CALL);
       protected_covergroup_status.set_name(priv_id, priv_name);
@@ -1652,13 +1658,14 @@ package body func_cov_pkg is
 
     procedure set_scope(
       constant scope : in string) is
-      constant C_LOCAL_CALL : string := "set_scope(" & scope & ")";
+      constant C_SCOPE_NORMALISED : string(1 to scope'length) := scope;
+      constant C_LOCAL_CALL       : string := "set_scope(" & scope & ")";
     begin
       initialize_coverpoint(C_LOCAL_CALL);
-      if scope'length > C_LOG_SCOPE_WIDTH then
-        priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
+      if C_SCOPE_NORMALISED'length > C_LOG_SCOPE_WIDTH then
+        priv_scope := C_SCOPE_NORMALISED(1 to C_LOG_SCOPE_WIDTH);
       else
-        priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH - scope'length);
+        priv_scope := C_SCOPE_NORMALISED & fill_string(NUL, C_LOG_SCOPE_WIDTH - C_SCOPE_NORMALISED'length);
       end if;
     end procedure;
 

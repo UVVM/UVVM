@@ -3555,6 +3555,7 @@ package body methods_pkg is
     log_file_name   : string            := C_LOG_FILE_NAME;
     open_mode       : file_open_kind    := append_mode
   ) is
+    constant C_MSG_NORMALISED     : string(1 to msg'length) := msg;
     variable v_msg               : line;
     variable v_msg_indent        : line;
     variable v_msg_indent_width  : natural;
@@ -3589,7 +3590,7 @@ package body methods_pkg is
       if msg'length > 1 then
         if C_USE_BACKSLASH_R_AS_LF then
           loop
-            if (msg(v_idx to v_idx + 1) = "\r") then
+            if (C_MSG_NORMALISED(v_idx to v_idx + 1) = "\r") then
               write(v_info_final, LF); -- Start transcript with an empty line
               v_idx := v_idx + 2;
             else
@@ -4722,10 +4723,11 @@ package body methods_pkg is
 
     -- Match length of short string with long string
     function pad_short_string(short, long : string) return string is
-      variable v_padding                    : string(1 to (long'length - short'length)) := (others => '0');
+      constant C_SHORT_NORMALISED : string(1 to short'length) := short;
+      variable v_padding          : string(1 to (long'length - short'length)) := (others => '0');
     begin
       -- Include leading 'x"'
-      return short(1 to 2) & v_padding & short(3 to short'length);
+      return C_SHORT_NORMALISED(1 to 2) & v_padding & C_SHORT_NORMALISED(3 to short'length);
     end function;
 
     -- Function to represent signed value as string if value_type is "signed"
@@ -7223,11 +7225,13 @@ package body methods_pkg is
   ) is
     variable v_length : integer := v_target'length;
     variable v_rand   : integer;
+    variable v_bit    : std_logic_vector(0 downto 0);
   begin
     -- Iterate through each bit and randomly set to 0 or 1
     for i in 0 to v_length - 1 loop
       random(0, 1, v_seed1, v_seed2, v_rand);
-      v_target(i downto i) := std_logic_vector(to_unsigned(v_rand, 1));
+      v_bit       := std_logic_vector(to_unsigned(v_rand, 1));
+      v_target(i) := v_bit(0);
     end loop;
   end procedure;
 

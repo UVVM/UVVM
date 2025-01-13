@@ -2045,12 +2045,14 @@ package body rand_pkg is
     -- Configuration
     ------------------------------------------------------------
     procedure set_name(
-      constant name : in string) is
+      constant name : in string
+    ) is
+      constant C_NAME_NORMALISED : string(1 to name'length) := name;
     begin
-      if name'length > C_RAND_MAX_NAME_LENGTH then
-        priv_name := name(1 to C_RAND_MAX_NAME_LENGTH);
+      if C_NAME_NORMALISED'length > C_RAND_MAX_NAME_LENGTH then
+        priv_name := C_NAME_NORMALISED(1 to C_RAND_MAX_NAME_LENGTH);
       else
-        priv_name := name & fill_string(NUL, C_RAND_MAX_NAME_LENGTH - name'length);
+        priv_name := C_NAME_NORMALISED & fill_string(NUL, C_RAND_MAX_NAME_LENGTH - C_NAME_NORMALISED'length);
       end if;
     end procedure;
 
@@ -2062,12 +2064,14 @@ package body rand_pkg is
     end function;
 
     procedure set_scope(
-      constant scope : in string) is
+      constant scope : in string
+    ) is
+      constant C_SCOPE_NORMALISED : string(1 to scope'length) := scope;
     begin
-      if scope'length > C_LOG_SCOPE_WIDTH then
-        priv_scope := scope(1 to C_LOG_SCOPE_WIDTH);
+      if C_SCOPE_NORMALISED'length > C_LOG_SCOPE_WIDTH then
+        priv_scope := C_SCOPE_NORMALISED(1 to C_LOG_SCOPE_WIDTH);
       else
-        priv_scope := scope & fill_string(NUL, C_LOG_SCOPE_WIDTH - scope'length);
+        priv_scope := C_SCOPE_NORMALISED & fill_string(NUL, C_LOG_SCOPE_WIDTH - C_SCOPE_NORMALISED'length);
       end if;
     end procedure;
 

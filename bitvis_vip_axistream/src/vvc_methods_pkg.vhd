@@ -879,7 +879,7 @@ package body vvc_methods_pkg is
     deprecate(C_PROC_NAME, "data_array as t_byte_array has been deprecated. Use data_array as t_slv_array.");
     
     -- t_byte_array sanity check
-    v_check_ok := check_value(data_array'length > 0, TB_ERROR, C_PROC_CALL & "data_array length must be > 0", "VVC");
+    v_check_ok := check_value(data_array'length > 0, TB_ERROR, C_PROC_CALL & "data_array length must be > 0", scope, ID_NEVER, parent_msg_id_panel);
     if v_check_ok then
       -- Call t_slv_array overloaded procedure
       axistream_expect(VVCT, vvc_instance_idx, data_array, user_array, strb_array, id_array, dest_array, msg, alert_level, scope, parent_msg_id_panel);

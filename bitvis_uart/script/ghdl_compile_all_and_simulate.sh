@@ -48,6 +48,7 @@ ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_sbi ../
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_sbi ../../bitvis_vip_sbi/src/vvc_cmd_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_sbi ../../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_sbi ../../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
+ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_sbi ../../bitvis_vip_sbi/src/vvc_sb_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_sbi ../../bitvis_vip_sbi/src/vvc_methods_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_sbi ../../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_sbi ../../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd
@@ -62,6 +63,7 @@ ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_uart ..
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_uart ../../bitvis_vip_uart/src/monitor_cmd_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_uart ../../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_uart ../../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd
+ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_uart ../../bitvis_vip_uart/src/vvc_sb_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_uart ../../bitvis_vip_uart/src/vvc_methods_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_uart ../../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=bitvis_vip_uart ../../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd

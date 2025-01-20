@@ -545,24 +545,26 @@ package body generic_queue_pkg is
 
     procedure set_scope(
       constant instance : in integer;
-      constant scope    : in string) is
+      constant scope    : in string
+    ) is
+      constant C_SCOPE_NORMALISED : string(1 to scope'length) := scope;
     begin
       if instance = ALL_INSTANCES then
-        if scope'length > C_LOG_SCOPE_WIDTH then
-          priv_scope := (others => scope(1 to C_LOG_SCOPE_WIDTH));
+        if C_SCOPE_NORMALISED'length > C_LOG_SCOPE_WIDTH then
+          priv_scope := (others => C_SCOPE_NORMALISED(1 to C_LOG_SCOPE_WIDTH));
         else
           for idx in priv_scope'range loop
-            priv_scope(idx)                    := (others => NUL);
-            priv_scope(idx)(1 to scope'length) := scope;
+            priv_scope(idx)                                 := (others => NUL);
+            priv_scope(idx)(1 to C_SCOPE_NORMALISED'length) := C_SCOPE_NORMALISED;
           end loop;
         end if;
         priv_scope_is_defined := (others => true);
       else
-        if scope'length > C_LOG_SCOPE_WIDTH then
-          priv_scope(instance) := scope(1 to C_LOG_SCOPE_WIDTH);
+        if C_SCOPE_NORMALISED'length > C_LOG_SCOPE_WIDTH then
+          priv_scope(instance) := C_SCOPE_NORMALISED(1 to C_LOG_SCOPE_WIDTH);
         else
-          priv_scope(instance)                    := (others => NUL);
-          priv_scope(instance)(1 to scope'length) := scope;
+          priv_scope(instance)                                  := (others => NUL);
+          priv_scope(instance)(1 to C_SCOPE_NORMALISED'length)  := C_SCOPE_NORMALISED;
         end if;
         priv_scope_is_defined(instance) := true;
       end if;

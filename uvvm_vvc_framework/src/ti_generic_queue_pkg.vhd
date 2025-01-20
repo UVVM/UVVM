@@ -547,23 +547,24 @@ package body ti_generic_queue_pkg is
     procedure set_scope(
       constant instance : in integer;
       constant scope    : in string) is
+      constant C_SCOPE_NORMALISED : string(1 to scope'length) := scope;
     begin
       if instance = ALL_INSTANCES then
-        if scope'length > C_LOG_SCOPE_WIDTH then
-          v_scope := (others => scope(1 to C_LOG_SCOPE_WIDTH));
+        if C_SCOPE_NORMALISED'length > C_LOG_SCOPE_WIDTH then
+          v_scope := (others => C_SCOPE_NORMALISED(1 to C_LOG_SCOPE_WIDTH));
         else
           for idx in v_scope'range loop
-            v_scope(idx)                    := (others => NUL);
-            v_scope(idx)(1 to scope'length) := scope;
+            v_scope(idx)                                 := (others => NUL);
+            v_scope(idx)(1 to C_SCOPE_NORMALISED'length) := C_SCOPE_NORMALISED;
           end loop;
         end if;
         v_scope_is_defined := (others => true);
       else
-        if scope'length > C_LOG_SCOPE_WIDTH then
-          v_scope(instance) := scope(1 to C_LOG_SCOPE_WIDTH);
+        if C_SCOPE_NORMALISED'length > C_LOG_SCOPE_WIDTH then
+          v_scope(instance) := C_SCOPE_NORMALISED(1 to C_LOG_SCOPE_WIDTH);
         else
-          v_scope(instance)                    := (others => NUL);
-          v_scope(instance)(1 to scope'length) := scope;
+          v_scope(instance)                                 := (others => NUL);
+          v_scope(instance)(1 to C_SCOPE_NORMALISED'length) := C_SCOPE_NORMALISED;
         end if;
         v_scope_is_defined(instance) := true;
       end if;

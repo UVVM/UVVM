@@ -331,12 +331,14 @@ package body protected_types_pkg is
 
     procedure set_name(
       constant coverpoint_idx : in integer;
-      constant name           : in string) is
+      constant name           : in string
+    ) is
+      constant C_NAME_NORMALISED  : string(1 to name'length) := name;
     begin
-      if name'length > C_FC_MAX_NAME_LENGTH then
-        priv_coverpoint_status_list(coverpoint_idx).name := name(1 to C_FC_MAX_NAME_LENGTH);
+      if C_NAME_NORMALISED'length > C_FC_MAX_NAME_LENGTH then
+        priv_coverpoint_status_list(coverpoint_idx).name := C_NAME_NORMALISED(1 to C_FC_MAX_NAME_LENGTH);
       else
-        priv_coverpoint_status_list(coverpoint_idx).name := name & fill_string(NUL, C_FC_MAX_NAME_LENGTH - name'length);
+        priv_coverpoint_status_list(coverpoint_idx).name := C_NAME_NORMALISED & fill_string(NUL, C_FC_MAX_NAME_LENGTH - C_NAME_NORMALISED'length);
       end if;
     end procedure;
 

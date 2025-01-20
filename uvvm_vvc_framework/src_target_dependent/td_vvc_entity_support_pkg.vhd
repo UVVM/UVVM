@@ -375,6 +375,7 @@ package body td_vvc_entity_support_pkg is
     constant result_queue_count_threshold_severity : in t_alert_level;
     constant max_vvc_instance_num                  : in natural := C_MAX_VVC_INSTANCE_NUM
   ) is
+    constant C_SCOPE_NORMALISED    : string(1 to scope'length) := scope;
     variable v_delta_cycle_counter : natural := 0;
     variable v_comma_number        : natural := 0;
   begin
@@ -382,32 +383,32 @@ package body td_vvc_entity_support_pkg is
     vvc_config.bfm_config := bfm_config;
 
     -- compose log message based on the number of channels in scope string
-    if pos_of_leftmost(',', scope, 1) = pos_of_rightmost(',', scope, 1) then
-      log(ID_CONSTRUCTOR, "VVC instantiated.", scope, vvc_config.msg_id_panel);
+    if pos_of_leftmost(',', C_SCOPE_NORMALISED, 1) = pos_of_rightmost(',', C_SCOPE_NORMALISED, 1) then
+      log(ID_CONSTRUCTOR, "VVC instantiated.", C_SCOPE_NORMALISED, vvc_config.msg_id_panel);
     else
-      for idx in scope'range loop
-        if (scope(idx) = ',') and (v_comma_number < 2) then -- locate 2nd comma in string
+      for idx in C_SCOPE_NORMALISED'range loop
+        if (C_SCOPE_NORMALISED(idx) = ',') and (v_comma_number < 2) then -- locate 2nd comma in string
           v_comma_number := v_comma_number + 1;
         end if;
         if v_comma_number = 2 then      -- rest of string is channel name
-          log(ID_CONSTRUCTOR, "VVC instantiated for channel " & scope((idx + 1) to scope'length), scope, vvc_config.msg_id_panel);
+          log(ID_CONSTRUCTOR, "VVC instantiated for channel " & C_SCOPE_NORMALISED((idx + 1) to C_SCOPE_NORMALISED'length), C_SCOPE_NORMALISED, vvc_config.msg_id_panel);
           exit;
         end if;
       end loop;
     end if;
-    command_queue.set_scope(scope);
+    command_queue.set_scope(C_SCOPE_NORMALISED);
     command_queue.set_name("cmd_queue");
     command_queue.set_queue_count_max(cmd_queue_count_max);
     command_queue.set_queue_count_threshold(cmd_queue_count_threshold);
     command_queue.set_queue_count_threshold_severity(cmd_queue_count_threshold_severity);
-    log(ID_CONSTRUCTOR_SUB, "Command queue instantiated and will give a warning when reaching " & to_string(command_queue.get_queue_count_max(VOID)) & " elements in queue.", scope, vvc_config.msg_id_panel);
+    log(ID_CONSTRUCTOR_SUB, "Command queue instantiated and will give a warning when reaching " & to_string(command_queue.get_queue_count_max(VOID)) & " elements in queue.", C_SCOPE_NORMALISED, vvc_config.msg_id_panel);
 
-    result_queue.set_scope(scope);
+    result_queue.set_scope(C_SCOPE_NORMALISED);
     result_queue.set_name("result_queue");
     result_queue.set_queue_count_max(result_queue_count_max);
     result_queue.set_queue_count_threshold(result_queue_count_threshold);
     result_queue.set_queue_count_threshold_severity(result_queue_count_threshold_severity);
-    log(ID_CONSTRUCTOR_SUB, "Result queue instantiated and will give a warning when reaching " & to_string(result_queue.get_queue_count_max(VOID)) & " elements in queue.", scope, vvc_config.msg_id_panel);
+    log(ID_CONSTRUCTOR_SUB, "Result queue instantiated and will give a warning when reaching " & to_string(result_queue.get_queue_count_max(VOID)) & " elements in queue.", C_SCOPE_NORMALISED, vvc_config.msg_id_panel);
 
     if shared_uvvm_state /= PHASE_A then
       loop

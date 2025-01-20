@@ -411,18 +411,19 @@ package body string_methods_pkg is
     width : natural;
     side  : side := LEFT
   ) return string is
-    variable v_result : string(1 to maximum(1, width));
+    constant C_VAL_NORMALISED : string(1 to val'length) := val;
+    variable v_result         : string(1 to maximum(1, width));
   begin
     if (width = 0) then
       return "";
-    elsif (width <= val'length) then
-      return val(1 to width);
+    elsif (width <= C_VAL_NORMALISED'length) then
+      return C_VAL_NORMALISED(1 to width);
     else
       v_result := (others => char);
       if side = LEFT then
-        v_result(1 to val'length) := val;
+        v_result(1 to C_VAL_NORMALISED'length) := C_VAL_NORMALISED;
       else
-        v_result(v_result'length - val'length + 1 to v_result'length) := val;
+        v_result(v_result'length - C_VAL_NORMALISED'length + 1 to v_result'length) := C_VAL_NORMALISED;
       end if;
     end if;
     return v_result;
@@ -435,21 +436,22 @@ package body string_methods_pkg is
     justified : side            := RIGHT;
     format    : t_format_string := AS_IS -- No defaults on 4 first param - to avoid ambiguity with std.textio
   ) return string is
-    constant C_VAL_LENGTH : natural            := val'length;
-    variable result       : string(1 to width) := (others => ' ');
+    constant C_VAL_LENGTH     : natural                   := val'length;
+    constant C_VAL_NORMALISED : string(1 to C_VAL_LENGTH) := val;
+    variable result           : string(1 to width)        := (others => ' ');
   begin
     -- return val if width is too small
     if C_VAL_LENGTH >= width then
       if (format = TRUNCATE) then
-        return val(1 to width);
+        return C_VAL_NORMALISED(1 to width);
       else
-        return val;
+        return C_VAL_NORMALISED;
       end if;
     end if;
     if justified = left then
-      result(1 to C_VAL_LENGTH) := val;
+      result(1 to C_VAL_LENGTH) := C_VAL_NORMALISED;
     elsif justified = right then
-      result(width - C_VAL_LENGTH + 1 to width) := val;
+      result(width - C_VAL_LENGTH + 1 to width) := C_VAL_NORMALISED;
     end if;
     return result;
   end function;
@@ -810,36 +812,37 @@ package body string_methods_pkg is
   function replace_backslash_n_with_lf(
     source : string
   ) return string is
-    variable v_source_idx : natural := 0;
-    variable v_dest_idx   : natural := 0;
-    variable v_dest       : string(1 to source'length);
+    constant C_SOURCE_NORMALISED  : string(1 to source'length) := source;
+    variable v_source_idx         : natural := 0;
+    variable v_dest_idx           : natural := 0;
+    variable v_dest               : string(1 to source'length);
   begin
-    if source'length = 0 then
+    if C_SOURCE_NORMALISED'length = 0 then
       return "";
     else
       if C_USE_BACKSLASH_N_AS_LF then
         loop
           v_source_idx := v_source_idx + 1;
           v_dest_idx   := v_dest_idx + 1;
-          if (v_source_idx < source'length) then
-            if (source(v_source_idx to v_source_idx + 1) /= "\n") then
-              v_dest(v_dest_idx) := source(v_source_idx);
+          if (v_source_idx < C_SOURCE_NORMALISED'length) then
+            if (C_SOURCE_NORMALISED(v_source_idx to v_source_idx + 1) /= "\n") then
+              v_dest(v_dest_idx) := C_SOURCE_NORMALISED(v_source_idx);
             else
               v_dest(v_dest_idx) := LF;
               v_source_idx       := v_source_idx + 1; -- Additional increment as two chars (\n) are consumed
-              if (v_source_idx = source'length) then
+              if (v_source_idx = C_SOURCE_NORMALISED'length) then
                 exit;
               end if;
             end if;
           else
             -- Final character in string
-            v_dest(v_dest_idx) := source(v_source_idx);
+            v_dest(v_dest_idx) := C_SOURCE_NORMALISED(v_source_idx);
             exit;
           end if;
         end loop;
       else
-        v_dest     := source;
-        v_dest_idx := source'length;
+        v_dest     := C_SOURCE_NORMALISED;
+        v_dest_idx := C_SOURCE_NORMALISED'length;
       end if;
       return v_dest(1 to v_dest_idx);
     end if;
@@ -848,16 +851,17 @@ package body string_methods_pkg is
   function replace_backslash_r_with_lf(
     source : string
   ) return string is
-    variable v_source_idx : natural := 0;
-    variable v_dest_idx   : natural := 0;
-    variable v_dest       : string(1 to source'length);
+    constant C_SOURCE_NORMALISED  : string(1 to source'length) := source;
+    variable v_source_idx         : natural := 0;
+    variable v_dest_idx           : natural := 0;
+    variable v_dest               : string(1 to source'length);
   begin
-    if source'length = 0 then
+    if C_SOURCE_NORMALISED'length = 0 then
       return "";
     else
       if C_USE_BACKSLASH_R_AS_LF then
         loop
-          if (source(v_source_idx to v_source_idx + 1) = "\r") then
+          if (C_SOURCE_NORMALISED(v_source_idx to v_source_idx + 1) = "\r") then
             v_dest_idx         := v_dest_idx + 1;
             v_dest(v_dest_idx) := LF;
             v_source_idx       := v_source_idx + 2;
@@ -876,11 +880,12 @@ package body string_methods_pkg is
     source : string;
     num    : natural
   ) return string is
+    constant C_SOURCE_NORMALISED  : string(1 to source'length) := source;
   begin
-    if source'length <= num then
+    if C_SOURCE_NORMALISED'length <= num then
       return "";
     else
-      return source(1 + num to source'right);
+      return C_SOURCE_NORMALISED(1 + num to C_SOURCE_NORMALISED'right);
     end if;
   end;
 
@@ -1827,7 +1832,9 @@ package body string_methods_pkg is
   -- Returns a string with a timestamp and a text. Used in report headers
   function timestamp_header(
     value : time;
-    txt   : string) return string is
+    txt   : string
+  ) return string is
+    constant C_TXT_NORMALISED  : string(1 to txt'length) := txt;
     variable v_line            : line;
     variable v_delimiter_pos   : natural;
     variable v_timestamp_width : natural;
@@ -1855,8 +1862,8 @@ package body string_methods_pkg is
     v_result(v_timestamp_width to v_timestamp_width) := " ";
 
     -- add time string to return string
-    v_return := v_result(1 to v_timestamp_width) & txt(1 to txt'length - v_timestamp_width);
-    return v_return(1 to txt'length);
+    v_return := v_result(1 to v_timestamp_width) & C_TXT_NORMALISED(1 to C_TXT_NORMALISED'length - v_timestamp_width);
+    return v_return(1 to C_TXT_NORMALISED'length);
   end function timestamp_header;
 
 end package body string_methods_pkg;

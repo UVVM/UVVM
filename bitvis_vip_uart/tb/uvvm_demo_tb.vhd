@@ -67,7 +67,7 @@ architecture func of uvvm_demo_tb is
 
 begin
 
-  ------------------------------------------------
+  -------------------------- ----------------------
   -- Process: general watchdog timer
   ------------------------------------------------
   -- Note: these timers should have a minimum timeout that

@@ -20,4 +20,5 @@ context vvc_context is
   use bitvis_vip_axilite.vvc_methods_pkg.all;
   use bitvis_vip_axilite.td_vvc_framework_common_methods_pkg.all;
   use bitvis_vip_axilite.axilite_bfm_pkg.all;
+  use bitvis_vip_axilite.axilite_slave_bfm_pkg.all;
 end context;

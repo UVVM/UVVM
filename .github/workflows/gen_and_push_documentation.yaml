@@ -44,14 +44,12 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           cd doc/build/html
-
+          git add -A
           # Check if there are any changes to commit
           if git diff --staged --quiet; then
             echo "No changes to commit."
             exit 0
           fi
-          
-          git add -A
           git commit -m "Update documentation (html gen)"
           git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM master
 
@@ -78,15 +76,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
-        cd github_io
-
+        cd github_io        
+        git add .
         # Check if there are any changes to commit
         if git diff --staged --quiet; then
           echo "No changes to commit."
           exit 0
         fi
-        
-        git add .
         git commit -m "Update documentation from ${{ github.repository }} at ${{ github.sha }}"
         git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM.github.io.git main
 

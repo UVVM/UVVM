@@ -43,8 +43,8 @@ jobs:
         run: |
           cd doc/build/html
           git add -A
-          git commit -m "Update documentation from ${{ github.repository }} at ${{ github.sha }}"
-          git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM.github.io.git main
+          git commit -m "Update documentation (html gen)"
+          git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM master
 
   push_docs_to_uvvm_github_io:
     needs: gen_html_docs

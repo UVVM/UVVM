@@ -79,7 +79,7 @@ a boolean if the method is called as a function. ::
 
     -- Examples:
     check_value(v_int_a, 42, WARNING, "Checking the integer");
-    v_check := check_value(v_slv5_a, "11100", MATCH_EXACT, "Checking the SLV value", "My Scope", HEX, SKIP_LEADING_0, ID_SEQUENCER, shared_msg_id_panel);
+    v_check := check_value(v_slv5_a, "11100", MATCH_EXACT, "Checking the SLV", "My Scope", HEX, SKIP_LEADING_0, ID_SEQUENCER, shared_msg_id_panel);
 
 .. note::
 

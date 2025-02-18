@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bitvis VIP SBI &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -871,8 +869,10 @@ think of it as a simple SRAM interface, but that is not a standard, and is proba
 Thus, we have defined a name and an exact behavior, with some flexibility.</p>
 <p>SBI is a single cycle bus with an optional ready-signalling. The protocol for SBI with and without ready-signalling is given below.
 (Note that ready is always high in the without case). Data is sampled on rising edge <strong>a</strong> and <strong>b</strong>.</p>
-<a class="reference internal image-reference" href="_images/sbi_protocol_1.png"><img alt="SBI protocol without ready" class="align-center" src="_images/sbi_protocol_1.png" style="width: 450pt;" /></a>
-<a class="reference internal image-reference" href="_images/sbi_protocol_2.png"><img alt="SBI protocol with ready" class="align-center" src="_images/sbi_protocol_2.png" style="width: 750pt;" /></a>
+<a class="reference internal image-reference" href="_images/sbi_protocol_1.png"><img alt="SBI protocol without ready" class="align-center" src="_images/sbi_protocol_1.png" style="width: 450pt;" />
+</a>
+<a class="reference internal image-reference" href="_images/sbi_protocol_2.png"><img alt="SBI protocol with ready" class="align-center" src="_images/sbi_protocol_2.png" style="width: 750pt;" />
+</a>
 <p>As can be seen from the figure all required signals including data input must be ready on the rising edge of the clock. This also
 applies for a read access, but the actual data output is provided combinatorial as soon as the combinational logic allows.
 Note that an active ‘cs’, a valid ‘addr’ and an active ‘wena’ or ‘rena’ is needed on the same active clock edge to be registered
@@ -1759,7 +1759,7 @@ otherwise, arising from, out of or in connection with this IP.</p>
 </div>
 <p class="rubric">Footnotes</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="f1" role="note">
+<aside class="footnote brackets" id="f1" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://www.aldec.com/en/support/resources/multimedia/webinars/1673">https://www.aldec.com/en/support/resources/multimedia/webinars/1673</a></p>
 </aside>

@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'doc/**'
 
 jobs:
   gen_html_docs:
@@ -42,6 +44,13 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           cd doc/build/html
+
+          # Check if there are any changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          
           git add -A
           git commit -m "Update documentation (html gen)"
           git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM master
@@ -70,6 +79,13 @@ jobs:
         PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
         cd github_io
+
+        # Check if there are any changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit."
+          exit 0
+        fi
+        
         git add .
         git commit -m "Update documentation from ${{ github.repository }} at ${{ github.sha }}"
         git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM.github.io.git main

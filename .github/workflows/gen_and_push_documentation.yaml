@@ -11,6 +11,11 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: Setup Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}noreply.uvvm.com"
+
       - name: Checkout source repository
         uses: actions/checkout@master
         with:
@@ -42,6 +47,7 @@ jobs:
           git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM.github.io.git main
 
   push_docs_to_uvvm_github_io:
+    needs: gen_html_docs
     runs-on: ubuntu-latest
 
     steps:

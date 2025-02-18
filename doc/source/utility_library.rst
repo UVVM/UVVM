@@ -286,6 +286,12 @@ see await_change_to_value() under. ::
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
 |          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | radix              | in     | :ref:`t_radix`               | Controls how the vector is represented in the log.      |
+|          |                    |        |                              | Default value is HEX_BIN_IF_INVALID.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | format             | in     | :ref:`t_format_zeros`        | Controls how the vector is formatted in the log. Default|
+|          |                    |        |                              | value is KEEP_LEADING_0.                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_POS_ACK.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+

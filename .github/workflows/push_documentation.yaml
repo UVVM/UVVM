@@ -1,0 +1,34 @@
+name: Push Documentation to UVVM.github.io Repo
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  push-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source repository
+      uses: actions/checkout@master
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Git
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}noreply.uvvm.com"
+    - name: Copy Documentation
+      run: |
+        git clone https://github.com/UVVM/UVVM.github.io.git github_io
+        rsync -av --delete ./doc/ github_io/docs
+    - name: Commit and Push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        cd github_io
+        git add .
+        git commit -m "Update documentation from ${{ github.repository }} at ${{ github.sha }}"
+        git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM.github.io.git main

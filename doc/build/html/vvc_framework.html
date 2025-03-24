@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VVC Framework &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -1336,7 +1334,8 @@ synchronizing VVCs in the test sequencer using the await_completion() or await_a
 operation and transaction information such as address and data. Note that the accessible fields depend on the VVC and its
 implementation. An example of two SBI VVCs performing FIFO write operations, followed by check operations, is shown in Figure 1.</p>
 <figure class="align-center" id="id13">
-<a class="reference internal image-reference" href="_images/transaction_info_wave_view.png"><img alt="VVC transaction info waveview" src="_images/transaction_info_wave_view.png" style="width: 800pt;" /></a>
+<a class="reference internal image-reference" href="images/vvc_framework/transaction_info_wave_view.png"><img alt="VVC transaction info waveview" src="images/vvc_framework/transaction_info_wave_view.png" style="width: 800pt;" />
+</a>
 <figcaption>
 <p><span class="caption-text">Figure 1 VVC Transaction info example</span><a class="headerlink" href="#id13" title="Link to this image"></a></p>
 </figcaption>
@@ -1427,7 +1426,8 @@ changed to a different value. To disable this feature in the testbench, e.g. for
 will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be
 initiated from I2C slave VVC 2 and 3.</p>
 <figure class="align-center" id="id14">
-<a class="reference internal image-reference" href="_images/multiple_slave_VVCs_example.png"><img alt="False unwanted activity detection" src="_images/multiple_slave_VVCs_example.png" style="width: 550pt;" /></a>
+<a class="reference internal image-reference" href="_images/multiple_slave_VVCs_example.png"><img alt="False unwanted activity detection" src="_images/multiple_slave_VVCs_example.png" style="width: 550pt;" />
+</a>
 <figcaption>
 <p><span class="caption-text">Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT</span><a class="headerlink" href="#id14" title="Link to this image"></a></p>
 </figcaption>
@@ -1906,26 +1906,26 @@ records.</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="f1" role="note">
+<aside class="footnote brackets" id="f1" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">1</a><span class="fn-bracket">]</span></span>
 <p>Record field <strong>address</strong> is not applicable for all interface types, e.g. UART, and is only shown here for
 informational purposes.</p>
 </aside>
-<aside class="footnote brackets" id="f2" role="note">
+<aside class="footnote brackets" id="f2" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">2</a><span class="fn-bracket">]</span></span>
 <p>Transaction status <strong>FAILED</strong> and <strong>SUCCEEDED</strong> are only applicable for Monitor Transaction Info records and not for
 VVC Transaction Info records. Whereas <strong>COMPLETED</strong> is applicable only for VVCs and not Monitors.</p>
 </aside>
-<aside class="footnote brackets" id="f3" role="note">
+<aside class="footnote brackets" id="f3" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">3</a><span class="fn-bracket">]</span></span>
 <p>Record field <strong>error_info</strong> and its sub-record fields can be omitted if no error injection is implemented in the BFM.</p>
 </aside>
-<aside class="footnote brackets" id="f4" role="note">
+<aside class="footnote brackets" id="f4" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id8">1</a>,<a role="doc-backlink" href="#id9">2</a>)</span>
 <p><strong>error_info</strong> sub-record fields <strong>parity_bit_error</strong> and <strong>stop_bit_error</strong> are examples of UART error injection.</p>
 </aside>
-<aside class="footnote brackets" id="f5" role="note">
+<aside class="footnote brackets" id="f5" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">5</a><span class="fn-bracket">]</span></span>
 <p>Record entry <strong>ct</strong> will consist of similar record fields as <strong>bt</strong>, and might not always be necessary. This applies
 to record entry <strong>st</strong> as well (not shown here).</p>
@@ -2550,7 +2550,8 @@ referred to only as the VVC. Communications between the HVVC and VVC is handled 
 between the HVVC and HVVC-to-VVC Bridge on a common interface and converted in the HVVC-to-VVC Bridge to/from the specific
 interface of the VVC used. An example of this concept used on Ethernet is seen in Figure 9.</p>
 <figure class="align-center" id="id26">
-<a class="reference internal image-reference" href="_images/hvvc_to_vvc_bridge.png"><img alt="HVVC-to-VVC Bridge" src="_images/hvvc_to_vvc_bridge.png" style="width: 550pt;" /></a>
+<a class="reference internal image-reference" href="_images/hvvc_to_vvc_bridge.png"><img alt="HVVC-to-VVC Bridge" src="_images/hvvc_to_vvc_bridge.png" style="width: 550pt;" />
+</a>
 <figcaption>
 <p><span class="caption-text">Figure 9 Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC</span><a class="headerlink" href="#id26" title="Link to this image"></a></p>
 </figcaption>

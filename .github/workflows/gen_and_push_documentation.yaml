@@ -1,0 +1,88 @@
+name: Push Documentation to UVVM.github.io Repo
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'doc/**'
+
+jobs:
+  gen_html_docs:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Setup Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}noreply.uvvm.com"
+
+      - name: Checkout source repository
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Set up Python
+        uses: actions/setup-python@v2.2.1
+        with:
+          python-version: 3.9
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install -U sphinx
+          python -m pip install sphinx-rtd-theme
+          
+      - name: Make the sphinx docs
+        run: |
+          make -C doc clean
+          make -C doc html
+            
+      - name: Commit and Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          cd doc/build/html
+          git add -A
+          # Check if there are any changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Update documentation (html gen)"
+          git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM master
+
+  push_docs_to_uvvm_github_io:
+    needs: gen_html_docs
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source repository
+      uses: actions/checkout@master
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Git
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}noreply.uvvm.com"
+    - name: Copy Documentation
+      run: |
+        git clone https://github.com/UVVM/UVVM.github.io.git github_io
+        rsync -av --delete ./doc/ github_io/docs
+    - name: Commit and Push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        cd github_io        
+        git add .
+        # Check if there are any changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit."
+          exit 0
+        fi
+        git commit -m "Update documentation from ${{ github.repository }} at ${{ github.sha }}"
+        git push https://${{ secrets.PAT_TOKEN }}@github.com/UVVM/UVVM.github.io.git main
+

@@ -1,0 +1,69 @@
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  TB seq.                        Start Simulation of Randomization package - rand_report
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_GEN). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ID_RAND_CONF). 
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                    **unnamed**
+UVVM:                SCOPE              :                        TB seq.
+UVVM:                SEED 1             :                             10
+UVVM:                SEED 2             :                            100
+UVVM:                DISTRIBUTION       :                        UNIFORM
+UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
+UVVM:                MEAN CONFIGURED    :                          false
+UVVM:                MEAN               :                           0.00
+UVVM:                STD_DEV CONFIGURED :                          false
+UVVM:                STD_DEV            :                           0.00
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: ID_RAND_GEN                        0.0 ns  MY_SCOPE                       rand(RANGE:[10:20])=> 20
+UVVM: ID_RAND_CONF                       0.0 ns  MY_SCOPE                       set_rand_dist(GAUSSIAN)
+UVVM: ID_RAND_CONF                       0.0 ns  MY_SCOPE                       set_range_weight_default_mode(INDIVIDUAL_WEIGHT)
+UVVM: ID_RAND_CONF                       0.0 ns  MY_SCOPE                       set_rand_dist_mean(1.00)
+UVVM: ID_RAND_CONF                       0.0 ns  MY_SCOPE                       set_rand_dist_std_deviation(5.00)
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                NAME               :                    MY_RAND_GEN
+UVVM:                SCOPE              :                       MY_SCOPE
+UVVM:                SEED 1             :                         400140
+UVVM:                SEED 2             :                        4069200
+UVVM:                DISTRIBUTION       :                       GAUSSIAN
+UVVM:                WEIGHT MODE        :              INDIVIDUAL_WEIGHT
+UVVM:                MEAN CONFIGURED    :                           true
+UVVM:                MEAN               :                           1.00
+UVVM:                STD_DEV CONFIGURED :                           true
+UVVM:                STD_DEV            :                           5.00
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      0         0         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      0         0         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.                        SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

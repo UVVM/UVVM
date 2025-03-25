@@ -14,7 +14,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #1  ***
 UVVM:            10 ns   TB seq.(uvvm)
-UVVM:                    check_stable() => Failed. Switched from false to true 10 ns ago. Expected stable for 11000000 fs
+UVVM:                    check_stable() => Failed. Switched from false to true 10 ns ago. Expected stable for 11 ns
 UVVM:                    Stable boolean Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -23,7 +23,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #2  ***
 UVVM:            10 ns   TB seq.(uvvm)
-UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11000000 fs
+UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11 ns
 UVVM:                    Stable slv Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -32,7 +32,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #3  ***
 UVVM:            10 ns   TB seq.(uvvm)
-UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11000000 fs
+UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11 ns
 UVVM:                    Stable unsigned Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -41,7 +41,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #4  ***
 UVVM:            10 ns   TB seq.(uvvm)
-UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11000000 fs
+UVVM:                    check_stable() => Failed. Switched from x00 to xFF 10 ns ago. Expected stable for 11 ns
 UVVM:                    Stable signed Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -50,7 +50,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #5  ***
 UVVM:            10 ns   TB seq.(uvvm)
-UVVM:                    check_stable() => Failed. Switched from 0 to 14 10 ns ago. Expected stable for 11000000 fs
+UVVM:                    check_stable() => Failed. Switched from 0 to 14 10 ns ago. Expected stable for 11 ns
 UVVM:                    Stable integer Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -59,7 +59,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #6  ***
 UVVM:            10 ns   TB seq.(uvvm)
-UVVM:                    check_stable() => Failed. Switched from 0 to 1337.14 10 ns ago. Expected stable for 11000000 fs
+UVVM:                    check_stable() => Failed. Switched from 0 to 1337.14 10 ns ago. Expected stable for 11 ns
 UVVM:                    Stable real Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 
@@ -68,7 +68,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #7  ***
 UVVM:            10 ns   TB seq.(uvvm)
-UVVM:                    check_stable() => Failed. Switched from 0 to 1 10 ns ago. Expected stable for 11000000 fs
+UVVM:                    check_stable() => Failed. Switched from 0 to 1 10 ns ago. Expected stable for 11 ns
 UVVM:                    Stable std_logic Fail
 UVVM: =========================================================================================================================================================================
 UVVM: 

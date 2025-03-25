@@ -106,7 +106,7 @@ hr.add_generics(
     generics=[
         "GC_TB_REQ_FILE", ("../../tb/maintenance_tb/tb_tests_req_file.csv", "PATH"),
         "GC_REQ_FILE_EMPTY", ("../../tb/maintenance_tb/req_file_empty.csv", "PATH"),
-        "GC_MIX_REQ_FILE", ("../../tb/maintenance_tb/mix_req_File.csv", "PATH"),
+        "GC_MIX_REQ_FILE", ("../../tb/maintenance_tb/mix_req_file.csv", "PATH"),
         "GC_MIX_MAP_FILE", ("../../tb/maintenance_tb/mix_map_file.csv", "PATH"),
         "GC_GENERAL_REQ_FILE", ("../../tb/maintenance_tb/general_req_file.csv", "PATH"),
         "GC_GENERAL_MAP_FILE", ("../../tb/maintenance_tb/general_map_file.csv", "PATH"),

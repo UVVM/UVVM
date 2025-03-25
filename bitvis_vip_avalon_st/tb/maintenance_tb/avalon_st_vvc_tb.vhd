@@ -189,6 +189,7 @@ begin
         v_num_expected_alerts := 0 when alert_level = NO_ALERT else
                                  v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
                                  v_num_expected_alerts + 1;
+        wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
         check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
       end loop;
     end procedure;
@@ -581,6 +582,80 @@ begin
         avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, std_logic_vector(to_unsigned(i, GC_CHANNEL_WIDTH)), v_data_packet(0 to i), "");
       end loop;
       await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 10 us);
+
+    elsif GC_TESTCASE = "test_random_configuration" then
+      ----------------------------------------------------------------------------------------------------------------------------
+      log(ID_LOG_HDR, "Testing random configurations of valid and ready low");
+      ----------------------------------------------------------------------------------------------------------------------------
+      new_random_data(v_data_packet);   -- Generate random data
+      for i in 0 to 59 loop
+        if i < 20 then
+          shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_at_word_idx     := random(0, 5);
+          shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_duration        := random(0, 5);
+          shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_at_word_idx := random(0, 5);
+          shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_duration    := random(0, 5);
+          shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_at_word_idx      := random(0, 5);
+          shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_duration         := random(0, 5);
+          shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_at_word_idx  := random(0, 5);
+          shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_duration     := random(0, 5);
+        else
+          shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_at_word_idx     := C_MULTIPLE_RANDOM;
+          shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_duration        := C_RANDOM;
+          shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_at_word_idx := C_MULTIPLE_RANDOM;
+          shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_duration    := C_RANDOM;
+          shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_at_word_idx      := C_MULTIPLE_RANDOM;
+          shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_duration         := C_RANDOM;
+          shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_at_word_idx  := C_MULTIPLE_RANDOM;
+          shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_duration     := C_RANDOM;
+          if i < 30 then
+            -- Probability of multiple random is zero
+            shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_multiple_random_prob     := 0.0;
+            shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_max_random_duration      := 20;
+            shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_multiple_random_prob := 0.0;
+            shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_max_random_duration  := 20;
+            shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_multiple_random_prob      := 0.0;
+            shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_max_random_duration       := 20;
+            shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob  := 0.0;
+            shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_max_random_duration   := 20;
+          elsif i < 40 then
+            -- Probability of multiple random is low and max random duration is high
+            shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_multiple_random_prob     := 0.1;
+            shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_max_random_duration      := 20;
+            shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_multiple_random_prob := 0.1;
+            shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_max_random_duration  := 20;
+            shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_multiple_random_prob      := 0.1;
+            shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_max_random_duration       := 20;
+            shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob  := 0.1;
+            shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_max_random_duration   := 20;
+          elsif i < 50 then
+            -- Probability of multiple random is 50/50 and max random duration is low
+            shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_multiple_random_prob     := 0.5;
+            shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_max_random_duration      := 5;
+            shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_multiple_random_prob := 0.5;
+            shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_max_random_duration  := 5;
+            shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_multiple_random_prob      := 0.5;
+            shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_max_random_duration       := 5;
+            shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob  := 0.5;
+            shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_max_random_duration   := 5;
+          else
+            -- Probability of multiple random is 100% (every cycle) and max random duration is 1
+            shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_multiple_random_prob     := 1.0;
+            shared_avalon_st_vvc_config(C_VVC_MASTER).bfm_config.valid_low_max_random_duration      := 1;
+            shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_multiple_random_prob := 1.0;
+            shared_avalon_st_vvc_config(C_VVC2VVC_MASTER).bfm_config.valid_low_max_random_duration  := 1;
+            shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_multiple_random_prob      := 1.0;
+            shared_avalon_st_vvc_config(C_VVC_SLAVE).bfm_config.ready_low_max_random_duration       := 1;
+            shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_multiple_random_prob  := 1.0;
+            shared_avalon_st_vvc_config(C_VVC2VVC_SLAVE).bfm_config.ready_low_max_random_duration   := 1;
+          end if;
+        end if;
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC_MASTER, v_data_packet(0 to 15), "transmit 16 symbols");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC_SLAVE, v_data_packet(0 to 15), "expect 16 symbols");
+        await_completion(AVALON_ST_VVCT, C_VVC_SLAVE, 1 ms);
+        avalon_st_transmit(AVALON_ST_VVCT, C_VVC2VVC_MASTER, v_data_packet(0 to 15), "transmit 16 symbols");
+        avalon_st_expect(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, v_data_packet(0 to 15), "expect 16 symbols");
+        await_completion(AVALON_ST_VVCT, C_VVC2VVC_SLAVE, 1 ms);
+      end loop;
 
     elsif GC_TESTCASE = "test_unwanted_activity" then
       ----------------------------------------------------------------------------------------------------------------------------

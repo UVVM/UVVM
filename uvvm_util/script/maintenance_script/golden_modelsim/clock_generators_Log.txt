@@ -413,8 +413,27 @@ UVVM: ID_POS_ACK                      3825.0 ns  TB seq.(uvvm)                  
 UVVM:                                                                           cycle'
 UVVM: ID_POS_ACK                      3825.0 ns  TB seq.(uvvm)                  check_value() => OK, for std_logic '1' (exp: '1'). 'pulse for 0 ns, check that it actually
 UVVM:                                                                           pulsed for a delta cycle'
-UVVM: ID_POS_ACK                      3944.0 ns  TB seq.                        check_value() => OK, for int 0. 'Verifying cnt wrap'
-UVVM: ID_POS_ACK                      3947.0 ns  TB seq.                        check_value() => OK, for int 1. 'Verifying increment after wrap'
+UVVM: ID_SEQUENCER                    3925.0 ns  (non scoped)                   Check that multiple subsequent calls to blocking gen_pulse() do not result in TB_ERROR
+UVVM: ID_GEN_PULSE                    3935.0 ns  TB seq.                        Pulsed to 1 for 10000 ps. 'First call to gen_pulse with std_logic'
+UVVM: ID_GEN_PULSE                    3945.0 ns  TB seq.                        Pulsed to 1 for 10000 ps. 'Second call to gen_pulse with std_logic'
+UVVM: ID_GEN_PULSE                    3955.0 ns  TB seq.                        Pulsed to 1 for 10000 ps. 'Third call to gen_pulse with std_logic'
+UVVM: ID_GEN_PULSE                    3965.0 ns  TB seq.                        Pulsed to x"FF" for 10000 ps. 'First call to gen_pulse with std_logic_vector'
+UVVM: ID_GEN_PULSE                    3975.0 ns  TB seq.                        Pulsed to x"FF" for 10000 ps. 'Second call to gen_pulse with std_logic_vector'
+UVVM: ID_GEN_PULSE                    3985.0 ns  TB seq.                        Pulsed to x"FF" for 10000 ps. 'Third call to gen_pulse with std_logic_vector'
+UVVM: ID_GEN_PULSE                    4010.0 ns  TB seq.                        Pulsed to 1 for 1 clk cycles. 'First call to clocked gen_pulse with std_logic'
+UVVM: ID_GEN_PULSE                    4050.0 ns  TB seq.                        Pulsed to 1 for 1 clk cycles. 'Second call to clocked gen_pulse with std_logic'
+UVVM: ID_GEN_PULSE                    4090.0 ns  TB seq.                        Pulsed to 1 for 1 clk cycles. 'Third call to clocked gen_pulse with std_logic'
+UVVM: ID_GEN_PULSE                    4130.0 ns  TB seq.                        Pulsed to x"FF" for 1 clk cycles. 'First call to clocked gen_pulse with std_logic_vector'
+UVVM: ID_GEN_PULSE                    4170.0 ns  TB seq.                        Pulsed to x"FF" for 1 clk cycles. 'Second call to clocked gen_pulse with std_logic_vector'
+UVVM: ID_GEN_PULSE                    4210.0 ns  TB seq.                        Pulsed to x"FF" for 1 clk cycles. 'Third call to clocked gen_pulse with std_logic_vector'
+UVVM: ID_GEN_PULSE                    4220.0 ns  TB seq.                        Pulsed to true for 10000 ps. 'First call to gen_pulse with boolean'
+UVVM: ID_GEN_PULSE                    4230.0 ns  TB seq.                        Pulsed to true for 10000 ps. 'Second call to gen_pulse with boolean'
+UVVM: ID_GEN_PULSE                    4240.0 ns  TB seq.                        Pulsed to true for 10000 ps. 'Third call to gen_pulse with boolean'
+UVVM: ID_GEN_PULSE                    4270.0 ns  TB seq.                        Pulsed to true for 1 clk cycles. 'First call to clocked gen_pulse with boolean'
+UVVM: ID_GEN_PULSE                    4310.0 ns  TB seq.                        Pulsed to true for 1 clk cycles. 'Second call to clocked gen_pulse with boolean'
+UVVM: ID_GEN_PULSE                    4350.0 ns  TB seq.                        Pulsed to true for 1 clk cycles. 'Third call to clocked gen_pulse with boolean'
+UVVM: ID_POS_ACK                      4370.0 ns  TB seq.                        check_value() => OK, for int 0. 'Verifying cnt wrap'
+UVVM: ID_POS_ACK                      4373.0 ns  TB seq.                        check_value() => OK, for int 1. 'Verifying increment after wrap'
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
@@ -436,5 +455,5 @@ UVVM:
 UVVM:      
 UVVM: 
 UVVM: 
-UVVM: ID_LOG_HDR                      4947.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
+UVVM: ID_LOG_HDR                      5373.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

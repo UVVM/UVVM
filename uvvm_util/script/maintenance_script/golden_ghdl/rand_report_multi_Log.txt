@@ -198,15 +198,15 @@ UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_time([30 fs:40 fs])
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_time(100 fs)
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        excl_val_time(15 fs, 35 fs, 55 fs)
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[10 fs:20 fs],[30 fs:40 fs], ADD:(100 fs), EXCL:(15 fs, 35 fs, 55 fs))=> 100 fs
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[10 fs:20 fs],[30 fs:40 fs], ADD:(100 fs), EXCL:(15 fs, 35 fs, 55 fs))=> 37 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
 UVVM:      ====================================================================================================================================================================
 UVVM:                NAME               :                    RAND_TIME_1
 UVVM:                SCOPE              :                        TB seq.
-UVVM:                SEED 1             :                     1430040116
-UVVM:                SEED 2             :                      527225666
+UVVM:                SEED 1             :                      630423651
+UVVM:                SEED 2             :                     1005781624
 UVVM:                DISTRIBUTION       :                        UNIFORM
 UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
 UVVM:                MEAN CONFIGURED    :                          false
@@ -231,8 +231,8 @@ UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
 UVVM:      ====================================================================================================================================================================
 UVVM:                NAME               :                    RAND_TIME_2
 UVVM:                SCOPE              :                        TB seq.
-UVVM:                SEED 1             :                     1430040116
-UVVM:                SEED 2             :                      527225666
+UVVM:                SEED 1             :                      630423651
+UVVM:                SEED 2             :                     1005781624
 UVVM:                DISTRIBUTION       :                        UNIFORM
 UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
 UVVM:                MEAN CONFIGURED    :                          false
@@ -256,15 +256,15 @@ UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_time(100 fs)
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_val_weight_time(200 fs,8)
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(([10 fs:20 fs],1,COMBINED),([30 fs:40 fs],5,COMBINED),([50 fs:60 fs],10,COMBINED),(100
-UVVM:                                                                           fs,1),(200 fs,8))=> 100 fs
+UVVM:                                                                           fs,1),(200 fs,8))=> 57 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
 UVVM:      ====================================================================================================================================================================
 UVVM:                NAME               :                    RAND_TIME_3
 UVVM:                SCOPE              :                        TB seq.
-UVVM:                SEED 1             :                     1868636406
-UVVM:                SEED 2             :                      441909523
+UVVM:                SEED 1             :                     1925665489
+UVVM:                SEED 2             :                      507644862
 UVVM:                DISTRIBUTION       :                        UNIFORM
 UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
 UVVM:                MEAN CONFIGURED    :                          false
@@ -288,15 +288,15 @@ UVVM: --------------------------------------------------------------------------
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_unsigned([x"0":x"2"])
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_unsigned([x"6":x"8"])
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_unsigned([x"AAA":x"FFF"])
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:16, RANGE:[x"0000":x"0002"], [x"0006":x"0008"], [x"0AAA":x"0FFF"])=> x"0FC6"
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:16, RANGE:[x"0000":x"0002"], [x"0006":x"0008"], [x"0AAA":x"0FFF"])=> x"0FF4"
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
 UVVM:      ====================================================================================================================================================================
 UVVM:                NAME               :                     RAND_UNS_1
 UVVM:                SCOPE              :                        TB seq.
-UVVM:                SEED 1             :                      534453150
-UVVM:                SEED 2             :                     1303810089
+UVVM:                SEED 1             :                     1868636406
+UVVM:                SEED 2             :                      441909523
 UVVM:                DISTRIBUTION       :                        UNIFORM
 UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
 UVVM:                MEAN CONFIGURED    :                          false
@@ -322,15 +322,15 @@ UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_signed([x"4":x"7"])
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        add_range_signed([x"7AA":x"7FF"])
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(LEN:16, RANGE:[x"FFFC":x"FFFE"], [x"FFFF":x"0001"], [x"0004":x"0007"],
-UVVM:                                                                           [x"07AA":x"07FF"])=> x"07D8"
+UVVM:                                                                           [x"07AA":x"07FF"])=> x"07F2"
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      ***  REPORT OF RANDOM GENERATOR CONFIGURATION ***
 UVVM:      ====================================================================================================================================================================
 UVVM:                NAME               :                     RAND_SIG_1
 UVVM:                SCOPE              :                        TB seq.
-UVVM:                SEED 1             :                     1129334310
-UVVM:                SEED 2             :                      187381694
+UVVM:                SEED 1             :                      534453150
+UVVM:                SEED 2             :                     1303810089
 UVVM:                DISTRIBUTION       :                        UNIFORM
 UVVM:                WEIGHT MODE        :                COMBINED_WEIGHT
 UVVM:                MEAN CONFIGURED    :                          false
@@ -357,14 +357,14 @@ UVVM:
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Integer
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(UNCONSTRAINED)=> -1219239831
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(UNCONSTRAINED)=> 1955992494
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2])=> 0
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:9])=> 9
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-5, -3, 4))=> 4
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(EXCL:(-1, 0, 1))=> -1174793094
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1:1], ADD:(10))=> -1
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:9])=> -1
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-5, -3, 4))=> -3
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(EXCL:(-1, 0, 1))=> 1712720065
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1:1], ADD:(10))=> 10
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-1:1],[8:9], ADD:(10, -5, -3, 4))=> 1
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2], EXCL:(-1, 0, 1))=> 2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2], EXCL:(-1, 0, 1))=> -2
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2],[8:10], EXCL:(-1, 0, 1, 10))=> 9
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(ONLY:(-6, -4, -2, 0, 2, 4, 6), EXCL:(-2, 0, 2))=> 6
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        randm(RANGE:[-2:2], ADD:(-5, -3, 4), EXCL:(-5, -1, 1))=> -2

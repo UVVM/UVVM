@@ -1237,24 +1237,34 @@ bid, arid and rid shares a common width (id_width) and that awuser, buser, aruse
 </section>
 <section id="t-axburst">
 <h4>t_axburst<a class="headerlink" href="#t-axburst" title="Link to this heading"></a></h4>
-<p>FIXED, INCR, WRAP</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">FIXED</span><span class="p">,</span><span class="w"> </span><span class="n">INCR</span><span class="p">,</span><span class="w"> </span><span class="n">WRAP</span>
+</pre></div>
+</div>
 </section>
 <section id="t-axlock">
 <h4>t_axlock<a class="headerlink" href="#t-axlock" title="Link to this heading"></a></h4>
-<p>NORMAL, EXCLUSIVE</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">NORMAL</span><span class="p">,</span><span class="w"> </span><span class="n">EXCLUSIVE</span>
+</pre></div>
+</div>
 </section>
 <section id="t-axprot">
 <h4>t_axprot<a class="headerlink" href="#t-axprot" title="Link to this heading"></a></h4>
-<p>UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION,
-PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">UNPRIVILEGED_NONSECURE_DATA</span><span class="p">,</span><span class="w"> </span><span class="n">UNPRIVILEGED_NONSECURE_INSTRUCTION</span><span class="p">,</span><span class="w"> </span><span class="n">UNPRIVILEGED_SECURE_DATA</span><span class="p">,</span><span class="w"> </span><span class="n">UNPRIVILEGED_SECURE_INSTRUCTION</span><span class="p">,</span>
+<span class="n">PRIVILEGED_NONSECURE_DATA</span><span class="p">,</span><span class="w"> </span><span class="n">PRIVILEGED_NONSECURE_INSTRUCTION</span><span class="p">,</span><span class="w"> </span><span class="n">PRIVILEGED_SECURE_DATA</span><span class="p">,</span><span class="w"> </span><span class="n">PRIVILEGED_SECURE_INSTRUCTION</span>
+</pre></div>
+</div>
 </section>
 <section id="t-xresp">
 <h4>t_xresp<a class="headerlink" href="#t-xresp" title="Link to this heading"></a></h4>
-<p>OKAY, EXOKAY, SLVERR, DECERR, ILLEGAL</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">OKAY</span><span class="p">,</span><span class="w"> </span><span class="n">EXOKAY</span><span class="p">,</span><span class="w"> </span><span class="n">SLVERR</span><span class="p">,</span><span class="w"> </span><span class="n">DECERR</span><span class="p">,</span><span class="w"> </span><span class="n">ILLEGAL</span>
+</pre></div>
+</div>
 </section>
 <section id="t-xresp-array">
 <span id="id1"></span><h4>t_xresp_array<a class="headerlink" href="#t-xresp-array" title="Link to this heading"></a></h4>
-<p>array (natural range &lt;&gt;) of t_xresp;</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">array</span><span class="w"> </span><span class="p">(</span><span class="kt">natural</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">t_xresp</span><span class="p">;</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="local-bfm-overloads">
@@ -1612,8 +1622,8 @@ enabled with ERROR severity by default.</p></td>
 <p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
 </div>
 <p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_axi_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
-<span class="n">shared_axi_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_axi_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_axi_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
 </pre></div>
 </div>
 </section>

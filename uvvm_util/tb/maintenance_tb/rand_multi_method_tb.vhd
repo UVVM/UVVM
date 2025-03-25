@@ -965,6 +965,17 @@ begin
 
       v_rand.clear_constraints(VOID);
 
+      log(ID_LOG_HDR, "Testing time (range with time resolution)");
+      v_rand.add_range_time(-5 ms, -3 ms);
+      v_rand.add_range_time(-1 ms, 1 ms, 100 us);
+      v_rand.add_range_time(8 ms, 9 ms);
+      for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
+        v_time := v_rand.randm(VOID);
+        check_rand_value(v_time, ((-5 ms, -3 ms), (-1 ms, 1 ms), (8 ms, 9 ms)));
+      end loop;
+
+      v_rand.clear_constraints(VOID);
+
       log(ID_LOG_HDR, "Testing time (set of values)");
       v_num_values := 4;
       v_rand.add_val_time(-2 * C_TIME_RES);
@@ -1799,7 +1810,7 @@ begin
       -- Negative values
       v_num_values := 3;
       v_rand.add_range_signed(x"8F000000000000000000000000000000", x"8F000000000000000000000000000002");
-      for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS * 2 loop
         v_sig_long := v_rand.randm(v_sig_long'length);
         check_rand_value_long(v_sig_long, (0 => (x"8F000000000000000000000000000000", x"8F000000000000000000000000000002")));
         count_rand_value(v_value_cnt, v_sig_long - x"8F000000000000000000000000000000");
@@ -2073,7 +2084,7 @@ begin
 
       v_num_values := 9;
       v_rand.add_range_unsigned(x"007", x"00B");
-      for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS loop
+      for i in 1 to v_num_values * C_NUM_RAND_REPETITIONS * 2 loop
         v_slv := v_rand.randm(v_slv'length);
         check_rand_value_long(v_slv, ((x"0", x"3"), (x"7", x"B")));
         count_rand_value(v_value_cnt, v_slv);
@@ -2613,6 +2624,23 @@ begin
         end if;
       end loop;
       check_weight_distribution(v_value_cnt, ((-5, -3, 4), (0, 0, 2), (9, 10, 4), (20, 20, 1), (30, 30, 1)));
+      enable_log_msg(ID_RAND_GEN);
+
+      v_rand.clear_constraints(VOID);
+
+      log(ID_LOG_HDR, "Testing weighted time with time resolution - Generate " & to_string(C_NUM_WEIGHT_REPETITIONS) & " random values for each test");
+      v_rand.set_range_weight_time_resolution(10 us);
+      v_rand.add_range_weight_time(-5 ms, -3 ms, 30);
+      v_rand.add_val_weight_time(0 ms, 20);
+      v_rand.add_range_weight_time(9 ms, 10 ms, 50);
+      for i in 1 to C_NUM_WEIGHT_REPETITIONS loop
+        v_time := v_rand.randm(VOID);
+        count_rand_value(v_value_cnt, v_time);
+        if i = 10 then
+          disable_log_msg(ID_RAND_GEN);
+        end if;
+      end loop;
+      check_weight_distribution(v_value_cnt, ((-5, -3, 30), (0, 0, 20), (9, 10, 50)));
       enable_log_msg(ID_RAND_GEN);
 
       v_rand.clear_config(VOID);

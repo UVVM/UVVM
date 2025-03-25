@@ -358,6 +358,12 @@ package string_methods_pkg is
     value : time;
     txt   : string) return string;
 
+  -- Returns the the substring from the character after the last path
+  -- separator to the end of the string.
+  function get_basename(
+    constant path : string
+  ) return string;
+
 end package string_methods_pkg;
 
 package body string_methods_pkg is
@@ -1865,5 +1871,47 @@ package body string_methods_pkg is
     v_return := v_result(1 to v_timestamp_width) & C_TXT_NORMALISED(1 to C_TXT_NORMALISED'length - v_timestamp_width);
     return v_return(1 to C_TXT_NORMALISED'length);
   end function timestamp_header;
+
+  -- Returns the the substring from the character after the last path
+  -- separator to the end of the string.
+  function get_basename(
+    constant path : string
+  ) return string is
+
+    -- Returns the index of the last occurance of the given
+    -- character in the given string, or -1 if it is not found.
+    function index_of_last_character (
+      char : character;
+      str  : string
+    ) return integer is
+      variable v_pos : integer := -1;
+    begin
+      for i in str'right downto str'left loop
+        if str(i) = char then
+          v_pos := i;
+          char_found : exit;
+        end if;
+      end loop;
+      return v_pos;
+    end function index_of_last_character;
+
+    constant C_POSIX_PATH_SEPARATOR    : character := '/';
+    constant C_WINDOWS_PATH_SEPARATOR  : character := '\';
+    variable v_last_separator_position : integer;
+  begin
+    v_last_separator_position := index_of_last_character(C_POSIX_PATH_SEPARATOR, path);
+
+    if v_last_separator_position > -1 then -- posix path separator
+      return path(v_last_separator_position + 1 to path'high);
+    else
+      v_last_separator_position := index_of_last_character(C_WINDOWS_PATH_SEPARATOR, path);
+
+      if v_last_separator_position > -1 then -- windows path separator
+        return path(v_last_separator_position + 1 to path'high);
+      else -- no path separator
+        return path;
+      end if;
+    end if;
+  end function get_basename;
 
 end package body string_methods_pkg;

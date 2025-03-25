@@ -184,7 +184,22 @@ begin
 
       log(ID_SEQUENCER, "-- Test the random time function with default time resolution", C_SCOPE);
       for i in 1 to 100 loop
-        v_time             := random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE);
+        v_time             := random(1 us * C_RANDOM_MIN_VALUE, 1 us * C_RANDOM_MAX_VALUE);
+        -- Check that the number is in the requested range
+        check_value_in_range(v_time, 1 us * C_RANDOM_MIN_VALUE, 1 us * C_RANDOM_MAX_VALUE, error, "Random time function in range, OK", C_SCOPE, ID_NEVER);
+        counter(v_time / 1 us) <= counter(v_time / 1 us) + 1; -- Keep track of how many times the random value got this value
+        wait for 0 ns;
+      end loop;
+      -- Print statistics over the random values
+      for i in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
+        log(ID_SEQUENCER, "time function (us) : counter(" & to_string(i, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(counter(i), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
+        -- Reset counter
+        counter(i) <= 0;
+      end loop;
+
+      log(ID_SEQUENCER, "-- Test the random time function with explicit time resolution", C_SCOPE);
+      for i in 1 to 100 loop
+        v_time             := random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, ms);
         -- Check that the number is in the requested range
         check_value_in_range(v_time, 1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, error, "Random time function in range, OK", C_SCOPE, ID_NEVER);
         counter(v_time / 1 ms) <= counter(v_time / 1 ms) + 1; -- Keep track of how many times the random value got this value
@@ -197,22 +212,25 @@ begin
         counter(i) <= 0;
       end loop;
 
-      log(ID_SEQUENCER, "-- Test the random time function with explicit time resolution", C_SCOPE);
+      log(ID_SEQUENCER, "-- Test the random time function with same min and max values", C_SCOPE);
+      v_time := random(1 ms * C_RANDOM_MAX_VALUE, 1 ms * C_RANDOM_MAX_VALUE);
+      log(ID_SEQUENCER, "time:" & to_string(v_time));
+
+      log(ID_SEQUENCER, "-- Test the random time function with min greater than max values", C_SCOPE);
+      v_time := random(1 ms * C_RANDOM_MAX_VALUE, 1 ms * C_RANDOM_MIN_VALUE);
+      log(ID_SEQUENCER, "time:" & to_string(v_time));
+
+      log(ID_SEQUENCER, "-- Test the random time function with too small time resolution", C_SCOPE);
       increment_expected_alerts(TB_WARNING, 1);
-      for i in 1 to 100 loop
-        v_time             := random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, ps);
-        -- Check that the number is in the requested range
-        check_value_in_range(v_time, 1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, error, "Random time function in range, OK", C_SCOPE, ID_NEVER);
-        counter(v_time / 1 ms) <= counter(v_time / 1 ms) + 1; -- Keep track of how many times the random value got this value
-        wait for 0 ns;
-      end loop;
-      -- Print statistics over the random values
-      for i in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
-        log(ID_SEQUENCER, "time function (ms) : counter(" & to_string(i, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(counter(i), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
-        -- Reset counter
-        counter(i) <= 0;
-      end loop;
-      shared_warned_rand_time_res := false; -- Reset to test warning in procedure call
+      v_time := random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, ps);
+      log(ID_SEQUENCER, "time:" & to_string(v_time));
+      shared_warned_rand_time_res := false; -- Reset to test warning again
+
+      log(ID_SEQUENCER, "-- Test the random time function with too big time resolution", C_SCOPE);
+      increment_expected_alerts(TB_WARNING, 1);
+      v_time := random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, min);
+      log(ID_SEQUENCER, "time:" & to_string(v_time));
+      shared_warned_rand_time_res := false; -- Reset to test warning again
 
       log(ID_SEQUENCER, "-- Test the random time procedure", C_SCOPE);
       for i in 1 to 100 loop
@@ -229,21 +247,20 @@ begin
 
       log(ID_SEQUENCER, "-- Test the random time procedure with default time resolution", C_SCOPE);
       for i in 1 to 100 loop
-        random(1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, v_seed1, v_seed2, v_time);
-        check_value_in_range(v_time, 1 ms * C_RANDOM_MIN_VALUE, 1 ms * C_RANDOM_MAX_VALUE, error, "Random time procedure in range, OK", C_SCOPE, ID_NEVER);
-        counter(v_time / 1 ms) <= counter(v_time / 1 ms) + 1; -- Keep track of how many times the random value got this value
+        random(1 us * C_RANDOM_MIN_VALUE, 1 us * C_RANDOM_MAX_VALUE, v_seed1, v_seed2, v_time);
+        check_value_in_range(v_time, 1 us * C_RANDOM_MIN_VALUE, 1 us * C_RANDOM_MAX_VALUE, error, "Random time procedure in range, OK", C_SCOPE, ID_NEVER);
+        counter(v_time / 1 us) <= counter(v_time / 1 us) + 1; -- Keep track of how many times the random value got this value
       end loop;
       -- Print statistics over the random values
       for i in C_RANDOM_MIN_VALUE to C_RANDOM_MAX_VALUE loop
-        log(ID_SEQUENCER, "time procedure (ms) : counter(" & to_string(i, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(counter(i), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
+        log(ID_SEQUENCER, "time procedure (us) : counter(" & to_string(i, 2, right, KEEP_LEADING_SPACE) & ") = " & to_string(counter(i), 8, right, KEEP_LEADING_SPACE), C_SCOPE);
         -- Reset counter
         counter(i) <= 0;
       end loop;
 
       log(ID_SEQUENCER, "-- Test the random time procedure with explicit time resolution", C_SCOPE);
-      increment_expected_alerts(TB_WARNING, 1);
       for i in 1 to 100 loop
-        random(1 sec * C_RANDOM_MIN_VALUE, 1 sec * C_RANDOM_MAX_VALUE, ps, v_seed1, v_seed2, v_time);
+        random(1 sec * C_RANDOM_MIN_VALUE, 1 sec * C_RANDOM_MAX_VALUE, sec, v_seed1, v_seed2, v_time);
         check_value_in_range(v_time, 1 sec * C_RANDOM_MIN_VALUE, 1 sec * C_RANDOM_MAX_VALUE, error, "Random time procedure in range, OK", C_SCOPE, ID_NEVER);
         counter(v_time / 1 sec) <= counter(v_time / 1 sec) + 1; -- Keep track of how many times the random value got this value
       end loop;
@@ -253,6 +270,26 @@ begin
         -- Reset counter
         counter(i) <= 0;
       end loop;
+
+      log(ID_SEQUENCER, "-- Test the random time procedure with same min and max values", C_SCOPE);
+      random(1 sec * C_RANDOM_MIN_VALUE, 1 sec * C_RANDOM_MIN_VALUE, v_seed1, v_seed2, v_time);
+      log(ID_SEQUENCER, "time:" & to_string(v_time));
+
+      log(ID_SEQUENCER, "-- Test the random time procedure with min greater than max values", C_SCOPE);
+      random(1 sec * C_RANDOM_MAX_VALUE, 1 sec * C_RANDOM_MIN_VALUE, v_seed1, v_seed2, v_time);
+      log(ID_SEQUENCER, "time:" & to_string(v_time));
+
+      log(ID_SEQUENCER, "-- Test the random time procedure with too small time resolution", C_SCOPE);
+      increment_expected_alerts(TB_WARNING, 1);
+      random(1 sec * C_RANDOM_MIN_VALUE, 1 sec * C_RANDOM_MAX_VALUE, ps, v_seed1, v_seed2, v_time);
+      log(ID_SEQUENCER, "time:" & to_string(v_time));
+      shared_warned_rand_time_res := false; -- Reset to test warning again
+
+      log(ID_SEQUENCER, "-- Test the random time procedure with too big time resolution", C_SCOPE);
+      increment_expected_alerts(TB_WARNING, 1);
+      random(1 sec * C_RANDOM_MIN_VALUE, 1 sec * C_RANDOM_MAX_VALUE, hr, v_seed1, v_seed2, v_time);
+      log(ID_SEQUENCER, "time:" & to_string(v_time));
+      shared_warned_rand_time_res := false; -- Reset to test warning again
 
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "normalise" then
@@ -870,6 +907,11 @@ begin
       log(ID_SEQUENCER, justify("    Right", right, C_LOG_LINE_WIDTH - 80, SKIP_LEADING_SPACE, DISALLOW_TRUNCATE));
       log(ID_SEQUENCER, justify("Truncate last word", left, 13, KEEP_LEADING_SPACE, DISALLOW_TRUNCATE));
       log(ID_SEQUENCER, justify("Truncate last word", left, 13, KEEP_LEADING_SPACE, ALLOW_TRUNCATE));
+
+      log("\rVerifying get_basename()");
+      check_value(get_basename("/home/user/path/to/test/file_name.txt"), "file_name.txt", TB_ERROR, "Verifying get_basename() with a posix path.");
+      check_value(get_basename("C:\Users\user\path\to\test\file_name.txt"), "file_name.txt", TB_ERROR, "Verifying get_basename() with a windows path.");
+      check_value(get_basename("file_name.txt"), "file_name.txt", TB_ERROR, "Verifying get_basename() with no path.");
 
     ------------------------------------------------------------------------------------------------------------------------------
     elsif GC_TESTCASE = "byte_and_slv_arrays" then

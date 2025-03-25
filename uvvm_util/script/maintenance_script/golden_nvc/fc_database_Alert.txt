@@ -95,20 +95,20 @@ UVVM:
 UVVM: 
 UVVM: ***  TB_WARNING #11  ***
 UVVM:             0 ns   TB seq.
-UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Coverpoint has already been sampled, loading DB afterwards is not
-UVVM:                    recommended since coverage in the bins will be overwritten
+UVVM:                    load_coverage_db(db_coverpoint.txt)=> Coverpoint has already been sampled, loading DB afterwards is not recommended since coverage in the bins will be
+UVVM:                    overwritten
 UVVM: 
 UVVM: 
 UVVM: ***  TB_WARNING #12  ***
 UVVM:             0 ns   MY_SCOPE
-UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Coverpoint has already been sampled, loading DB afterwards is not
-UVVM:                    recommended since coverage in the bins will be overwritten
+UVVM:                    load_coverage_db(db_coverpoint.txt)=> Coverpoint has already been sampled, loading DB afterwards is not recommended since coverage in the bins will be
+UVVM:                    overwritten
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #2  ***
 UVVM:             0 ns   MY_SCOPE
-UVVM:                    load_coverage_db(C://projects//uvvm_internal//uvvm_util//sim//db_coverpoint.txt)=> Cannot load 1 crossed bins to a coverpoint with 2 crossed bins
+UVVM:                    load_coverage_db(db_coverpoint.txt)=> Cannot load 1 crossed bins to a coverpoint with 2 crossed bins
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 

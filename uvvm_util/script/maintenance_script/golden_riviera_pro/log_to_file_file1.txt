@@ -1,1 +1,1 @@
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq                         Line to specified file only
+UVVM: ID_SEQUENCER                       1.0 ns  TB seq.(uvvm)                  Line to specified file only

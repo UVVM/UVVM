@@ -1,7 +1,3 @@
-UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Sub-program randomise is outdated and has been replaced by another sub-program.
-UVVM:                                                                           Use randomize().
-UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
-UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 14, 12
 UVVM:      
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      ***  REPORT OF GLOBAL CTRL ***
@@ -34,6 +30,13 @@ UVVM:                ID_CLOCK_GEN                 : ENABLED
 UVVM:                ID_GEN_PULSE                 : ENABLED
 UVVM:                ID_BLOCKING                  : ENABLED
 UVVM:                ID_WATCHDOG                  : ENABLED
+UVVM:                ID_RAND_GEN                  : DISABLED
+UVVM:                ID_RAND_CONF                 : DISABLED
+UVVM:                ID_FUNC_COV_BINS             : DISABLED
+UVVM:                ID_FUNC_COV_BINS_INFO        : DISABLED
+UVVM:                ID_FUNC_COV_RAND             : DISABLED
+UVVM:                ID_FUNC_COV_SAMPLE           : DISABLED
+UVVM:                ID_FUNC_COV_CONFIG           : DISABLED
 UVVM:                ID_POS_ACK                   : ENABLED
 UVVM:                ID_LOG_HDR                   : ENABLED
 UVVM:                ID_LOG_HDR_LARGE             : ENABLED
@@ -57,6 +60,7 @@ UVVM:                ID_PACKET_HDR                : ENABLED
 UVVM:                ID_PACKET_DATA               : ENABLED
 UVVM:                ID_PACKET_CHECKSUM           : ENABLED
 UVVM:                ID_PACKET_GAP                : ENABLED
+UVVM:                ID_PACKET_PAYLOAD            : ENABLED
 UVVM:                ID_FRAME_INITIATE            : ENABLED
 UVVM:                ID_FRAME_COMPLETE            : ENABLED
 UVVM:                ID_FRAME_HDR                 : ENABLED
@@ -85,6 +89,7 @@ UVVM:                ID_AWAIT_COMPLETION          : ENABLED
 UVVM:                ID_AWAIT_COMPLETION_LIST     : ENABLED
 UVVM:                ID_AWAIT_COMPLETION_WAIT     : ENABLED
 UVVM:                ID_AWAIT_COMPLETION_END      : ENABLED
+UVVM:                ID_AWAIT_UVVM_COMPLETION     : ENABLED
 UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
 UVVM:                ID_CONSTRUCTOR               : ENABLED
 UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
@@ -93,15 +98,13 @@ UVVM:                ID_MONITOR                   : ENABLED
 UVVM:                ID_MONITOR_ERROR             : ENABLED
 UVVM:                ID_DATA                      : ENABLED
 UVVM:                ID_CTRL                      : ENABLED
+UVVM:                ID_SPEC_COV_INIT             : ENABLED
+UVVM:                ID_SPEC_COV_REQS             : ENABLED
+UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:                ID_FILE_OPEN_CLOSE           : ENABLED
 UVVM:                ID_FILE_PARSER               : ENABLED
-UVVM:                ID_SPEC_COV                  : ENABLED
 UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM:      
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         1.0 ns  (non scoped)                   Verifying logging and alerts
@@ -177,7 +180,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: 
 UVVM: ***  NOTE #2  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting note alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting note alert for shared_uvvm_status test.
 UVVM: 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected NOTEs by 1. 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
@@ -197,7 +200,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: 
 UVVM: ***  TB_NOTE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_note alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting tb_note alert for shared_uvvm_status test.
 UVVM: 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_NOTEs by 1. 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
@@ -217,7 +220,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: 
 UVVM: ***  WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting warning alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting warning alert for shared_uvvm_status test.
 UVVM: 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
@@ -245,7 +248,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_warning alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting tb_warning alert for shared_uvvm_status test.
 UVVM: 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 1. 'Expected that shared_uvvm_status indicate fail.'
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
@@ -273,7 +276,7 @@ UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        
 UVVM: 
 UVVM: ***  MANUAL_CHECK #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting manual_check alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting manual_check alert for shared_uvvm_status test.
 UVVM: 
 UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected MANUAL_CHECKs by 1. 
 UVVM: ID_POS_ACK                         1.0 ns  TB seq.                        check_value() => OK, for int 0. 'Expected that shared_uvvm_status indicate success.'
@@ -294,7 +297,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #2  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting error alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting error alert for shared_uvvm_status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -328,7 +331,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_error alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting tb_error alert for shared_uvvm_status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -362,7 +365,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  FAILURE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting failure alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting failure alert for shared_uvvm_status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -396,7 +399,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_FAILURE #1  ***
 UVVM:             1 ns   TB seq.
-UVVM:                    Setting tb_failure alert for shared_uvvm_status simulation_successful status test.
+UVVM:                    Setting tb_failure alert for shared_uvvm_status test.
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -463,5 +466,5 @@ UVVM:
 UVVM:      
 UVVM: 
 UVVM: 
-UVVM: ID_LOG_HDR                      1001.0 ns  TB seq                         SIMULATION COMPLETED
+UVVM: ID_LOG_HDR                      1001.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

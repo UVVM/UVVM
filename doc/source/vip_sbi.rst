@@ -636,8 +636,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_sbi_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_sbi_vvc_config(1).bfm_config.id_for_bfm := ID_BFM;
+    shared_sbi_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_sbi_vvc_config(C_VVC_IDX).bfm_config.id_for_bfm := ID_BFM;
 
 Status Record
 ==================================================================================================================================
@@ -652,16 +652,6 @@ Methods
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
 
-.. caution::
-
-    Orange description is preliminary.
-
-.. raw:: html
-
-    <style> .orange {color:orange} </style>
-
-.. role:: orange
-
 
 .. _sbi_write_vvc:
 
@@ -670,9 +660,9 @@ sbi_write()
 | Adds a write command to the SBI VVC executor queue, which will run as soon as all preceding commands have completed. It has two 
   variants using either just data for a basic single transaction, or num_words + randomization for a more advanced version.
 | When the basic write command is scheduled to run, the executor calls the BFM :ref:`sbi_write_bfm` procedure.
-| :orange:`When the more advanced randomization command is applied, the basic BFM sbi_write() transaction is executed num_words 
+| When the more advanced randomization command is applied, the basic BFM sbi_write() transaction is executed num_words 
   times with new random data each time – according to the given randomization profile. Current defined randomization profiles are: 
-  RANDOM: Standard uniform random. This is provided as an example.`
+  RANDOM: Standard uniform random. This is provided as an example.
 
 .. code-block::
 
@@ -717,8 +707,8 @@ command is scheduled to run, the executor calls the BFM :ref:`sbi_read_bfm` proc
 
 The value read from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the 
 read data will be stored in the VVC for a potential future fetch (see example with fetch_result below).
-:orange:`If the data_routing is set to TO_SB, the read data will be sent to the SBI VVC dedicated scoreboard where it will be 
-checked against the expected value (provided by the testbench).`
+If the data_routing is set to TO_SB, the read data will be sent to the SBI VVC dedicated scoreboard where it will be 
+checked against the expected value (provided by the testbench).
 
 .. code-block::
 

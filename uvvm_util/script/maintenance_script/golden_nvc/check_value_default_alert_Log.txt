@@ -364,27 +364,19 @@ UVVM:                    Check padding of different check_value SLV lengths (act
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_slv_array x"A"'. 'check_value with t_slv_array of different array
 UVVM:                                                                           indexes'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_slv_array x"B"'. 'check_value with t_slv_array of different array
 UVVM:                                                                           indexes'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_signed_array x"C"'. 'check_value with t_signed_array of different
 UVVM:                                                                           array indexes'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_signed_array x"D"'. 'check_value with t_signed_array of different
 UVVM:                                                                           array indexes'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_unsigned_array x"E"'. 'check_value with t_unsigned_array of
 UVVM:                                                                           different array indexes'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_unsigned_array x"F"'. 'check_value with t_unsigned_array of
 UVVM:                                                                           different array indexes'
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected ERRORs by 3. 
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_slv_array x"A"'. 'check_value with t_slv_array of different array
 UVVM:                                                                           indexes'
 UVVM: 
@@ -396,8 +388,6 @@ UVVM:                    check_value with t_slv_array of different array indexes
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_signed_array x"C"'. 'check_value with t_signed_array of different
 UVVM:                                                                           array indexes'
 UVVM: 
@@ -409,8 +399,6 @@ UVVM:                    check_value with t_signed_array of different array inde
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for t_unsigned_array x"E"'. 'check_value with t_unsigned_array of
 UVVM:                                                                           different array indexes'
 UVVM: 
@@ -424,7 +412,6 @@ UVVM:
 UVVM: 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  Incrementing alert_stop_limit(TB_ERROR) for 1 provoked tb_error to pass in simulation.
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array directions do not match'
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
@@ -439,7 +426,6 @@ UVVM: ***  TB_WARNING #1  ***
 UVVM:             0 ns   TB seq.
 UVVM:                    check_value() => Failed. Boolean was false. 'array directions do not match'
 UVVM: 
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL CHECK COUNTERS ***

@@ -90,8 +90,6 @@ package types_pkg is
   type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT, FIRST_BYTE_LEFT, FIRST_BYTE_RIGHT);
   alias t_word_endianness is t_byte_endianness;
 
-  type t_pulse_continuation is (ALLOW_PULSE_CONTINUATION, NO_PULSE_CONTINUATION_ALLOWED);
-
   type t_coverage_representation is (NO_GOAL, GOAL_CAPPED, GOAL_UNCAPPED);
 
   type t_global_ctrl is record

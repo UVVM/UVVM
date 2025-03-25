@@ -66,20 +66,20 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #8  ***
 UVVM:           170 ns   TB seq.(uvvm)
-UVVM:                    await_change_to_value(unsigned 00000001, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
+UVVM:                    await_change_to_value(unsigned x"01", 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #2  ***
 UVVM:           183 ns   TB seq.(uvvm)
-UVVM:                    await_change_to_value(unsigned 00000001, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
+UVVM:                    await_change_to_value(unsigned x"01", 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #9  ***
 UVVM:           206 ns   TB seq.(uvvm)
-UVVM:                    await_change_to_value(unsigned 00000000, 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
+UVVM:                    await_change_to_value(unsigned x"00", 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -87,7 +87,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #10  ***
 UVVM:           223 ns   TB seq.(uvvm)
-UVVM:                    await_change_to_value(unsigned 00000001, 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
+UVVM:                    await_change_to_value(unsigned x"01", 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -95,20 +95,20 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #11  ***
 UVVM:           268 ns   TB seq.(uvvm)
-UVVM:                    await_change_to_value(signed 00000001, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
+UVVM:                    await_change_to_value(signed x"01", 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change too late, Fail'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
 UVVM: 
 UVVM: ***  WARNING #3  ***
 UVVM:           281 ns   TB seq.(uvvm)
-UVVM:                    await_change_to_value(signed 00000001, 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
+UVVM:                    await_change_to_value(signed x"01", 0 ns, 3 ns) => Failed. Timed out after 3 ns. 'Change but not to value specified, Fail'
 UVVM: 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #12  ***
 UVVM:           304 ns   TB seq.(uvvm)
-UVVM:                    await_change_to_value(signed 00000000, 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
+UVVM:                    await_change_to_value(signed x"00", 2 ns, 3 ns) => Failed. Condition occurred too early, after 1 ns. 'Change to value before min_time, Fail'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
@@ -116,7 +116,7 @@ UVVM:
 UVVM: =========================================================================================================================================================================
 UVVM: ***  ERROR #13  ***
 UVVM:           321 ns   TB seq.(uvvm)
-UVVM:                    await_change_to_value(signed 00000001, 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
+UVVM:                    await_change_to_value(signed x"01", 5 ns, 7 ns) => Failed. Timed out after 7 ns. 'Time Check Failed'
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 

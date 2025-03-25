@@ -1019,8 +1019,9 @@ package body func_cov_pkg is
       tee(file_handler, v_line);        -- write to file, while keeping the line contents
       file_close(file_handler);
     end if;
+
     write_line_to_log_destination(v_line);
-    deallocate(v_line);
+    deallocate_line_if_exists(v_line);
   end procedure;
 
   ------------------------------------------------------------
@@ -1776,7 +1777,7 @@ package body func_cov_pkg is
     procedure write_coverage_db(
       constant file_name    : in string;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
-      constant C_LOCAL_CALL : string := "write_coverage_db(" & file_name & ")";
+      constant C_LOCAL_CALL : string := "write_coverage_db(" & get_basename(file_name) & ")";
       file file_handler     : text open write_mode is file_name;
       variable v_line       : line;
 
@@ -1875,7 +1876,7 @@ package body func_cov_pkg is
       constant alert_level_if_not_found : in t_alert_level         := TB_ERROR;
       constant report_verbosity         : in t_report_verbosity    := HOLES_ONLY;
       constant msg_id_panel             : in t_msg_id_panel        := shared_msg_id_panel) is
-      constant C_LOCAL_CALL       : string := "load_coverage_db(" & file_name & ")";
+      constant C_LOCAL_CALL       : string := "load_coverage_db(" & get_basename(file_name) & ")";
       file file_handler           : text;
       variable v_open_status      : file_open_status;
       variable v_line             : line;
@@ -3167,8 +3168,9 @@ package body func_cov_pkg is
         tee(file_handler, v_line);      -- write to file, while keeping the line contents
         file_close(file_handler);
       end if;
+
       write_line_to_log_destination(v_line);
-      DEALLOCATE(v_line);
+      deallocate_line_if_exists(v_line);
     end procedure;
 
     procedure report_config(
@@ -3224,8 +3226,9 @@ package body func_cov_pkg is
         tee(file_handler, v_line);      -- write to file, while keeping the line contents
         file_close(file_handler);
       end if;
+
       write_line_to_log_destination(v_line);
-      DEALLOCATE(v_line);
+      deallocate_line_if_exists(v_line);
     end procedure;
 
     ------------------------------------------------------------

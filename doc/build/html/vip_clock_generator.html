@@ -62,7 +62,27 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Clock Generator</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#start-clock">start_clock()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stop-clock">stop_clock()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-clock-period">set_clock_period()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-clock-high-time">set_clock_high_time()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_error_injection.html">Bitvis VIP Error Injection</a></li>
@@ -107,9 +127,540 @@
              
   <section id="bitvis-vip-clock-generator">
 <h1>Bitvis VIP Clock Generator<a class="headerlink" href="#bitvis-vip-clock-generator" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vvc">VVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#clock-generator-start-clock"><span class="std std-ref">start_clock()</span></a></p></li>
+<li><p><a class="reference internal" href="#clock-generator-stop-clock"><span class="std std-ref">stop_clock()</span></a></p></li>
+<li><p><a class="reference internal" href="#clock-generator-set-clock-period"><span class="std std-ref">set_clock_period()</span></a></p></li>
+<li><p><a class="reference internal" href="#clock-generator-set-clock-high-time"><span class="std std-ref">set_clock_high_time()</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
 <section id="vvc">
-<span id="vip-clock-generator-vvc"></span><h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_clock_generator/doc/clock_generator_vvc_QuickRef.pdf">clock_generator_vvc_QuickRef.pdf</a></p>
+<h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>VVC functionality is implemented in clock_generator_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CLOCK_NAME</p></td>
+<td><p>string</p></td>
+<td><p>“clk”</p></td>
+<td><p>Name to assign the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CLOCK_PERIOD</p></td>
+<td><p>time</p></td>
+<td><p>10 ns</p></td>
+<td><p>Clock period to assign the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CLOCK_HIGH_TIME</p></td>
+<td><p>time</p></td>
+<td><p>5 ns</p></td>
+<td><p>Time of the clock cycle that is ‘1’. Value must
+be less than GC_CLOCK_PERIOD</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>clk</p></td>
+<td><p>out</p></td>
+<td><p>std_logic</p></td>
+<td><p>VVC Clock signal</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="configuration-record">
+<h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_clock_generator_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_CLOCK_GENERATOR_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><p>Record parameter required by the VVC Framework,
+not applicable for this VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p>t_bfm_config</p></td>
+<td><p>C_VOID_BFM_CONFIG</p></td>
+<td><p>Record parameter required by the VVC Framework,
+not applicable for this VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-odd"><td><p>clock_name</p></td>
+<td><p>string</p></td>
+<td><p>“Set clock name”</p></td>
+<td><p>Name of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>clock_period</p></td>
+<td><p>time</p></td>
+<td><p>10 ns</p></td>
+<td><p>Clock period</p></td>
+</tr>
+<tr class="row-odd"><td><p>clock_high_time</p></td>
+<td><p>time</p></td>
+<td><p>5 ns</p></td>
+<td><p>Time of the clock cycle that is ‘1’. Value must
+be less than clock_period</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_clock_generator_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_clock_generator_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="start-clock">
+<span id="clock-generator-start-clock"></span><h4>start_clock()<a class="headerlink" href="#start-clock" title="Link to this heading"></a></h4>
+<p>Adds a start_clock command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have
+completed. When the command is scheduled to run, the executor activates the clock generator process in the VVC.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">start_clock</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">start_clock</span><span class="p">(</span><span class="n">CLOCK_GENERATOR_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Start clock generator&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="stop-clock">
+<span id="clock-generator-stop-clock"></span><h4>stop_clock()<a class="headerlink" href="#stop-clock" title="Link to this heading"></a></h4>
+<p>Adds a stop_clock command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have
+completed. When the command is scheduled to run, the executor deactivates the clock generator process in the VVC after finishing
+the current clock cycle.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">stop_clock</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">stop_clock</span><span class="p">(</span><span class="n">CLOCK_GENERATOR_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Stop clock generator&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="set-clock-period">
+<span id="clock-generator-set-clock-period"></span><h4>set_clock_period()<a class="headerlink" href="#set-clock-period" title="Link to this heading"></a></h4>
+<p>Adds a set_clock_period command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have
+completed. When the command is scheduled to run, the executor will change the clock period on the preceding rising clock edge.
+Note: the clock high time will have to be set using the set_clock_high_time() after setting a new clock period.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_clock_period</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">clock_period</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>clock_period</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Clock period</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">set_clock_period</span><span class="p">(</span><span class="n">CLOCK_GENERATOR_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Change clock period to 10 ns&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="set-clock-high-time">
+<span id="clock-generator-set-clock-high-time"></span><h4>set_clock_high_time()<a class="headerlink" href="#set-clock-high-time" title="Link to this heading"></a></h4>
+<p>Adds a set_clock_high_time command to the Clock Generator VVC executor queue, which will run as soon as all preceding commands have
+completed. When the command is scheduled to run, the executor changes the clock high time and the change will take effect from the
+next rising edge.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">set_clock_high_time</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">clock_high_time</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>clock_high_time</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>Time of the clock cycle that is ‘1’. Value must be less
+than clock_period</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">set_clock_high_time</span><span class="p">(</span><span class="n">CLOCK_GENERATOR_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Change the duty cycle to 60%&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<p>The Clock Generator VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the Clock Generator VVC, assure that uvvm_util and uvvm_vvc_framework have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Compile order for the Clock Generator VVC</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_clock_generator</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>Clock Generator VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_clock_generator</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_clock_generator</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_clock_generator</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>Clock Generator VVC methods</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_clock_generator</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_clock_generator</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_clock_generator</p></td>
+<td><p>clock_generator_vvc.vhd</p></td>
+<td><p>Clock Generator VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_clock_generator</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>Clock Generator VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -117,6 +668,8 @@ not limited to the warranties of merchantability, fitness for a particular purpo
 authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
 otherwise, arising from, out of or in connection with this IP.</p>
 </div>
+</section>
+</section>
 </section>
 </section>
 

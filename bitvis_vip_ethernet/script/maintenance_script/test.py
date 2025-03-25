@@ -68,17 +68,17 @@ hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/generic/*.vhd", "mac_m
 hr.add_files("../../tb/maintenance_tb/ethernet_mac-master/xilinx/ipcore_dir/*.vhd", "mac_master")
 
 sim_options = None
+com_options = None
 simulator_name = hr.settings.get_simulator_name()
 # Set simulator name and compile options
 if simulator_name in ["MODELSIM", "RIVIERA"]:
     sim_options = "-t ps"
     com_options = ["-suppress", "1346,1246,1236", "-2008"]
-    hr.set_simulator(simulator=simulator_name, com_options=com_options)
 elif simulator_name == "GHDL":
     com_options = ["--ieee=standard", "--std=08", "-frelaxed-rules", "--warn-no-shared", "--warn-no-hide", "--warn-no-attribute"]
     com_options += ["-fsynopsys"] # Xilinx library requires Synopsys std_logic_unsigned library
-    hr.set_simulator(simulator=simulator_name, com_options=com_options)
 
+hr.set_simulator(simulator=simulator_name, com_options=com_options)
 hr.start(sim_options=sim_options)
 
 num_failing_tests = hr.get_num_fail_tests()

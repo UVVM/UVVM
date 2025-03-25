@@ -255,8 +255,6 @@ UVVM:
 UVVM: 
 UVVM: 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check normalise and check_value for t_slv_array
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for boolean true. 'array directions do not match'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for t_slv_array x"0A"' (exp: x"A"'). 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for t_slv_array x"06"' (exp: x"6"'). 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for t_slv_array x"09"' (exp: x"9"'). 
@@ -267,8 +265,6 @@ UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for int 10. 
 UVVM: 
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check normalise and check_value for t_unsigned_array
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for boolean true. 'array directions do not match'
-UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for boolean true. 'array lengths do not match'
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for t_unsigned_array x"0A"' (exp: x"A"'). 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for t_unsigned_array x"06"' (exp: x"6"'). 
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for t_unsigned_array x"09"' (exp: x"9"'). 

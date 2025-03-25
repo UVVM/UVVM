@@ -30,6 +30,10 @@ package bfm_common_pkg is
   type t_normalization_mode is (ALLOW_WIDER, ALLOW_NARROWER, ALLOW_WIDER_NARROWER, ALLOW_EXACT_ONLY);
   alias t_normalisation_mode is t_normalization_mode;
 
+  -- Constants for random configurations
+  constant C_RANDOM          : integer := -1;
+  constant C_MULTIPLE_RANDOM : integer := -2;
+
   -- Functions/procedures
   impure function normalise(
     constant value       : in std_logic_vector;

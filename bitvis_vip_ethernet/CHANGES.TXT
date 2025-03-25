@@ -1,6 +1,10 @@
 Bitvis VIP Ethernet - Overview on Versions and Changes
 ==============================================================
 
+v0.4.1
+----------
+Released: 2025-03-25
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
 
 v0.4.0
 ----------

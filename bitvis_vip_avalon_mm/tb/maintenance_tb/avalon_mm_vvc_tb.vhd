@@ -124,6 +124,7 @@ begin
         v_num_expected_alerts := 0 when alert_level = NO_ALERT else
                                  v_num_expected_alerts + C_NUM_VVC_SIGNALS when i = 0 else
                                  v_num_expected_alerts + 1;
+        wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
         check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
       end loop;
     end procedure;

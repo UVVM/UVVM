@@ -974,19 +974,27 @@ value is C_AXISTREAM_BFM_CONFIG_DEFAULT.</p></td>
 <h3>Local types<a class="headerlink" href="#local-types" title="Link to this heading"></a></h3>
 <section id="t-user-array">
 <span id="id1"></span><h4>t_user_array<a class="headerlink" href="#t-user-array" title="Link to this heading"></a></h4>
-<p>array (natural range &lt;&gt;) of std_logic_vector(C_AXISTREAM_BFM_MAX_TUSER_BITS - 1 downto 0);</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">array</span><span class="w"> </span><span class="p">(</span><span class="kt">natural</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="n">C_AXISTREAM_BFM_MAX_TUSER_BITS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="t-strb-array">
 <span id="id2"></span><h4>t_strb_array<a class="headerlink" href="#t-strb-array" title="Link to this heading"></a></h4>
-<p>array (natural range &lt;&gt;) of std_logic_vector(C_AXISTREAM_BFM_MAX_TSTRB_BITS - 1 downto 0);</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">array</span><span class="w"> </span><span class="p">(</span><span class="kt">natural</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="n">C_AXISTREAM_BFM_MAX_TSTRB_BITS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="t-id-array">
 <span id="id3"></span><h4>t_id_array<a class="headerlink" href="#t-id-array" title="Link to this heading"></a></h4>
-<p>array (natural range &lt;&gt;) of std_logic_vector(C_AXISTREAM_BFM_MAX_TID_BITS - 1 downto 0);</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">array</span><span class="w"> </span><span class="p">(</span><span class="kt">natural</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="n">C_AXISTREAM_BFM_MAX_TID_BITS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="t-dest-array">
 <span id="id4"></span><h4>t_dest_array<a class="headerlink" href="#t-dest-array" title="Link to this heading"></a></h4>
-<p>array (natural range &lt;&gt;) of std_logic_vector(C_AXISTREAM_BFM_MAX_TDEST_BITS - 1 downto 0);</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">array</span><span class="w"> </span><span class="p">(</span><span class="kt">natural</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">(</span><span class="n">C_AXISTREAM_BFM_MAX_TDEST_BITS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">downto</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="local-bfm-overloads">
@@ -1479,8 +1487,8 @@ enabled with ERROR severity by default.</p></td>
 <p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
 </div>
 <p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_axistream_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
-<span class="n">shared_axistream_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_axistream_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_axistream_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
 </pre></div>
 </div>
 </section>

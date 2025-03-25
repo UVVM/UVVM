@@ -2,6 +2,12 @@ Bitvis VIP axistream (AXI4-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v6.1.1
+----------
+Released: 2025-03-25
+- Updated methods for generating random values to control randomization seeds in axistream_bfm_pkg.
+- Moved the random configuration constants to bfm_common_pkg.
+
 v6.1.0
 ----------
 Released: 2024-09-19

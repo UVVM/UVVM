@@ -216,6 +216,7 @@ begin
     variable v_num_data_bits                          : natural                                     := vvc_config.bfm_config.num_data_bits;
     variable v_has_raised_warning_if_vvc_bfm_conflict : boolean                                     := false;
     variable v_vvc_config                             : t_vvc_config;
+    variable v_seeds                                  : t_positive_vector(0 to 1)                   := (1, 2);
 
   begin
     -- 0. Initialize the process prior to first command
@@ -223,6 +224,9 @@ begin
     work.td_vvc_entity_support_pkg.initialize_executor(terminate_current_cmd);
     -- Set initial value of v_msg_id_panel to msg_id_panel in config
     v_msg_id_panel := vvc_config.msg_id_panel;
+
+    -- Set the randomization seeds
+    set_rand_seeds(C_VVC_LABELS.scope, v_seeds(0), v_seeds(1));
 
     loop
       -- update vvc activity
@@ -288,7 +292,7 @@ begin
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
-                v_cmd.data(v_num_data_bits - 1 downto 0) := std_logic_vector(random(v_num_data_bits));
+                random(v_seeds(0), v_seeds(1), v_cmd.data(v_num_data_bits - 1 downto 0));
               when RANDOM_FAVOUR_EDGES =>
                 null;                   -- Not implemented yet
               when others =>            -- NA

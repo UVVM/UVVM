@@ -1,0 +1,48 @@
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  ERROR #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    [Covpt_1] sample_coverage(500)=> Sampled illegal_bin_range(256 to 511)
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    log called with NULL line
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    log called with NULL line
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    log called with NULL line
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    log called with NULL line
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #5  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    log called with NULL line
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #6  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    log called with NULL line
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #7  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    log called with NULL line
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #8  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    log called with NULL line
+UVVM: 

@@ -1,376 +1,256 @@
-UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Sub-program randomise is outdated and has been replaced by another sub-program.
-UVVM:                                                                           Use randomize().
-UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 12, 14
-UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Setting global seeds to 14, 12
-UVVM:      
-UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:      ***  REPORT OF GLOBAL CTRL ***
-UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:                                IGNORE    STOP_LIMIT
-UVVM:                NOTE         :  REGARD         0
-UVVM:                TB_NOTE      :  REGARD         0
-UVVM:                WARNING      :  REGARD         0
-UVVM:                TB_WARNING   :  REGARD         0
-UVVM:                MANUAL_CHECK :  REGARD         0
-UVVM:                ERROR        :  REGARD         1
-UVVM:                TB_ERROR     :  REGARD         1
-UVVM:                FAILURE      :  REGARD         1
-UVVM:                TB_FAILURE   :  REGARD         1
-UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:      
-UVVM:      
-UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:      ***  REPORT OF MSG ID PANEL ***
-UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:                ID                             Status
-UVVM:                ------------------------       ------
-UVVM:                ID_UTIL_BURIED               : DISABLED
-UVVM:                ID_BITVIS_DEBUG              : DISABLED
-UVVM:                ID_UTIL_SETUP                : ENABLED
-UVVM:                ID_LOG_MSG_CTRL              : ENABLED
-UVVM:                ID_ALERT_CTRL                : ENABLED
-UVVM:                ID_FINISH_OR_STOP            : ENABLED
-UVVM:                ID_CLOCK_GEN                 : ENABLED
-UVVM:                ID_GEN_PULSE                 : ENABLED
-UVVM:                ID_BLOCKING                  : ENABLED
-UVVM:                ID_WATCHDOG                  : ENABLED
-UVVM:                ID_POS_ACK                   : ENABLED
-UVVM:                ID_LOG_HDR                   : ENABLED
-UVVM:                ID_LOG_HDR_LARGE             : ENABLED
-UVVM:                ID_LOG_HDR_XL                : ENABLED
-UVVM:                ID_SEQUENCER                 : ENABLED
-UVVM:                ID_SEQUENCER_SUB             : ENABLED
-UVVM:                ID_BFM                       : ENABLED
-UVVM:                ID_BFM_WAIT                  : ENABLED
-UVVM:                ID_BFM_POLL                  : ENABLED
-UVVM:                ID_BFM_POLL_SUMMARY          : ENABLED
-UVVM:                ID_CHANNEL_BFM               : ENABLED
-UVVM:                ID_TERMINATE_CMD             : ENABLED
-UVVM:                ID_SEGMENT_INITIATE          : ENABLED
-UVVM:                ID_SEGMENT_COMPLETE          : ENABLED
-UVVM:                ID_SEGMENT_HDR               : ENABLED
-UVVM:                ID_SEGMENT_DATA              : ENABLED
-UVVM:                ID_PACKET_INITIATE           : ENABLED
-UVVM:                ID_PACKET_PREAMBLE           : ENABLED
-UVVM:                ID_PACKET_COMPLETE           : ENABLED
-UVVM:                ID_PACKET_HDR                : ENABLED
-UVVM:                ID_PACKET_DATA               : ENABLED
-UVVM:                ID_PACKET_CHECKSUM           : ENABLED
-UVVM:                ID_PACKET_GAP                : ENABLED
-UVVM:                ID_FRAME_INITIATE            : ENABLED
-UVVM:                ID_FRAME_COMPLETE            : ENABLED
-UVVM:                ID_FRAME_HDR                 : ENABLED
-UVVM:                ID_FRAME_DATA                : ENABLED
-UVVM:                ID_COVERAGE_MAKEBIN          : DISABLED
-UVVM:                ID_COVERAGE_ADDBIN           : DISABLED
-UVVM:                ID_COVERAGE_ICOVER           : DISABLED
-UVVM:                ID_COVERAGE_CONFIG           : ENABLED
-UVVM:                ID_COVERAGE_SUMMARY          : ENABLED
-UVVM:                ID_COVERAGE_HOLES            : ENABLED
-UVVM:                ID_UVVM_SEND_CMD             : ENABLED
-UVVM:                ID_UVVM_CMD_ACK              : ENABLED
-UVVM:                ID_UVVM_CMD_RESULT           : ENABLED
-UVVM:                ID_CMD_INTERPRETER           : ENABLED
-UVVM:                ID_CMD_INTERPRETER_WAIT      : ENABLED
-UVVM:                ID_IMMEDIATE_CMD             : ENABLED
-UVVM:                ID_IMMEDIATE_CMD_WAIT        : ENABLED
-UVVM:                ID_CMD_EXECUTOR              : ENABLED
-UVVM:                ID_CMD_EXECUTOR_WAIT         : ENABLED
-UVVM:                ID_CHANNEL_EXECUTOR          : ENABLED
-UVVM:                ID_CHANNEL_EXECUTOR_WAIT     : ENABLED
-UVVM:                ID_NEW_HVVC_CMD_SEQ          : ENABLED
-UVVM:                ID_INSERTED_DELAY            : ENABLED
-UVVM:                ID_OLD_AWAIT_COMPLETION      : ENABLED
-UVVM:                ID_AWAIT_COMPLETION          : ENABLED
-UVVM:                ID_AWAIT_COMPLETION_LIST     : ENABLED
-UVVM:                ID_AWAIT_COMPLETION_WAIT     : ENABLED
-UVVM:                ID_AWAIT_COMPLETION_END      : ENABLED
-UVVM:                ID_UVVM_DATA_QUEUE           : ENABLED
-UVVM:                ID_CONSTRUCTOR               : ENABLED
-UVVM:                ID_CONSTRUCTOR_SUB           : ENABLED
-UVVM:                ID_VVC_ACTIVITY              : ENABLED
-UVVM:                ID_MONITOR                   : ENABLED
-UVVM:                ID_MONITOR_ERROR             : ENABLED
-UVVM:                ID_DATA                      : ENABLED
-UVVM:                ID_CTRL                      : ENABLED
-UVVM:                ID_FILE_OPEN_CLOSE           : ENABLED
-UVVM:                ID_FILE_PARSER               : ENABLED
-UVVM:                ID_SPEC_COV                  : ENABLED
-UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM:      
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8100000 ps. Watchdog A
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8200000 ps. Watchdog B
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 8300000 ps. Watchdog C
-UVVM: ID_WATCHDOG                        0.0 ns  TB seq.                        Starting general watchdog: 100000000 ps. Watchdog D
 UVVM: 
 UVVM: 
-UVVM: ID_LOG_HDR                         1.0 ns  (non scoped)                   Verifying normalize_and_check
+UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Verifying normalize_and_check
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: 
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check normalize_and_check for slv
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"15"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"15"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for int 21. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for int 21. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for slv x"15"'. 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check normalize_and_check for slv
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for slv x"15"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for slv x"15"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for int 21. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for int 21. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for slv x"15"'. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #1  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(slv: v_slv5a=15, v_slv8=00) => v_slv5a is narrower than v_slv8 without using ALLOW_NARROWER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(slv: v_slv5_a=15, v_slv8=00) => v_slv5_a is narrower than v_slv8 without using ALLOW_NARROWER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #2  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(slv: v_slv5a=15, v_slv8=15) => v_slv5a is narrower than v_slv8 without using ALLOW_NARROWER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(slv: v_slv5_a=15, v_slv8=15) => v_slv5_a is narrower than v_slv8 without using ALLOW_NARROWER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #3  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(slv: v_slv8=15, v_slv5a=15) => v_slv8 is wider than v_slv5a without using ALLOW_WIDER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(slv: v_slv8=15, v_slv5_a=15) => v_slv8 is wider than v_slv5_a without using ALLOW_WIDER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #4  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(slv: v_slv8=15, v_slv5a=15) => v_slv8 is wider than v_slv5a without using ALLOW_WIDER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(slv: v_slv8=15, v_slv5_a=15) => v_slv8 is wider than v_slv5_a without using ALLOW_WIDER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #5  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(slv: v_slv5a=55, v_slv8=15) => v_slv5a is wider than v_slv8 and has non-zeros in the extended MSB. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(slv: v_slv5_a=55, v_slv8=15) => v_slv5_a is wider than v_slv8 and has non-zeros in the extended MSB. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #6  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(slv: v_slv5a=55, v_slv8=15) => v_slv5a is wider than v_slv8 and has non-zeros in the extended MSB. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(slv: v_slv5_a=55, v_slv8=15) => v_slv5_a is wider than v_slv8 and has non-zeros in the extended MSB. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #7  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(slv: v_slv5a=, v_slv8=15) => Value length is zero! 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(slv: v_slv5_a=, v_slv8=15) => Value length is zero! 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #8  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(slv: v_slv5a=55, v_slv8=) => Target length is zero! 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(slv: v_slv5_a=55, v_slv8=) => Target length is zero! 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
 UVVM: 
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check normalize_and_check for unsigned
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for unsigned x"15"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for unsigned x"15"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for int 21. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for int 21. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for unsigned x"15"'. 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check normalize_and_check for unsigned
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for unsigned x"15"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for unsigned x"15"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for int 21. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for int 21. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for unsigned x"15"'. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #9  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(unsigned: v_u5a=15, v_u8=00) => v_u5a is narrower than v_u8 without using ALLOW_NARROWER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(unsigned: v_uns5_a=15, v_uns8=00) => v_uns5_a is narrower than v_uns8 without using ALLOW_NARROWER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #10  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(unsigned: v_u5a=15, v_u8=15) => v_u5a is narrower than v_u8 without using ALLOW_NARROWER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(unsigned: v_uns5_a=15, v_uns8=15) => v_uns5_a is narrower than v_uns8 without using ALLOW_NARROWER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #11  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(unsigned: v_u8=15, v_u5a=15) => v_u8 is wider than v_u5a without using ALLOW_WIDER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(unsigned: v_uns8=15, v_uns5_a=15) => v_uns8 is wider than v_uns5_a without using ALLOW_WIDER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #12  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(unsigned: v_u8=15, v_u5a=15) => v_u8 is wider than v_u5a without using ALLOW_WIDER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(unsigned: v_uns8=15, v_uns5_a=15) => v_uns8 is wider than v_uns5_a without using ALLOW_WIDER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #13  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(unsigned: v_u5a=55, v_u8=15) => v_u5a is wider than v_u8 and has non-zeros in the extended MSB. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(unsigned: v_uns5_a=55, v_uns8=15) => v_uns5_a is wider than v_uns8 and has non-zeros in the extended MSB. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #14  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(unsigned: v_u5a=55, v_u8=15) => v_u5a is wider than v_u8 and has non-zeros in the extended MSB. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(unsigned: v_uns5_a=55, v_uns8=15) => v_uns5_a is wider than v_uns8 and has non-zeros in the extended MSB. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #15  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(unsigned: v_u5a=, v_u8=15) => Value length is zero! 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(unsigned: v_uns5_a=, v_uns8=15) => Value length is zero! 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #16  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(unsigned: v_u5a=55, v_u8=) => Target length is zero! 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(unsigned: v_uns5_a=55, v_uns8=) => Target length is zero! 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
 UVVM: 
-UVVM: ID_SEQUENCER                       1.0 ns  TB seq.                        Check normalize_and_check for signed
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for signed x"F5"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for signed x"F5"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for signed x"15"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for signed x"15"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for signed x"0A"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for signed x"0A"'. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for int -11. 
-UVVM: ID_POS_ACK                         1.0 ns  TB seq                         check_value() => OK, for int -11. 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Check normalize_and_check for signed
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for signed x"F5"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for signed x"F5"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for signed x"15"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for signed x"15"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for signed x"0A"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for signed x"0A"'. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for int -11. 
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.(uvvm)                  check_value() => OK, for int -11. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #17  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s5a=10101, v_s8=00000000) => v_s5a is narrower than v_s8 without using ALLOW_NARROWER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig5_a=10101, v_sig8=00000000) => v_sig5_a is narrower than v_sig8 without using ALLOW_NARROWER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #18  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s5a=10101, v_s8=11110101) => v_s5a is narrower than v_s8 without using ALLOW_NARROWER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig5_a=10101, v_sig8=11110101) => v_sig5_a is narrower than v_sig8 without using ALLOW_NARROWER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #19  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s8=11110101, v_s5a=10101) => v_s8 is wider than v_s5a without using ALLOW_WIDER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig8=11110101, v_sig5_a=10101) => v_sig8 is wider than v_sig5_a without using ALLOW_WIDER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #20  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s8=11110101, v_s5a=10101) => v_s8 is wider than v_s5a without using ALLOW_WIDER mode. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig8=11110101, v_sig5_a=10101) => v_sig8 is wider than v_sig5_a without using ALLOW_WIDER mode. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #21  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s5a=01010101, v_s8=10101) => v_s5a is wider than v_s8 and has non-zeros in the extended MSB. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig5_a=01010101, v_sig8=10101) => v_sig5_a is wider than v_sig8 and has non-zeros in the extended MSB. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #22  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s5a=01010101, v_s8=10101) => v_s5a is wider than v_s8 and has non-zeros in the extended MSB. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig5_a=01010101, v_sig8=10101) => v_sig5_a is wider than v_sig8 and has non-zeros in the extended MSB. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #23  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s5a=10110101, v_s8=10101) => v_s5a is wider than v_s8 and has non-sign bits in the extended MSB. 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig5_a=10110101, v_sig8=10101) => v_sig5_a is wider than v_sig8 and has non-sign bits in the extended MSB. 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #24  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s5a=, v_s8=10101) => Value length is zero! 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig5_a=, v_sig8=10101) => Value length is zero! 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
 UVVM: 
 UVVM: =========================================================================================================================================================================
 UVVM: ***  TB_ERROR #25  ***
-UVVM:             1 ns   bfm_common
-UVVM:                    normalize_and_check(signed: v_s5a=10110101, v_s8=) => Target length is zero! 
+UVVM:             0 ns   bfm_common
+UVVM:                    normalize_and_check(signed: v_sig5_a=10110101, v_sig8=) => Target length is zero! 
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM:      
-UVVM:      ====================================================================================================================================================================
-UVVM:      *** INTERMEDIATE SUMMARY OF ALL ALERTS ***
-UVVM:      ====================================================================================================================================================================
-UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
-UVVM:                NOTE         :      0         0         0         ok
-UVVM:                TB_NOTE      :      0         0         0         ok
-UVVM:                WARNING      :      0         0         0         ok
-UVVM:                TB_WARNING   :      0         0         0         ok
-UVVM:                MANUAL_CHECK :      0         0         0         ok
-UVVM:                ERROR        :      0         0         0         ok
-UVVM:                TB_ERROR     :     25        25         0         ok
-UVVM:                FAILURE      :      0         0         0         ok
-UVVM:                TB_FAILURE   :      0         0         0         ok
-UVVM:      ====================================================================================================================================================================
-UVVM:      
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
@@ -392,5 +272,5 @@ UVVM:
 UVVM:      
 UVVM: 
 UVVM: 
-UVVM: ID_LOG_HDR                      1001.0 ns  TB seq                         SIMULATION COMPLETED
+UVVM: ID_LOG_HDR                      1000.0 ns  TB seq.(uvvm)                  SIMULATION COMPLETED
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

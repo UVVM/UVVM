@@ -800,8 +800,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_avalon_mm_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_avalon_mm_vvc_config(1).bfm_config.use_waitrequest := true;
+    shared_avalon_mm_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_avalon_mm_vvc_config(C_VVC_IDX).bfm_config.use_waitrequest := true;
 
 Status Record
 ==================================================================================================================================
@@ -815,16 +815,6 @@ Methods
 * See :ref:`vvc_framework_methods` for procedures which are common to all VVCs.
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
-
-.. caution::
-
-    Orange description is preliminary.
-
-.. raw:: html
-
-    <style> .orange {color:orange} </style>
-
-.. role:: orange
 
 
 .. _avalon_mm_write_vvc:
@@ -877,8 +867,8 @@ command is scheduled to run, the executor calls the :ref:`avalon_mm_read_bfm` pr
 
 The value read from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the read 
 data will be stored in the VVC for a potential future fetch (see example with fetch_result below). 
-:orange:`If the data_routing is set to TO_SB, the read data will be sent to the Avalon-MM VVC dedicated scoreboard where it will be 
-checked against the expected value (provided by the testbench).`
+If the data_routing is set to TO_SB, the read data will be sent to the Avalon-MM VVC dedicated scoreboard where it will be 
+checked against the expected value (provided by the testbench).
 
 **Using read pipeline:**
 If vvc_config.use_read_pipeline has been set to true, the VVC will perform the read transaction using the BFM procedures 

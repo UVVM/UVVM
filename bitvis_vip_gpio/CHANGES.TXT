@@ -2,6 +2,13 @@ Bitvis VIP GPIO - Overview on Versions and Changes
 ==============================================================
 
 
+v3.1.1
+----------
+Released: 2025-03-25
+- Removed support for don't care operator in expected value in gpio_check_stable() BFM procedure.
+- Updated BFM QuickRef regarding the don't care operator usage.
+- Converted documentation to RST format.
+
 v3.1.0
 ----------
 Released: 2024-09-19

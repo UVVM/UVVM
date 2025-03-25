@@ -511,26 +511,33 @@ Local types
 
 t_user_array
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of std_logic_vector(C_AXISTREAM_BFM_MAX_TUSER_BITS - 1 downto 0);
+.. code-block::
+
+    array (natural range <>) of std_logic_vector(C_AXISTREAM_BFM_MAX_TUSER_BITS - 1 downto 0)
 
 .. _t_strb_array:
 
 t_strb_array
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of std_logic_vector(C_AXISTREAM_BFM_MAX_TSTRB_BITS - 1 downto 0);
+.. code-block::
+
+    array (natural range <>) of std_logic_vector(C_AXISTREAM_BFM_MAX_TSTRB_BITS - 1 downto 0)
 
 .. _t_id_array:
 
 t_id_array
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of std_logic_vector(C_AXISTREAM_BFM_MAX_TID_BITS - 1 downto 0);
+.. code-block::
+
+    array (natural range <>) of std_logic_vector(C_AXISTREAM_BFM_MAX_TID_BITS - 1 downto 0)
 
 .. _t_dest_array:
 
 t_dest_array
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of std_logic_vector(C_AXISTREAM_BFM_MAX_TDEST_BITS - 1 downto 0);
+.. code-block::
 
+    array (natural range <>) of std_logic_vector(C_AXISTREAM_BFM_MAX_TDEST_BITS - 1 downto 0)
 
 
 Local BFM overloads
@@ -849,8 +856,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_axistream_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_axistream_vvc_config(1).bfm_config.clock_period := 10 ns;
+    shared_axistream_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_axistream_vvc_config(C_VVC_IDX).bfm_config.clock_period := 10 ns;
 
 Status Record
 ==================================================================================================================================

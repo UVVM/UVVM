@@ -1,0 +1,95 @@
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    check_value() => Failed. Boolean was false. 'insert() into position larger than number of elements in queue. Use add() instead when inserting at the
+UVVM:                    back of the queue'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    insert() did not match an element in queue. It was called with the following parameters: instance=1, identifier_option=entry_num, identifier=123456,
+UVVM:                    element...
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    check_value() => Failed. Boolean was false. 'insert() into position larger than number of elements in queue. Use add() instead when inserting at the
+UVVM:                    back of the queue'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    peek() did not match an element in queue. It was called with the following parameters: instance=1, identifier_option=position, identifier=123456
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:             0 ns   TB seq.(uvvm)
+UVVM:                    fetch() did not match an element in queue. It was called with the following parameters: instance=1, identifier_option=position, identifier=123456
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    Queue is now at 950 of 1000 elements.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    Queue is now at 950 of 1000 elements.
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    Queue is now at 950 of 1000 elements.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #6  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    check_value() => Failed. Boolean was false. 'add() into generic queue (of size 1000) when full'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #7  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    check_value() => Failed. Boolean was false. 'fetch() from generic queue when empty'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #8  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    check_value() => Failed. Boolean was false. 'set_queue_count_max() new queue max count (5) is less than current queue count(20).'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    Queue is now at 70 of 100 elements.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #9  ***
+UVVM:             0 ns   queue_scope
+UVVM:                    Queue is now at 85 of 100 elements.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 

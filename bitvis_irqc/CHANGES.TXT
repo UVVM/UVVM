@@ -2,6 +2,11 @@ Bitvis IRQC - Overview on Versions and Changes
 ==============================================================
 
 
+v1.0.13
+----------
+Released: 2025-03-25
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
+
 v1.0.12
 ----------
 Released: 2021-10-22

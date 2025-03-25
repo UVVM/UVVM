@@ -56,6 +56,7 @@ architecture clock_arch of methods_tb is
   signal sl           : std_logic                    := '0';
   signal slv8         : std_logic_vector(7 downto 0) := (others => '0');
   signal slv8_to      : std_logic_vector(0 to 7)     := (others => '0');
+  signal bln          : boolean                      := false;
 begin
 
   clock_generator(clk50M, C_CLK50M_PERIOD); -- Always enabled
@@ -484,6 +485,49 @@ begin
       check_value(sl'last_event, 0 ns, error, "pulse for 0 ns. Check that it actually pulsed for a delta cycle", C_SCOPE);
       check_value(sl'last_value, '1', error, "pulse for 0 ns, check that it actually pulsed for a delta cycle", C_SCOPE);
       wait for 100 ns;
+
+      log(ID_SEQUENCER, "Check that multiple subsequent calls to blocking gen_pulse() do not result in TB_ERROR", "");
+      sl <= '0';
+      wait for 0 ns;
+      gen_pulse(sl, '1', 10 ns, "First call to gen_pulse with std_logic");
+      gen_pulse(sl, '1', 10 ns, "Second call to gen_pulse with std_logic");
+      gen_pulse(sl, '1', 10 ns, "Third call to gen_pulse with std_logic");
+      wait for 0 ns;
+
+      slv8 <= (others => '0');
+      wait for 0 ns;
+      gen_pulse(slv8, x"FF", 10 ns, "First call to gen_pulse with std_logic_vector");
+      gen_pulse(slv8, x"FF", 10 ns, "Second call to gen_pulse with std_logic_vector");
+      gen_pulse(slv8, x"FF", 10 ns, "Third call to gen_pulse with std_logic_vector");
+      wait for 0 ns;
+
+      sl <= '0';
+      wait for 0 ns;
+      gen_pulse(sl, clk50M, 1, "First call to clocked gen_pulse with std_logic");
+      gen_pulse(sl, clk50M, 1, "Second call to clocked gen_pulse with std_logic");
+      gen_pulse(sl, clk50M, 1, "Third call to clocked gen_pulse with std_logic");
+      wait for 0 ns;
+
+      slv8 <= (others => '0');
+      wait for 0 ns;
+      gen_pulse(slv8, x"FF", clk50M, 1, "First call to clocked gen_pulse with std_logic_vector");
+      gen_pulse(slv8, x"FF", clk50M, 1, "Second call to clocked gen_pulse with std_logic_vector");
+      gen_pulse(slv8, x"FF", clk50M, 1, "Third call to clocked gen_pulse with std_logic_vector");
+      wait for 0 ns;
+
+      bln <= false;
+      wait for 0 ns;
+      gen_pulse(bln, true, 10 ns, "First call to gen_pulse with boolean");
+      gen_pulse(bln, true, 10 ns, "Second call to gen_pulse with boolean");
+      gen_pulse(bln, true, 10 ns, "Third call to gen_pulse with boolean");
+      wait for 0 ns;
+
+      bln <= false;
+      wait for 0 ns;
+      gen_pulse(bln, clk50M, 1, "First call to clocked gen_pulse with boolean");
+      gen_pulse(bln, clk50M, 1, "Second call to clocked gen_pulse with boolean");
+      gen_pulse(bln, clk50M, 1, "Third call to clocked gen_pulse with boolean");
+      wait for 0 ns;
 
       -- Verify that clock_counter wraps when reaching natural'right.
       wait until clk500M = '1';

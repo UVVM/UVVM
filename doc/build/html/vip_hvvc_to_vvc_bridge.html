@@ -66,7 +66,32 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP HVVC-to-VVC Bridge</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP HVVC-to-VVC Bridge</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#concept">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface">Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#t-hvvc-to-bridge">t_hvvc_to_bridge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#t-bridge-to-hvvc">t_bridge_to_hvvc</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#generics">Generics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dut-interface-field-configuration-array">DUT interface field configuration array</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-dut-if-field-config">t_dut_if_field_config</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#user-implementation">User implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-of-implementation-of-gmii-interface">Example of implementation of GMII interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-of-instantiation-in-hvvc">Example of instantiation in HVVC</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#blocking-send-to-bridge">blocking_send_to_bridge()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blocking-request-from-bridge">blocking_request_from_bridge()</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="vip_i2c.html">Bitvis VIP I2C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_rgmii.html">Bitvis VIP RGMII</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_sbi.html">Bitvis VIP SBI</a></li>
@@ -104,7 +129,394 @@
              
   <section id="bitvis-vip-hvvc-to-vvc-bridge">
 <span id="vip-hvvc-to-vvc-bridge"></span><h1>Bitvis VIP HVVC-to-VVC Bridge<a class="headerlink" href="#bitvis-vip-hvvc-to-vvc-bridge" title="Link to this heading"></a></h1>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_hvvc_to_vvc_bridge/doc/HVVC_to_VVC_Bridge_Implementation_Guide.pdf">HVVC_to_VVC_Bridge_Implementation_Guide.pdf</a></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This guide is meant for users that want to make their own HVVC-to-VVC bridge connect.
+Users that only write test cases that are using the existing HVVCs and interfaces do NOT need to read this guide.</p>
+</div>
+<section id="concept">
+<h2>Concept<a class="headerlink" href="#concept" title="Link to this heading"></a></h2>
+<p>Many protocols and applications consist of several abstraction levels, e.g. physical layer, link layer, transaction layer, etc.
+When writing a test case for a higher level you most likely want to ignore the underlying levels and only deal with the scope of
+the relevant level. The test case will be less complex and easier to both write and read.</p>
+<p>A hierarchical VVC (HVVC) is a VVC of a higher protocol level than the physical layer, i.e. it has no physical connections. The
+test case only communicates with the HVVC which communicate with the lower level. Data is propagated upwards and downwards between
+the HVVC and DUT through a standard VVC connected to the DUT.</p>
+<p>The HVVC-to-VVC Bridge is the connection between a hierarchical VVC (HVVC) and the VVC at a lower protocol level, in this context
+referred to only as the VVC. Communications between the HVVC and VVC is handled by the HVVC-to-VVC Bridge. Data is transferred
+between the HVVC and HVVC-to-VVC Bridge on a common interface and converted in the HVVC-to-VVC Bridge to/from the specific
+interface of the VVC used. An example of this concept used on Ethernet is seen in Figure 1.</p>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="_images/hvvc_example.png"><img alt="HVVC example" src="_images/hvvc_example.png" style="width: 700pt;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 1 - Example of HVVC-to-VVC Bridge implemented in an Ethernet HVVC</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="interface">
+<h2>Interface<a class="headerlink" href="#interface" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Communication with the bridge is done through the ports in the HVVC-to-VVC bridge.</p></li>
+<li><p>All data transfer between the HVVC and bridge is in std_logic_vector array format.</p></li>
+<li><p>One port is used for each direction.</p></li>
+<li><p>Data from HVVC to HVVC-to-VVC Bridge is of type <a class="reference internal" href="#t-hvvc-to-bridge"><span class="std std-ref">t_hvvc_to_bridge</span></a>, and data from HVVC-to-VVC Bridge to HVVC is of type
+<a class="reference internal" href="#t-bridge-to-hvvc"><span class="std std-ref">t_bridge_to_hvvc</span></a>.</p></li>
+</ul>
+<section id="t-hvvc-to-bridge">
+<span id="id1"></span><h3>t_hvvc_to_bridge<a class="headerlink" href="#t-hvvc-to-bridge" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>trigger</p></td>
+<td><p>boolean</p></td>
+<td><p>Trigger signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>operation</p></td>
+<td><p>t_vvc_operation</p></td>
+<td><p>Operation of the VVC, e.g. RECEIVE or TRANSMIT</p></td>
+</tr>
+<tr class="row-even"><td><p>num_data_words</p></td>
+<td><p>positive</p></td>
+<td><p>Number of data words transferred</p></td>
+</tr>
+<tr class="row-odd"><td><p>data_words</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Data sent to the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>dut_if_field_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Index of the interface field</p></td>
+</tr>
+<tr class="row-odd"><td><p>dut_if_field_pos</p></td>
+<td><p>t_field_position</p></td>
+<td><p>Position of the interface field within the packet, e.g. FIRST,
+MIDDLE, LAST or FIRST_AND_LAST.</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>HVVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to use verbosity
+control.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="t-bridge-to-hvvc">
+<span id="id2"></span><h3>t_bridge_to_hvvc<a class="headerlink" href="#t-bridge-to-hvvc" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>trigger</p></td>
+<td><p>boolean</p></td>
+<td><p>Trigger signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>data_words</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Data received from the VVC</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="generics">
+<h2>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>integer</p></td>
+<td><p>N/A</p></td>
+<td><p>Instance index of the VVC</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_DUT_IF_FIELD_CONFIG</p></td>
+<td><p>t_dut_if_field_config_direction_array</p></td>
+<td><p>N/A</p></td>
+<td><p>Array of IF field configurations</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_MAX_NUM_WORDS</p></td>
+<td><p>positive</p></td>
+<td><p>N/A</p></td>
+<td><p>Max number of data words transferred in one
+operation</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_PHY_MAX_ACCESS_TIME</p></td>
+<td><p>time</p></td>
+<td><p>N/A</p></td>
+<td><p>Maximum time that the PHY interface (lowest
+protocol level) takes to execute an access, e.g.
+GMII writing 1 byte. It should account also for
+any margin it needs, e.g. receiver not ready.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_SCOPE</p></td>
+<td><p>string</p></td>
+<td><p>N/A</p></td>
+<td><p>Scope of the HVVC-to-VVC Bridge</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_WORD_ENDIANNESS</p></td>
+<td><p>t_word_endianness</p></td>
+<td><p>LOWER_WORD_LEFT</p></td>
+<td><p>Word endianness when converting between
+different slv array widths, e.g. LOWER_WORD_LEFT
+or LOWER_WORD_RIGHT</p></td>
+</tr>
+</tbody>
+</table>
+<section id="dut-interface-field-configuration-array">
+<h3>DUT interface field configuration array<a class="headerlink" href="#dut-interface-field-configuration-array" title="Link to this heading"></a></h3>
+<p>If the interface of the VVC is address-based there needs to be a way to control which address to send the data to. This is done
+with the DUT IF field configurations.</p>
+<p>An array of <a class="reference internal" href="#t-dut-if-field-config"><span class="std std-ref">t_dut_if_field_config</span></a> records is defined by the user and passed to the HVVC-to-VVC Bridge through the generic
+of the HVVC and HVVC-to-VVC Bridge. When a transmit or receive operation is sent to the HVVC-to-VVC Bridge the index of the DUT IF
+field config is specified in <em>dut_if_field_idx</em> in the hvvc_to_bridge port. The specified DUT IF field config states the address
+that shall be accessed. The address associated with each field can easily be changed by changing the DUT IF configuration.</p>
+<section id="t-dut-if-field-config">
+<span id="id3"></span><h4>t_dut_if_field_config<a class="headerlink" href="#t-dut-if-field-config" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>dut_address</p></td>
+<td><p>unsigned</p></td>
+<td><p>Address of the DUT IF field</p></td>
+</tr>
+<tr class="row-odd"><td><p>dut_address_increment</p></td>
+<td><p>integer</p></td>
+<td><p>Increment of the address on each access</p></td>
+</tr>
+<tr class="row-even"><td><p>data_width</p></td>
+<td><p>positive</p></td>
+<td><p>Width of the data per transfer, must be &lt;= than bus width</p></td>
+</tr>
+<tr class="row-odd"><td><p>use_field</p></td>
+<td><p>boolean</p></td>
+<td><p>Used by the HVVC to send/request fields to/from the bridge or
+ignore them when not applicable (e.g. preamble in SBI).</p></td>
+</tr>
+<tr class="row-even"><td><p>field_description</p></td>
+<td><p>string</p></td>
+<td><p>Description of the DUT IF field</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="user-implementation">
+<h2>User implementation<a class="headerlink" href="#user-implementation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The bridge is implemented as an entity and is instantiated inside the HVVC.</p></li>
+<li><p>The different VVC interfaces are implemented as independent architectures due to better readability and extensibility.</p></li>
+<li><p>When adding a new architecture remember to update <em>t_interface</em> type in uvvm_util/src/adaptations_pkg.vhd with the new VVC
+interface name.</p></li>
+</ul>
+<section id="example-of-implementation-of-gmii-interface">
+<h3>Example of implementation of GMII interface<a class="headerlink" href="#example-of-implementation-of-gmii-interface" title="Link to this heading"></a></h3>
+<p>A snippet of the implementation of GMII is shown as an example below.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Execute command</span>
+<span class="k">case</span><span class="w"> </span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">operation</span><span class="w"> </span><span class="k">is</span>
+
+<span class="w">  </span><span class="k">when</span><span class="w"> </span><span class="n">TRANSMIT</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">    </span><span class="c1">-- Convert from t_slv_array to t_byte_array</span>
+<span class="w">    </span><span class="n">v_data_bytes</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">v_num_data_bytes</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">convert_slv_array_to_byte_array</span><span class="p">(</span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">data_words</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w">   </span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">num_data_words</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">v_byte_endianness</span><span class="p">);</span>
+<span class="w">    </span><span class="n">gmii_write</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">GC_INSTANCE_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_bytes</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">v_num_data_bytes</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Send data over GMII&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">GC_SCOPE</span><span class="p">,</span><span class="w">  </span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">msg_id_panel</span><span class="p">);</span>
+<span class="w">    </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">GC_INSTANCE_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">GC_SCOPE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">await_completion</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">GC_INSTANCE_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_num_transfers</span><span class="o">*</span><span class="n">GC_PHY_MAX_ACCESS_TIME</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for write to finish.&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">GC_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">msg_id_panel</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">when</span><span class="w"> </span><span class="n">RECEIVE</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">    </span><span class="n">gmii_read</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">GC_INSTANCE_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_num_data_bytes</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read data over GMII&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">GC_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">msg_id_panel</span><span class="p">);</span>
+<span class="w">    </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">GC_INSTANCE_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">GC_SCOPE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">await_completion</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">GC_INSTANCE_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_num_transfers</span><span class="o">*</span><span class="n">GC_PHY_MAX_ACCESS_TIME</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for read to finish.&quot;</span><span class="p">,</span><span class="w">   </span><span class="n">GC_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">msg_id_panel</span><span class="p">);</span>
+<span class="w">    </span><span class="n">fetch_result</span><span class="p">(</span><span class="n">GMII_VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">GC_INSTANCE_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">RX</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_gmii_received_data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching received data.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">TB_ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">GC_SCOPE</span><span class="p">,</span><span class="w">  </span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">msg_id_panel</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">-- Convert from t_byte_array back to t_slv_array</span>
+<span class="w">    </span><span class="n">bridge_to_hvvc</span><span class="p">.</span><span class="n">data_words</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">hvvc_to_bridge</span><span class="p">.</span><span class="n">num_data_words</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w">  </span><span class="n">convert_byte_array_to_slv_array</span><span class="p">(</span><span class="n">v_gmii_received_data</span><span class="p">.</span><span class="n">data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">v_num_data_bytes</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">c_data_words_width</span><span class="o">/</span><span class="mi">8</span><span class="p">,</span><span class="w">   </span><span class="n">v_byte_endianness</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">when</span><span class="w"> </span><span class="k">others</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">    </span><span class="n">alert</span><span class="p">(</span><span class="n">TB_ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Unsupported operation&quot;</span><span class="p">);</span>
+
+<span class="k">end</span><span class="w"> </span><span class="k">case</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="example-of-instantiation-in-hvvc">
+<h3>Example of instantiation in HVVC<a class="headerlink" href="#example-of-instantiation-in-hvvc" title="Link to this heading"></a></h3>
+<p>The example below shows an instantiation of the HVVC-to-VVC Bridge for GMII in an HVVC. The generics that might change in each
+instantiation of the HVVC, in this example the ones named GC_* on the right hand side of the generic map, are passed on through
+the HVVC from the test harness/testbench. Additional interfaces can be added by using the generate statement for each architecture.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gen_hvvc_bridge</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">GC_PHY_INTERFACE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GMII</span><span class="w"> </span><span class="k">generate</span>
+<span class="w">  </span><span class="n">i_hvvc_to_vvc_bridge</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">bitvis_vip_hvvc_to_vvc_bridge</span><span class="p">.</span><span class="n">hvvc_to_vvc_bridge</span><span class="p">(</span><span class="n">GMII</span><span class="p">)</span>
+<span class="w">    </span><span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">      </span><span class="n">GC_INSTANCE_IDX</span><span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_PHY_VVC_INSTANCE_IDX</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_DUT_IF_FIELD_CONFIG</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_DUT_IF_FIELD_CONFIG</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_MAX_NUM_WORDS</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_MAX_PACKET_LENGTH</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_PHY_MAX_ACCESS_TIME</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">GC_PHY_MAX_ACCESS_TIME</span><span class="p">,</span>
+<span class="w">      </span><span class="n">GC_SCOPE</span><span class="w">               </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_SCOPE</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="k">port</span><span class="w"> </span><span class="k">map</span><span class="p">(</span>
+<span class="w">      </span><span class="n">hvvc_to_bridge</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">hvvc_to_bridge</span><span class="p">,</span>
+<span class="w">      </span><span class="n">bridge_to_hvvc</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">bridge_to_hvvc</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="k">end</span><span class="w"> </span><span class="k">generate</span><span class="w"> </span><span class="nc">gen_hvvc_bridge</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h2>
+<p>The following procedures are used by the HVVC when transmitting or requesting data from the HVVC-to-VVC Bridge</p>
+<section id="blocking-send-to-bridge">
+<h3>blocking_send_to_bridge()<a class="headerlink" href="#blocking-send-to-bridge" title="Link to this heading"></a></h3>
+<p>Sends a data array to the HVVC-to-VVC Bridge and waits for a trigger signalling the bridge has finished. This procedure blocks the
+sequencer until it is done.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">blocking_send_to_bridge</span><span class="p">(</span><span class="n">hvvc_to_bridge</span><span class="p">,</span><span class="w"> </span><span class="n">bridge_to_hvvc</span><span class="p">,</span><span class="w"> </span><span class="n">data_words</span><span class="p">,</span><span class="w"> </span><span class="n">dut_if_field_idx</span><span class="p">,</span><span class="w"> </span><span class="n">dut_if_field_pos</span><span class="p">,</span><span class="w"> </span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">msg_id_panel</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>hvvc_to_bridge</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-hvvc-to-bridge"><span class="std std-ref">t_hvvc_to_bridge</span></a></p></td>
+<td><p>Data transmitted from the HVVC to the bridge</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>bridge_to_hvvc</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-bridge-to-hvvc"><span class="std std-ref">t_bridge_to_hvvc</span></a></p></td>
+<td><p>Data transmitted from the bridge to the HVVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_words</p></td>
+<td><p>in</p></td>
+<td><p>t_slv_array</p></td>
+<td><p>Data to be sent to the bridge</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>dut_if_field_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Index of the interface field</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>dut_if_field_pos</p></td>
+<td><p>in</p></td>
+<td><p>t_field_position</p></td>
+<td><p>Position of the interface field within the packet, e.g.
+FIRST, MIDDLE, LAST or FIRST_AND_LAST.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">blocking_send_to_bridge</span><span class="p">(</span><span class="n">hvvc_to_bridge</span><span class="p">,</span><span class="w"> </span><span class="n">bridge_to_hvvc</span><span class="p">,</span><span class="w"> </span><span class="n">v_data_array</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">9</span><span class="p">),</span><span class="w"> </span><span class="n">C_FIELD_IDX_PAYLOAD</span><span class="p">,</span><span class="w"> </span><span class="n">FIRST</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">v_msg_id_panel</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="blocking-request-from-bridge">
+<h3>blocking_request_from_bridge()<a class="headerlink" href="#blocking-request-from-bridge" title="Link to this heading"></a></h3>
+<p>Requests data from the HVVC-to-VVC Bridge and waits for a trigger signalling the bridge has finished. This procedure blocks the
+sequencer until it is done.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">blocking_request_from_bridge</span><span class="p">(</span><span class="n">hvvc_to_bridge</span><span class="p">,</span><span class="w"> </span><span class="n">bridge_to_hvvc</span><span class="p">,</span><span class="w"> </span><span class="n">num_data_words</span><span class="p">,</span><span class="w"> </span><span class="n">dut_if_field_idx</span><span class="p">,</span><span class="w"> </span><span class="n">dut_if_field_pos</span><span class="p">,</span><span class="w"> </span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">msg_id_panel</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>hvvc_to_bridge</p></td>
+<td><p>inout</p></td>
+<td><p><a class="reference internal" href="#t-hvvc-to-bridge"><span class="std std-ref">t_hvvc_to_bridge</span></a></p></td>
+<td><p>Data transmitted from the HVVC to the bridge</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>bridge_to_hvvc</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-bridge-to-hvvc"><span class="std std-ref">t_bridge_to_hvvc</span></a></p></td>
+<td><p>Data transmitted from the bridge to the HVVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>num_data_words</p></td>
+<td><p>in</p></td>
+<td><p>positive</p></td>
+<td><p>Number of data words to be transferred</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>dut_if_field_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Index of the interface field</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>dut_if_field_pos</p></td>
+<td><p>in</p></td>
+<td><p>t_field_position</p></td>
+<td><p>Position of the interface field within the packet, e.g.
+FIRST, MIDDLE, LAST or FIRST_AND_LAST.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">blocking_request_from_bridge</span><span class="p">(</span><span class="n">hvvc_to_bridge</span><span class="p">,</span><span class="w"> </span><span class="n">bridge_to_hvvc</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">C_FIELD_IDX_PAYLOAD</span><span class="p">,</span><span class="w"> </span><span class="n">LAST</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">v_msg_id_panel</span><span class="p">);</span>
+<span class="n">v_receive_words</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">bridge_to_hvvc</span><span class="p">.</span><span class="n">data_words</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">9</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Save the received data</span>
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -112,6 +524,8 @@ not limited to the warranties of merchantability, fitness for a particular purpo
 authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
 otherwise, arising from, out of or in connection with this IP.</p>
 </div>
+</section>
+</section>
 </section>
 
 

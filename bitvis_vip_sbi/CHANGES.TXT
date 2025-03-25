@@ -2,6 +2,11 @@ Bitvis VIP SBI - Overview on Versions and Changes
 ==============================================================
 
 
+v4.1.1
+----------
+Released: 2025-03-25
+- Updated the method for generating random values to control randomization seeds in sbi_vvc.
+
 v4.1.0
 ----------
 Released: 2024-09-19

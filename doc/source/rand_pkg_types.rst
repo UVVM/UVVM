@@ -7,35 +7,45 @@ Type definitions used for Enhanced Randomization in *rand_pkg*.
 
 t_rand_dist
 ----------------------------------------------------------------------------------------------------------------------------------
-UNIFORM, GAUSSIAN
+.. code-block::
+
+    UNIFORM, GAUSSIAN
 
 
 .. _t_value_specifier:
 
 t_value_specifier
 ----------------------------------------------------------------------------------------------------------------------------------
-ONLY, ADD, EXCL
+.. code-block::
+
+    ONLY, ADD, EXCL
 
 
 .. _t_uniqueness:
 
 t_uniqueness
 ----------------------------------------------------------------------------------------------------------------------------------
-UNIQUE, NON_UNIQUE
+.. code-block::
+
+    UNIQUE, NON_UNIQUE
 
 
 .. _t_weight_mode:
 
 t_weight_mode
 ----------------------------------------------------------------------------------------------------------------------------------
-NA, COMBINED_WEIGHT, INDIVIDUAL_WEIGHT
+.. code-block::
+
+    NA, COMBINED_WEIGHT, INDIVIDUAL_WEIGHT
 
 
 .. _t_cyclic:
 
 t_cyclic
 ----------------------------------------------------------------------------------------------------------------------------------
-CYCLIC, NON_CYCLIC
+.. code-block::
+
+    CYCLIC, NON_CYCLIC
 
 
 .. _t_val_weight_int:
@@ -177,60 +187,78 @@ t_range_weight_mode_time
 
 t_val_weight_int_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_val_weight_int`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_val_weight_int`
 
 
 .. _t_range_weight_int_vec:
 
 t_range_weight_int_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_range_weight_int`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_range_weight_int`
 
 
 .. _t_range_weight_mode_int_vec:
 
 t_range_weight_mode_int_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_range_weight_mode_int`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_range_weight_mode_int`
 
 
 .. _t_val_weight_real_vec:
 
 t_val_weight_real_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_val_weight_real`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_val_weight_real`
 
 
 .. _t_range_weight_real_vec:
 
 t_range_weight_real_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_range_weight_real`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_range_weight_real`
 
 
 .. _t_range_weight_mode_real_vec:
 
 t_range_weight_mode_real_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_range_weight_mode_real`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_range_weight_mode_real`
 
 
 .. _t_val_weight_time_vec:
 
 t_val_weight_time_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_val_weight_time`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_val_weight_time`
 
 
 .. _t_range_weight_time_vec:
 
 t_range_weight_time_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_range_weight_time`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_range_weight_time`
 
 
 .. _t_range_weight_mode_time_vec:
 
 t_range_weight_mode_time_vec
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of :ref:`t_range_weight_mode_time`
+.. parsed-literal::
+
+    array (natural range <>) of :ref:`t_range_weight_mode_time`

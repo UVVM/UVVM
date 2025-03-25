@@ -130,6 +130,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#uvvm-vip-randomization-principles">UVVM VIP randomization principles</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#data-randomization-in-bfms">Data randomization in BFMs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#data-randomization-in-vvcs">Data randomization in VVCs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-randomization-seeds-in-bfms">Managing randomization seeds in BFMs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vvc-command-syntax">VVC Command Syntax</a></li>
 </ul>
 </li>
@@ -2276,6 +2277,46 @@ to allow users to add more profiles.</p>
 </tr>
 </tbody>
 </table>
+<p>Note that the randomization seeds are initialized with a unique string assigned to each VVC. These seeds are automatically updated
+when random data is generated.</p>
+</section>
+<section id="managing-randomization-seeds-in-bfms">
+<h4>Managing randomization seeds in BFMs<a class="headerlink" href="#managing-randomization-seeds-in-bfms" title="Link to this heading"></a></h4>
+<p>Flow Control signals (e.g. valid and ready) can be configured to be randomly de-asserted in some BFMs (e.g. AXI-Stream and Avalon-ST).
+The randomization parameters in the BFM configuration determine the low duration and the probability of signal de-assertion.
+The random() methods described in <a class="reference internal" href="utility_library.html#basic-randomization"><span class="std std-ref">Basic Randomization</span></a> are used to generate random values for these parameters. To ensure that
+the tests are repeatable and produce consistent results, the randomization seeds must be controlled. A standard dictionary-like linked
+list is implemented for this purpose. The seeds are managed using the protected type <strong>t_seeds</strong>, declared in protected_types_pkg.vhd.
+This type consists of the <strong>t_seeds_item</strong> record type, which holds the seeds, and an access type that points to a dynamically allocated
+t_seeds_item. The seeds are stored in a record using a unique string (scope and instance_name) assigned to each BFM procedure as keys.
+To facilitate seed management, two subprograms are declared in the t_seeds protected type:</p>
+<p><code class="docutils literal notranslate"><span class="pre">set_rand_seeds()</span></code>- sets randomization seeds from a string.</p>
+<p><code class="docutils literal notranslate"><span class="pre">update_and_get_seeds()</span></code>- updates and get the seeds from the linked list.</p>
+<p>A global shared variable <strong>shared_rand_seeds_register</strong> of type t_seeds is declared in global_signals_and_shared_variables_pkg.vhd
+to allow common access to the seeds from different BFM procedure calls, as shown below.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">shared</span><span class="w"> </span><span class="k">variable</span><span class="w"> </span><span class="n">shared_rand_seeds_register</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">t_seeds</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The randomization steps used to control the seeds in BFMs are as follow:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>When a BFM procedure (e.g. axistream_transmit() / axistream_receive()) is invoked for the first time, there is no entry for the
+BFM in the list. Generate seeds based on scope and instance_name using the set_rand_seeds() method. Store the generated seeds
+in the linked list, with scope and instance_name as keys.</p></li>
+<li><p>Generate a random value using the random() procedure defined in the methods package.</p></li>
+<li><p>When the same BFM procedure is invoked again, the previously stored seeds can be retrieved with scope and instance_name as keys.
+Update the seeds and generate a new random value.</p></li>
+</ol>
+</div></blockquote>
+<p>The handling of randomization seeds is hidden from the user and performed automatically. Therefore, the user does not require to change or
+modify testbenches to control the randomization seeds. If a new BFM requires this functionality, it only needs to invoke the
+update_and_get_seeds() procedure from the global shared variable with suitable parameters and use the random() procedure with the generated
+seeds whenever a randomized method is used, as shown below:</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.</span>
+<span class="n">shared_rand_seeds_register</span><span class="p">.</span><span class="n">update_and_get_seeds</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">v_seeds</span><span class="na">&#39;instance_name</span><span class="p">,</span><span class="w"> </span><span class="n">v_seeds</span><span class="p">);</span>
+<span class="n">random</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">valid_low_max_random_duration</span><span class="p">,</span><span class="w"> </span><span class="n">v_seeds</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">v_seeds</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">v_valid_low_duration</span><span class="p">);</span>
+</pre></div>
+</div>
 </section>
 <section id="vvc-command-syntax">
 <h4>VVC Command Syntax<a class="headerlink" href="#vvc-command-syntax" title="Link to this heading"></a></h4>
@@ -2855,8 +2896,68 @@ function in this package.</p>
 <h4>t_vvc_cmd_record<a class="headerlink" href="#t-vvc-cmd-record" title="Link to this heading"></a></h4>
 <p>Record type used for relaying a command from the testbench sequencer to the VVC. The record contains fields needed in the common
 UVVM procedures (listed under the “Common UVVM fields” comment), and VVC specific fields needed to relay data to the VVC executor.
-The VVC specific data fields should contain any data fields that the BFM procedures might need, e.g. data, address, timeouts etc.
-There is also a default for this type called C_VVC_CMD_DEFAULT in this package.</p>
+There is a default constant for this type called C_VVC_CMD_DEFAULT in this package.</p>
+<p>The VVC mandatory data fields are the following:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>Commanded VVC operation</p></td>
+</tr>
+<tr class="row-odd"><td><p>command_type</p></td>
+<td><p>Determines whether it is an immediate or queued command. Immediate commands are handled by the
+Interpreter and queued commands by the Executor.</p></td>
+</tr>
+<tr class="row-even"><td><p>proc_call</p></td>
+<td><p>Procedure call used in log messages.</p></td>
+</tr>
+<tr class="row-odd"><td><p>msg</p></td>
+<td><p>User-defined message used in log messages.</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id</p></td>
+<td><p>Message ID used in enable_log_msg and disable_log_msg commands.</p></td>
+</tr>
+<tr class="row-odd"><td><p>quietness</p></td>
+<td><p>Whether to print or not a log message when using enable_log_msg and disable_log_msg commands.</p></td>
+</tr>
+<tr class="row-even"><td><p>data_routing</p></td>
+<td><p>Where to store the data from read/receive commands.</p></td>
+</tr>
+<tr class="row-odd"><td><p>alert_level</p></td>
+<td><p>Alert level when data does not match in check/expect commands.</p></td>
+</tr>
+<tr class="row-even"><td><p>parent_msg_id_panel</p></td>
+<td><p>Message ID panel from the parent HVVC which is used to print log messages in the lower-level VVC.</p></td>
+</tr>
+<tr class="row-odd"><td><p>delay</p></td>
+<td><p>Delay in time units for the insert_delay command.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_idx</p></td>
+<td><p>Command index.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gen_integer_array</p></td>
+<td><div class="line-block">
+<div class="line">Generic integer array (0 to 1).</div>
+<div class="line">(0) Used as delay in clock cycles in the insert_delay command.</div>
+<div class="line">(0) Used as wanted cmd_idx in the fetch_result command.</div>
+<div class="line">(0) Used as wanted cmd_idx in old await_completion and await_any_completion commands. DEPRECATED</div>
+<div class="line">(1) Used awaiting_completion_idx in old await_any_completion command. DEPRECATED.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>gen_boolean</p></td>
+<td><p>Generic boolean. Used in old await_completion command. DEPRECATED.</p></td>
+</tr>
+<tr class="row-odd"><td><p>timeout</p></td>
+<td><p>Timeout used in old await_completion command. DEPRECATED.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The VVC specific data fields should contain any data fields that the BFM procedures might need, e.g. data, address, timeouts etc.</p>
 </section>
 <section id="constants">
 <h4>Constants<a class="headerlink" href="#constants" title="Link to this heading"></a></h4>

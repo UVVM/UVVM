@@ -1,2 +1,2 @@
-UVVM: ID_UTIL_SETUP                      1.0 ns  TB seq.                        Sub-program set_alert_file_name is outdated and has been replaced by another sub-program.
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        Sub-program set_alert_file_name is outdated and has been replaced by another sub-program.
 UVVM:                                                                           msg_id parameter is no longer in use. Please call this procedure without the msg_id parameter.

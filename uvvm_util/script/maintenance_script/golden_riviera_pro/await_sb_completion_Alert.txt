@@ -1,0 +1,74 @@
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:       1000000 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:       2000000 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: 
+UVVM: ***  WARNING #1  ***
+UVVM:       2000260 ns   DEMO SB 4,1
+UVVM:                    check_received() => MISMATCH, expected: x"55"; received: x"AA". 'checking received'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:       3000260 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:       4000260 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:       5000260 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 1,1
+UVVM:                    
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:       6000260 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. The following UVVM scoreboard(s) still have pending data after 1 ms:
+UVVM:                      DEMO SB 8,1
+UVVM:                      DEMO SB 7,2
+UVVM:                      DEMO SB 7,3
+UVVM:                    
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #1  ***
+UVVM:       6000260 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. Boolean was false. 'timeout must be greater than 0'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_FAILURE #2  ***
+UVVM:       6000260 ns   TB seq.(uvvm)
+UVVM:                    await_sb_completion() => Failed. Boolean was false. 'sb_poll_time must be greater than 0'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 

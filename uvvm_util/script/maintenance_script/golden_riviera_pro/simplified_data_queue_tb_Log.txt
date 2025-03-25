@@ -1,0 +1,556 @@
+UVVM:      
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      ***  REPORT OF GLOBAL CTRL ***
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:                                IGNORE    STOP_LIMIT
+UVVM:                NOTE         :  REGARD         0
+UVVM:                TB_NOTE      :  REGARD         0
+UVVM:                WARNING      :  REGARD         0
+UVVM:                TB_WARNING   :  REGARD         0
+UVVM:                MANUAL_CHECK :  REGARD         0
+UVVM:                ERROR        :  REGARD         1
+UVVM:                TB_ERROR     :  REGARD         1
+UVVM:                FAILURE      :  REGARD         1
+UVVM:                TB_FAILURE   :  REGARD         1
+UVVM:      --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM:      
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        enable_log_msg(ALL_MESSAGES). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_POS_ACK). 
+UVVM: ID_LOG_MSG_CTRL                    0.0 ns  TB seq.                        disable_log_msg(ID_SEQUENCER_SUB). 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  test_bench                     Test of Data Queue
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of init then push_back until overflow
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Queue 1 initialized with buffer size 64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 0. 'Verifying that queue is empty.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 8). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 16). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 24). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 16. 'Verifying that queue contains 2elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 32). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 40). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 16. 'Verifying that queue contains 2elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 48). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 24. 'Verifying that queue contains 3elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 56). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 0). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 16. 'Verifying that queue contains 2elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 8). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 24. 'Verifying that queue contains 3elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 16). Fill level is 32/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 32. 'Verifying that queue contains 4elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 24). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 32). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 16. 'Verifying that queue contains 2elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 40). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 24. 'Verifying that queue contains 3elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 48). Fill level is 32/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 32. 'Verifying that queue contains 4elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 56). Fill level is 40/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 40. 'Verifying that queue contains 5elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 0). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 8). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 16. 'Verifying that queue contains 2elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 16). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 24. 'Verifying that queue contains 3elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 24). Fill level is 32/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 32. 'Verifying that queue contains 4elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 32). Fill level is 40/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 40. 'Verifying that queue contains 5elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 40). Fill level is 48/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 48. 'Verifying that queue contains 6elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 48). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 56). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 16. 'Verifying that queue contains 2elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 0). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 24. 'Verifying that queue contains 3elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 8). Fill level is 32/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 32. 'Verifying that queue contains 4elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 16). Fill level is 40/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 40. 'Verifying that queue contains 5elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 24). Fill level is 48/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 48. 'Verifying that queue contains 6elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 32). Fill level is 56/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 56. 'Verifying that queue contains 7elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 40). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 48). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 16. 'Verifying that queue contains 2elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 56). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 24. 'Verifying that queue contains 3elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 0). Fill level is 32/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 32. 'Verifying that queue contains 4elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 8). Fill level is 40/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 40. 'Verifying that queue contains 5elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 16). Fill level is 48/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 48. 'Verifying that queue contains 6elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 24). Fill level is 56/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 56. 'Verifying that queue contains 7elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 32). Fill level is 64/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 64. 'Verifying that queue contains 8elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 40). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 8. 'Verifying that queue contains 1elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 48). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 16. 'Verifying that queue contains 2elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 56). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 24. 'Verifying that queue contains 3elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 0). Fill level is 32/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 32. 'Verifying that queue contains 4elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 8). Fill level is 40/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 40. 'Verifying that queue contains 5elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 16). Fill level is 48/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 48. 'Verifying that queue contains 6elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 24). Fill level is 56/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 56. 'Verifying that queue contains 7elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 32). Fill level is 64/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 64. 'Verifying that queue contains 8elements after push_back.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 55 pushed to back of queue 1 (index 40). Fill level is 72/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 72. 'Verifying that queue contains 9elements after push_back.'
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #1  ***
+UVVM:             0 ns   test_bench
+UVVM:                    check_value() => Failed. slv  Was x"00". Expected x"55".
+UVVM:                    pop_front should be 55.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of queue flush
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Queue 3 initialized with buffer size 1024.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data
+UVVM:                                                                           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+UVVM:                                                                           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+UVVM:                                                                           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF pushed to back of queue 3
+UVVM:                                                                           (index 64). Fill level is 1024/1024.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 0. 'Verifying that queue is empty.'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of peek_front and peek_back
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: 
+UVVM: ***  TB_WARNING #1  ***
+UVVM:             0 ns   test_bench
+UVVM:                    check_value() => Failed. Boolean was false. 'peek_back() when queue 1 is empty. Return value will be garbage.'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Peeking empty back: 00000000
+UVVM: 
+UVVM: ***  TB_WARNING #2  ***
+UVVM:             0 ns   test_bench
+UVVM:                    check_value() => Failed. Boolean was false. 'peek_front() when queue 1 is empty. Return value will be garbage.'
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Peeking empty front: 00000000
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 2. 
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 0. 'Verifying that queue is empty.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data EE pushed to back of queue 1 (index 48). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_front should be 0xee'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 0xee'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 00 pushed to back of queue 1 (index 56). Fill level is 16/64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 11 pushed to back of queue 1 (index 0). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 0x11'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of get_queue_count_max, get_count, pop_back and pop_front
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 64. 'Verifying that queue is correct size'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 0. 'Verifying fill grade'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 00 pushed to back of queue 1 (index 8). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 00.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 01 pushed to back of queue 1 (index 16). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 01.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 02 pushed to back of queue 1 (index 24). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 02.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 03 pushed to back of queue 1 (index 32). Fill level is 32/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 03.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 04 pushed to back of queue 1 (index 40). Fill level is 40/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 04.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 05 pushed to back of queue 1 (index 48). Fill level is 48/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 05.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 06 pushed to back of queue 1 (index 56). Fill level is 56/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 06.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 07 pushed to back of queue 1 (index 0). Fill level is 64/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 07.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 64. 'Verifying that queue is filled properly'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing pop_front()...
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_front should be 00.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_front should be 01.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_front should be 02.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_front should be 03.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_front should be 04.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_front should be 05.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_front should be 06.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_front should be 07.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 0. 'Verifying that queue is empty'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 00 pushed to back of queue 1 (index 8). Fill level is 8/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 00.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 01 pushed to back of queue 1 (index 16). Fill level is 16/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 01.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 02 pushed to back of queue 1 (index 24). Fill level is 24/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 02.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 03 pushed to back of queue 1 (index 32). Fill level is 32/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 03.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 04 pushed to back of queue 1 (index 40). Fill level is 40/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 04.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 05 pushed to back of queue 1 (index 48). Fill level is 48/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 05.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 06 pushed to back of queue 1 (index 56). Fill level is 56/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 06.'
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  test_bench                     Data 07 pushed to back of queue 1 (index 0). Fill level is 64/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'peek_back should be 07.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 64. 'Verifying that queue is filled properly'
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Testing pop_back()...
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_back should be 07.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_back should be 06.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_back should be 05.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_back should be 04.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_back should be 03.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_back should be 02.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_back should be 01.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'pop_back should be 00.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for int 0. 'Verifying that queue is empty'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  test_bench                     Test of Data FIFO package
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of FIFO put and get methods
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Queue 1 initialized with buffer size 64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Data 00 pushed to back of queue 1 (index 8). Fill level is 8/64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Data 01 pushed to back of queue 1 (index 16). Fill level is 16/64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Data 02 pushed to back of queue 1 (index 24). Fill level is 24/64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Data 03 pushed to back of queue 1 (index 32). Fill level is 32/64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Data 04 pushed to back of queue 1 (index 40). Fill level is 40/64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Data 05 pushed to back of queue 1 (index 48). Fill level is 48/64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Data 06 pushed to back of queue 1 (index 56). Fill level is 56/64.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Data 07 pushed to back of queue 1 (index 0). Fill level is 64/64.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 00.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 01.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 02.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 03.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 04.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 05.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 06.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 07.'
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of FIFO deallocate procedure
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Buffer has been deallocated, i.e., all queues removed.
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #2  ***
+UVVM:             0 ns   UVVM_FIFO
+UVVM:                    check_value() => Failed. Boolean was false. 'push_back called, but queue 1 not initialized.'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_FIFO                      Queue 1 initialized with buffer size 64.
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  test_bench                     Test of Data Stack package
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                         0.0 ns  test_bench                     Test of stack push and pop methods
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_STACK                     Queue 4 initialized with buffer size 32.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_STACK                     Data 00 pushed to back of queue 4 (index 8). Fill level is 8/32.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_STACK                     Data 01 pushed to back of queue 4 (index 16). Fill level is 16/32.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_STACK                     Data 02 pushed to back of queue 4 (index 24). Fill level is 24/32.
+UVVM: ID_UVVM_DATA_QUEUE                 0.0 ns  UVVM_STACK                     Data 03 pushed to back of queue 4 (index 0). Fill level is 32/32.
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_stack_pop should be 03.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_stack_pop should be 02.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_stack_pop should be 01.'
+UVVM: ID_SEQUENCER                       0.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_stack_pop should be 00.'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                   0.0 ns  test_bench                     Test of FIFO that has an odd size compared to data size
+UVVM: =========================================================================================================================================================================
+UVVM: ID_UVVM_DATA_QUEUE                10.0 ns  UVVM_FIFO                      Queue 9 initialized with buffer size 33.
+UVVM: ID_UVVM_DATA_QUEUE                20.0 ns  UVVM_FIFO                      Data 00 pushed to back of queue 9 (index 72). Fill level is 8/33.
+UVVM: ID_UVVM_DATA_QUEUE                30.0 ns  UVVM_FIFO                      Data 01 pushed to back of queue 9 (index 80). Fill level is 16/33.
+UVVM: ID_UVVM_DATA_QUEUE                40.0 ns  UVVM_FIFO                      Data 02 pushed to back of queue 9 (index 88). Fill level is 24/33.
+UVVM: ID_UVVM_DATA_QUEUE                50.0 ns  UVVM_FIFO                      Data 03 pushed to back of queue 9 (index 96). Fill level is 32/33.
+UVVM: ID_UVVM_DATA_QUEUE                60.0 ns  UVVM_FIFO                      Data 04 pushed to back of queue 9 (index 71). Fill level is 40/33.
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #3  ***
+UVVM:            70 ns   test_bench
+UVVM:                    check_value() => Failed. slv  Was x"02". Expected x"00".
+UVVM:                    uvvm_fifo_get should be 00.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #4  ***
+UVVM:            70 ns   test_bench
+UVVM:                    check_value() => Failed. slv  Was x"00". Expected x"04".
+UVVM:                    uvvm_fifo_get should be 04.
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UTIL_SETUP                     70.0 ns  TB seq.                        incremented expected TB_ERRORs by 2. 
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                  70.0 ns  test_bench                     Test of FIFO that has data inserted with different widths in and out
+UVVM: =========================================================================================================================================================================
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Queue 8 initialized with buffer size 192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 00 pushed to back of queue 8 (index 105). Fill level is 8/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 01 pushed to back of queue 8 (index 113). Fill level is 16/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 02 pushed to back of queue 8 (index 121). Fill level is 24/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 03 pushed to back of queue 8 (index 129). Fill level is 32/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 04 pushed to back of queue 8 (index 137). Fill level is 40/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 05 pushed to back of queue 8 (index 145). Fill level is 48/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 06 pushed to back of queue 8 (index 153). Fill level is 56/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 07 pushed to back of queue 8 (index 161). Fill level is 64/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 08 pushed to back of queue 8 (index 169). Fill level is 72/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 09 pushed to back of queue 8 (index 177). Fill level is 80/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 0A pushed to back of queue 8 (index 185). Fill level is 88/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 0B pushed to back of queue 8 (index 193). Fill level is 96/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 0C pushed to back of queue 8 (index 201). Fill level is 104/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 0D pushed to back of queue 8 (index 209). Fill level is 112/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 0E pushed to back of queue 8 (index 217). Fill level is 120/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 0F pushed to back of queue 8 (index 225). Fill level is 128/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 10 pushed to back of queue 8 (index 233). Fill level is 136/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 11 pushed to back of queue 8 (index 241). Fill level is 144/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 12 pushed to back of queue 8 (index 249). Fill level is 152/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 13 pushed to back of queue 8 (index 257). Fill level is 160/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 14 pushed to back of queue 8 (index 265). Fill level is 168/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 15 pushed to back of queue 8 (index 273). Fill level is 176/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 16 pushed to back of queue 8 (index 281). Fill level is 184/192.
+UVVM: ID_UVVM_DATA_QUEUE                70.0 ns  UVVM_FIFO                      Data 17 pushed to back of queue 8 (index 97). Fill level is 192/192.
+UVVM: ID_SEQUENCER                      70.0 ns  test_bench                     check_value() => OK, for int 0. 'Verifying that queue is empty'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE                  70.0 ns  test_bench                     Testing that queues don't overlap
+UVVM: =========================================================================================================================================================================
+UVVM: ID_UVVM_DATA_QUEUE             10070.0 ns  test_bench                     Buffer has been deallocated, i.e., all queues removed.
+UVVM: ID_UVVM_DATA_QUEUE             10070.0 ns  test_bench                     Queue 0 initialized with buffer size 10.
+UVVM: ID_UVVM_DATA_QUEUE             10070.0 ns  test_bench                     Queue 1 initialized with buffer size 16.
+UVVM: ID_UVVM_DATA_QUEUE             10070.0 ns  test_bench                     Queue 2 initialized with buffer size 10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data F55F pushed to back of queue 1 (index 10). Fill level is 16/16.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 1). Fill level is 1/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 27). Fill level is 1/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 2). Fill level is 2/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 28). Fill level is 2/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 3). Fill level is 3/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 29). Fill level is 3/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 4). Fill level is 4/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 30). Fill level is 4/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 5). Fill level is 5/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 31). Fill level is 5/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 6). Fill level is 6/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 32). Fill level is 6/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 7). Fill level is 7/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 33). Fill level is 7/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 8). Fill level is 8/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 34). Fill level is 8/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 9). Fill level is 9/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 35). Fill level is 9/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 0). Fill level is 10/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 26). Fill level is 10/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 1). Fill level is 11/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 27). Fill level is 11/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 2). Fill level is 12/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 28). Fill level is 12/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 3). Fill level is 13/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 29). Fill level is 13/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 4). Fill level is 14/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 30). Fill level is 14/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 5). Fill level is 15/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 31). Fill level is 15/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 6). Fill level is 16/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 32). Fill level is 16/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 7). Fill level is 17/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 33). Fill level is 17/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 8). Fill level is 18/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 34). Fill level is 18/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 9). Fill level is 19/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 35). Fill level is 19/10.
+UVVM: ID_UTIL_SETUP                  10080.0 ns  TB seq.                        Sub-program check_value is outdated and has been replaced by another sub-program.
+UVVM:                                                                           format 'AS_IS' has been deprecated. Use KEEP_LEADING_0.
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for slv x"F55F"'. 'Verifying that queue has correct value'
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 0). Fill level is 14/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 30). Fill level is 14/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 1). Fill level is 15/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 31). Fill level is 15/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 2). Fill level is 16/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 32). Fill level is 16/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 3). Fill level is 17/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 33). Fill level is 17/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 4). Fill level is 18/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 34). Fill level is 18/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 5). Fill level is 19/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 35). Fill level is 19/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 6). Fill level is 20/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 26). Fill level is 20/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 7). Fill level is 21/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 27). Fill level is 21/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 8). Fill level is 22/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 28). Fill level is 22/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 9). Fill level is 23/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 29). Fill level is 23/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 0). Fill level is 24/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 30). Fill level is 24/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 1). Fill level is 25/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 31). Fill level is 25/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 2). Fill level is 26/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 32). Fill level is 26/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 3). Fill level is 27/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 33). Fill level is 27/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 4). Fill level is 28/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 34). Fill level is 28/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 5). Fill level is 29/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 35). Fill level is 29/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 6). Fill level is 30/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 26). Fill level is 30/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 7). Fill level is 31/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 27). Fill level is 31/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 8). Fill level is 32/10.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  test_bench                     Data 0 pushed to back of queue 2 (index 28). Fill level is 32/10.
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for slv x"F55F"'. 'Verifying that queue has correct value'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE               10080.0 ns  test_bench                     Testing fifo is full method
+UVVM: =========================================================================================================================================================================
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for int 0. 'Verifying that queue is empty'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 00 pushed to back of queue 1 (index 8). Fill level is 8/64.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 01 pushed to back of queue 1 (index 16). Fill level is 16/64.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 02 pushed to back of queue 1 (index 24). Fill level is 24/64.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 03 pushed to back of queue 1 (index 32). Fill level is 32/64.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 04 pushed to back of queue 1 (index 40). Fill level is 40/64.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 05 pushed to back of queue 1 (index 48). Fill level is 48/64.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 06 pushed to back of queue 1 (index 56). Fill level is 56/64.
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 07 pushed to back of queue 1 (index 0). Fill level is 64/64.
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_is_full should return true.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 00.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_UVVM_DATA_QUEUE             10080.0 ns  UVVM_FIFO                      Data 08 pushed to back of queue 1 (index 8). Fill level is 64/64.
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_is_full should return true.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 01.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 02.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 03.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 04.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 05.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 06.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 07.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean true. 'uvvm_fifo_get should be 08.'
+UVVM: ID_SEQUENCER                   10080.0 ns  test_bench                     check_value() => OK, for boolean false. 'uvvm_fifo_is_full should return false.'
+UVVM: 
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ID_LOG_HDR_LARGE               10080.0 ns  test_bench                     Testing various corner cases
+UVVM: =========================================================================================================================================================================
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Buffer has been deallocated, i.e., all queues removed.
+UVVM: ID_UTIL_SETUP                  20080.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 9 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 8 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 7 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 6 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 5 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 4 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 3 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 2 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 1 initialized with buffer size 2.
+UVVM: ID_UVVM_DATA_QUEUE             20080.0 ns  test_bench                     Queue 0 initialized with buffer size 2.
+UVVM: 
+UVVM: =========================================================================================================================================================================
+UVVM: ***  TB_ERROR #5  ***
+UVVM:         20080 ns   test_bench
+UVVM:                    check_value() => Failed. Boolean was false. 'init_queue called, but all queues have already been initialized!'
+UVVM: =========================================================================================================================================================================
+UVVM: 
+UVVM: 
+UVVM: ID_UVVM_DATA_QUEUE             30080.0 ns  test_bench                     Buffer has been deallocated, i.e., all queues removed.
+UVVM: ID_UVVM_DATA_QUEUE             30080.0 ns  test_bench                     Queue 0 initialized with buffer size 4.
+UVVM: ID_UVVM_DATA_QUEUE             30080.0 ns  test_bench                     Queue 1 initialized with buffer size 4.
+UVVM: ID_UVVM_DATA_QUEUE             30090.0 ns  test_bench                     Queue 2 initialized with buffer size 8.
+UVVM: ID_UVVM_DATA_QUEUE             30100.0 ns  test_bench                     Queue 3 initialized with buffer size 16.
+UVVM: ID_UVVM_DATA_QUEUE             30110.0 ns  test_bench                     Queue 4 initialized with buffer size 32.
+UVVM: ID_UVVM_DATA_QUEUE             30120.0 ns  test_bench                     Queue 5 initialized with buffer size 64.
+UVVM: ID_UVVM_DATA_QUEUE             30130.0 ns  test_bench                     Queue 6 initialized with buffer size 128.
+UVVM: ID_UVVM_DATA_QUEUE             30140.0 ns  test_bench                     Queue 7 initialized with buffer size 256.
+UVVM: ID_UVVM_DATA_QUEUE             30150.0 ns  test_bench                     Queue 8 initialized with buffer size 512.
+UVVM: ID_UVVM_DATA_QUEUE             30160.0 ns  test_bench                     Queue 9 initialized with buffer size 1024.
+UVVM: ID_UVVM_DATA_QUEUE             40170.0 ns  test_bench                     Buffer has been deallocated, i.e., all queues removed.
+UVVM: ID_UVVM_DATA_QUEUE             40170.0 ns  test_bench                     Queue 0 initialized with buffer size 1.
+UVVM: ID_UVVM_DATA_QUEUE             40170.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 0). Fill level is 1/1.
+UVVM: ID_SEQUENCER                   40170.0 ns  test_bench                     check_value() => OK, for slv x"0"'. 'Verifying that queue has correct value'
+UVVM: ID_UVVM_DATA_QUEUE             50170.0 ns  test_bench                     Data 1 pushed to back of queue 0 (index 0). Fill level is 1/1.
+UVVM: ID_SEQUENCER                   50170.0 ns  test_bench                     check_value() => OK, for slv x"1"'. 'Peek_back: Verifying that queue has correct value'
+UVVM: ID_UVVM_DATA_QUEUE             60170.0 ns  test_bench                     Data 1 pushed to back of queue 0 (index 0). Fill level is 1/1.
+UVVM: ID_UVVM_DATA_QUEUE             60170.0 ns  test_bench                     Data 0 pushed to back of queue 0 (index 0). Fill level is 2/1.
+UVVM: ID_UVVM_DATA_QUEUE             60170.0 ns  test_bench                     Buffer has been deallocated, i.e., all queues removed.
+UVVM: ID_UVVM_DATA_QUEUE             60170.0 ns  test_bench                     Queue 0 initialized with buffer size 2048.
+UVVM: ID_UVVM_DATA_QUEUE             60170.0 ns  test_bench                     Data
+UVVM:                                                                           A71F18B8D98EEB10F926B3DC0426DC704ABFA959552602E8041EE99991DC06F56EF7EB61389C6609D9DBC5250F03DBF
+UVVM:                                                                           4B3D07B2825FAE9FF54A3C04C1AD92CCD7C4D1D696C5BBB89743359E22655ED031B8CBE2005E92140C80FDAACCB6515
+UVVM:                                                                           77AF98D4D7CB6DDB51403ED64103A74DC9D92E6FFD5A4FD2A4A188C20C9802C912AABBC292902E91F31D8897AD8056A
+UVVM:                                                                           E85E75949DBC636E0BACC5C1722E26741BD35C59A4AC56563B5513F728A78C1D24101D44DE0A329E1922502D02C63EA
+UVVM:                                                                           C404D8E31FA6E6DCD5403BC1ED003AF7990910AC2F51B7FF50EEA2718EBB8BB6B1121F1C6B65565D0688C58B607B609
+UVVM:                                                                           2214F64CB809C2C112B9970E32293253B1447 pushed to back of queue 0 (index 0). Fill level is
+UVVM:                                                                           2048/2048.
+UVVM: ID_UVVM_DATA_QUEUE             60170.0 ns  test_bench                     Data
+UVVM:                                                                           89A4A70A953B694B26749DC163BEB8A870FD04D80F218A697A81F460D55E94D92829C3321E0E6FB5BE38A0AE1BD9557
+UVVM:                                                                           31925918724211D324339DAB694EA059A6F81047EEF9AA8ADCDF47ABD19395C25E3C5A8D8C4ACAE8096ED5AA6ACD7FD
+UVVM:                                                                           978F582F9C47E2DEBE1D82208201D68B028D1E8A1EDE6D2F8CFC8C08F1625A91D4EB825FC67A6CA16A719B8C900EFAE
+UVVM:                                                                           30AEBEC8B41AC6F7B8EBC0A56D9E96F1B8DB24E6861B4FCF43D768498FBFFB3BC20A3CD870D5A3DCFB59F5150584B95
+UVVM:                                                                           C8983E59F491B0575437EB6CB92EDAC1A4CEB4D97E07DF1AC44C46927E1AAB63EA5AB26ECC78CC16CD7EF00E86A86DE
+UVVM:                                                                           15F5FEB2471F4CBACDF43C3B6EF9837BD0648 pushed to back of queue 0 (index 0). Fill level is
+UVVM:                                                                           2048/2048.
+UVVM:      
+UVVM:      ====================================================================================================================================================================
+UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
+UVVM:      ====================================================================================================================================================================
+UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
+UVVM:                NOTE         :      0         0         0         ok
+UVVM:                TB_NOTE      :      0         0         0         ok
+UVVM:                WARNING      :      0         0         0         ok
+UVVM:                TB_WARNING   :      2         2         0         ok
+UVVM:                MANUAL_CHECK :      0         0         0         ok
+UVVM:                ERROR        :      0         0         0         ok
+UVVM:                TB_ERROR     :      5         5         0         ok
+UVVM:                FAILURE      :      0         0         0         ok
+UVVM:                TB_FAILURE   :      0         0         0         ok
+UVVM:      ====================================================================================================================================================================
+UVVM:      >> Simulation SUCCESS: No mismatch between counted and expected serious alerts
+UVVM:      ====================================================================================================================================================================
+UVVM:      
+UVVM:      
+UVVM: 
+UVVM: 
+UVVM: ID_LOG_HDR                     61170.0 ns  test_bench                     SIMULATION COMPLETED
+UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

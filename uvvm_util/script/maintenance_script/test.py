@@ -4,6 +4,7 @@ import shutil
 from itertools import product
 import platform
 from pathlib import Path
+import subprocess
 
 try:
     from hdlregression import HDLRegression
@@ -22,6 +23,18 @@ def os_adjust_path(path) -> str:
         return path.replace('\\', '//')
     else:
         return path.replace('\\', '\\\\')
+    
+def find_python3_executable():
+    python_executables = ["python3", "python", "Python3", "Python"]
+
+    for executable in python_executables:
+        try:
+            output = (subprocess.check_output([executable, "--version"], stderr=subprocess.STDOUT).decode().strip())
+            if "Python 3" in output:
+                return executable
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            continue
+    return "python"
 
 
 path_called_from = os_adjust_path(os.getcwd())
@@ -66,23 +79,25 @@ elif simulator_name == "NVC":
 
 hr.start(sim_options=sim_options, global_options=global_options)
 
+python_exec = find_python3_executable()
+
 # Run coverage accumulation script
-hr.run_command("python ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_verbose.txt -r")
-hr.run_command("python ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_non_verbose.txt -r -nv")
-hr.run_command("python ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_holes.txt -r -hl -im")
+hr.run_command("{} ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_verbose.txt -r".format(python_exec))
+hr.run_command("{} ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_non_verbose.txt -r -nv".format(python_exec))
+hr.run_command("{} ../../uvvm_util/script/func_cov_merge.py -f db_*_parallel_*.txt -o func_cov_accumulated_holes.txt -r -hl -im".format(python_exec))
 
 num_failing_tests = hr.get_num_fail_tests()
 num_passing_tests = hr.get_num_pass_tests()
 
 # Check with golden reference
 if simulator_name == 'MODELSIM':
-    (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -modelsim")
+    (ret_txt, ret_code) = hr.run_command("{} ../../uvvm_util/script/maintenance_script/verify_with_golden.py -modelsim".format(python_exec))
 elif simulator_name == 'RIVIERA':
-    (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -riviera")
+    (ret_txt, ret_code) = hr.run_command("{} ../../uvvm_util/script/maintenance_script/verify_with_golden.py -riviera".format(python_exec))
 elif simulator_name == 'GHDL':
-    (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -ghdl")
+    (ret_txt, ret_code) = hr.run_command("{} ../../uvvm_util/script/maintenance_script/verify_with_golden.py -ghdl".format(python_exec))
 elif simulator_name == 'NVC':
-    (ret_txt, ret_code) = hr.run_command("python ../../uvvm_util/script/maintenance_script/verify_with_golden.py -nvc")
+    (ret_txt, ret_code) = hr.run_command("{} ../../uvvm_util/script/maintenance_script/verify_with_golden.py -nvc".format(python_exec))
 else:
   print("Please specify simulator as argument: MODELSIM, RIVIERA, GHDL or NVC")
   sys.exit(1)

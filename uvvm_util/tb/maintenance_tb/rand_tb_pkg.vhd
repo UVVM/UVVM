@@ -589,9 +589,9 @@ package body rand_tb_pkg is
     constant range_vec : in t_range_time_vec) is
   begin
     if check_rand_value(value, range_vec) then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, get_time_unit(value)) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, get_time_unit(value)) & ".");
     end if;
   end procedure;
 
@@ -788,9 +788,9 @@ package body rand_tb_pkg is
   begin
     check_value(specifier = ONLY, TB_ERROR, "Specifier must be ONLY", C_TB_SCOPE_DEFAULT, ID_NEVER, shared_msg_id_panel, "check_rand_value");
     if check_rand_value(value, set_of_values) then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, get_time_unit(value)) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, get_time_unit(value)) & ".");
     end if;
   end procedure;
 
@@ -990,9 +990,9 @@ package body rand_tb_pkg is
     constant set_of_values : in time_vector) is
   begin
     if check_rand_value(value, range_vec, specifier, set_of_values) then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, get_time_unit(value)) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, get_time_unit(value)) & ".");
     end if;
   end procedure;
 
@@ -1205,9 +1205,9 @@ package body rand_tb_pkg is
     constant set_of_values2 : in time_vector) is
   begin
     if check_rand_value(value, range_vec, specifier1, set_of_values1, specifier2, set_of_values2) then
-      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value) & ".");
+      log(ID_POS_ACK, "check_rand_value => OK, for " & to_string(value, get_time_unit(value)) & ".");
     else
-      alert(ERROR, "check_rand_value => Failed, for " & to_string(value) & ".");
+      alert(ERROR, "check_rand_value => Failed, for " & to_string(value, get_time_unit(value)) & ".");
     end if;
   end procedure;
 
@@ -1354,7 +1354,11 @@ package body rand_tb_pkg is
     variable value_cnt : inout t_integer_cnt;
     constant value     : in time) is
   begin
-    value_cnt(value / std.env.resolution_limit) := value_cnt(value / std.env.resolution_limit) + 1;
+    if value = 0 ns then
+      value_cnt(0) := value_cnt(0) + 1;
+    else
+      value_cnt(value / get_time_unit(value)) := value_cnt(value / get_time_unit(value)) + 1;
+    end if;
   end procedure;
 
   procedure count_rand_value(
@@ -1362,7 +1366,11 @@ package body rand_tb_pkg is
     constant values    : in time_vector) is
   begin
     for i in values'range loop
-      value_cnt(values(i) / std.env.resolution_limit) := value_cnt(values(i) / std.env.resolution_limit) + 1;
+      if values(i) = 0 ns then
+        value_cnt(0) := value_cnt(0) + 1;
+      else
+        value_cnt(values(i) / get_time_unit(values(i))) := value_cnt(values(i) / get_time_unit(values(i))) + 1;
+      end if;
     end loop;
   end procedure;
 

@@ -51,39 +51,60 @@ package avalon_st_bfm_pkg is
 
   -- Configuration record to be assigned in the test harness.
   type t_avalon_st_bfm_config is record
-    max_wait_cycles          : natural; -- Used for setting the maximum cycles to wait before an alert is issued when
-                                        -- waiting for ready or valid signals from the DUT.
-    max_wait_cycles_severity : t_alert_level; -- Severity if max_wait_cycles expires.
-    clock_period             : time;    -- Period of the clock signal.
-    clock_period_margin      : time;    -- Input clock period margin to specified clock_period
-    clock_margin_severity    : t_alert_level; -- The above margin will have this severity
-    setup_time               : time;    -- Setup time for generated signals, set to clock_period/4
-    hold_time                : time;    -- Hold time for generated signals, set to clock_period/4
-    bfm_sync                 : t_bfm_sync; -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
-    match_strictness         : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
-    symbol_width             : natural; -- Number of data bits per symbol.
-    first_symbol_in_msb      : boolean; -- Symbol ordering. When true, first-order symbol is in most significant bits.
-    max_channel              : natural; -- Maximum number of channels that the interface supports.
-    use_packet_transfer      : boolean; -- When true, packet signals are enabled: start_of_packet, end_of_packet & empty.
-    id_for_bfm               : t_msg_id; -- The message ID used as a general message ID in the BFM
+    -- Common
+    max_wait_cycles                : natural; -- Used for setting the maximum cycles to wait before an alert is issued when waiting for ready or valid signals from the DUT.
+    max_wait_cycles_severity       : t_alert_level; -- Severity if max_wait_cycles expires.
+    clock_period                   : time;    -- Period of the clock signal.
+    clock_period_margin            : time;    -- Input clock period margin to specified clock_period
+    clock_margin_severity          : t_alert_level; -- The above margin will have this severity
+    setup_time                     : time;    -- Setup time for generated signals, set to clock_period/4
+    hold_time                      : time;    -- Hold time for generated signals, set to clock_period/4
+    bfm_sync                       : t_bfm_sync; -- Synchronisation of the BFM procedures, i.e. using clock signals, using setup_time and hold_time.
+    match_strictness               : t_match_strictness; -- Matching strictness for std_logic values in check procedures.
+    symbol_width                   : natural; -- Number of data bits per symbol.
+    first_symbol_in_msb            : boolean; -- Symbol ordering. When true, first-order symbol is in most significant bits.
+    max_channel                    : natural; -- Maximum number of channels that the interface supports.
+    use_packet_transfer            : boolean; -- When true, packet signals are enabled: start_of_packet, end_of_packet & empty.
+    -- config for avalon_st_transmit()
+    valid_low_at_word_idx          : integer; -- Word index where the Source BFM shall deassert valid
+    valid_low_multiple_random_prob : real range 0.0 to 1.0; -- Probability of how often valid shall be deasserted when using C_MULTIPLE_RANDOM
+    valid_low_duration             : integer; -- Number of clock cycles to deassert valid
+    valid_low_max_random_duration  : integer; -- Maximum number of clock cycles to deassert valid when using C_RANDOM
+    -- config for avalon_st_receive()
+    ready_low_at_word_idx          : integer; -- Word index where the Sink BFM shall deassert ready
+    ready_low_multiple_random_prob : real range 0.0 to 1.0; -- Probability of how often ready shall be deasserted when using C_MULTIPLE_RANDOM
+    ready_low_duration             : integer; -- Number of clock cycles to deassert ready
+    ready_low_max_random_duration  : integer; -- Maximum number of clock cycles to deassert ready when using C_RANDOM
+    ready_default_value            : std_logic; -- Which value the BFM shall set ready to between accesses.
+    -- Common
+    id_for_bfm                     : t_msg_id; -- The message ID used as a general message ID in the BFM
   end record;
 
   -- Define the default value for the BFM config
   constant C_AVALON_ST_BFM_CONFIG_DEFAULT : t_avalon_st_bfm_config := (
-    max_wait_cycles          => 100,
-    max_wait_cycles_severity => ERROR,
-    clock_period             => -1 ns,
-    clock_period_margin      => 0 ns,
-    clock_margin_severity    => TB_ERROR,
-    setup_time               => -1 ns,
-    hold_time                => -1 ns,
-    bfm_sync                 => SYNC_ON_CLOCK_ONLY,
-    match_strictness         => MATCH_EXACT,
-    symbol_width             => 8,
-    first_symbol_in_msb      => true,
-    max_channel              => 0,
-    use_packet_transfer      => true,
-    id_for_bfm               => ID_BFM
+    max_wait_cycles                => 100,
+    max_wait_cycles_severity       => ERROR,
+    clock_period                   => -1 ns,
+    clock_period_margin            => 0 ns,
+    clock_margin_severity          => TB_ERROR,
+    setup_time                     => -1 ns,
+    hold_time                      => -1 ns,
+    bfm_sync                       => SYNC_ON_CLOCK_ONLY,
+    match_strictness               => MATCH_EXACT,
+    symbol_width                   => 8,
+    first_symbol_in_msb            => true,
+    max_channel                    => 0,
+    use_packet_transfer            => true,
+    valid_low_at_word_idx          => 0,
+    valid_low_multiple_random_prob => 0.5,
+    valid_low_duration             => 0,
+    valid_low_max_random_duration  => 5,
+    ready_low_at_word_idx          => 0,
+    ready_low_multiple_random_prob => 0.5,
+    ready_low_duration             => 0,
+    ready_low_max_random_duration  => 5,
+    ready_default_value            => '0',
+    id_for_bfm                     => ID_BFM
   );
 
   --==========================================================================================
@@ -236,24 +257,28 @@ package body avalon_st_bfm_pkg is
     constant msg_id_panel  : in t_msg_id_panel         := shared_msg_id_panel;
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT
   ) is
-    constant c_data_word_size       : natural                                                                := data_array(data_array'low)'length;
-    constant c_sym_width            : natural                                                                := config.symbol_width;
-    constant c_symbols_per_beat     : natural                                                                := avalon_st_if.data'length / config.symbol_width; -- Number of symbols transferred per cycle
-    constant proc_name              : string                                                                 := "avalon_st_transmit";
-    constant proc_call              : string                                                                 := proc_name & "(" & to_string(data_array'length) & " words/" & to_string(data_array'length * c_symbols_per_beat) & " sym, ch:" & to_string(channel_value, DEC, AS_IS) & ")";
+    constant c_data_word_size        : natural                                                                := data_array(data_array'low)'length;
+    constant c_sym_width             : natural                                                                := config.symbol_width;
+    constant c_symbols_per_beat      : natural                                                                := avalon_st_if.data'length / config.symbol_width; -- Number of symbols transferred per cycle
+    constant proc_name               : string                                                                 := "avalon_st_transmit";
+    constant proc_call               : string                                                                 := proc_name & "(" & to_string(data_array'length) & " words/" & to_string(data_array'length * c_symbols_per_beat) & " sym, ch:" & to_string(channel_value, DEC, AS_IS) & ")";
     -- Normalize to the DUT channel/data widths
-    variable v_normalized_chan      : std_logic_vector(avalon_st_if.channel'length - 1 downto 0)             := normalize_and_check(channel_value, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
-    variable v_normalized_data      : t_slv_array(0 to data_array'length - 1)(c_data_word_size - 1 downto 0) := data_array;
+    variable v_normalized_chan       : std_logic_vector(avalon_st_if.channel'length - 1 downto 0)             := normalize_and_check(channel_value, avalon_st_if.channel, ALLOW_NARROWER, "channel", "avalon_st_if.channel", msg);
+    variable v_normalized_data       : t_slv_array(0 to data_array'length - 1)(c_data_word_size - 1 downto 0) := data_array;
     -- Helper variables
-    variable v_symbol_array         : t_slv_array_ptr;
-    variable v_sym_in_beat          : natural                                                                := 0;
-    variable v_data_offset          : natural                                                                := 0;
-    variable v_time_of_rising_edge  : time                                                                   := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                                                   := -1 ns; -- time stamp for clk period checking
-    variable v_wait_for_transfer    : boolean                                                                := false;
-    variable v_wait_count           : natural                                                                := 0;
-    variable v_timeout              : boolean                                                                := false;
-    variable v_ready                : std_logic; -- Sampled ready for the current clock cycle
+    variable v_symbol_array          : t_slv_array_ptr;
+    variable v_sym_in_beat           : natural                                                                := 0;
+    variable v_data_offset           : natural                                                                := 0;
+    variable v_time_of_rising_edge   : time                                                                   := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_falling_edge  : time                                                                   := -1 ns; -- time stamp for clk period checking
+    variable v_valid_low_duration    : natural                                                                := 0;
+    variable v_valid_low_cycle_count : natural                                                                := 0;
+    variable v_wait_for_transfer     : boolean                                                                := false;
+    variable v_wait_count            : natural                                                                := 0;
+    variable v_timeout               : boolean                                                                := false;
+    variable v_ready                 : std_logic; -- Sampled ready for the current clock cycle
+    variable v_seeds                 : t_positive_vector(0 to 1);
+    variable v_rand                  : real;
   begin
 
     check_value(c_sym_width <= C_MAX_BITS_PER_SYMBOL, TB_FAILURE, "Sanity check: Check that symbol_width doesn't exceed C_MAX_BITS_PER_SYMBOL.", scope, ID_NEVER, msg_id_panel, proc_call);
@@ -302,12 +327,6 @@ package body avalon_st_bfm_pkg is
     -- Send all the symbols in the symbol array
     ------------------------------------------------------------
     for symbol in 0 to v_symbol_array'high loop
-      v_wait_for_transfer := false;
-
-      -- Set the basic interface signals
-      avalon_st_if.valid                                                      <= '1';
-      avalon_st_if.channel                                                    <= v_normalized_chan;
-      -- Insert the symbols into the data bus according to the configured order
       if config.first_symbol_in_msb then
         v_data_offset := (c_symbols_per_beat - 1 - v_sym_in_beat) * c_sym_width;
       else
@@ -315,6 +334,46 @@ package body avalon_st_bfm_pkg is
       end if;
       avalon_st_if.data(v_data_offset + c_sym_width - 1 downto v_data_offset) <= v_symbol_array(symbol);
       log(ID_PACKET_DATA, proc_call & "=> " & to_string(v_symbol_array(symbol), HEX, AS_IS, INCL_RADIX) & " (symbol# " & to_string(symbol) & "). " & add_msg_delimiter(msg), scope, msg_id_panel);
+
+      -------------------------------------------------------------------
+      -- Set valid low (once per transmission or multiple random times)
+      -------------------------------------------------------------------
+      if v_sym_in_beat = 0 and (config.valid_low_duration > 0 or config.valid_low_duration = C_RANDOM) then
+        v_valid_low_cycle_count := 0;
+        if config.valid_low_duration > 0 then
+          v_valid_low_duration := config.valid_low_duration;
+        elsif config.valid_low_duration = C_RANDOM then
+          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+          random(1, config.valid_low_max_random_duration, v_seeds(0), v_seeds(1), v_valid_low_duration);
+        end if;
+
+        -- Deassert valid once per transmission on a specific word
+        if config.valid_low_at_word_idx = symbol / c_symbols_per_beat then
+          while v_valid_low_cycle_count < v_valid_low_duration loop
+            v_valid_low_cycle_count := v_valid_low_cycle_count + 1;
+            wait until rising_edge(clk);
+            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+          end loop;
+
+        -- Deassert valid multiple random times per transmission
+        elsif config.valid_low_at_word_idx = C_MULTIPLE_RANDOM then
+          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+          random(0.0, 1.0, v_seeds(0), v_seeds(1), v_rand);
+          if v_rand <= config.valid_low_multiple_random_prob then
+            while v_valid_low_cycle_count < v_valid_low_duration loop
+              v_valid_low_cycle_count := v_valid_low_cycle_count + 1;
+              wait until rising_edge(clk);
+              wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+            end loop;
+          end if;
+        end if;
+      end if;
+
+      -- Set the basic interface signals
+      avalon_st_if.valid   <= '1';
+      avalon_st_if.channel <= v_normalized_chan;
 
       -- Set the packet transfer signals
       if config.use_packet_transfer then
@@ -324,6 +383,9 @@ package body avalon_st_bfm_pkg is
           avalon_st_if.empty <= std_logic_vector(to_unsigned(c_symbols_per_beat - 1 - v_sym_in_beat, avalon_st_if.empty'length));
         end if;
       end if;
+
+      -- Default: Go to next 'symbol' iteration in zero time (when data is not completely filled with symbols).
+      v_wait_for_transfer := false;
 
       -- Counter for the symbol index within the current cycle
       if v_sym_in_beat = c_symbols_per_beat - 1 then
@@ -420,26 +482,31 @@ package body avalon_st_bfm_pkg is
     constant config        : in t_avalon_st_bfm_config := C_AVALON_ST_BFM_CONFIG_DEFAULT;
     constant ext_proc_call : in string                 := "" -- External proc_call. Overwrite if called from another BFM procedure
   ) is
-    constant c_data_word_size       : natural                                             := data_array(data_array'low)'length;
-    constant c_sym_width            : natural                                             := config.symbol_width;
-    constant c_symbols_per_beat     : natural                                             := avalon_st_if.data'length / config.symbol_width; -- Number of symbols transferred per cycle
-    constant local_proc_name        : string                                              := "avalon_st_receive"; -- Internal proc_name; Used if called from sequencer or VVC
-    constant local_proc_call        : string                                              := local_proc_name & "(" & to_string(data_array'length) & " words/" & to_string(data_array'length * c_symbols_per_beat) & " sym)";
+    constant c_data_word_size        : natural                                             := data_array(data_array'low)'length;
+    constant c_sym_width             : natural                                             := config.symbol_width;
+    constant c_symbols_per_beat      : natural                                             := avalon_st_if.data'length / config.symbol_width; -- Number of symbols transferred per cycle
+    constant local_proc_name         : string                                              := "avalon_st_receive"; -- Internal proc_name; Used if called from sequencer or VVC
+    constant local_proc_call         : string                                              := local_proc_name & "(" & to_string(data_array'length) & " words/" & to_string(data_array'length * c_symbols_per_beat) & " sym)";
     -- Normalize to the DUT channel/data widths
-    variable v_normalized_chan      : std_logic_vector(channel_value'length - 1 downto 0) := (others => '0');
-    variable v_normalized_data      : t_slv_array(0 to data_array'length - 1)(c_data_word_size - 1 downto 0);
+    variable v_normalized_chan       : std_logic_vector(channel_value'length - 1 downto 0) := (others => '0');
+    variable v_normalized_data       : t_slv_array(0 to data_array'length - 1)(c_data_word_size - 1 downto 0);
     -- Helper variables
-    variable v_proc_call            : line; -- Current proc_call, external or local
-    variable v_symbol_array         : t_slv_array_ptr;
-    variable v_sym_in_beat          : natural                                             := 0;
-    variable v_sym_cnt              : natural                                             := 0;
-    variable v_invalid_count        : natural                                             := 0; -- # cycles without valid being asserted
-    variable v_done                 : boolean                                             := false;
-    variable v_timeout              : boolean                                             := false;
-    variable v_empty_symbols        : natural                                             := 0;
-    variable v_data_offset          : natural                                             := 0;
-    variable v_time_of_rising_edge  : time                                                := -1 ns; -- time stamp for clk period checking
-    variable v_time_of_falling_edge : time                                                := -1 ns; -- time stamp for clk period checking
+    variable v_proc_call             : line; -- Current proc_call, external or local
+    variable v_symbol_array          : t_slv_array_ptr;
+    variable v_sym_in_beat           : natural                                             := 0;
+    variable v_sym_cnt               : natural                                             := 0;
+    variable v_invalid_count         : natural                                             := 0; -- # cycles without valid being asserted
+    variable v_done                  : boolean                                             := false;
+    variable v_timeout               : boolean                                             := false;
+    variable v_empty_symbols         : natural                                             := 0;
+    variable v_data_offset           : natural                                             := 0;
+    variable v_ready_low_duration    : natural                                             := 0;
+    variable v_ready_low_cycle_count : natural                                             := 0;
+    variable v_time_of_rising_edge   : time                                                := -1 ns; -- time stamp for clk period checking
+    variable v_time_of_falling_edge  : time                                                := -1 ns; -- time stamp for clk period checking
+    variable v_sample_data_now       : boolean                                             := false;
+    variable v_seeds                 : t_positive_vector(0 to 1);
+    variable v_rand                  : real;
   begin
 
     if ext_proc_call = "" then
@@ -481,19 +548,109 @@ package body avalon_st_bfm_pkg is
     log(ID_PACKET_INITIATE, v_proc_call.all & "=> " & add_msg_delimiter(msg), scope, msg_id_panel);
 
     while not (v_done) loop
-      ------------------------------------------------------------
-      -- Wait for the rising_edge of the clock to sample the data
-      ------------------------------------------------------------
-      if v_sym_in_beat = 0 then
-        avalon_st_if.ready <= '1';
-        wait until rising_edge(clk);
-        if v_time_of_rising_edge = -1 ns then
-          v_time_of_rising_edge := now;
+      --------------------------------------------------------------------------------------
+      -- Set ready low before given beat (once per transmission or multiple random times)
+      --------------------------------------------------------------------------------------
+      if v_sym_in_beat = 0 and (config.ready_low_duration > 0 or config.ready_low_duration = C_RANDOM) then
+        v_ready_low_cycle_count := 0;
+        -- Check if pulse duration is defined or random
+        if config.ready_low_duration > 0 then
+          v_ready_low_duration := config.ready_low_duration;
+        elsif config.ready_low_duration = C_RANDOM then
+          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+          random(1, config.ready_low_max_random_duration, v_seeds(0), v_seeds(1), v_ready_low_duration);
+        end if;
+
+        -- Deassert ready once per transmission on a specific beat
+        if config.ready_low_at_word_idx = v_sym_cnt / c_symbols_per_beat then
+          avalon_st_if.ready <= '0';
+          -- Wait until valid goes high before counting the deassertion cycles
+          while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles loop
+            v_invalid_count := v_invalid_count + 1;
+            wait until rising_edge(clk);
+            -- If valid was asserted right before the rising_edge then we have already waited
+            -- one cycle with ready deasserted
+            if avalon_st_if.valid = '1' then
+              v_ready_low_duration := v_ready_low_duration - 1;
+            end if;
+            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+          end loop;
+          -- valid timed out
+          if v_invalid_count >= config.max_wait_cycles then
+            v_timeout            := true;
+            v_done               := true;
+            v_ready_low_duration := 0;
+          end if;
+          while v_ready_low_cycle_count < v_ready_low_duration loop
+            v_ready_low_cycle_count := v_ready_low_cycle_count + 1;
+            wait until rising_edge(clk);
+            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+          end loop;
+
+        -- Deassert ready multiple random times per transmission
+        elsif config.ready_low_at_word_idx = C_MULTIPLE_RANDOM then
+          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+          random(0.0, 1.0, v_seeds(0), v_seeds(1), v_rand);
+          if v_rand <= config.ready_low_multiple_random_prob then
+            avalon_st_if.ready <= '0';
+            while v_ready_low_cycle_count < v_ready_low_duration loop
+              v_ready_low_cycle_count := v_ready_low_cycle_count + 1;
+              wait until rising_edge(clk);
+              wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+            end loop;
+          end if;
         end if;
       end if;
 
-      check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
-                                config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+      ------------------------------------------------------------
+      -- Assert the ready signal (after valid is high) and wait
+      -- for the rising_edge of the clock to sample the data
+      ------------------------------------------------------------
+      if v_sym_in_beat = 0 then
+        -- To receive the first symbol wait until valid goes high before asserting ready
+        if v_sym_cnt = 0 and avalon_st_if.valid = '0' and not (v_timeout) then
+          while avalon_st_if.valid = '0' and v_invalid_count < config.max_wait_cycles loop
+            v_invalid_count := v_invalid_count + 1;
+            wait until rising_edge(clk);
+            -- If valid was asserted right before the rising_edge then we should sample
+            -- the data right away, otherwise we wait
+            if avalon_st_if.valid = '1' and avalon_st_if.ready = '1' then
+              v_sample_data_now := true;
+            else
+              v_sample_data_now := false;
+              wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+            end if;
+          end loop;
+          if not (v_sample_data_now) then
+            -- valid is now high, assert ready
+            if v_invalid_count < config.max_wait_cycles then
+              avalon_st_if.ready <= '1';
+              wait until rising_edge(clk);
+              if v_time_of_rising_edge = -1 ns then
+                v_time_of_rising_edge := now;
+              end if;
+            -- valid timed out
+            else
+              v_timeout := true;
+              v_done    := true;
+            end if;
+          end if;
+          -- valid was already high, assert ready right away
+        else
+          avalon_st_if.ready <= '1';
+          wait until rising_edge(clk);
+          if v_time_of_rising_edge = -1 ns then
+            v_time_of_rising_edge := now;
+          end if;
+        end if;
+      end if;
+
+      if not (v_timeout) then
+        check_clock_period_margin(clk, config.bfm_sync, v_time_of_falling_edge, v_time_of_rising_edge,
+                                  config.clock_period, config.clock_period_margin, config.clock_margin_severity);
+      end if;
 
       ------------------------------------------------------------
       -- Receive the data

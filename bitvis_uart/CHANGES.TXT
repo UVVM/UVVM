@@ -1,6 +1,11 @@
 Bitvis UART - Overview on Versions and Changes
 ==============================================================
 
+v1.1.8
+----------
+Released: 2025-03-25
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
+
 v1.1.7
 ----------
 Released: 2024-03-08

@@ -151,6 +151,12 @@ UVVM:                                                                           
 UVVM:                                                                           weight:    30%    20%    50%
 UVVM:                                                                           count:     295    209    496
 UVVM:                                                                           ===============================================================================================
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5 us:-4 us],30,COMBINED),(0 ps,20),([9 us:10 us],50,COMBINED))=> -4.33 us
+UVVM:                                                                           ===============================================================================================
+UVVM:                                                                           value:   -5:-4      0   9:10
+UVVM:                                                                           weight:    30%    20%    50%
+UVVM:                                                                           count:     303    196    501
+UVVM:                                                                           ===============================================================================================
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        set_range_weight_default_mode(INDIVIDUAL_WEIGHT)
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking range_weight_default_mode'
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_ERRORs by 1. 
@@ -162,18 +168,24 @@ UVVM:                    rand_range_weight(([-5 ps:-3 ps],30,INDIVIDUAL),(0 ps,2
 UVVM: =========================================================================================================================================================================
 UVVM: 
 UVVM: 
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5 ps:-3 ps],30,INDIVIDUAL),(0 ps,20),([9 ps:10 ps],50,INDIVIDUAL))=>
-UVVM:                                                                           -9223372036854775807 ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5 ps:-3 ps],30,INDIVIDUAL),(0 ps,20),([9 ps:10 ps],50,INDIVIDUAL))=> -2562
+UVVM:                                                                           hr
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing weighted time (ranges w/explicit mode) - Generate 1000 random values for each test
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight_mode(([-5 ps:-3 ps],30,COMBINED),(0 ps,20),([9 ps:10 ps],50,COMBINED))=> -3
-UVVM:                                                                           ps
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight_mode(([-5 ps:-3 ps],30,COMBINED),(0 ps,20),([9 ps:10 ps],50,COMBINED))=> 9 ps
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:   -5:-3      0   9:10
 UVVM:                                                                           weight:    30%    20%    50%
-UVVM:                                                                           count:     303    196    501
+UVVM:                                                                           count:     286    214    500
+UVVM:                                                                           ===============================================================================================
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight_mode(([-5 us:-4 us],30,COMBINED),(0 ps,20),([9 us:10 us],50,COMBINED))=> 9.05
+UVVM:                                                                           us
+UVVM:                                                                           ===============================================================================================
+UVVM:                                                                           value:   -5:-4      0   9:10
+UVVM:                                                                           weight:    30%    20%    50%
+UVVM:                                                                           count:     269    222    509
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
@@ -183,7 +195,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       5     10
 UVVM:                                                                           weight:    25%    75%
-UVVM:                                                                           count:     237    763
+UVVM:                                                                           count:     236    764
 UVVM:                                                                           ===============================================================================================
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_val_weight((5,1),(10,0))=> 5
 UVVM:                                                                           ===============================================================================================
@@ -195,7 +207,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       0      5     10
 UVVM:                                                                           weight:    10%    30%    60%
-UVVM:                                                                           count:      94    301    605
+UVVM:                                                                           count:      79    296    625
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
@@ -203,19 +215,19 @@ UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        set_range_weight_default_mode(COMBINED_WEIGHT)
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking range_weight_default_mode'
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([0:2],30,COMBINED),(5,20),([9:10],50,COMBINED))=> 5
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([0:2],30,COMBINED),(5,20),([9:10],50,COMBINED))=> 9
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       0      1      2      5      9     10
 UVVM:                                                                           weight:    10%    10%    10%    20%    25%    25%
-UVVM:                                                                           count:      83    113    101    185    244    274
+UVVM:                                                                           count:     114     96    105    189    243    253
 UVVM:                                                                           ===============================================================================================
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        set_range_weight_default_mode(INDIVIDUAL_WEIGHT)
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking range_weight_default_mode'
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([0:2],30,INDIVIDUAL),(5,20),([9:10],50,INDIVIDUAL))=> 2
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([0:2],30,INDIVIDUAL),(5,20),([9:10],50,INDIVIDUAL))=> 9
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       0      1      2      5      9     10
 UVVM:                                                                           weight:    14%    14%    14%     9%    23%    23%
-UVVM:                                                                           count:     138    130    128    121    242    241
+UVVM:                                                                           count:     159    137    135     88    223    258
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
@@ -225,7 +237,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       0      1      2      5      9     10
 UVVM:                                                                           weight:    18%    18%    18%    12%    15%    15%
-UVVM:                                                                           count:     196    184    195    130    148    147
+UVVM:                                                                           count:     198    201    166    121    150    164
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
@@ -235,7 +247,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:      -5      7
 UVVM:                                                                           weight:    25%    75%
-UVVM:                                                                           count:     246    754
+UVVM:                                                                           count:     280    720
 UVVM:                                                                           ===============================================================================================
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_val_weight((-5,1),(7,0))=> -5
 UVVM:                                                                           ===============================================================================================
@@ -247,7 +259,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:      -5      0      7
 UVVM:                                                                           weight:    10%    30%    60%
-UVVM:                                                                           count:     113    303    584
+UVVM:                                                                           count:      98    310    592
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
@@ -255,29 +267,29 @@ UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        set_range_weight_default_mode(COMBINED_WEIGHT)
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking range_weight_default_mode'
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5:-3],30,COMBINED),(0,20),([6:7],50,COMBINED))=> 7
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5:-3],30,COMBINED),(0,20),([6:7],50,COMBINED))=> -3
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:      -5     -4     -3      0      6      7
 UVVM:                                                                           weight:    10%    10%    10%    20%    25%    25%
-UVVM:                                                                           count:     104     98     91    196    261    250
+UVVM:                                                                           count:      99     97    102    217    223    262
 UVVM:                                                                           ===============================================================================================
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        set_range_weight_default_mode(INDIVIDUAL_WEIGHT)
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking range_weight_default_mode'
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5:-3],30,INDIVIDUAL),(0,20),([6:7],50,INDIVIDUAL))=> 7
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([-5:-3],30,INDIVIDUAL),(0,20),([6:7],50,INDIVIDUAL))=> 6
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:      -5     -4     -3      0      6      7
 UVVM:                                                                           weight:    14%    14%    14%     9%    23%    23%
-UVVM:                                                                           count:     140    165    130     89    245    231
+UVVM:                                                                           count:     131    143    155     86    254    231
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.                        Testing weighted signed (ranges w/explicit mode) - Generate 1000 random values for each test
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight_mode(([-5:-3],30,INDIVIDUAL),(0,20),([6:7],50,COMBINED))=> -3
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight_mode(([-5:-3],30,INDIVIDUAL),(0,20),([6:7],50,COMBINED))=> 0
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:      -5     -4     -3      0      6      7
 UVVM:                                                                           weight:    18%    18%    18%    12%    15%    15%
-UVVM:                                                                           count:     187    196    189    110    138    180
+UVVM:                                                                           count:     185    187    184    115    162    167
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
@@ -287,7 +299,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       5     10
 UVVM:                                                                           weight:    25%    75%
-UVVM:                                                                           count:     266    734
+UVVM:                                                                           count:     248    752
 UVVM:                                                                           ===============================================================================================
 UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_val_weight((5,1),(10,0))=> 5
 UVVM:                                                                           ===============================================================================================
@@ -299,7 +311,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       0      5     10
 UVVM:                                                                           weight:    10%    30%    60%
-UVVM:                                                                           count:     106    275    619
+UVVM:                                                                           count:     106    297    597
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
@@ -308,19 +320,19 @@ UVVM:                                                                           
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        set_range_weight_default_mode(COMBINED_WEIGHT)
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking range_weight_default_mode'
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([0:2],30,COMBINED),(5,20),([9:10],50,COMBINED))=> 9
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([0:2],30,COMBINED),(5,20),([9:10],50,COMBINED))=> 0
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       0      1      2      5      9     10
 UVVM:                                                                           weight:    10%    10%    10%    20%    25%    25%
-UVVM:                                                                           count:      92     98     93    188    256    273
+UVVM:                                                                           count:     100     98    111    195    220    276
 UVVM:                                                                           ===============================================================================================
 UVVM: ID_RAND_CONF                       0.0 ns  TB seq.                        set_range_weight_default_mode(INDIVIDUAL_WEIGHT)
 UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for boolean true. 'Checking range_weight_default_mode'
-UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([0:2],30,INDIVIDUAL),(5,20),([9:10],50,INDIVIDUAL))=> 10
+UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        rand_range_weight(([0:2],30,INDIVIDUAL),(5,20),([9:10],50,INDIVIDUAL))=> 0
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       0      1      2      5      9     10
 UVVM:                                                                           weight:    14%    14%    14%     9%    23%    23%
-UVVM:                                                                           count:     145    138    148     91    231    247
+UVVM:                                                                           count:     142    147    141     94    224    252
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 
@@ -331,7 +343,7 @@ UVVM: ID_RAND_GEN                        0.0 ns  TB seq.                        
 UVVM:                                                                           ===============================================================================================
 UVVM:                                                                           value:       0      1      2      5      9     10
 UVVM:                                                                           weight:    18%    18%    18%    12%    15%    15%
-UVVM:                                                                           count:     183    181    207    130    138    161
+UVVM:                                                                           count:     169    183    203    121    176    148
 UVVM:                                                                           ===============================================================================================
 UVVM: 
 UVVM: 

@@ -90,47 +90,75 @@ UVVM:
 UVVM: ID_LOG_HDR                         0.0 ns  TB seq.(uvvm)                  Time
 UVVM: -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(10) =       37
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(11) =       56
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(12) =       31
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(13) =        0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(10) =       26
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(11) =       49
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(12) =       21
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ns) : counter(13) =       28
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with default time resolution
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(10) =       41
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(11) =       32
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(12) =       58
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(13) =        0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (us) : counter(10) =       28
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (us) : counter(11) =       34
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (us) : counter(12) =       40
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (us) : counter(13) =       19
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with explicit time resolution
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(10) =       22
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(11) =       64
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(12) =       22
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(13) =       26
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with same min and max values
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:13000000000000 fs
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with min greater than max values
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:12000000000000 fs
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with too small time resolution
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
 UVVM: 
 UVVM: ***  TB_WARNING #1  ***
 UVVM:             0 ns   TB seq.
-UVVM:                    random(10000000000000 fs,13000000000000 fs,1000 fs) => time_resolution is too small for the given range. It has been increased to 1000000 fs
+UVVM:                    random(10 ms,13 ms,1 ps) => time_resolution is too small for the given range. It has been increased to 1 ns
 UVVM: 
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(10) =       78
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(11) =       34
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(12) =       29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time function (ms) : counter(13) =        0
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(10) =       78
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(11) =       34
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(12) =       29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(13) =        0
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with default time resolution
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ms) : counter(10) =       78
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ms) : counter(11) =       34
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ms) : counter(12) =       29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ms) : counter(13) =        0
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with explicit time resolution
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:12140664000000 fs
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time function with too big time resolution
 UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
 UVVM: 
 UVVM: ***  TB_WARNING #2  ***
 UVVM:             0 ns   TB seq.
-UVVM:                    random(10000000000000000 fs,13000000000000000 fs,1000 fs) => time_resolution is too small for the given range. It has been increased to 1000000000 fs
+UVVM:                    random(10 ms,13 ms,1 min) => time_resolution is too big for the given range. It has been reduced to 1 ms
 UVVM: 
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(10) =       78
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(11) =       34
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(12) =       29
-UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(13) =        0
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:13000000000000 fs
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(10) =       22
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(11) =       64
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(12) =       22
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (ns) : counter(13) =       26
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with default time resolution
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (us) : counter(10) =       22
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (us) : counter(11) =       64
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (us) : counter(12) =       22
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (us) : counter(13) =       26
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with explicit time resolution
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(10) =       22
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(11) =       64
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(12) =       22
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  time procedure (sec) : counter(13) =       26
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with same min and max values
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:10000000000000000 fs
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with min greater than max values
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:13000000000000000 fs
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with too small time resolution
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #3  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    random(10 sec,13 sec,1 ps) => time_resolution is too small for the given range. It has been increased to 1 us
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:12053564000000000 fs
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.(uvvm)                  -- Test the random time procedure with too big time resolution
+UVVM: ID_UTIL_SETUP                      0.0 ns  TB seq.                        incremented expected TB_WARNINGs by 1. 
+UVVM: 
+UVVM: ***  TB_WARNING #4  ***
+UVVM:             0 ns   TB seq.
+UVVM:                    random(10 sec,13 sec,1 hr) => time_resolution is too big for the given range. It has been reduced to 1 sec
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        time:13000000000000000 fs
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***
@@ -139,7 +167,7 @@ UVVM:                                REGARDED   EXPECTED  IGNORED      Comment?
 UVVM:                NOTE         :      0         0         0         ok
 UVVM:                TB_NOTE      :      0         0         0         ok
 UVVM:                WARNING      :      0         0         0         ok
-UVVM:                TB_WARNING   :      2         2         0         ok
+UVVM:                TB_WARNING   :      4         4         0         ok
 UVVM:                MANUAL_CHECK :      0         0         0         ok
 UVVM:                ERROR        :      0         0         0         ok
 UVVM:                TB_ERROR     :      0         0         0         ok

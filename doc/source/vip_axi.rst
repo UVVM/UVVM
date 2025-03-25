@@ -649,26 +649,36 @@ t_axi_read_data_channel
 
 t_axburst
 ----------------------------------------------------------------------------------------------------------------------------------
-FIXED, INCR, WRAP
+.. code-block::
+
+    FIXED, INCR, WRAP
 
 t_axlock
 ----------------------------------------------------------------------------------------------------------------------------------
-NORMAL, EXCLUSIVE
+.. code-block::
+
+    NORMAL, EXCLUSIVE
 
 t_axprot
 ----------------------------------------------------------------------------------------------------------------------------------
-UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION, 
-PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION
+.. code-block::
+
+    UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION, 
+    PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION
 
 t_xresp
 ----------------------------------------------------------------------------------------------------------------------------------
-OKAY, EXOKAY, SLVERR, DECERR, ILLEGAL
+.. code-block::
+
+    OKAY, EXOKAY, SLVERR, DECERR, ILLEGAL
 
 .. _t_xresp_array:
 
 t_xresp_array
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of t_xresp;
+.. code-block::
+
+    array (natural range <>) of t_xresp;
 
 
 Local BFM overloads
@@ -922,8 +932,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_axi_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_axi_vvc_config(1).bfm_config.clock_period := 10 ns;
+    shared_axi_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_axi_vvc_config(C_VVC_IDX).bfm_config.clock_period := 10 ns;
 
 Status Record
 ==================================================================================================================================

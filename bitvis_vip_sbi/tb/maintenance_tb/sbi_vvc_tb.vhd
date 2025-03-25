@@ -123,6 +123,7 @@ begin
       wait for 0 ns; -- Wait an extra delta cycle so that the value is propagated from the non-record to the record signals
       v_num_expected_alerts := 0 when alert_level = NO_ALERT else
                                v_num_expected_alerts + 1;
+      wait for 0 ns; -- Wait another cycle to allow signals to propagate before checking them - Needed for Riviera Pro
       check_value(get_alert_counter(alert_level), v_num_expected_alerts, TB_NOTE, "Unwanted activity alert was expected", C_SCOPE, ID_NEVER);
     end procedure;
 

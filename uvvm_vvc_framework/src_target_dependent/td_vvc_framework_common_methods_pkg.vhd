@@ -1031,7 +1031,7 @@ package body td_vvc_framework_common_methods_pkg is
     terminate_all_commands(vvc_target, vvc_instance_idx, vvc_channel, msg, scope, parent_msg_id_panel);
   end procedure;
 
-  ---- Returns the index of the last queued command
+  -- Returns the index of the last queued command
   impure function get_last_received_cmd_idx(
     signal   vvc_target       : in t_vvc_target_record;
     constant vvc_instance_idx : in integer;

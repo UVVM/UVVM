@@ -16,6 +16,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.math_real.all;
 use ieee.numeric_std.all;
 use std.textio.all;
 
@@ -106,6 +107,11 @@ package protected_types_pkg is
     impure function get_sb_element_cnt(constant sb_index : integer) return natural;
     impure function is_enabled(constant sb_index : integer) return boolean;
   end protected t_sb_activity;
+
+  type t_seeds is protected
+    procedure set_rand_seeds(constant str : in string; variable seed1 : out positive; variable seed2 : out positive);
+    procedure update_and_get_seeds(constant scope : in string; constant instance_name : in string; variable seeds : inout t_positive_vector(0 to 1));
+  end protected t_seeds;
 
 end package protected_types_pkg;
 
@@ -807,6 +813,116 @@ package body protected_types_pkg is
     end function;
 
   end protected body t_sb_activity;
+  --------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------
+  type t_seeds is protected body
+
+    type t_seeds_item;
+
+    type t_seeds_array_ptr is access t_seeds_item;
+
+    type t_seeds_id is record
+      scope         : string(1 to C_LOG_SCOPE_WIDTH);
+      instance_name : string(1 to C_RAND_MAX_INSTANCE_NAME_LENGTH);
+      seeds         : t_positive_vector(0 to 1);
+    end record;
+
+    type t_seeds_item is record
+      seeds_id   : t_seeds_id;
+      next_seeds : t_seeds_array_ptr;
+    end record;
+
+    variable priv_head : t_seeds_array_ptr; -- Head of the linked list
+    variable priv_last_registered_seeds : integer := -1; -- Counter for the number of registered seeds
+
+    -- Set randomization seeds from a string.
+    -- Identical to the set_rand_seeds() procedure defined in methods_pkg.
+    -- Required to be redefined here to avoid circular dependency.
+    procedure set_rand_seeds(
+      constant str   : in  string;
+      variable seed1 : out positive;
+      variable seed2 : out positive
+    ) is
+      constant C_STR_LEN : natural := str'length;
+      constant C_MAX_POS : natural := integer'right;
+    begin
+      seed1 := C_RAND_INIT_SEED_1;
+      seed2 := C_RAND_INIT_SEED_2;
+      -- Create the seeds by accumulating the ASCII values of the string,
+      -- multiplied by a factor so they are widely spread, and making sure
+      -- they don't overflow the positive range.
+      for i in 1 to C_STR_LEN / 2 loop
+        seed1 := (seed1 + char_to_ascii(str(i)) * 128) mod C_MAX_POS;
+      end loop;
+        seed2 := (seed2 + seed1) mod C_MAX_POS;
+      for i in C_STR_LEN / 2 + 1 to C_STR_LEN loop
+        seed2 := (seed2 + char_to_ascii(str(i)) * 128) mod C_MAX_POS;
+      end loop;
+    end procedure;
+
+    -- Manage randomization seeds using a dictionary-like linked list.
+    -- This procedure uses the standard linked list algorithm with scope/instance_name as the keys and seeds as the value in a key-value pair.
+    -- If the linked list is empty or the keys are not found, generate new seeds and store them in the linked list.
+    -- If the keys are found, generate and update the seeds in the linked list.
+    -- The updated seeds are accessible via the inout variable.
+    procedure update_and_get_seeds(
+      constant scope         : in string;
+      constant instance_name : in string;
+      variable seeds         : inout t_positive_vector(0 to 1)
+    ) is
+      variable v_seeds_item : t_seeds_array_ptr;
+      variable v_node       : t_seeds_array_ptr;
+      variable v_found      : boolean := false;
+      variable v_str        : string(1 to scope'length + instance_name'length);
+      variable v_rand       : real;
+    begin
+      -- Linked list is not empty
+      if priv_last_registered_seeds > -1 then
+        -- Set v_node to the head of the linked list
+        v_node := priv_head;
+        -- Loop through each node in the linked list
+        for idx in 0 to priv_last_registered_seeds loop
+          -- Update the seeds if the keys are found in the searched node
+          if v_node.seeds_id.scope(1 to scope'length) = scope and v_node.seeds_id.instance_name(1 to instance_name'length) = instance_name then
+            v_found := true;
+            -- Generate and update the seeds
+            uniform(v_node.seeds_id.seeds(0), v_node.seeds_id.seeds(1), v_rand); -- ignore the generated random real number
+            -- Assign the updated seeds to the inout variable
+            seeds(0) := v_node.seeds_id.seeds(0);
+            seeds(1) := v_node.seeds_id.seeds(1);
+            exit;
+          -- Set the pointer to reference the next node
+          elsif v_node.next_seeds /= null then
+            v_node := v_node.next_seeds;
+          end if;
+        end loop;
+      end if;
+
+      -- Linked list is empty, or the keys are not found in the linked list
+      if priv_last_registered_seeds = -1 or v_found = false then
+        -- Concatenate scope and instance_name to create a new string
+        v_str := scope & instance_name;
+        -- Generate the seeds
+        set_rand_seeds(v_str, seeds(0), seeds(1));
+        -- Dynamically allocate a new seeds_item and update seeds_id
+        v_seeds_item                                                   := new t_seeds_item;
+        v_seeds_item.seeds_id.scope(1 to scope'length)                 := scope;
+        v_seeds_item.seeds_id.instance_name(1 to instance_name'length) := instance_name;
+        v_seeds_item.seeds_id.seeds                                    := seeds;
+
+        -- New seeds_item is appended to the end of the linked list or becomes the head node if the linked list is empty
+        if priv_last_registered_seeds = -1 then
+          priv_head := v_seeds_item;
+        else
+          v_node.next_seeds := v_seeds_item;
+        end if;
+
+        -- Increment the registered seeds index
+        priv_last_registered_seeds := priv_last_registered_seeds + 1;
+      end if;
+    end procedure;
+
+  end protected body t_seeds;
   --------------------------------------------------------------------------------
 
 end package body protected_types_pkg;

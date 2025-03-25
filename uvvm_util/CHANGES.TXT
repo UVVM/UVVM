@@ -2,6 +2,29 @@ UVVM Utility Library - Overview on Versions and Changes
 ==============================================================
 
 ----------------------------------------------------------------------
+
+v2.20.0
+----------
+Released: 2025-03-25
+- Fixed set_rand_seeds(string) procedure being dependent on previous seed values.
+- Modified alert text for mode_error in check_file_open_status.
+- Added t_seeds type for controlling randomization seeds in protected_types_pkg.
+- Added shared_rand_seeds_register, a shared variable for controlling randomization seeds in global_signals_and_shared_variables_pkg.
+- Added C_RAND_MAX_INSTANCE_NAME_LENGTH, a constant for controlling randomization seeds in adaptations_pkg.
+- Added set_rand_seeds(string) procedure in methods_pkg to control randomization seeds from VVCs.
+- Updated some .do files in order to allow compatibility between QuestaSim and Riviera Pro.
+- Print an alert and reduce the resolution in the random(time) functions whenever the resolution parameter is bigger than the range.
+- Use the lowest time unit among the range parameters instead of the simulator resolution limit for the random(time) functions.
+- Added time_resolution parameter to rand(), rand_range_weight() and rand_range_weight_mode() time functions for single-method approach.
+- Added time_resolution parameter to add_range_time() and added new procedure set_range_weight_time_resolution() for multi-method approach.
+- Fixed logging and distribution of range values in randm() when using time values.
+- Fixed issue with multiple subsequent calls to the clocked gen_pulse procedure.
+- Removed unused type t_pulse_continuation.
+- Added radix and prefix parameters to the integer, signed, and unsigned versions of check_value_in_range and await_change_to_value.
+- Removed the deallocate call from tee. The user should take care of memory management.
+- Added get_basename(string) to the string_methods package to get the file name from a path string.
+- Added scalable time units in check_stable().
+
 v2.19.7
 ----------
 Released: 2024-09-19
@@ -10,7 +33,7 @@ Released: 2024-09-19
 v2.19.6
 ----------
 Released: 2024-07-03
-- Fixed bug in .single_tc_vs_single_req listed output files in spec cov. 
+- Fixed bug in .single_tc_vs_single_req listed output files in spec cov.
 
 v2.19.5
 ----------

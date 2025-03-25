@@ -281,6 +281,12 @@ UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                                                                                                                  Right
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Truncate last word
 UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Truncate last
+UVVM: 
+UVVM: ID_SEQUENCER                       0.0 ns  TB seq.                        Verifying get_basename()
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for string 'file_name.txt'. 'Verifying get_basename() with a posix path.'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for string 'file_name.txt'. 'Verifying get_basename() with a windows
+UVVM:                                                                           path.'
+UVVM: ID_POS_ACK                         0.0 ns  TB seq.                        check_value() => OK, for string 'file_name.txt'. 'Verifying get_basename() with no path.'
 UVVM:      
 UVVM:      ====================================================================================================================================================================
 UVVM:      *** FINAL SUMMARY OF ALL ALERTS ***

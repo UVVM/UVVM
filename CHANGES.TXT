@@ -9,17 +9,38 @@ CHANGES.TXT in each module's sub-directory.
 
 ----------------------------------------------------------------------
 
+v2 2025.03.25
+--------------------
+Released: 2025-03-25
+- Fixed set_rand_seeds(string) procedure being dependent on previous seed values.
+- Methods_pkg: Modified alert text for mode_error in check_file_open_status
+- Updated vvc_generator.py to add missing delta cycle needed to update the last_cmd_idx_executed when not using transaction info.
+- Converted Clock Generator, Error Injection, HVVC-bridge and GPIO documentation to RST format.
+- Added methods to control randomization seeds in uvvm_util.
+- Updated the random methods used in BFMs and VVCs to use the mechanism to control randomization seeds.
+- Added a new section, Managing randomization seeds in BFMs, under Essential Mechanisms/Built-in randomization in the UVVM documentation.
+- Updated several .do files in order to allow compatibility between QuestaSim and Riviera Pro.
+- Print an alert and reduce the resolution in the random(time) functions whenever the resolution parameter is bigger than the range.
+- Use the lowest time unit among the range parameters instead of the simulator resolution limit for the random(time) functions.
+- Added time_resolution parameter to rand(), rand_range_weight() and rand_range_weight_mode() time functions for single-method approach.
+- Added time_resolution parameter to add_range_time() and added new procedure set_range_weight_time_resolution() for multi-method approach.
+- Fixed logging and distribution of range values in randm() when using time values.
+- Added random valid and ready configuration in Avalon-ST BFM and updated the Avalon-ST documentation.
+- Moved the random configuration constants from axistream_bfm_pkg to bfm_common_pkg.
+- Removed support for don't care operator in expected value in gpio_check_stable() BFM procedure and updated the GPIO documentation.
+- Fixed issue with multiple subsequent calls to the clocked gen_pulse procedure.
+- Removed unused type t_pulse_continuation.
+- Added radix and prefix parameters to the integer, signed, and unsigned versions of check_value_in_range and await_change_to_value.
+- Removed the deallocate call from tee. The user should take care of memory management.
+- Added get_basename(string) to the string_methods package to get the file name from a path string.
+- Added scalable time units in check_stable().
+
+
 v2 2024.10.23
 --------------------
 Released: 2024-10-23
- - Spec cov: New output formats. Support compound reqs in req list.
- - Spec cov: Check that number of requirement lines is below max limit in VHDL package.
-
-
-v2 2024.10.08
---------------------
-Released: 2024-10-08
-- Updated vvc_generator.py with fixes for runtime errors in the VVCs.
+- Spec cov: New output formats. Support compound reqs in req list.
+- Spec cov: Check that number of requirement lines is below max limit in VHDL package.
 
 
 v2 2024.10.08

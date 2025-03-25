@@ -122,6 +122,41 @@ Default value for the record is C_AVALON_ST_BFM_CONFIG_DEFAULT.
 | use_packet_transfer          | boolean                      | true            | When true, packet signals are enabled:          |
 |                              |                              |                 | start_of_packet, end_of_packet & empty          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| valid_low_at_word_idx        | integer                      | 0               | Word index during which the master BFM shall    |
+|                              |                              |                 | de-assert valid while sending a packet. Can be  |
+|                              |                              |                 | set to multiple random indices using            |
+|                              |                              |                 | C_MULTIPLE_RANDOM.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| valid_low_multiple_random_pr\| real                         | 0.5             | Probability, between 0.0 and 1.0, of how often  |
+| ob                           |                              |                 | valid shall be de-asserted when using           |
+|                              |                              |                 | C_MULTIPLE_RANDOM.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| valid_low_duration           | integer                      | 0               | Number of clock cycles to de-assert valid. To   |
+|                              |                              |                 | disable this feature set to 0. Can be set to    |
+|                              |                              |                 | random using C_RANDOM.                          |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| valid_low_max_random_duration| integer                      | 5               | Maximum number of clock cycles to de-assert     |
+|                              |                              |                 | valid when using C_RANDOM.                      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_low_at_word_idx        | integer                      | 0               | Word index during which the slave BFM shall     |
+|                              |                              |                 | de-assert ready while receiving the packet. Can |
+|                              |                              |                 | be set to multiple random indices using         |
+|                              |                              |                 | C_MULTIPLE_RANDOM.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_low_multiple_random_pr\| real                         | 0.5             | Probability, between 0.0 and 1.0, of how often  |
+| ob                           |                              |                 | ready shall be de-asserted when using           |
+|                              |                              |                 | C_MULTIPLE_RANDOM.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_low_duration           | integer                      | 0               | Number of clock cycles to de-assert ready. To   |
+|                              |                              |                 | disable this feature set to 0. Can be set to    |
+|                              |                              |                 | random using C_RANDOM.                          |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_low_max_random_duration| integer                      | 5               | Maximum number of clock cycles to de-assert     |
+|                              |                              |                 | ready when using C_RANDOM.                      |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| ready_default_value          | std_logic                    | '0'             | Determines the ready output value while the     |
+|                              |                              |                 | slave BFM is idle.                              |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -610,8 +645,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_avalon_st_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_avalon_st_vvc_config(1).bfm_config.clock_period := 10 ns;
+    shared_avalon_st_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_avalon_st_vvc_config(C_VVC_IDX).bfm_config.clock_period := 10 ns;
 
 Status Record
 ==================================================================================================================================

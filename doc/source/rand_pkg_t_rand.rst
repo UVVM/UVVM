@@ -501,13 +501,13 @@ return time
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a random time value. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    time := rand(min_value, max_value, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], [msg_id_panel])
     time := rand(specifier, set_of_values, [msg_id_panel])
-    time := rand(min_value, max_value, specifier, value, [msg_id_panel])
-    time := rand(min_value, max_value, specifier, set_of_values, [msg_id_panel])
-    time := rand(min_value, max_value, specifier1, value1, specifier2, value2, [msg_id_panel])
-    time := rand(min_value, max_value, specifier1, value1, specifier2, set_of_values2, [msg_id_panel])
-    time := rand(min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier, value, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier, set_of_values, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier1, value1, specifier2, value2, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier1, value1, specifier2, set_of_values2, [msg_id_panel])
+    time := rand(min_value, max_value, [time_resolution], specifier1, set_of_values1, specifier2, set_of_values2, [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -515,6 +515,11 @@ Returns a random time value. For more information on the probability distributio
 | constant | min_value          | in     | time                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | time_resolution    | in     | time                         | Defines how many values can be generated between min_value and|
+|          |                    |        |                              | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                              | a TB_WARNING will be printed once. Default value is the       |
+|          |                    |        |                              | smallest time unit between the min and max parameters.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | specifier          | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -529,7 +534,9 @@ Returns a random time value. For more information on the probability distributio
 .. code-block::
 
     -- Examples:
-    rand_time := my_rand.rand(0 ps, 100 ps);
+    rand_time := my_rand.rand(1 us, 100 us);         -- Generates random values with a resolution of 1 us
+    rand_time := my_rand.rand(1 us, 100 us, ns);     -- Generates random values with a resolution of 1 ns
+    rand_time := my_rand.rand(1 us, 100 us, 100 ns); -- Generates random values with a resolution of 100 ns
     rand_time := my_rand.rand(ONLY, (5 us, 10 us, 15 us, 20 us));
     rand_time := my_rand.rand(1 ns, 10 ns, ADD,(20 ns));
     rand_time := my_rand.rand(1 ns, 10 ns, EXCL,(5 ns, 6 ns));
@@ -643,13 +650,13 @@ return time_vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Returns a vector of random time values. For more information on the probability distribution click :ref:`here <rand_pkg_distributions>`. ::
 
-    time_vector := rand(length, min_value, max_value, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], [uniqueness, [msg_id_panel]])
     time_vector := rand(length, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier, value, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier, set_of_values, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
-    time_vector := rand(length, min_value, max_value, specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier, value, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier, set_of_values, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier1, value1, specifier2, value2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier1, value1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
+    time_vector := rand(length, min_value, max_value, [time_resolution], specifier1, set_of_values1, specifier2, set_of_values2, [uniqueness, [msg_id_panel]])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -659,6 +666,11 @@ Returns a vector of random time values. For more information on the probability 
 | constant | min_value          | in     | time                         | The minimum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | time_resolution    | in     | time                         | Defines how many values can be generated between min_value and|
+|          |                    |        |                              | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                              | a TB_WARNING will be printed once. Default value is the       |
+|          |                    |        |                              | smallest time unit between the min and max parameters.        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | specifier          | in     | :ref:`t_value_specifier`     | Defines how to handle a single value or a set of values       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -676,7 +688,9 @@ Returns a vector of random time values. For more information on the probability 
 .. code-block::
 
     -- Examples:
-    rand_time_vec := my_rand.rand(rand_time_vec'length, 0 ps, 100 ps);
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 us, 100 us);         -- Generates random values with a resolution of 1 us
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 us, 100 us, ns);     -- Generates random values with a resolution of 1 ns
+    rand_time_vec := my_rand.rand(rand_time_vec'length, 1 us, 100 us, 100 ns); -- Generates random values with a resolution of 100 ns
     rand_time_vec := my_rand.rand(rand_time_vec'length, ONLY, (5 us, 10 us, 15 us, 20 us, 25 us, 30 us));
     rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, ADD,(20 ns));
     rand_time_vec := my_rand.rand(rand_time_vec'length, 1 ns, 10 ns, EXCL,(5 ns, 6 ns));
@@ -1031,7 +1045,7 @@ This mode can be changed to assigning the given weight equally to each value wit
 
     integer          := rand_range_weight(weighted_vector, [msg_id_panel])
     real             := rand_range_weight(weighted_vector, [msg_id_panel])
-    time             := rand_range_weight(weighted_vector, [msg_id_panel])
+    time             := rand_range_weight(weighted_vector, [time_resolution], [msg_id_panel])
     unsigned         := rand_range_weight(length, weighted_vector, [msg_id_panel])
     signed           := rand_range_weight(length, weighted_vector, [msg_id_panel])
     std_logic_vector := rand_range_weight(length, weighted_vector, [msg_id_panel])
@@ -1045,6 +1059,12 @@ This mode can be changed to assigning the given weight equally to each value wit
 |          |                    |        |                               |                                                               |
 |          |                    |        | :ref:`t_range_weight_time_vec`|                                                               |
 +----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
+| constant | time_resolution    | in     | time                          | Defines how many values can be generated between min_value and|
+|          |                    |        |                               | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                               | a TB_WARNING will be printed once. Default value is the       |
+|          |                    |        |                               | smallest time unit between the min and max parameters of the  |
+|          |                    |        |                               | first element in the weighted_vector.                         |
++----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel                | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                               | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+-------------------------------+---------------------------------------------------------------+
@@ -1054,7 +1074,9 @@ This mode can be changed to assigning the given weight equally to each value wit
     -- Examples:
     rand_int  := my_rand.rand_range_weight(((-5,-3,30),(0,0,20),(1,5,50)));
     rand_real := my_rand.rand_range_weight(((-5.0,-3.0,10),(0.0,0.0,30),(1.0,5.0,60)));
-    rand_time := my_rand.rand_range_weight(((1 ns,5 ns,10),(10 ns,10 ns,30),(25 ns,50 ns,60)));
+    rand_time := my_rand.rand_range_weight(((1 us,5 us,10),(10 us,10 us,30),(25 us,50 us,60)));         -- Generates random values with a resolution of 1 us
+    rand_time := my_rand.rand_range_weight(((1 us,5 us,10),(10 us,10 us,30),(25 us,50 us,60)), ns);     -- Generates random values with a resolution of 1 ns
+    rand_time := my_rand.rand_range_weight(((1 us,5 us,10),(10 us,10 us,30),(25 us,50 us,60)), 100 ns); -- Generates random values with a resolution of 100 ns
     rand_uns  := my_rand.rand_range_weight(rand_uns'length, ((10,15,1),(20,25,3),(30,35,6)));
     rand_sign := my_rand.rand_range_weight(rand_sign'length, ((-5,-3,1),(0,0,2),(5,10,2)));
     rand_slv  := my_rand.rand_range_weight(rand_slv'length, ((10,15,5),(20,25,1),(30,35,1))); -- SLV is interpreted as unsigned
@@ -1083,7 +1105,7 @@ values within a real/time range. ::
 
     integer          := rand_range_weight_mode(weighted_vector, [msg_id_panel])
     real             := rand_range_weight_mode(weighted_vector, [msg_id_panel])
-    time             := rand_range_weight_mode(weighted_vector, [msg_id_panel])
+    time             := rand_range_weight_mode(weighted_vector, [time_resolution], [msg_id_panel])
     unsigned         := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
     signed           := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
     std_logic_vector := rand_range_weight_mode(length, weighted_vector, [msg_id_panel])
@@ -1097,6 +1119,12 @@ values within a real/time range. ::
 |          |                    |        |                                    |                                                                |
 |          |                    |        | :ref:`t_range_weight_mode_time_vec`|                                                                |
 +----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
+| constant | time_resolution    | in     | time                               | Defines how many values can be generated between min_value and |
+|          |                    |        |                                    | max_value. If the given resolution is too small for the range, |
+|          |                    |        |                                    | a TB_WARNING will be printed once. Default value is the        |
+|          |                    |        |                                    | smallest time unit between the min and max parameters of the   |
+|          |                    |        |                                    | first element in the weighted_vector.                          |
++----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel                     | Controls verbosity within a specified scope. Default value is  |
 |          |                    |        |                                    | shared_msg_id_panel.                                           |
 +----------+--------------------+--------+------------------------------------+----------------------------------------------------------------+
@@ -1106,7 +1134,9 @@ values within a real/time range. ::
     -- Examples:
     rand_int  := my_rand.rand_range_weight_mode(((-5,-3,30,INDIVIDUAL_WEIGHT),(0,0,20,NA),(1,5,50,INDIVIDUAL_WEIGHT)));
     rand_real := my_rand.rand_range_weight_mode(((-5.0,-3.0,10,COMBINED_WEIGHT),(0.0,0.0,30,NA),(1.0,5.0,60,COMBINED_WEIGHT)));
-    rand_time := my_rand.rand_range_weight_mode(((1 ns,5 ns,10,COMBINED_WEIGHT),(10 ns,10 ns,30,NA),(25 ns,50 ns,60,COMBINED_WEIGHT)));
+    rand_time := my_rand.rand_range_weight_mode(((1 us,5 us,10,COMBINED_WEIGHT),(10 us,10 us,30,NA),(25 us,50 us,60,COMBINED_WEIGHT)));         -- Generates random values with a resolution of 1 us
+    rand_time := my_rand.rand_range_weight_mode(((1 us,5 us,10,COMBINED_WEIGHT),(10 us,10 us,30,NA),(25 us,50 us,60,COMBINED_WEIGHT)), ns);     -- Generates random values with a resolution of 1 ns
+    rand_time := my_rand.rand_range_weight_mode(((1 us,5 us,10,COMBINED_WEIGHT),(10 us,10 us,30,NA),(25 us,50 us,60,COMBINED_WEIGHT)), 100 ns); -- Generates random values with a resolution of 100 ns
     rand_uns  := my_rand.rand_range_weight_mode(rand_uns'length, ((10,15,1,INDIVIDUAL_WEIGHT),(20,20,3,NA),(30,35,6,INDIVIDUAL_WEIGHT)));
     rand_sign := my_rand.rand_range_weight_mode(rand_sign'length, ((-5,-3,1,INDIVIDUAL_WEIGHT),(0,0,2,NA),(5,10,2,INDIVIDUAL_WEIGHT)));
     rand_slv  := my_rand.rand_range_weight_mode(rand_slv'length, ((10,15,5,INDIVIDUAL_WEIGHT),(20,20,1,NA),(30,35,1,INDIVIDUAL_WEIGHT))); -- SLV is interpreted as unsigned
@@ -1135,7 +1165,7 @@ Adds a constraint specifying a range which will be included in the randomized va
 .. code-block::
 
     -- Example:
-    my_rand.add_range(1,10);
+    my_rand.add_range(1, 10);
 
 
 add_range_real()
@@ -1158,14 +1188,14 @@ Adds a constraint specifying a range which will be included in the randomized va
 .. code-block::
 
     -- Example:
-    my_rand.add_range_real(1.0,10.0);
+    my_rand.add_range_real(1.0, 10.0);
 
 
 add_range_time()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range which will be included in the randomized values. ::
 
-    add_range_time(min_value, max_value, [msg_id_panel])
+    add_range_time(min_value, max_value, [time_resolution], [msg_id_panel])
 
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | Object   | Name               | Dir.   | Type                         | Description                                                   |
@@ -1174,6 +1204,11 @@ Adds a constraint specifying a range which will be included in the randomized va
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | max_value          | in     | time                         | The maximum value in the range to generate the random number  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | time_resolution    | in     | time                         | Defines how many values can be generated between min_value and|
+|          |                    |        |                              | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                              | a TB_WARNING will be printed once. Default value is the       |
+|          |                    |        |                              | smallest time unit between the min and max parameters.        |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
 |          |                    |        |                              | shared_msg_id_panel.                                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
@@ -1181,7 +1216,9 @@ Adds a constraint specifying a range which will be included in the randomized va
 .. code-block::
 
     -- Example:
-    my_rand.add_range_time(1 ns,10 ns);
+    my_rand.add_range_time(1 us, 10 us);         -- Generates random values with a resolution of 1 us
+    my_rand.add_range_time(1 us, 10 us, ns);     -- Generates random values with a resolution of 1 ns
+    my_rand.add_range_time(1 us, 10 us, 100 ns); -- Generates random values with a resolution of 100 ns
 
 
 .. _add_range_unsigned:
@@ -1537,7 +1574,8 @@ used by default due to the very large number of values within a real range. ::
 add_range_weight_time()
 ----------------------------------------------------------------------------------------------------------------------------------
 Adds a constraint specifying a range with a weight which will be included in the randomized values. The COMBINED_WEIGHT mode is 
-used by default due to the very large number of values within a time range. ::
+used by default due to the very large number of values within a time range. To specify the time resolution see 
+:ref:`set_range_weight_time_resolution` ::
 
     add_range_weight_time(min_value, max_value, weight, [msg_id_panel])
 
@@ -1603,6 +1641,34 @@ Configures whether uniqueness is enabled or disabled. Default value is NON_UNIQU
 
     -- Example:
     my_rand.set_uniqueness(UNIQUE);
+
+
+.. _set_range_weight_time_resolution:
+
+set_range_weight_time_resolution()
+----------------------------------------------------------------------------------------------------------------------------------
+Sets the time resolution to use in the weighted distribution functions. Default value is the smallest time unit between the min 
+and max parameters of the first element added to the weighted_vector. ::
+
+    set_range_weight_time_resolution(time_resolution, [msg_id_panel])
+
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| Object   | Name               | Dir.   | Type                         | Description                                                   |
++==========+====================+========+==============================+===============================================================+
+| constant | time_resolution    | in     | time                         | Defines how many values can be generated between min_value and|
+|          |                    |        |                              | max_value. If the given resolution is too small for the range,|
+|          |                    |        |                              | a TB_WARNING will be printed once.                            |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+| constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default value is |
+|          |                    |        |                              | shared_msg_id_panel.                                          |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------------+
+
+.. code-block::
+
+    -- Example:
+    my_rand.set_range_weight_time_resolution(100 ns); -- Generates random values with a resolution of 100 ns
+    my_rand.add_range_weight_time(10 us,19 us, 1);
+    my_rand.add_range_weight_time(20 us,29 us, 3);
 
 
 clear_constraints()

@@ -1,21 +1,23 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bitvis VIP Avalon-ST &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -329,7 +331,69 @@ supports</p></td>
 <td><p>When true, packet signals are enabled:
 start_of_packet, end_of_packet &amp; empty</p></td>
 </tr>
-<tr class="row-odd"><td><p>id_for_bfm</p></td>
+<tr class="row-odd"><td><p>valid_low_at_word_idx</p></td>
+<td><p>integer</p></td>
+<td><p>0</p></td>
+<td><p>Word index during which the master BFM shall
+de-assert valid while sending a packet. Can be
+set to multiple random indices using
+C_MULTIPLE_RANDOM.</p></td>
+</tr>
+<tr class="row-even"><td><p>valid_low_multiple_random_prob</p></td>
+<td><p>real</p></td>
+<td><p>0.5</p></td>
+<td><p>Probability, between 0.0 and 1.0, of how often
+valid shall be de-asserted when using
+C_MULTIPLE_RANDOM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>valid_low_duration</p></td>
+<td><p>integer</p></td>
+<td><p>0</p></td>
+<td><p>Number of clock cycles to de-assert valid. To
+disable this feature set to 0. Can be set to
+random using C_RANDOM.</p></td>
+</tr>
+<tr class="row-even"><td><p>valid_low_max_random_duration</p></td>
+<td><p>integer</p></td>
+<td><p>5</p></td>
+<td><p>Maximum number of clock cycles to de-assert
+valid when using C_RANDOM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ready_low_at_word_idx</p></td>
+<td><p>integer</p></td>
+<td><p>0</p></td>
+<td><p>Word index during which the slave BFM shall
+de-assert ready while receiving the packet. Can
+be set to multiple random indices using
+C_MULTIPLE_RANDOM.</p></td>
+</tr>
+<tr class="row-even"><td><p>ready_low_multiple_random_prob</p></td>
+<td><p>real</p></td>
+<td><p>0.5</p></td>
+<td><p>Probability, between 0.0 and 1.0, of how often
+ready shall be de-asserted when using
+C_MULTIPLE_RANDOM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ready_low_duration</p></td>
+<td><p>integer</p></td>
+<td><p>0</p></td>
+<td><p>Number of clock cycles to de-assert ready. To
+disable this feature set to 0. Can be set to
+random using C_RANDOM.</p></td>
+</tr>
+<tr class="row-even"><td><p>ready_low_max_random_duration</p></td>
+<td><p>integer</p></td>
+<td><p>5</p></td>
+<td><p>Maximum number of clock cycles to de-assert
+ready when using C_RANDOM.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ready_default_value</p></td>
+<td><p>std_logic</p></td>
+<td><p>‘0’</p></td>
+<td><p>Determines the ready output value while the
+slave BFM is idle.</p></td>
+</tr>
+<tr class="row-even"><td><p>id_for_bfm</p></td>
 <td><p>t_msg_id</p></td>
 <td><p>ID_BFM</p></td>
 <td><p>Message ID used for logging general messages in
@@ -1120,8 +1184,8 @@ enabled with ERROR severity by default.</p></td>
 <p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
 </div>
 <p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_avalon_st_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
-<span class="n">shared_avalon_st_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_avalon_st_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_avalon_st_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">clock_period</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
 </pre></div>
 </div>
 </section>

@@ -1,21 +1,23 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bitvis VIP GPIO &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -64,8 +66,55 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP GPIO</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bfm">BFM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-set">gpio_set()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-get">gpio_get()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-check">gpio_check()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-check-stable">gpio_check_stable()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-expect">gpio_expect()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-expect-stable">gpio_expect_stable()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-bfm-overloads">Local BFM overloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-documentation">Additional Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#checking-stability">Checking stability</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vvc">VVC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Configuration Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status-record">Status Record</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-set-vvc">gpio_set()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-get-vvc">gpio_get()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-check-vvc">gpio_check()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-check-stable-vvc">gpio_check_stable()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-expect-vvc">gpio_expect()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-expect-stable-vvc">gpio_expect_stable()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#activity-watchdog">Activity Watchdog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transaction-info">Transaction Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoreboard">Scoreboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unwanted-activity-detection">Unwanted Activity Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vip_hvvc_to_vvc_bridge.html">Bitvis VIP HVVC-to-VVC Bridge</a></li>
@@ -106,13 +155,1499 @@
              
   <section id="bitvis-vip-gpio">
 <h1>Bitvis VIP GPIO<a class="headerlink" href="#bitvis-vip-gpio" title="Link to this heading"></a></h1>
+<p><strong>Quick Access</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#bfm">BFM</a></p>
+<ul>
+<li><p><a class="reference internal" href="#gpio-set-bfm"><span class="std std-ref">gpio_set()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-get-bfm"><span class="std std-ref">gpio_get()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-check-bfm"><span class="std std-ref">gpio_check()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-check-stable-bfm"><span class="std std-ref">gpio_check_stable()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-expect-bfm"><span class="std std-ref">gpio_expect()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-expect-stable-bfm"><span class="std std-ref">gpio_expect_stable()</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vvc">VVC</a></p>
+<ul>
+<li><p><a class="reference internal" href="#gpio-set-vvc"><span class="std std-ref">gpio_set()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-get-vvc"><span class="std std-ref">gpio_get()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-check-vvc"><span class="std std-ref">gpio_check()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-check-stable-vvc"><span class="std std-ref">gpio_check_stable()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-expect-vvc"><span class="std std-ref">gpio_expect()</span></a></p></li>
+<li><p><a class="reference internal" href="#gpio-expect-stable-vvc"><span class="std std-ref">gpio_expect_stable()</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
 <section id="bfm">
-<span id="vip-gpio-bfm"></span><h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_gpio/doc/gpio_bfm_QuickRef.pdf">gpio_bfm_QuickRef.pdf</a></p>
+<h2>BFM<a class="headerlink" href="#bfm" title="Link to this heading"></a></h2>
+<p>BFM functionality is implemented in gpio_bfm_pkg.vhd</p>
+<section id="configuration-record">
+<span id="t-gpio-bfm-config"></span><h3>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h3>
+<p><strong>t_gpio_bfm_config</strong></p>
+<p>Default value for the record is C_GPIO_BFM_CONFIG_DEFAULT.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>clock_period</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Specifies the clock period</p></td>
+</tr>
+<tr class="row-odd"><td><p>match_strictness</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-match-strictness"><span class="std std-ref">t_match_strictness</span></a></p></td>
+<td><p>MATCH_STD</p></td>
+<td><div class="line-block">
+<div class="line">Matching strictness for std_logic values in
+check procedures.</div>
+<div class="line">MATCH_EXACT requires both values to be the
+same. Note that the expected value can contain
+the don’t care operator ‘-‘.</div>
+<div class="line">MATCH_STD allows comparisons between ‘H’ and
+‘1’, ‘L’ and ‘0’ and ‘-’ in both values.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>id_for_bfm</p></td>
+<td><p>t_msg_id</p></td>
+<td><p>ID_BFM</p></td>
+<td><p>Message ID used for logging general messages in
+the BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>timeout</p></td>
+<td><p>time</p></td>
+<td><p>-1 ns</p></td>
+<td><p>Timeout value for the expected procedures. This
+is only used if no timeout parameter is given
+in the procedures.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All signals are active high.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="gpio-set">
+<span id="gpio-set-bfm"></span><h4>gpio_set()<a class="headerlink" href="#gpio-set" title="Link to this heading"></a></h4>
+<p>Writes the given data in ‘data_value’ to the DUT. When called, the procedure will write to the DUT register immediately, except
+bits set to “don’t care” (‘-‘).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_set</span><span class="p">(</span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_value</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be written to the DUT. This value is
+normalized to the data_port direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>data_port</p></td>
+<td><p>inout</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The signal where the data_value is written to</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GPIO_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_set</span><span class="p">(</span><span class="n">C_BAUDRATE_9600</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Set baud-rate to 9600&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GPIO_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">gpio_set</span><span class="p">(</span><span class="n">C_BAUDRATE_9600</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Set baud-rate to 9600&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-get">
+<span id="gpio-get-bfm"></span><h4>gpio_get()<a class="headerlink" href="#gpio-get" title="Link to this heading"></a></h4>
+<p>Reads data from the DUT.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_get</span><span class="p">(</span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>variable</p></td>
+<td><p>data_value</p></td>
+<td><p>out</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be read from the DUT</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>data_port</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The signal where the data_value is written to</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GPIO_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_get</span><span class="p">(</span><span class="n">v_baudrate</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GPIO_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">gpio_set</span><span class="p">(</span><span class="n">v_baudrate</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-check">
+<span id="gpio-check-bfm"></span><h4>gpio_check()<a class="headerlink" href="#gpio-check" title="Link to this heading"></a></h4>
+<p>Reads the DUT register and compares the data with the expected data in ‘data_exp’.</p>
+<ul class="simple">
+<li><p>If the read data matches the expected data, a log message is written with ID ‘config.id_for_bfm’.</p></li>
+<li><p>If the read data did not match the expected data, an alert with severity ‘alert_level’ will be reported.</p></li>
+<li><p>Bits set to “don’t care” (‘-’) will not be checked.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_check</span><span class="p">(</span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when reading the register.
+A mismatch results in an alert with severity
+‘alert_level’. This value is normalized to the data_port
+direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>data_port</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The signal where the data_value is written to</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GPIO_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_check</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GPIO_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">gpio_check</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-check-stable">
+<span id="gpio-check-stable-bfm"></span><h4>gpio_check_stable()<a class="headerlink" href="#gpio-check-stable" title="Link to this heading"></a></h4>
+<p>Reads the DUT register and compares the data with the expected data in ‘data_exp’, it also checks that the DUT register has been
+stable for the ‘stable_req’ time (see <a class="reference internal" href="#checking-stability"><span class="std std-ref">Checking stability</span></a>).</p>
+<ul class="simple">
+<li><p>If the read data matches the expected data and is stable, a log message is written with ID ‘config.id_for_bfm’.</p></li>
+<li><p>If the read data did not match the expected data or is not stable, an alert with severity ‘alert_level’ will be reported.</p></li>
+<li><p>Bits set to “don’t care” (‘-’) will not be checked.</p></li>
+<li><p>Note that it is not possible to use the “don’t care” (‘-’) operator in ‘data_exp’ to ignore changes in a subset of a std_logic_vector.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_check_stable</span><span class="p">(</span><span class="n">data_value</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when reading the register.
+A mismatch results in an alert with severity
+‘alert_level’. This value is normalized to the data_port
+direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>stable_req</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The time that the expected data value should remain
+stable in the register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>signal</p></td>
+<td><p>data_port</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The signal where the data_value is written to</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GPIO_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_check_stable</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX has been stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GPIO_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">gpio_check_stable</span><span class="p">(</span><span class="mh">x&quot;3B&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX has been stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-expect">
+<span id="gpio-expect-bfm"></span><h4>gpio_expect()<a class="headerlink" href="#gpio-expect" title="Link to this heading"></a></h4>
+<p>Reads the DUT register until the expected data in ‘data_exp’ is matched or until a timeout value is reached.</p>
+<ul class="simple">
+<li><p>If the read data matches the expected data, a log message is written with ID ‘config.id_for_bfm’.</p></li>
+<li><p>If the read data did not match the expected data within the timeout delay, an alert with severity ‘alert_level’ will be reported.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect</span><span class="p">(</span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when reading the register.
+A mismatch results in an alert with severity
+‘alert_level’. This value is normalized to the data_port
+direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>data_port</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The signal where the data_value is written to</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum time to pass before the expected data must
+be found. A timeout results in an alert with severity
+‘alert_level’. Default value is -1 ns which means no
+timeout.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GPIO_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_expect</span><span class="p">(</span><span class="mh">x&quot;0B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GPIO_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">gpio_expect</span><span class="p">(</span><span class="mh">x&quot;0B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-expect-stable">
+<span id="gpio-expect-stable-bfm"></span><h4>gpio_expect_stable()<a class="headerlink" href="#gpio-expect-stable" title="Link to this heading"></a></h4>
+<p>Reads the DUT register until the expected data in ‘data_exp’ is matched or until a timeout value is reached, it also checks that
+the DUT register remains stable for the ‘stable_req’ time sampled after the ‘stable_req_from’ point in time (see <a class="reference internal" href="#checking-stability"><span class="std std-ref">Checking stability</span></a>).</p>
+<ul class="simple">
+<li><p>If the read data matches the expected data and is stable, a log message is written with ID ‘config.id_for_bfm’.</p></li>
+<li><p>If the read data did not match the expected data within the timeout delay or it doesn’t remain stable, an alert with severity
+‘alert_level’ will be reported.</p></li>
+</ul>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req_from</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">config</span><span class="p">]]]]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when reading the register.
+A mismatch results in an alert with severity
+‘alert_level’. This value is normalized to the data_port
+direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>stable_req</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The time that the expected data value should remain
+stable in the register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>stable_req_from</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-from-point-in-time"><span class="std std-ref">t_from_point_in_time</span></a></p></td>
+<td><p>The point in time where stable_req starts</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>data_port</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The signal where the data_value is written to</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum time to pass before the expected data must
+be found. A timeout results in an alert with severity
+‘alert_level’. Default value is -1 ns which means no
+timeout.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_BFM_SCOPE (“GPIO BFM”).</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg_id_panel</p></td>
+<td><p>in</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>Controls verbosity within a specified scope. Default
+value is shared_msg_id_panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>config</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>Configuration of BFM behavior and restrictions. Default
+value is C_GPIO_BFM_CONFIG_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_expect_stable</span><span class="p">(</span><span class="mh">x&quot;0B&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found and check it remains stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span>
+<span class="w">                   </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GPIO_BFM_CONFIG_DEFAULT</span><span class="p">);</span>
+
+<span class="c1">-- Suggested usage (requires local overload, see &#39;Local BFM overloads&#39; section):</span>
+<span class="n">gpio_expect_stable</span><span class="p">(</span><span class="mh">x&quot;0B&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_LAST_EVENT</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX and check it has been stable for 100 us since the last event&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="local-bfm-overloads">
+<h3>Local BFM overloads<a class="headerlink" href="#local-bfm-overloads" title="Link to this heading"></a></h3>
+<p>A good approach for better readability and maintainability is to make simple, local overloads for the BFM procedures in the TB
+process. This allows calling the BFM procedures with the key parameters only, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect</span><span class="p">(</span><span class="mh">x&quot;F5&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until 0xF5 is found&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>rather than</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect</span><span class="p">(</span><span class="mh">x&quot;F5&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until 0xF5 is found&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">data_port</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w"> </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w"> </span><span class="n">C_GPIO_CONFIG_DEFAULT</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>By defining the local overload as e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">procedure</span><span class="w"> </span><span class="n">gpio_check</span><span class="p">(</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data_exp</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">msg</span><span class="w">       </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">sting</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">data_port</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">std_logic_vector</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constant</span><span class="w"> </span><span class="n">timeout</span><span class="w">   </span><span class="o">:</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">time</span><span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="n">gpio_check</span><span class="p">(</span><span class="n">data_exp</span><span class="p">,</span><span class="w">             </span><span class="c1">-- Keep as is</span>
+<span class="w">             </span><span class="n">msg</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Keep as is</span>
+<span class="w">             </span><span class="n">data_port</span><span class="p">,</span><span class="w">            </span><span class="c1">-- Keep as is</span>
+<span class="w">             </span><span class="n">timeout</span><span class="p">,</span><span class="w">              </span><span class="c1">-- Keep as is</span>
+<span class="w">             </span><span class="n">error</span><span class="p">,</span><span class="w">                </span><span class="c1">-- Use the default</span>
+<span class="w">             </span><span class="n">C_SCOPE</span><span class="p">,</span><span class="w">              </span><span class="c1">-- Use the default</span>
+<span class="w">             </span><span class="n">shared_msg_id_panel</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Use global, shared msg_id_panel</span>
+<span class="w">             </span><span class="n">C_GPIO_CONFIG_LOCAL</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Use locally defined configuration or C_GPIO_CONFIG_LOCAL</span>
+<span class="k">end</span><span class="w"> </span><span class="k">procedure</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Using a local overload like this also allows the following – if wanted:</p>
+<ul class="simple">
+<li><p>Set up defaults for constants. May be different for two overloads of the same BFM</p></li>
+<li><p>Apply dedicated message ID panel to allow dedicated verbosity control</p></li>
+</ul>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>This BFM package may only be compiled with VHDL-2008 or newer. It is dependent on the <a class="reference internal" href="utility_library.html#utility-library"><span class="std std-ref">Utility Library</span></a>, which is only
+compatible with VHDL-2008 or newer.</p></li>
+<li><p>After UVVM-Util has been compiled, the BFM package can be compiled into any desired library.</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p></li>
+</ul>
+<section id="simulator-compatibility-and-setup">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-documentation">
+<h3>Additional Documentation<a class="headerlink" href="#additional-documentation" title="Link to this heading"></a></h3>
+<section id="checking-stability">
+<span id="id1"></span><h4>Checking stability<a class="headerlink" href="#checking-stability" title="Link to this heading"></a></h4>
+<p>The procedures <a class="reference internal" href="#gpio-check-stable-bfm"><span class="std std-ref">gpio_check_stable()</span></a> and <a class="reference internal" href="#gpio-expect-stable-bfm"><span class="std std-ref">gpio_expect_stable()</span></a> can check if the DUT data port is stable for a
+certain time. There are different scenarios where we could check stability:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>To check that data has been stable for a certain time before now, use gpio_check_stable().</p></li>
+<li><p>To check that data, which is already same as expected, remains stable for a certain time from now, use gpio_expect_stable(FROM_NOW).</p></li>
+<li><p>To check that data, which is already same as expected, remains stable for a certain time from the last change, use
+gpio_expect_stable(FROM_LAST_EVENT).</p></li>
+<li><p>To check that data remains stable after it is equal than expected, use gpio_expect_stable(FROM_NOW). Note that in this case
+the ‘stable_req_from’ parameter does not have any influence since the event has not occurred.</p></li>
+</ol>
+</div></blockquote>
+<a class="reference internal image-reference" href="images/vip_gpio/checking_stability.png"><img alt="Checking stability" class="align-center" src="images/vip_gpio/checking_stability.png" style="width: 600pt;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
 </section>
 <section id="vvc">
-<span id="vip-gpio-vvc"></span><h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_gpio/doc/gpio_vvc_QuickRef.pdf">gpio_vvc_QuickRef.pdf</a></p>
+<h2>VVC<a class="headerlink" href="#vvc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>VVC functionality is implemented in gpio_vvc.vhd</p></li>
+<li><p>For general information see <a class="reference internal" href="vvc_framework.html#vvc-framework-essential-mechanisms"><span class="std std-ref">VVC Framework - Essential Mechanisms</span></a>.</p></li>
+</ul>
+<section id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h3>
+<section id="generics">
+<h4>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_DATA_WIDTH</p></td>
+<td><p>natural</p></td>
+<td><p>N/A</p></td>
+<td><p>Width of the GPIO data word</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>N/A</p></td>
+<td><p>Instance number to assign the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_DEFAULT_LINE_VALUE</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>N/A</p></td>
+<td><p>Default value of input or output GPIO</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_GPIO_BFM_CONFIG</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>C_GPIO_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the GPIO BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Absolute maximum number of commands in the VVC
+command queue</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be generated when reaching this
+threshold to indicate that the command queue is
+almost full. The queue will still accept new commands until it reaches GC_CMD_QUEUE_COUNT_MAX.</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Alert severity which will be used when command
+queue reaches GC_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-even"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GC_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE _COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+GC_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>gpio_vvc_if</p></td>
+<td><p>inout</p></td>
+<td><p>std_logic_vector</p></td>
+<td><div class="line-block">
+<div class="line">This interface can be used as input, output or inout.</div>
+<div class="line">If the GC_DEFAULT_LINE_VALUE is set to ‘Z’, ‘H’ or ‘L’
+, the interface can be used as an input, output or
+inout.</div>
+<div class="line">If the default is set to ‘1’, ‘0’ or ‘U’, the
+interface must be used as an output.</div>
+<div class="line">When using the interface as inout, the process
+currently driving the signal (DUT or VVC) must set it
+to ‘Z’ after it is finished in order to release the
+interface so that the other process can drive it.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="id2">
+<h3>Configuration Record<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><strong>vvc_config</strong> accessible via <strong>shared_gpio_vvc_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inter_bfm_delay</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-inter-bfm-delay"><span class="std std-ref">t_inter_bfm_delay</span></a></p></td>
+<td><p>C_GPIO_INTER_BFM_DELAY_DEFAULT</p></td>
+<td><div class="line-block">
+<div class="line">Delay between any requested BFM accesses
+towards the DUT.</div>
+<div class="line">TIME_START2START: Time from a BFM start to the
+next BFM start (a TB_WARNING will be issued if
+access takes longer than TIME_START2START).</div>
+<div class="line">TIME_FINISH2START: Time from a BFM end to the
+next BFM start.</div>
+<div class="line">Any insert_delay() command will add to the
+above minimum delays, giving for instance the
+ability to skew the BFM starting time.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum pending number in command queue before
+queue is full. Adding additional commands will
+result in an ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>cmd_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if command queue exceeds
+this count. Used for early warning if command
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmd_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_CMD_QUEUE_COUNT_THRESHOLD_SEERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+cmd_queue_count_threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_max</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_MAX</p></td>
+<td><p>Maximum number of unfetched results before
+result_queue is full</p></td>
+</tr>
+<tr class="row-odd"><td><p>result_queue_count_threshold</p></td>
+<td><p>natural</p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD</p></td>
+<td><p>An alert will be issued if result queue exceeds
+this count. Used for early warning if result
+queue is almost full. Will be ignored if set to
+0.</p></td>
+</tr>
+<tr class="row-even"><td><p>result_queue_count_threshold_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_RESULT_QUEUE_COUNT_THRESHOLD_SEVERITY</p></td>
+<td><p>Severity of alert to be initiated if exceeding
+result_queue_count_threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p>bfm_config</p></td>
+<td><p><a class="reference internal" href="#t-gpio-bfm-config"><span class="std std-ref">t_gpio_bfm_config</span></a></p></td>
+<td><p>C_GPIO_BFM_CONFIG_DEFAULT</p></td>
+<td><p>Configuration for the GPIO BFM</p></td>
+</tr>
+<tr class="row-even"><td><p>msg_id_panel</p></td>
+<td><p>t_msg_id_panel</p></td>
+<td><p>C_VVC_MSG_ID_PANEL_DEFAULT</p></td>
+<td><p>VVC dedicated message ID panel. See
+<a class="reference internal" href="vvc_framework.html#vvc-framework-verbosity-ctrl"><span class="std std-ref">Scope of Verbosity Control</span></a> for how to
+use verbosity control.</p></td>
+</tr>
+<tr class="row-odd"><td><p>unwanted_activity_severity</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>C_UNWANTED_ACTIVITY_SEVERITY</p></td>
+<td><p>Severity of alert to be issued if unwanted
+activity on the DUT outputs is detected. It is
+enabled with ERROR severity by default.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gpio_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="status-record">
+<h3>Status Record<a class="headerlink" href="#status-record" title="Link to this heading"></a></h3>
+<p><strong>vvc_status</strong> accessible via <strong>shared_gpio_vvc_status</strong></p>
+<p>The current status of the VVC can be retrieved during simulation. This is achieved by reading from the shared variable from the
+test sequencer. The record contents can be seen below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>current_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Command index currently running</p></td>
+</tr>
+<tr class="row-odd"><td><p>previous_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Previous command index to run</p></td>
+</tr>
+<tr class="row-even"><td><p>pending_cmd_idx</p></td>
+<td><p>natural</p></td>
+<td><p>Pending number of commands in the command queue</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h3>Methods<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>All VVC procedures are defined in vvc_methods_pkg.vhd (dedicated to this VVC).</p></li>
+<li><p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-methods"><span class="std std-ref">Common VVC Methods</span></a> for procedures which are common to all VVCs.</p></li>
+<li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
+<li><p>All parameters in brackets are optional.</p></li>
+</ul>
+<section id="gpio-set-vvc">
+<span id="id4"></span><h4>gpio_set()<a class="headerlink" href="#gpio-set-vvc" title="Link to this heading"></a></h4>
+<p>Adds a set command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-set-bfm"><span class="std std-ref">gpio_set()</span></a> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_set</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to be written to the register</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_set</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">C_BAUDRATE_9600</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Set baud-rate to 9600&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-get-vvc">
+<span id="id5"></span><h4>gpio_get()<a class="headerlink" href="#gpio-get-vvc" title="Link to this heading"></a></h4>
+<p>Adds a get command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-get-bfm"><span class="std std-ref">gpio_get()</span></a> procedure.</p>
+<p>The value received from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the
+received data will be stored in the VVC for a potential future fetch (see example with fetch_result below).
+If the data_routing is set to TO_SB, the read data will be sent to the GPIO VVC dedicated scoreboard where it will be
+checked against the expected value (provided by the testbench).</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_get</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">data_routing</span><span class="p">,]</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_routing</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-data-routing"><span class="std std-ref">t_data_routing</span></a></p></td>
+<td><p>Selects the destination of the read data</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">TO_SB</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate and send to Scoreboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+
+<span class="c1">-- Example with fetch_result() call: Result is placed in v_result</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="p">;</span><span class="w">                       </span><span class="c1">-- Command index for the last receive</span>
+<span class="k">variable</span><span class="w"> </span><span class="n">v_result</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nn">work</span><span class="p">.</span><span class="n">vvc_cmd_pkg</span><span class="p">.</span><span class="n">t_vvc_result</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Result from receive.</span>
+<span class="p">...</span>
+<span class="n">gpio_get</span><span class="p">(</span><span class="n">GPI_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read baud-rate&quot;</span><span class="p">);</span>
+<span class="n">v_cmd_idx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">get_last_received_cmd_idx</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">await_completion</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wait for receive to finish&quot;</span><span class="p">);</span>
+<span class="n">fetch_result</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">v_cmd_idx</span><span class="p">,</span><span class="w"> </span><span class="n">v_result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fetching result from receive operation&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="vvc_framework.html#t-vvc-result"><span class="std std-ref">t_vvc_result</span></a> is defined in the corresponding vvc_cmd_pkg.vhd for the VIP.</p>
+</div>
+</section>
+<section id="gpio-check-vvc">
+<span id="id6"></span><h4>gpio_check()<a class="headerlink" href="#gpio-check-vvc" title="Link to this heading"></a></h4>
+<p>Adds a check command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-check-bfm"><span class="std std-ref">gpio_check()</span></a> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_check</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The expected data value to be read from the register</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_check</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F5&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-check-stable-vvc">
+<span id="id7"></span><h4>gpio_check_stable()<a class="headerlink" href="#gpio-check-stable-vvc" title="Link to this heading"></a></h4>
+<p>Adds a check_stable command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-check-stable-bfm"><span class="std std-ref">gpio_check_stable()</span></a> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_check_stable</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when reading the register.
+A mismatch results in an alert with severity
+‘alert_level’. This value is normalized to the data_port
+direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>stable_req</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The time that the expected data value should remain
+stable in the register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_check_stable</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;F5&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Check data from UART RX has been stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-expect-vvc">
+<span id="id8"></span><h4>gpio_expect()<a class="headerlink" href="#gpio-expect-vvc" title="Link to this heading"></a></h4>
+<p>Adds an expect command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When the
+command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-expect-bfm"><span class="std std-ref">gpio_expect()</span></a> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The expected data value to be read from the register</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>timeout</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The maximum time to pass before the expected data must
+be found. A timeout results in an alert with severity
+‘alert_level’.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_expect</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found or timeout&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="gpio-expect-stable-vvc">
+<span id="id9"></span><h4>gpio_expect_stable()<a class="headerlink" href="#gpio-expect-stable-vvc" title="Link to this heading"></a></h4>
+<p>Adds an expect_stable command to the GPIO VVC executor queue, which will run as soon as all preceding commands have completed. When
+the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#gpio-expect-stable-bfm"><span class="std std-ref">gpio_expect_stable()</span></a> procedure.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">VVCT</span><span class="p">,</span><span class="w"> </span><span class="n">vvc_instance_idx</span><span class="p">,</span><span class="w"> </span><span class="n">data_exp</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req</span><span class="p">,</span><span class="w"> </span><span class="n">stable_req_from</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">alert_level</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">scope</span><span class="p">]])</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Dir.</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>signal</p></td>
+<td><p>VVCT</p></td>
+<td><p>inout</p></td>
+<td><p>t_vvc_target_record</p></td>
+<td><p>VVC target type compiled into each VVC in order to
+differentiate between VVCs</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>vvc_instance_idx</p></td>
+<td><p>in</p></td>
+<td><p>integer</p></td>
+<td><p>Instance number of the VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>data_exp</p></td>
+<td><p>in</p></td>
+<td><p>std_logic_vector</p></td>
+<td><p>The data value to expect when reading the register.
+A mismatch results in an alert with severity
+‘alert_level’. This value is normalized to the data_port
+direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>stable_req</p></td>
+<td><p>in</p></td>
+<td><p>time</p></td>
+<td><p>The time that the expected data value should remain
+stable in the register</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>stable_req_from</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-from-point-in-time"><span class="std std-ref">t_from_point_in_time</span></a></p></td>
+<td><p>The point in time where stable_req starts</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>msg</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>A custom message to be appended in the log/alert</p></td>
+</tr>
+<tr class="row-even"><td><p>constant</p></td>
+<td><p>alert_level</p></td>
+<td><p>in</p></td>
+<td><p><a class="reference internal" href="types_pkg.html#t-alert-level"><span class="std std-ref">t_alert_level</span></a></p></td>
+<td><p>Sets the severity for the alert. Default value is ERROR.</p></td>
+</tr>
+<tr class="row-odd"><td><p>constant</p></td>
+<td><p>scope</p></td>
+<td><p>in</p></td>
+<td><p>string</p></td>
+<td><p>Describes the scope from which the log/alert originates.
+Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Examples:</span>
+<span class="n">gpio_expect_stable</span><span class="p">(</span><span class="n">GPIO_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;0D&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">us</span><span class="p">,</span><span class="w"> </span><span class="n">FROM_NOW</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Read UART RX until CR is found and check that it remains stable for 100 us&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ERROR</span><span class="p">,</span><span class="w"> </span><span class="n">C_SCOPE</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="activity-watchdog">
+<h3>Activity Watchdog<a class="headerlink" href="#activity-watchdog" title="Link to this heading"></a></h3>
+<p>The VVCs support a centralized VVC activity register which the activity watchdog uses to monitor the VVC activities. The VVCs will
+register their presence to the VVC activity register at start-up, and report when ACTIVE and INACTIVE, using dedicated VVC
+activity register methods, and trigger the global_trigger_vvc_activity_register signal during simulations. The activity watchdog
+is continuously monitoring the VVC activity register for VVC inactivity and raises an alert if no VVC activity is registered
+within the specified timeout period.</p>
+<p>Include <code class="docutils literal notranslate"><span class="pre">activity_watchdog(num_exp_vvc,</span> <span class="pre">timeout,</span> <span class="pre">[alert_level,</span> <span class="pre">[msg]])</span></code> in the testbench to start using the activity watchdog.
+Note that setting the exact number of expected VVCs in the VVC activity register can be omitted by setting num_exp_vvc = 0.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-activity-watchdog"><span class="std std-ref">Essential Mechanisms - Activity Watchdog</span></a>.</p>
+</section>
+<section id="transaction-info">
+<h3>Transaction Info<a class="headerlink" href="#transaction-info" title="Link to this heading"></a></h3>
+<p>This VVC supports transaction info, a UVVM concept for distributing transaction information in a controlled manner within the
+complete testbench environment. The transaction info may be used in many different ways, but the main purpose is to share
+information directly from the VVC to a DUT model.</p>
+<table class="docutils align-default" id="id12">
+<caption><span class="caption-text">GPIO transaction info record fields. Transaction Type: t_base_transaction (BT) - accessible via <strong>shared_gpio_vvc_transaction_info.bt</strong></span><a class="headerlink" href="#id12" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Info field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operation</p></td>
+<td><p>t_operation</p></td>
+<td><p>NO_OPERATION</p></td>
+<td><p>Current VVC operation, e.g. INSERT_DELAY,
+POLL_UNTIL, READ, WRITE</p></td>
+</tr>
+<tr class="row-odd"><td><p>data</p></td>
+<td><p>std_logic_vector(1023 downto
+0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Data of the GPIO get or set transaction</p></td>
+</tr>
+<tr class="row-even"><td><p>data_exp</p></td>
+<td><p>std_logic_vector(1023 downto
+0)</p></td>
+<td><p>0x0</p></td>
+<td><p>Data of the GPIO check or expect transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p>vvc_meta</p></td>
+<td><p>t_vvc_meta</p></td>
+<td><p>C_VVC_META_DEFAULT</p></td>
+<td><p>VVC meta data of the executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>-&gt; msg</p></td>
+<td><p>string</p></td>
+<td><p>“”</p></td>
+<td><p>Message of executing VVC command</p></td>
+</tr>
+<tr class="row-odd"><td><p>-&gt; cmd_idx</p></td>
+<td><p>integer</p></td>
+<td><p>-1</p></td>
+<td><p>Command index of executing VVC command</p></td>
+</tr>
+<tr class="row-even"><td><p>transaction_status</p></td>
+<td><p>t_transaction_status</p></td>
+<td><p>INACTIVE</p></td>
+<td><p>Set to INACTIVE, IN_PROGRESS, FAILED or
+SUCCEEDED during a transaction</p></td>
+</tr>
+</tbody>
+</table>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-transaction-info"><span class="std std-ref">Essential Mechanisms - Distribution of Transaction Info</span></a>.</p>
+</section>
+<section id="scoreboard">
+<h3>Scoreboard<a class="headerlink" href="#scoreboard" title="Link to this heading"></a></h3>
+<p>This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls,
+i.e. gpio_get(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the
+TO_SB parameter is applied. The GPIO scoreboard is accessible from the testbench as a shared variable GPIO_VVC_SB, located in the
+vvc_methods_pkg.vhd, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">GPIO_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="n">C_GPIO_VVC_IDX</span><span class="p">,</span><span class="w"> </span><span class="n">pad_gpio_sb</span><span class="p">(</span><span class="n">v_expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Adding expected&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The GPIO scoreboard is per default a 32 bits wide standard logic vector. When sending expected data to the scoreboard, where the
+data width is smaller than the default scoreboard width, we recommend zero-padding the data with the pad_gpio_sb() function, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">GPIO_VVC_SB</span><span class="p">.</span><span class="n">add_expected</span><span class="p">(</span><span class="o">&lt;</span><span class="n">GPIO</span><span class="w"> </span><span class="n">VVC</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="n">number</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">pad_gpio_sb</span><span class="p">(</span><span class="o">&lt;</span><span class="n">exp</span><span class="w"> </span><span class="n">data</span><span class="o">&gt;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="vip_scoreboard.html#vip-scoreboard"><span class="std std-ref">Bitvis VIP Scoreboard</span></a> for a complete list of available commands and additional information. All of the listed Generic
+Scoreboard commands are available for the GPIO VVC scoreboard using the GPIO_VVC_SB.</p>
+</section>
+<section id="unwanted-activity-detection">
+<h3>Unwanted Activity Detection<a class="headerlink" href="#unwanted-activity-detection" title="Link to this heading"></a></h3>
+<p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
+not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
+VVC issues an alert.</p>
+<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To disable this feature in the testbench, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_gpio_vvc_config</span><span class="p">(</span><span class="n">C_VVC_INDEX</span><span class="p">).</span><span class="n">unwanted_activity_severity</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">NO_ALERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>For GPIO VVC, the unwanted activity detection is disabled by default with severity NO_ALERT.</p>
+<p>When the unwanted activity detection is enabled, the GPIO set/get/check methods would not work as expected. To use these VVC
+methods, the unwanted activity detection must be disabled.</p>
+<p>More information can be found in <a class="reference internal" href="vvc_framework.html#vvc-framework-unwanted-activity"><span class="std std-ref">Essential Mechanisms - Unwanted Activity Detection</span></a>.</p>
+</section>
+<section id="id10">
+<h3>Compilation<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>The GPIO VVC must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+<li><p>UVVM VVC Framework</p></li>
+<li><p>Bitvis VIP Scoreboard</p></li>
+<li><p>GPIO BFM</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the GPIO VVC, assure that uvvm_util, uvvm_vvc_framework and bitvis_vip_scoreboard have been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id13">
+<caption><span class="caption-text">Compile order for the GPIO VVC</span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_gpio</p></td>
+<td><p>gpio_bfm_pkg.vhd</p></td>
+<td><p>GPIO BFM</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gpio</p></td>
+<td><p>transaction_pkg.vhd</p></td>
+<td><p>GPIO transaction package with DTT types,
+constants, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gpio</p></td>
+<td><p>vvc_cmd_pkg.vhd</p></td>
+<td><p>GPIO VVC command types and operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gpio</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_target_support_pkg.vhd</p></td>
+<td><p>UVVM VVC target support package, compiled into
+this VVC library</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gpio</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd</p></td>
+<td><p>Common UVVM framework methods compiled into the
+this VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gpio</p></td>
+<td><p>vvc_sb_pkg.vhd</p></td>
+<td><p>GPIO VVC scoreboard</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gpio</p></td>
+<td><p>vvc_methods_pkg.vhd</p></td>
+<td><p>GPIO VVC methods</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gpio</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_queue_pkg.vhd</p></td>
+<td><p>UVVM queue package for this VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gpio</p></td>
+<td><p>../uvvm_vvc_framework/src_target_dependent/td_vvc_entity_support_pkg.vhd</p></td>
+<td><p>UVVM VVC entity support compiled into this
+VVC library</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_gpio</p></td>
+<td><p>gpio_vvc.vhd</p></td>
+<td><p>GPIO VVC</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_gpio</p></td>
+<td><p>vvc_context.vhd</p></td>
+<td><p>GPIO VVC context file</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id11">
+<h4>Simulator compatibility and setup<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -120,6 +1655,8 @@ not limited to the warranties of merchantability, fitness for a particular purpo
 authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
 otherwise, arising from, out of or in connection with this IP.</p>
 </div>
+</section>
+</section>
 </section>
 </section>
 

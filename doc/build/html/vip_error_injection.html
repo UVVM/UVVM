@@ -1,21 +1,23 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bitvis VIP Error Injection &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -60,7 +62,34 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_axilite.html">Bitvis VIP AXI4-Lite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axistream.html">Bitvis VIP AXI4-Stream</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_clock_generator.html">Bitvis VIP Clock Generator</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Error Injection</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bitvis VIP Error Injection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#entity">Entity</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generics">Generics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instantiation">Instantiation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-record">Configuration Record</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-injection-types">Error Injection Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bypass">BYPASS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#delay">DELAY</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jitter">JITTER</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pulse">PULSE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#invert">INVERT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stuck-at-old">STUCK_AT_OLD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stuck-at-new">STUCK_AT_NEW</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation">Compilation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simulator-compatibility-and-setup">Simulator compatibility and setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="vip_ethernet.html">Bitvis VIP Ethernet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_gmii.html">Bitvis VIP GMII</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_gpio.html">Bitvis VIP GPIO</a></li>
@@ -102,7 +131,526 @@
              
   <section id="bitvis-vip-error-injection">
 <span id="vip-error-injection"></span><h1>Bitvis VIP Error Injection<a class="headerlink" href="#bitvis-vip-error-injection" title="Link to this heading"></a></h1>
-<p>See <a class="reference external" href="https://github.com/UVVM/UVVM/tree/master/bitvis_vip_error_injection/doc/error_injection_QuickRef.pdf">error_injection_QuickRef.pdf</a></p>
+<section id="entity">
+<h2>Entity<a class="headerlink" href="#entity" title="Link to this heading"></a></h2>
+<p>The Error Injection VIP consists of two VHDL entities - a std_logic entity (error_injection_sl.vhd) and a std_logic_vector entity
+(error_injection_slv.vhd), and is used for inducing non protocol-dependent errors on single and vector signals.</p>
+<section id="generics">
+<h3>Generics<a class="headerlink" href="#generics" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GC_START_TIME</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><div class="line-block">
+<div class="line">The error injector will wait the specified
+time after initialization before starting to
+monitor signal events, and injecting error if
+configured to.</div>
+<div class="line">Note that default is 0 ns, i.e. not waiting
+after initialization.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>GC_INSTANCE_IDX</p></td>
+<td><p>natural</p></td>
+<td><p>1</p></td>
+<td><p>Instance number to assign the error injector</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="instantiation">
+<h3>Instantiation<a class="headerlink" href="#instantiation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>The Error Injection VIP can be used as a single instance or with multiple instances and can be used with std_logic
+(error_injection_sl entity) or vector (error_injection_slv entity).</p></li>
+<li><p>The default error injector behavior is in BYPASS mode, i.e. without any error injected to the signal.</p></li>
+<li><p>The error injection is controlled using a dedicated shared variable array, shared_ei_config(index), of type
+<a class="reference internal" href="#ei-configuration-record"><span class="std std-ref">t_error_injection_config</span></a>, where each error injector has its own dedicated array index.</p></li>
+<li><p>The error injection is disabled and set to bypass mode by setting the configuration to C_EI_CONFIG_DEFAULT.</p></li>
+</ul>
+<p>The provided example below shows how a typical UART error injection setup could be done, using an error_injection_sl entity for
+the UART RX signal line.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/example_ei_uart.png"><img alt="Example Error Injection UART" src="_images/example_ei_uart.png" style="width: 700pt;" /></a>
+</figure>
+<ol class="arabic simple">
+<li><p>Include the error injection package.</p></li>
+<li><p>Define the needed error injection configuration signal(s).</p></li>
+<li><p>Instantiate the error injector(s) needed.</p></li>
+<li><p>Set the error injection configurations.</p></li>
+</ol>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="k">library</span><span class="w"> </span><span class="nn">bitvis_vip_error_injection</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="nn">bitvis_vip_error_injection.error_injection_pkg.</span><span class="k">all</span><span class="p">;</span>
+
+<span class="p">...</span>
+
+<span class="k">constant</span><span class="w"> </span><span class="n">C_UART_TX_EI</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">natural</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Error injection instance index</span>
+<span class="k">signal</span><span class="w">   </span><span class="n">uart_tx</span><span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="p">;</span>
+<span class="k">signal</span><span class="w">   </span><span class="n">ei_uart_tx</span><span class="w">   </span><span class="o">:</span><span class="w"> </span><span class="kt">std_logic</span><span class="p">;</span>
+
+<span class="p">...</span>
+
+<span class="n">uart_tx_error_injector</span><span class="o">:</span><span class="w"> </span><span class="k">entity</span><span class="w"> </span><span class="nc">bitvis_vip_error_injection</span><span class="p">.</span><span class="n">error_injection_sl</span>
+<span class="k">generic</span><span class="w"> </span><span class="k">map</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">GC_START_TIME</span><span class="w">    </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">,</span>
+<span class="w">  </span><span class="n">GC_INSTANCE_IDX</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">C_UART_TX_EI</span>
+<span class="p">)</span>
+<span class="k">port</span><span class="w"> </span><span class="k">map</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">ei_in</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">uart_tx</span><span class="p">,</span>
+<span class="w">  </span><span class="n">ei_out</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ei_uart_tx</span>
+<span class="p">);</span>
+
+<span class="p">...</span>
+
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">).</span><span class="n">error_type</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">DELAY</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">).</span><span class="n">delay_min</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">).</span><span class="n">base_value</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+
+<span class="n">uart_transmit</span><span class="p">(</span><span class="n">UART_VVCT</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">TX</span><span class="p">,</span><span class="w"> </span><span class="mh">x&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Transmitting data&quot;</span><span class="p">);</span>
+
+<span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_UART_TX_EI</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">C_EI_CONFIG_DEFAULT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Set the configuration back to BYPASS when done</span>
+</pre></div>
+</div>
+<p>For more detailed examples see VHDL example ei_demo_tb.vhd, located in the tb folder.</p>
+</section>
+</section>
+<section id="configuration-record">
+<span id="ei-configuration-record"></span><h2>Configuration Record<a class="headerlink" href="#configuration-record" title="Link to this heading"></a></h2>
+<p>Accessible via <strong>shared_ei_config</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record element</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>error_type</p></td>
+<td><p><a class="reference internal" href="#t-error-injection-types"><span class="std std-ref">t_error_injection_types</span></a></p></td>
+<td><p>BYPASS</p></td>
+<td><p>Type of error to be injected to signal. No error
+is injected when set to BYPASS. (1)</p></td>
+</tr>
+<tr class="row-odd"><td><p>initial_delay_min</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Error injection start relative to initial signal
+event. (1)</p></td>
+</tr>
+<tr class="row-even"><td><p>initial_delay_max</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Setting the max parameter will generate a
+randomized initial timing parameter. (2)</p></td>
+</tr>
+<tr class="row-odd"><td><p>return_delay_min</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Error injection end relative to next signal
+event. (1,4)</p></td>
+</tr>
+<tr class="row-even"><td><p>return_delay_max</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Setting the max parameter will generate a
+randomized return timing parameter. (2,4)</p></td>
+</tr>
+<tr class="row-odd"><td><p>width_min</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>The width of an error injected pulse if error
+type PULSE is selected</p></td>
+</tr>
+<tr class="row-even"><td><p>width_max</p></td>
+<td><p>time</p></td>
+<td><p>0 ns</p></td>
+<td><p>Setting the max parameter will generate a
+randomized timing parameter. (2)</p></td>
+</tr>
+<tr class="row-odd"><td><p>interval</p></td>
+<td><p>positive</p></td>
+<td><p>1</p></td>
+<td><div class="line-block">
+<div class="line">Errors will be injected in this interval, e.g.
+1 for every signal event, 2 for every second
+signal event, etc. (3,5)</div>
+<div class="line">Interval = 1: SL will experience error
+injection on every second signal event, e.g.
+every rising edge.</div>
+<div class="line">SLV will experience error injection on every
+signal event.</div>
+<div class="line">Interval = 2: SL will experience error
+injection on every fourth signal event, e.g.
+every second rising edge.</div>
+<div class="line">SLV will experience error injection on every
+second signal event.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>base_value</p></td>
+<td><p>std_logic</p></td>
+<td><p>‘0’</p></td>
+<td><div class="line-block">
+<div class="line">The initial edge in an SL error injection will
+start on the transition from base_value to
+another value, e.g. from ‘0’ to ‘1’.</div>
+<div class="line">The return edge in an SL error injection will
+be the transition back to base_value. (6)</div>
+<div class="line">Note that setting base_value = ‘-’ will start
+SL error injection on first upcoming edge
+after configuration, regardless of input value</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>(1) See <a class="reference internal" href="#t-error-injection-types-parameters"><span class="std std-ref">Error Injection Types Parameters</span></a> for required configuration parameters
+for each error type.</p></li>
+<li><p>(2) Randomization is selected by setting the max parameter higher than the min parameter and will be in the range of min
+parameter to max parameter.</p></li>
+<li><p>(3) SL signal is handled with respect to a start and an end transition, and an error injection is activated at the start
+transition. SLV signal is handled with respect to a start transition, and the following transition will be treated as a new
+start transition.</p></li>
+<li><p>(4) SLV signal does not have a return_delay_min/max parameter.</p></li>
+<li><p>(5) Error injection interval will always start injection on the first signal event for any interval setting, followed by the
+configured interval, e.g. every second for interval = 2.</p></li>
+<li><p>(6) For initial and return edge definitions, see <a class="reference internal" href="#ei-bypass-example"><span class="std std-ref">BYPASS example</span></a>.</p></li>
+</ul>
+</div>
+<p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ei_config</span><span class="p">(</span><span class="n">C_EI_IDX</span><span class="p">).</span><span class="n">error_type</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">DELAY</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="error-injection-types">
+<span id="t-error-injection-types"></span><h2>Error Injection Types<a class="headerlink" href="#error-injection-types" title="Link to this heading"></a></h2>
+<p><strong>t_error_injection_types</strong></p>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Error</p></th>
+<th class="head"><p>std_logic</p></th>
+<th class="head"><p>std_logic_vector</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>BYPASS</p></td>
+<td><p>Signal is preserved and no error is injected</p></td>
+<td><p>As for std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>PULSE</p></td>
+<td><div class="line-block">
+<div class="line">Signal will experience a pulse of width “width”
+after a time of “initial_delay”. (1)</div>
+<div class="line">Note that the pulse value will be the value
+prior to initial event</div>
+</div>
+</td>
+<td><p>As for std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>DELAY</p></td>
+<td><div class="line-block">
+<div class="line">Signal will be skewed for a time of “initial_delay” on initial edge and on return edge. (1)</div>
+<div class="line">Any signal activity while error injection is
+active will override the error injection.</div>
+</div>
+</td>
+<td><p>As for std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>JITTER</p></td>
+<td><div class="line-block">
+<div class="line">As for DELAY, but with different values on edge
+delays</div>
+<div class="line">Note that only positive jitter is supported, and
+that reordering of positive and negative edges
+yield an invalid configuration and will not work</div>
+</div>
+</td>
+<td><p>Not applicable for vector signals</p></td>
+</tr>
+<tr class="row-even"><td><p>INVERT</p></td>
+<td><div class="line-block">
+<div class="line">The signal is inverted as long as the error
+injection configuration is set to INVERT.</div>
+<div class="line">Note that when error injection configuration is
+changed from INVERT, a new signal event is
+required for the new configuration to take
+effect</div>
+</div>
+</td>
+<td><p>As for std_logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>STUCK_AT_OLD</p></td>
+<td><div class="line-block">
+<div class="line">The signal will be stuck at the value it had
+prior to initial signal event, and released to
+the current signal value after the specified
+“width_min” time. (1)</div>
+<div class="line">Note that any signal event during STUCK_AT_OLD
+is ignored</div>
+</div>
+</td>
+<td><p>As for std_logic</p></td>
+</tr>
+<tr class="row-even"><td><p>STUCK_AT_NEW</p></td>
+<td><div class="line-block">
+<div class="line">The signal will be stuck at the value it had
+prior to initial signal event, and released to
+the current signal value after a specified
+“width_min” time. (1)</div>
+<div class="line">Note that any signal event during STUCK_AT_NEW
+is ignored</div>
+</div>
+</td>
+<td><p>As for std_logic</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>(1) Initial event is when a SL signal is at base_value (see <a class="reference internal" href="#ei-configuration-record"><span class="std std-ref">Configuration Record</span></a>) and changes signal level.
+The return event is when a SL signal is returning to its base_value. Note that vector signals only have initial events.
+See <a class="reference internal" href="#ei-bypass-example"><span class="std std-ref">BYPASS example</span></a>.</p></li>
+</ul>
+</div>
+</section>
+<section id="parameters">
+<span id="t-error-injection-types-parameters"></span><h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Error</p></th>
+<th class="head"><p>initial_delay_min</p></th>
+<th class="head"><p>initial_delay_max</p></th>
+<th class="head"><p>return_delay_min</p></th>
+<th class="head"><p>return_delay_max</p></th>
+<th class="head"><p>width_min</p></th>
+<th class="head"><p>width_max</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>BYPASS</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+</tr>
+<tr class="row-odd"><td><p>PULSE</p></td>
+<td><p>Required</p></td>
+<td><p>Optional</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Required</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-even"><td><p>DELAY</p></td>
+<td><p>Required</p></td>
+<td><p>Optional</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+</tr>
+<tr class="row-odd"><td><p>JITTER</p></td>
+<td><p>Required</p></td>
+<td><p>Optional</p></td>
+<td><p>Required</p></td>
+<td><p>Optional</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+</tr>
+<tr class="row-even"><td><p>INVERT</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+</tr>
+<tr class="row-odd"><td><p>STUCK_AT_OLD</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Required</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-even"><td><p>STUCK_AT_NEW</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Ignored</p></td>
+<td><p>Required</p></td>
+<td><p>Optional</p></td>
+</tr>
+</tbody>
+</table>
+<p>Note that a randomized error injection is selected by setting optional parameter “_max” /= 0 ns, and by setting “_max” &gt; “_min”.
+The randomization interval will be in the range of required parameter time to optional parameter time.
+The seeds used for generating randomized timing parameters are initialized with a unique string assigned to each error injection VIP.</p>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<p>Below follows a series of examples showing error configuration of a std_logic and a std_logic_vector type signal, respectively.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>In these examples the std_logic_signal is active high for 20 ns and active low for 20 ns, while the std_logic_vector signal
+is updated to a new value every 40 ns.</p></li>
+<li><p>JITTER is an invalid error injection type for vector signals and that the signal therefore is not error injected.</p></li>
+</ul>
+</div>
+<section id="bypass">
+<span id="ei-bypass-example"></span><h4>BYPASS<a class="headerlink" href="#bypass" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">C_EI_CONFIG_DEFAULT</span><span class="p">;</span>
+</pre></div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/example_bypass.png"><img alt="Example BYPASS" src="_images/example_bypass.png" style="width: 1000pt;" /></a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="delay">
+<h4>DELAY<a class="headerlink" href="#delay" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">error_type</span><span class="w">        </span><span class="o">:=</span><span class="w"> </span><span class="n">DELAY</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">initial_delay_min</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/example_delay.png"><img alt="Example DELAY" src="_images/example_delay.png" style="width: 1000pt;" /></a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="jitter">
+<h4>JITTER<a class="headerlink" href="#jitter" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">error_type</span><span class="w">        </span><span class="o">:=</span><span class="w"> </span><span class="n">JITTER</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">initial_delay_min</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">return_delay</span><span class="w">      </span><span class="o">:=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/example_jitter.png"><img alt="Example JITTER" src="_images/example_jitter.png" style="width: 1000pt;" /></a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="pulse">
+<h4>PULSE<a class="headerlink" href="#pulse" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">error_type</span><span class="w">        </span><span class="o">:=</span><span class="w"> </span><span class="n">PULSE</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">initial_delay_min</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">width_min</span><span class="w">         </span><span class="o">:=</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/example_pulse.png"><img alt="Example PULSE" src="_images/example_pulse.png" style="width: 1000pt;" /></a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="invert">
+<h4>INVERT<a class="headerlink" href="#invert" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">error_type</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">INVERT</span><span class="p">;</span>
+</pre></div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/example_invert.png"><img alt="Example INVERT" src="_images/example_invert.png" style="width: 1000pt;" /></a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="stuck-at-old">
+<h4>STUCK_AT_OLD<a class="headerlink" href="#stuck-at-old" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">error_type</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">STUCK_AT_OLD</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">width_min</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="mi">13</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+</pre></div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/example_stuck_at_old.png"><img alt="Example STUCK_AT_OLD" src="_images/example_stuck_at_old.png" style="width: 1000pt;" /></a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="stuck-at-new">
+<h4>STUCK_AT_NEW<a class="headerlink" href="#stuck-at-new" title="Link to this heading"></a></h4>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">error_type</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">STUCK_AT_NEW</span><span class="p">;</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">width_min</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="mi">35</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span><span class="w"> </span><span class="c1">-- SL</span>
+<span class="n">shared_ei_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">width_min</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span><span class="w"> </span><span class="c1">-- SLV</span>
+</pre></div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/example_stuck_at_new.png"><img alt="Example STUCK_AT_NEW" src="_images/example_stuck_at_new.png" style="width: 1000pt;" /></a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+</section>
+<section id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h2>
+<p>The Error Injection VIP must be compiled with VHDL-2008 or newer. It is dependent on the following libraries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UVVM Utility Library (UVVM-Util)</p></li>
+</ul>
+</div></blockquote>
+<p>Before compiling the Error Injection VIP, assure that uvvm_util has been compiled.</p>
+<p>See <a class="reference internal" href="vvc_framework.html#vvc-framework-compile-scripts"><span class="std std-ref">Essential Mechanisms - Compile Scripts</span></a> for information about compile scripts.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Compile order for the Error Injection VIP</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Compile to library</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bitvis_vip_error_injection</p></td>
+<td><p>error_injection_pkg.vhd</p></td>
+<td><p>Configuration declaration</p></td>
+</tr>
+<tr class="row-odd"><td><p>bitvis_vip_error_injection</p></td>
+<td><p>error_injection_slv.vhd</p></td>
+<td><p>Vector entity and error injection functionality</p></td>
+</tr>
+<tr class="row-even"><td><p>bitvis_vip_error_injection</p></td>
+<td><p>error_injection_sl.vhd</p></td>
+<td><p>std_logic entity, only needed when using error
+injection with std_logic signals</p></td>
+</tr>
+</tbody>
+</table>
+<section id="simulator-compatibility-and-setup">
+<h3>Simulator compatibility and setup<a class="headerlink" href="#simulator-compatibility-and-setup" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="uvvm_intro.html#uvvm-prerequisites"><span class="std std-ref">Prerequisites</span></a> for a list of supported simulators.</p></li>
+<li><p>For required simulator setup see <a class="reference internal" href="utility_library.html#util-simulator-compatibility"><span class="std std-ref">UVVM-Util Simulator compatibility and setup</span></a>.</p></li>
+</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Disclaimer: This IP and any part thereof are provided “as is”, without warranty of any kind, express or implied, including but
@@ -110,6 +658,8 @@ not limited to the warranties of merchantability, fitness for a particular purpo
 authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or
 otherwise, arising from, out of or in connection with this IP.</p>
 </div>
+</section>
+</section>
 </section>
 
 

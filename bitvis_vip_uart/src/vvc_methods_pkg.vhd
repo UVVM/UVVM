@@ -456,6 +456,8 @@ package body vvc_methods_pkg is
     variable has_raised_warning_if_vvc_bfm_conflict : inout boolean;
     constant scope                                  : in string
   ) is
+    variable v_seeds : t_positive_vector(0 to 1);
+    variable v_rand  : real;
   begin
     if probability /= -1.0 then
       check_value_in_range(probability, 0.0, 1.0, tb_error, "Verify probability value within range 0.0 - 1.0.", scope, ID_NEVER);
@@ -466,7 +468,11 @@ package body vvc_methods_pkg is
         has_raised_warning_if_vvc_bfm_conflict := true;
       end if;
 
-      bfm_configured_error_injection_setting := (random(0.0, 1.0) <= probability);
+      -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+      shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+      -- Use the updated seeds to generate a random real number
+      random(0.0, 1.0, v_seeds(0), v_seeds(1), v_rand);
+      bfm_configured_error_injection_setting := (v_rand <= probability);
     end if;
   end procedure determine_error_injection;
 

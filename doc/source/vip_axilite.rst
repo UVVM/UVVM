@@ -400,12 +400,16 @@ t_axilite_read_data_channel
 
 t_axprot
 ----------------------------------------------------------------------------------------------------------------------------------
-UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION, 
-PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION
+.. code-block::
+
+    UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION, 
+    PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION
 
 t_xresp
 ----------------------------------------------------------------------------------------------------------------------------------
-OKAY, SLVERR, DECERR, ILLEGAL
+.. code-block::
+
+    OKAY, SLVERR, DECERR, ILLEGAL
 
 
 Local BFM overloads
@@ -605,8 +609,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_axilite_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_axilite_vvc_config(1).bfm_config.clock_period := 10 ns;
+    shared_axilite_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_axilite_vvc_config(C_VVC_IDX).bfm_config.clock_period := 10 ns;
 
 Status Record
 ==================================================================================================================================
@@ -620,16 +624,6 @@ Methods
 * See :ref:`vvc_framework_methods` for procedures which are common to all VVCs.
 * It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.
 * All parameters in brackets are optional.
-
-.. caution::
-
-    Orange description is preliminary.
-
-.. raw:: html
-
-    <style> .orange {color:orange} </style>
-
-.. role:: orange
 
 
 .. _axilite_write_vvc:
@@ -684,8 +678,8 @@ AXI4-Lite procedures in axilite_channel_handler_pkg.vhd.
 
 The value read from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the read 
 data will be stored in the VVC for a potential future fetch (see example with fetch_result below). 
-:orange:`If the data_routing is set to TO_SB, the read data will be sent to the AXI4-Lite VVC dedicated scoreboard where it will be 
-checked against the expected value (provided by the testbench).`
+If the data_routing is set to TO_SB, the read data will be sent to the AXI4-Lite VVC dedicated scoreboard where it will be 
+checked against the expected value (provided by the testbench).
 
 .. code-block::
 

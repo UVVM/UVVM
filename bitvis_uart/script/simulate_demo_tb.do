@@ -14,5 +14,5 @@
 # Run simulation
 #-----------------------------------------------------------------------
 vsim bitvis_uart.uart_vvc_demo_tb
-do wave.do
+do ../script/wave.do
 run -all

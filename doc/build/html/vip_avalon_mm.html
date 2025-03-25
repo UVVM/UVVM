@@ -1,21 +1,23 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bitvis VIP Avalon-MM &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -1458,8 +1460,8 @@ enabled with ERROR severity by default.</p></td>
 <p>cmd/result queue parameters in the configuration record are unused and will be removed in v3.0, use instead the entity generic constants.</p>
 </div>
 <p>The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g.</p>
-<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_avalon_mm_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
-<span class="n">shared_avalon_mm_vvc_config</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">use_waitrequest</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span>
+<div class="highlight-VHDL notranslate"><div class="highlight"><pre><span></span><span class="n">shared_avalon_mm_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">inter_bfm_delay</span><span class="p">.</span><span class="n">delay_in_time</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span>
+<span class="n">shared_avalon_mm_vvc_config</span><span class="p">(</span><span class="n">C_VVC_IDX</span><span class="p">).</span><span class="n">bfm_config</span><span class="p">.</span><span class="n">use_waitrequest</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">true</span><span class="p">;</span>
 </pre></div>
 </div>
 </section>
@@ -1499,11 +1501,7 @@ test sequencer. The record contents can be seen below:</p>
 <li><p>It is also possible to send a multicast to all instances of a VVC with ALL_INSTANCES as parameter for vvc_instance_idx.</p></li>
 <li><p>All parameters in brackets are optional.</p></li>
 </ul>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Orange description is preliminary.</p>
-</div>
-<style> .orange {color:orange} </style><section id="avalon-mm-write-vvc">
+<section id="avalon-mm-write-vvc">
 <span id="id3"></span><h4>avalon_mm_write()<a class="headerlink" href="#avalon-mm-write-vvc" title="Link to this heading"></a></h4>
 <p>Adds a write command to the Avalon-MM VVC executor queue, which will run as soon as all preceding commands have completed. When
 the command is scheduled to run, the executor calls the BFM <a class="reference internal" href="#avalon-mm-write-bfm"><span class="std std-ref">avalon_mm_write()</span></a> procedure.
@@ -1581,8 +1579,8 @@ Default value is C_VVC_CMD_SCOPE_DEFAULT.</p></td>
 command is scheduled to run, the executor calls the <a class="reference internal" href="#avalon-mm-read-bfm"><span class="std std-ref">avalon_mm_read()</span></a> procedure.</p>
 <p>The value read from DUT will not be returned in this procedure call since it is non-blocking for the sequencer/caller, but the read
 data will be stored in the VVC for a potential future fetch (see example with fetch_result below).
-<span class="orange">If the data_routing is set to TO_SB, the read data will be sent to the Avalon-MM VVC dedicated scoreboard where it will be
-checked against the expected value (provided by the testbench).</span></p>
+If the data_routing is set to TO_SB, the read data will be sent to the Avalon-MM VVC dedicated scoreboard where it will be
+checked against the expected value (provided by the testbench).</p>
 <p><strong>Using read pipeline:</strong>
 If vvc_config.use_read_pipeline has been set to true, the VVC will perform the read transaction using the BFM procedures
 <a class="reference internal" href="#avalon-mm-read-request-bfm"><span class="std std-ref">avalon_mm_read_request()</span></a> and <a class="reference internal" href="#avalon-mm-read-response-bfm"><span class="std std-ref">avalon_mm_read_response()</span></a>. First, the VVC executor will check if the number of

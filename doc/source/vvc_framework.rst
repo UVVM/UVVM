@@ -1489,6 +1489,52 @@ to allow users to add more profiles.
 | <user-defined>             |                                                                                                   |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 
+Note that the randomization seeds are initialized with a unique string assigned to each VVC. These seeds are automatically updated 
+when random data is generated.
+
+Managing randomization seeds in BFMs
+----------------------------------------------------------------------------------------------------------------------------------
+Flow Control signals (e.g. valid and ready) can be configured to be randomly de-asserted in some BFMs (e.g. AXI-Stream and Avalon-ST). 
+The randomization parameters in the BFM configuration determine the low duration and the probability of signal de-assertion. 
+The random() methods described in :ref:`basic_randomization` are used to generate random values for these parameters. To ensure that 
+the tests are repeatable and produce consistent results, the randomization seeds must be controlled. A standard dictionary-like linked 
+list is implemented for this purpose. The seeds are managed using the protected type **t_seeds**, declared in protected_types_pkg.vhd. 
+This type consists of the **t_seeds_item** record type, which holds the seeds, and an access type that points to a dynamically allocated 
+t_seeds_item. The seeds are stored in a record using a unique string (scope and instance_name) assigned to each BFM procedure as keys. 
+To facilitate seed management, two subprograms are declared in the t_seeds protected type:
+
+``set_rand_seeds()``- sets randomization seeds from a string.
+
+``update_and_get_seeds()``- updates and get the seeds from the linked list.
+
+A global shared variable **shared_rand_seeds_register** of type t_seeds is declared in global_signals_and_shared_variables_pkg.vhd 
+to allow common access to the seeds from different BFM procedure calls, as shown below.
+
+.. code-block::
+
+    shared variable shared_rand_seeds_register : t_seeds;
+
+The randomization steps used to control the seeds in BFMs are as follow:
+
+    #. When a BFM procedure (e.g. axistream_transmit() / axistream_receive()) is invoked for the first time, there is no entry for the 
+       BFM in the list. Generate seeds based on scope and instance_name using the set_rand_seeds() method. Store the generated seeds 
+       in the linked list, with scope and instance_name as keys.
+    #. Generate a random value using the random() procedure defined in the methods package.
+    #. When the same BFM procedure is invoked again, the previously stored seeds can be retrieved with scope and instance_name as keys. 
+       Update the seeds and generate a new random value.
+
+The handling of randomization seeds is hidden from the user and performed automatically. Therefore, the user does not require to change or 
+modify testbenches to control the randomization seeds. If a new BFM requires this functionality, it only needs to invoke the 
+update_and_get_seeds() procedure from the global shared variable with suitable parameters and use the random() procedure with the generated 
+seeds whenever a randomized method is used, as shown below:
+
+.. code-block::
+
+    -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+    shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+    random(1, config.valid_low_max_random_duration, v_seeds(0), v_seeds(1), v_valid_low_duration);
+
+
 VVC Command Syntax
 ----------------------------------------------------------------------------------------------------------------------------------
 See :ref:`vvc_framework_vvc_parameters_and_sequence` for parameter sequence and options.
@@ -1977,8 +2023,48 @@ t_vvc_cmd_record
 ----------------------------------------------------------------------------------------------------------------------------------
 Record type used for relaying a command from the testbench sequencer to the VVC. The record contains fields needed in the common 
 UVVM procedures (listed under the "Common UVVM fields" comment), and VVC specific fields needed to relay data to the VVC executor. 
+There is a default constant for this type called C_VVC_CMD_DEFAULT in this package.
+
+The VVC mandatory data fields are the following:
+
++----------------------------+---------------------------------------------------------------------------------------------------+
+| Record element             | Description                                                                                       |
++============================+===================================================================================================+
+| operation                  | Commanded VVC operation                                                                           |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| command_type               | Determines whether it is an immediate or queued command. Immediate commands are handled by the    |
+|                            | Interpreter and queued commands by the Executor.                                                  |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| proc_call                  | Procedure call used in log messages.                                                              |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| msg                        | User-defined message used in log messages.                                                        |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| msg_id                     | Message ID used in enable_log_msg and disable_log_msg commands.                                   |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| quietness                  | Whether to print or not a log message when using enable_log_msg and disable_log_msg commands.     |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| data_routing               | Where to store the data from read/receive commands.                                               |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| alert_level                | Alert level when data does not match in check/expect commands.                                    |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| parent_msg_id_panel        | Message ID panel from the parent HVVC which is used to print log messages in the lower-level VVC. |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| delay                      | Delay in time units for the insert_delay command.                                                 |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| cmd_idx                    | Command index.                                                                                    |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| gen_integer_array          | | Generic integer array (0 to 1).                                                                 |
+|                            | | (0) Used as delay in clock cycles in the insert_delay command.                                  |
+|                            | | (0) Used as wanted cmd_idx in the fetch_result command.                                         |
+|                            | | (0) Used as wanted cmd_idx in old await_completion and await_any_completion commands. DEPRECATED|
+|                            | | (1) Used awaiting_completion_idx in old await_any_completion command. DEPRECATED.               |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| gen_boolean                | Generic boolean. Used in old await_completion command. DEPRECATED.                                |
++----------------------------+---------------------------------------------------------------------------------------------------+
+| timeout                    | Timeout used in old await_completion command. DEPRECATED.                                         |
++----------------------------+---------------------------------------------------------------------------------------------------+
+
 The VVC specific data fields should contain any data fields that the BFM procedures might need, e.g. data, address, timeouts etc. 
-There is also a default for this type called C_VVC_CMD_DEFAULT in this package.
 
 Constants
 ----------------------------------------------------------------------------------------------------------------------------------

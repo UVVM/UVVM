@@ -32,6 +32,9 @@ package global_signals_and_shared_variables_pkg is
   shared variable shared_uvvm_status  : t_uvvm_status  := C_UVVM_STATUS_DEFAULT;
   shared variable shared_msg_id_panel : t_msg_id_panel := C_MSG_ID_PANEL_DEFAULT;
 
+  -- Randomization seeds
+  shared variable shared_rand_seeds_register : t_seeds;
+
   -- UVVM internal shared variables
   shared variable shared_initialised_util        : boolean                                         := false;
   shared variable shared_log_file_name_is_set    : boolean                                         := false;

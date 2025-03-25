@@ -2,6 +2,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.11
+----------
+Released: 2025-03-25
+- Updated vvc_generator.py to add missing delta cycle needed to update the last_cmd_idx_executed when not using transaction info.
+
 v2.12.10
 ----------
 Released: 2024-10-08

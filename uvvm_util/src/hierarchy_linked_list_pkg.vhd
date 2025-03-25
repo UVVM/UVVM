@@ -575,10 +575,6 @@ package body hierarchy_linked_list_pkg is
           tee(OUTPUT, v_info);
           tee(ALERT_FILE, v_info);
           writeline(LOG_FILE, v_info);
-        else
-          if v_info /= null then
-            deallocate(v_info);
-          end if;
         end if;
 
         if (alert_level /= NO_ALERT) and (alert_level /= NOTE) and (alert_level /= TB_NOTE) and (alert_level /= MANUAL_CHECK) then
@@ -596,6 +592,10 @@ package body hierarchy_linked_list_pkg is
           end if;
         end if;
 
+      end if;
+
+      if v_info /= null then
+        deallocate(v_info);
       end if;
 
     end procedure;

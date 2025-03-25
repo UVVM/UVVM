@@ -4,150 +4,194 @@ Type definitions used in the Utility Library, defined in types_pkg.vhd
 
 t_alert_level
 ----------------------------------------------------------------------------------------------------------------------------------
-NO_ALERT, NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK, ERROR, TB_ERROR, FAILURE, TB_FAILURE
+.. code-block::
+
+    NO_ALERT, NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK, ERROR, TB_ERROR, FAILURE, TB_FAILURE
 
 
 .. _t_attention:
 
 t_attention
 ----------------------------------------------------------------------------------------------------------------------------------
-REGARD, EXPECT, IGNORE
+.. code-block::
+
+    REGARD, EXPECT, IGNORE
 
 
 .. _t_match_strictness:
 
 t_match_strictness
 ----------------------------------------------------------------------------------------------------------------------------------
-MATCH_STD, MATCH_STD_INCL_Z, MATCH_EXACT, MATCH_STD_INCL_ZXUW
+.. code-block::
+
+    MATCH_STD, MATCH_STD_INCL_Z, MATCH_EXACT, MATCH_STD_INCL_ZXUW
 
 
 .. _t_format_spaces:
 
 t_format_spaces
 ----------------------------------------------------------------------------------------------------------------------------------
-KEEP_LEADING_SPACE, SKIP_LEADING_SPACE
+.. code-block::
+
+    KEEP_LEADING_SPACE, SKIP_LEADING_SPACE
 
 
 .. _t_truncate_string:
 
 t_truncate_string
 ----------------------------------------------------------------------------------------------------------------------------------
-ALLOW_TRUNCATE, DISALLOW_TRUNCATE
+.. code-block::
+
+    ALLOW_TRUNCATE, DISALLOW_TRUNCATE
 
 
 .. _t_radix:
 
 t_radix
 ----------------------------------------------------------------------------------------------------------------------------------
-BIN, HEX, DEC, HEX_BIN_IF_INVALID
+.. code-block::
 
-HEX_BIN_IF_INVALID means hexadecimal, unless there are the vector contains any U, X, Z or W, in which case it is also logged in 
-binary radix.
+    BIN, HEX, DEC, HEX_BIN_IF_INVALID
+
+.. note::
+
+    HEX_BIN_IF_INVALID means hexadecimal, unless there are the vector contains any U, X, Z or W, in which case it is also logged in 
+    binary radix.
 
 
 .. _t_radix_prefix:
 
 t_radix_prefix
 ----------------------------------------------------------------------------------------------------------------------------------
-EXCL_RADIX, INCL_RADIX
+.. code-block::
+
+    EXCL_RADIX, INCL_RADIX
 
 
 .. _t_ascii_allow:
 
 t_ascii_allow
 ----------------------------------------------------------------------------------------------------------------------------------
-ALLOW_ALL, ALLOW_PRINTABLE_ONLY
+.. code-block::
+
+    ALLOW_ALL, ALLOW_PRINTABLE_ONLY
 
 
 .. _t_blocking_mode:
 
 t_blocking_mode
 ----------------------------------------------------------------------------------------------------------------------------------
-BLOCKING, NON_BLOCKING
+.. code-block::
+
+    BLOCKING, NON_BLOCKING
 
 
 .. _t_format_zeros:
 
 t_format_zeros
 ----------------------------------------------------------------------------------------------------------------------------------
-KEEP_LEADING_0, SKIP_LEADING_0
+.. code-block::
+
+    KEEP_LEADING_0, SKIP_LEADING_0
 
 
 .. _t_from_point_in_time:
 
 t_from_point_in_time
 ----------------------------------------------------------------------------------------------------------------------------------
-FROM_NOW, FROM_LAST_EVENT
+.. code-block::
+
+    FROM_NOW, FROM_LAST_EVENT
 
 
 .. _t_log_destination:
 
 t_log_destination
 ----------------------------------------------------------------------------------------------------------------------------------
-CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY
+.. code-block::
+
+    CONSOLE_AND_LOG, CONSOLE_ONLY, LOG_ONLY
 
 
 .. _t_log_format:
 
 t_log_format
 ----------------------------------------------------------------------------------------------------------------------------------
-FORMATTED, UNFORMATTED
+.. code-block::
+
+    FORMATTED, UNFORMATTED
 
 
 .. _t_log_if_block_empty:
 
 t_log_if_block_empty
 ----------------------------------------------------------------------------------------------------------------------------------
-WRITE_HDR_IF_BLOCK_EMPTY, SKIP_LOG_IF_BLOCK_EMPTY, NOTIFY_IF_BLOCK_EMPTY
+.. code-block::
+
+    WRITE_HDR_IF_BLOCK_EMPTY, SKIP_LOG_IF_BLOCK_EMPTY, NOTIFY_IF_BLOCK_EMPTY
 
 
 .. _t_quietness:
 
 t_quietness
 ----------------------------------------------------------------------------------------------------------------------------------
-NON_QUIET, QUIET
+.. code-block::
+
+    NON_QUIET, QUIET
 
 
 .. _t_identifier_option:
 
 t_identifier_option
 ----------------------------------------------------------------------------------------------------------------------------------
-ENTRY_NUM, POSITION
+.. code-block::
+
+    ENTRY_NUM, POSITION
 
 
 .. _t_range_option:
 
 t_range_option
 ----------------------------------------------------------------------------------------------------------------------------------
-SINGLE, AND_LOWER, AND_HIGHER
+.. code-block::
+
+    SINGLE, AND_LOWER, AND_HIGHER
 
 
 .. _t_vvc_select:
 
 t_vvc_select
 ----------------------------------------------------------------------------------------------------------------------------------
-ANY_OF, ALL_OF, ALL_VVCS
+.. code-block::
+
+    ANY_OF, ALL_OF, ALL_VVCS
 
 
 .. _t_list_action:
 
 t_list_action
 ----------------------------------------------------------------------------------------------------------------------------------
-KEEP_LIST, CLEAR_LIST
+.. code-block::
+
+    KEEP_LIST, CLEAR_LIST
 
 
 .. _t_bfm_sync:
 
 t_bfm_sync
 ----------------------------------------------------------------------------------------------------------------------------------
-SYNC_ON_CLOCK_ONLY, SYNC_WITH_SETUP_AND_HOLD
+.. code-block::
+
+    SYNC_ON_CLOCK_ONLY, SYNC_WITH_SETUP_AND_HOLD
 
 
 .. _t_bfm_delay_type:
 
 t_bfm_delay_type
 ----------------------------------------------------------------------------------------------------------------------------------
-NO_DELAY, TIME_FINISH2START, TIME_START2START
+.. code-block::
+
+    NO_DELAY, TIME_FINISH2START, TIME_START2START
 
 
 .. _t_inter_bfm_delay:
@@ -169,14 +213,18 @@ t_inter_bfm_delay
 
 t_order
 ----------------------------------------------------------------------------------------------------------------------------------
-INTERMEDIATE, FINAL
+.. code-block::
+
+    INTERMEDIATE, FINAL
 
 
 .. _t_flag_returning:
 
 t_flag_returning
 ----------------------------------------------------------------------------------------------------------------------------------
-KEEP_UNBLOCKED, RETURN_TO_BLOCK
+.. code-block::
+
+    KEEP_UNBLOCKED, RETURN_TO_BLOCK
 
 
 .. _t_watchdog_ctrl:
@@ -202,14 +250,18 @@ t_watchdog_ctrl
 
 t_alert_counters
 ----------------------------------------------------------------------------------------------------------------------------------
-array (NOTE to :ref:`t_alert_level`'right) of natural;
+.. parsed-literal::
+
+    array (NOTE to :ref:`t_alert_level`'right) of natural
 
 
 .. _t_normalization_mode:
 
 t_normalization_mode
 ----------------------------------------------------------------------------------------------------------------------------------
-ALLOW_WIDER, ALLOW_NARROWER, ALLOW_WIDER_NARROWER, ALLOW_EXACT_ONLY
+.. code-block::
+
+    ALLOW_WIDER, ALLOW_NARROWER, ALLOW_WIDER_NARROWER, ALLOW_EXACT_ONLY
 
 .. note::
 
@@ -220,46 +272,60 @@ ALLOW_WIDER, ALLOW_NARROWER, ALLOW_WIDER_NARROWER, ALLOW_EXACT_ONLY
 
 t_data_routing
 ----------------------------------------------------------------------------------------------------------------------------------
-NA, TO_SB, TO_BUFFER, FROM_BUFFER, TO_RECEIVE_BUFFER
+.. code-block::
+
+    NA, TO_SB, TO_BUFFER, FROM_BUFFER, TO_RECEIVE_BUFFER
 
 
 .. _t_report_alert_counters:
 
 t_report_alert_counters
 ----------------------------------------------------------------------------------------------------------------------------------
-NO_REPORT, REPORT_ALERT_COUNTERS, REPORT_ALERT_COUNTERS_FINAL
+.. code-block::
+
+    NO_REPORT, REPORT_ALERT_COUNTERS, REPORT_ALERT_COUNTERS_FINAL
 
 
 .. _t_report_sb:
 
 t_report_sb
 ----------------------------------------------------------------------------------------------------------------------------------
-NO_REPORT, REPORT_SCOREBOARDS
+.. code-block::
+
+    NO_REPORT, REPORT_SCOREBOARDS
 
 
 .. _t_report_vvc:
 
 t_report_vvc
 ----------------------------------------------------------------------------------------------------------------------------------
-NO_REPORT, REPORT_VVCS
+.. code-block::
+
+    NO_REPORT, REPORT_VVCS
 
 
 .. _t_byte_endianness:
 
 t_byte_endianness
 ----------------------------------------------------------------------------------------------------------------------------------
-LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT
+.. code-block::
+
+    LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT
 
 
 .. _t_test_status:
 
 t_test_status
 ----------------------------------------------------------------------------------------------------------------------------------
-NA, PASS, FAIL
+.. code-block::
+
+    NA, PASS, FAIL
 
 
 .. _t_extent_tickoff:
 
 t_extent_tickoff
 ----------------------------------------------------------------------------------------------------------------------------------
-LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF
+.. code-block::
+
+    LIST_SINGLE_TICKOFF, LIST_EVERY_TICKOFF

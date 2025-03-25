@@ -42,9 +42,6 @@ package axistream_bfm_pkg is
   constant C_MAX_TID_BITS   : positive := C_AXISTREAM_BFM_MAX_TID_BITS;
   constant C_MAX_TDEST_BITS : positive := C_AXISTREAM_BFM_MAX_TDEST_BITS;
 
-  constant C_RANDOM          : integer := -1;
-  constant C_MULTIPLE_RANDOM : integer := -2;
-
   type t_user_array is array (natural range <>) of std_logic_vector(C_MAX_TUSER_BITS - 1 downto 0);
   type t_strb_array is array (natural range <>) of std_logic_vector(C_MAX_TSTRB_BITS - 1 downto 0);
   type t_id_array is array (natural range <>) of std_logic_vector(C_MAX_TID_BITS - 1 downto 0);
@@ -695,6 +692,8 @@ package body axistream_bfm_pkg is
     variable v_timeout                      : boolean                                     := false;
     variable v_tready                       : std_logic; -- Sampled tready for the current clock cycle
     variable v_check_ok                     : boolean                                     := true;
+    variable v_seeds                        : t_positive_vector(0 to 1);
+    variable v_rand                         : real;
   begin
     v_check_ok := v_check_ok and check_value(axistream_if.tdata'length >= 8, TB_ERROR, "Sanity check: Check that tdata is at least one byte wide. Narrower tdata is not supported.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
     v_check_ok := v_check_ok and check_value(axistream_if.tdata'length mod 8 = 0, TB_ERROR, "Sanity check: Check that tdata is an integer number of bytes wide.", scope, ID_NEVER, msg_id_panel, C_PROC_CALL);
@@ -752,7 +751,9 @@ package body axistream_bfm_pkg is
         if config.valid_low_duration > 0 then
           v_valid_low_duration := config.valid_low_duration;
         elsif config.valid_low_duration = C_RANDOM then
-          v_valid_low_duration := random(1, config.valid_low_max_random_duration);
+          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+          random(1, config.valid_low_max_random_duration, v_seeds(0), v_seeds(1), v_valid_low_duration);
         end if;
 
         -- Deassert tvalid once per transmission on a specific word
@@ -764,12 +765,17 @@ package body axistream_bfm_pkg is
           end loop;
 
         -- Deassert tvalid multiple random times per transmission
-        elsif config.valid_low_at_word_num = C_MULTIPLE_RANDOM and random(0.0, 1.0) <= config.valid_low_multiple_random_prob then
-          while v_valid_low_cycle_count < v_valid_low_duration loop
-            v_valid_low_cycle_count := v_valid_low_cycle_count + 1;
-            wait until rising_edge(clk);
-            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-          end loop;
+        elsif config.valid_low_at_word_num = C_MULTIPLE_RANDOM then
+          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+          random(0.0, 1.0, v_seeds(0), v_seeds(1), v_rand);
+          if v_rand <= config.valid_low_multiple_random_prob then
+            while v_valid_low_cycle_count < v_valid_low_duration loop
+              v_valid_low_cycle_count := v_valid_low_cycle_count + 1;
+              wait until rising_edge(clk);
+              wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+            end loop;
+          end if;
         end if;
       end if;
 
@@ -1269,6 +1275,8 @@ package body axistream_bfm_pkg is
     variable v_time_of_rising_edge       : time                                        := -1 ns; -- time stamp for clk period checking
     variable v_time_of_falling_edge      : time                                        := -1 ns; -- time stamp for clk period checking
     variable v_sample_data_now           : boolean                                     := false;
+    variable v_seeds                     : t_positive_vector(0 to 1);
+    variable v_rand                      : real;
   begin
     if ext_proc_call = "" then
       -- Called directly from sequencer/VVC, log 'axistream_receive...'
@@ -1323,7 +1331,9 @@ package body axistream_bfm_pkg is
         if config.ready_low_duration > 0 then
           v_ready_low_duration := config.ready_low_duration;
         elsif config.ready_low_duration = C_RANDOM then
-          v_ready_low_duration := random(1, config.ready_low_max_random_duration);
+          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+          random(1, config.ready_low_max_random_duration, v_seeds(0), v_seeds(1), v_ready_low_duration);
         end if;
 
         -- Deassert tready once per transmission on a specific word
@@ -1353,13 +1363,18 @@ package body axistream_bfm_pkg is
           end loop;
 
         -- Deassert tready multiple random times per transmission
-        elsif config.ready_low_at_word_num = C_MULTIPLE_RANDOM and random(0.0, 1.0) <= config.ready_low_multiple_random_prob then
-          axistream_if.tready <= '0';
-          while v_ready_low_cycle_count < v_ready_low_duration loop
-            v_ready_low_cycle_count := v_ready_low_cycle_count + 1;
-            wait until rising_edge(clk);
-            wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
-          end loop;
+        elsif config.ready_low_at_word_num = C_MULTIPLE_RANDOM then
+          -- Search the randomization seeds register with the scope and instance_name attribute as keys. The updated seeds are stored in v_seeds.
+          shared_rand_seeds_register.update_and_get_seeds(scope, v_seeds'instance_name, v_seeds);
+          random(0.0, 1.0, v_seeds(0), v_seeds(1), v_rand);
+          if v_rand <= config.ready_low_multiple_random_prob then
+            axistream_if.tready <= '0';
+            while v_ready_low_cycle_count < v_ready_low_duration loop
+              v_ready_low_cycle_count := v_ready_low_cycle_count + 1;
+              wait until rising_edge(clk);
+              wait_on_bfm_sync_start(clk, config.bfm_sync, config.setup_time, config.clock_period, v_time_of_falling_edge, v_time_of_rising_edge);
+            end loop;
+          end if;
         end if;
       end if;
 

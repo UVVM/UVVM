@@ -92,9 +92,9 @@ check_value_in_range()
 Checks if min_value ≤ val ≤ max_value, and alerts with severity alert_level if val is outside the range. The result of the check 
 is returned as a boolean if the method is called as a function. ::
 
-    [boolean :=] check_value_in_range(value(u), min_value(u), max_value(u), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    [boolean :=] check_value_in_range(value(s), min_value(s), max_value(s), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    [boolean :=] check_value_in_range(value(int), min_value(int), max_value(int), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(u), min_value(u), max_value(u), [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
+    [boolean :=] check_value_in_range(value(s), min_value(s), max_value(s), [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
+    [boolean :=] check_value_in_range(value(int), min_value(int), max_value(int), [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
     [boolean :=] check_value_in_range(value(time), min_value(time), max_value(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     [boolean :=] check_value_in_range(value(real), min_value(real), max_value(real), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
@@ -119,6 +119,14 @@ is returned as a boolean if the method is called as a function. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
 |          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | radix              | in     | t_radix                      | Radix used in the log.                                  |
+|          |                    |        |                              | Default is DEC for integer and HEX_BIN_IF_INVALID for   |
+|          |                    |        |                              | signed and unsigned.                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | prefix             | in     | t_radix_prefix               | Include/exclude radix prefix in the log.                |
+|          |                    |        |                              | Default is EXCL_RADIX for integer and INCL_RADIX for    |
+|          |                    |        |                              | signed and unsigned.                                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -320,9 +328,9 @@ If the signal changes to the expected value before min_time, or the signal does 
     await_change_to_value(target(sl), exp(sl), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_change_to_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_change_to_value(target(bool), exp(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_change_to_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_change_to_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_change_to_value(target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change_to_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
+    await_change_to_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
+    await_change_to_value(target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
     await_change_to_value(target(real), exp(real), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
@@ -351,6 +359,14 @@ If the signal changes to the expected value before min_time, or the signal does 
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default                  |
 |          |                    |        |                              | value is shared_msg_id_panel.                                         |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | radix              | in     | t_radix                      | Radix used in the log.                                                |
+|          |                    |        |                              | Default is DEC for integer and HEX_BIN_IF_INVALID for signed and      |
+|          |                    |        |                              | unsigned.                                                             |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | prefix             | in     | t_radix_prefix               | Include/exclude radix prefix in the log.                              |
+|          |                    |        |                              | Default is EXCL_RADIX for integer and INCL_RADIX for signed and       |
+|          |                    |        |                              | unsigned.                                                             |
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
 
 .. code-block::
@@ -1033,7 +1049,8 @@ Returns a random value. The function uses and updates a global seed. ::
 | constant | time_resolution    | in     | time                         | Defines how many values can be generated between        |
 |          |                    |        |                              | min_value and max_value. If the given resolution is too |
 |          |                    |        |                              | small for the range, a TB_WARNING will be printed once. |
-|          |                    |        |                              | Default value is the simulator time resolution.         |
+|          |                    |        |                              | Default value is the smallest time unit between the min |
+|          |                    |        |                              | and max parameters.                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1043,8 +1060,9 @@ Returns a random value. The function uses and updates a global seed. ::
     v_slv  := random(v_slv'length);
     v_int  := random(1, 10);
     v_real := random(0.01, 0.03);
-    v_time := random(25 us, 50 us);     -- Generates random values with the default resolution of the simulator
-    v_time := random(25 us, 50 us, us); -- Generates random values with a resolution of 1 us
+    v_time := random(25 us, 50 us);         -- Generates random values with a resolution of 1 us
+    v_time := random(25 us, 50 us, ns);     -- Generates random values with a resolution of 1 ns
+    v_time := random(25 us, 50 us, 100 ns); -- Generates random values with a resolution of 100 ns
 
 
 random() - procedure
@@ -1067,7 +1085,8 @@ Sets v_target to a random value. The procedure uses and updates v_seed1 and v_se
 | constant | time_resolution    | in     | time                         | Defines how many values can be generated between        |
 |          |                    |        |                              | min_value and max_value. If the given resolution is too |
 |          |                    |        |                              | small for the range, a TB_WARNING will be printed once. |
-|          |                    |        |                              | Default value is the simulator time resolution.         |
+|          |                    |        |                              | Default value is the smallest time unit between the min |
+|          |                    |        |                              | and max parameters.                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | v_seed1            | inout  | positive                     | Randomization seed 1                                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1083,8 +1102,9 @@ Sets v_target to a random value. The procedure uses and updates v_seed1 and v_se
     random(v_seed1, v_seed2, v_slv);
     random(1, 10, v_seed1, v_seed2, v_int);
     random(0.01, 0.03, v_seed1, v_seed2, v_real);
-    random(25 us, 50 us, v_seed1, v_seed2, v_time);     -- Generates random values with the default resolution of the simulator
-    random(25 us, 50 us, us, v_seed1, v_seed2, v_time); -- Generates random values with a resolution of 1 us
+    random(25 us, 50 us, v_seed1, v_seed2, v_time);         -- Generates random values with a resolution of 1 us
+    random(25 us, 50 us, ns, v_seed1, v_seed2, v_time);     -- Generates random values with a resolution of 1 ns
+    random(25 us, 50 us, 100 ns, v_seed1, v_seed2, v_time); -- Generates random values with a resolution of 100 ns
 
 
 randomize()
@@ -1653,6 +1673,7 @@ falling edge. ::
 |          |                    |        |                              | | When NON_BLOCKING, the procedure starts the pulse and |
 |          |                    |        |                              |   schedules the end of the pulse so that the caller can |
 |          |                    |        |                              |   continue immediately.                                 |
+|          |                    |        |                              | | Default value is BLOCKING.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1671,7 +1692,6 @@ falling edge. ::
     -- Examples:
     gen_pulse(sl_1, 50 ns, BLOCKING, "Pulsing for 50 ns");
     gen_pulse(sl_1, '1', 50 ns, BLOCKING, "Pulsing for 50 ns");
-    gen_pulse(slv8, 50 ns, "Pulsing SLV for 50 ns", ALLOW_PULSE_CONTINUATION);
     gen_pulse(slv8, x"AB", clk100M, 2, "Pulsing SLV for 2 clock periods");
 
 

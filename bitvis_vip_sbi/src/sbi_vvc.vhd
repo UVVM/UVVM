@@ -229,6 +229,7 @@ begin
     variable v_normalised_addr                       : unsigned(GC_ADDR_WIDTH - 1 downto 0)         := (others => '0');
     variable v_normalised_data                       : std_logic_vector(GC_DATA_WIDTH - 1 downto 0) := (others => '0');
     variable v_msg_id_panel                          : t_msg_id_panel;
+    variable v_seeds                                 : t_positive_vector(0 to 1)                    := (1, 2);
 
   begin
     -- 0. Initialize the process prior to first command
@@ -242,6 +243,9 @@ begin
     SBI_VVC_SB.enable(GC_INSTANCE_IDX, "SBI VVC SB Enabled");
     SBI_VVC_SB.config(GC_INSTANCE_IDX, C_SB_CONFIG_DEFAULT);
     SBI_VVC_SB.enable_log_msg(GC_INSTANCE_IDX, ID_DATA);
+
+    -- Set the randomization seeds
+    set_rand_seeds(C_VVC_LABELS.scope, v_seeds(0), v_seeds(1));
 
     loop
 
@@ -297,7 +301,7 @@ begin
             -- Randomise data if applicable
             case v_cmd.randomisation is
               when RANDOM =>
-                v_cmd.data(GC_DATA_WIDTH - 1 downto 0) := std_logic_vector(random(GC_DATA_WIDTH));
+                random(v_seeds(0), v_seeds(1), v_cmd.data(GC_DATA_WIDTH - 1 downto 0));
               when RANDOM_FAVOUR_EDGES =>
                 null;                   -- Not implemented yet
               when others =>            -- NA

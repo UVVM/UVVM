@@ -2,6 +2,11 @@ Bitvis VIP Avalon-ST (Avalon-Stream) - Overview on Versions and Changes
 ==============================================================
 
 
+v4.0.0
+----------
+Released: 2025-03-25
+- Added random valid and ready configuration in BFM.
+
 v3.1.0
 ----------
 Released: 2024-09-19

@@ -95,7 +95,7 @@ package gpio_bfm_pkg is
   -- Perform a read operation, then compare the read value to the expected value.
   -- Verify that the read value has been stable for a certain time.
   procedure gpio_check_stable(
-    constant data_exp     : in std_logic_vector; -- '-' means don't care
+    constant data_exp     : in std_logic_vector;
     constant stable_req   : in time;
     constant msg          : in string;
     signal   data_port    : in std_logic_vector;
@@ -222,7 +222,7 @@ package body gpio_bfm_pkg is
   end procedure;
 
   procedure gpio_check_stable(
-    constant data_exp     : in std_logic_vector; -- '-' means don't care
+    constant data_exp     : in std_logic_vector;
     constant stable_req   : in time;
     constant msg          : in string;
     signal   data_port    : in std_logic_vector;
@@ -238,8 +238,8 @@ package body gpio_bfm_pkg is
     variable v_alert_radix : t_radix;
   begin
     for i in c_data_exp'range loop
-      -- Allow don't care in expected value and use match strictness from config for comparison
-      if c_data_exp(i) = '-' or check_value(data_port(i), c_data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
+      -- Use match strictness from config for comparison
+      if check_value(data_port(i), c_data_exp(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
         v_data_ok := true;
       else
         v_data_ok := false;

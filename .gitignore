@@ -36,7 +36,7 @@ __pycache__/
 # rst
 *.doctree
 *.pickle
-/doc/build/
+# /doc/build/
 
 release/hdlregression/
 

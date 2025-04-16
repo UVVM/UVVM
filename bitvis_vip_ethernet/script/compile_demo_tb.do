@@ -24,7 +24,7 @@ proc quietly { args } {
 if {[catch {eval "vsim -version"} message] == 0} {
   quietly set simulator_version [eval "vsim -version"]
   # puts "Version is: $simulator_version"
-  if {[regexp -nocase {modelsim} $simulator_version]} {
+  if {[regexp -nocase {modelsim} $simulator_version] | [regexp -nocase {questasim} $simulator_version]} {
     quietly set simulator "modelsim"
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"

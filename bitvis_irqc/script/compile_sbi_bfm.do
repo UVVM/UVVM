@@ -58,7 +58,7 @@ quietly quit -sim
 if {[catch {eval "vsim -version"} message] == 0} { 
   quietly set version [eval "vsim -version"]
   # puts "Version is: $version"
-  if {[regexp -nocase {modelsim} $version]} {
+  if {[regexp -nocase {modelsim} $simulator_version] || [regexp -nocase {questasim} $simulator_version]} {
     quietly set simulator "modelsim"
   } elseif {[regexp -nocase {aldec} $version]} {
     quietly set simulator "rivierapro"

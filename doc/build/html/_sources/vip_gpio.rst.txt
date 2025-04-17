@@ -413,10 +413,10 @@ certain time. There are different scenarios where we could check stability:
   d. To check that data remains stable after it is equal than expected, use gpio_expect_stable(FROM_NOW). Note that in this case 
      the 'stable_req_from' parameter does not have any influence since the event has not occurred. 
 
-.. image:: images/vip_gpio/checking_stability.png
-   :alt: Checking stability
-   :width: 600pt
-   :align: center
+.. .. image:: _images/vip_gpio/checking_stability.png
+..    :alt: Checking stability
+..    :width: 600pt
+..    :align: center
 
 
 .. include:: rst_snippets/subtitle_1_division.rst

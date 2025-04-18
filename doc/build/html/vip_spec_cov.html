@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bitvis VIP Specification Coverage &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -279,7 +277,8 @@ more testcases and Partial Coverage summaries for a DUT depending on complexity 
 Specification Coverage -&gt; ‘Partial Coverage’, and Test suite overall Specification Coverage -&gt; ‘Specification Coverage’</p></li>
 </ul>
 <figure class="align-center" id="id2">
-<a class="reference internal image-reference" href="_images/workflow.png"><img alt="Workflow" src="_images/workflow.png" style="width: 500pt;" /></a>
+<a class="reference internal image-reference" href="_images/workflow.png"><img alt="Workflow" src="_images/workflow.png" style="width: 500pt;" />
+</a>
 <figcaption>
 <p><span class="caption-text">Specification Coverage workflow</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
 </figcaption>
@@ -329,7 +328,8 @@ For a simple scenario with a single testcase, the Partial Coverage <code class="
 <code class="samp docutils literal notranslate"><span class="pre">(SC)</span></code> yield the same information, but the Specification Coverage potentially with fewer lines.</p></li>
 </ol>
 <figure class="align-center" id="fig-overview">
-<a class="reference internal image-reference" href="_images/concept.png"><img alt="Simplest possible Specification Coverage (note that Partial Coverage files only show the actual requirement coverage lines)" src="_images/concept.png" style="width: 1300pt;" /></a>
+<a class="reference internal image-reference" href="_images/concept.png"><img alt="Simplest possible Specification Coverage (note that Partial Coverage files only show the actual requirement coverage lines)" src="_images/concept.png" style="width: 1300pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -372,7 +372,8 @@ Coverage files. Then the Specification Coverage is generated exactly as before.<
 requirement will be tested. In these cases, the Requirement List must be extended to include the testcase in which a requirement will
 be tested, - as shown below. The example now shows more testcases than just tc_basic.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/requirement_list.png"><img alt="Requirement List" src="_images/requirement_list.png" style="width: 500pt;" /></a>
+<a class="reference internal image-reference" href="_images/requirement_list.png"><img alt="Requirement List" src="_images/requirement_list.png" style="width: 500pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -412,7 +413,8 @@ summary fail. This approach could for instance be used to qualify for a lab test
 remove all old Partial Coverage files before running your test suite generating new Partial Coverage files. The run_spec_cov.py option
 -clean may be used for this.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/requirement_list_or_listed.png"><img alt="Requirement List" src="_images/requirement_list_or_listed.png" style="width: 700pt;" /></a>
+<a class="reference internal image-reference" href="_images/requirement_list_or_listed.png"><img alt="Requirement List" src="_images/requirement_list_or_listed.png" style="width: 700pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -428,7 +430,8 @@ for instance be left out of from a reduced test suite to qualify for lab test on
 <p>This is basically the opposite of the above and is easy to achieve by just adding lines in the Requirement List for all wanted
 combinations of requirements and testcases. The example below states that UART_REQ_3 must pass in both tc_basic and tc_19k2.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/requirement_list_and_listed.png"><img alt="Requirement List" src="_images/requirement_list_and_listed.png" style="width: 300pt;" /></a>
+<a class="reference internal image-reference" href="_images/requirement_list_and_listed.png"><img alt="Requirement List" src="_images/requirement_list_and_listed.png" style="width: 300pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -444,7 +447,8 @@ requirements to multiple sub-requirements, or mapping of project requirements to
 whole lot of different things are tested. An example of that could be a UART requirement like the one shown below - with a single
 UART_REQ_GENERAL requirement.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/super_req.png"><img alt="Requirement List" src="_images/super_req.png" style="width: 350pt;" /></a>
+<a class="reference internal image-reference" href="_images/super_req.png"><img alt="Requirement List" src="_images/super_req.png" style="width: 350pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -452,7 +456,8 @@ UART_REQ_GENERAL requirement.</p>
 <p>If you want to split this into more specific requirements you have several options, with some potential options listed and illustrated
 below. a) Rename the requirements b) Extend the names c) Extend the names using a record like notation</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/requirement_split.png"><img alt="Requirement List" src="_images/requirement_split.png" style="width: 800pt;" /></a>
+<a class="reference internal image-reference" href="_images/requirement_split.png"><img alt="Requirement List" src="_images/requirement_split.png" style="width: 800pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -461,14 +466,16 @@ below. a) Rename the requirements b) Extend the names c) Extend the names using 
 <p>Showing this relationship is quite simple in UVVM, by creating a Map file which maps the original requirement to a set of
 sub-requirements.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/mapping_long_name.png"><img alt="Mapping" src="_images/mapping_long_name.png" style="width: 800pt;" /></a>
+<a class="reference internal image-reference" href="_images/mapping_long_name.png"><img alt="Mapping" src="_images/mapping_long_name.png" style="width: 800pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <p>Or even simpler just name the sub-requirements A,B,C,….</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/mapping_short_name.png"><img alt="Mapping" src="_images/mapping_short_name.png" style="width: 800pt;" /></a>
+<a class="reference internal image-reference" href="_images/mapping_short_name.png"><img alt="Mapping" src="_images/mapping_short_name.png" style="width: 800pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -485,7 +492,8 @@ or less matches that of the IP, but the requirement labels and combinations may 
 UART testbench in order just to get the “right” requirement labels. A much better approach is to map the project requirements to the
 UART IP requirements.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/requirement_list_ip.png"><img alt="Requirement List" src="_images/requirement_list_ip.png" style="width: 500pt;" /></a>
+<a class="reference internal image-reference" href="_images/requirement_list_ip.png"><img alt="Requirement List" src="_images/requirement_list_ip.png" style="width: 500pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -495,7 +503,8 @@ scenario as shown above. Here we can see that UART_REQ_B of the project matches 
 of the project is actually not covered by any single UART IP requirement, but in fact must include both UART_REQ_1 and UART_REQ_2. The
 mapping would for this case be as shown below.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/requirement_mapping_ip.png"><img alt="Requirement List" src="_images/requirement_mapping_ip.png" style="width: 350pt;" /></a>
+<a class="reference internal image-reference" href="_images/requirement_mapping_ip.png"><img alt="Requirement List" src="_images/requirement_mapping_ip.png" style="width: 350pt;" />
+</a>
 </figure>
 <div class="line-block">
 <div class="line"><br /></div>

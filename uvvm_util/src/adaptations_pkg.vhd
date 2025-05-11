@@ -292,6 +292,7 @@ package adaptations_pkg is
   constant C_FC_MAX_NUM_NEW_BINS                     : positive := 1000; -- Maximum number of bins which can be added using a single add_bins() call
   constant C_FC_MAX_PROC_CALL_LENGTH                 : positive := 100;  -- Maximum string length used for logging a single bin function
   constant C_FC_MAX_NAME_LENGTH                      : positive := 20;   -- Maximum string length used for coverpoint and bin names
+  constant C_FC_MAX_UCDB_NAME_LENGTH                 : positive := 50;   -- Maximum length of name+values string used when writing bins to UCDB
   constant C_FC_MAX_NUM_BIN_VALUES                   : positive := 10;   -- Maximum number of values that can be given in bin() and bin_transition()
   constant C_FC_MAX_NUM_COVERPOINTS                  : positive := 20;   -- Maximum number of coverpoints
   constant C_FC_DEFAULT_INITIAL_NUM_BINS_ALLOCATED   : positive := 1;    -- Default value used for the number of bins allocated when a coverpoint is created
@@ -507,7 +508,7 @@ package adaptations_pkg is
   -- SPI
   -- Constants for the maximum sizes to use in the VVC.
   constant C_SPI_VVC_CMD_DATA_MAX_LENGTH   : natural := 32;
-  constant C_SPI_VVC_DATA_ARRAY_WIDTH      : natural := 31; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
+  constant C_SPI_VVC_DATA_ARRAY_WIDTH      : natural := 32; -- Width of SPI VVC data array for SPI VVC and transaction package defaults.
   constant C_SPI_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
   constant C_SPI_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 

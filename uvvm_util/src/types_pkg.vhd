@@ -261,6 +261,8 @@ package types_pkg is
   constant C_DEPRECATE_SETTING               : t_deprecate_setting := DEPRECATE_ONCE;
   shared variable deprecated_subprogram_list : t_deprecate_list    := (others => (others => ' '));
 
+  type t_relational_operator is (LT, GT, EQ, LE, GE, NE);
+  type t_arithmetic_operator is (ADD, SUB, MULT, DIV);
 end package types_pkg;
 
 package body types_pkg is

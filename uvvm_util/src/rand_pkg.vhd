@@ -26,6 +26,7 @@ use work.adaptations_pkg.all;
 use work.string_methods_pkg.all;
 use work.global_signals_and_shared_variables_pkg.all;
 use work.methods_pkg.all;
+use work.vendor_rand_extension_pkg.all;
 
 package rand_pkg is
 
@@ -1273,6 +1274,12 @@ package rand_pkg is
       constant set_of_values : in integer_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
 
+    -- Questa 2025.2+ only
+    procedure excl_range(
+      constant min           : in integer;
+      constant max           : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
     procedure add_val_weight(
       constant value        : in integer;
       constant weight       : in natural;
@@ -1283,6 +1290,16 @@ package rand_pkg is
       constant max_value    : in integer;
       constant weight       : in natural;
       constant mode         : in t_weight_mode  := NA;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+      -- Questa 2025.2+ only
+    procedure vector_sum_min(
+      constant min        : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
+
+      -- Questa 2025.2+ only
+    procedure vector_sum_max(
+      constant max        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     ------------------------------------------------------------
@@ -1308,6 +1325,12 @@ package rand_pkg is
     procedure excl_val_real(
       constant set_of_values : in real_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+      -- Questa 2025.2+ only
+    procedure excl_range_real(
+      constant min           : in real;
+      constant max           : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure add_val_weight_real(
       constant value        : in real;
@@ -1349,6 +1372,12 @@ package rand_pkg is
     procedure excl_val_time(
       constant set_of_values : in time_vector;
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel);
+
+      -- Questa 2025.2+ only
+    procedure excl_range_time(
+      constant min           : in time;
+      constant max           : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel);
 
     procedure add_val_weight_time(
       constant value        : in time;
@@ -1465,6 +1494,94 @@ package rand_pkg is
       constant length       : positive;
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector;
+    
+    ------------------------------------------------------------
+    -- Get Value (Questa 2025.2+ only)
+    ------------------------------------------------------------
+    impure function get_value(
+      constant VOID : t_void)
+    return integer;
+
+    impure function get_value(
+      constant VOID : t_void)
+    return real;
+
+    impure function get_value(
+      constant VOID : t_void)
+    return time;
+
+    impure function get_value(
+      constant length : positive)
+    return integer_vector;
+
+    impure function get_value(
+      constant length : positive)
+    return real_vector;
+
+    impure function get_value(
+      constant length : positive)
+    return time_vector;
+
+    impure function get_value(
+      constant length : positive)
+    return signed;
+
+    impure function get_value(
+      constant length : positive)
+    return unsigned;
+
+    impure function get_value(
+      constant length : positive)
+    return std_logic_vector;
+
+    ------------------------------------------------------------
+    -- Linking Variables (Questa 2025.2+ only)
+    ------------------------------------------------------------
+    -- Questa 2025.2+ only
+    impure function create_rand(
+      constant VOID : t_void)
+    return integer;
+
+    -- Questa 2025.2+ only
+    procedure link(
+      constant op : t_relational_operator;
+      constant var2: integer);
+
+    -- Questa 2025.2+ only
+    procedure link(
+      constant arith_op: t_arithmetic_operator;
+      constant var2: integer;
+      constant op : t_relational_operator;
+      constant valOrVarId3: integer;
+      constant isVarId3 : boolean := false);
+
+    -- Questa 2025.2+ only
+    procedure unlink(
+      constant var2: integer);
+
+    -- Questa 2025.2+ only
+    procedure unlink(
+      constant VOID: t_void);
+
+    ------------------------------------------------------------
+    -- Bitwise Constraints
+    ------------------------------------------------------------
+    -- Questa 2025.2+ only
+    procedure nonzero_bitwise_and(
+      constant mask : integer);
+
+    -- Questa 2025.2+ only
+    procedure zero_bitwise_and(
+      constant mask : integer);
+
+    -- Questa 2025.2+ only
+    procedure force_bits_to(
+        constant mask : string);
+
+    -- Questa 2025.2+ only
+    procedure one_hot(
+      constant VOID : t_void);
+
 
   end protected t_rand;
 
@@ -1694,6 +1811,9 @@ package body rand_pkg is
                                                                                     weighted_config => false);
     variable priv_uns_constraints         : t_uns_constraints                   := (ran_incl => new t_null_range_uns_vec);
     variable priv_sig_constraints         : t_sig_constraints                   := (ran_incl => new t_null_range_sig_vec);
+
+    -- Questa 2025.2+ only
+    variable vendor_var_id                : integer                             := -1;
 
     -- The number of attempts for a random value to be generated with exclude constraints is multiplied by this constant
     constant C_NUM_INVALID_TRIES : natural := 10;
@@ -2200,6 +2320,17 @@ package body rand_pkg is
       end if;
     end procedure;
 
+    -- Questa 2025.2+ only
+    procedure check_and_initialize_vendor_varid(
+      constant VOID : t_void) is
+    begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          if (vendor_var_id = -1) then
+              vendor_var_id := vendor_create_rand_var;
+          end if;
+      end if;
+    end procedure;
+
     ------------------------------------------------------------
     -- Configuration
     ------------------------------------------------------------
@@ -2471,6 +2602,13 @@ package body rand_pkg is
     begin
       priv_seed1 := C_RAND_INIT_SEED_1;
       priv_seed2 := C_RAND_INIT_SEED_2;
+      
+      -- Questa 2025.2+ only
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+        check_and_initialize_vendor_varid(void);
+        vendor_randvar_set_seed(vendor_var_id, str);
+        return;
+    end if;
       -- Create the seeds by accumulating the ASCII values of the string,
       -- multiplied by a factor so they are widely spread, and making sure
       -- they don't overflow the positive range.
@@ -2487,6 +2625,11 @@ package body rand_pkg is
       constant seed1 : in positive;
       constant seed2 : in positive) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_set_seed_ints(vendor_var_id, seed1, seed2);
+          return;
+      end if;
       priv_seed1 := seed1;
       priv_seed2 := seed2;
     end procedure;
@@ -2494,6 +2637,11 @@ package body rand_pkg is
     procedure set_rand_seeds(
       constant seeds : in t_positive_vector(0 to 1)) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_set_seed_ints(vendor_var_id, seeds(0), seeds(1));
+          return;
+      end if;
       priv_seed1 := seeds(0);
       priv_seed2 := seeds(1);
     end procedure;
@@ -2502,6 +2650,11 @@ package body rand_pkg is
       variable seed1 : out positive;
       variable seed2 : out positive) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_get_seed_ints(vendor_var_id, seed1, seed2);
+          return;
+      end if;
       seed1 := priv_seed1;
       seed2 := priv_seed2;
     end procedure;
@@ -2511,6 +2664,11 @@ package body rand_pkg is
     return t_positive_vector is
       variable v_ret : t_positive_vector(0 to 1);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_set_seed_ints(vendor_var_id, v_ret(0), v_ret(1));
+          return v_ret;
+      end if;
       v_ret(0) := priv_seed1;
       v_ret(1) := priv_seed2;
       return v_ret;
@@ -6245,6 +6403,11 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range([" & to_string(min_value) & ":" & to_string(max_value) & "])";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_include_range_int(vendor_var_id, min_value, max_value, 0);
+          return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6266,6 +6429,11 @@ package body rand_pkg is
       constant value        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_include_range_int(vendor_var_id, value, value, 0);
+          return;
+      end if;
       add_val((0 => value), msg_id_panel);
     end procedure;
 
@@ -6274,6 +6442,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val" & to_string(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_include_vals_int(vendor_var_id, set_of_values);
+          return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6291,6 +6464,11 @@ package body rand_pkg is
       constant value        : in integer;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_exclude_range_int(vendor_var_id, value, value, 0);
+          return;
+      end if;
       excl_val((0 => value), msg_id_panel);
     end procedure;
 
@@ -6299,6 +6477,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "excl_val" & to_string(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_exclude_vals_int(vendor_var_id, set_of_values);
+          return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6308,12 +6491,31 @@ package body rand_pkg is
       priv_int_constraints.val_excl(priv_int_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_int_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
+    -- Questa 2025.2+ only
+    procedure excl_range(
+      constant min        : in integer;
+      constant max        : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_add_exclude_range_int(vendor_var_id, min, max, 0);
+        else
+            alert(TB_ERROR, "Procedure excl_range() only supported in Questa 2025.2+", C_SCOPE);
+        end if;
+    end procedure;
+
     procedure add_val_weight(
       constant value        : in integer;
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_weight(" & to_string(value) & "," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_add_range_weight_int(vendor_var_id, value, value, weight);
+          return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6333,6 +6535,11 @@ package body rand_pkg is
       constant C_LOCAL_CALL  : string := "add_range_weight([" & to_string(min_value) & ":" & to_string(max_value) & "]," & to_string(weight) & return_string1_if_true_otherwise_string2("," & to_upper(to_string(mode)), "", mode /= NA) & ")";
       variable v_weight_mode : t_weight_mode;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_add_range_weight_int(vendor_var_id, min_value, max_value, weight);
+          return;
+      end if;
       -- Check only integer constraints have been configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6348,6 +6555,32 @@ package body rand_pkg is
       priv_int_constraints.weighted_config                                    := true;
     end procedure;
 
+    -- Questa 2025.2+ only
+    procedure vector_sum_max(
+      constant max        : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_add_vector_sum_max(vendor_var_id, max);
+        else
+            alert(TB_ERROR, "Procedure vector_sum_max() only supported in Questa 2025.2+", C_SCOPE);
+        end if;
+    end procedure;
+
+    -- Questa 2025.2+ only
+    procedure vector_sum_min(
+      constant min        : in integer;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_add_vector_sum_min(vendor_var_id, min);
+        else
+            alert(TB_ERROR, "Procedure vector_sum_min() only supported in Questa 2025.2+", C_SCOPE);
+        end if;
+    end procedure;
+
     ------------------------------------------------------------
     -- Real constraints
     ------------------------------------------------------------
@@ -6357,6 +6590,11 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_real([" & format_real(min_value) & ":" & format_real(max_value) & "])";
     begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_add_include_range_real(vendor_var_id, min_value, max_value, 0);
+            return;
+        end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6376,6 +6614,11 @@ package body rand_pkg is
       constant value        : in real;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_include_range_real(vendor_var_id, value, value, 0);
+          return;
+      end if;
       add_val_real((0 => value), msg_id_panel);
     end procedure;
 
@@ -6384,6 +6627,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_real" & format_real(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_include_vals_real(vendor_var_id, set_of_values);
+          return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6401,6 +6649,11 @@ package body rand_pkg is
       constant value        : in real;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_exclude_range_real(vendor_var_id, value, value, 0);
+          return;
+      end if;
       excl_val_real((0 => value), msg_id_panel);
     end procedure;
 
@@ -6409,6 +6662,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "excl_val_real" & format_real(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_exclude_vals_real(vendor_var_id, set_of_values);
+          return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6418,12 +6676,31 @@ package body rand_pkg is
       priv_real_constraints.val_excl(priv_real_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_real_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
+    -- Questa 2025.2+ only
+    procedure excl_range_real(
+      constant min        : in real;
+      constant max        : in real;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_add_exclude_range_real(vendor_var_id, min, max, 0);
+        else
+            alert(TB_ERROR, "Procedure excl_range_real() only supported in Questa 2025.2+", C_SCOPE);
+        end if;
+    end procedure;
+
     procedure add_val_weight_real(
       constant value        : in real;
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_weight_real(" & format_real(value) & "," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_add_range_weight_real(vendor_var_id, value, value, weight);
+          return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6441,6 +6718,11 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_weight_real([" & format_real(min_value) & ":" & format_real(max_value) & "]," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_add_range_weight_real(vendor_var_id, min_value, max_value, weight);
+          return;
+      end if;
       -- Check only real constraints have been configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6465,6 +6747,11 @@ package body rand_pkg is
       constant msg_id_panel    : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_time([" & to_string(min_value, get_time_unit(min_value)) & ":" & to_string(max_value, get_time_unit(max_value)) & "])";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_include_range_time(vendor_var_id, min_value, max_value, 0);
+          return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6492,6 +6779,11 @@ package body rand_pkg is
       constant value        : in time;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_include_range_time(vendor_var_id, value, value, 0);
+          return;
+      end if;
       add_val_time((0 => value), msg_id_panel);
     end procedure;
 
@@ -6500,6 +6792,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_time" & to_string(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_include_vals_time(vendor_var_id, set_of_values);
+          return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6517,6 +6814,11 @@ package body rand_pkg is
       constant value        : in time;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_exclude_range_time(vendor_var_id, value, value, 0);
+          return;
+      end if;
       excl_val_time((0 => value), msg_id_panel);
     end procedure;
 
@@ -6525,6 +6827,11 @@ package body rand_pkg is
       constant msg_id_panel  : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "excl_val_time" & to_string(set_of_values);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_exclude_vals_time(vendor_var_id, set_of_values);
+          return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6534,12 +6841,31 @@ package body rand_pkg is
       priv_time_constraints.val_excl(priv_time_constraints.val_excl'length - 1 - (set_of_values'length - 1) to priv_time_constraints.val_excl'length - 1) := set_of_values;
     end procedure;
 
+    -- Questa 2025.2+ only
+    procedure excl_range_time(
+      constant min        : in time;
+      constant max        : in time;
+      constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_add_exclude_range_time(vendor_var_id, min, max, 0);
+        else
+            alert(TB_ERROR, "Procedure excl_range_time() only supported in Questa 2025.2+", C_SCOPE);
+        end if;
+    end procedure;
+
     procedure add_val_weight_time(
       constant value        : in time;
       constant weight       : in natural;
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_val_weight_time(" & to_string(value, get_time_unit(value)) & "," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_add_range_weight_time(vendor_var_id, value, value, weight);
+          return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6561,6 +6887,11 @@ package body rand_pkg is
       constant msg_id_panel : in t_msg_id_panel := shared_msg_id_panel) is
       constant C_LOCAL_CALL : string := "add_range_weight_time([" & to_string(min_value, get_time_unit(min_value)) & ":" & to_string(max_value, get_time_unit(max_value)) & "]," & to_string(weight) & ")";
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randvar_add_range_weight_time(vendor_var_id, min_value, max_value, weight);
+          return;
+      end if;
       -- Check only time constraints have been configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6589,6 +6920,11 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "add_range_unsigned([" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       alias C_MAX_LENGTH is C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_range_unsigned(vendor_var_id, min_value, max_value);
+          return;
+      end if;
       -- Check only unsigned constraints have been configured
       if not (check_configured_constraints("UNSIGNED", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6618,6 +6954,11 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "add_range_signed([" & to_string(min_value, HEX, KEEP_LEADING_0, INCL_RADIX) & ":" & to_string(max_value, HEX, KEEP_LEADING_0, INCL_RADIX) & "])";
       alias C_MAX_LENGTH is C_RAND_MM_MAX_LONG_VECTOR_LENGTH;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_add_range_signed(vendor_var_id, min_value, max_value);
+          return;
+      end if;
       -- Check only signed constraints have been configured
       if not (check_configured_constraints("SIGNED", C_LOCAL_CALL, is_config => true)) then
         return;
@@ -6691,6 +7032,11 @@ package body rand_pkg is
       constant C_LOCAL_CALL : string := "clear_constraints()";
       variable v_proc_call  : line;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_clear_constraints(vendor_var_id);
+          return;
+      end if;
       create_proc_call(C_LOCAL_CALL, ext_proc_call, v_proc_call);
       log_proc_call(ID_RAND_CONF, v_proc_call.all, ext_proc_call, v_proc_call, msg_id_panel);
       DEALLOCATE(v_proc_call);
@@ -6778,6 +7124,10 @@ package body rand_pkg is
       variable v_num_ranges          : natural := priv_int_constraints.ran_incl'length;
       variable v_ret                 : integer;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          return vendor_randomize_int(vendor_var_id);
+      end if;
       create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
       v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
@@ -6900,6 +7250,10 @@ package body rand_pkg is
       variable v_num_ranges          : natural := priv_real_constraints.ran_incl'length;
       variable v_ret                 : real;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          return vendor_randomize_real(vendor_var_id);
+      end if;
       create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
       v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
@@ -7027,6 +7381,10 @@ package body rand_pkg is
       variable v_num_ranges          : natural := priv_time_constraints.ran_incl'length;
       variable v_ret                 : time;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          return vendor_randomize_time(vendor_var_id);
+      end if;
       create_proc_call(C_LOCAL_CALL_1, ext_proc_call, v_proc_call);
       v_ran_incl_configured := '1' when v_num_ranges > 0 else '0';
       v_val_incl_configured := '1' when priv_time_constraints.val_incl'length > 0 else '0';
@@ -7154,6 +7512,12 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_int_constraints.val_excl'length > 0 else '0';
 
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randomize_int_array(vendor_var_id, length, v_ret);
+          return v_ret;
+      end if;
+
       -- Check only integer constraints are configured
       if not (check_configured_constraints("INTEGER", C_LOCAL_CALL_1, is_config => false)) then
         return v_ret;
@@ -7221,6 +7585,12 @@ package body rand_pkg is
     begin
       v_val_incl_configured := '1' when priv_real_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_real_constraints.val_excl'length > 0 else '0';
+
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randomize_real_array(vendor_var_id, length, v_ret);
+          return v_ret;
+      end if;
 
       -- Check only real constraints are configured
       if not (check_configured_constraints("REAL", C_LOCAL_CALL_1, is_config => false)) then
@@ -7294,6 +7664,12 @@ package body rand_pkg is
       v_val_incl_configured := '1' when priv_time_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured := '1' when priv_time_constraints.val_excl'length > 0 else '0';
 
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randomize_time_array(vendor_var_id, length, v_ret);
+          return v_ret;
+      end if;
+
       -- Check only time constraints are configured
       if not (check_configured_constraints("TIME", C_LOCAL_CALL_1, is_config => false)) then
         return v_ret;
@@ -7357,6 +7733,12 @@ package body rand_pkg is
       variable v_ret                     : unsigned(length - 1 downto 0);
       variable v_check_ok                : boolean := true;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randomize_unsigned(vendor_var_id, length, v_ret);
+          return v_ret;
+      end if;
+
       v_ran_incl_configured     := '1' when priv_int_constraints.ran_incl'length > 0 else '0';
       v_val_incl_configured     := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured     := '1' when priv_int_constraints.val_excl'length > 0 else '0';
@@ -7471,6 +7853,12 @@ package body rand_pkg is
       variable v_ret                     : signed(length - 1 downto 0);
       variable v_check_ok                : boolean := true;
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randomize_signed(vendor_var_id, length, v_ret);
+          return v_ret;
+      end if;
+
       v_ran_incl_configured     := '1' when priv_int_constraints.ran_incl'length > 0 else '0';
       v_val_incl_configured     := '1' when priv_int_constraints.val_incl'length > 0 else '0';
       v_val_excl_configured     := '1' when priv_int_constraints.val_excl'length > 0 else '0';
@@ -7575,10 +7963,283 @@ package body rand_pkg is
       constant msg_id_panel : t_msg_id_panel := shared_msg_id_panel)
     return std_logic_vector is
       variable v_ret : unsigned(length - 1 downto 0);
+      variable vendor_v_ret : std_logic_vector(length - 1 downto 0);
     begin
+      if (C_VENDOR_EXTENSION_IS_ENABLED) then
+          check_and_initialize_vendor_varid(void);
+          vendor_randomize_slv(vendor_var_id, length, vendor_v_ret);
+          return vendor_v_ret;
+      end if;
+
       v_ret := randm(length, msg_id_panel, "slv");
       return std_logic_vector(v_ret);
     end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant VOID : t_void)
+    return integer is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            return vendor_randvar_get_value_int(vendor_var_id);
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return 0;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant VOID : t_void)
+    return real is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            return vendor_randvar_get_value_real(vendor_var_id);
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return 0.0;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant VOID : t_void)
+    return time is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            return vendor_randvar_get_value_time(vendor_var_id);
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return 0 ns;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant length : positive)
+    return integer_vector is
+    variable retval : integer_vector(0 to length-1);
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_get_value_int_array(vendor_var_id, retval);
+            return retval;
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return retval;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant length : positive)
+    return real_vector is
+    variable retval : real_vector(0 to length-1);
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_get_value_real_array(vendor_var_id, retval);
+            return retval;
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return retval;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant length : positive)
+    return time_vector is
+    variable retval : time_vector(0 to length-1);
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_get_value_time_array(vendor_var_id, retval);
+            return retval;
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return retval;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant length : positive)
+    return signed is
+    variable retval : signed(0 to length-1);
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_get_value_signed(vendor_var_id, retval);
+            return retval;
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return retval;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant length : positive)
+    return unsigned is
+    variable retval : unsigned(0 to length-1);
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_get_value_unsigned(vendor_var_id, retval);
+            return retval;
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return retval;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function get_value(
+      constant length : positive)
+    return std_logic_vector is
+    variable retval : std_logic_vector(0 to length-1);
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_get_value_slv(vendor_var_id, retval);
+            return retval;
+        else
+            alert(TB_ERROR, "Function get_value() only supported in Questa 2025.2+", C_SCOPE);
+            return retval;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    impure function create_rand(
+      constant VOID : t_void)
+    return integer is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            return vendor_var_id;
+        else
+            alert(TB_ERROR, "Function create_rand() only supported in Questa 2025.2+", C_SCOPE);
+            return 0;
+        end if;
+    end function;
+
+    -- Questa 2025.2+ only
+    procedure link(
+      constant op : t_relational_operator;
+      constant var2: integer) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_add_link(vendor_var_id, var2, t_relational_operator'pos(op));
+            return;
+        else
+            alert(TB_ERROR, "Procedure link() only supported in Questa 2025.2+", C_SCOPE);
+            return;
+        end if;
+    end procedure;
+
+    -- Questa 2025.2+ only
+    procedure link(
+      constant arith_op: t_arithmetic_operator;
+      constant var2: integer;
+      constant op : t_relational_operator;
+      constant valOrVarId3: integer;
+      constant isVarId3 : boolean := false) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_add_link2(vendor_var_id, var2, t_relational_operator'pos(op), t_arithmetic_operator'pos(arith_op), valOrVarId3, boolean'pos(isVarId3));
+            return;
+        end if;
+    end procedure;
+
+    -- Questa 2025.2+ only
+    procedure unlink(
+      constant var2: integer) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_delete_link(vendor_var_id, var2);
+            return;
+        else
+            alert(TB_ERROR, "Procedure link() only supported in Questa 2025.2+", C_SCOPE);
+            return;
+        end if;
+    end procedure;
+
+    -- Questa 2025.2+ only
+    procedure unlink(
+      constant VOID: t_void) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_delete_link(vendor_var_id, -1);
+            return;
+        else
+            alert(TB_ERROR, "Procedure unlink() only supported in Questa 2025.2+", C_SCOPE);
+            return;
+        end if;
+    end procedure;
+
+    -- Questa 2025.2+ only
+    procedure nonzero_bitwise_and(
+      constant mask : integer) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_nonzero_bitwise_and(vendor_var_id, mask);
+            return;
+        else
+            alert(TB_ERROR, "Procedure nonzero_bitwise_and() only supported in Questa 2025.2+", C_SCOPE);
+            return;
+        end if;
+    end procedure;
+
+    -- Questa 2025.2+ only
+    procedure zero_bitwise_and(
+      constant mask : integer) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_zero_bitwise_and(vendor_var_id, mask);
+            return;
+        else
+            alert(TB_ERROR, "Procedure zero_bitwise_and() only supported in Questa 2025.2+", C_SCOPE);
+            return;
+        end if;
+    end procedure;
+
+    -- Questa 2025.2+ only
+    procedure force_bits_to(
+      constant mask : string) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_force_bits_to(vendor_var_id, mask);
+            return;
+        else
+            alert(TB_ERROR, "Procedure force_bits_to() only supported in Questa 2025.2+", C_SCOPE);
+            return;
+        end if;
+    end procedure;
+
+    -- Questa 2025.2+ only
+    procedure one_hot(
+      constant VOID : t_void) is
+    begin
+        if (C_VENDOR_EXTENSION_IS_ENABLED) then
+            check_and_initialize_vendor_varid(void);
+            vendor_randvar_one_hot(vendor_var_id);
+            return;
+        else
+            alert(TB_ERROR, "Procedure one_hot() only supported in Questa 2025.2+", C_SCOPE);
+            return;
+        end if;
+    end procedure;
 
   end protected body t_rand;
 

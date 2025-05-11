@@ -1,0 +1,17 @@
+uvvm_intro.rst:142: [redirected permanently] http://www.apache.org/licenses/LICENSE-2.0 to https://www.apache.org/licenses/LICENSE-2.0
+vip_ethernet.rst:11: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_ethernet/doc/ethernet_hvvc_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_ethernet/doc/ethernet_hvvc_QuickRef.pdf
+uvvm_intro.rst:151: [redirected permanently] http://uvvm.org to https://www.uvvm.org/
+vip_gmii.rst:11: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_gmii/doc/gmii_bfm_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_gmii/doc/gmii_bfm_QuickRef.pdf
+vip_gmii.rst:19: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_gmii/doc/gmii_vvc_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_gmii/doc/gmii_vvc_QuickRef.pdf
+vip_i2c.rst:11: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_i2c/doc/i2c_bfm_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_i2c/doc/i2c_bfm_QuickRef.pdf
+vip_i2c.rst:19: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_i2c/doc/i2c_vvc_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_i2c/doc/i2c_vvc_QuickRef.pdf
+vip_rgmii.rst:11: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_rgmii/doc/rgmii_bfm_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_rgmii/doc/rgmii_bfm_QuickRef.pdf
+vip_rgmii.rst:19: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_rgmii/doc/rgmii_vvc_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_rgmii/doc/rgmii_vvc_QuickRef.pdf
+vip_spi.rst:11: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_spi/doc/spi_bfm_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_spi/doc/spi_bfm_QuickRef.pdf
+vip_spi.rst:19: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_spi/doc/spi_vvc_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_spi/doc/spi_vvc_QuickRef.pdf
+vip_uart.rst:11: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_uart/doc/uart_bfm_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_uart/doc/uart_bfm_QuickRef.pdf
+vip_uart.rst:25: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_uart/doc/uart_monitor_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_uart/doc/uart_monitor_QuickRef.pdf
+vip_uart.rst:19: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/bitvis_vip_uart/doc/uart_vvc_QuickRef.pdf to https://github.com/UVVM/UVVM/blob/master/bitvis_vip_uart/doc/uart_vvc_QuickRef.pdf
+uvvm_intro.rst:134: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx to https://github.com/UVVM/UVVM/blob/master/uvvm_vvc_framework/doc/The_critically_missing_VHDL_TB_feature.ppsx
+uvvm_intro.rst:135: [redirected permanently] https://github.com/UVVM/UVVM/tree/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf to https://github.com/UVVM/UVVM/blob/master/uvvm_vvc_framework/doc/VVC_Framework_Manual.pdf
+uvvm_getting_started.rst:132: [redirected permanently] https://uvvm.org to https://www.uvvm.org/

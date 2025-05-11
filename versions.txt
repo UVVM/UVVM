@@ -1,6 +1,6 @@
 This project uses the following versions:
-  uvvm_util, version v2.20.0
-  uvvm_vvc_framework, version v2.12.11
+  uvvm_util, version v2.21.0
+  uvvm_vvc_framework, version v2.12.12
   bitvis_irqc, version v1.0.13
   bitvis_uart, version v1.1.8
   bitvis_vip_avalon_mm, version v4.1.0

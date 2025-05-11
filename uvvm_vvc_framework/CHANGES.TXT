@@ -2,6 +2,11 @@ UVVM VVC Framework - Overview on Versions and Changes
 
 ----------------------------------------------------------------------
 
+v2.12.12
+----------
+Released: 2025-XX-XX
+- Added a check for duplicated VVC ID in the activity register in ti_protected_types_pkg.
+
 v2.12.11
 ----------
 Released: 2025-03-25

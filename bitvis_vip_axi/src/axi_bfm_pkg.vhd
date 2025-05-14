@@ -682,6 +682,21 @@ package body axi_bfm_pkg is
       check_value(not v_await_wready, config.max_wait_cycles_severity, ": Timeout waiting for WREADY", scope, ID_NEVER, msg_id_panel, proc_call);
       check_value(not v_await_awready, config.max_wait_cycles_severity, ": Timeout waiting for AWREADY", scope, ID_NEVER, msg_id_panel, proc_call);
 
+      if v_await_awready or v_await_wready then
+        axi_if.write_address_channel.awid     <= (axi_if.write_address_channel.awid'range => '0');
+        axi_if.write_address_channel.awaddr   <= (axi_if.write_address_channel.awaddr'range => '0');
+        axi_if.write_address_channel.awlen    <= (others => '0');
+        axi_if.write_address_channel.awsize   <= (others => '0');
+        axi_if.write_address_channel.awburst  <= (others => '0');
+        axi_if.write_address_channel.awlock   <= '0';
+        axi_if.write_address_channel.awcache  <= (others => '0');
+        axi_if.write_address_channel.awprot   <= (others => '0');
+        axi_if.write_address_channel.awqos    <= (others => '0');
+        axi_if.write_address_channel.awregion <= (others => '0');
+        axi_if.write_address_channel.awuser   <= (axi_if.write_address_channel.awuser'range => '0');
+        axi_if.write_address_channel.awvalid  <= '0';
+      end if;
+
       v_await_wready := true;
     end loop;
 
@@ -718,6 +733,9 @@ package body axi_bfm_pkg is
     end loop;
 
     check_value(not v_await_bvalid, config.max_wait_cycles_severity, ": Timeout waiting for BVALID", scope, ID_NEVER, msg_id_panel, proc_call);
+    if v_await_bvalid then
+      axi_if.write_response_channel.bready <= '0';
+    end if;
 
     log(config.id_for_bfm, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure axi_write;
@@ -839,6 +857,20 @@ package body axi_bfm_pkg is
     end loop;
 
     check_value(not v_await_arready, config.max_wait_cycles_severity, ": Timeout waiting for ARREADY", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+    if v_await_arready then
+        axi_if.read_address_channel.arid     <= (axi_if.read_address_channel.arid'range => '0');
+        axi_if.read_address_channel.araddr   <= (axi_if.read_address_channel.araddr'range => '0');
+        axi_if.read_address_channel.arlen    <= (others => '0');
+        axi_if.read_address_channel.arsize   <= (others => '0');
+        axi_if.read_address_channel.arburst  <= (others => '0');
+        axi_if.read_address_channel.arlock   <= '0';
+        axi_if.read_address_channel.arcache  <= (others => '0');
+        axi_if.read_address_channel.arprot   <= (others => '0');
+        axi_if.read_address_channel.arqos    <= (others => '0');
+        axi_if.read_address_channel.arregion <= (others => '0');
+        axi_if.read_address_channel.aruser   <= (axi_if.read_address_channel.aruser'range => '0');
+        axi_if.read_address_channel.arvalid  <= '0';
+    end if;
 
     for read_transfer_num in 0 to to_integer(unsigned(arlen_value)) loop
       for cycle in 0 to config.max_wait_cycles loop
@@ -872,6 +904,10 @@ package body axi_bfm_pkg is
         end if;
       end loop;
       check_value(not v_await_rvalid, config.max_wait_cycles_severity, ": Timeout waiting for RVALID", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+      if not v_await_rvalid then
+          axi_if.read_data_channel.rready <= '0';
+          exit;
+      end if;
       v_await_rvalid := true;
     end loop;
 

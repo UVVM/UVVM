@@ -285,6 +285,20 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
+    if(v_await_awready) then
+        awid            <= (awid'range => '0');
+        awaddr          <= (awaddr'range => '0');
+        awlen           <= (others => '0');
+        awsize          <= (others => '0');
+        awburst         <= (others => '0');
+        awlock          <= '0';
+        awcache         <= (others => '0');
+        awprot          <= (others => '0');
+        awqos           <= (others => '0');
+        awregion        <= (others => '0');
+        awuser          <= (awuser'range => '0');
+        awvalid         <= '0';
+    end if;
     check_value(not v_await_awready, config.max_wait_cycles_severity, ": Timeout waiting for AWREADY", scope, ID_NEVER, msg_id_panel, proc_call);
     log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure write_address_channel_write;
@@ -357,6 +371,13 @@ package body axi_channel_handler_pkg is
           exit;
         end if;
       end loop;
+      if (v_await_wready) then
+          wdata          <= (wdata'range => '0');
+          wstrb          <= (wstrb'range => '0');
+          wuser          <= (wuser'range => '0');
+          wlast          <= '0';
+          wvalid         <= '0';
+      end if;
       check_value(not v_await_wready, config.max_wait_cycles_severity, ": Timeout waiting for WREADY", scope, ID_NEVER, msg_id_panel, proc_call);
     end loop;
     log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
@@ -428,6 +449,9 @@ package body axi_channel_handler_pkg is
         exit;
       end if;
     end loop;
+    if (v_await_bvalid) then
+        bready         <= '0';
+    end if;
     check_value(not v_await_bvalid, config.max_wait_cycles_severity, ": Timeout waiting for BVALID", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
 
     if ext_proc_call = "" then
@@ -531,6 +555,20 @@ package body axi_channel_handler_pkg is
       end if;
     end loop;
     check_value(not v_await_arready, config.max_wait_cycles_severity, ": Timeout waiting for ARREADY", scope, ID_NEVER, msg_id_panel, proc_call);
+    if (v_await_arready) then
+        arid            <= (arid'range => '0');
+        araddr          <= (araddr'range => '0');
+        arlen           <= (others => '0');
+        arsize          <= (others => '0');
+        arburst         <= (others => '0');
+        arlock          <= '0';
+        arcache         <= (others => '0');
+        arprot          <= (others => '0');
+        arqos           <= (others => '0');
+        arregion        <= (others => '0');
+        aruser          <= (aruser'range => '0');
+        arvalid         <= '0';
+    end if;
     log(ID_CHANNEL_BFM, proc_call & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
   end procedure read_address_channel_write;
 
@@ -604,6 +642,10 @@ package body axi_channel_handler_pkg is
         end if;
       end loop;
       check_value(not v_await_rvalid, config.max_wait_cycles_severity, ": Timeout waiting for RVALID", scope, ID_NEVER, msg_id_panel, v_proc_call.all);
+      if (v_await_rvalid) then
+          rready         <= '0';
+          exit;
+      end if;
       if v_rlast_detected then
         read_result := read_data_queue.fetch_from_queue(v_returning_rid);
         exit;
